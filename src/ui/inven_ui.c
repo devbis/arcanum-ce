@@ -678,7 +678,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
                     gsound_play_sfx_id(sub_4F0FD0(target_obj, 0), 1);
                 }
             }
-            if ((obj_field_int32_get(target_obj, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
+            if ((obj_field_int32_get(target_obj, OBJ_F_CONTAINER_FLAGS) & OCOF_INVEN_SPAWN_ONCE) != 0) {
                 sub_463E20(target_obj);
             }
         } else {

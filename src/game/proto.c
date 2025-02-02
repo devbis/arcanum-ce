@@ -750,7 +750,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -762,7 +762,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -774,7 +774,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
@@ -786,7 +786,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
             break;
         case 3039:
@@ -797,7 +797,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
             break;
         case 3040:
@@ -808,7 +808,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
             break;
         case 3041:
@@ -819,7 +819,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
@@ -831,7 +831,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -843,7 +843,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -855,7 +855,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -867,7 +867,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -879,7 +879,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
@@ -891,7 +891,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
             break;
         case 3048:
@@ -902,7 +902,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
             break;
         case 3049:
@@ -913,7 +913,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
             break;
         case 3050:
@@ -924,7 +924,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
             break;
         case 3051:
@@ -935,7 +935,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
             break;
         case 3052:
@@ -946,7 +946,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
             break;
         case 3053:
@@ -957,7 +957,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
             break;
         case 3054:
@@ -968,7 +968,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
-            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
+            obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
             break;
         case 3055:

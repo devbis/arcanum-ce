@@ -2060,7 +2060,7 @@ void sub_463E20(int64_t obj)
     int source_id;
     InvenSourceSet set;
     int64_t loc;
-    bool v1;
+    bool spawn;
     int64_t pc_obj;
     int race;
     int gender;
@@ -2076,14 +2076,14 @@ void sub_463E20(int64_t obj)
     }
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    v1 = false;
+    spawn = false;
     if (obj_type == OBJ_TYPE_CONTAINER) {
         inventory_source_fld = OBJ_F_CONTAINER_INVENTORY_SOURCE;
-        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
+        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & OCOF_INVEN_SPAWN_ONCE) != 0) {
             if (item_editor) {
                 return;
             }
-            v1 = true;
+            spawn = true;
         }
     } else if (obj_type_is_critter(obj_type)) {
         inventory_source_fld = OBJ_F_CRITTER_INVENTORY_SOURCE;
@@ -2099,13 +2099,14 @@ void sub_463E20(int64_t obj)
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         invensource_get_id_list(source_id, &set);
 
-        if (v1) {
+        if (spawn) {
             pc_obj = player_get_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL) {
                 gender = stat_level_get(pc_obj, STAT_GENDER);
                 race = stat_level_get(pc_obj, STAT_RACE);
                 background = background_obj_get_background(pc_obj);
 
+                // TODO: Incomplete.
             }
         }
 
@@ -2127,11 +2128,11 @@ void sub_463E20(int64_t obj)
             sub_4654F0(obj, OBJ_HANDLE_NULL);
         }
 
-        if (v1) {
+        if (spawn) {
             sub_4EFDD0(obj, inventory_source_fld, 0);
 
             unsigned int container_flags = obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS);
-            container_flags &= ~0x200;
+            container_flags &= ~OCOF_INVEN_SPAWN_ONCE;
             sub_4EFDD0(obj, OBJ_F_CONTAINER_FLAGS, container_flags);
         }
     }
