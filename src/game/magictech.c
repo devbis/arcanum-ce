@@ -95,6 +95,7 @@ static void MTComponentEnvFlag_ProcFunc();
 static bool sub_452F20();
 static bool sub_4532F0(int64_t obj, int magictech);
 static bool sub_453370(int64_t obj, int magictech, int a3);
+static bool sub_453410(int mt_id, int spell, int64_t obj, int* other_mt_id_ptr);
 static void sub_4534E0(MagicTechRunInfo* run_info);
 static void sub_453630();
 static bool sub_453710();
@@ -2969,7 +2970,132 @@ void MTComponentEnvFlag_ProcFunc()
 // 0x452F20
 bool sub_452F20()
 {
-    // TODO: Incomplete.
+    bool v1;
+    bool v2;
+    MesFileEntry mes_file_entry;
+
+    v1 = false;
+    v2 = (dword_5E75F0->field_13C & 2) == 0;
+
+    if (dword_5E75F0->action == MAGICTECH_ACTION_BEGIN) {
+        if (obj_type_is_critter(dword_5E75F0->source_obj.type)) {
+            if (critter_is_dead(dword_5E75F0->source_obj.obj)) {
+                return false;
+            }
+
+            if (critter_is_unconscious(dword_5E75F0->source_obj.obj)) {
+                return false;
+            }
+        }
+
+        if (obj_type_is_critter(dword_5E75F0->parent_obj.type)
+            && magictech_is_magic(dword_5E75F0->spell)) {
+            if (stat_level_get(dword_5E75F0->parent_obj.obj, STAT_INTELLIGENCE) < sub_4502E0(dword_5E75F0->spell)) {
+                if (obj_type_is_critter(dword_5E75F0->source_obj.type)) {
+                    v1 = true;
+                    v2 = false;
+                    mes_file_entry.num = 602; // "You lose your concentration."
+                }
+            }
+
+            if (stat_level_get(dword_5E75F0->parent_obj.obj, STAT_WILLPOWER) < magictech_get_iq(dword_5E75F0->spell)) {
+                if (obj_type_is_critter(dword_5E75F0->source_obj.type)) {
+                    v1 = true;
+                    v2 = false;
+                    mes_file_entry.num = 602; // "You lose your concentration."
+                }
+            }
+
+            if (v2) {
+                if ((dword_5E7598->flags & 0x100) == 0
+                    && !sub_4507D0(dword_5E75F0->source_obj.obj, dword_5E75F0->spell)) {
+                    v1 = true;
+                    mes_file_entry.num = 600; // "Not enough Energy."
+                }
+            }
+
+            if (v1) {
+                if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+                    mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+                    sub_460610(mes_file_entry.str);
+                }
+
+                return false;
+            }
+        }
+
+        qword_5E75B8 = dword_5E75F0->target_obj.obj;
+
+        if (qword_5E75B8 == OBJ_HANDLE_NULL) {
+            qword_5E75B8 = dword_5E75F0->source_obj.obj;
+        }
+
+        if (qword_5E75B8 != OBJ_HANDLE_NULL) {
+            if (dword_5E7598->no_stack) {
+                int other_mt_id;
+                if (sub_453410(dword_5E75F0->id, dword_5E75F0->spell, qword_5E75B8, &other_mt_id)
+                    && dword_5E75F0->id != other_mt_id) {
+                    return false;
+                }
+            }
+        }
+
+        sub_4534E0(dword_5E75F0);
+        return true;
+    }
+
+    if (dword_5E75F0->action == MAGICTECH_ACTION_MAINTAIN) {
+        if (obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
+            if (stat_level_get(dword_5E75F0->parent_obj.obj, STAT_INTELLIGENCE) < sub_4502E0(dword_5E75F0->spell)) {
+                if (obj_type_is_critter(dword_5E75F0->source_obj.type)) {
+                    v1 = true;
+                    v2 = false;
+                    mes_file_entry.num = 602; // "You lose your concentration."
+                }
+            }
+
+            if (stat_level_get(dword_5E75F0->parent_obj.obj, STAT_WILLPOWER) < magictech_get_iq(dword_5E75F0->spell)) {
+                if (obj_type_is_critter(dword_5E75F0->source_obj.type)) {
+                    v1 = true;
+                    v2 = false;
+                    mes_file_entry.num = 602; // "You lose your concentration."
+                }
+            }
+
+            if (v2) {
+                if (!sub_4532F0(dword_5E75F0->source_obj.obj, dword_5E75F0->spell)) {
+                    v1 = true;
+                    mes_file_entry.num = 601; // "Maintain terminated."
+                }
+            }
+
+            if (dword_5E75F0->field_144 != 0) {
+                if (!sub_453370(dword_5E75F0->source_obj.obj, dword_5E75F0->spell, dword_5E75F0->field_144)) {
+                    v1 = true;
+                    mes_file_entry.num = 601; // "Maintain terminated."
+                }
+            }
+
+            if (v1) {
+                if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+                    mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+                    sub_460610(mes_file_entry.str);
+                    sub_4604C0(dword_5E75F0->id);
+                }
+
+                dword_5E75F0->action = MAGICTECH_ACTION_END;
+
+                stru_5E3518.cnt = 0;
+                sub_451070(dword_5E75F0);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return true;
 }
 
 // 0x4532F0
@@ -3016,9 +3142,37 @@ bool sub_453370(int64_t obj, int magictech, int a3)
 }
 
 // 0x453410
-void sub_453410()
+bool sub_453410(int mt_id, int spell, int64_t obj, int* other_mt_id_ptr)
 {
-    // TODO: Incomplete.
+    int idx;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    for (idx = 0; idx < 512; idx++) {
+        if ((magictech_run_info[idx].field_13C & 0x1) != 0) {
+            if (magictech_run_info[idx].target_obj.obj == obj
+                && magictech_run_info[idx].spell == spell
+                && magictech_run_info[idx].id != mt_id) {
+                if (other_mt_id_ptr != NULL) {
+                    *other_mt_id_ptr = idx;
+                }
+                return true;
+            } else if (magictech_run_info[idx].target_obj.obj == OBJ_HANDLE_NULL
+                && (magictech_spells[magictech_run_info[idx].spell].field_70[MAGICTECH_ACTION_BEGIN].flags & Tgt_Self) != 0
+                && magictech_run_info[idx].source_obj.obj == obj
+                && magictech_run_info[idx].spell == spell
+                && magictech_run_info[idx].id != mt_id) {
+                if (other_mt_id_ptr != NULL) {
+                    *other_mt_id_ptr = idx;
+                }
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x4534E0
