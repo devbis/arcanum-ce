@@ -2061,10 +2061,6 @@ void sub_463E20(int64_t obj)
     InvenSourceSet set;
     int64_t loc;
     bool spawn;
-    int64_t pc_obj;
-    int race;
-    int gender;
-    int background;
     int qty;
     int idx;
     int64_t item_obj;
@@ -2100,14 +2096,26 @@ void sub_463E20(int64_t obj)
         invensource_get_id_list(source_id, &set);
 
         if (spawn) {
-            pc_obj = player_get_pc_obj();
-            if (pc_obj != OBJ_HANDLE_NULL) {
-                gender = stat_level_get(pc_obj, STAT_GENDER);
-                race = stat_level_get(pc_obj, STAT_RACE);
-                background = background_obj_get_background(pc_obj);
+            int seed = (int)loc;
+            int64_t pc_obj = player_get_pc_obj();
 
-                // TODO: Incomplete.
+            if (pc_obj != OBJ_HANDLE_NULL) {
+                char buffer[80];
+                int pos;
+                int len;
+
+                seed += stat_level_get(pc_obj, STAT_RACE) * background_obj_get_background(pc_obj);
+                seed += stat_level_get(pc_obj, STAT_GENDER);
+
+                sub_441B60(pc_obj, pc_obj, buffer);
+                len = (int)strlen(buffer);
+
+                for (pos = 1; pos < len; pos += 2) {
+                    seed += buffer[pos] * buffer[pos - 1];
+                }
             }
+
+            random_seed(seed);
         }
 
         qty = random_between(set.min_coins, set.max_coins);
