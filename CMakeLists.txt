@@ -131,6 +131,8 @@ set(SRCS
     "src/game/path.h"
     "src/game/player.c"
     "src/game/player.h"
+    "src/game/portal.c"
+    "src/game/portal.h"
     "src/game/portrait.c"
     "src/game/portrait.h"
     "src/game/proto.c"

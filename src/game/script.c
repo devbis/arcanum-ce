@@ -23,6 +23,7 @@
 #include "game/newspaper.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/portal.h"
 #include "game/quest.h"
 #include "game/random.h"
 #include "game/reaction.h"
@@ -1255,7 +1256,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
         type = obj_field_int32_get(obj, OBJ_F_TYPE);
         if (type == OBJ_TYPE_PORTAL) {
-            is_open = sub_4F08C0(obj);
+            is_open = portal_is_open(obj);
         } else if (type == OBJ_TYPE_CONTAINER) {
             is_open = tig_art_id_frame_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) != 0;
         } else {

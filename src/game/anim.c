@@ -18,6 +18,7 @@
 #include "game/object.h"
 #include "game/path.h"
 #include "game/player.h"
+#include "game/portal.h"
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/reaction.h"
@@ -6452,7 +6453,7 @@ bool sub_4284F0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4F08C0(obj)) {
+    if (portal_is_open(obj)) {
         return false;
     }
 
@@ -8476,7 +8477,7 @@ bool sub_42B640(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4F08C0(door_obj)) {
+    if (portal_is_open(door_obj)) {
         return true;
     }
 
@@ -8485,8 +8486,8 @@ bool sub_42B640(AnimRunInfo* run_info)
     }
 
     // NOTE: Why twice?
-    sub_4F08F0(door_obj);
-    sub_4F08F0(door_obj);
+    portal_toggle(door_obj);
+    portal_toggle(door_obj);
 
     return true;
 }
@@ -8516,7 +8517,7 @@ bool sub_42B6F0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_4F08C0(door_obj)) {
+    if (!portal_is_open(door_obj)) {
         return true;
     }
 
@@ -8524,7 +8525,7 @@ bool sub_42B6F0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4F08F0(door_obj);
+    portal_toggle(door_obj);
 
     return true;
 }
@@ -9513,7 +9514,7 @@ bool sub_42D080(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(door_obj, OBJ_F_CURRENT_AID);
-    if (!sub_4F0950(door_obj)) {
+    if (!portal_open(door_obj)) {
         return false;
     }
 
@@ -9543,7 +9544,7 @@ bool sub_42D160(AnimRunInfo* run_info)
         return false;
     }
 
-    return sub_4F0950(door_obj);
+    return portal_open(door_obj);
 }
 
 // 0x42D1C0
@@ -9561,7 +9562,7 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(door_obj, OBJ_F_CURRENT_AID);
-    if (!sub_4F0A90(door_obj)) {
+    if (!portal_close(door_obj)) {
         return false;
     }
 
@@ -9591,7 +9592,7 @@ bool sub_42D2A0(AnimRunInfo* run_info)
         return false;
     }
 
-    return sub_4F0A90(door_obj);
+    return portal_close(door_obj);
 }
 
 // 0x42D300

@@ -17,6 +17,7 @@
 #include "game/obj.h"
 #include "game/party.h"
 #include "game/player.h"
+#include "game/portal.h"
 #include "game/proto.h"
 #include "game/reaction.h"
 #include "game/resistance.h"
@@ -2920,7 +2921,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
                 }
             } else {
                 if (tig_art_id_damaged_get(art_id) != 512
-                    && !sub_4F08C0(node->obj)) {
+                    && !portal_is_open(node->obj)) {
                     if ((flags & 0x20) != 0) {
                         cost += 1;
                     } else {
@@ -3043,7 +3044,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
                     }
                 } else {
                     if (tig_art_id_damaged_get(art_id) != 512
-                        && !sub_4F08C0(node->obj)) {
+                        && !portal_is_open(node->obj)) {
                         if ((flags & 0x20) != 0) {
                             cost += 1;
                         } else {
@@ -4003,8 +4004,8 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     object_locked_set(obj, true);
     object_jammed_set(obj, false);
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
-        if (sub_4F08C0(obj)) {
-            sub_4F08F0(obj);
+        if (portal_is_open(obj)) {
+            portal_toggle(obj);
         }
     } else {
         aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
