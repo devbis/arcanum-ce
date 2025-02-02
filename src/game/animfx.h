@@ -49,18 +49,20 @@ typedef struct AnimFxList {
 
 static_assert(sizeof(AnimFxList) == 0x2C, "wrong size");
 
-typedef enum AnimFxNodeFlags {
-    ANIMFX_PLAY_REVERSE = 0x0001,
-    ANIMFX_PLAY_STACK = 0x0002,
-    ANIMFX_PLAY_DESTROY = 0x0004,
-    ANIMFX_PLAY_CALLBACK = 0x0008,
-    ANIMFX_PLAY_END_CALLBACK = 0x0010,
-    ANIMFX_PLAY_RANDOM_START = 0x0020,
-    ANIMFX_PLAY_FIRE_DMG = 0x0040,
-    ANIMFX_PLAY_CHECK_ALREADY = 0x0080,
-    ANIMFX_PLAY_NO_ID = 0x0100,
-    ANIMFX_PLAY_ICE_DMG = 0x0240,
-} AnimFxNodeFlags;
+typedef uint32_t AnimFxNodeFlags;
+
+#define ANIMFX_PLAY_COUNT 10
+
+#define ANIMFX_PLAY_REVERSE 0x0001u
+#define ANIMFX_PLAY_STACK 0x0002u
+#define ANIMFX_PLAY_DESTROY 0x0004u
+#define ANIMFX_PLAY_CALLBACK 0x0008u
+#define ANIMFX_PLAY_END_CALLBACK 0x0010u
+#define ANIMFX_PLAY_RANDOM_START 0x0020u
+#define ANIMFX_PLAY_FIRE_DMG 0x0040u
+#define ANIMFX_PLAY_CHECK_ALREADY 0x0080u
+#define ANIMFX_PLAY_NO_ID 0x0100u
+#define ANIMFX_PLAY_ICE_DMG 0x0240u
 
 typedef struct AnimFxNode {
     /* 0000 */ AnimFxList* list;
@@ -70,7 +72,7 @@ typedef struct AnimFxNode {
     /* 0018 */ int field_18;
     /* 001C */ int field_1C;
     /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
+    /* 0024 */ AnimFxNodeFlags flags;
     /* 0028 */ int field_28;
     /* 002C */ tig_art_id_t* art_id_ptr;
     /* 0030 */ tig_art_id_t* light_art_id_ptr;
@@ -85,8 +87,8 @@ typedef struct AnimFxNode {
 
 static_assert(sizeof(AnimFxNode) == 0x50, "wrong size");
 
-extern const char* off_5B7658[];
-extern unsigned int dword_5B7680[];
+extern const char* animfx_play_flags_lookup_tbl_keys[ANIMFX_PLAY_COUNT];
+extern unsigned int animfx_play_flags_lookup_tbl_values[ANIMFX_PLAY_COUNT];
 
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();

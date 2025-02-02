@@ -15367,7 +15367,7 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
         sub_4CCD20(&stru_5DE610, &node, a3, -1, v1 + 5);
         node.field_1C = 1;
         node.field_20 = 0;
-        node.field_24 |= 2u;
+        node.flags |= ANIMFX_PLAY_STACK;
         animfx_add(&node);
     }
 

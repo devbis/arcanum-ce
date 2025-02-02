@@ -2512,21 +2512,21 @@ void MTComponentEyeCandy_ProcFunc()
         }
 
         node.field_1C = 1;
-        node.field_24 = dword_5E761C->data.eye_candy.flags;
+        node.flags = dword_5E761C->data.eye_candy.flags;
         node.field_10 = dword_5E75F0->parent_obj.obj;
 
         if ((dword_5E75F0->field_13C & 0x40) == 0) {
             if (animfx_add(&node)) {
-                if ((node.field_24 & 0x18) != 0) {
+                if ((node.flags & (ANIMFX_PLAY_CALLBACK | ANIMFX_PLAY_END_CALLBACK)) != 0) {
                     dword_5E75CC = 1;
                 }
                 return;
             }
         }
 
-        if ((node.field_24 & 0x18) != 0) {
+        if ((node.flags & (ANIMFX_PLAY_CALLBACK | ANIMFX_PLAY_END_CALLBACK)) != 0) {
             dword_5E75D4 = 1;
-            if ((node.field_24 & 0x10) != 0) {
+            if ((node.flags & ANIMFX_PLAY_END_CALLBACK) != 0) {
                 dword_5E75D8 = 1;
             }
         }
@@ -5655,7 +5655,12 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
         case MTC_EYECANDY:
             tig_str_parse_value(&str, &(component_info->data.eye_candy.num));
             tig_str_match_str_to_list(&str, off_5B0C88, 2, &(component_info->data.eye_candy.add_remove));
-            tig_str_parse_named_flag_list(&str, "Play:", off_5B7658, dword_5B7680, 10, &(component_info->data.eye_candy.flags));
+            tig_str_parse_named_flag_list(&str,
+                "Play:",
+                animfx_play_flags_lookup_tbl_keys,
+                animfx_play_flags_lookup_tbl_values,
+                ANIMFX_PLAY_COUNT,
+                &(component_info->data.eye_candy.flags));
             break;
         case MTC_HEAL:
             tig_str_match_named_str_to_list(&str, "DmgType:", off_5B0C70, 6, &(component_info->data.heal.damage_type));

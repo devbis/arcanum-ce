@@ -25,7 +25,7 @@ static bool sub_4CE1A0(tig_art_id_t art_id, unsigned int flags, int index, const
 static void sub_4CE2A0(int index);
 
 // 0x5B7658
-const char* off_5B7658[] = {
+const char* animfx_play_flags_lookup_tbl_keys[ANIMFX_PLAY_COUNT] = {
     "reverse",
     "stack",
     "destroy",
@@ -39,7 +39,7 @@ const char* off_5B7658[] = {
 };
 
 // 0x5B7680
-unsigned int dword_5B7680[] = {
+unsigned int animfx_play_flags_lookup_tbl_values[ANIMFX_PLAY_COUNT] = {
     ANIMFX_PLAY_REVERSE,
     ANIMFX_PLAY_STACK,
     ANIMFX_PLAY_DESTROY,
@@ -176,7 +176,7 @@ void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5)
     node->art_id_ptr = NULL;
     node->light_art_id_ptr = NULL;
     node->light_color_ptr = NULL;
-    node->field_24 = 0;
+    node->flags = 0;
     node->sound_id = -1;
     node->rotation = 0;
     node->scale = 4;
@@ -224,7 +224,7 @@ bool sub_4CCDD0(AnimFxNode* node)
         return false;
     }
 
-    if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0
+    if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0
         && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
         return false;
     }
@@ -329,12 +329,12 @@ bool animfx_add(AnimFxNode* node)
         int index;
         tig_art_id_t art_id;
 
-        if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0
+        if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0
             && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
             return false;
         }
 
-        if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0) {
+        if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0) {
             if ((obj_type_is_critter(obj_field_int32_get(node->obj, OBJ_F_TYPE)))) {
                 art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
                 switch (tig_art_type(art_id)) {
@@ -589,29 +589,29 @@ bool animfx_add(AnimFxNode* node)
             int goal_type;
             AnimGoalData goal_data;
 
-            if ((node->field_24 & (ANIMFX_PLAY_CALLBACK | ANIMFX_PLAY_END_CALLBACK)) != 0) {
-                if ((node->field_24 & ANIMFX_PLAY_CALLBACK) != 0) {
-                    if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
+            if ((node->flags & (ANIMFX_PLAY_CALLBACK | ANIMFX_PLAY_END_CALLBACK)) != 0) {
+                if ((node->flags & ANIMFX_PLAY_CALLBACK) != 0) {
+                    if ((node->flags & ANIMFX_PLAY_REVERSE) != 0) {
                         goal_type = AG_EYE_CANDY_REVERSE_CALLBACK;
                     } else {
                         goal_type = AG_EYE_CANDY_CALLBACK;
                     }
                 } else {
-                    if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
+                    if ((node->flags & ANIMFX_PLAY_REVERSE) != 0) {
                         goal_type = AG_EYE_CANDY_REVERSE_END_CALLBACK;
                     } else {
                         goal_type = AG_EYE_CANDY_END_CALLBACK;
                     }
                 }
             } else {
-                if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
-                    if ((node->field_24 & ANIMFX_PLAY_FIRE_DMG) != 0) {
+                if ((node->flags & ANIMFX_PLAY_REVERSE) != 0) {
+                    if ((node->flags & ANIMFX_PLAY_FIRE_DMG) != 0) {
                         goal_type = AG_EYE_CANDY_REVERSE_FIRE_DMG;
                     } else {
                         goal_type = AG_EYE_CANDY_REVERSE;
                     }
                 } else {
-                    if ((node->field_24 & ANIMFX_PLAY_FIRE_DMG) != 0) {
+                    if ((node->flags & ANIMFX_PLAY_FIRE_DMG) != 0) {
                         goal_type = AG_EYE_CANDY_FIRE_DMG;
                     } else {
                         goal_type = AG_EYE_CANDY;
@@ -621,7 +621,7 @@ bool animfx_add(AnimFxNode* node)
 
             if (sub_44D500(&goal_data, node->obj, goal_type)) {
                 goal_data.params[AGDATA_ANIM_ID].data = eye_candy_art_id;
-                if ((node->field_24 & ANIMFX_PLAY_NO_ID) != 0) {
+                if ((node->flags & ANIMFX_PLAY_NO_ID) != 0) {
                     goal_data.params[AGDATA_SPELL_DATA].data = -1;
                 } else {
                     goal_data.params[AGDATA_SPELL_DATA].data = node->field_28;
@@ -636,18 +636,18 @@ bool animfx_add(AnimFxNode* node)
                 goal_data.params[AGDATA_RANGE_DATA].data = entry->light_color;
                 goal_data.params[AGDATA_FLAGS_DATA].data = (entry->flags & ANIMFX_LIST_ENTRY_LOOPS) != 0 ? 0x80 : 0;
 
-                if ((node->field_24 & ANIMFX_PLAY_RANDOM_START) != 0) {
+                if ((node->flags & ANIMFX_PLAY_RANDOM_START) != 0) {
                     goal_data.params[AGDATA_FLAGS_DATA].data |= 0x800;
                 }
 
-                if ((node->field_24 & ANIMFX_PLAY_ICE_DMG) != 0) {
+                if ((node->flags & ANIMFX_PLAY_ICE_DMG) != 0) {
                     goal_data.params[AGDATA_FLAGS_DATA].data |= 0x4000;
                 }
 
                 goal_data.params[AGDATA_PARENT_OBJ].obj = node->field_10;
 
                 if (entry->sound != -1) {
-                    if ((node->field_24 & 0x1) != 0
+                    if ((node->flags & ANIMFX_PLAY_REVERSE) != 0
                         && dword_601738->field_20 > 0) {
                         int sound_id;
                         char path[TIG_MAX_PATH];
@@ -662,13 +662,13 @@ bool animfx_add(AnimFxNode* node)
                     goal_data.params[AGDATA_ANIM_ID_PREVIOUS].data = node->sound_id;
                 }
 
-                if ((node->field_24 & ANIMFX_PLAY_STACK) != 0) {
+                if ((node->flags & ANIMFX_PLAY_STACK) != 0) {
                     sub_44DBE0(stru_601700, &goal_data);
                 } else {
                     sub_44D520(&goal_data, &stru_601700);
                 }
 
-                if ((node->field_24 & ANIMFX_PLAY_DESTROY) != 0) {
+                if ((node->flags & ANIMFX_PLAY_DESTROY) != 0) {
                     if (sub_44D500(&goal_data, node->obj, AG_DESTROY_OBJ)) {
                         sub_44DBE0(stru_601700, &goal_data);
                     }
