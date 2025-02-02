@@ -416,7 +416,7 @@ bool animfx_add(AnimFxNode* node)
                 }
 
                 if (!node->field_1C) {
-                    sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, index, eye_candy_art_id);
+                    object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, index, eye_candy_art_id);
                 }
 
                 overlay_fore_index = index;
@@ -438,7 +438,7 @@ bool animfx_add(AnimFxNode* node)
                     if (found > node->field_20) {
                         if (!node->field_1C) {
                             if (overlay_fore_index != -1) {
-                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                                object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
                         }
                         return false;
@@ -449,7 +449,7 @@ bool animfx_add(AnimFxNode* node)
             if (index >= 7) {
                 if (!node->field_1C) {
                     if (overlay_fore_index != -1) {
-                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                        object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
                 }
                 return false;
@@ -468,7 +468,7 @@ bool animfx_add(AnimFxNode* node)
             }
 
             if (!node->field_1C) {
-                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, index, eye_candy_art_id);
+                object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, index, eye_candy_art_id);
             }
 
             overlay_back_index = index;
@@ -489,11 +489,11 @@ bool animfx_add(AnimFxNode* node)
                     if (found > node->field_20) {
                         if (!node->field_1C) {
                             if (overlay_fore_index != -1) {
-                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                                object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
 
                             if (overlay_back_index != -1) {
-                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                                object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
                             }
                         }
                         return false;
@@ -504,11 +504,11 @@ bool animfx_add(AnimFxNode* node)
             if (index >= 4) {
                 if (!node->field_1C) {
                     if (overlay_fore_index != -1) {
-                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                        object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
 
                     if (overlay_back_index != -1) {
-                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                        object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
                     }
                 }
                 return false;
@@ -526,7 +526,7 @@ bool animfx_add(AnimFxNode* node)
             }
 
             if (!node->field_1C) {
-                sub_43ECF0(node->obj, OBJ_F_UNDERLAY, index, eye_candy_art_id);
+                object_overlay_set(node->obj, OBJ_F_UNDERLAY, index, eye_candy_art_id);
             }
 
             overlay_fore_index = index;
@@ -548,11 +548,11 @@ bool animfx_add(AnimFxNode* node)
                     if (found > node->field_20) {
                         if (!node->field_1C) {
                             if (overlay_fore_index != -1) {
-                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                                object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
 
                             if (overlay_back_index != -1) {
-                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                                object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
                             }
                         }
                         return false;
@@ -563,11 +563,11 @@ bool animfx_add(AnimFxNode* node)
             if (index >= 4) {
                 if (!node->field_1C) {
                     if (overlay_fore_index != -1) {
-                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                        object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
 
                     if (overlay_back_index != -1) {
-                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                        object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
                     }
                 }
                 return false;
@@ -845,7 +845,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
             }
 
             if (tig_art_num_get(art_id) == num) {
-                sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+                object_overlay_set(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
                 break;
             }
         }
@@ -859,7 +859,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
             }
 
             if (tig_art_num_get(art_id) == num) {
-                sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+                object_overlay_set(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
                 break;
             }
         }
@@ -873,7 +873,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
             }
 
             if (tig_art_num_get(art_id) == num) {
-                sub_43ECF0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
+                object_overlay_set(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
                 break;
             }
         }

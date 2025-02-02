@@ -126,7 +126,7 @@ bool sub_43EAC0(TimeEvent* timeevent);
 void object_set_offset(object_id_t obj, int offset_x, int offset_y);
 void object_set_current_aid(object_id_t obj, tig_art_id_t aid);
 void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color);
-void sub_43ECF0(int64_t obj, int fld, int index, int value);
+void object_overlay_set(int64_t obj, int fld, int index, tig_art_id_t aid);
 bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent);
 void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, tig_art_id_t aid, tig_color_t color);
 void object_set_blit_scale(object_id_t obj, int value);

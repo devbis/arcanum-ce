@@ -2188,7 +2188,7 @@ void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig
 }
 
 // 0x43ECF0
-void sub_43ECF0(int64_t obj, int fld, int index, int value)
+void object_overlay_set(int64_t obj, int fld, int index, tig_art_id_t aid)
 {
     TigRect dirty_rect;
     TigRect updated_rect;
@@ -2200,7 +2200,7 @@ void sub_43ECF0(int64_t obj, int fld, int index, int value)
     }
 
     object_get_rect(obj, 0x7, &dirty_rect);
-    obj_arrayfield_uint32_set(obj, fld, index, value);
+    obj_arrayfield_uint32_set(obj, fld, index, aid);
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     flags &= ~(OF_HAS_OVERLAYS | OF_HAS_UNDERLAYS);
