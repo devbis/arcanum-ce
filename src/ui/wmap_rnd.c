@@ -75,7 +75,7 @@ static int sub_558D20(const WmapRndEncounterChartEntry* a, const WmapRndEncounte
 static bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry);
 static bool sub_558DE0(int64_t location);
 static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
-static int wmap_rnd_determine_terrain(long long location);
+static int wmap_rnd_determine_terrain(int64_t loc);
 static bool wmap_rnd_encounter_check();
 static bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry);
 static int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable *table);
@@ -754,25 +754,25 @@ bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr)
 }
 
 // 0x558FB0
-int wmap_rnd_determine_terrain(long long location)
+int wmap_rnd_determine_terrain(int64_t loc)
 {
-    long long v1;
-    uint16_t v2;
-    int v3;
+    uint64_t sec;
+    uint16_t tid;
+    int terrain_base_type;
 
-    v1 = sector_id_from_loc(location);
-    v2 = sub_4E87F0(v1);
-    if (!wmap_rnd_terrain_clear(v2)) {
+    sec = sector_id_from_loc(loc);
+    tid = sub_4E87F0(sec);
+    if (!wmap_rnd_terrain_clear(tid)) {
         return 0;
     }
 
-    v3 = sub_4E8DC0(v2);
-    if (v3 < 0 || v3 >= 19) {
+    terrain_base_type = sub_4E8DC0(tid);
+    if (terrain_base_type < 0 || terrain_base_type >= 19) {
         tig_debug_println("Error:  Unknown terrain base encountered inwmap_rnd_determine_terrain");
         return 0;
     }
 
-    return dword_5C79C4[v3];
+    return dword_5C79C4[terrain_base_type];
 }
 
 // 0x559010
