@@ -18,6 +18,6 @@ int sub_4E8DF0(uint16_t a1);
 bool sub_4E8E00(int64_t a1);
 void sub_4E86F0(Sector* sector);
 void terrain_flush();
-uint16_t sub_4E87F0(int64_t loc);
+uint16_t sub_4E87F0(int64_t sec);
 
 #endif /* ARCANUM_GAME_TERRAIN_H_ */

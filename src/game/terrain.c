@@ -455,15 +455,16 @@ void terrain_flush()
 }
 
 // 0x4E87F0
-uint16_t sub_4E87F0(int64_t loc)
+uint16_t sub_4E87F0(int64_t sec)
 {
     int idx;
     int64_t x;
     int64_t y;
 
-    x = loc & 0x3FFFFFF;
-    y = loc >> 26;
-    if (x >= terrain_header.field_8
+    x = SECTOR_X(sec);
+    y = SECTOR_Y(sec);
+    if (x < 0
+        || x >= terrain_header.field_8
         || y < 0
         || y >= terrain_header.field_10) {
         return -1;
