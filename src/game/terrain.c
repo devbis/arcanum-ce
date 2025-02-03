@@ -23,6 +23,7 @@ typedef struct TerrainHeader {
 static_assert(sizeof(TerrainHeader) == 0x20, "wrong size");
 
 static void sub_4E80C0(int a1, int a2, TigVideoBuffer* vb, TigRect* rect);
+static void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec));
 static const char* terrain_base_name(int terrain_type);
 static int terrain_match_base_name(const char* base_name);
 static void terrain_color(int terrain_type, int* red, int* green, int* blue);
@@ -485,6 +486,24 @@ uint16_t sub_4E87F0(int64_t sec)
     }
 
     return dword_6038D0[idx][x];
+}
+
+// 0x4E88C0
+void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec))
+{
+    int x;
+    int y;
+
+    x = (int)SECTOR_X(sec);
+    y = (int)SECTOR_Y(sec);
+
+    dword_6039EC[terrain_header.field_8 * y + x] = tid;
+
+    if (callback != NULL) {
+        callback(sec);
+    }
+
+    dword_603A10 = true;
 }
 
 // 0x4E8B20
