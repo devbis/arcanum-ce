@@ -3621,7 +3621,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
             Packet60 pkt;
 
             pkt.type = 60;
-            pkt.idx = dword_5E75F0->id;
+            pkt.mt_id = dword_5E75F0->id;
             pkt.player = player;
 
             tig_net_send_app_all(&pkt, sizeof(pkt));
