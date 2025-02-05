@@ -25,7 +25,7 @@ bool jumppoint_open(const char* a1, const char* a2);
 void jumppoint_close();
 bool jumppoint_flush();
 bool jumppoint_update_view(ViewOptions* view_options);
-void sub_4E3320(UnknownContext* a1);
+void jumppoint_draw(UnknownContext* draw_info);
 bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint);
 
 #endif /* ARCANUM_GAME_JUMPPOINT_H_ */

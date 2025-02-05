@@ -185,7 +185,7 @@ void sub_4E3300()
 }
 
 // 0x4E3320
-void sub_4E3320(UnknownContext* a1)
+void jumppoint_draw(UnknownContext* draw_info)
 {
     TigArtBlitInfo art_blit_info;
     TigArtFrameData art_frame_data;
@@ -223,7 +223,7 @@ void sub_4E3320(UnknownContext* a1)
     for (index = 0; index < jumppoints_count; index++) {
         jumppoint_get_rect(index, &jp_rect);
 
-        rect_node = *a1->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&jp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                 if (jumppoint_view_options.type != VIEW_TYPE_TOP_DOWN) {

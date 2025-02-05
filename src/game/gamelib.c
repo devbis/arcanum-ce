@@ -1720,7 +1720,7 @@ void gamelib_render_editor(UnknownContext* render_info)
         light_render(render_info);
         tile_render(render_info);
         facade_render(render_info);
-        sub_4E3320(render_info);
+        jumppoint_draw(render_info);
         tile_script_render(render_info);
         tileblock_render(render_info);
         object_render(render_info);
