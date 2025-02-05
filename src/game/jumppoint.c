@@ -26,7 +26,7 @@ static char byte_603560[TIG_MAX_PATH];
 static ViewOptions jumppoint_view_options;
 
 // 0x603670
-static bool dword_603670;
+static bool jumppoint_enabled;
 
 // 0x603674
 static tig_window_handle_t jumppoint_iso_window_handle;
@@ -59,7 +59,7 @@ bool jumppoint_init(GameInitInfo* init_info)
 
     jumppoint_initialized = true;
     dword_60367C = false;
-    dword_603670 = true;
+    jumppoint_enabled = true;
 
     return true;
 }
@@ -173,15 +173,15 @@ bool jumppoint_update_view(ViewOptions* view_options)
 }
 
 // 0x4E32F0
-bool sub_4E32F0()
+bool jumppoint_is_enabled()
 {
-    return dword_603670;
+    return jumppoint_enabled;
 }
 
 // 0x4E3300
-void sub_4E3300()
+void jumppoint_toggle()
 {
-    dword_603670 = !dword_603670;
+    jumppoint_enabled = !jumppoint_enabled;
 }
 
 // 0x4E3320
@@ -195,7 +195,7 @@ void jumppoint_draw(UnknownContext* draw_info)
     TigRect jp_rect;
     TigRectListNode* rect_node;
 
-    if (!dword_603670) {
+    if (!jumppoint_enabled) {
         return;
     }
 
