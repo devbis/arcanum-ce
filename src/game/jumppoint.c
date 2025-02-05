@@ -14,7 +14,7 @@ static char byte_603450[TIG_MAX_PATH];
 static JumpPoint* jumppoints;
 
 // 0x603558
-static tig_art_id_t dword_603558;
+static tig_art_id_t jumppoint_td_art_id;
 
 // 0x60355C
 static IsoInvalidateRectFunc* jumppoint_iso_invalidate_rect;
@@ -32,7 +32,7 @@ static bool jumppoint_enabled;
 static tig_window_handle_t jumppoint_iso_window_handle;
 
 // 0x603678
-static tig_art_id_t dword_603678;
+static tig_art_id_t jumppoint_iso_art_id;
 
 // 0x60367C
 static bool dword_60367C;
@@ -54,8 +54,8 @@ bool jumppoint_init(GameInitInfo* init_info)
     jumppoint_editor = init_info->editor;
     jumppoint_view_options.type = VIEW_TYPE_ISOMETRIC;
 
-    tig_art_interface_id_create(350, 0, 0, 0, &dword_603678);
-    tig_art_interface_id_create(351, 0, 0, 0, &dword_603558);
+    tig_art_interface_id_create(350, 0, 0, 0, &jumppoint_iso_art_id);
+    tig_art_interface_id_create(351, 0, 0, 0, &jumppoint_td_art_id);
 
     jumppoint_initialized = true;
     dword_60367C = false;
@@ -201,11 +201,11 @@ void jumppoint_draw(UnknownContext* draw_info)
 
     switch (jumppoint_view_options.type) {
     case VIEW_TYPE_ISOMETRIC:
-        art_blit_info.art_id = dword_603678;
+        art_blit_info.art_id = jumppoint_iso_art_id;
         break;
     case VIEW_TYPE_TOP_DOWN:
-        art_blit_info.art_id = dword_603558;
-        tig_art_frame_data(dword_603558, &art_frame_data);
+        art_blit_info.art_id = jumppoint_td_art_id;
+        tig_art_frame_data(jumppoint_td_art_id, &art_frame_data);
         src_rect.y = 0;
         src_rect.x = 0;
         src_rect.width = art_frame_data.width;
@@ -283,7 +283,7 @@ void jumppoint_get_rect(int jumppoint, TigRect* rect)
             return;
         }
 
-        if (tig_art_frame_data(dword_603678, &art_frame_data) == TIG_OK) {
+        if (tig_art_frame_data(jumppoint_iso_art_id, &art_frame_data) == TIG_OK) {
             rect->x = (int)x - art_frame_data.hot_x + 40;
             rect->y = (int)y - (40 - art_frame_data.height) / 2 - art_frame_data.hot_y + 40;
             rect->width = art_frame_data.width;
