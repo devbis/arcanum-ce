@@ -468,8 +468,8 @@ void sub_581950(int x, int y)
     MainMenuWindowInfo* window;
 
     window = sub_5496C0(sub_5496D0());
-    x += window->field_5C.x;
-    y += window->field_5C.y;
+    x += window->content_rect.x;
+    y += window->content_rect.y;
 
     if (x >= stru_5CC018.x && x < stru_5CC018.x + stru_5CC018.width
         && y >= stru_5CC018.y && y < stru_5CC018.y + stru_5CC018.height) {
@@ -645,8 +645,8 @@ void sub_581E60(int x, int y)
     MainMenuWindowInfo* window_info;
 
     window_info = sub_5496C0(sub_5496D0());
-    x += window_info->field_5C.x;
-    y += window_info->field_5C.y;
+    x += window_info->content_rect.x;
+    y += window_info->content_rect.y;
 
     if (x >= stru_5CC038.x
         && y >= stru_5CC038.y
@@ -1610,8 +1610,8 @@ void sub_583B20(int x, int y)
     MainMenuWindowInfo* window_info;
 
     window_info = sub_5496C0(sub_5496D0());
-    x += window_info->field_5C.x;
-    y += window_info->field_5C.y;
+    x += window_info->content_rect.x;
+    y += window_info->content_rect.y;
 
     if (x >= stru_5CC470.x
         && y >= stru_5CC470.y
@@ -1646,8 +1646,8 @@ void sub_583C80(int x, int y)
     MainMenuWindowInfo* window_info;
 
     window_info = sub_5496C0(sub_5496D0());
-    x += window_info->field_5C.x;
-    y += window_info->field_5C.y;
+    x += window_info->content_rect.x;
+    y += window_info->content_rect.y;
 
     if (x >= stru_5CC470.x
         && y >= stru_5CC470.y

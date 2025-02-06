@@ -54,13 +54,10 @@ typedef struct MainMenuWindowInfo {
     /* 003C */ MainMenuWindowInfoF3C field_3C[2];
     /* 0054 */ void(*refresh_func)(TigRect* rect);
     /* 0058 */ bool(*execute_func)(int btn);
-    /* 005C */ TigRect field_5C;
-    /* 006C */ void(*field_6C)(int x, int y);
-    /* 0070 */ int field_70;
-    /* 0074 */ int field_74;
-    /* 0078 */ int field_78;
-    /* 007C */ int field_7C;
-    /* 0080 */ void(*field_80)(int x, int y);
+    /* 005C */ TigRect content_rect;
+    /* 006C */ void(*mouse_up_func)(int x, int y);
+    /* 0070 */ TigRect scrollbar_rect;
+    /* 0080 */ void(*mouse_down_func)(int x, int y);
     /* 0084 */ int top_index;
     /* 0088 */ int max_top_index;
     /* 008C */ int cnt;

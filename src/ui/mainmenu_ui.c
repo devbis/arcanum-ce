@@ -3090,7 +3090,7 @@ void mainmenu_ui_create_load_game()
         window->selected_index = window->cnt > 0 ? 0 : -1;
     }
 
-    window->max_top_index = window->cnt - window->field_5C.height / 20 - 1;
+    window->max_top_index = window->cnt - window->content_rect.height / 20 - 1;
     if (window->max_top_index < 0) {
         window->max_top_index = 0;
     }
@@ -3352,14 +3352,14 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
     }
 
     if (rect == NULL
-        || (window->field_5C.x < rect->x + rect->width
-            && window->field_5C.y < rect->y + rect->height
-            && rect->x < window->field_5C.x + window->field_5C.width
-            && rect->y < window->field_5C.y + window->field_5C.height)) {
-        dst_rect.x = window->field_5C.x;
-        dst_rect.y = window->field_5C.y;
-        dst_rect.width = window->field_5C.width;
-        dst_rect.height = window->field_5C.height + 5;
+        || (window->content_rect.x < rect->x + rect->width
+            && window->content_rect.y < rect->y + rect->height
+            && rect->x < window->content_rect.x + window->content_rect.width
+            && rect->y < window->content_rect.y + window->content_rect.height)) {
+        dst_rect.x = window->content_rect.x;
+        dst_rect.y = window->content_rect.y;
+        dst_rect.width = window->content_rect.width;
+        dst_rect.height = window->content_rect.height + 5;
 
         if (tig_window_fill(dword_5C3624, &dst_rect, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("mmUIMPLoadGameRefreshFunc: ERROR: tig_window_fill2 failed!\n");
@@ -3640,8 +3640,8 @@ void sub_5430D0()
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
-        if (window->selected_index > window->top_index + window->field_5C.height / 20) {
-            sub_5810D0(stru_64C220, 2, window->selected_index - window->field_5C.height / 20);
+        if (window->selected_index > window->top_index + window->content_rect.height / 20) {
+            sub_5810D0(stru_64C220, 2, window->selected_index - window->content_rect.height / 20);
         }
         gsound_play_sfx_id(0, 1);
         sub_542560();
@@ -3773,7 +3773,7 @@ void mainmenu_ui_create_save_game()
         window->selected_index = -1;
     }
 
-    window->max_top_index = window->cnt - window->field_5C.height / 20 - 1;
+    window->max_top_index = window->cnt - window->content_rect.height / 20 - 1;
     if (window->max_top_index < 0) {
         window->max_top_index = 0;
     }
@@ -4036,11 +4036,11 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
     }
 
     if (rect == NULL
-        || (window->field_5C.x < rect->x + rect->width
-            && window->field_5C.y < rect->y + rect->height
-            && rect->x < window->field_5C.x + window->field_5C.width
-            && rect->y < window->field_5C.y + window->field_5C.height)) {
-        dst_rect = window->field_5C;
+        || (window->content_rect.x < rect->x + rect->width
+            && window->content_rect.y < rect->y + rect->height
+            && rect->x < window->content_rect.x + window->content_rect.width
+            && rect->y < window->content_rect.y + window->content_rect.height)) {
+        dst_rect = window->content_rect;
 
         if (tig_window_fill(dword_5C3624, &dst_rect, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("mmUIMPSaveGameRefreshFunc: ERROR: tig_window_fill2 failed!\n");
@@ -5898,13 +5898,13 @@ bool sub_546EE0(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN) {
-            if (window->field_78 > 0
-                && window->field_5C.x >= msg->data.mouse.x
-                && window->field_5C.y >= msg->data.mouse.y
-                && msg->data.mouse.x < window->field_5C.x + window->field_5C.width
-                && msg->data.mouse.y < window->field_5C.y + window->field_5C.height) {
-                if (window->field_80 != NULL) {
-                    window->field_80(msg->data.mouse.x - window->field_70, msg->data.mouse.y - window->field_74 - stru_5C3628.y);
+            if (window->scrollbar_rect.width > 0
+                && msg->data.mouse.x >= window->content_rect.x
+                && msg->data.mouse.y >= window->content_rect.y
+                && msg->data.mouse.x < window->content_rect.x + window->content_rect.width
+                && msg->data.mouse.y < window->content_rect.y + window->content_rect.height) {
+                if (window->mouse_down_func != NULL) {
+                    window->mouse_down_func(msg->data.mouse.x - window->scrollbar_rect.x, msg->data.mouse.y - window->scrollbar_rect.y - stru_5C3628.y);
                     return true;
                 }
             }
@@ -5977,14 +5977,14 @@ bool sub_546EE0(TigMessage* msg)
                 break;
             }
 
-            if (window->field_6C != NULL
-                && window->field_5C.width > 0
-                && msg->data.mouse.x >= window->field_5C.x
-                && msg->data.mouse.y - stru_5C3628.y >= window->field_5C.y
-                && msg->data.mouse.x < window->field_5C.x + window->field_5C.width
-                && msg->data.mouse.y - stru_5C3628.y < window->field_5C.y + window->field_5C.height) {
+            if (window->mouse_up_func != NULL
+                && window->content_rect.width > 0
+                && msg->data.mouse.x >= window->content_rect.x
+                && msg->data.mouse.y - stru_5C3628.y >= window->content_rect.y
+                && msg->data.mouse.x < window->content_rect.x + window->content_rect.width
+                && msg->data.mouse.y - stru_5C3628.y < window->content_rect.y + window->content_rect.height) {
                 gsound_play_sfx_id(0, 1);
-                window->field_6C(msg->data.mouse.x - window->field_5C.x, msg->data.mouse.y - window->field_5C.y - stru_5C3628.y);
+                window->mouse_up_func(msg->data.mouse.x - window->content_rect.x, msg->data.mouse.y - window->content_rect.y - stru_5C3628.y);
                 return true;
             }
 
@@ -7027,7 +7027,7 @@ void mmUIWinRefreshScrollBar()
     MainMenuWindowInfo* curr_window_info;
 
     curr_window_info = main_menu_window_info[dword_64C414];
-    if (curr_window_info->field_78 > 0) {
+    if (curr_window_info->scrollbar_rect.width > 0) {
         tig_art_interface_id_create(316, 0, 0, 0, &art_id);
         if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
             tig_debug_printf("mmUIWinRefreshScrollBar: ERROR: tig_art_frame_data failed!\n");
@@ -7035,14 +7035,14 @@ void mmUIWinRefreshScrollBar()
         }
 
         src_rect.x = 0;
-        src_rect.y = curr_window_info->top_index + art_frame_data.height / 2 - curr_window_info->field_7C / 2;
+        src_rect.y = curr_window_info->top_index + art_frame_data.height / 2 - curr_window_info->scrollbar_rect.height / 2;
         src_rect.width = art_frame_data.width;
-        src_rect.height = curr_window_info->field_7C;
+        src_rect.height = curr_window_info->scrollbar_rect.height;
 
-        dst_rect.x = curr_window_info->field_70;
-        dst_rect.y = curr_window_info->field_74;
+        dst_rect.x = curr_window_info->scrollbar_rect.x;
+        dst_rect.y = curr_window_info->scrollbar_rect.y;
         dst_rect.width = art_frame_data.width;
-        dst_rect.height = curr_window_info->field_7C;
+        dst_rect.height = curr_window_info->scrollbar_rect.height;
 
         blit_info.flags = 0;
         blit_info.art_id = art_id;
@@ -7239,7 +7239,7 @@ void sub_5493C0(char* buffer, int size)
         dword_64C428 = true;
 
         curr_window_info = main_menu_window_info[dword_64C414];
-        curr_window_info->refresh_func(&(curr_window_info->field_5C));
+        curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
         sub_549A40();
     }
@@ -7258,7 +7258,7 @@ void sub_549450()
         dword_64C428 = false;
 
         curr_window_info = main_menu_window_info[dword_64C414];
-        curr_window_info->refresh_func(&(curr_window_info->field_5C));
+        curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
         sub_549A50();
     }
@@ -7296,7 +7296,7 @@ void sub_549540(TextEdit* textedit)
     (void)textedit;
 
     curr_window_info = main_menu_window_info[dword_64C414];
-    curr_window_info->refresh_func(&(curr_window_info->field_5C));
+    curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
     if (dword_64C414 == 8) {
         sub_5806F0(stru_64C220);
