@@ -107,7 +107,7 @@ static void sub_5445F0();
 static void sub_544640();
 static void sub_544690(TigRect* rect);
 static void mainmenu_ui_create_single_player();
-static void sub_5446D0();
+static void mainmenu_ui_pick_new_or_pregen_create();
 static void sub_5446F0();
 static void sub_5447B0(TigRect* rect);
 static void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect);
@@ -1203,7 +1203,7 @@ static MainMenuWindowInfo mainmenu_ui_single_player_window_info = {
 };
 
 // 0x5C4B20
-static MainMenuButtonInfo stru_5C4B20[3] = {
+static MainMenuButtonInfo mainmenu_ui_pick_new_or_pregen_buttons[3] = {
     {
         410,
         143,
@@ -1240,9 +1240,9 @@ static MainMenuButtonInfo stru_5C4B20[3] = {
 };
 
 // 0x5C4BB0
-static MainMenuWindowInfo stru_5C4BB0 = {
+static MainMenuWindowInfo mainmenu_ui_pick_new_or_pregen_window_info = {
     329,
-    sub_5446D0,
+    mainmenu_ui_pick_new_or_pregen_create,
     NULL,
     0,
     NULL,
@@ -1252,7 +1252,7 @@ static MainMenuWindowInfo stru_5C4BB0 = {
     NULL,
     420,
     3,
-    stru_5C4B20,
+    mainmenu_ui_pick_new_or_pregen_buttons,
     0,
     0,
     0xD,
@@ -1996,7 +1996,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_save_game_window_info,
     &stru_5C4900,
     &stru_5C3BE0,
-    &stru_5C4BB0,
+    &mainmenu_ui_pick_new_or_pregen_window_info,
     &stru_5C4E28,
     &stru_5C5270,
     &stru_5C5370,
@@ -4353,7 +4353,7 @@ void mainmenu_ui_create_single_player()
 }
 
 // 0x5446D0
-void sub_5446D0()
+void mainmenu_ui_pick_new_or_pregen_create()
 {
     dword_64C454 = 0;
     dword_64C414 = 11;
