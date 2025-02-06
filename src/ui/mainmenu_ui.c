@@ -3090,9 +3090,9 @@ void mainmenu_ui_create_load_game()
         window->selected_index = window->cnt > 0 ? 0 : -1;
     }
 
-    window->field_88 = window->cnt - window->field_5C.height / 20 - 1;
-    if (window->field_88 < 0) {
-        window->field_88 = 0;
+    window->max_top_index = window->cnt - window->field_5C.height / 20 - 1;
+    if (window->max_top_index < 0) {
+        window->max_top_index = 0;
     }
     window->top_index = 0;
 
@@ -3106,7 +3106,7 @@ void mainmenu_ui_create_load_game()
     stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
     stru_64C260.field_28 = 0;
-    stru_64C260.field_24 = window->field_88 + 1;
+    stru_64C260.field_24 = window->max_top_index + 1;
     if (stru_64C260.field_24 > 0) {
         stru_64C260.field_24--;
     }
@@ -3773,9 +3773,9 @@ void mainmenu_ui_create_save_game()
         window->selected_index = -1;
     }
 
-    window->field_88 = window->cnt - window->field_5C.height / 20 - 1;
-    if (window->field_88 < 0) {
-        window->field_88 = 0;
+    window->max_top_index = window->cnt - window->field_5C.height / 20 - 1;
+    if (window->max_top_index < 0) {
+        window->max_top_index = 0;
     }
 
     window->top_index = 0;
@@ -3789,7 +3789,7 @@ void mainmenu_ui_create_save_game()
     stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
     stru_64C260.field_28 = 0;
-    stru_64C260.field_24 = window->field_88 + 1;
+    stru_64C260.field_24 = window->max_top_index + 1;
     if (stru_64C260.field_24 > 0) {
         stru_64C260.field_24--;
     }
@@ -7061,8 +7061,8 @@ void sub_548FF0(int a1)
     curr_window_info = main_menu_window_info[dword_64C414];
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 > curr_window_info->field_88) {
-        a1 = curr_window_info->field_88;
+    } else if (a1 > curr_window_info->max_top_index) {
+        a1 = curr_window_info->max_top_index;
     }
 
     if (curr_window_info->top_index != a1) {

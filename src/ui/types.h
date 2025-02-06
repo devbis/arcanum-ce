@@ -62,7 +62,7 @@ typedef struct MainMenuWindowInfo {
     /* 007C */ int field_7C;
     /* 0080 */ void(*field_80)(int x, int y);
     /* 0084 */ int top_index;
-    /* 0088 */ int field_88;
+    /* 0088 */ int max_top_index;
     /* 008C */ int cnt;
     /* 0090 */ int selected_index;
     /* 0094 */ int field_94;
