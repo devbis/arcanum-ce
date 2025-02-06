@@ -106,7 +106,7 @@ static void sub_544440();
 static void sub_5445F0();
 static void sub_544640();
 static void sub_544690(TigRect* rect);
-static void sub_5446A0();
+static void mainmenu_ui_create_single_player();
 static void sub_5446D0();
 static void sub_5446F0();
 static void sub_5447B0(TigRect* rect);
@@ -1110,7 +1110,7 @@ static MainMenuWindowInfo stru_5C4900 = {
 };
 
 // 0x5C4998
-static MainMenuButtonInfo stru_5C4998[5] = {
+static MainMenuButtonInfo mainmenu_ui_single_player_buttons[5] = {
     {
         410,
         143,
@@ -1169,9 +1169,9 @@ static MainMenuButtonInfo stru_5C4998[5] = {
 };
 
 // 0x5C4A88
-static MainMenuWindowInfo stru_5C4A88 = {
+static MainMenuWindowInfo mainmenu_ui_single_player_window_info = {
     331,
-    sub_5446A0,
+    mainmenu_ui_create_single_player,
     NULL,
     0,
     NULL,
@@ -1181,7 +1181,7 @@ static MainMenuWindowInfo stru_5C4A88 = {
     NULL,
     50,
     5,
-    stru_5C4998,
+    mainmenu_ui_single_player_buttons,
     0,
     0,
     0xD,
@@ -1990,7 +1990,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_mainmenu_window_info,
     &mainmenu_ui_mainmenu_in_play_window_info,
     &mainmenu_ui_mainmenu_in_play_locked_window_info,
-    &stru_5C4A88,
+    &mainmenu_ui_single_player_window_info,
     &stru_5C44A0,
     &stru_5C4608,
     &stru_5C4868,
@@ -4340,7 +4340,7 @@ void sub_544690(TigRect* rect)
 }
 
 // 0x5446A0
-void sub_5446A0()
+void mainmenu_ui_create_single_player()
 {
     dword_64C414 = 5;
     sub_546330();
