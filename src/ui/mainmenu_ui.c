@@ -108,10 +108,10 @@ static void sub_544640();
 static void sub_544690(TigRect* rect);
 static void mainmenu_ui_create_single_player();
 static void mainmenu_ui_pick_new_or_pregen_create();
-static void sub_5446F0();
-static void sub_5447B0(TigRect* rect);
+static void mainmenu_ui_new_char_create();
+static void mainmenu_ui_new_char_refresh(TigRect* rect);
 static void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect);
-static bool sub_544FF0(tig_button_handle_t button_handle);
+static bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle);
 static bool sub_5452C0(int64_t obj, int* background_ptr);
 static bool sub_545300(int64_t obj, int* background_ptr);
 static bool sub_545350(int64_t obj);
@@ -120,10 +120,10 @@ static bool sub_545440(int64_t obj);
 static bool sub_545490(int64_t obj);
 static void sub_545550(int64_t obj, int race);
 static bool sub_5455D0(int64_t obj);
-static bool sub_545690(tig_button_handle_t button_handle);
-static bool sub_5456A0(tig_button_handle_t button_handle);
-static void sub_5456B0(int x, int y);
-static bool sub_545780(int btn);
+static bool mainmenu_ui_new_char_button_hover(tig_button_handle_t button_handle);
+static bool mainmenu_ui_new_char_button_leave(tig_button_handle_t button_handle);
+static void mainmenu_ui_new_char_mouse_idle(int x, int y);
+static bool mainmenu_ui_new_char_execute(int btn);
 static void sub_545870();
 static void sub_5458D0(TigRect* rect);
 static bool sub_5459F0(tig_button_handle_t button_handle);
@@ -1274,7 +1274,7 @@ static MainMenuWindowInfo mainmenu_ui_pick_new_or_pregen_window_info = {
 };
 
 // 0x5C4C48
-static MainMenuButtonInfo stru_5C4C48[10] = {
+static MainMenuButtonInfo mainmenu_ui_new_char_buttons[10] = {
     { 675,
         55,
         321, // nextbut.art
@@ -1387,19 +1387,19 @@ static MainMenuButtonInfo stru_5C4C48[10] = {
 };
 
 // 0x5C4E28
-static MainMenuWindowInfo stru_5C4E28 = {
+static MainMenuWindowInfo mainmenu_ui_new_char_window_info = {
     765, // createcharacterbase.art
-    sub_5446F0,
+    mainmenu_ui_new_char_create,
     NULL,
     1,
-    0,
-    sub_544FF0,
-    sub_545690,
-    sub_5456A0,
-    sub_5456B0,
+    NULL,
+    mainmenu_ui_new_char_button_released,
+    mainmenu_ui_new_char_button_hover,
+    mainmenu_ui_new_char_button_leave,
+    mainmenu_ui_new_char_mouse_idle,
     -1,
     8,
-    stru_5C4C48,
+    mainmenu_ui_new_char_buttons,
     0,
     0,
     0x5,
@@ -1407,8 +1407,8 @@ static MainMenuWindowInfo stru_5C4E28 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_5447B0,
-    sub_545780,
+    mainmenu_ui_new_char_refresh,
+    mainmenu_ui_new_char_execute,
     { 184, 35, 145, 196 },
     NULL,
     { 347, 42, 10, 184 },
@@ -1997,7 +1997,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &stru_5C4900,
     &stru_5C3BE0,
     &mainmenu_ui_pick_new_or_pregen_window_info,
-    &stru_5C4E28,
+    &mainmenu_ui_new_char_window_info,
     &stru_5C5270,
     &stru_5C5370,
     &stru_5C5468,
@@ -4362,7 +4362,7 @@ void mainmenu_ui_pick_new_or_pregen_create()
 }
 
 // 0x5446F0
-void sub_5446F0()
+void mainmenu_ui_new_char_create()
 {
     PlayerCreateInfo player_create_info;
 
@@ -4385,7 +4385,7 @@ void sub_5446F0()
 }
 
 // 0x5447B0
-void sub_5447B0(TigRect* rect)
+void mainmenu_ui_new_char_refresh(TigRect* rect)
 {
     int64_t pc_obj;
     char* str;
@@ -4565,7 +4565,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
 }
 
 // 0x544FF0
-bool sub_544FF0(tig_button_handle_t button_handle)
+bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
 {
     int index;
     int64_t pc_obj;
@@ -4574,7 +4574,7 @@ bool sub_544FF0(tig_button_handle_t button_handle)
     int background;
 
     for (index = 0; index < 10; index++) {
-        if (button_handle == stru_5C4C48[index].button_handle) {
+        if (button_handle == mainmenu_ui_new_char_buttons[index].button_handle) {
             break;
         }
     }
@@ -4861,7 +4861,7 @@ bool sub_5455D0(int64_t obj)
 }
 
 // 0x545690
-bool sub_545690(tig_button_handle_t button_handle)
+bool mainmenu_ui_new_char_button_hover(tig_button_handle_t button_handle)
 {
     (void)button_handle;
 
@@ -4869,7 +4869,7 @@ bool sub_545690(tig_button_handle_t button_handle)
 }
 
 // 0x5456A0
-bool sub_5456A0(tig_button_handle_t button_handle)
+bool mainmenu_ui_new_char_button_leave(tig_button_handle_t button_handle)
 {
     (void)button_handle;
 
@@ -4877,7 +4877,7 @@ bool sub_5456A0(tig_button_handle_t button_handle)
 }
 
 // 0x5456B0
-void sub_5456B0(int x, int y)
+void mainmenu_ui_new_char_mouse_idle(int x, int y)
 {
     int v1;
 
@@ -4903,7 +4903,7 @@ void sub_5456B0(int x, int y)
 }
 
 // 0x545780
-bool sub_545780(int btn)
+bool mainmenu_ui_new_char_execute(int btn)
 {
     int64_t pc_obj;
     MesFileEntry mes_file_entry;
@@ -7096,7 +7096,7 @@ bool mainmenu_ui_execute_multiplayer_select_char(int index)
         break;
     case 1:
         sub_5417A0(0);
-        sub_5446F0();
+        mainmenu_ui_new_char_create();
         if (dword_64C384) {
             sub_541810(dword_64C414);
         }
@@ -7480,7 +7480,7 @@ void sub_549A80()
             && tig_art_exists(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
             dword_5C3620 = false;
             dword_5C361C = 13;
-            stru_5C4E28.num_buttons = 10;
+            mainmenu_ui_new_char_window_info.num_buttons = 10;
         } else {
             dword_5C3620 = true;
         }
