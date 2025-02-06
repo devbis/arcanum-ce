@@ -90,13 +90,13 @@ static void sub_543060();
 static void sub_5430D0();
 static bool sub_543160();
 static bool sub_5432B0(const char* name);
-static void mainmenu_ui_create_save_game();
-static void mainmenu_ui_destroy_save_game();
-static bool mainmenu_ui_execute_save_game(int btn);
-static bool sub_543850(tig_button_handle_t button_handle);
-static bool sub_543890(tig_button_handle_t button_handle);
-static void sub_543920(int a1, int a2);
-static void mmUIMPSaveGameRefreshFunc(TigRect* rect);
+static void mainmenu_ui_save_game_create();
+static void mainmenu_ui_save_game_destroy();
+static bool mainmenu_ui_save_game_execute(int btn);
+static bool mainmenu_ui_save_game_button_pressed(tig_button_handle_t button_handle);
+static bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle);
+static void mainmenu_ui_save_game_mouse_up(int a1, int a2);
+static void mainmenu_ui_save_game_refresh(TigRect* rect);
 static void sub_544100(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_544210();
 static void sub_544250();
@@ -992,7 +992,7 @@ static bool dword_5C4790 = true;
 static TigRect stru_5C4798 = { 213, 111, 12, 232 };
 
 // 0x5C47A8
-static MainMenuButtonInfo stru_5C47A8[3] = {
+static MainMenuButtonInfo mainmenu_ui_save_game_buttons[3] = {
     {
         675,
         55,
@@ -1042,19 +1042,19 @@ static MainMenuButtonInfo stru_5C4838 = {
 };
 
 // 0x5C4868
-static MainMenuWindowInfo stru_5C4868 = {
+static MainMenuWindowInfo mainmenu_ui_save_game_window_info = {
     745, // saveloadbackground.art
-    mainmenu_ui_create_save_game,
-    mainmenu_ui_destroy_save_game,
+    mainmenu_ui_save_game_create,
+    mainmenu_ui_save_game_destroy,
     0,
-    sub_543850,
-    sub_543890,
+    mainmenu_ui_save_game_button_pressed,
+    mainmenu_ui_save_game_button_released,
     NULL,
     NULL,
     NULL,
     -1,
     3,
-    stru_5C47A8,
+    mainmenu_ui_save_game_buttons,
     0,
     0,
     0xD,
@@ -1062,10 +1062,10 @@ static MainMenuWindowInfo stru_5C4868 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    mmUIMPSaveGameRefreshFunc,
-    mainmenu_ui_execute_save_game,
+    mainmenu_ui_save_game_refresh,
+    mainmenu_ui_save_game_execute,
     { 42, 120, 145, 213 },
-    sub_543920,
+    mainmenu_ui_save_game_mouse_up,
     { 0 },
     NULL,
     0,
@@ -1993,7 +1993,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_single_player_window_info,
     &mainmenu_ui_options_window_info,
     &mainmenu_ui_load_game_window_info,
-    &stru_5C4868,
+    &mainmenu_ui_save_game_window_info,
     &stru_5C4900,
     &stru_5C3BE0,
     &stru_5C4BB0,
@@ -3673,7 +3673,7 @@ bool sub_5432B0(const char* name)
 }
 
 // 0x543380
-void mainmenu_ui_create_save_game()
+void mainmenu_ui_save_game_create()
 {
     MainMenuWindowInfo* window;
     int64_t pc_obj;
@@ -3740,7 +3740,7 @@ void mainmenu_ui_create_save_game()
 }
 
 // 0x543580
-void mainmenu_ui_destroy_save_game()
+void mainmenu_ui_save_game_destroy()
 {
     scrollbar_ui_control_destroy(stru_64C220);
 
@@ -3754,7 +3754,7 @@ void mainmenu_ui_destroy_save_game()
 }
 
 // 0x5435D0
-bool mainmenu_ui_execute_save_game(int btn)
+bool mainmenu_ui_save_game_execute(int btn)
 {
     int v1;
     char fname[_MAX_FNAME];
@@ -3860,7 +3860,7 @@ bool mainmenu_ui_execute_save_game(int btn)
 }
 
 // 0x543850
-bool sub_543850(tig_button_handle_t button_handle)
+bool mainmenu_ui_save_game_button_pressed(tig_button_handle_t button_handle)
 {
     if (button_handle != stru_5C4838.button_handle) {
         return false;
@@ -3873,7 +3873,7 @@ bool sub_543850(tig_button_handle_t button_handle)
 }
 
 // 0x543890
-bool sub_543890(tig_button_handle_t button_handle)
+bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle)
 {
     MainMenuWindowInfo* window;
     int index;
@@ -3902,7 +3902,7 @@ bool sub_543890(tig_button_handle_t button_handle)
 }
 
 // 0x543920
-void sub_543920(int x, int y)
+void mainmenu_ui_save_game_mouse_up(int x, int y)
 {
     MainMenuWindowInfo* window;
 
@@ -3916,7 +3916,7 @@ void sub_543920(int x, int y)
 }
 
 // 0x543990
-void mmUIMPSaveGameRefreshFunc(TigRect* rect)
+void mainmenu_ui_save_game_refresh(TigRect* rect)
 {
     MainMenuWindowInfo* window;
     tig_art_id_t art_id;
@@ -7198,7 +7198,7 @@ void sub_5494C0(TextEdit* textedit)
     sub_549450();
 
     if (dword_64C414 == 8) {
-        mainmenu_ui_execute_save_game(-1);
+        mainmenu_ui_save_game_execute(-1);
     }
 }
 
