@@ -39,7 +39,7 @@ typedef struct MainMenuWindowInfo {
     /* 0000 */ int background_art_num;
     /* 0004 */ void(*init_func)();
     /* 0008 */ void(*exit_func)();
-    /* 000C */ int field_C;
+    /* 000C */ unsigned int flags;
     /* 0010 */ bool(*field_10)(tig_button_handle_t button_handle);
     /* 0014 */ bool(*field_14)(tig_button_handle_t button_handle);
     /* 0018 */ bool(*field_18)(tig_button_handle_t button_handle);

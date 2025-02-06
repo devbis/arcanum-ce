@@ -5866,7 +5866,7 @@ void mainmenu_ui_create_shared_radio_buttons()
     info = main_menu_window_info[dword_64C414];
     group[0] = info->buttons[4].button_handle;
     group[1] = info->buttons[5].button_handle;
-    if (tig_button_radio_group_create(2, group, info->field_C & 1) != TIG_OK) {
+    if (tig_button_radio_group_create(2, group, info->flags & 1) != TIG_OK) {
         tig_debug_printf("mainmenu_ui_create_shared_radio_buttons: ERROR: tig_button_radio_group failed!\n");
     }
 }
@@ -6612,11 +6612,11 @@ void sub_5480C0(int a1)
         }
         return;
     case 4:
-        window->field_C &= ~0x1;
-        if ((window->field_C & 0x2) != 0) {
+        window->flags &= ~0x1;
+        if ((window->flags & 0x2) != 0) {
             window->field_90 = 0;
         }
-        if ((window->field_C & 0x4) != 0) {
+        if ((window->flags & 0x4) != 0) {
             if (window->field_90 > 0) {
                 window->field_90--;
             }
@@ -6626,11 +6626,11 @@ void sub_5480C0(int a1)
         }
         return;
     case 5:
-        window->field_C |= 0x1;
-        if ((window->field_C & 0x2) != 0) {
+        window->flags |= 0x1;
+        if ((window->flags & 0x2) != 0) {
             window->field_90 = -1;
         }
-        if ((window->field_C & 0x4) != 0) {
+        if ((window->flags & 0x4) != 0) {
             if (window->field_90 < window->field_8C - 1) {
                 window->field_90++;
             }
