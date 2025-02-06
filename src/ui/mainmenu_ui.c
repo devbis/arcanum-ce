@@ -3069,9 +3069,9 @@ void mainmenu_ui_create_load_game()
 
     sub_403C10(&stru_64BBF8, 0, 0);
 
-    window->field_8C = stru_64BBF8.count;
+    window->cnt = stru_64BBF8.count;
     if (window->selected_index == -1) {
-        if (window->field_8C > 0) {
+        if (window->cnt > 0) {
             const char* path = sub_403850();
             unsigned int index;
 
@@ -3086,11 +3086,11 @@ void mainmenu_ui_create_load_game()
                 }
             }
         }
-    } else if (window->selected_index >= window->field_8C) {
-        window->selected_index = window->field_8C > 0 ? 0 : -1;
+    } else if (window->selected_index >= window->cnt) {
+        window->selected_index = window->cnt > 0 ? 0 : -1;
     }
 
-    window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
+    window->field_88 = window->cnt - window->field_5C.height / 20 - 1;
     if (window->field_88 < 0) {
         window->field_88 = 0;
     }
@@ -3285,8 +3285,8 @@ void sub_5424F0(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->selected_index = window->field_84 + y / 20, window->field_8C;
-    if (window->selected_index >= window->field_8C) {
+    window->selected_index = window->field_84 + y / 20;
+    if (window->selected_index >= window->cnt) {
         window->selected_index = -1;
     }
     sub_542560();
@@ -3378,7 +3378,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
             dst_rect.width -= 4;
             dst_rect.height = 20;
 
-            for (index = window->field_84; index < window->field_8C; index++) {
+            for (index = window->field_84; index < window->cnt; index++) {
                 if (dst_rect.y >= max_y) {
                     break;
                 }
@@ -3638,7 +3638,7 @@ void sub_5430D0()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->selected_index < window->field_8C - 1) {
+    if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
         if (window->selected_index > window->field_84 + window->field_5C.height / 20) {
             sub_5810D0(stru_64C220, 2, window->selected_index - window->field_5C.height / 20);
@@ -3676,7 +3676,7 @@ bool sub_543160()
 
     sub_403C10(&stru_64BBF8, 0, 0);
     window->selected_index = -1;
-    window->field_8C--;
+    window->cnt--;
     window->refresh_func(NULL);
 
     return true;
@@ -3766,14 +3766,14 @@ void mainmenu_ui_create_save_game()
     gamelib_savlist_create(&stru_64BBF8);
     sub_403C10(&stru_64BBF8, 0, 0);
     byte_64C2F8[0] = '\0';
-    window->field_8C = stru_64BBF8.count + 1;
+    window->cnt = stru_64BBF8.count + 1;
     if (stru_64BBF8.count != 0) {
         window->selected_index = 1;
     } else {
         window->selected_index = -1;
     }
 
-    window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
+    window->field_88 = window->cnt - window->field_5C.height / 20 - 1;
     if (window->field_88 < 0) {
         window->field_88 = 0;
     }
@@ -3989,7 +3989,7 @@ void sub_543920(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->selected_index = min(y / 90 + window->field_84, window->field_8C - 1);
+    window->selected_index = min(y / 90 + window->field_84, window->cnt - 1);
     sub_544290();
     window->refresh_func(NULL);
     sub_5806F0(stru_64C220);
@@ -4052,7 +4052,7 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
         dst_rect.height = 20;
         dst_rect.width -= 4;
 
-        for (int idx = window->field_84; idx < window->field_8C; idx++) {
+        for (int idx = window->field_84; idx < window->cnt; idx++) {
             if (dst_rect.y >= max_y) {
                 break;
             }
@@ -4255,7 +4255,7 @@ void sub_544250()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->selected_index < window->field_8C - 1) {
+    if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
         gsound_play_sfx_id(0, 1);
         sub_544290();
@@ -4318,7 +4318,7 @@ bool sub_544320()
     gamelib_savlist_create(&stru_64BBF8);
     sub_403C10(&stru_64BBF8, 0, 0);
     window->selected_index = -1;
-    window->field_8C--;
+    window->cnt--;
     window->refresh_func(NULL);
 
     return true;
@@ -6632,7 +6632,7 @@ void sub_5480C0(int a1)
             window->selected_index = -1;
         }
         if ((window->flags & 0x4) != 0) {
-            if (window->selected_index < window->field_8C - 1) {
+            if (window->selected_index < window->cnt - 1) {
                 window->selected_index++;
             }
         }
