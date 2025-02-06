@@ -3070,24 +3070,24 @@ void mainmenu_ui_create_load_game()
     sub_403C10(&stru_64BBF8, 0, 0);
 
     window->field_8C = stru_64BBF8.count;
-    if (window->field_90 == -1) {
+    if (window->selected_index == -1) {
         if (window->field_8C > 0) {
             const char* path = sub_403850();
             unsigned int index;
 
-            window->field_90 = 0;
+            window->selected_index = 0;
 
             if (path != NULL && *path != '\0') {
                 for (index = 0; index < stru_64BBF8.count; index++) {
                     if (strcmp(stru_64BBF8.paths[index], path) == 0) {
-                        window->field_90 = index;
+                        window->selected_index = index;
                         break;
                     }
                 }
             }
         }
-    } else if (window->field_90 >= window->field_8C) {
-        window->field_90 = window->field_8C > 0 ? 0 : -1;
+    } else if (window->selected_index >= window->field_8C) {
+        window->selected_index = window->field_8C > 0 ? 0 : -1;
     }
 
     window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
@@ -3110,7 +3110,7 @@ void mainmenu_ui_create_load_game()
     if (stru_64C260.field_24 > 0) {
         stru_64C260.field_24--;
     }
-    stru_64C260.field_38 = window->field_90 < 7 ? 0 : window->field_90;
+    stru_64C260.field_38 = window->selected_index < 7 ? 0 : window->selected_index;
     stru_64C260.field_2C = 1;
     stru_64C260.field_3C = sub_542280;
     stru_64C260.field_40 = sub_5422A0;
@@ -3195,7 +3195,7 @@ bool sub_5422C0(int btn)
 
     (void)btn;
 
-    index = main_menu_window_info[dword_64C414]->field_90;
+    index = main_menu_window_info[dword_64C414]->selected_index;
     if (index == -1) {
         return false;
     }
@@ -3285,9 +3285,9 @@ void sub_5424F0(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->field_90 = window->field_84 + y / 20, window->field_8C;
-    if (window->field_90 >= window->field_8C) {
-        window->field_90 = -1;
+    window->selected_index = window->field_84 + y / 20, window->field_8C;
+    if (window->selected_index >= window->field_8C) {
+        window->selected_index = -1;
     }
     sub_542560();
     window->refresh_func(NULL);
@@ -3304,8 +3304,8 @@ void sub_542560()
         gamelib_saveinfo_exit(&stru_64B898);
         dword_64C444 = 0;
 
-        if (window->field_90 > -1
-            && gamelib_saveinfo_load(stru_64BBF8.paths[window->field_90], &stru_64B898)) {
+        if (window->selected_index > -1
+            && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &stru_64B898)) {
             dword_64C444 = true;
         }
     }
@@ -3383,7 +3383,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
                     break;
                 }
 
-                font = window->field_90 == index ? dword_64C240 : dword_64C210[0];
+                font = window->selected_index == index ? dword_64C240 : dword_64C210[0];
                 tig_font_push(font);
                 name = sub_543040(index);
                 if (*name != '\0') {
@@ -3400,10 +3400,10 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
             && stru_5C46C0.y < rect->y + rect->height
             && rect->x < stru_5C46C0.x + stru_5C46C0.width
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
-        if (window->field_90 > -1) {
+        if (window->selected_index > -1) {
             if (!dword_64C444
                 && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->field_90], &stru_64B898)) {
+                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &stru_64B898)) {
                 dword_64C444 = true;
             }
 
@@ -3620,10 +3620,10 @@ void sub_543060()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->field_90 > 0) {
-        window->field_90--;
-        if (window->field_90 < window->field_84) {
-            sub_5810D0(stru_64C220, 2, window->field_90);
+    if (window->selected_index > 0) {
+        window->selected_index--;
+        if (window->selected_index < window->field_84) {
+            sub_5810D0(stru_64C220, 2, window->selected_index);
         }
         gsound_play_sfx_id(0, 1);
         sub_542560();
@@ -3638,10 +3638,10 @@ void sub_5430D0()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->field_90 < window->field_8C - 1) {
-        window->field_90++;
-        if (window->field_90 > window->field_84 + window->field_5C.height / 20) {
-            sub_5810D0(stru_64C220, 2, window->field_90 - window->field_5C.height / 20);
+    if (window->selected_index < window->field_8C - 1) {
+        window->selected_index++;
+        if (window->selected_index > window->field_84 + window->field_5C.height / 20) {
+            sub_5810D0(stru_64C220, 2, window->selected_index - window->field_5C.height / 20);
         }
         gsound_play_sfx_id(0, 1);
         sub_542560();
@@ -3657,11 +3657,11 @@ bool sub_543160()
     const char* path;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->field_90 == -1) {
+    if (window->selected_index == -1) {
         return false;
     }
 
-    path = stru_64BBF8.paths[window->field_90];
+    path = stru_64BBF8.paths[window->selected_index];
     if (sub_5416A0(5150) || !sub_403790(path)) {
         return false;
     }
@@ -3675,7 +3675,7 @@ bool sub_543160()
     gamelib_savlist_create(&stru_64BBF8);
 
     sub_403C10(&stru_64BBF8, 0, 0);
-    window->field_90 = -1;
+    window->selected_index = -1;
     window->field_8C--;
     window->refresh_func(NULL);
 
@@ -3768,9 +3768,9 @@ void mainmenu_ui_create_save_game()
     byte_64C2F8[0] = '\0';
     window->field_8C = stru_64BBF8.count + 1;
     if (stru_64BBF8.count != 0) {
-        window->field_90 = 1;
+        window->selected_index = 1;
     } else {
-        window->field_90 = -1;
+        window->selected_index = -1;
     }
 
     window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
@@ -3845,7 +3845,7 @@ bool mainmenu_ui_execute_save_game(int btn)
 
     (void)btn;
 
-    v1 = main_menu_window_info[dword_64C414]->field_90;
+    v1 = main_menu_window_info[dword_64C414]->selected_index;
     if (v1 == -1) {
         return false;
     }
@@ -3989,7 +3989,7 @@ void sub_543920(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->field_90 = min(y / 90 + window->field_84, window->field_8C - 1);
+    window->selected_index = min(y / 90 + window->field_84, window->field_8C - 1);
     sub_544290();
     window->refresh_func(NULL);
     sub_5806F0(stru_64C220);
@@ -4057,7 +4057,7 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
                 break;
             }
 
-            font = window->field_90 == idx ? dword_64C240 : dword_64C210[0];
+            font = window->selected_index == idx ? dword_64C240 : dword_64C210[0];
             tig_font_push(font);
 
             char* name;
@@ -4088,10 +4088,10 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
             && stru_5C46C0.y < rect->y + rect->height
             && rect->x < stru_5C46C0.x + stru_5C46C0.width
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
-        if (window->field_90 > 0) {
+        if (window->selected_index > 0) {
             if (!dword_64C444
                 && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->field_90 - 1], &stru_64B898)) {
+                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &stru_64B898)) {
                 dword_64C444 = true;
             }
 
@@ -4241,8 +4241,8 @@ void sub_544210()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->field_90 > 0) {
-        window->field_90--;
+    if (window->selected_index > 0) {
+        window->selected_index--;
         gsound_play_sfx_id(0, 1);
         sub_544290();
         window->refresh_func(NULL);
@@ -4255,8 +4255,8 @@ void sub_544250()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[dword_64C414];
-    if (window->field_90 < window->field_8C - 1) {
-        window->field_90++;
+    if (window->selected_index < window->field_8C - 1) {
+        window->selected_index++;
         gsound_play_sfx_id(0, 1);
         sub_544290();
         window->refresh_func(NULL);
@@ -4272,7 +4272,7 @@ void sub_544290()
     sub_549450();
 
     if (!dword_64C444) {
-        if (window->field_90 == 0) {
+        if (window->selected_index == 0) {
             byte_64C2F8[0] = 0;
             sub_5493C0(byte_64C2F8, 23);
         }
@@ -4282,8 +4282,8 @@ void sub_544290()
     gamelib_saveinfo_exit(&stru_64B898);
 
     dword_64C444 = false;
-    if (window->field_90 > 0) {
-        if (gamelib_saveinfo_load(stru_64BBF8.paths[window->field_90 - 1], &stru_64B898)) {
+    if (window->selected_index > 0) {
+        if (gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &stru_64B898)) {
             dword_64C444 = true;
         }
     } else {
@@ -4300,11 +4300,11 @@ bool sub_544320()
 
     window = main_menu_window_info[dword_64C414];
 
-    if (window->field_90 <= 0) {
+    if (window->selected_index <= 0) {
         return false;
     }
 
-    path = stru_64BBF8.paths[window->field_90 - 1];
+    path = stru_64BBF8.paths[window->selected_index - 1];
     if (sub_5416A0(5150) || !sub_403790(path)) {
         return false;
     }
@@ -4317,7 +4317,7 @@ bool sub_544320()
     gamelib_savlist_destroy(&stru_64BBF8);
     gamelib_savlist_create(&stru_64BBF8);
     sub_403C10(&stru_64BBF8, 0, 0);
-    window->field_90 = -1;
+    window->selected_index = -1;
     window->field_8C--;
     window->refresh_func(NULL);
 
@@ -5330,7 +5330,7 @@ void sub_545FD0(int x, int y)
         && y >= stru_5C3FF0.y
         && x < stru_5C3FF0.x + stru_5C3FF0.width
         && y < stru_5C3FF0.y + stru_5C3FF0.height) {
-        window->field_90 = -1;
+        window->selected_index = -1;
         byte_64C394[0] = '\0';
         sub_5493C0(byte_64C394, 23);
     }
@@ -6615,11 +6615,11 @@ void sub_5480C0(int a1)
     case 4:
         window->flags &= ~0x1;
         if ((window->flags & 0x2) != 0) {
-            window->field_90 = 0;
+            window->selected_index = 0;
         }
         if ((window->flags & 0x4) != 0) {
-            if (window->field_90 > 0) {
-                window->field_90--;
+            if (window->selected_index > 0) {
+                window->selected_index--;
             }
         }
         if (window->refresh_func != NULL) {
@@ -6629,11 +6629,11 @@ void sub_5480C0(int a1)
     case 5:
         window->flags |= 0x1;
         if ((window->flags & 0x2) != 0) {
-            window->field_90 = -1;
+            window->selected_index = -1;
         }
         if ((window->flags & 0x4) != 0) {
-            if (window->field_90 < window->field_8C - 1) {
-                window->field_90++;
+            if (window->selected_index < window->field_8C - 1) {
+                window->selected_index++;
             }
         }
         if (window->refresh_func != NULL) {
