@@ -63,7 +63,7 @@ static void sub_541830(char* dst, const char* src);
 static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void mainmenu_ui_create_mainmenu();
 static void sub_541AC0();
-static bool sub_541B50(tig_button_handle_t button_handle);
+static bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle);
 static bool sub_541BE0(tig_button_handle_t button_handle);
 static void mainmenu_ui_create_options();
 static void sub_541D40();
@@ -243,7 +243,7 @@ static bool stru_5C36B0[6][2] = {
 };
 
 // 0x5C36E0
-static MainMenuButtonInfo stru_5C36E0[5] = {
+static MainMenuButtonInfo mainmenu_ui_mainmenu_in_play_buttons[5] = {
     { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, 8, 0, 0, { 0 }, -1 },
     { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, 7, 0, 0, { 0 }, -1 },
     { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 6, 0, 0, { 0 }, -1 },
@@ -674,19 +674,19 @@ static MainMenuWindowInfo mainmenu_ui_mainmenu_window_info = {
 };
 
 // 0x5C4208
-static MainMenuWindowInfo stru_5C4208 = {
+static MainMenuWindowInfo mainmenu_ui_mainmenu_in_play_window_info = {
     329,
     NULL,
     NULL,
     0,
     NULL,
-    sub_541B50,
+    mainmenu_ui_press_mainmenu_in_play,
     NULL,
     NULL,
     NULL,
     30,
     5,
-    stru_5C36E0,
+    mainmenu_ui_mainmenu_in_play_buttons,
     0,
     0,
     0xD,
@@ -748,7 +748,7 @@ static MainMenuWindowInfo stru_5C4338 = {
     NULL,
     0,
     NULL,
-    sub_541B50,
+    mainmenu_ui_press_mainmenu_in_play,
     NULL,
     NULL,
     NULL,
@@ -1988,7 +1988,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &stru_5C3AB0,
     &stru_5C3B48,
     &mainmenu_ui_mainmenu_window_info,
-    &stru_5C4208,
+    &mainmenu_ui_mainmenu_in_play_window_info,
     &stru_5C42A0,
     &stru_5C4A88,
     &stru_5C44A0,
@@ -2783,7 +2783,7 @@ void sub_541AC0()
 }
 
 // 0x541B50
-bool sub_541B50(tig_button_handle_t button_handle)
+bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
 {
     MainMenuWindowInfo* window;
 
