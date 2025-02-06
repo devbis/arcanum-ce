@@ -68,7 +68,7 @@ static bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button
 static void mainmenu_ui_create_options();
 static void sub_541D40();
 static void mainmenu_ui_destroy_options();
-static bool sub_541D90(tig_button_handle_t button_handle);
+static bool mainmenu_ui_press_options(tig_button_handle_t button_handle);
 static void sub_541E20(int a1);
 static void mainmenu_ui_create_load_game();
 static void sub_542200();
@@ -776,7 +776,7 @@ static MainMenuWindowInfo stru_5C4338 = {
 };
 
 // 0x5C43D0
-static MainMenuButtonInfo stru_5C43D0[4] = {
+static MainMenuButtonInfo mainmenu_ui_options_buttons[4] = {
     {
         130,
         221,
@@ -827,19 +827,19 @@ static MainMenuButtonInfo stru_5C43D0[4] = {
 static TigRect stru_5C4490 = { 84, 67, 89, 89 };
 
 // 0x5C44A0
-static MainMenuWindowInfo stru_5C44A0 = {
+static MainMenuWindowInfo mainmenu_ui_options_window_info = {
     556,
     mainmenu_ui_create_options,
     mainmenu_ui_destroy_options,
     0,
     NULL,
-    sub_541D90,
+    mainmenu_ui_press_options,
     NULL,
     NULL,
     NULL,
     4000,
     4,
-    stru_5C43D0,
+    mainmenu_ui_options_buttons,
     0,
     0,
     0xD,
@@ -1991,7 +1991,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_mainmenu_in_play_window_info,
     &mainmenu_ui_mainmenu_in_play_locked_window_info,
     &mainmenu_ui_single_player_window_info,
-    &stru_5C44A0,
+    &mainmenu_ui_options_window_info,
     &stru_5C4608,
     &stru_5C4868,
     &stru_5C4900,
@@ -2911,12 +2911,12 @@ void mainmenu_ui_destroy_options()
 }
 
 // 0x541D90
-bool sub_541D90(tig_button_handle_t button_handle)
+bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
 {
     int index;
 
     for (index = 0; index < 4; index++) {
-        if (stru_5C43D0[index].button_handle == button_handle) {
+        if (mainmenu_ui_options_buttons[index].button_handle == button_handle) {
             break;
         }
     }
