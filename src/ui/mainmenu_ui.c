@@ -124,10 +124,10 @@ static bool mainmenu_ui_new_char_button_hover(tig_button_handle_t button_handle)
 static bool mainmenu_ui_new_char_button_leave(tig_button_handle_t button_handle);
 static void mainmenu_ui_new_char_mouse_idle(int x, int y);
 static bool mainmenu_ui_new_char_execute(int btn);
-static void sub_545870();
-static void sub_5458D0(TigRect* rect);
-static bool sub_5459F0(tig_button_handle_t button_handle);
-static bool mmUIPregenCharExecuteFunc(int btn);
+static void mainmenu_ui_pregen_char_create();
+static void mainmenu_ui_pregen_char_refresh(TigRect* rect);
+static bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle);
+static bool mainmenu_ui_pregen_char_execute(int btn);
 static void sub_545C50();
 static void sub_545C60();
 static bool sub_545C70(tig_button_handle_t button_handle);
@@ -1558,7 +1558,7 @@ static struct {
 };
 
 // 0x5C51B0
-static MainMenuButtonInfo stru_5C51B0[4] = {
+static MainMenuButtonInfo mainmenu_ui_pregen_char_buttons[4] = {
     {
         675,
         55,
@@ -1606,19 +1606,19 @@ static MainMenuButtonInfo stru_5C51B0[4] = {
 };
 
 // 0x5C5270
-static MainMenuWindowInfo stru_5C5270 = {
+static MainMenuWindowInfo mainmenu_ui_pregen_char_window_info = {
     766,
-    sub_545870,
+    mainmenu_ui_pregen_char_create,
     NULL,
     1,
     NULL,
-    sub_5459F0,
+    mainmenu_ui_pregen_char_button_released,
     NULL,
     NULL,
     NULL,
     -1,
     4,
-    stru_5C51B0,
+    mainmenu_ui_pregen_char_buttons,
     0,
     0,
     0x5,
@@ -1626,8 +1626,8 @@ static MainMenuWindowInfo stru_5C5270 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_5458D0,
-    mmUIPregenCharExecuteFunc,
+    mainmenu_ui_pregen_char_refresh,
+    mainmenu_ui_pregen_char_execute,
     { 184, 35, 145, 196 },
     NULL,
     { 347, 42, 10, 184 },
@@ -1998,7 +1998,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &stru_5C3BE0,
     &mainmenu_ui_pick_new_or_pregen_window_info,
     &mainmenu_ui_new_char_window_info,
-    &stru_5C5270,
+    &mainmenu_ui_pregen_char_window_info,
     &stru_5C5370,
     &stru_5C5468,
     &stru_5C5500,
@@ -4932,7 +4932,7 @@ bool mainmenu_ui_new_char_execute(int btn)
 }
 
 // 0x545870
-void sub_545870()
+void mainmenu_ui_pregen_char_create()
 {
     dword_64C414 = 13;
     dword_5C5308 = 1;
@@ -4941,7 +4941,7 @@ void sub_545870()
 }
 
 // 0x5458D0
-void sub_5458D0(TigRect* rect)
+void mainmenu_ui_pregen_char_refresh(TigRect* rect)
 {
     char* name;
 
@@ -4964,14 +4964,14 @@ void sub_5458D0(TigRect* rect)
 }
 
 // 0x5459F0
-bool sub_5459F0(tig_button_handle_t button_handle)
+bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
 {
     int index;
     int64_t pc_obj;
     MainMenuWindowInfo* window;
 
     for (index = 0; index < 4; index++) {
-        if (button_handle == stru_5C51B0[index].button_handle) {
+        if (button_handle == mainmenu_ui_pregen_char_buttons[index].button_handle) {
             break;
         }
     }
@@ -5017,7 +5017,7 @@ bool sub_5459F0(tig_button_handle_t button_handle)
 }
 
 // 0x545B60
-bool mmUIPregenCharExecuteFunc(int btn)
+bool mainmenu_ui_pregen_char_execute(int btn)
 {
     PlayerCreateInfo player_create_info;
     MesFileEntry mes_file_entry;
