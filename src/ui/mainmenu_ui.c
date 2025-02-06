@@ -61,7 +61,7 @@ static void sub_541740();
 static int sub_5417E0();
 static void sub_541830(char* dst, const char* src);
 static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
-static void sub_541AA0();
+static void mainmenu_ui_create_mainmenu();
 static void sub_541AC0();
 static bool sub_541B50(tig_button_handle_t button_handle);
 static bool sub_541BE0(tig_button_handle_t button_handle);
@@ -631,7 +631,7 @@ static int dword_5C4070[3] = {
 static char off_5C407C[] = "...";
 
 // 0x5C4080
-static MainMenuButtonInfo stru_5C4080[5] = {
+static MainMenuButtonInfo mainmenu_ui_mainmenu_buttons[5] = {
     { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, 0x5, 0, 0, { 0 }, -1 },
     { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, 0x10, 0, 0, { 0 }, -1 },
     { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 0x6, 0, 0, { 0 }, -1 },
@@ -640,9 +640,9 @@ static MainMenuButtonInfo stru_5C4080[5] = {
 };
 
 // 0x5C4170
-static MainMenuWindowInfo stru_5C4170 = {
+static MainMenuWindowInfo mainmenu_ui_mainmenu_window_info = {
     329,
-    sub_541AA0,
+    mainmenu_ui_create_mainmenu,
     NULL,
     0,
     NULL,
@@ -652,7 +652,7 @@ static MainMenuWindowInfo stru_5C4170 = {
     NULL,
     10,
     5,
-    stru_5C4080,
+    mainmenu_ui_mainmenu_buttons,
     0,
     0,
     0xD,
@@ -1987,7 +1987,7 @@ static MainMenuButtonInfo stru_5C5818[4] = {
 static MainMenuWindowInfo *main_menu_window_info[] = {
     &stru_5C3AB0,
     &stru_5C3B48,
-    &stru_5C4170,
+    &mainmenu_ui_mainmenu_window_info,
     &stru_5C4208,
     &stru_5C42A0,
     &stru_5C4A88,
@@ -2753,7 +2753,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
 }
 
 // 0x541AA0
-void sub_541AA0()
+void mainmenu_ui_create_mainmenu()
 {
     dword_64C414 = 2;
     sub_546330();
@@ -7490,9 +7490,9 @@ void sub_549A80()
 // 0x549B10
 void sub_549B10()
 {
-    stru_5C4170.num = 460;
-    stru_5C4170.num_buttons = 4;
-    stru_5C4170.buttons = stru_5C5818;
+    mainmenu_ui_mainmenu_window_info.num = 460;
+    mainmenu_ui_mainmenu_window_info.num_buttons = 4;
+    mainmenu_ui_mainmenu_window_info.buttons = stru_5C5818;
 }
 
 // 0x549B30
