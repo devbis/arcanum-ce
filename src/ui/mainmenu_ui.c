@@ -70,17 +70,17 @@ static void sub_541D40();
 static void mainmenu_ui_destroy_options();
 static bool mainmenu_ui_press_options(tig_button_handle_t button_handle);
 static void sub_541E20(int a1);
-static void mainmenu_ui_create_load_game();
+static void mainmenu_ui_load_game_create();
 static void sub_542200();
-static void mainmenu_ui_destroy_load_game();
+static void mainmenu_ui_load_game_destroy();
 static void sub_542280(int a1);
 static void sub_5422A0(TigRect* rect);
-static bool sub_5422C0(int btn);
-static bool sub_542420(tig_button_handle_t button_handle);
-static bool sub_542460(tig_button_handle_t button_handle);
-static void sub_5424F0(int a1, int a2);
+static bool mainmenu_ui_load_game_execute(int btn);
+static bool mainmenu_ui_load_game_button_pressed(tig_button_handle_t button_handle);
+static bool mainmenu_ui_load_game_button_released(tig_button_handle_t button_handle);
+static void mainmenu_ui_load_game_mouse_up(int a1, int a2);
 static void sub_542560();
-static void mmUIMPLoadGameRefreshFunc(TigRect* rect);
+static void mainmenu_ui_load_game_refresh(TigRect* rect);
 static void sub_542D00(char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542DF0(char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542EA0(char* str, TigRect* rect, tig_font_handle_t font);
@@ -864,7 +864,7 @@ static MainMenuWindowInfo mainmenu_ui_options_window_info = {
 static TigRect stru_5C4538 = { 150, 273, 240, 40 };
 
 // 0x5C4548
-static MainMenuButtonInfo stru_5C4548[3] = {
+static MainMenuButtonInfo mainmenu_ui_load_game_buttons[3] = {
     {
         675,
         55,
@@ -914,19 +914,19 @@ static MainMenuButtonInfo stru_5C45D8 = {
 };
 
 // 0x5C4608
-static MainMenuWindowInfo stru_5C4608 = {
+static MainMenuWindowInfo mainmenu_ui_load_game_window_info = {
     745,
-    mainmenu_ui_create_load_game,
-    mainmenu_ui_destroy_load_game,
+    mainmenu_ui_load_game_create,
+    mainmenu_ui_load_game_destroy,
     0,
-    sub_542420,
-    sub_542460,
+    mainmenu_ui_load_game_button_pressed,
+    mainmenu_ui_load_game_button_released,
     NULL,
     NULL,
     NULL,
     -1,
     3,
-    stru_5C4548,
+    mainmenu_ui_load_game_buttons,
     0,
     0,
     0xD,
@@ -934,10 +934,10 @@ static MainMenuWindowInfo stru_5C4608 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    mmUIMPLoadGameRefreshFunc,
-    sub_5422C0,
+    mainmenu_ui_load_game_refresh,
+    mainmenu_ui_load_game_execute,
     { 42, 120, 145, 213 },
-    sub_5424F0,
+    mainmenu_ui_load_game_mouse_up,
     { 0 },
     NULL,
     0,
@@ -1992,7 +1992,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_mainmenu_in_play_locked_window_info,
     &mainmenu_ui_single_player_window_info,
     &mainmenu_ui_options_window_info,
-    &stru_5C4608,
+    &mainmenu_ui_load_game_window_info,
     &stru_5C4868,
     &stru_5C4900,
     &stru_5C3BE0,
@@ -2970,7 +2970,7 @@ void sub_541E20(int a1)
 }
 
 // 0x541F20
-void mainmenu_ui_create_load_game()
+void mainmenu_ui_load_game_create()
 {
     MainMenuWindowInfo* window;
     int64_t pc_obj;
@@ -3076,7 +3076,7 @@ void sub_542200()
 }
 
 // 0x542230
-void mainmenu_ui_destroy_load_game()
+void mainmenu_ui_load_game_destroy()
 {
     scrollbar_ui_control_destroy(stru_64C220);
     if (dword_64C444) {
@@ -3107,7 +3107,7 @@ void sub_5422A0(TigRect* rect)
 }
 
 // 0x5422C0
-bool sub_5422C0(int btn)
+bool mainmenu_ui_load_game_execute(int btn)
 {
     int index;
     MatchmakerRegisterInfo register_info;
@@ -3155,7 +3155,7 @@ bool sub_5422C0(int btn)
 }
 
 // 0x542420
-bool sub_542420(tig_button_handle_t button_handle)
+bool mainmenu_ui_load_game_button_pressed(tig_button_handle_t button_handle)
 {
     if (button_handle != stru_5C45D8.button_handle) {
         return false;
@@ -3168,7 +3168,7 @@ bool sub_542420(tig_button_handle_t button_handle)
 }
 
 // 0x542460
-bool sub_542460(tig_button_handle_t button_handle)
+bool mainmenu_ui_load_game_button_released(tig_button_handle_t button_handle)
 {
     MainMenuWindowInfo* window;
     int index;
@@ -3198,7 +3198,7 @@ bool sub_542460(tig_button_handle_t button_handle)
 }
 
 // 0x5424F0
-void sub_5424F0(int x, int y)
+void mainmenu_ui_load_game_mouse_up(int x, int y)
 {
     MainMenuWindowInfo* window;
 
@@ -3232,7 +3232,7 @@ void sub_542560()
 }
 
 // 0x5425C0
-void mmUIMPLoadGameRefreshFunc(TigRect* rect)
+void mainmenu_ui_load_game_refresh(TigRect* rect)
 {
     MainMenuWindowInfo* window;
     tig_art_id_t art_id;
