@@ -3094,7 +3094,7 @@ void mainmenu_ui_create_load_game()
     if (window->field_88 < 0) {
         window->field_88 = 0;
     }
-    window->field_84 = 0;
+    window->top_index = 0;
 
     mainmenu_ui_create_window_func(false);
 
@@ -3175,7 +3175,7 @@ void mainmenu_ui_destroy_load_game()
 // 0x542280
 void sub_542280(int a1)
 {
-    main_menu_window_info[dword_64C414]->field_84 = a1;
+    main_menu_window_info[dword_64C414]->top_index = a1;
 }
 
 // 0x5422A0
@@ -3285,7 +3285,7 @@ void sub_5424F0(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->selected_index = window->field_84 + y / 20;
+    window->selected_index = window->top_index + y / 20;
     if (window->selected_index >= window->cnt) {
         window->selected_index = -1;
     }
@@ -3378,7 +3378,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
             dst_rect.width -= 4;
             dst_rect.height = 20;
 
-            for (index = window->field_84; index < window->cnt; index++) {
+            for (index = window->top_index; index < window->cnt; index++) {
                 if (dst_rect.y >= max_y) {
                     break;
                 }
@@ -3622,7 +3622,7 @@ void sub_543060()
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index > 0) {
         window->selected_index--;
-        if (window->selected_index < window->field_84) {
+        if (window->selected_index < window->top_index) {
             sub_5810D0(stru_64C220, 2, window->selected_index);
         }
         gsound_play_sfx_id(0, 1);
@@ -3640,7 +3640,7 @@ void sub_5430D0()
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
-        if (window->selected_index > window->field_84 + window->field_5C.height / 20) {
+        if (window->selected_index > window->top_index + window->field_5C.height / 20) {
             sub_5810D0(stru_64C220, 2, window->selected_index - window->field_5C.height / 20);
         }
         gsound_play_sfx_id(0, 1);
@@ -3778,7 +3778,7 @@ void mainmenu_ui_create_save_game()
         window->field_88 = 0;
     }
 
-    window->field_84 = 0;
+    window->top_index = 0;
     mainmenu_ui_create_window_func(0);
 
     if (!main_menu_button_create_ex(&stru_5C4838, 0, 0, 2)) {
@@ -3989,7 +3989,7 @@ void sub_543920(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->selected_index = min(y / 90 + window->field_84, window->cnt - 1);
+    window->selected_index = min(y / 90 + window->top_index, window->cnt - 1);
     sub_544290();
     window->refresh_func(NULL);
     sub_5806F0(stru_64C220);
@@ -4052,7 +4052,7 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
         dst_rect.height = 20;
         dst_rect.width -= 4;
 
-        for (int idx = window->field_84; idx < window->cnt; idx++) {
+        for (int idx = window->top_index; idx < window->cnt; idx++) {
             if (dst_rect.y >= max_y) {
                 break;
             }
@@ -6585,10 +6585,10 @@ void sub_5480C0(int a1)
     window = main_menu_window_info[dword_64C414];
     switch (a1) {
     case 0:
-        sub_548FF0(window->field_84 - 1);
+        sub_548FF0(window->top_index - 1);
         return;
     case 1:
-        sub_548FF0(window->field_84 + 1);
+        sub_548FF0(window->top_index + 1);
         return;
     case 2:
         if (window->execute_func != NULL) {
@@ -7035,7 +7035,7 @@ void mmUIWinRefreshScrollBar()
         }
 
         src_rect.x = 0;
-        src_rect.y = curr_window_info->field_84 + art_frame_data.height / 2 - curr_window_info->field_7C / 2;
+        src_rect.y = curr_window_info->top_index + art_frame_data.height / 2 - curr_window_info->field_7C / 2;
         src_rect.width = art_frame_data.width;
         src_rect.height = curr_window_info->field_7C;
 
@@ -7065,8 +7065,8 @@ void sub_548FF0(int a1)
         a1 = curr_window_info->field_88;
     }
 
-    if (curr_window_info->field_84 != a1) {
-        curr_window_info->field_84 = a1;
+    if (curr_window_info->top_index != a1) {
+        curr_window_info->top_index = a1;
         mmUIWinRefreshScrollBar();
         if (curr_window_info->refresh_func != NULL) {
             curr_window_info->refresh_func(NULL);
