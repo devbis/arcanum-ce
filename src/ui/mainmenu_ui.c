@@ -121,7 +121,7 @@ static bool sub_545490(int64_t obj);
 static void sub_545550(int64_t obj, int race);
 static bool sub_5455D0(int64_t obj);
 static bool sub_545690(tig_button_handle_t button_handle);
-static bool sub_5456A0();
+static bool sub_5456A0(tig_button_handle_t button_handle);
 static void sub_5456B0(int x, int y);
 static bool sub_545780(int btn);
 static void sub_545870();
@@ -4949,8 +4949,10 @@ bool sub_545690(tig_button_handle_t button_handle)
 }
 
 // 0x5456A0
-bool sub_5456A0()
+bool sub_5456A0(tig_button_handle_t button_handle)
 {
+    (void)button_handle;
+
     return true;
 }
 
@@ -5999,9 +6001,8 @@ bool sub_546EE0(TigMessage* msg)
             }
             return false;
         case TIG_MESSAGE_MOUSE_IDLE:
-
-            if (window->field_20 != NULL) {
-                window->field_20(msg->data.mouse.x, msg->data.mouse.y);
+            if (window->mouse_idle_func != NULL) {
+                window->mouse_idle_func(msg->data.mouse.x, msg->data.mouse.y);
                 return true;
             }
             return false;
@@ -6013,12 +6014,12 @@ bool sub_546EE0(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_BUTTON) {
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_PRESSED:
-            if (window->field_10 != NULL && window->field_10(msg->data.button.button_handle)) {
+            if (window->button_press_func != NULL && window->button_press_func(msg->data.button.button_handle)) {
                 return true;
             }
             return false;
         case TIG_BUTTON_STATE_RELEASED:
-            if (window->field_14 != NULL && window->field_14(msg->data.button.button_handle)) {
+            if (window->button_release_func != NULL && window->button_release_func(msg->data.button.button_handle)) {
                 return true;
             }
 
@@ -6061,8 +6062,8 @@ bool sub_546EE0(TigMessage* msg)
 
             return false;
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            if (window->field_18 != NULL) {
-                window->field_18(msg->data.button.button_handle);
+            if (window->button_hover_func != NULL) {
+                window->button_hover_func(msg->data.button.button_handle);
             }
 
             for (idx = 0; idx < window->num_buttons; idx++) {
@@ -6113,8 +6114,8 @@ bool sub_546EE0(TigMessage* msg)
 
             return false;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
-            if (window->field_1C != NULL) {
-                window->field_1C(msg->data.button.button_handle);
+            if (window->button_leave_func != NULL) {
+                window->button_leave_func(msg->data.button.button_handle);
             }
 
             for (idx = 0; idx < window->num_buttons; idx++) {

@@ -40,11 +40,11 @@ typedef struct MainMenuWindowInfo {
     /* 0004 */ void(*init_func)();
     /* 0008 */ void(*exit_func)();
     /* 000C */ unsigned int flags;
-    /* 0010 */ bool(*field_10)(tig_button_handle_t button_handle);
-    /* 0014 */ bool(*field_14)(tig_button_handle_t button_handle);
-    /* 0018 */ bool(*field_18)(tig_button_handle_t button_handle);
-    /* 001C */ bool(*field_1C)();
-    /* 0020 */ void(*field_20)(int x, int y);
+    /* 0010 */ bool(*button_press_func)(tig_button_handle_t button_handle);
+    /* 0014 */ bool(*button_release_func)(tig_button_handle_t button_handle);
+    /* 0018 */ bool(*button_hover_func)(tig_button_handle_t button_handle);
+    /* 001C */ bool(*button_leave_func)(tig_button_handle_t button_handle);
+    /* 0020 */ void(*mouse_idle_func)(int x, int y);
     /* 0024 */ int num;
     /* 0028 */ int num_buttons;
     /* 002C */ MainMenuButtonInfo* buttons;
