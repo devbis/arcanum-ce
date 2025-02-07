@@ -421,20 +421,20 @@ void main_loop()
                                 if (!tig_net_is_active()) {
                                     sub_551A80(0);
                                     sub_551A80(0);
-                                    sub_5496E0();
+                                    mainmenu_ui_feedback_saving();
                                     gamelib_save("SlotAuto", "Auto-Save");
-                                    sub_549750();
+                                    mainmenu_ui_feedback_saving_completed();
                                 }
                             } else {
-                                sub_549760();
+                                mainmenu_ui_feedback_cannot_save_in_tb();
                             }
                         }
                         break;
                     case DIK_F8:
                         if (!tig_net_is_active()) {
-                            sub_549770();
+                            mainmenu_ui_feedback_loading();
                             sub_543220();
-                            sub_549780();
+                            mainmenu_ui_feedback_loading_completed();
                         }
                         break;
                     case DIK_F11:

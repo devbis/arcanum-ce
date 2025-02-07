@@ -163,7 +163,7 @@ static void sub_549540(TextEdit* textedit);
 static void won_account_changed();
 static void won_password_changed();
 static void selected_char_id_changed();
-static void sub_5496F0(int num);
+static void mainmenu_ui_feedback(int num);
 static void mainmenu_fonts_init();
 static void mainmenu_fonts_exit();
 static bool sub_549A10(TigWindowModalDialogChoice* choice_ptr);
@@ -7298,13 +7298,13 @@ int sub_5496D0()
 }
 
 // 0x5496E0
-void sub_5496E0()
+void mainmenu_ui_feedback_saving()
 {
-    sub_5496F0(5060); // "Saving..."
+    mainmenu_ui_feedback(5060); // "Saving..."
 }
 
 // 0x5496F0
-void sub_5496F0(int num)
+void mainmenu_ui_feedback(int num)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -7320,27 +7320,27 @@ void sub_5496F0(int num)
 }
 
 // 0x549750
-void sub_549750()
+void mainmenu_ui_feedback_saving_completed()
 {
-    sub_5496F0(5062); // "Save completed."
+    mainmenu_ui_feedback(5062); // "Save completed."
 }
 
 // 0x549760
-void sub_549760()
+void mainmenu_ui_feedback_cannot_save_in_tb()
 {
-    sub_5496F0(5065); // "Cannot save during turn-based combat when it isn't your turn."
+    mainmenu_ui_feedback(5065); // "Cannot save during turn-based combat when it isn't your turn."
 }
 
 // 0x549770
-void sub_549770()
+void mainmenu_ui_feedback_loading()
 {
-    sub_5496F0(5061); // "Loading..."
+    mainmenu_ui_feedback(5061); // "Loading..."
 }
 
 // 0x549780
-void sub_549780()
+void mainmenu_ui_feedback_loading_completed()
 {
-    sub_5496F0(5063); // "Load completed."
+    mainmenu_ui_feedback(5063); // "Load completed."
 }
 
 // 0x549820
