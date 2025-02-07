@@ -31,7 +31,7 @@ static bool sub_5713F0(TigMessage* msg);
 static void sub_571570(int screen_x, int screen_y, int* window_x, int* window_y);
 static bool sub_5715A0(int x, int y, int* index_ptr);
 static char sub_571610(int a1);
-static int sub_571630(int a1);
+static tig_font_handle_t sub_571630(int a1);
 static void sub_571660(TextEdit* textedit);
 static void sub_571730(TextEdit* textedit);
 
@@ -237,7 +237,7 @@ bool sub_570260(tig_window_handle_t window_handle)
     tig_button_show(multiplayer_ui_ban_btn);
 
     // Disconnect
-    tig_font_push(sub_549940(2, 0));
+    tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_WHITE));
     mes_load("mes\\MultiPlayer.mes", &mes_file); // FIXME: No error checking.
     mes_file_entry.num = 1090;
     mes_get_msg(mes_file, &mes_file_entry);
@@ -252,7 +252,7 @@ bool sub_570260(tig_window_handle_t window_handle)
     tig_font_pop();
 
     // Ban
-    tig_font_push(sub_549940(2, 0));
+    tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_WHITE));
     mes_file_entry.num = 1091;
     mes_get_msg(mes_file, &mes_file_entry);
     font_desc.width = 0;
@@ -516,7 +516,7 @@ bool sub_570940(int a1)
     tig_button_show(dword_680F98);
     textedit_ui_focus(&stru_5CABF8);
     intgame_text_edit_refresh_color(stru_5CABF8.buffer,
-        sub_549940(0, 0),
+        mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE),
         tig_color_make(2, 0, 116),
         true);
 
@@ -577,7 +577,7 @@ bool sub_570A40(tig_window_handle_t window_handle)
     }
 
     for (index = 0; off_681000[index].field_0 != NULL; index++) {
-        tig_font_push(sub_549940(0, 0));
+        tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
         font_desc.str = off_681000[index].field_0;
         font_desc.width = frame_rect.width;
@@ -780,7 +780,7 @@ void sub_571100()
     char str[12];
 
     for (index = 0; index < dword_68103C; index++) {
-        tig_font_push(sub_549940(MM_FONT_2, MM_COLOR_WHITE));
+        tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_WHITE));
         font_desc.width = 0;
         font_desc.str = tig_net_client_info_get_name(dword_680FA4[index]);
         tig_font_measure(&font_desc);
@@ -810,7 +810,7 @@ void sub_571100()
             }
         }
 
-        tig_font_push(sub_549940(MM_FONT_2, MM_COLOR_WHITE));
+        tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_WHITE));
         if (tig_net_client_is_waiting(dword_680FA4[index])) {
             mes_file_entry.num = 1002; // "Waiting"
         } else if (tig_net_client_is_loading(dword_680FA4[index])) {
@@ -835,11 +835,11 @@ void sub_571100()
                 && dword_680FA4[index] == 0)) {
             ping = sub_526D60(dword_680FA4[index]);
             if (ping < 251) {
-                font = sub_549940(MM_FONT_0, MM_COLOR_GREEN);
+                font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GREEN);
             } else if (ping < 501) {
-                font = sub_549940(MM_FONT_0, MM_COLOR_GOLD);
+                font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD);
             } else {
-                font = sub_549940(MM_FONT_0, MM_COLOR_RED);
+                font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED);
             }
             tig_font_push(font);
             rect.x = font_desc.width + 40;
@@ -970,9 +970,9 @@ char sub_571610(int a1)
 }
 
 // 0x571630
-int sub_571630(int a1)
+tig_font_handle_t sub_571630(int a1)
 {
-    return sub_549940(3, (a1 + a1 / 10) % 10);
+    return mainmenu_ui_font(MM_FONT_MPICONS, (a1 + a1 / MM_COLOR_COUNT) % MM_COLOR_COUNT);
 }
 
 // 0x571660
@@ -982,9 +982,15 @@ void sub_571660(TextEdit* textedit)
 
     color = tig_color_make(2, 0, 116);
     if (textedit->buffer[0] != '\0') {
-        intgame_text_edit_refresh_color(textedit->buffer, sub_549940(0, 0), color, 1);
+        intgame_text_edit_refresh_color(textedit->buffer,
+            mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE),
+            color,
+            1);
     } else {
-        intgame_text_edit_refresh_color("", sub_549940(0, 0), color, 1);
+        intgame_text_edit_refresh_color("",
+            mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE),
+            color,
+            1);
     }
 }
 

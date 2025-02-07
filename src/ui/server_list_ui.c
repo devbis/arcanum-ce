@@ -675,7 +675,7 @@ void sub_586AD0(TigRect* rect, tig_window_handle_t window_handle)
             v1[0] = '\x7F';
             v1[1] = '\0';
 
-            tig_font_push(sub_549940(0, 0));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
             font_desc.width = 0;
             font_desc.str = v1;
             tig_font_measure(&font_desc);
@@ -721,7 +721,7 @@ void sub_586AD0(TigRect* rect, tig_window_handle_t window_handle)
         }
 
         if (str != NULL) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             font_desc.width = 0;
             font_desc.str = str;
             tig_font_measure(&font_desc);
@@ -761,9 +761,9 @@ void sub_586D20(TigRect* rect, tig_window_handle_t window_handle)
         sub_588180(&stru_5CCC78, window_handle);
 
         if (dword_687254) {
-            font = sub_549940(0, 3);
+            font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD);
         } else {
-            font = sub_549940(0, 0);
+            font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE);
         }
 
         tig_font_push(font);
@@ -828,7 +828,7 @@ void sub_586ED0(TigRect* rect, tig_window_handle_t window_handle)
             tig_color_make(0, 0, 0));
 
         if (byte_686A50[0] != '\0') {
-            tig_font_push(sub_549940(0, 0));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
             tig_window_text_write(window_handle, byte_686A50, &text_rect);
             tig_font_pop();
         } else if (sub_588D00() != NULL) {
@@ -838,7 +838,7 @@ void sub_586ED0(TigRect* rect, tig_window_handle_t window_handle)
             off.num = 2239; // "OFF"
             mes_get_msg(serverlist_ui_mainmenu_mes_file, &off);
 
-            tig_font_push(sub_549940(0, 0));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
             copy = STRDUP(sub_588D00()->name);
             pos = strlen(copy);
@@ -1000,7 +1000,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
             && stru_5CCCA8.y < rect->y + rect->height)) {
         sub_588180(&stru_5CCCA8, window_handle);
 
-        tig_font_push(sub_549940(0, 4));
+        tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_BROWN));
         mes_file_entry.num = 2210; // "Name"
         mes_get_msg(serverlist_ui_mainmenu_mes_file, &mes_file_entry);
         font_desc.width = 0;
@@ -1013,7 +1013,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
         tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
 
         if (dword_5CCAD8 == 0) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             text_rect.x--;
             text_rect.y--;
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
@@ -1032,7 +1032,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
         tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
 
         if (dword_5CCAD8 == 1) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             text_rect.x--;
             text_rect.y--;
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
@@ -1051,7 +1051,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
         tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
 
         if (dword_5CCAD8 == 2) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             text_rect.x--;
             text_rect.y--;
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
@@ -1070,7 +1070,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
         tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
 
         if (dword_5CCAD8 == 3) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             text_rect.x--;
             text_rect.y--;
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
@@ -1089,7 +1089,7 @@ void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
         tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
 
         if (dword_5CCAD8 == 4) {
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             text_rect.x--;
             text_rect.y--;
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
@@ -1118,7 +1118,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
             && stru_5CCCB8.y < rect->y + rect->height)) {
         sub_588180(&stru_5CCCB8, window_handle);
 
-        tig_font_push(sub_549940(0, 4));
+        tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_BROWN));
 
         mes_file_entry.num = 2220; // "All"
         mes_get_msg(serverlist_ui_mainmenu_mes_file, &mes_file_entry);
@@ -1134,7 +1134,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
         if (dword_687250 == 7) {
             text_rect.x--;
             text_rect.y--;
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
             tig_font_pop();
         }
@@ -1154,7 +1154,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
             && dword_687250 != 7) {
             text_rect.x--;
             text_rect.y--;
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
             tig_font_pop();
         }
@@ -1174,7 +1174,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
             && dword_687250 != 7) {
             text_rect.x--;
             text_rect.y--;
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
             tig_font_pop();
         }
@@ -1194,7 +1194,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
             && dword_687250 != 7) {
             text_rect.x--;
             text_rect.y--;
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
             tig_font_pop();
         }
@@ -1213,7 +1213,7 @@ void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
         if ((dword_687250 & TIG_NET_SERVER_FILTER_BOOKMARKED) != 0) {
             text_rect.x--;
             text_rect.y--;
-            tig_font_push(sub_549940(0, 1));
+            tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
             tig_window_text_write(window_handle, mes_file_entry.str, &text_rect);
             tig_font_pop();
         }
@@ -1260,11 +1260,11 @@ void sub_587D60(TigRect* rect, tig_window_handle_t window_handle)
             if (dword_6869A0 != NULL && dword_6869A8 + index < dword_6869A4) {
                 server = &(dword_6869A0[dword_6869A8 + index]);
                 if (sub_588D00() == server) {
-                    font = sub_549940(0, 3);
+                    font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD);
                 } else if ((server->options & TIG_NET_SERVER_BOOKMARKED) != 0) {
-                    font = sub_549940(0, 2);
+                    font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_BLUE);
                 } else {
-                    font = sub_549940(0, 0);
+                    font = mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE);
                 }
 
                 tig_font_push(font);
@@ -1501,7 +1501,7 @@ void sub_5883E0(tig_button_handle_t button_handle, tig_window_handle_t window_ha
 
     mes_get_msg(serverlist_ui_mainmenu_mes_file, &mes_file_entry);
 
-    tig_font_push(sub_549940(0, 1));
+    tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1933,7 +1933,7 @@ void sub_588FF0(const char* path, int progress, tig_window_handle_t window_handl
         _splitpath(path, NULL, NULL, fname, ext);
         sprintf(tmp, "%s%s %d%%", fname, ext, progress);
 
-        tig_font_push(sub_549940(0, 0));
+        tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
         font_desc.width = 0;
         font_desc.str = tmp;
         tig_font_measure(&font_desc);

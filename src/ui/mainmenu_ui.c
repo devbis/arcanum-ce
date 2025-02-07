@@ -2045,7 +2045,7 @@ static MesFileEntry stru_64C0E8;
 static char byte_64C0F0[128];
 
 // 0x64C170
-static tig_font_handle_t mainmenu_fonts[MM_FONT_COUNT][MM_COLOR_COUNT];
+static tig_font_handle_t mainmenu_ui_fonts_tbl[MM_FONT_COUNT][MM_COLOR_COUNT];
 
 // 0x64C210
 static tig_font_handle_t dword_64C210[2];
@@ -6644,7 +6644,7 @@ void sub_5482A0(TigRect* rect)
     }
 
     // Render name.
-    tig_font_push(sub_549940(2, 3));
+    tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_GOLD));
 
     obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &player_name);
     copy = STRDUP(player_name);
@@ -6671,7 +6671,7 @@ void sub_5482A0(TigRect* rect)
     tig_font_pop();
 
     // Render primary stats.
-    tig_font_push(sub_549940(0, 1));
+    tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
 
     mes_file_entry1.num = 2020; // "ST: %02d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
@@ -6730,7 +6730,7 @@ void sub_5482A0(TigRect* rect)
     tig_font_pop();
 
     // Render secondary stats.
-    tig_font_push(sub_549940(0, 0));
+    tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
     mes_file_entry1.num = 2028; // "Level: %d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
@@ -6867,7 +6867,9 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
 
         y = 206;
         for (index = dword_64C378; index < dword_64C420 && y < 546; index++) {
-            tig_font_push(index == dword_5C3618 ? sub_549940(0, 3) : sub_549940(0, 0));
+            tig_font_push(index == dword_5C3618
+                ? mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD)
+                : mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
             obj_field_string_get(dword_64C41C[index], OBJ_F_PC_PLAYER_NAME, &player_name);
             copy = STRDUP(player_name);
@@ -7376,7 +7378,7 @@ void mainmenu_fonts_init()
             font_info.color = tig_color_make(mainmenu_font_colors[clr][0],
                 mainmenu_font_colors[clr][1],
                 mainmenu_font_colors[clr][2]);
-            tig_font_create(&font_info, &(mainmenu_fonts[fnt][clr]));
+            tig_font_create(&font_info, &(mainmenu_ui_fonts_tbl[fnt][clr]));
         }
     }
 }
@@ -7389,15 +7391,15 @@ void mainmenu_fonts_exit()
 
     for (fnt = 0; fnt < MM_FONT_COUNT; fnt++) {
         for (clr = 0; clr < MM_COLOR_COUNT; clr++) {
-            tig_font_destroy(mainmenu_fonts[fnt][clr]);
+            tig_font_destroy(mainmenu_ui_fonts_tbl[fnt][clr]);
         }
     }
 }
 
 // 0x549940
-tig_font_handle_t sub_549940(int font, int color)
+tig_font_handle_t mainmenu_ui_font(MainMenuFont font, MainMenuColor color)
 {
-    return mainmenu_fonts[font][color];
+    return mainmenu_ui_fonts_tbl[font][color];
 }
 
 // 0x549960

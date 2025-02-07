@@ -7,10 +7,10 @@
 #include "ui/types.h"
 
 typedef enum MainMenuFont {
-    MM_FONT_0,
-    MM_FONT_1,
-    MM_FONT_2,
-    MM_FONT_3,
+    MM_FONT_FLARE12,
+    MM_FONT_ARIAL10,
+    MM_FONT_MORPH15,
+    MM_FONT_MPICONS,
     MM_FONT_COUNT,
 } MainMenuFont;
 
@@ -63,7 +63,7 @@ void sub_549780();
 tig_window_handle_t sub_549820();
 void sub_549830(int a1);
 mes_file_handle_t sub_549840();
-tig_font_handle_t sub_549940(int font, int color);
+tig_font_handle_t mainmenu_ui_font(MainMenuFont font, MainMenuColor color);
 void sub_549960();
 void sub_549990(int* a1, int num);
 bool sub_5499B0(const char* text);
