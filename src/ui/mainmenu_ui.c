@@ -56,7 +56,7 @@ typedef struct S64B870 {
 static_assert(sizeof(S64B870) == 0x14, "wrong size");
 
 static void sub_5412E0(bool a1);
-static TigWindowModalDialogChoice sub_5416A0(int num);
+static TigWindowModalDialogChoice mainmenu_ui_confirm(int num);
 static void sub_541740();
 static int sub_5417E0();
 static void sub_541830(char* dst, const char* src);
@@ -2531,7 +2531,7 @@ bool mainmenu_ui_handle()
         while (tig_message_dequeue(&msg) == TIG_OK) {
             switch (msg.type) {
             case TIG_MESSAGE_QUIT:
-                if (!sub_541690()) {
+                if (mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
                     return false;
                 }
                 break;
@@ -2554,13 +2554,13 @@ bool sub_541680()
 }
 
 // 0x541690
-bool sub_541690()
+TigWindowModalDialogChoice mainmenu_ui_confirm_quit()
 {
-    return sub_5416A0(5100);
+    return mainmenu_ui_confirm(5100); // "Are you sure you want to quit?"
 }
 
 // 0x5416A0
-TigWindowModalDialogChoice sub_5416A0(int num)
+TigWindowModalDialogChoice mainmenu_ui_confirm(int num)
 {
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_info;
@@ -2794,7 +2794,7 @@ bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
 
     window = main_menu_window_info[dword_64C414];
     if (button_handle == window->buttons[3].button_handle) {
-        if (sub_5416A0(5100)) {
+        if (mainmenu_ui_confirm_quit() != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
             return false;
         }
 
@@ -2834,7 +2834,7 @@ bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle
 
     window = main_menu_window_info[dword_64C414];
     if (button_handle == window->buttons[1].button_handle) {
-        if (sub_5416A0(5100)) {
+        if (mainmenu_ui_confirm_quit() != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
             return false;
         }
 
@@ -3579,15 +3579,18 @@ void sub_5430D0()
 bool sub_543160()
 {
     MainMenuWindowInfo* window;
-    const char* path;
 
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index == -1) {
         return false;
     }
 
-    path = stru_64BBF8.paths[window->selected_index];
-    if (sub_5416A0(5150) || !sub_403790(path)) {
+    // "Are you sure you want to delete the save game?"
+    if (mainmenu_ui_confirm(5150) != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
+        return false;
+    }
+
+    if (!sub_403790(stru_64BBF8.paths[window->selected_index])) {
         return false;
     }
 
@@ -3780,7 +3783,7 @@ bool mainmenu_ui_save_game_execute(int btn)
         strcpy(byte_64C2F8, stru_64BBF8.paths[v1 - 1] + 8);
         fname[8] = '\0';
 
-        if (sub_5416A0(5064)) {
+        if (mainmenu_ui_confirm(5064)) {
             return false;
         }
     } else {
@@ -4221,7 +4224,6 @@ void sub_544290()
 bool sub_544320()
 {
     MainMenuWindowInfo* window;
-    const char* path;
 
     window = main_menu_window_info[dword_64C414];
 
@@ -4229,8 +4231,12 @@ bool sub_544320()
         return false;
     }
 
-    path = stru_64BBF8.paths[window->selected_index - 1];
-    if (sub_5416A0(5150) || !sub_403790(path)) {
+    // "Are you sure you want to delete the save game?"
+    if (mainmenu_ui_confirm(5150) != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
+        return false;
+    }
+
+    if (!sub_403790(stru_64BBF8.paths[window->selected_index - 1])) {
         return false;
     }
 
@@ -6328,7 +6334,7 @@ bool sub_546EE0(TigMessage* msg)
             case 3:
                 switch (idx) {
                 case 3:
-                    if (!sub_541690()) {
+                    if (mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
                         // FIXME: Looks wrong.
                         tig_button_hide(3);
 
@@ -6356,7 +6362,7 @@ bool sub_546EE0(TigMessage* msg)
             case 4:
                 switch (idx) {
                 case 1:
-                    if (!sub_541690()) {
+                    if (mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
                         // FIXME: Looks wrong.
                         tig_button_hide(1);
 

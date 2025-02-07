@@ -352,7 +352,7 @@ void main_loop()
 
         while (tig_message_dequeue(&message) == TIG_OK) {
             if (message.type == TIG_MESSAGE_QUIT
-                && !sub_541690()) {
+                && mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
                 sub_541710();
                 return;
             }

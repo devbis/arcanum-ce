@@ -38,7 +38,7 @@ void mainmenu_ui_start(int window_type);
 void sub_5412D0();
 bool mainmenu_ui_handle();
 bool sub_541680();
-bool sub_541690();
+TigWindowModalDialogChoice mainmenu_ui_confirm_quit();
 void sub_541710();
 void sub_5417A0(bool a1);
 void sub_541810(int a1);
