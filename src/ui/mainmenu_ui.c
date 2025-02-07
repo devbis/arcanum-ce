@@ -62,7 +62,7 @@ static int sub_5417E0();
 static void sub_541830(char* dst, const char* src);
 static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void mainmenu_ui_create_mainmenu();
-static void sub_541AC0();
+static void mainmenu_ui_draw_version();
 static bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle);
 static bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle);
 static void mainmenu_ui_create_options();
@@ -2758,28 +2758,33 @@ void mainmenu_ui_create_mainmenu()
     dword_64C414 = 2;
     sub_546330();
     ++dword_64C43C;
-    sub_541AC0();
+    mainmenu_ui_draw_version();
 }
 
 // 0x541AC0
-void sub_541AC0()
+void mainmenu_ui_draw_version()
 {
     TigRect rect;
     char version[40];
+
+    if (settings_get_value(&settings, "show version") == 0) {
+        return;
+    }
+
+    if (!gamelib_copy_version(version, NULL, NULL)) {
+        return;
+    }
 
     rect.x = 10;
     rect.y = 575;
     rect.width = 400;
     rect.height = 20;
 
-    if (settings_get_value(&settings, "show version") != 0
-        && gamelib_copy_version(version, 0, 0)) {
-        tig_font_push(dword_64BC04[0]);
-        if (tig_window_text_write(dword_5C3624, version, &rect) != TIG_OK) {
-            tig_debug_printf("MainMenuUI: ERROR: GameLib_Version_String Failed to draw!\n");
-        }
-        tig_font_pop();
+    tig_font_push(dword_64BC04[0]);
+    if (tig_window_text_write(dword_5C3624, version, &rect) != TIG_OK) {
+        tig_debug_printf("MainMenuUI: ERROR: GameLib_Version_String Failed to draw!\n");
     }
+    tig_font_pop();
 }
 
 // 0x541B50
@@ -2874,7 +2879,7 @@ void mainmenu_ui_create_options()
     mainmenu_ui_create_window_func(0);
     dword_64C440 = 0;
     options_ui_init(0, dword_5C3624, stru_5C36B0[dword_64C244][1] == 0);
-    sub_541AC0();
+    mainmenu_ui_draw_version();
 
     pc_lens.window_handle = dword_5C3624;
     pc_lens.rect = &stru_5C4490;
@@ -4344,7 +4349,7 @@ void mainmenu_ui_create_single_player()
 {
     dword_64C414 = 5;
     sub_546330();
-    sub_541AC0();
+    mainmenu_ui_draw_version();
     if (tig_net_is_active()) {
         sub_49CC20();
         sub_5280F0();
@@ -4358,7 +4363,7 @@ void mainmenu_ui_pick_new_or_pregen_create()
     dword_64C454 = 0;
     dword_64C414 = 11;
     sub_546330();
-    sub_541AC0();
+    mainmenu_ui_draw_version();
 }
 
 // 0x5446F0
