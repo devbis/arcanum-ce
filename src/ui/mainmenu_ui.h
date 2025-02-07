@@ -43,7 +43,7 @@ void sub_541710();
 void sub_5417A0(bool a1);
 void sub_541810(int a1);
 bool sub_543220();
-void sub_546330();
+void mainmenu_ui_create_window();
 void mainmenu_ui_create_window_func(bool should_display);
 bool mainmenu_ui_process_callback(TimeEvent* timeevent);
 void sub_5482A0(TigRect* rect);

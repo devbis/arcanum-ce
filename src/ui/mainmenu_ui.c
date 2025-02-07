@@ -2604,7 +2604,7 @@ void sub_541740()
         if (main_menu_window_info[dword_64C414]->init_func != NULL) {
             main_menu_window_info[dword_64C414]->init_func();
         } else {
-            sub_546330();
+            mainmenu_ui_create_window();
         }
 
         if (dword_64C384) {
@@ -2756,7 +2756,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
 void mainmenu_ui_create_mainmenu()
 {
     dword_64C414 = 2;
-    sub_546330();
+    mainmenu_ui_create_window();
     ++dword_64C43C;
     mainmenu_ui_draw_version();
 }
@@ -2876,7 +2876,7 @@ void mainmenu_ui_create_options()
 
     sub_541D40();
     dword_64C414 = 6;
-    mainmenu_ui_create_window_func(0);
+    mainmenu_ui_create_window_func(false);
     dword_64C440 = 0;
     options_ui_init(0, dword_5C3624, stru_5C36B0[dword_64C244][1] == 0);
     mainmenu_ui_draw_version();
@@ -3704,7 +3704,7 @@ void mainmenu_ui_save_game_create()
     }
 
     window->top_index = 0;
-    mainmenu_ui_create_window_func(0);
+    mainmenu_ui_create_window_func(false);
 
     if (!main_menu_button_create_ex(&stru_5C4838, 0, 0, 2)) {
         tig_debug_printf("MainMenu-UI: mainmenu_ui_create_save_game: ERROR: Failed to create button.\n");
@@ -4258,7 +4258,7 @@ void sub_544440()
     char name[256];
 
     dword_64C414 = 9;
-    sub_546330();
+    mainmenu_ui_create_window();
     dword_64C384 = false;
 
     path = sub_403850();
@@ -4348,7 +4348,7 @@ void sub_544690(TigRect* rect)
 void mainmenu_ui_create_single_player()
 {
     dword_64C414 = 5;
-    sub_546330();
+    mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
     if (tig_net_is_active()) {
         sub_49CC20();
@@ -4362,7 +4362,7 @@ void mainmenu_ui_pick_new_or_pregen_create()
 {
     dword_64C454 = 0;
     dword_64C414 = 11;
-    sub_546330();
+    mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
 }
 
@@ -4383,7 +4383,7 @@ void mainmenu_ui_new_char_create()
         exit(EXIT_FAILURE);
     }
 
-    sub_546330();
+    mainmenu_ui_create_window();
     if (!main_menu_button_create(&stru_5C50A0, stru_5C4EE0.width + 2, stru_5C4EE0.height + 2)) {
         tig_debug_printf("MainMenu-UI: mainmenu_ui_create_new_char: ERROR: Failed to create button.\n");
     }
@@ -4942,7 +4942,7 @@ void mainmenu_ui_pregen_char_create()
     dword_64C414 = 13;
     dword_5C5308 = 1;
     qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(16067)));
-    sub_546330();
+    mainmenu_ui_create_window();
 }
 
 // 0x5458D0
@@ -5060,7 +5060,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 void sub_545C50()
 {
     dword_64C414 = 14;
-    sub_546330();
+    mainmenu_ui_create_window();
 }
 
 // 0x545C60
@@ -5143,7 +5143,7 @@ void sub_545DF0(TigRect* rect)
 void sub_545E20()
 {
     dword_64C414 = 15;
-    sub_546330();
+    mainmenu_ui_create_window();
 }
 
 // 0x545E30
@@ -5225,7 +5225,7 @@ void sub_545E80(TigRect* rect)
 void sub_545F60()
 {
     dword_64C414 = 16;
-    sub_546330();
+    mainmenu_ui_create_window();
 
     if (tig_net_is_active()) {
         if (dword_64C41C != NULL) {
@@ -5278,7 +5278,7 @@ void mainmenu_ui_create_multiplayer_select_char()
     stru_64C2B0.field_40 = sub_548B60;
     stru_64C2B0.field_3C = sub_546180;
 
-    sub_546330();
+    mainmenu_ui_create_window();
     scrollbar_ui_control_create(&stru_64C2A8, &stru_64C2B0, sub_549820());
     sub_5806F0(stru_64C2A8);
 }
@@ -5361,7 +5361,7 @@ bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height,
 }
 
 // 0x546330
-void sub_546330()
+void mainmenu_ui_create_window()
 {
     mainmenu_ui_create_window_func(true);
 }

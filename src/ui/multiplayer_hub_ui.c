@@ -395,7 +395,7 @@ void multiplayer_hub_ui_init()
     stru_6861D8.num = 3000;
     mes_get_msg(dword_6862D8, &stru_6861D8);
 
-    sub_546330();
+    mainmenu_ui_create_window();
     sub_581F30();
 
     sb_create_info.flags = 0xFFFF;
@@ -515,7 +515,7 @@ bool sub_5819D0(int a1)
 void multiplayer_hub_ui_create_chat()
 {
     sub_549830(24);
-    sub_546330();
+    mainmenu_ui_create_window();
     multiplayer_hub_ui_refresh_chat(NULL);
 }
 
@@ -1312,7 +1312,7 @@ void mainmenu_ui_create_multiplayer_hub()
     sb_create_info.field_40 = sub_5837A0;
     sb_create_info.field_3C = 0;
 
-    mainmenu_ui_create_window_func(0);
+    mainmenu_ui_create_window_func(false);
 
     scrollbar_ui_control_create(&stru_686520, &sb_create_info, sub_549820());
 
@@ -1570,7 +1570,7 @@ void sub_583A00()
     mes_get_msg(dword_686538, &stru_686530);
 
     sub_549830(19);
-    sub_546330();
+    mainmenu_ui_create_window();
 }
 
 // 0x583A80
@@ -1594,7 +1594,7 @@ void sub_583A90()
     mes_get_msg(dword_686538, &stru_686530);
 
     sub_549830(20);
-    sub_546330();
+    mainmenu_ui_create_window();
     sub_549990(dword_5994A0, 2);
 }
 
