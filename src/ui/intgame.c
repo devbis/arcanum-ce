@@ -107,8 +107,8 @@ static void sub_5517F0();
 static bool sub_5518C0(int x, int y);
 static void sub_551910(TigMessage* msg);
 static void sub_551A10(int64_t obj);
-static void sub_551F20();
-static void sub_551F40();
+static void intgame_force_fullscreen();
+static void intgame_unforce_fullscreen();
 static void sub_551F80();
 static bool sub_552050(TigMouseMessageData* a1, S4F2810* a2);
 static void sub_5520D0(int window_type, int a2);
@@ -891,7 +891,7 @@ static void(*dword_64C6D4)(UiMessage* ui_message);
 static int dword_64C6D8;
 
 // 0x64C6DC
-static bool dword_64C6DC;
+static bool intgame_fullscreen_forced;
 
 // 0x64C6E0
 static bool dword_64C6E0;
@@ -2489,13 +2489,13 @@ void sub_54DBF0(int btn, int window_type)
     tig_button_state_get(stru_5C6480[btn].button_handle, &state);
     if (state != TIG_BUTTON_STATE_PRESSED) {
         tig_button_state_change(stru_5C6480[btn != 1 ? 1 : 0].button_handle, TIG_BUTTON_STATE_RELEASED);
-        sub_551F20();
+        intgame_force_fullscreen();
         tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_PRESSED);
         sub_5506C0(window_type);
     } else {
         sub_5506C0(0);
         tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_RELEASED);
-        sub_551F40();
+        intgame_unforce_fullscreen();
     }
 }
 
@@ -4758,7 +4758,7 @@ bool sub_551A80(int a1)
             }
             v1 = true;
             if (a1 != 13) {
-                sub_551F40();
+                intgame_unforce_fullscreen();
             }
             break;
         case 5:
@@ -4768,7 +4768,7 @@ bool sub_551A80(int a1)
                 sub_5506C0(0);
             }
             scroll_set_scroll_func(NULL);
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         case 6:
             v1 = true;
@@ -4777,7 +4777,7 @@ bool sub_551A80(int a1)
         case 7:
             v1 = true;
             logbook_ui_close();
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         case 8:
             switch (a1) {
@@ -4794,19 +4794,19 @@ bool sub_551A80(int a1)
             }
 
             if (a1 != 13) {
-                sub_551F40();
+                intgame_unforce_fullscreen();
             }
             break;
         case 9:
             v1 = true;
             charedit_destroy();
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         case 10:
             if (a1 == 1
                 || a1 == 2) {
                 if (a1 != 13) {
-                    sub_551F40();
+                    intgame_unforce_fullscreen();
                 }
             } else if (a1 != 13) {
                 inven_ui_destroy();
@@ -4815,7 +4815,7 @@ bool sub_551A80(int a1)
         case 11:
             if (a1 != 13) {
                 inven_ui_destroy();
-                sub_551F40();
+                intgame_unforce_fullscreen();
             }
             break;
         case 13:
@@ -4836,12 +4836,12 @@ bool sub_551A80(int a1)
         case 14:
             v1 = true;
             schematic_ui_close();
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         case 15:
             v1 = true;
             sub_56BC90();
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         case 16:
             sub_571C80();
@@ -4856,7 +4856,7 @@ bool sub_551A80(int a1)
                 inven_ui_destroy();
             }
             v1 = true;
-            sub_551F40();
+            intgame_unforce_fullscreen();
             break;
         }
 
@@ -4882,10 +4882,10 @@ bool sub_551A80(int a1)
         case 15:
         case 19:
         case 20:
-            sub_551F20();
+            intgame_force_fullscreen();
             break;
         case 5:
-            sub_551F20();
+            intgame_force_fullscreen();
             scroll_set_scroll_func(sub_563770);
             break;
         case 13:
@@ -4927,21 +4927,21 @@ bool sub_551A80(int a1)
 }
 
 // 0x551F20
-void sub_551F20()
+void intgame_force_fullscreen()
 {
     if (intgame_is_compact_interface()) {
         intgame_toggle_interface();
-        dword_64C6DC = true;
+        intgame_fullscreen_forced = true;
     }
 }
 
 // 0x551F40
-void sub_551F40()
+void intgame_unforce_fullscreen()
 {
-    if (dword_64C6DC) {
+    if (intgame_fullscreen_forced) {
         if (!intgame_is_compact_interface()) {
             intgame_toggle_interface();
-            dword_64C6DC = false;
+            intgame_fullscreen_forced = false;
         }
     }
 }
