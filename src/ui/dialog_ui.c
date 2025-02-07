@@ -106,7 +106,7 @@ void dialog_ui_reset()
     int index;
 
     if (dword_67B964) {
-        sub_553350();
+        intgame_dialog_end();
         dword_67B964 = false;
     }
 
@@ -196,7 +196,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             }
 
             if (player_is_pc_obj(a1)) {
-                if (!sub_553320(sub_5680A0)) {
+                if (!intgame_dialog_begin(sub_5680A0)) {
                     sub_413280(&(entry->field_8));
                     sub_412F40(entry->field_4);
                     return;
@@ -247,7 +247,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
         if (a3 != 0
             && script_name_build_dlg_name(a3, path)
             && player_is_pc_obj(a1)) {
-            if (sub_553320(sub_5680A0)) {
+            if (intgame_dialog_begin(sub_5680A0)) {
                 entry->field_8.field_68 = a5;
                 entry->field_8.pc_obj = a1;
                 entry->field_8.npc_obj = a2;
@@ -278,7 +278,7 @@ void sub_5678D0(long long obj, int a2)
     entry->field_1850 = false;
 
     if (player_is_pc_obj(obj)) {
-        sub_553350();
+        intgame_dialog_end();
         dword_67B964 = 0;
     }
 
@@ -332,7 +332,7 @@ void sub_567A20(long long obj)
 {
     sub_567420(obj)->field_1850 = false;
     if (player_is_pc_obj(obj)) {
-        sub_553350();
+        intgame_dialog_end();
         dword_67B964 = false;
     }
 }
@@ -342,7 +342,7 @@ void sub_567A60(long long obj)
 {
     sub_567420(obj)->field_1850 = true;
     if (player_is_pc_obj(obj)) {
-        if (sub_553320(sub_5680A0)) {
+        if (intgame_dialog_begin(sub_5680A0)) {
             dword_67B964 = true;
         }
     }
@@ -483,7 +483,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         break;
     case 3:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 1);
         }
         if (tig_net_is_active()) {
@@ -501,25 +501,25 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         break;
     case 5:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             charedit_create(entry->field_8.npc_obj, 2);
         }
         break;
     case 6:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_560760();
         }
         break;
     case 7:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_56D130(entry->field_8.npc_obj, entry->field_8.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_4EE550(entry->field_8.pc_obj, entry->field_8.npc_obj);
         }
         if (tig_net_is_active()) {
@@ -528,7 +528,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         break;
     case 9:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 6);
         }
         if (tig_net_is_active()) {
@@ -544,7 +544,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 bool sub_5680A0(TigMessage* msg)
 {
     DialogUiEntry* entry;
-    int v1;
+    int option;
     int player;
     Packet44 pkt;
 
@@ -553,14 +553,14 @@ bool sub_5680A0(TigMessage* msg)
         return false;
     }
 
-    v1 = sub_5533A0(msg);
-    if (v1 == -1) {
+    option = intgame_dialog_get_option(msg);
+    if (option == -1) {
         sub_5517A0(msg);
         return true;
     }
 
     if (multiplayer_is_locked() || tig_net_is_host()) {
-        if (!sub_567E30(entry, v1)) {
+        if (!sub_567E30(entry, option)) {
             sub_5517A0(msg);
         }
         return true;
@@ -574,7 +574,7 @@ bool sub_5680A0(TigMessage* msg)
         pkt.subtype = 2;
         pkt.d.f.field_8 = sub_407EF0(player_get_pc_obj());
         pkt.d.f.field_20 = entry->field_0;
-        pkt.d.f.field_24 = v1;
+        pkt.d.f.field_24 = option;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -633,37 +633,37 @@ bool sub_568280(DialogUiEntry *a1)
         break;
     case 3:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 1);
         }
         break;
     case 5:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             charedit_create(a1->field_8.npc_obj, 2);
         }
         break;
     case 6:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_560760();
         }
         break;
     case 7:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_56D130(a1->field_8.npc_obj, a1->field_8.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_4EE550(a1->field_8.pc_obj, a1->field_8.npc_obj);
         }
         break;
     case 9:
         if (is_pc) {
-            sub_553370();
+            intgame_dialog_clear();
             sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 6);
         }
         break;
@@ -706,10 +706,10 @@ void sub_5684C0(DialogUiEntry* entry)
         entry->field_8.field_458);
 
     if (player_is_pc_obj(entry->field_8.pc_obj)) {
-        sub_553370();
+        intgame_dialog_clear();
 
         for (index = 0; index < entry->field_8.field_45C; index++) {
-            sub_553380(index, entry->field_8.field_460[index]);
+            intgame_dialog_set_option(index, entry->field_8.field_460[index]);
         }
     }
 }

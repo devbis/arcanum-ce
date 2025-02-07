@@ -5640,7 +5640,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
 }
 
 // 0x553320
-bool sub_553320(bool(*func)(TigMessage* msg))
+bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
 {
     dword_64C6CC = func;
     tc_show();
@@ -5651,7 +5651,7 @@ bool sub_553320(bool(*func)(TigMessage* msg))
 }
 
 // 0x553350
-void sub_553350()
+void intgame_dialog_end()
 {
     dword_64C6CC = NULL;
     tc_hide();
@@ -5659,19 +5659,19 @@ void sub_553350()
 }
 
 // 0x553370
-void sub_553370()
+void intgame_dialog_clear()
 {
     tc_clear();
 }
 
 // 0x553380
-void sub_553380(int index, const char* str)
+void intgame_dialog_set_option(int index, const char* str)
 {
     tc_set_option(index, str);
 }
 
 // 0x5533A0
-int sub_5533A0(TigMessage* msg)
+int intgame_dialog_get_option(TigMessage* msg)
 {
     return tc_handle_message(msg);
 }
