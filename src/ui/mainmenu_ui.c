@@ -2484,7 +2484,7 @@ void sub_5412E0(bool a1)
         sub_5417A0(0);
     }
 
-    sub_553990();
+    intgame_refresh_cursor();
     sub_5507D0(0);
     if (!a1) {
         intgame_draw_bars();

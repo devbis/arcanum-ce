@@ -192,7 +192,7 @@ void combat_ui_resize(GameResizeInfo* resize_info)
 // 0x56ECE0
 void sub_56ECE0(int a1)
 {
-    sub_553990();
+    intgame_refresh_cursor();
     if (a1) {
         wmap_ui_close();
     }

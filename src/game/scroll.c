@@ -315,7 +315,7 @@ void scroll_start_scrolling_in_direction(int direction)
 void scroll_stop_scrolling()
 {
     if (dword_5D11C0) {
-        sub_460AF0();
+        ui_refresh_cursor();
         dword_5D11C0 = false;
     }
 }

@@ -1177,7 +1177,7 @@ void sub_573630(int64_t obj)
     dword_6810E8 = obj_field_int32_get(obj, OBJ_F_ITEM_INV_LOCATION);
 
     inv_art_id = obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_INV_AID);
-    sub_553990();
+    intgame_refresh_cursor();
     mouse_art_id = tig_mouse_cursor_get_art_id();
     tig_mouse_hide();
     tig_mouse_cursor_set_art_id(inv_art_id);
@@ -1844,7 +1844,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
     }
 
     if (!qword_6810E0) {
-        sub_553990();
+        intgame_refresh_cursor();
     }
     if (!v45) {
         return true;
@@ -1929,7 +1929,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
     }
 
     if (qword_6810E0 == OBJ_HANDLE_NULL) {
-        sub_553990();
+        intgame_refresh_cursor();
     }
 
     if (!v45) {
@@ -2376,7 +2376,7 @@ void sub_575C50(int64_t obj)
     if (qword_6810E0 != OBJ_HANDLE_NULL && obj == qword_6810E0) {
         sub_4A51C0(player_get_pc_obj(), qword_6810E0);
         qword_6810E0 = OBJ_HANDLE_NULL;
-        sub_553990();
+        intgame_refresh_cursor();
         redraw_inven(false);
     }
 }
@@ -3657,7 +3657,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
                 } else {
                     sub_551A80(13);
                     sub_5506C0(9);
-                    sub_553990();
+                    intgame_refresh_cursor();
                 }
 
                 return;

@@ -129,7 +129,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_F4 = sub_568220;
     callbacks.field_F8 = sub_569C70;
     callbacks.field_FC = sub_549310;
-    callbacks.field_100 = sub_553990;
+    callbacks.refresh_cursor = intgame_refresh_cursor;
     callbacks.field_104 = sub_57A6C0;
     callbacks.field_108 = sub_575770;
     callbacks.wmap_rnd_timeevent_process = wmap_rnd_timeevent_process;
@@ -412,7 +412,7 @@ void sub_57CF70(long long a1, long long a2)
 void sub_57CFA0()
 {
     sub_575930();
-    sub_553990();
+    intgame_refresh_cursor();
 }
 
 // 0x57CFB0

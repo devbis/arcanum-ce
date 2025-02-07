@@ -116,7 +116,7 @@ void sub_571AA0(int64_t a1, int64_t a2)
             sub_4F25B0(*tgt_ptr);
             if (obj_field_int32_get(qword_6810D8, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) < 0) {
                 sub_553A60(620);
-                sub_553990();
+                intgame_refresh_cursor();
             }
 
             if ((*tgt_ptr & Tgt_Object) != 0

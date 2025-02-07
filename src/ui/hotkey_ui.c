@@ -649,7 +649,7 @@ void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2)
     tig_art_id_t cursor_art_id;
     TigArtFrameData art_frame_data;
 
-    sub_553990();
+    intgame_refresh_cursor();
     if (art_id != TIG_ART_ID_INVALID) {
         if (!a2) {
             dx = 2;
@@ -792,7 +792,7 @@ bool sub_57E5D0()
 void sub_57E8B0()
 {
     sub_575770();
-    sub_553990();
+    intgame_refresh_cursor();
     dword_6839B0 = false;
     dword_5CB4E4 = -1;
 }
@@ -827,7 +827,7 @@ bool sub_57E8D0(int a1)
             && !player_is_pc_obj(parent_obj)) {
             dword_6839B0 = false;
             sub_575770();
-            sub_553990();
+            intgame_refresh_cursor();
             dword_5CB4E4 = -1;
             return false;
         }
@@ -837,7 +837,7 @@ bool sub_57E8D0(int a1)
             || obj_type == OBJ_TYPE_GOLD) {
             dword_6839B0 = false;
             sub_575770();
-            sub_553990();
+            intgame_refresh_cursor();
             dword_5CB4E4 = -1;
             return false;
         }
@@ -852,7 +852,7 @@ bool sub_57E8D0(int a1)
 
             dword_6839B0 = false;
             sub_575770();
-            sub_553990();
+            intgame_refresh_cursor();
             dword_5CB4E4 = -1;
             return false;
         }
@@ -872,7 +872,7 @@ bool sub_57E8D0(int a1)
 
             dword_6839B0 = false;
             sub_573840();
-            sub_553990();
+            intgame_refresh_cursor();
             dword_5CB4E4 = -1;
             return true;
         }
@@ -955,7 +955,7 @@ bool sub_57E8D0(int a1)
         }
 
         dword_6839B0 = false;
-        sub_553990();
+        intgame_refresh_cursor();
         dword_5CB4E4 = -1;
         return true;
     }

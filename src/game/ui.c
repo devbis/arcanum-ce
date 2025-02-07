@@ -539,10 +539,10 @@ void sub_460AD0(int a1)
 }
 
 // 0x460AF0
-void sub_460AF0()
+void ui_refresh_cursor()
 {
-    if (ui_callbacks.field_100 != NULL) {
-        ui_callbacks.field_100();
+    if (ui_callbacks.refresh_cursor != NULL) {
+        ui_callbacks.refresh_cursor();
     }
 }
 

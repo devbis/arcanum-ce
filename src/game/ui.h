@@ -101,7 +101,7 @@ typedef void(UI_CALLBACKS_FUNC_F0)(long long obj, int a2, int a3, int a4, int a5
 typedef void(UI_CALLBACKS_FUNC_F4)(DialogSerializedData* serialized_data, int a2, int a3, int a4, int a5, char* buffer);
 typedef void(UI_CALLBACKS_FUNC_F8)(int a1, int a2, void* a3);
 typedef bool(UI_CALLBACKS_FUNC_FC)(tig_button_handle_t button_handle);
-typedef void(UI_CALLBACKS_FUNC_100)();
+typedef void(UiRefreshCursor)();
 typedef int(UI_CALLBACKS_FUNC_104)(int a1, S4F2810* a2);
 typedef void(UI_CALLBACKS_FUNC_108)();
 typedef bool(UiWmapRndTimeEventProcess)(TimeEvent* timeevent);
@@ -195,7 +195,7 @@ typedef struct UiCallbacks {
     /* 00F4 */ UI_CALLBACKS_FUNC_F4* field_F4;
     /* 00F8 */ UI_CALLBACKS_FUNC_F8* field_F8;
     /* 00FC */ UI_CALLBACKS_FUNC_FC* field_FC;
-    /* 0100 */ UI_CALLBACKS_FUNC_100* field_100;
+    /* 0100 */ UiRefreshCursor* refresh_cursor;
     /* 0104 */ UI_CALLBACKS_FUNC_104* field_104;
     /* 0108 */ UI_CALLBACKS_FUNC_108* field_108;
     /* 010C */ UiWmapRndTimeEventProcess* wmap_rnd_timeevent_process;
@@ -288,7 +288,7 @@ void sub_460A40(int64_t obj, int a3, int a4, int a5, int a6, int a7, const char*
 void sub_460A80(DialogSerializedData* a1, int a2, int a3, int a4, int a5, char* buffer);
 void sub_460AB0(int a1, int a2, void* a3);
 void sub_460AD0(int a1);
-void sub_460AF0();
+void ui_refresh_cursor();
 int sub_460B00(int a1, S4F2810* a2);
 void sub_460B20();
 bool ui_wmap_rnd_timeevent_process(TimeEvent* timeevent);

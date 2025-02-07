@@ -979,7 +979,7 @@ void intgame_reset()
     int index;
 
     dword_64C6D8 = 0;
-    sub_553990();
+    intgame_refresh_cursor();
     sub_57DAB0();
     intgame_clock_process_callback(NULL);
     sub_552130(0);
@@ -1095,7 +1095,7 @@ bool intgame_load(GameLoadInfo* load_info)
     }
 
     sub_54B3C0();
-    sub_553990();
+    intgame_refresh_cursor();
     intgame_mt_button_enable();
 
     obj = player_get_pc_obj();
@@ -1826,7 +1826,7 @@ bool sub_54B5D0(TigMessage* msg)
                 }
 
                 if (!sub_573620()) {
-                    sub_553990();
+                    intgame_refresh_cursor();
                     return false;
                 }
             }
@@ -1953,7 +1953,7 @@ bool sub_54B5D0(TigMessage* msg)
                         return true;
                     }
                     sub_575770();
-                    sub_553990();
+                    intgame_refresh_cursor();
                     return true;
                 }
                 if (msg->data.button.button_handle == stru_5C65F8[0].button_handle) {
@@ -1962,7 +1962,7 @@ bool sub_54B5D0(TigMessage* msg)
                         return true;
                     }
                     sub_575770();
-                    sub_553990();
+                    intgame_refresh_cursor();
                     return true;
                 }
                 break;
@@ -2284,7 +2284,7 @@ bool sub_54B5D0(TigMessage* msg)
             case DIK_COMMA:
             case DIK_PERIOD:
             case DIK_SLASH:
-                sub_553990();
+                intgame_refresh_cursor();
                 return false;
             case DIK_NUMPAD7:
                 if (intgame_iso_window_type == 9) {
@@ -2394,7 +2394,7 @@ bool sub_54B5D0(TigMessage* msg)
             case DIK_COMMA:
             case DIK_PERIOD:
             case DIK_SLASH:
-                sub_553990();
+                intgame_refresh_cursor();
                 return false;
             }
 
@@ -2531,7 +2531,7 @@ bool sub_54DC80(TigMessage* msg)
         if (msg->data.button.button_handle == stru_5C65F8[1].button_handle
             || msg->data.button.button_handle == stru_5C65F8[0].button_handle) {
             if (!sub_573620()) {
-                sub_553990();
+                intgame_refresh_cursor();
             }
             return true;
         }
@@ -2612,7 +2612,7 @@ void sub_54DE50(TigMessage* msg)
                             if (!sub_57DE00()) {
                                 if (critter_is_active(pc_obj)) {
                                     sub_573840();
-                                    sub_553990();
+                                    intgame_refresh_cursor();
                                     anim_goal_throw_item(pc_obj, v2, v1.loc);
                                 } else {
                                     sub_575770();
@@ -2690,7 +2690,7 @@ void sub_54DE50(TigMessage* msg)
 
                     if (sub_573620()) {
                         sub_575770();
-                        sub_553990();
+                        intgame_refresh_cursor();
                     }
                 }
                 break;
@@ -3139,7 +3139,7 @@ void sub_54ED30(S4F2810* a1)
         }
 
         sub_573840();
-        sub_553990();
+        intgame_refresh_cursor();
 
         anim = AG_THROW_ITEM;
     } else {
@@ -4721,7 +4721,7 @@ bool sub_551A80(int a1)
                 v2 = true;
             }
             if (!sub_573620()) {
-                sub_553990();
+                intgame_refresh_cursor();
             }
         }
 
@@ -4847,7 +4847,7 @@ bool sub_551A80(int a1)
             sub_571C80();
             if (sub_573620()) {
                 sub_575770();
-                sub_553990();
+                intgame_refresh_cursor();
             }
             break;
         case 19:
@@ -4910,7 +4910,7 @@ bool sub_551A80(int a1)
         }
 
         dword_64C634[dword_64C6B8] = a1;
-        sub_553990();
+        intgame_refresh_cursor();
 
         v1 = false;
         dword_64C6E8 = false;
@@ -5891,9 +5891,9 @@ void sub_553960()
 }
 
 // 0x553990
-void sub_553990()
+void intgame_refresh_cursor()
 {
-    bool v1 = false;
+    bool have_weapon = false;
     int64_t pc_obj;
     tig_art_id_t art_id;
     int art_num;
@@ -5902,7 +5902,7 @@ void sub_553990()
     if (pc_obj != OBJ_HANDLE_NULL) {
         art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
         if (tig_art_critter_id_weapon_get(art_id) != TIG_ART_WEAPON_TYPE_NO_WEAPON) {
-            v1 = true;
+            have_weapon = true;
         }
     }
 
@@ -5912,18 +5912,18 @@ void sub_553990()
 
         art_num = dword_5C7178[sub_551A00()];
         if (art_num == -1) {
-            if (v1) {
+            if (have_weapon) {
                 if (tig_kb_is_key_pressed(DIK_COMMA)) {
-                    art_num = 818;
+                    art_num = 818; // "cursor-called-head.art"
                 } else if (tig_kb_is_key_pressed(DIK_PERIOD)) {
-                    art_num = 819;
+                    art_num = 819; // "cursor-called-leg.art"
                 } else if (tig_kb_is_key_pressed(DIK_SLASH)) {
-                    art_num = 820;
+                    art_num = 820; // "cursor-called-arm.art"
                 } else {
-                    art_num = 353;
+                    art_num = 353; // "battlecur.art"
                 }
             } else {
-                art_num = 0;
+                art_num = 0; // "cursor.art"
             }
         }
 
@@ -7850,7 +7850,7 @@ void sub_5570D0(int64_t obj, bool a2, int a3)
     }
 
     if (sub_57DE00()) {
-        sub_553990();
+        intgame_refresh_cursor();
         dword_6839B0 = 0;
         dword_5CB4E4 = -1;
     }

@@ -81,7 +81,7 @@ int sub_5533A0(TigMessage* msg);
 int sub_5533B0();
 void sub_553620(int index, tig_art_id_t art_id);
 void sub_553910(int index, bool a2);
-void sub_553990();
+void intgame_refresh_cursor();
 void sub_553A60(int art_num);
 void sub_553BE0(int64_t a1, int64_t a2, char* str);
 bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr);
