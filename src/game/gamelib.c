@@ -952,7 +952,7 @@ bool gamelib_save(const char* name, const char* description)
 
     in_save = true;
 
-    sub_460870(64);
+    ui_progressbar_init(MODULE_COUNT + 2);
 
     if (!tig_file_is_directory("Save\\Current")) {
         tig_debug_printf("gamelib_save(): Error finding folder %s\n", "Save\\Current");
@@ -982,7 +982,7 @@ bool gamelib_save(const char* name, const char* description)
     tig_file_fgetpos(stream, &start_pos);
     tig_debug_printf("gamelib_save: Start Pos: %lu\n", start_pos);
 
-    sub_460890(1);
+    ui_progressbar_update(1);
 
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].save_func != NULL) {
@@ -1007,7 +1007,7 @@ bool gamelib_save(const char* name, const char* description)
                 break;
             }
 
-            sub_460890(index + 1);
+            ui_progressbar_update(index + 1);
         }
     }
 
@@ -1058,7 +1058,7 @@ bool gamelib_save(const char* name, const char* description)
     duration = tig_timer_elapsed(time);
     tig_debug_printf("done. Time (ms): %d\n", duration);
 
-    sub_460890(64);
+    ui_progressbar_update(MODULE_COUNT + 2);
 
     in_save = false;
 
@@ -1087,7 +1087,7 @@ bool gamelib_load(const char* name)
 
     in_load = true;
 
-    sub_460870(64);
+    ui_progressbar_init(MODULE_COUNT + 2);
 
     if (!tig_file_is_directory("Save\\Current")) {
         tig_debug_printf("gamelib_load(): Error finding folder %s\n", "Save\\Current");
@@ -1135,7 +1135,7 @@ bool gamelib_load(const char* name)
     tig_file_fgetpos(stream, &start_pos);
     tig_debug_printf("gamelib_load: Start Pos: %lu\n", start_pos);
 
-    sub_460890(1);
+    ui_progressbar_update(1);
 
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].load_func != NULL) {
@@ -1165,7 +1165,7 @@ bool gamelib_load(const char* name)
                 break;
             }
 
-            sub_460890(index + 1);
+            ui_progressbar_update(index + 1);
         }
     }
 
@@ -1187,7 +1187,7 @@ bool gamelib_load(const char* name)
         tig_debug_printf("done. Time (ms): %d\n", duration);
     }
 
-    sub_460890(64);
+    ui_progressbar_update(MODULE_COUNT + 2);
 
     in_load = false;
 

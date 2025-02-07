@@ -112,8 +112,8 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_B0 = sub_57B180;
     callbacks.field_B4 = ui_charedit_error_msg;
     callbacks.field_B8 = sub_55A230;
-    callbacks.field_BC = sub_5495F0;
-    callbacks.field_C0 = sub_549620;
+    callbacks.progressbar_init = mainmenu_ui_progressbar_init;
+    callbacks.progressbar_update = mainmenu_ui_progressbar_update;
     callbacks.field_C4 = sub_560790;
     callbacks.field_C8 = sub_56E720;
     callbacks.field_CC = sub_56E950;

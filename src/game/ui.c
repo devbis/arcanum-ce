@@ -427,18 +427,18 @@ void sub_460860()
 }
 
 // 0x460870
-void sub_460870(int a1)
+void ui_progressbar_init(int max_value)
 {
-    if (ui_callbacks.field_BC != NULL) {
-        ui_callbacks.field_BC(a1);
+    if (ui_callbacks.progressbar_init != NULL) {
+        ui_callbacks.progressbar_init(max_value);
     }
 }
 
 // 0x460890
-void sub_460890(int a1)
+void ui_progressbar_update(int value)
 {
-    if (ui_callbacks.field_C0 != NULL) {
-        ui_callbacks.field_C0(a1);
+    if (ui_callbacks.progressbar_update != NULL) {
+        ui_callbacks.progressbar_update(value);
     }
 }
 

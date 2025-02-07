@@ -2141,10 +2141,10 @@ static int dword_64C440;
 static bool dword_64C444;
 
 // 0x64C448
-static int dword_64C448;
+static int mainmenu_ui_progressbar_max_value;
 
 // 0x64C44C
-static int dword_64C44C;
+static int mainmenu_ui_progressbar_value;
 
 // 0x64C450
 static bool dword_64C450;
@@ -7242,9 +7242,10 @@ void mainmenu_ui_exit_game()
 }
 
 // 0x5495F0
-void sub_5495F0(int a1)
+void mainmenu_ui_progressbar_init(int max_value)
 {
-    dword_64C448 = a1;
+    mainmenu_ui_progressbar_max_value = max_value;
+
     if (dword_64C384) {
         if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
             main_menu_window_info[dword_64C414]->refresh_func(&stru_5C4538);
@@ -7253,9 +7254,10 @@ void sub_5495F0(int a1)
 }
 
 // 0x549620
-void sub_549620(int a1)
+void mainmenu_ui_progressbar_update(int value)
 {
-    dword_64C44C = a1;
+    mainmenu_ui_progressbar_value = value;
+
     if (dword_64C384) {
         if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
             main_menu_window_info[dword_64C414]->refresh_func(&stru_5C4538);
