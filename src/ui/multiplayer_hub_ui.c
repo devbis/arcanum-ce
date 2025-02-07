@@ -536,7 +536,7 @@ bool multiplayer_hub_ui_execute_chat(int a1)
     if (!multiplayer_mm_chatroom_create(byte_686250, byte_684688)
         || !sub_5499B0(stru_6861D8.str)) {
         mes_file_entry.num = 10064; // "Cannot create chatroom."
-        mes_get_msg(sub_549840(), &mes_file_entry);
+        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
         sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
     }
 
@@ -581,7 +581,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
         tig_window_blit_art(sub_549820(), &art_blit_info);
 
         mes_file_entry.num = 2401; // "Room Name"
-        mes_get_msg(sub_549840(), &mes_file_entry);
+        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
         font_desc.width = 0;
         font_desc.str = mes_file_entry.str;
@@ -607,7 +607,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
         tig_window_text_write(sub_549820(), str, &text_rect);
 
         mes_file_entry.num = 2402; // "Password"
-        mes_get_msg(sub_549840(), &mes_file_entry);
+        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
         font_desc.width = 0;
         font_desc.str = mes_file_entry.str;
         tig_font_measure(&font_desc);
@@ -678,7 +678,7 @@ void sub_581F30()
 
     while (stru_5CBF88[index].cmd != -1) {
         mes_file_entry.num = 10100 + index;
-        mes_get_msg(sub_549840(), &mes_file_entry);
+        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
         stru_5CBF88[index].str = mes_file_entry.str;
     }
 }
@@ -722,7 +722,7 @@ void sub_581FC0(TextEdit* textedit)
             sub_582060(&(byte_6861F8[1]));
         } else {
             mes_file_entry.num = 10053; // "Unknown Command. Try /HELP."
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
         }
     }
@@ -767,13 +767,13 @@ void sub_582060(const char* str)
                 if (!multiplayer_mm_chatroom_join(&(dword_6862DC[room - 1]), 0)
                     || !sub_5499B0(stru_6861D8.str)) {
                     mes_file_entry.num = 10050; // "Could not join chatroom %d."
-                    mes_get_msg(sub_549840(), &mes_file_entry);
+                    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
                     snprintf(v2, sizeof(v2), mes_file_entry.str, room);
                     sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, v2);
                 }
             } else {
                 mes_file_entry.num = 10052; // "Unknown chatroom %s."
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
                 snprintf(v2, sizeof(v2), mes_file_entry.str, v1);
                 sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, v2);
             }
@@ -789,8 +789,8 @@ void sub_582060(const char* str)
         break;
     case 1:
         mes_file_entry.num = 10000; // "Arcanum and WON.net CHAT Help File"
-        while (mes_search(sub_549840(), &mes_file_entry)) {
-            mes_get_msg(sub_549840(), &mes_file_entry);
+        while (mes_search(mainmenu_ui_mes_file(), &mes_file_entry)) {
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
             mes_file_entry.num++;
         }
@@ -803,7 +803,7 @@ void sub_582060(const char* str)
                     for (bit = 0; bit < 32; bit++) {
                         if ((members[index].flags & (1 << bit)) != 0) {
                             mes_file_entry.num = 10200 + bit;
-                            mes_get_msg(sub_549840(), &mes_file_entry);
+                            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
                             strncat(v3, mes_file_entry.str, sizeof(v3));
                         }
                     }
@@ -811,13 +811,13 @@ void sub_582060(const char* str)
                 }
             } else {
                 mes_file_entry.num = 10062; // "There is nobody in this chatroom? Odd, what about YOURSELF!"
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
                 sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
             }
             multiplayer_mm_chatroom_members_free(members);
         } else {
             mes_file_entry.num = 10063; // "Could not get a list of people in the ChatRoom."
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
         }
         break;
@@ -854,7 +854,7 @@ void sub_582510(const char* name)
     char str[80];
 
     mes_file_entry.num = 10054; // "%s has entered the room."
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
     snprintf(str, sizeof(str), mes_file_entry.str, name);
     sub_5826D0(NULL, CHAT_ENTRY_TYPE_JOIN, str);
@@ -879,7 +879,7 @@ void sub_5825B0(const char* name)
     char str[80];
 
     mes_file_entry.num = 10055; // "%s has left."
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
     snprintf(str, sizeof(str), mes_file_entry.str, name);
     sub_5826D0(NULL, CHAT_ENTRY_TYPE_LEAVE, str);
@@ -1055,7 +1055,7 @@ void sub_5829D0(TigRect* rect)
         tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_BLUE));
 
         mes_file_entry.num = 2400;
-        mes_get_msg(sub_549840(), &mes_file_entry);
+        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
         font.str = mes_file_entry.str;
         font.width = 0;
@@ -1515,7 +1515,7 @@ void sub_583830(TigRect* dirty_rect)
             sub_5837A0(&stru_5CC268);
 
             mes_file_entry.num = 2040;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
             tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD));
             font_desc.width = 0;
@@ -1707,7 +1707,7 @@ void sub_583D90(TigRect* rect)
     tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
     mes_file_entry.num = 2000; // "Login Name"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1731,7 +1731,7 @@ void sub_583D90(TigRect* rect)
     tig_window_text_write(sub_549820(), str, &dst_rect);
 
     mes_file_entry.num = 2001; // "Password"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1778,7 +1778,7 @@ void sub_583D90(TigRect* rect)
     }
 
     mes_file_entry.num = 2005; // "New WON Account"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1829,7 +1829,7 @@ void sub_584150(TigRect* rect)
     tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
 
     mes_file_entry.num = 2000; // "Login Name"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1853,7 +1853,7 @@ void sub_584150(TigRect* rect)
     tig_window_text_write(sub_549820(), str, &dst_rect);
 
     mes_file_entry.num = 2000; // "Password"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1885,7 +1885,7 @@ void sub_584150(TigRect* rect)
     tig_window_text_write(sub_549820(), str, &dst_rect);
 
     mes_file_entry.num = 2002; // "Verify Password"
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
     tig_font_measure(&font_desc);
@@ -1944,7 +1944,7 @@ void sub_584150(TigRect* rect)
         break;
     }
 
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
     dst_rect.x = 319;
     dst_rect.y = 265;
@@ -1971,7 +1971,7 @@ bool sub_5845E0(int btn)
         if (!multiplayer_mm_is_active()) {
             if (!multiplayer_mm_init(&matchmaker_init_info)) {
                 mes_file_entry.num = 2052;
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -1987,7 +1987,7 @@ bool sub_5845E0(int btn)
 
             if (!sub_5499B0(stru_686530.str)) {
                 mes_file_entry.num = 2052;
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -2040,7 +2040,7 @@ bool sub_5847D0(int btn)
         if (!multiplayer_mm_is_active()) {
             if (!multiplayer_mm_init(&matchmaker_init_info)) {
                 mes_file_entry.num = 2052;
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -2057,7 +2057,7 @@ bool sub_5847D0(int btn)
 
             if (!sub_5499B0(stru_686530.str)) {
                 mes_file_entry.num = 2052;
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -2109,7 +2109,7 @@ const char* sub_584A40(int value)
     }
 
     mes_file_entry.num = value + 2010;
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     return mes_file_entry.str;
 }
 
@@ -2156,7 +2156,7 @@ void sub_584AE0()
     mes_get_msg(dword_5CC5F0, &stru_6867A0);
 
     mes_file_entry.num = 2333;
-    mes_get_msg(sub_549840(), &mes_file_entry);
+    mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
     strncpy(byte_6868F8, mes_file_entry.str, sizeof(byte_6868F8));
 
     tig_net_local_server_clear_password();
@@ -2243,7 +2243,7 @@ void sub_584CB0(TigRect* rect)
             sub_584C30(&text_rect);
 
             mes_file_entry.num = stru_5CC5F8[index].num;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             copy = STRDUP(mes_file_entry.str);
 
             font_desc.width = 0;
@@ -2473,7 +2473,7 @@ bool sub_585270(int num)
             sub_584CB0(&rect);
         } else {
             mes_file_entry.num = 2332;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6868F8, mes_file_entry.str);
         }
         return false;
@@ -2604,13 +2604,13 @@ const char* sub_585630(int num)
             }
 
             mes_file_entry.num = 2332;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2302:
             tig_net_local_server_type_get(&server_type);
             mes_file_entry.num = 2320 + server_type;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2303:
@@ -2640,7 +2640,7 @@ const char* sub_585630(int num)
             break;
         case 2308:
             mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_PRIVATE_CHAT) != 0 ? 2331 : 2330;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2309:
@@ -2648,19 +2648,19 @@ const char* sub_585630(int num)
             return byte_6867F8;
         case 2310:
             mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_PLAYER_KILLING) != 0 ? 2331 : 2330;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2311:
 
         case 2312:
             mes_file_entry.num = tig_net_auto_join_is_enabled() ? 2331 : 2330;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2313:
             mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_AUTO_EQUIP) != 0 ? 2331 : 2330;
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         case 2314:
@@ -2669,7 +2669,7 @@ const char* sub_585630(int num)
             } else {
                 mes_file_entry.num = 2330;
             }
-            mes_get_msg(sub_549840(), &mes_file_entry);
+            mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
             strcpy(byte_6867F8, mes_file_entry.str);
             return byte_6867F8;
         default:

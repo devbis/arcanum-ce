@@ -402,7 +402,7 @@ void sub_586150(int a1, int a2, void* a3)
 
             if (mes_file_entry.num != -1) {
                 tig_net_reset_connection();
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.text = mes_file_entry.str;
                 tig_window_modal_dialog(&modal_dialog_info, &choice);

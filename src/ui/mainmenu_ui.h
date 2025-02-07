@@ -62,7 +62,7 @@ void sub_549770();
 void sub_549780();
 tig_window_handle_t sub_549820();
 void sub_549830(int a1);
-mes_file_handle_t sub_549840();
+mes_file_handle_t mainmenu_ui_mes_file();
 tig_font_handle_t mainmenu_ui_font(MainMenuFont font, MainMenuColor color);
 void sub_549960();
 void sub_549990(int* a1, int num);

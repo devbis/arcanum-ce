@@ -6213,7 +6213,7 @@ bool sub_546EE0(TigMessage* msg)
 
                     if (dword_64C41C[dword_5C3618] != OBJ_HANDLE_NULL) {
                         mes_file_entry.num = 2050;
-                        mes_get_msg(sub_549840(), &mes_file_entry);
+                        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                         sub_441B60(dword_64C41C[dword_5C3618], dword_64C41C[dword_5C3618], str);
                         snprintf(path, sizeof(path), mes_file_entry.str, str);
@@ -6242,7 +6242,7 @@ bool sub_546EE0(TigMessage* msg)
                         }
                     } else {
                         mes_file_entry.num = 2051;
-                        mes_get_msg(sub_549840(), &mes_file_entry);
+                        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                         modal_dialog_info.text = mes_file_entry.str;
                         modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
@@ -7026,7 +7026,7 @@ bool sub_549040(int a1)
         if (!multiplayer_mm_is_active()) {
             if (!multiplayer_mm_init(&init_info)) {
                 mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -7042,7 +7042,7 @@ bool sub_549040(int a1)
 
             if (!sub_5499B0(stru_64C0E8.str)) {
                 mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
-                mes_get_msg(sub_549840(), &mes_file_entry);
+                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
                 modal_dialog_info.redraw = sub_4045A0;
@@ -7356,7 +7356,7 @@ void sub_549830(int a1)
 }
 
 // 0x549840
-mes_file_handle_t sub_549840()
+mes_file_handle_t mainmenu_ui_mes_file()
 {
     return mainmenu_ui_mainmenu_mes_file;
 }
