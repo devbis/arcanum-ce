@@ -12,6 +12,7 @@
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/portal.h"
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/sector.h"
