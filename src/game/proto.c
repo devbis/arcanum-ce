@@ -405,6 +405,8 @@ void sub_468660(bool* rescan_ptr)
         }
     }
 
+    proto_id_list_destroy(proto_ids);
+
     tig_debug_printf("Reading prototypes completed.\n");
 }
 
