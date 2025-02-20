@@ -1,6 +1,7 @@
 #include "game/portal.h"
 
 #include "game/obj.h"
+#include "game/object.h"
 
 // 0x4F08C0
 bool portal_is_open(int64_t obj)
