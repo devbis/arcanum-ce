@@ -1226,7 +1226,7 @@ void sub_5607E0()
 
     stru_5C9228[dword_66D868].field_48();
 
-    sub_460790(3, 0);
+    ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, false);
 }
 
 // 0x560AA0
@@ -3826,10 +3826,10 @@ void sub_564F60(long long a1, long long a2)
     if (dword_66D874) {
         sub_564A70(a1, sector_loc_from_id(a2));
         wmap_ui_town_notes_load();
-        sub_4607B0(2);
+        ui_set_map_button(UI_PRIMARY_BUTTON_TOWNMAP);
     } else {
         sub_5650C0();
-        sub_4607B0(3);
+        ui_set_map_button(UI_PRIMARY_BUTTON_WORLDMAP);
     }
     sub_560EF0();
 }

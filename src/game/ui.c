@@ -371,18 +371,18 @@ void sub_460780()
 }
 
 // 0x460790
-void sub_460790(int a1, int a2)
+void ui_toggle_primary_button(UiPrimaryButton btn, bool on)
 {
-    if (ui_callbacks.field_A0 != NULL) {
-        ui_callbacks.field_A0(a1, a2);
+    if (ui_callbacks.toggle_primary_button != NULL) {
+        ui_callbacks.toggle_primary_button(btn, on);
     }
 }
 
 // 0x4607B0
-void sub_4607B0(int a1)
+void ui_set_map_button(UiPrimaryButton btn)
 {
-    if (ui_callbacks.field_A4 != NULL) {
-        ui_callbacks.field_A4(a1);
+    if (ui_callbacks.set_map_button != NULL) {
+        ui_callbacks.set_map_button(btn);
     }
 }
 

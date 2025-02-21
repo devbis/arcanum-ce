@@ -368,7 +368,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 
     if (player_is_pc_obj(obj)) {
         if ((pc_quest_state.state & ~0x100) != QUEST_STATE_UNKNOWN) {
-            sub_460790(1, 1);
+            ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
         }
     }
 
@@ -416,7 +416,7 @@ int sub_4C5070(int64_t obj, int num)
         }
 
         if (pc_quest_state.state != QUEST_STATE_UNKNOWN) {
-            sub_460790(1, 1);
+            ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
         }
     }
 

@@ -1057,7 +1057,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     dword_739F58 = 0;
 
     if (player_is_pc_obj(pc_obj)) {
-        sub_460790(4, 0);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, false);
     }
 
     if (qword_6813A8 != OBJ_HANDLE_NULL) {

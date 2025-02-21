@@ -478,19 +478,19 @@ void sub_4EE1D0(int64_t obj)
 }
 
 // 0x4EE230
-void sub_4EE230(int a1, int a2, int client_id)
+void sub_4EE230(UiPrimaryButton btn, bool on, int client_id)
 {
     Packet100 pkt;
 
     if (sub_529520() == client_id) {
-        sub_460790(a1, a2);
+        ui_toggle_primary_button(btn, on);
         return;
     }
 
     pkt.type = 100;
     pkt.subtype = 2;
-    pkt.d.a.field_8 = a1;
-    pkt.d.a.field_C = a2;
+    pkt.d.a.field_8 = btn;
+    pkt.d.a.field_C = on;
     tig_net_send_app(&pkt, sizeof(pkt), client_id);
 }
 
@@ -630,10 +630,10 @@ void sub_4EE5E0(Packet100* pkt)
         sub_460240(objp_perm_lookup(pkt->d.b.field_8));
         break;
     case 2:
-        sub_460790(pkt->d.a.field_8, pkt->d.a.field_C);
+        ui_toggle_primary_button(pkt->d.a.field_8, pkt->d.a.field_C);
         break;
     case 3:
-        sub_460790(pkt->d.a.field_8, pkt->d.a.field_C);
+        ui_toggle_primary_button(pkt->d.a.field_8, pkt->d.a.field_C);
         break;
     case 4:
         sub_460900(pkt->d.c.field_8,

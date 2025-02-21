@@ -1173,7 +1173,7 @@ bool charedit_create(int64_t obj, int mode)
     dword_64D360 = -1;
 
     if (player_is_pc_obj(obj)) {
-        sub_460790(0, 0);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_CHAR, false);
     }
 
     sub_424070(obj, 4, 0, 1);

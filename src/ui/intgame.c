@@ -71,6 +71,15 @@ typedef enum IntgameCounter {
     INTGAME_COUNTER_COUNT,
 } IntgameCounter;
 
+typedef enum IntgamePrimaryButton {
+    INTGAME_PRIMARY_BUTTON_LOGBOOK,
+    INTGAME_PRIMARY_BUTTON_CHAR,
+    INTGAME_PRIMARY_BUTTON_INVENTORY,
+    INTGAME_PRIMARY_BUTTON_MAP,
+    INTGAME_PRIMARY_BUTTON_FATE,
+    INTGAME_PRIMARY_BUTTON_COUNT,
+} IntgamePrimaryButton;
+
 typedef struct IntgameIsoWindowTypeInfo {
     /* 0000 */ TigRect rect;
     /* 0010 */ tig_window_handle_t window_handle;
@@ -138,7 +147,7 @@ static void sub_555D80(int64_t a1, int64_t a2, char* str);
 static void sub_555EC0(int64_t a1, int64_t a2, char* a3);
 static void sub_556040(int64_t a1, int64_t a2, char* a3);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
-static void sub_556B90(int a1);
+static void intgame_refresh_primary_button(UiPrimaryButton btn);
 static void sub_556C20(int64_t obj);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
@@ -199,30 +208,30 @@ static UiButtonInfo stru_5C6480[] = {
 };
 
 // 0x5C64C0
-static UiButtonInfo stru_5C64C0[] = {
-    { 41, 2, 187, TIG_BUTTON_HANDLE_INVALID },
-    { 4, 2, 169, TIG_BUTTON_HANDLE_INVALID },
-    { 115, 2, 186, TIG_BUTTON_HANDLE_INVALID },
-    { 78, 2, 193, TIG_BUTTON_HANDLE_INVALID },
-    { 157, 9, 137, TIG_BUTTON_HANDLE_INVALID },
+static UiButtonInfo intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_COUNT] = {
+    /*   INTGAME_PRIMARY_BUTTON_LOGBOOK */ { 41, 2, 187, TIG_BUTTON_HANDLE_INVALID },
+    /*      INTGAME_PRIMARY_BUTTON_CHAR */ { 4, 2, 169, TIG_BUTTON_HANDLE_INVALID },
+    /* INTGAME_PRIMARY_BUTTON_INVENTORY */ { 115, 2, 186, TIG_BUTTON_HANDLE_INVALID },
+    /*       INTGAME_PRIMARY_BUTTON_MAP */ { 78, 2, 193, TIG_BUTTON_HANDLE_INVALID },
+    /*      INTGAME_PRIMARY_BUTTON_FATE */ { 157, 9, 137, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C6510
-static int dword_5C6510[] = {
-    561,
-    560,
-    558,
-    195,
-    559,
+static int intgame_ui_primary_button_highlighted_icons[UI_PRIMARY_BUTTON_COUNT] = {
+    /*      UI_PRIMARY_BUTTON_CHAR */ 561, // "char_on.art"
+    /*   UI_PRIMARY_BUTTON_LOGBOOK */ 560, // "log_on.art"
+    /*   UI_PRIMARY_BUTTON_TOWNMAP */ 558, // "tmap_on.art"
+    /*  UI_PRIMARY_BUTTON_WORLDMAP */ 195, // "wmap_on.art"
+    /* UI_PRIMARY_BUTTON_INVENTORY */ 559, // "invn_on.art"
 };
 
 // 0x5C6524
-static int dword_5C6524[5] = {
-    169,
-    187,
-    193,
-    194,
-    186,
+static int intgame_ui_primary_button_normal_icons[UI_PRIMARY_BUTTON_COUNT] = {
+    /*      UI_PRIMARY_BUTTON_CHAR */ 169, // "char_but.art"
+    /*   UI_PRIMARY_BUTTON_LOGBOOK */ 187, // "log_but.art"
+    /*   UI_PRIMARY_BUTTON_TOWNMAP */ 193, // "tmap_but.art"
+    /*  UI_PRIMARY_BUTTON_WORLDMAP */ 194, // "wmap_but.art"
+    /* UI_PRIMARY_BUTTON_INVENTORY */ 186, // "invn_but.art"
 };
 
 // 0x5C6538
@@ -771,7 +780,7 @@ static int dword_64C478;
 static int dword_64C47C[2];
 
 // 0x64C484
-static int dword_64C484[5];
+static int intgame_ui_primary_button_icons[UI_PRIMARY_BUTTON_COUNT];
 
 // 0x64C498
 static tig_font_handle_t dword_64C498;
@@ -810,7 +819,7 @@ static tig_window_handle_t dword_64C52C;
 static int dword_64C530;
 
 // 0x64C534
-static int dword_64C534;
+static UiPrimaryButton intgame_map_button;
 
 // 0x64C538
 static tig_font_handle_t dword_64C538;
@@ -966,8 +975,8 @@ bool intgame_init(GameInitInfo* init_info)
     font.color = tig_color_make(255, 255, 255);
     tig_font_create(&font, &dword_64C4A0);
 
-    memcpy(dword_64C484, dword_5C6524, sizeof(dword_64C484));
-    dword_64C534 = 2;
+    memcpy(intgame_ui_primary_button_icons, intgame_ui_primary_button_normal_icons, sizeof(intgame_ui_primary_button_icons));
+    intgame_map_button = UI_PRIMARY_BUTTON_TOWNMAP;
     dword_64C674 = -1;
 
     return true;
@@ -988,8 +997,8 @@ void intgame_reset()
         sub_57F210(index);
     }
 
-    dword_64C534 = 2;
-    memcpy(dword_64C484, dword_5C6524, sizeof(dword_64C484));
+    intgame_map_button = UI_PRIMARY_BUTTON_TOWNMAP;
+    memcpy(intgame_ui_primary_button_icons, intgame_ui_primary_button_normal_icons, sizeof(intgame_ui_primary_button_icons));
     sub_54AA30();
 }
 
@@ -1065,8 +1074,8 @@ bool intgame_save(TigFile* stream)
     if (tig_file_fwrite(&intgame_iso_window_type, sizeof(intgame_iso_window_type), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_64C530, sizeof(dword_64C530), 1, stream) != 1) return false;
     if (!hotkey_ui_save(stream)) return false;
-    if (tig_file_fwrite(dword_64C484, sizeof(*dword_64C484), 5, stream) != 5) return false;
-    if (tig_file_fwrite(&dword_64C534, sizeof(dword_64C534), 1, stream) != 1) return false;
+    if (tig_file_fwrite(intgame_ui_primary_button_icons, sizeof(*intgame_ui_primary_button_icons), UI_PRIMARY_BUTTON_COUNT, stream) != UI_PRIMARY_BUTTON_COUNT) return false;
+    if (tig_file_fwrite(&intgame_map_button, sizeof(intgame_map_button), 1, stream) != 1) return false;
 
     return true;
 }
@@ -1075,7 +1084,7 @@ bool intgame_save(TigFile* stream)
 bool intgame_load(GameLoadInfo* load_info)
 {
     int v1;
-    int index;
+    int btn;
     int64_t obj;
 
     if (load_info->stream == NULL) return false;
@@ -1087,11 +1096,11 @@ bool intgame_load(GameLoadInfo* load_info)
     }
 
     if (!hotkey_ui_load(load_info)) return false;
-    if (tig_file_fread(dword_64C484, sizeof(*dword_64C484), 5, load_info->stream) != 5) return false;
-    if (tig_file_fread(&dword_64C534, sizeof(dword_64C534), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(intgame_ui_primary_button_icons, sizeof(*intgame_ui_primary_button_icons), UI_PRIMARY_BUTTON_COUNT, load_info->stream) != UI_PRIMARY_BUTTON_COUNT) return false;
+    if (tig_file_fread(&intgame_map_button, sizeof(intgame_map_button), 1, load_info->stream) != 1) return false;
 
-    for (index = 0; index < 5; index++) {
-        sub_556B90(index);
+    for (btn = 0; btn < UI_PRIMARY_BUTTON_COUNT; btn++) {
+        intgame_refresh_primary_button(btn);
     }
 
     sub_54B3C0();
@@ -1186,8 +1195,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
         }
     }
 
-    for (index = 0; index < 5; index++) {
-        intgame_button_create(&(stru_5C64C0[index]));
+    for (index = 0; index < INTGAME_PRIMARY_BUTTON_COUNT; index++) {
+        intgame_button_create(&(intgame_primary_buttons[index]));
     }
 
     intgame_button_create(&stru_5C6538);
@@ -1906,27 +1915,27 @@ bool sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[0].button_handle) {
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_LOGBOOK].button_handle) {
                 logbook_ui_open(player_get_pc_obj());
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[1].button_handle) {
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle) {
                 sub_552740(player_get_pc_obj(), 1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[2].button_handle) {
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle) {
                 sub_572240(player_get_pc_obj(), OBJ_HANDLE_NULL, 0);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[3].button_handle) {
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle) {
                 sub_560760();
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[4].button_handle) {
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_FATE].button_handle) {
                 fate_ui_open(player_get_pc_obj());
                 return true;
             }
@@ -2152,28 +2161,28 @@ bool sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[0].button_handle) {
-                dword_64C674 = 1004;
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_LOGBOOK].button_handle) {
+                dword_64C674 = 1004; // "Log Book"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[1].button_handle) {
-                dword_64C674 = 1005;
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle) {
+                dword_64C674 = 1005; // "Character Editor"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[2].button_handle) {
-                dword_64C674 = 1006;
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle) {
+                dword_64C674 = 1006; // "Inventory"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[3].button_handle) {
-                dword_64C674 = 1007;
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle) {
+                dword_64C674 = 1007; // "Maps"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C64C0[4].button_handle) {
-                dword_64C674 = 1008;
+            if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_FATE].button_handle) {
+                dword_64C674 = 1008; // "Fate Points"
                 return true;
             }
 
@@ -2515,11 +2524,11 @@ bool sub_54DC80(TigMessage* msg)
         || msg->data.button.button_handle == stru_5C6480[0].button_handle
         || msg->data.button.button_handle == stru_5C6480[2].button_handle
         || msg->data.button.button_handle == stru_5C6480[3].button_handle
-        || msg->data.button.button_handle == stru_5C64C0[0].button_handle
-        || msg->data.button.button_handle == stru_5C64C0[1].button_handle
-        || msg->data.button.button_handle == stru_5C64C0[2].button_handle
-        || msg->data.button.button_handle == stru_5C64C0[3].button_handle
-        || msg->data.button.button_handle == stru_5C64C0[4].button_handle
+        || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_LOGBOOK].button_handle
+        || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle
+        || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle
+        || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle
+        || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_FATE].button_handle
         || msg->data.button.button_handle == stru_5C6538.button_handle) {
         dword_64C674 = -1;
         sub_550720();
@@ -7579,81 +7588,81 @@ void sub_5566B0(int64_t obj)
 }
 
 // 0x556A90
-void sub_556A90(int a1, bool a2)
+void intgame_toggle_primary_button(UiPrimaryButton btn, bool on)
 {
-    if (a2) {
-        switch (a1) {
-        case 0:
+    if (on) {
+        switch (btn) {
+        case UI_PRIMARY_BUTTON_CHAR:
             if (charedit_is_created()) {
                 return;
             }
             break;
-        case 1:
+        case UI_PRIMARY_BUTTON_LOGBOOK:
             if (logbook_ui_is_created()) {
                 return;
             }
             break;
-        case 2:
-        case 3:
+        case UI_PRIMARY_BUTTON_TOWNMAP:
+        case UI_PRIMARY_BUTTON_WORLDMAP:
             if (wmap_ui_is_created()) {
                 return;
             }
             break;
-        case 4:
+        case UI_PRIMARY_BUTTON_INVENTORY:
             if (inven_ui_is_created()) {
                 return;
             }
             break;
         }
 
-        dword_64C484[a1] = dword_5C6510[a1];
-        sub_556B90(a1);
+        intgame_ui_primary_button_icons[btn] = intgame_ui_primary_button_highlighted_icons[btn];
+        intgame_refresh_primary_button(btn);
     } else {
-        dword_64C484[a1] = dword_5C6524[a1];
-        sub_556B90(a1);
+        intgame_ui_primary_button_icons[btn] = intgame_ui_primary_button_normal_icons[btn];
+        intgame_refresh_primary_button(btn);
     }
 }
 
 // 0x556B70
-void sub_556B70(int a1)
+void intgame_set_map_button(UiPrimaryButton btn)
 {
-    dword_64C534 = a1;
-    sub_556B90(a1);
+    intgame_map_button = btn;
+    intgame_refresh_primary_button(btn);
 }
 
 // 0x556B90
-void sub_556B90(int a1)
+void intgame_refresh_primary_button(UiPrimaryButton btn)
 {
     tig_button_handle_t button_handle;
     tig_art_id_t art_id;
 
-    switch (a1) {
-    case 0:
-        button_handle = stru_5C64C0[1].button_handle;
+    switch (btn) {
+    case UI_PRIMARY_BUTTON_CHAR:
+        button_handle = intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle;
         break;
-    case 1:
-        button_handle = stru_5C64C0[0].button_handle;
+    case UI_PRIMARY_BUTTON_LOGBOOK:
+        button_handle = intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_LOGBOOK].button_handle;
         break;
-    case 2:
-        if (dword_64C534 != 2) {
+    case UI_PRIMARY_BUTTON_TOWNMAP:
+        if (intgame_map_button != UI_PRIMARY_BUTTON_TOWNMAP) {
             return;
         }
 
-        button_handle = stru_5C64C0[3].button_handle;
+        button_handle = intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle;
         break;
-    case 3:
-        if (dword_64C534 != 3) {
+    case UI_PRIMARY_BUTTON_WORLDMAP:
+        if (intgame_map_button != UI_PRIMARY_BUTTON_WORLDMAP) {
             return;
         }
 
-        button_handle = stru_5C64C0[3].button_handle;
+        button_handle = intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle;
         break;
-    case 4:
-        button_handle = stru_5C64C0[2].button_handle;
+    case UI_PRIMARY_BUTTON_INVENTORY:
+        button_handle = intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle;
         break;
     }
 
-    tig_art_interface_id_create(dword_64C484[a1], 0, 0, 0, &art_id);
+    tig_art_interface_id_create(intgame_ui_primary_button_icons[btn], 0, 0, 0, &art_id);
     tig_button_set_art(button_handle, art_id);
 }
 

@@ -143,7 +143,7 @@ void bless_add(object_id_t obj, int bless)
         ui_message.field_8 = bless;
         sub_460630(&ui_message);
 
-        sub_460790(1, 1);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
     }
 }
 
@@ -197,7 +197,7 @@ void bless_remove(object_id_t obj, int bless)
             effect_remove_one_typed(obj, bless_get_effect(bless));
 
             if (player_is_pc_obj(obj)) {
-                sub_460790(1, 1);
+                ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
             }
             break;
         }

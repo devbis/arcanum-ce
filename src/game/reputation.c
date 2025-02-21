@@ -336,7 +336,7 @@ void reputation_add(int64_t pc_obj, int reputation)
     obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, sub_45A7C0().value);
 
     if (player_is_pc_obj(pc_obj)) {
-        sub_460790(1, 1);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
     }
 }
 
@@ -392,7 +392,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
     obj_arrayfield_length_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, cnt - 1);
 
     if (player_is_pc_obj(pc_obj)) {
-        sub_460790(1, 1);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
     }
 }
 

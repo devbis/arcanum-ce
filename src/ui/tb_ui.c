@@ -105,8 +105,8 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_94 = sub_571AA0;
     callbacks.follower_refresh = follower_ui_refresh;
     callbacks.field_9C = sub_56B290;
-    callbacks.field_A0 = sub_556A90;
-    callbacks.field_A4 = sub_556B70;
+    callbacks.toggle_primary_button = intgame_toggle_primary_button;
+    callbacks.set_map_button = intgame_set_map_button;
     callbacks.field_A8 = sub_57CE70;
     callbacks.field_AC = sub_56CCA0;
     callbacks.field_B0 = sub_57B180;

@@ -3772,7 +3772,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     mt_ai_notify_inventory_changed(parent_obj);
 
     if (player_is_pc_obj(parent_obj)) {
-        sub_460790(4, 1);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, true);
 
         if (inventory_location >= 2000 && inventory_location <= 2009) {
             sub_460590(item_obj, inventory_location);
@@ -4464,7 +4464,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_REMOVE_ITEM, 0);
 
     if (is_pc) {
-        sub_460790(4, 1);
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, true);
     }
 }
 

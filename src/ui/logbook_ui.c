@@ -421,7 +421,7 @@ void logbook_ui_create()
     tig_art_interface_id_create(198, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     sub_53F490(261, 1);
-    sub_460790(1, 0);
+    ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, false);
     gsound_play_sfx_id(3008, 1);
 
     logbook_ui_created = true;

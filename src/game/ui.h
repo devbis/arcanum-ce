@@ -31,6 +31,15 @@ typedef struct UiMessage {
 
 static_assert(sizeof(UiMessage) == 0x18, "wrong size");
 
+typedef enum UiPrimaryButton {
+    UI_PRIMARY_BUTTON_CHAR,
+    UI_PRIMARY_BUTTON_LOGBOOK,
+    UI_PRIMARY_BUTTON_TOWNMAP,
+    UI_PRIMARY_BUTTON_WORLDMAP,
+    UI_PRIMARY_BUTTON_INVENTORY,
+    UI_PRIMARY_BUTTON_COUNT,
+} UiPrimaryButton;
+
 // TODO: Remove forward declarations.
 typedef struct Packet81 Packet81;
 typedef struct DialogSerializedData DialogSerializedData;
@@ -77,8 +86,8 @@ typedef void(UI_CALLBACKS_FUNC_90)(int a1, int a2);
 typedef void(UI_CALLBACKS_FUNC_94)(int64_t a1, int64_t a2);
 typedef void(UiFollowerRefresh)();
 typedef void(UI_CALLBACKS_FUNC_9C)();
-typedef void(UI_CALLBACKS_FUNC_A0)(int a1, bool a2);
-typedef void(UI_CALLBACKS_FUNC_A4)(int a1);
+typedef void(UiTogglePrimaryButton)(UiPrimaryButton btn, bool on);
+typedef void(UiSetMapButton)(UiPrimaryButton btn);
 typedef void(UI_CALLBACKS_FUNC_A8)(int64_t a1, int64_t a2);
 typedef void(UI_CALLBACKS_FUNC_AC)(int a1, char* str);
 typedef void(UI_CALLBACKS_FUNC_B0)(int64_t obj);
@@ -171,8 +180,8 @@ typedef struct UiCallbacks {
     /* 0094 */ UI_CALLBACKS_FUNC_94* field_94;
     /* 0098 */ UiFollowerRefresh* follower_refresh;
     /* 009C */ UI_CALLBACKS_FUNC_9C* field_9C;
-    /* 00A0 */ UI_CALLBACKS_FUNC_A0* field_A0;
-    /* 00A4 */ UI_CALLBACKS_FUNC_A4* field_A4;
+    /* 00A0 */ UiTogglePrimaryButton* toggle_primary_button;
+    /* 00A4 */ UiSetMapButton* set_map_button;
     /* 00A8 */ UI_CALLBACKS_FUNC_A8* field_A8;
     /* 00AC */ UI_CALLBACKS_FUNC_AC* field_AC;
     /* 00B0 */ UI_CALLBACKS_FUNC_B0* field_B0;
@@ -267,8 +276,8 @@ void sub_460720(int a1, int a2);
 void sub_460740(int64_t a1, int64_t a2);
 void ui_follower_refresh();
 void sub_460780();
-void sub_460790(int a1, int a2);
-void sub_4607B0(int a1);
+void ui_toggle_primary_button(UiPrimaryButton btn, bool on);
+void ui_set_map_button(UiPrimaryButton btn);
 void sub_4607D0(int64_t a1, int64_t a2);
 void sub_460800(int a1, char* str);
 void sub_460820(int64_t obj);
