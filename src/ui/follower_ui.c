@@ -286,7 +286,7 @@ void follower_ui_resize(GameResizeInfo* resize_info)
         sub_56A6E0(index);
     }
 
-    sub_56B6F0();
+    follower_ui_refresh();
     sub_56B620();
     sub_56B620();
 }
@@ -297,7 +297,7 @@ bool follower_ui_load(GameLoadInfo* load_info)
     if (tig_file_fread(&dword_67BC60, sizeof(dword_67BC60), 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_67BC10, sizeof(dword_67BC10), 1, load_info->stream) != 1) return false;
 
-    sub_56B6F0();
+    follower_ui_refresh();
 
     return true;
 }
@@ -619,7 +619,7 @@ void sub_56B290()
 
         follower_obj = dword_67BC08[dword_67BC10 + index].obj;
         if (follower_obj == OBJ_HANDLE_NULL) {
-            sub_56B6F0();
+            follower_ui_refresh();
             break;
         }
 
@@ -735,7 +735,7 @@ void sub_56B620()
 }
 
 // 0x56B6F0
-void sub_56B6F0()
+void follower_ui_refresh()
 {
     int index;
     int64_t pc_obj;

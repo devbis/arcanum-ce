@@ -103,7 +103,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_8C = sub_56BB60;
     callbacks.field_90 = sub_56BC00;
     callbacks.field_94 = sub_571AA0;
-    callbacks.field_98 = sub_56B6F0;
+    callbacks.follower_refresh = follower_ui_refresh;
     callbacks.field_9C = sub_56B290;
     callbacks.field_A0 = sub_556A90;
     callbacks.field_A4 = sub_556B70;

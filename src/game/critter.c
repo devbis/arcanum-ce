@@ -724,7 +724,7 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
         mp_obj_field_int32_set(follower_obj, OBJ_F_NPC_FLAGS, flags);
 
         sub_436FA0(follower_obj);
-        sub_4EE190();
+        mp_ui_follower_refresh();
         critter_set_concealed(follower_obj, critter_is_concealed(leader_obj));
 
         if ((obj_field_int32_get(leader_obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
@@ -810,7 +810,7 @@ void sub_45E040(int64_t obj)
         mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
     }
 
-    sub_4EE190();
+    mp_ui_follower_refresh();
 
     if (critter_is_concealed(obj)) {
         critter_set_concealed(obj, false);

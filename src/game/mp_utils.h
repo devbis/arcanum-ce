@@ -1154,7 +1154,7 @@ void sub_4EDE80(int64_t obj, int a2);
 void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7);
 void sub_4EE060(int64_t a1, int64_t a2);
 void sub_4EE0F0(int a1, int64_t a2, int64_t a3);
-void sub_4EE190();
+void mp_ui_follower_refresh();
 void sub_4EE1D0(int64_t obj);
 void sub_4EE230(int a1, int a2, int client_id);
 void sub_4EE290(int64_t obj, int a2, int a3);

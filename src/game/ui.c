@@ -355,10 +355,10 @@ void sub_460740(int64_t a1, int64_t a2)
 }
 
 // 0x460770
-void sub_460770()
+void ui_follower_refresh()
 {
-    if (ui_callbacks.field_98 != NULL) {
-        ui_callbacks.field_98();
+    if (ui_callbacks.follower_refresh != NULL) {
+        ui_callbacks.follower_refresh();
     }
 }
 

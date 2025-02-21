@@ -449,11 +449,11 @@ void sub_4EE0F0(int a1, int64_t a2, int64_t a3)
 }
 
 // 0x4EE190
-void sub_4EE190()
+void mp_ui_follower_refresh()
 {
     Packet100 pkt;
 
-    sub_460770();
+    ui_follower_refresh();
 
     if (tig_net_is_active()) {
         pkt.type = 100;
@@ -624,7 +624,7 @@ void sub_4EE5E0(Packet100* pkt)
 
     switch (pkt->subtype) {
     case 0:
-        sub_460770();
+        ui_follower_refresh();
         break;
     case 1:
         sub_460240(objp_perm_lookup(pkt->d.b.field_8));

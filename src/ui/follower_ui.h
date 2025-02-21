@@ -14,6 +14,6 @@ void sub_56B180(S4F2810* a1);
 void sub_56B280();
 void sub_56B290();
 void sub_56B4D0(int64_t obj);
-void sub_56B6F0();
+void follower_ui_refresh();
 
 #endif /* ARCANUM_UI_FOLLOWER_UI_H_ */
