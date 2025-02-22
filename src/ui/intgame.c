@@ -148,7 +148,7 @@ static void sub_555EC0(int64_t a1, int64_t a2, char* a3);
 static void sub_556040(int64_t a1, int64_t a2, char* a3);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void intgame_refresh_primary_button(UiPrimaryButton btn);
-static void sub_556C20(int64_t obj);
+static void intgame_refresh_experience_gauges(int64_t obj);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -1109,7 +1109,7 @@ bool intgame_load(GameLoadInfo* load_info)
 
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
-        sub_556C20(obj);
+        intgame_refresh_experience_gauges(obj);
         intgame_draw_counter(INTGAME_COUNTER_FATE,
             stat_level_get(obj, STAT_FATE_POINTS),
             2);
@@ -4399,7 +4399,7 @@ void sub_551160()
             intgame_draw_counter(INTGAME_COUNTER_FATE,
                 stat_level_get(pc_obj, STAT_FATE_POINTS),
                 2);
-            sub_556C20(pc_obj);
+            intgame_refresh_experience_gauges(pc_obj);
         }
     }
 }
@@ -7667,7 +7667,7 @@ void intgame_refresh_primary_button(UiPrimaryButton btn)
 }
 
 // 0x556C20
-void sub_556C20(int64_t obj)
+void intgame_refresh_experience_gauges(int64_t obj)
 {
     TigArtFrameData art_frame_data;
     TigArtBlitInfo art_blit_info;
