@@ -867,13 +867,13 @@ typedef struct Packet102 {
 
 static_assert(sizeof(Packet102) == 0x20, "wrong size");
 
-typedef struct Packet103 {
+typedef struct PacketObjectLock {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet103;
+    /* 0020 */ int locked;
+} PacketObjectLock;
 
-static_assert(sizeof(Packet103) == 0x28, "wrong size");
+static_assert(sizeof(PacketObjectLock) == 0x28, "wrong size");
 
 typedef struct Packet104 {
     /* 0000 */ int type;
@@ -1179,7 +1179,7 @@ void sub_4EF830(int64_t a1, int64_t a2);
 bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr);
 void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
-void sub_4EEC10(int64_t obj, int a2);
+void mp_object_locked_set(int64_t obj, int a2);
 void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3);
 void sub_4EED80(int sound_id, int loops, int64_t obj);
 void sub_4EEE00(int a1, int a2);

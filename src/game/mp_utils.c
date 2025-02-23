@@ -753,24 +753,24 @@ void sub_4EEBD0(Packet101* pkt)
 }
 
 // 0x4EEC10
-void sub_4EEC10(int64_t obj, int a2)
+void mp_object_locked_set(int64_t obj, int locked)
 {
-    Packet103 pkt;
-
-    object_locked_set(obj, a2);
+    object_locked_set(obj, locked);
 
     if (tig_net_is_active()) {
+        PacketObjectLock pkt;
+
         pkt.type = 103;
         pkt.oid = sub_407EF0(obj);
-        pkt.field_20 = a2;
+        pkt.locked = locked;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EEC80
-void sub_4EEC80(Packet103* pkt)
+void sub_4EEC80(PacketObjectLock* pkt)
 {
-    object_locked_set(objp_perm_lookup(pkt->oid), pkt->field_20);
+    object_locked_set(objp_perm_lookup(pkt->oid), pkt->locked);
 }
 
 // 0x4EECB0
