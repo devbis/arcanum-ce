@@ -316,7 +316,7 @@ bool area_set_known(int64_t pc_obj, int area)
 
                     area_flags_per_player[player][area] |= 1;
                     area_last_known_area_per_player[player] = area;
-                    sub_4EE230(UI_PRIMARY_BUTTON_WORLDMAP, true, player);
+                    mp_ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true, player);
                 }
                 return true;
             }

@@ -478,20 +478,21 @@ void sub_4EE1D0(int64_t obj)
 }
 
 // 0x4EE230
-void sub_4EE230(UiPrimaryButton btn, bool on, int client_id)
+void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id)
 {
-    Packet100 pkt;
+    if (sub_529520() != client_id) {
+        Packet100 pkt;
 
-    if (sub_529520() == client_id) {
-        ui_toggle_primary_button(btn, on);
+        pkt.type = 100;
+        pkt.subtype = 2;
+        pkt.d.a.field_8 = btn;
+        pkt.d.a.field_C = on;
+        tig_net_send_app(&pkt, sizeof(pkt), client_id);
+
         return;
     }
 
-    pkt.type = 100;
-    pkt.subtype = 2;
-    pkt.d.a.field_8 = btn;
-    pkt.d.a.field_C = on;
-    tig_net_send_app(&pkt, sizeof(pkt), client_id);
+    ui_toggle_primary_button(btn, on);
 }
 
 // 0x4EE290

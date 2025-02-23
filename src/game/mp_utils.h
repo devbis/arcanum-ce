@@ -1156,7 +1156,7 @@ void sub_4EE060(int64_t a1, int64_t a2);
 void sub_4EE0F0(int a1, int64_t a2, int64_t a3);
 void mp_ui_follower_refresh();
 void sub_4EE1D0(int64_t obj);
-void sub_4EE230(UiPrimaryButton btn, bool on, int client_id);
+void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id);
 void sub_4EE290(int64_t obj, int a2, int a3);
 void sub_4EE310(int64_t obj, int64_t a2);
 void sub_4EE3A0(int64_t obj, int64_t a2);
