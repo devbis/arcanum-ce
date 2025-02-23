@@ -2577,7 +2577,7 @@ void MTComponentIdentify_ProcFunc()
         if (obj_type_is_critter(dword_5E75AC)) {
             sub_4EE4C0(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
         } else if (dword_5E75AC == OBJ_TYPE_CONTAINER) {
-            sub_4EE430(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+            mp_ui_show_inven_identify(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
         } else {
             sub_4EE3A0(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
         }

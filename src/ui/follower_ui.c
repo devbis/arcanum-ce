@@ -359,7 +359,7 @@ bool sub_56A9D0(TigMessage* msg)
                             break;
                         case 6:
                             if (sub_575080(qword_67BC20, qword_67BC50)) {
-                                sub_572240(qword_67BC20, qword_67BC50, 1);
+                                inven_ui_open(qword_67BC20, qword_67BC50, INVEN_UI_MODE_BARTER);
                             }
                             break;
                         case 7:

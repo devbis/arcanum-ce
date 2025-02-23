@@ -62,7 +62,7 @@ static_assert(sizeof(S5754C0) == 0x30, "wrong size");
 
 static bool sub_572340();
 static bool inven_ui_message_filter(TigMessage* msg);
-static void sub_574FD0(bool a1);
+static void sub_574FD0(bool next);
 static bool sub_575100(bool* a1);
 static bool sub_575180(bool* a1);
 static void sub_575200(int a1);
@@ -467,16 +467,15 @@ void inven_ui_reset()
 }
 
 // 0x572240
-bool sub_572240(int64_t pc_obj, int64_t target_obj, int mode)
+bool inven_ui_open(int64_t pc_obj, int64_t target_obj, int mode)
 {
-    Packet100 pkt;
-
     if (sub_572340()) {
         return true;
     }
 
-    if (tig_net_is_active()
-        && !tig_net_is_host()) {
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        Packet100 pkt;
+
         pkt.type = 100;
         pkt.subtype = 12;
         sub_4F0640(pc_obj, &(pkt.d.z.field_8));
@@ -1339,12 +1338,12 @@ static inline bool inven_ui_message_filter_handle_button_released(TigMessage* ms
     }
 
     if (msg->data.button.button_handle == inven_ui_cycle_left_btn) {
-        sub_574FD0(0);
+        sub_574FD0(false);
         return true;
     }
 
     if (msg->data.button.button_handle == inven_ui_cycle_right_btn) {
-        sub_574FD0(1);
+        sub_574FD0(true);
         return true;
     }
 
@@ -2031,31 +2030,31 @@ bool inven_ui_message_filter(TigMessage* msg)
 }
 
 // 0x574FD0
-void sub_574FD0(bool a1)
+void sub_574FD0(bool next)
 {
-    int64_t v1;
-    int64_t v2;
+    int64_t follower_obj;
+    int64_t pc_obj;
     int mode;
 
     sub_575770();
 
-    v1 = qword_6813A8;
+    follower_obj = qword_6813A8;
 
-    if (a1) {
+    if (next) {
         do {
-            v1 = critter_follower_next(v1);
-        } while (!sub_575080(inven_ui_pc_obj, v1));
+            follower_obj = critter_follower_next(follower_obj);
+        } while (!sub_575080(inven_ui_pc_obj, follower_obj));
     } else {
         do {
-            v1 = critter_follower_prev(v1);
-        } while (!sub_575080(inven_ui_pc_obj, v1));
+            follower_obj = critter_follower_prev(follower_obj);
+        } while (!sub_575080(inven_ui_pc_obj, follower_obj));
     }
 
-    if (v1 != qword_6813A8) {
-        v2 = inven_ui_pc_obj;
+    if (follower_obj != qword_6813A8) {
+        pc_obj = inven_ui_pc_obj;
         mode = inven_ui_mode;
         inven_ui_destroy();
-        sub_572240(v2, v1, mode);
+        inven_ui_open(pc_obj, follower_obj, mode);
     }
 }
 

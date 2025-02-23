@@ -97,7 +97,7 @@ void sub_5571C0(int64_t obj);
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();
 void sub_557370(int64_t a1, int64_t a2);
-void sub_557670();
+void intgame_there_is_nothing_to_loot();
 void sub_5576B0();
 void sub_557730(int index);
 void sub_557790(int64_t obj);

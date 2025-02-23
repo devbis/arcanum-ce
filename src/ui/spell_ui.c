@@ -190,7 +190,7 @@ bool sub_57BC70(int64_t obj, int spl)
         if (inven_ui_is_created()) {
             v1 = true;
         } else {
-            sub_572240(qword_6834F8, OBJ_HANDLE_NULL, 0);
+            inven_ui_open(qword_6834F8, OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
         }
     } else {
         if (!sub_551A80(0)) {
@@ -238,7 +238,7 @@ bool sub_57BC70(int64_t obj, int spl)
 
     if (v1) {
         if (!inven_ui_is_created()) {
-            sub_572240(qword_6834F8, OBJ_HANDLE_NULL, 0);
+            inven_ui_open(qword_6834F8, OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
         }
     }
 

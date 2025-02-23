@@ -5221,7 +5221,7 @@ void sub_545E80(TigRect* rect)
         sub_463E20(substitute_inventory_obj);
     }
 
-    if (!sub_572240(pc_obj, npc_obj, 1)) {
+    if (!inven_ui_open(pc_obj, npc_obj, INVEN_UI_MODE_BARTER)) {
         sub_5412D0();
         return;
     }

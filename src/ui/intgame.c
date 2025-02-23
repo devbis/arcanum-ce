@@ -1926,7 +1926,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle) {
-                sub_572240(player_get_pc_obj(), OBJ_HANDLE_NULL, 0);
+                inven_ui_open(player_get_pc_obj(), OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
                 return true;
             }
 
@@ -2450,7 +2450,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'I':
         case 'i':
-            sub_572240(player_get_pc_obj(), OBJ_HANDLE_NULL, 0);
+            inven_ui_open(player_get_pc_obj(), OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
             break;
         case 'R':
         case 'r':
@@ -8035,7 +8035,7 @@ void sub_557370(int64_t a1, int64_t a2)
 }
 
 // 0x557670
-void sub_557670()
+void intgame_there_is_nothing_to_loot()
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;

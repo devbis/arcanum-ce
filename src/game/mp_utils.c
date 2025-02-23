@@ -522,7 +522,7 @@ void sub_4EE310(int64_t obj, int64_t a2)
     Packet100 pkt;
 
     if (player_is_pc_obj(obj)) {
-        sub_4602D0(obj, a2);
+        ui_show_inven_loot(obj, a2);
         return;
     }
 
@@ -557,23 +557,23 @@ void sub_4EE3A0(int64_t obj, int64_t a2)
 }
 
 // 0x4EE430
-void sub_4EE430(int64_t obj, int64_t a2)
+void mp_ui_show_inven_identify(int64_t pc_obj, int64_t target_obj)
 {
-    Packet100 pkt;
+    if (!player_is_pc_obj(pc_obj)) {
+        if (tig_net_is_active() && tig_net_is_host()) {
+            Packet100 pkt;
 
-    if (player_is_pc_obj(obj)) {
-        sub_460300(obj, a2);
+            pkt.type = 100;
+            pkt.subtype = 8;
+            sub_4F0640(pc_obj, &(pkt.d.s.field_8));
+            sub_4F0640(pc_obj, &(pkt.d.s.field_20));
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
         return;
     }
 
-    if (tig_net_is_active()
-        && tig_net_is_host()) {
-        pkt.type = 100;
-        pkt.subtype = 8;
-        sub_4F0640(obj, &(pkt.d.s.field_8));
-        sub_4F0640(obj, &(pkt.d.s.field_20));
-        tig_net_send_app_all(&pkt, sizeof(pkt));
-    }
+    ui_show_inven_identify(pc_obj, target_obj);
 }
 
 // 0x4EE4C0
@@ -597,23 +597,23 @@ void sub_4EE4C0(int64_t obj, int64_t a2)
 }
 
 // 0x4EE550
-void sub_4EE550(int64_t obj, int64_t a2)
+void mp_ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj)
 {
-    Packet100 pkt;
+    if (!player_is_pc_obj(pc_obj)) {
+        if (tig_net_is_active() && tig_net_is_host()) {
+            Packet100 pkt;
 
-    if (player_is_pc_obj(obj)) {
-        sub_460DE0(obj, a2);
+            pkt.type = 100;
+            pkt.subtype = 9;
+            sub_4F0640(pc_obj, &(pkt.d.s.field_8));
+            sub_4F0640(pc_obj, &(pkt.d.s.field_20));
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
         return;
     }
 
-    if (tig_net_is_active()
-        && tig_net_is_host()) {
-        pkt.type = 100;
-        pkt.subtype = 9;
-        sub_4F0640(obj, &(pkt.d.s.field_8));
-        sub_4F0640(obj, &(pkt.d.s.field_20));
-        tig_net_send_app_all(&pkt, sizeof(pkt));
-    }
+    ui_show_inven_npc_identify(pc_obj, target_obj);
 }
 
 // 0x4EE5E0
@@ -652,7 +652,7 @@ void sub_4EE5E0(Packet100* pkt)
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
         if (player_is_pc_obj(v1)) {
-            sub_4602D0(v1, v2);
+            ui_show_inven_loot(v1, v2);
         }
         break;
     case 7:
@@ -666,14 +666,14 @@ void sub_4EE5E0(Packet100* pkt)
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
         if (player_is_pc_obj(v1)) {
-            sub_460300(v1, v2);
+            ui_show_inven_identify(v1, v2);
         }
         break;
     case 9:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
         if (player_is_pc_obj(v1)) {
-            sub_460DE0(v1, v2);
+            ui_show_inven_npc_identify(v1, v2);
         }
         break;
     case 10:

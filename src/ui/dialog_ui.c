@@ -484,7 +484,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 3:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 1);
+            inven_ui_open(entry->field_8.pc_obj, entry->field_8.npc_obj, INVEN_UI_MODE_BARTER);
         }
         if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
@@ -520,7 +520,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 8:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_4EE550(entry->field_8.pc_obj, entry->field_8.npc_obj);
+            mp_ui_show_inven_npc_identify(entry->field_8.pc_obj, entry->field_8.npc_obj);
         }
         if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
@@ -529,7 +529,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 9:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 6);
+            inven_ui_open(entry->field_8.pc_obj, entry->field_8.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
         }
         if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
@@ -634,7 +634,7 @@ bool sub_568280(DialogUiEntry *a1)
     case 3:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 1);
+            inven_ui_open(a1->field_8.pc_obj, a1->field_8.npc_obj, INVEN_UI_MODE_BARTER);
         }
         break;
     case 5:
@@ -658,13 +658,13 @@ bool sub_568280(DialogUiEntry *a1)
     case 8:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_4EE550(a1->field_8.pc_obj, a1->field_8.npc_obj);
+            mp_ui_show_inven_npc_identify(a1->field_8.pc_obj, a1->field_8.npc_obj);
         }
         break;
     case 9:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 6);
+            inven_ui_open(a1->field_8.pc_obj, a1->field_8.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
         }
         break;
     }

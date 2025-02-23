@@ -38,9 +38,9 @@
 static void sub_57CAE0();
 static void sub_57CAB0(long long obj);
 static void sub_57CAF0(long long obj);
-static void sub_57CB10(long long a1, long long a2);
-static void sub_57CB80(long long a1, long long a2);
-static void sub_57CBC0(long long a1, long long a2);
+static void show_inven_loot(int64_t pc_obj, int64_t target_obj);
+static void show_inven_identify(int64_t pc_obj, int64_t target_obj);
+static void show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 static void sub_57CBE0(char* str);
 static void sub_57CC10(long long obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
@@ -80,8 +80,8 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_10 = sub_5571C0;
     callbacks.field_18 = sub_5570A0;
     callbacks.field_1C = sub_5570D0;
-    callbacks.field_20 = sub_57CB10;
-    callbacks.field_24 = sub_57CB80;
+    callbacks.show_inven_loot = show_inven_loot;
+    callbacks.show_inven_identify = show_inven_identify;
     callbacks.field_28 = tech_ui_adjust_degree;
     callbacks.field_2C = skill_ui_preprocess;
     callbacks.field_30 = sub_57A320;
@@ -152,7 +152,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_154 = sub_5826B0;
     callbacks.field_158 = sub_582690;
     callbacks.field_15C = sub_5826C0;
-    callbacks.field_160 = sub_57CBC0;
+    callbacks.show_inven_npc_identify = show_inven_npc_identify;
     callbacks.field_164 = sub_55F360;
     callbacks.field_168 = sub_55F450;
     callbacks.field_16C = sub_55F5F0;
@@ -197,33 +197,33 @@ void sub_57CAF0(long long obj)
 }
 
 // 0x57CB10
-void sub_57CB10(long long a1, long long a2)
+void show_inven_loot(int64_t pc_obj, int64_t target_obj)
 {
-    int type;
-
-    if ((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & 0x10000) == 0) {
-        type = obj_field_int32_get(a2, OBJ_F_TYPE);
-        if ((type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC)
-            && obj_field_int32_get(a2, OBJ_F_CRITTER_INVENTORY_NUM) == 0) {
-            sub_557670();
-        } else {
-            sub_572240(a1, a2, 2);
-        }
+    if ((obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return;
     }
+
+    if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
+        && obj_field_int32_get(target_obj, OBJ_F_CRITTER_INVENTORY_NUM) == 0) {
+        intgame_there_is_nothing_to_loot();
+        return;
+    }
+
+    inven_ui_open(pc_obj, target_obj, INVEN_UI_MODE_LOOT);
 }
 
 // 0x57CB80
-void sub_57CB80(long long a1, long long a2)
+void show_inven_identify(int64_t pc_obj, int64_t target_obj)
 {
-    if (player_is_pc_obj(a1)) {
-        sub_572240(a1, a2, 4);
+    if (player_is_pc_obj(pc_obj)) {
+        inven_ui_open(pc_obj, target_obj, INVEN_UI_MODE_IDENTIFY);
     }
 }
 
 // 0x57CBC0
-void sub_57CBC0(long long a1, long long a2)
+void show_inven_npc_identify(int64_t pc_obj, int64_t target_obj)
 {
-    sub_572240(a1, a2, 5);
+    inven_ui_open(pc_obj, target_obj, INVEN_UI_MODE_NPC_IDENTIFY);
 }
 
 // 0x57CBE0

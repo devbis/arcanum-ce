@@ -99,18 +99,18 @@ void sub_4602A0(int64_t obj, int a3, int a4)
 }
 
 // 0x4602D0
-void sub_4602D0(long long a1, long long a2)
+void ui_show_inven_loot(int64_t pc_obj, int64_t target_obj)
 {
-    if (ui_callbacks.field_20 != NULL) {
-        ui_callbacks.field_20(a1, a2);
+    if (ui_callbacks.show_inven_loot != NULL) {
+        ui_callbacks.show_inven_loot(pc_obj, target_obj);
     }
 }
 
 // 0x460300
-void sub_460300(int64_t a1, int64_t a2)
+void ui_show_inven_identify(int64_t pc_obj, int64_t target_obj)
 {
-    if (ui_callbacks.field_24 != NULL) {
-        ui_callbacks.field_24(a1, a2);
+    if (ui_callbacks.show_inven_identify != NULL) {
+        ui_callbacks.show_inven_identify(pc_obj, target_obj);
     }
 }
 
@@ -752,10 +752,10 @@ void sub_460DD0()
 }
 
 // 0x460DE0
-void sub_460DE0(int64_t a1, int64_t a2)
+void ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj)
 {
-    if (ui_callbacks.field_160 != NULL) {
-        ui_callbacks.field_160(a1, a2);
+    if (ui_callbacks.show_inven_npc_identify != NULL) {
+        ui_callbacks.show_inven_npc_identify(pc_obj, target_obj);
     }
 }
 

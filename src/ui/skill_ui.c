@@ -211,7 +211,7 @@ void skill_ui_preprocess(int64_t obj, int type)
         }
 
         if (!inven_ui_is_created()) {
-            sub_572240(obj, OBJ_HANDLE_NULL, 0);
+            inven_ui_open(obj, OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
         }
         break;
     default:
@@ -297,7 +297,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
                     if (sub_441980(obj, a1->obj, obj, SAP_USE, 0)
                         && (spell_flags & OSF_POLYMORPHED) == 0
                         && !sub_423300(a1->obj, 0)) {
-                        sub_4602D0(obj, a1->obj);
+                        ui_show_inven_loot(obj, a1->obj);
                     }
                 } else {
                     sub_57A710(obj, a1->obj);
@@ -395,13 +395,15 @@ char* sub_57A700(int index)
 }
 
 // 0x57A710
-bool sub_57A710(int64_t a1, int64_t a2)
+bool sub_57A710(int64_t pc_obj, int64_t target_obj)
 {
-    int type;
+    int mode;
 
-    if (a1 != a2) {
-        type = obj_field_int32_get(a2, OBJ_F_TYPE);
-        sub_572240(a1, a2, type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC ? 3 : 2);
+    if (pc_obj != target_obj) {
+        mode = obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
+            ? INVEN_UI_MODE_STEAL
+            : INVEN_UI_MODE_LOOT;
+        inven_ui_open(pc_obj, target_obj, mode);
     }
 
     return true;
