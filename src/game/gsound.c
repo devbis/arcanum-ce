@@ -81,7 +81,7 @@ static int dword_5D1A30[TWO];
 static int dword_5D1A38[TWO];
 
 // 0x5D1A40
-static mes_file_handle_t dword_5D1A40;
+static mes_file_handle_t gsound_scheme_list_mes_file;
 
 // 0x5D1A44
 static int gsound_music_volume;
@@ -99,7 +99,7 @@ static int64_t qword_5D1A50;
 static int64_t qword_5D1A58;
 
 // 0x5D1A68
-static mes_file_handle_t* dword_5D1A68;
+static mes_file_handle_t* gsound_sfx_mes_files;
 
 // 0x5D1A60
 static int64_t qword_5D1A60;
@@ -117,7 +117,7 @@ static int64_t sound_minimum_radius[TIG_SOUND_SIZE_COUNT];
 static SoundSchemeList stru_5D1A98[TWO];
 
 // 0x5D5480
-static mes_file_handle_t dword_5D5480;
+static mes_file_handle_t gsound_scheme_index_mes_file;
 
 // 0x5D5484
 static int dword_5D5484[TWO];
@@ -132,7 +132,7 @@ static tig_timestamp_t dword_5D548C;
 static int dword_5D5594;
 
 // 0x5D5598
-static mes_file_handle_t dword_5D5598;
+static mes_file_handle_t gsound_snd_user_mes_file;
 
 // 0x5D559C
 static int gsound_effects_volume;
@@ -141,7 +141,7 @@ static int gsound_effects_volume;
 static int sound_maximum_volume[TIG_SOUND_SIZE_COUNT];
 
 // 0x5D55B0
-static int dword_5D55B0;
+static int gsound_sfx_mes_files_count;
 
 // 0x5D55B8
 static int64_t sound_maximum_radius[TIG_SOUND_SIZE_COUNT];
@@ -167,15 +167,15 @@ int gsound_resolve_path(int sound_id, char* path)
     if (gsound_initialized) {
         mes_file_entry.num = sound_id;
 
-        for (index = 0; index < dword_5D55B0; index++) {
-            if (mes_search(dword_5D1A68[index], &mes_file_entry)) {
+        for (index = 0; index < gsound_sfx_mes_files_count; index++) {
+            if (mes_search(gsound_sfx_mes_files[index], &mes_file_entry)) {
                 sprintf(path, "%s%s", gsound_base_sound_path, mes_file_entry.str);
                 return TIG_OK;
             }
         }
 
-        if (dword_5D5598 != MES_FILE_HANDLE_INVALID) {
-            if (mes_search(dword_5D5598, &mes_file_entry)) {
+        if (gsound_snd_user_mes_file != MES_FILE_HANDLE_INVALID) {
+            if (mes_search(gsound_snd_user_mes_file, &mes_file_entry)) {
                 sprintf(path, "%s%s", gsound_base_sound_path, mes_file_entry.str);
                 return TIG_OK;
             }
@@ -197,24 +197,24 @@ bool gsound_init(GameInitInfo* init_info)
     (void)init_info;
 
     mes_load(gsound_build_sound_path("snd_00index.mes"), &tmp_mes_file);
-    dword_5D55B0 = mes_num_entries(tmp_mes_file);
-    if (dword_5D55B0 == 0) {
+    gsound_sfx_mes_files_count = mes_num_entries(tmp_mes_file);
+    if (gsound_sfx_mes_files_count == 0) {
         return false;
     }
 
-    dword_5D1A68 = CALLOC(dword_5D55B0, sizeof(*dword_5D1A68));
+    gsound_sfx_mes_files = (mes_file_handle_t*)CALLOC(gsound_sfx_mes_files_count, sizeof(*gsound_sfx_mes_files));
 
     mes_file_entry.num = 0;
-    for (index = 0; index < dword_5D55B0; index++) {
-        dword_5D1A68[index] = MES_FILE_HANDLE_INVALID;
+    for (index = 0; index < gsound_sfx_mes_files_count; index++) {
+        gsound_sfx_mes_files[index] = MES_FILE_HANDLE_INVALID;
         mes_find_next(tmp_mes_file, &mes_file_entry);
-        mes_load(gsound_build_sound_path(mes_file_entry.str), &(dword_5D1A68[index]));
+        mes_load(gsound_build_sound_path(mes_file_entry.str), &(gsound_sfx_mes_files[index]));
     }
 
     mes_unload(tmp_mes_file);
 
-    mes_load(gsound_build_sound_path("SchemeIndex.mes"), &dword_5D5480);
-    mes_load(gsound_build_sound_path("SchemeList.mes"), &dword_5D1A40);
+    mes_load(gsound_build_sound_path("SchemeIndex.mes"), &gsound_scheme_index_mes_file);
+    mes_load(gsound_build_sound_path("SchemeList.mes"), &gsound_scheme_list_mes_file);
 
     for (index = 0; index < 2; index++) {
         sub_41AFB0(&(stru_5D1A98[index]));
@@ -370,17 +370,17 @@ void gsound_exit()
 
     gsound_initialized = false;
 
-    for (index = 0; index < dword_5D55B0; index++) {
-        mes_unload(dword_5D1A68[index]);
+    for (index = 0; index < gsound_sfx_mes_files_count; index++) {
+        mes_unload(gsound_sfx_mes_files[index]);
     }
 
-    FREE(dword_5D1A68);
-    dword_5D1A68 = NULL;
+    FREE(gsound_sfx_mes_files);
+    gsound_sfx_mes_files = NULL;
 
-    dword_5D55B0 = 0;
+    gsound_sfx_mes_files_count = 0;
 
-    mes_unload(dword_5D5480);
-    mes_unload(dword_5D1A40);
+    mes_unload(gsound_scheme_index_mes_file);
+    mes_unload(gsound_scheme_list_mes_file);
 }
 
 // 0x41B060
@@ -397,15 +397,15 @@ void gsound_reset()
 // 0x41B0A0
 bool gsound_mod_load()
 {
-    mes_load(gsound_build_sound_path("snd_user.mes"), &dword_5D5598);
+    mes_load(gsound_build_sound_path("snd_user.mes"), &gsound_snd_user_mes_file);
     return true;
 }
 
 // 0x41B0D0
 void gsound_mod_unload()
 {
-    mes_unload(dword_5D5598);
-    dword_5D5598 = MES_FILE_HANDLE_INVALID;
+    mes_unload(gsound_snd_user_mes_file);
+    gsound_snd_user_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
 // 0x41B0F0
@@ -928,7 +928,7 @@ void sub_41BE20(int num)
     scheme->field_4 = num;
 
     mes_file_entry.num = num;
-    if (!mes_search(dword_5D5480, &mes_file_entry)) {
+    if (!mes_search(gsound_scheme_index_mes_file, &mes_file_entry)) {
         return;
     }
 
@@ -942,7 +942,7 @@ void sub_41BE20(int num)
 
     for (index = 0; index < 100; index++) {
         mes_file_entry.num = scheme->field_0 + index;
-        if (mes_search(dword_5D1A40, &mes_file_entry)) {
+        if (mes_search(gsound_scheme_list_mes_file, &mes_file_entry)) {
             sound = sub_41BF70(scheme, mes_file_entry.str);
             if (sound != NULL) {
                 if (sound->field_0
