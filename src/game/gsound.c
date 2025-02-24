@@ -1319,7 +1319,7 @@ void gsound_listener_set(int64_t loc)
 }
 
 // 0x41C780
-void sub_41C780(tig_sound_handle_t sound_handle, int64_t location)
+void gsound_move(tig_sound_handle_t sound_handle, int64_t location)
 {
     int64_t x;
     int64_t y;

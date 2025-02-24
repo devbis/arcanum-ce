@@ -12265,7 +12265,7 @@ void sub_4319F0(AnimRunInfo* run_info, int64_t obj)
     if (goal_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID
         && (run_info->flags & 0x20000) == 0
         && (goal_data->params[AGDATA_FLAGS_DATA].data & 0x80000000) != 0) {
-        sub_41C780(goal_data->params[AGDATA_SOUND_HANDLE].data, obj_field_int64_get(obj, OBJ_F_LOCATION));
+        gsound_move(goal_data->params[AGDATA_SOUND_HANDLE].data, obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
 }
 
