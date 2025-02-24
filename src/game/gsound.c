@@ -57,7 +57,7 @@ static Sound* sub_41BF70(SoundScheme* scheme, const char* path);
 static void sub_41C260(char* str);
 static void sub_41C290(const char* str, const char* key, int* value1, int* value2);
 static void set_listener_xy(int64_t x, int64_t y);
-static void gsound_set_defaults(int min_radius, int max_radius, int a3, int a4);
+static void gsound_set_defaults(int min_radius, int max_radius, int min_pan_distance, int max_pan_distance);
 static int gsound_effects_volume_get();
 static void gsound_effects_volume_changed();
 static int gsound_voice_volume_get();
@@ -73,7 +73,7 @@ static const char* gsound_base_sound_path = "sound\\";
 static int gsound_voice_volume;
 
 // 0x5D1A20
-static int64_t qword_5D1A20;
+static int64_t sound_maximum_pan_distance;
 
 // 0x5D1A28
 static int64_t qword_5D1A28;
@@ -106,7 +106,7 @@ static int64_t gsound_listener_y;
 static mes_file_handle_t* gsound_sfx_mes_files;
 
 // 0x5D1A60
-static int64_t qword_5D1A60;
+static int64_t sound_minimum_pan_distance;
 
 // 0x5D1A6C
 static bool gsound_initialized;
@@ -250,13 +250,13 @@ bool gsound_init(GameInitInfo* init_info)
 
         mes_file_entry.num = 3;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
-            qword_5D1A60 = atoi(mes_file_entry.str);
+            sound_minimum_pan_distance = atoi(mes_file_entry.str);
             cnt++;
         }
 
         mes_file_entry.num = 4;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
-            qword_5D1A20 = atoi(mes_file_entry.str);
+            sound_maximum_pan_distance = atoi(mes_file_entry.str);
             cnt++;
         }
 
@@ -555,12 +555,13 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
     int extra_volume = 64;
     int volume = 127;
     int64_t distance;
-    int64_t v1;
+    int64_t dx;
 
     distance = (int64_t)sqrt((double)((x - gsound_listener_x) * (x - gsound_listener_x) + 2 * (y - gsound_listener_y) * 2 * (y - gsound_listener_y)));
-    v1 = x - gsound_listener_x;
-    if (v1 < 0) {
-        v1 = gsound_listener_x - x;
+
+    dx = x - gsound_listener_x;
+    if (dx < 0) {
+        dx = gsound_listener_x - x;
     }
 
     if (distance < sound_minimum_radius[size]) {
@@ -578,10 +579,10 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
     }
 
     if (x < gsound_listener_x) {
-        if (v1 > qword_5D1A20) {
+        if (dx > sound_maximum_pan_distance) {
             extra_volume = 0;
-        } else if (v1 > qword_5D1A60) {
-            extra_volume = (int)(64 * (qword_5D1A60 - v1) / (qword_5D1A20 - qword_5D1A60)) + 64;
+        } else if (dx > sound_minimum_pan_distance) {
+            extra_volume = (int)(64 * (sound_minimum_pan_distance - dx) / (sound_maximum_pan_distance - sound_minimum_pan_distance)) + 64;
             if (extra_volume < 0) {
                 extra_volume = 0;
             } else if (extra_volume > 127) {
@@ -591,10 +592,10 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
     }
 
     if (x > gsound_listener_x) {
-        if (v1 > qword_5D1A20) {
+        if (dx > sound_maximum_pan_distance) {
             extra_volume = 127;
-        } else if (v1 > qword_5D1A60) {
-            extra_volume = (int)(64 * (v1 - qword_5D1A60) / (qword_5D1A20 - qword_5D1A60)) + 64;
+        } else if (dx > sound_minimum_pan_distance) {
+            extra_volume = (int)(64 * (dx - sound_minimum_pan_distance) / (sound_maximum_pan_distance - sound_minimum_pan_distance)) + 64;
             if (extra_volume < 0) {
                 extra_volume = 0;
             } else if (extra_volume > 127) {
@@ -1342,7 +1343,7 @@ void gsound_move(tig_sound_handle_t sound_handle, int64_t location)
 }
 
 // 0x41C850
-void gsound_set_defaults(int min_radius, int max_radius, int a3, int a4)
+void gsound_set_defaults(int min_radius, int max_radius, int min_pan_distance, int max_pan_distance)
 {
     if (!gsound_initialized) {
         return;
@@ -1350,8 +1351,8 @@ void gsound_set_defaults(int min_radius, int max_radius, int a3, int a4)
 
     sound_minimum_radius[TIG_SOUND_SIZE_LARGE] = min_radius;
     sound_maximum_radius[TIG_SOUND_SIZE_LARGE] = max_radius;
-    qword_5D1A60 = a3;
-    qword_5D1A20 = a4;
+    sound_minimum_pan_distance = min_pan_distance;
+    sound_maximum_pan_distance = max_pan_distance;
 
     sub_41B3A0();
 }
