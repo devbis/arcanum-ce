@@ -11,10 +11,10 @@
 #define TWO 2
 #define TWENTY_FIVE 25
 
-typedef struct SoundScheme {
-    /* 0000 */ uint8_t field_0;
-    /* 0001 */ uint8_t field_1;
-    /* 0002 */ uint8_t field_2;
+typedef struct Sound {
+    /* 0000 */ bool song;
+    /* 0001 */ bool loop;
+    /* 0002 */ bool over;
     /* 0004 */ int frequency;
     /* 0008 */ int time_start;
     /* 000C */ int time_end;
@@ -24,16 +24,16 @@ typedef struct SoundScheme {
     /* 001C */ int volume_max;
     /* 0020 */ tig_sound_handle_t sound_handle;
     /* 0024 */ char path[TIG_MAX_PATH];
-} SoundScheme;
+} Sound;
 
 // See 0x41BF70.
-static_assert(sizeof(SoundScheme) == 0x128, "wrong size");
+static_assert(sizeof(Sound) == 0x128, "wrong size");
 
 typedef struct SoundSchemeList {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
     /* 0008 */ int field_8;
-    /* 000C */ SoundScheme field_C[TWENTY_FIVE];
+    /* 000C */ Sound field_C[TWENTY_FIVE];
 } SoundSchemeList;
 
 static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
@@ -49,7 +49,7 @@ static void sub_41BAF0();
 static void sub_41BCD0(const char* name, char* buffer);
 static bool sub_41BD10(int a1, int* a2);
 static void sub_41BE20(int num);
-static SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path);
+static Sound* sub_41BF70(SoundSchemeList* a1, const char* path);
 static void sub_41C260(char* str);
 static void sub_41C290(const char* str, const char* key, int* value1, int* value2);
 static void sub_41C690(int64_t a1, int64_t a2);
@@ -720,7 +720,7 @@ TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
 void sub_41BA20(int fade_duration, int index)
 {
     SoundSchemeList* scheme;
-    SoundScheme* sound;
+    Sound* sound;
     int snd;
 
     scheme = &(stru_5D1A98[index]);
@@ -731,7 +731,7 @@ void sub_41BA20(int fade_duration, int index)
 
         for (snd = 0; snd < TWENTY_FIVE; snd++) {
             sound = &(scheme->field_C[snd]);
-            if (sound->field_0) {
+            if (sound->song) {
                 if (sound->sound_handle != TIG_SOUND_HANDLE_INVALID) {
                     tig_sound_stop(sound->sound_handle, fade_duration);
                     sound->sound_handle = TIG_SOUND_HANDLE_INVALID;
@@ -773,7 +773,7 @@ void sub_41BAF0()
     int list_idx;
     SoundSchemeList* list;
     int scheme_idx;
-    SoundScheme* scheme;
+    Sound* sound;
     char path[TIG_MAX_PATH];
     int volume;
     int extra_volume;
@@ -783,47 +783,47 @@ void sub_41BAF0()
     for (list_idx = 0; list_idx < TWO; list_idx++) {
         list = &(stru_5D1A98[list_idx]);
         for (scheme_idx = 0; scheme_idx < list->field_8; scheme_idx++) {
-            scheme = &(list->field_C[scheme_idx]);
-            if (!scheme->field_0) {
-                if (hour >= scheme->time_start
-                    && hour <= scheme->time_end
-                    && random_between(0, 999) < scheme->frequency) {
-                    sub_41BCD0(scheme->path, path);
-                    if (scheme->volume_max > scheme->volume_min) {
-                        volume = scheme->volume_min
-                            + random_between(0, scheme->volume_max - scheme->volume_min - 1);
+            sound = &(list->field_C[scheme_idx]);
+            if (!sound->song) {
+                if (hour >= sound->time_start
+                    && hour <= sound->time_end
+                    && random_between(0, 999) < sound->frequency) {
+                    sub_41BCD0(sound->path, path);
+                    if (sound->volume_max > sound->volume_min) {
+                        volume = sound->volume_min
+                            + random_between(0, sound->volume_max - sound->volume_min - 1);
                     } else {
-                        volume = scheme->volume_min;
+                        volume = sound->volume_min;
                     }
 
-                    if (scheme->balance_right > scheme->balance_left) {
-                        extra_volume = scheme->balance_left
-                            + random_between(0, scheme->balance_right - scheme->balance_left - 1);
+                    if (sound->balance_right > sound->balance_left) {
+                        extra_volume = sound->balance_left
+                            + random_between(0, sound->balance_right - sound->balance_left - 1);
                     } else {
-                        extra_volume = scheme->balance_left;
+                        extra_volume = sound->balance_left;
                     }
 
                     gsound_play_sfx(path, 1, volume, extra_volume, 0);
                 }
-            } else if (scheme->field_2) {
-                if (!tig_sound_is_playing(scheme->sound_handle)) {
+            } else if (sound->over) {
+                if (!tig_sound_is_playing(sound->sound_handle)) {
                     if (dword_5D5594) {
                         gsound_play_scheme(dword_5D1A38[0], dword_5D1A38[1]);
                         dword_5D5594 = false;
                     }
                 }
-            } else if (scheme->field_1) {
-                if (hour < scheme->time_start || hour > scheme->time_end) {
-                    if (scheme->sound_handle != TIG_SOUND_HANDLE_INVALID) {
-                        tig_sound_stop(scheme->sound_handle, 25);
-                        scheme->sound_handle = TIG_SOUND_HANDLE_INVALID;
+            } else if (sound->loop) {
+                if (hour < sound->time_start || hour > sound->time_end) {
+                    if (sound->sound_handle != TIG_SOUND_HANDLE_INVALID) {
+                        tig_sound_stop(sound->sound_handle, 25);
+                        sound->sound_handle = TIG_SOUND_HANDLE_INVALID;
                     }
                 } else {
-                    if (scheme->sound_handle == TIG_SOUND_HANDLE_INVALID) {
-                        sub_41BCD0(scheme->path, path);
-                        tig_sound_create(&(scheme->sound_handle), TIG_SOUND_TYPE_MUSIC);
-                        tig_sound_set_volume(scheme->sound_handle, gsound_music_volume * (scheme->volume_min) / 100);
-                        tig_sound_play_streamed_indefinitely(scheme->sound_handle, path, 25, TIG_SOUND_HANDLE_INVALID);
+                    if (sound->sound_handle == TIG_SOUND_HANDLE_INVALID) {
+                        sub_41BCD0(sound->path, path);
+                        tig_sound_create(&(sound->sound_handle), TIG_SOUND_TYPE_MUSIC);
+                        tig_sound_set_volume(sound->sound_handle, gsound_music_volume * (sound->volume_min) / 100);
+                        tig_sound_play_streamed_indefinitely(sound->sound_handle, path, 25, TIG_SOUND_HANDLE_INVALID);
                     }
                 }
             }
@@ -905,7 +905,7 @@ void sub_41BE20(int num)
     int index;
     MesFileEntry mes_file_entry;
     char* hash;
-    SoundScheme* sound;
+    Sound* sound;
     char path[TIG_MAX_PATH];
 
     if (num == 0) {
@@ -945,15 +945,15 @@ void sub_41BE20(int num)
         if (mes_search(gsound_scheme_list_mes_file, &mes_file_entry)) {
             sound = sub_41BF70(scheme, mes_file_entry.str);
             if (sound != NULL) {
-                if (sound->field_0
-                    && !sound->field_1) {
+                if (sound->song
+                    && !sound->loop) {
                     sub_41BCD0(sound->path, path);
                     tig_sound_create(&(sound->sound_handle), TIG_SOUND_TYPE_MUSIC);
                     tig_sound_set_volume(sound->sound_handle, gsound_music_volume * sound->volume_min / 100);
                     tig_sound_play_streamed_once(sound->sound_handle, path, 25, TIG_SOUND_HANDLE_INVALID);
                 }
 
-                if (sound->field_2) {
+                if (sound->over) {
                     dword_5D5594 = true;
                 }
             }
@@ -962,9 +962,9 @@ void sub_41BE20(int num)
 }
 
 // 0x41BF70
-SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
+Sound* sub_41BF70(SoundSchemeList* a1, const char* path)
 {
-    SoundScheme* scheme = NULL;
+    Sound* sound = NULL;
     char* copy;
     char* pch;
     int v1;
@@ -973,20 +973,20 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
     copy = STRDUP(path);
     if (copy != NULL) {
         if (a1->field_8 < TWENTY_FIVE) {
-            scheme = &(a1->field_C[a1->field_8++]);
-            memset(scheme, 0, sizeof(*scheme));
-            scheme->field_0 = 0;
-            scheme->field_1 = 0;
-            scheme->field_2 = 0;
-            scheme->balance_left = 50;
-            scheme->balance_right = 50;
-            scheme->frequency = 5;
-            scheme->time_start = 0;
-            scheme->time_end = 23;
-            scheme->volume_min = 100;
-            scheme->volume_max = 100;
-            scheme->sound_handle = TIG_SOUND_HANDLE_INVALID;
-            scheme->path[0] = '\0';
+            sound = &(a1->field_C[a1->field_8++]);
+            memset(sound, 0, sizeof(*sound));
+            sound->song = false;
+            sound->loop = false;
+            sound->over = false;
+            sound->balance_left = 50;
+            sound->balance_right = 50;
+            sound->frequency = 5;
+            sound->time_start = 0;
+            sound->time_end = 23;
+            sound->volume_min = 100;
+            sound->volume_max = 100;
+            sound->sound_handle = TIG_SOUND_HANDLE_INVALID;
+            sound->path[0] = '\0';
             sub_41C260(copy);
 
             pch = strchr(copy, ' ');
@@ -994,36 +994,36 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
                 *pch++ = '\0';
             }
 
-            strcpy(scheme->path, copy);
+            strcpy(sound->path, copy);
 
             if (pch != NULL) {
-                sub_41C290(pch, "/vol:", &(scheme->volume_min), &(scheme->volume_max));
+                sub_41C290(pch, "/vol:", &(sound->volume_min), &(sound->volume_max));
 
                 if (strstr(pch, "/loop") != NULL || strstr(pch, "/anchor") != NULL || strstr(pch, "/over") != NULL) {
-                    scheme->field_0 = 1;
+                    sound->song = true;
 
                     if (strstr(pch, "/over") != NULL) {
-                        scheme->field_2 = 1;
+                        sound->over = true;
                     }
 
                     if (strstr(pch, "/loop") != NULL) {
-                        scheme->field_1 = 1;
-                        sub_41C290(pch, "/time:", &(scheme->time_start), &(scheme->time_end));
+                        sound->loop = true;
+                        sub_41C290(pch, "/time:", &(sound->time_start), &(sound->time_end));
                     }
                 } else {
-                    sub_41C290(pch, "/freq:", &(scheme->frequency), NULL);
-                    sub_41C290(pch, "/time:", &(scheme->time_start), &(scheme->time_end));
-                    sub_41C290(pch, "/bal:", &(scheme->balance_left), &(scheme->balance_right));
+                    sub_41C290(pch, "/freq:", &(sound->frequency), NULL);
+                    sub_41C290(pch, "/time:", &(sound->time_start), &(sound->time_end));
+                    sub_41C290(pch, "/bal:", &(sound->balance_left), &(sound->balance_right));
 
                     v1 = -1;
                     v2 = -1;
                     sub_41C290(pch, "/scatter:", &v1, &v2);
 
                     if (v1 >= 0) {
-                        scheme->volume_max = 100;
-                        scheme->volume_min = 100 - v1;
-                        scheme->balance_left = 50 - v1 / 2;
-                        scheme->balance_right = 50 + v1 / 2;
+                        sound->volume_max = 100;
+                        sound->volume_min = 100 - v1;
+                        sound->balance_left = 50 - v1 / 2;
+                        sound->balance_right = 50 + v1 / 2;
                     }
                 }
             }
@@ -1031,56 +1031,56 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
 
         FREE(copy);
 
-        if (scheme->volume_max < scheme->volume_min) {
-            scheme->volume_max = scheme->volume_min;
+        if (sound->volume_max < sound->volume_min) {
+            sound->volume_max = sound->volume_min;
         }
 
-        if (scheme->balance_right < scheme->balance_left) {
-            scheme->balance_right = scheme->balance_left;
+        if (sound->balance_right < sound->balance_left) {
+            sound->balance_right = sound->balance_left;
         }
 
         // TODO: Strange 64-bit math, check.
-        scheme->volume_min = 127 * scheme->volume_min / 100;
-        scheme->volume_max = 127 * scheme->volume_max / 100;
-        scheme->balance_left = 127 * scheme->balance_left / 100;
-        scheme->balance_right = 127 * scheme->balance_right / 100;
+        sound->volume_min = 127 * sound->volume_min / 100;
+        sound->volume_max = 127 * sound->volume_max / 100;
+        sound->balance_left = 127 * sound->balance_left / 100;
+        sound->balance_right = 127 * sound->balance_right / 100;
 
-        if (scheme->volume_min < 0) {
-            scheme->volume_min = 0;
+        if (sound->volume_min < 0) {
+            sound->volume_min = 0;
         }
 
-        if (scheme->volume_min > 127) {
-            scheme->volume_min = 127;
+        if (sound->volume_min > 127) {
+            sound->volume_min = 127;
         }
 
-        if (scheme->volume_max < 0) {
-            scheme->volume_max = 0;
+        if (sound->volume_max < 0) {
+            sound->volume_max = 0;
         }
 
-        if (scheme->volume_max > 127) {
-            scheme->volume_max = 127;
+        if (sound->volume_max > 127) {
+            sound->volume_max = 127;
         }
 
-        if (scheme->balance_left < 0) {
-            scheme->balance_left = 0;
-        }
-
-        // FIXME: Looks wrong, max balance should be 100.
-        if (scheme->balance_left > 127) {
-            scheme->balance_left = 0;
-        }
-
-        if (scheme->balance_right < 0) {
-            scheme->balance_right = 0;
+        if (sound->balance_left < 0) {
+            sound->balance_left = 0;
         }
 
         // FIXME: Looks wrong, max balance should be 100.
-        if (scheme->balance_right > 127) {
-            scheme->balance_right = 127;
+        if (sound->balance_left > 127) {
+            sound->balance_left = 0;
+        }
+
+        if (sound->balance_right < 0) {
+            sound->balance_right = 0;
+        }
+
+        // FIXME: Looks wrong, max balance should be 100.
+        if (sound->balance_right > 127) {
+            sound->balance_right = 127;
         }
     }
 
-    return scheme;
+    return sound;
 }
 
 // 0x41C260
