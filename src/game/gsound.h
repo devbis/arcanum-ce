@@ -31,8 +31,8 @@ tig_sound_handle_t gsound_play_music_once(const char* path, int fade_duration);
 tig_sound_handle_t gsound_play_music_indefinitely(const char* path, int fade_duration);
 void gsound_start_combat_music(int64_t obj);
 void gsound_stop_combat_music(int64_t obj);
-void sub_41C610();
-void sub_41C660();
+void gsound_lock();
+void gsound_unlock();
 void sub_41C6D0(int64_t location);
 void sub_41C780(tig_sound_handle_t sound_handle, int64_t location);
 

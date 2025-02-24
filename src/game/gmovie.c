@@ -49,7 +49,7 @@ void gmovie_play_path(const char* path, unsigned int flags, int sound_track)
     unsigned int movie_flags;
 
     if (tig_file_extract(path, temp_path)) {
-        sub_41C610();
+        gsound_lock();
 
         movie_flags = 0;
 
@@ -71,6 +71,6 @@ void gmovie_play_path(const char* path, unsigned int flags, int sound_track)
 
         tig_movie_play(temp_path, movie_flags, sound_track);
 
-        sub_41C660();
+        gsound_unlock();
     }
 }

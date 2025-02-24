@@ -108,7 +108,7 @@ static int64_t qword_5D1A60;
 static bool gsound_initialized;
 
 // 0x5D1A70
-static int dword_5D1A70;
+static int gsound_lock_cnt;
 
 // 0x5D1A78
 static int64_t sound_minimum_radius[TIG_SOUND_SIZE_COUNT];
@@ -333,7 +333,7 @@ bool gsound_init(GameInitInfo* init_info)
     gsound_voice_volume_changed();
     gsound_music_volume_changed();
     gsound_combat_music_active = false;
-    dword_5D1A70 = 0;
+    gsound_lock_cnt = 0;
 
     return true;
 }
@@ -390,7 +390,7 @@ void gsound_reset()
     qword_5D55E8 = 0;
     qword_5D55E0 = 0;
     gsound_combat_music_active = false;
-    dword_5D1A70 = 0;
+    gsound_lock_cnt = 0;
     gsound_stop_all(0);
 }
 
@@ -507,7 +507,7 @@ tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int 
         return TIG_SOUND_HANDLE_INVALID;
     }
 
-    if (dword_5D1A70) {
+    if (gsound_lock_cnt) {
         return TIG_SOUND_HANDLE_INVALID;
     }
 
@@ -870,7 +870,7 @@ void gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
         return;
     }
 
-    if (dword_5D1A70) {
+    if (gsound_lock_cnt) {
         return;
     }
 
@@ -1146,7 +1146,7 @@ tig_sound_handle_t gsound_play_voice(const char* path, int fade_duration)
 {
     tig_sound_handle_t sound_handle;
 
-    if (dword_5D1A70) {
+    if (gsound_lock_cnt) {
         return TIG_SOUND_HANDLE_INVALID;
     }
 
@@ -1165,7 +1165,7 @@ tig_sound_handle_t gsound_play_music_once(const char* path, int fade_duration)
 {
     tig_sound_handle_t sound_handle;
 
-    if (dword_5D1A70) {
+    if (gsound_lock_cnt) {
         return TIG_SOUND_HANDLE_INVALID;
     }
 
@@ -1184,7 +1184,7 @@ tig_sound_handle_t gsound_play_music_indefinitely(const char* path, int fade_dur
 {
     tig_sound_handle_t sound_handle;
 
-    if (dword_5D1A70) {
+    if (gsound_lock_cnt) {
         return TIG_SOUND_HANDLE_INVALID;
     }
 
@@ -1257,31 +1257,30 @@ void gsound_stop_combat_music(int64_t obj)
 }
 
 // 0x41C610
-void sub_41C610()
+void gsound_lock()
 {
-    int index;
+    int type;
 
-    if (dword_5D1A70 == 0) {
-        for (index = 0; index < TWO; index++) {
-            if (stru_5D1A98[index].scheme_num != 0) {
-                dword_5D5484[index] = stru_5D1A98[index].scheme_idx;
+    if (gsound_lock_cnt == 0) {
+        for (type = 0; type < TWO; type++) {
+            if (stru_5D1A98[type].scheme_num != 0) {
+                dword_5D5484[type] = stru_5D1A98[type].scheme_idx;
             } else {
-                dword_5D5484[index] = 0;
+                dword_5D5484[type] = 0;
             }
         }
 
         sub_41BAC0(0);
     }
 
-    dword_5D1A70++;
+    gsound_lock_cnt++;
 }
 
 // 0x41C660
-void sub_41C660()
+void gsound_unlock()
 {
-    if (dword_5D1A70 > 0) {
-        dword_5D1A70--;
-        if (dword_5D1A70 == 0) {
+    if (gsound_lock_cnt > 0) {
+        if (--gsound_lock_cnt == 0) {
             gsound_play_scheme(dword_5D5484[0], dword_5D5484[1]);
         }
     }
