@@ -774,16 +774,16 @@ void sub_4EEC80(PacketObjectLock* pkt)
 }
 
 // 0x4EECB0
-void sub_4EECB0(int sound_id)
+void mp_gsound_play_sfx(int sound_id)
 {
-    Packet106 pkt;
-
     gsound_play_sfx(sound_id, 1);
 
     if (tig_net_is_active()) {
+        PacketPlaySound pkt;
+
         pkt.type = 106;
         pkt.subtype = 0;
-        pkt.field_8 = sound_id;
+        pkt.sound_id = sound_id;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -791,9 +791,6 @@ void sub_4EECB0(int sound_id)
 // 0x4EED00
 void sub_4EED00(int64_t obj, int sound_id)
 {
-    Packet106 pkt;
-    int client_id;
-
     if (obj == OBJ_HANDLE_NULL) {
         return;
     }
@@ -803,30 +800,31 @@ void sub_4EED00(int64_t obj, int sound_id)
         return;
     }
 
-    if (tig_net_is_active()
-        && tig_net_is_host()) {
-        client_id = sub_4A2B10(obj);
+    if (tig_net_is_active() && tig_net_is_host()) {
+        int client_id = sub_4A2B10(obj);
         if (client_id != -1) {
+            PacketPlaySound pkt;
+
             pkt.type = 106;
             pkt.subtype = 0;
-            pkt.field_8 = sound_id;
+            pkt.sound_id = sound_id;
             tig_net_send_app(&pkt, sizeof(pkt), client_id);
         }
     }
 }
 
 // 0x4EED80
-void sub_4EED80(int sound_id, int loops, int64_t obj)
+void mp_gsound_play_sfx_on_obj(int sound_id, int loops, int64_t obj)
 {
-    Packet106 pkt;
-
     gsound_play_sfx_on_obj(sound_id, loops, obj);
 
     if (tig_net_is_active()) {
+        PacketPlaySound pkt;
+
         pkt.type = 106;
         pkt.subtype = 1;
-        pkt.field_8 = sound_id;
-        pkt.field_C = loops;
+        pkt.sound_id = sound_id;
+        pkt.loops = loops;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -838,7 +836,7 @@ void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
     gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
 
     if (tig_net_is_active()) {
-        Packet106 pkt;
+        PacketPlaySound pkt;
 
         pkt.type = 106;
         pkt.subtype = 2;
@@ -849,14 +847,14 @@ void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
 }
 
 // 0x4EEE50
-void sub_4EEE50(Packet106* pkt)
+void sub_4EEE50(PacketPlaySound* pkt)
 {
     switch (pkt->subtype) {
     case 0:
-        gsound_play_sfx(pkt->field_8, 1);
+        gsound_play_sfx(pkt->sound_id, 1);
         break;
     case 1:
-        gsound_play_sfx_on_obj(pkt->field_8, pkt->field_C, objp_perm_lookup(pkt->oid));
+        gsound_play_sfx_on_obj(pkt->sound_id, pkt->loops, objp_perm_lookup(pkt->oid));
         break;
     case 2:
         gsound_play_scheme(pkt->music_scheme_idx, pkt->ambient_scheme_idx);

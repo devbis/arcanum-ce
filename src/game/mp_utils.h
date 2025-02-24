@@ -882,23 +882,23 @@ typedef struct Packet104 {
 
 static_assert(sizeof(Packet104) == 0x20, "wrong size");
 
-typedef struct Packet106 {
+typedef struct PacketPlaySound {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     union {
         struct {
-        /* 0008 */ int field_8;
-        /* 000C */ int field_C;
+        /* 0008 */ int sound_id;
+        /* 000C */ int loops;
         /* 0010 */ ObjectID oid;
         };
         struct {
-            int music_scheme_idx;
-            int ambient_scheme_idx;
+        /* 0008 */ int music_scheme_idx;
+        /* 000C */ int ambient_scheme_idx;
         };
     };
-} Packet106;
+} PacketPlaySound;
 
-static_assert(sizeof(Packet106) == 0x28, "wrong size");
+static_assert(sizeof(PacketPlaySound) == 0x28, "wrong size");
 
 typedef struct Packet107 {
     /* 0000 */ int type;
@@ -1178,7 +1178,6 @@ void mp_sector_block_set(int64_t sec, bool blocked);
 void mp_spell_mastery_set(int64_t obj, int college);
 void sub_4EF120(int map, int a2);
 void sub_4EF190(tig_art_id_t art_id);
-void sub_4EECB0(int sound_id);
 void sub_4EF1E0(int64_t a1, int64_t obj);
 void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
@@ -1189,7 +1188,9 @@ void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);
 void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3);
-void sub_4EED80(int sound_id, int loops, int64_t obj);
+void mp_gsound_play_sfx(int sound_id);
+void sub_4EED00(int64_t obj, int sound_id);
+void mp_gsound_play_sfx_on_obj(int sound_id, int loops, int64_t obj);
 void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx);
 void mp_obj_field_int32_set(int64_t obj, int fld, int value);
 void mp_obj_field_int64_set(int64_t obj, int fld, int64_t value);

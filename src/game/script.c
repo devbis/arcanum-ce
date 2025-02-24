@@ -2287,13 +2287,13 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         return NEXT;
     case SAT_PLAY_SOUND: {
         int sound_id = script_get_value(action->op_type[0], action->op_value[0], state);
-        sub_4EECB0(sound_id);
+        mp_gsound_play_sfx(sound_id);
         return NEXT;
     }
     case SAT_PLAY_SOUND_ON: {
         int sound_id = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_4EED80(sound_id, 1, obj);
+        mp_gsound_play_sfx_on_obj(sound_id, 1, obj);
         return NEXT;
     }
     case SAT_GET_AREA: {
