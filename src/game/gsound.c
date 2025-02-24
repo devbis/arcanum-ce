@@ -29,17 +29,17 @@ typedef struct Sound {
 // See 0x41BF70.
 static_assert(sizeof(Sound) == 0x128, "wrong size");
 
-typedef struct SoundSchemeList {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ Sound field_C[TWENTY_FIVE];
-} SoundSchemeList;
+typedef struct SoundScheme {
+    /* 0000 */ int scheme_num;
+    /* 0004 */ int scheme_idx;
+    /* 0008 */ int count;
+    /* 000C */ Sound sounds[TWENTY_FIVE];
+} SoundScheme;
 
-static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
+static_assert(sizeof(SoundScheme) == 0x1CF4, "wrong size");
 
 static const char* gsound_build_sound_path(const char* name);
-static void sub_41AFB0(SoundSchemeList* scheme);
+static void sub_41AFB0(SoundScheme* scheme);
 static void sub_41B3A0();
 static void sub_41B3B0(tig_sound_handle_t sound_handle);
 static void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size);
@@ -47,9 +47,9 @@ static void sub_41BA20(int fade_duration, int index);
 static void sub_41BAC0(int fade_duration);
 static void sub_41BAF0();
 static void sub_41BCD0(const char* name, char* buffer);
-static bool sub_41BD10(int a1, int* a2);
-static void sub_41BE20(int num);
-static Sound* sub_41BF70(SoundSchemeList* a1, const char* path);
+static bool sub_41BD10(int scheme_idx, int* a2);
+static void sub_41BE20(int scheme_idx);
+static Sound* sub_41BF70(SoundScheme* scheme, const char* path);
 static void sub_41C260(char* str);
 static void sub_41C290(const char* str, const char* key, int* value1, int* value2);
 static void sub_41C690(int64_t a1, int64_t a2);
@@ -114,7 +114,7 @@ static int dword_5D1A70;
 static int64_t sound_minimum_radius[TIG_SOUND_SIZE_COUNT];
 
 // 0x5D1A98
-static SoundSchemeList stru_5D1A98[TWO];
+static SoundScheme stru_5D1A98[TWO];
 
 // 0x5D5480
 static mes_file_handle_t gsound_scheme_index_mes_file;
@@ -350,16 +350,16 @@ const char* gsound_build_sound_path(const char* name)
 }
 
 // 0x41AFB0
-void sub_41AFB0(SoundSchemeList* scheme)
+void sub_41AFB0(SoundScheme* scheme)
 {
     int index;
 
-    scheme->field_0 = 0;
-    scheme->field_8 = 0;
+    scheme->scheme_num = 0;
+    scheme->count = 0;
 
     for (index = 0; index < TWENTY_FIVE; index++) {
-        memset(&(scheme->field_C[index]), 0, sizeof(*scheme->field_C));
-        scheme->field_C[index].sound_handle = TIG_SOUND_HANDLE_INVALID;
+        memset(&(scheme->sounds[index]), 0, sizeof(*scheme->sounds));
+        scheme->sounds[index].sound_handle = TIG_SOUND_HANDLE_INVALID;
     }
 }
 
@@ -449,11 +449,11 @@ bool gsound_load(GameLoadInfo* load_info)
 bool gsound_save(TigFile* stream)
 {
     int index;
-    int v1;
+    int scheme_idx;
 
     for (index = 0; index < TWO; index++) {
-        v1 = stru_5D1A98[index].field_0 ? stru_5D1A98[index].field_4 : 0;
-        if (tig_file_fwrite(&v1, sizeof(v1), 1, stream) != 1) {
+        scheme_idx = stru_5D1A98[index].scheme_num != 0 ? stru_5D1A98[index].scheme_idx : 0;
+        if (tig_file_fwrite(&scheme_idx, sizeof(scheme_idx), 1, stream) != 1) {
             return false;
         }
     }
@@ -719,18 +719,18 @@ TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
 // 0x41BA20
 void sub_41BA20(int fade_duration, int index)
 {
-    SoundSchemeList* scheme;
+    SoundScheme* scheme;
     Sound* sound;
     int snd;
 
     scheme = &(stru_5D1A98[index]);
-    if (scheme->field_0) {
+    if (scheme->scheme_num != 0) {
         if (!dword_5D5594) {
-            dword_5D1A38[index] = scheme->field_4;
+            dword_5D1A38[index] = scheme->scheme_idx;
         }
 
         for (snd = 0; snd < TWENTY_FIVE; snd++) {
-            sound = &(scheme->field_C[snd]);
+            sound = &(scheme->sounds[snd]);
             if (sound->song) {
                 if (sound->sound_handle != TIG_SOUND_HANDLE_INVALID) {
                     tig_sound_stop(sound->sound_handle, fade_duration);
@@ -770,9 +770,9 @@ void sub_41BAC0(int fade_duration)
 void sub_41BAF0()
 {
     int hour;
-    int list_idx;
-    SoundSchemeList* list;
-    int scheme_idx;
+    int type;
+    SoundScheme* scheme;
+    int idx;
     Sound* sound;
     char path[TIG_MAX_PATH];
     int volume;
@@ -780,10 +780,10 @@ void sub_41BAF0()
 
     hour = datetime_current_hour();
 
-    for (list_idx = 0; list_idx < TWO; list_idx++) {
-        list = &(stru_5D1A98[list_idx]);
-        for (scheme_idx = 0; scheme_idx < list->field_8; scheme_idx++) {
-            sound = &(list->field_C[scheme_idx]);
+    for (type = 0; type < TWO; type++) {
+        scheme = &(stru_5D1A98[type]);
+        for (idx = 0; idx < scheme->count; idx++) {
+            sound = &(scheme->sounds[idx]);
             if (!sound->song) {
                 if (hour >= sound->time_start
                     && hour <= sound->time_end
@@ -842,13 +842,13 @@ void sub_41BCD0(const char* name, char* buffer)
 }
 
 // 0x41BD10
-bool sub_41BD10(int a1, int* a2)
+bool sub_41BD10(int scheme_idx, int* a2)
 {
     int index;
 
     for (index = 0; index < TWO; index++) {
-        if (stru_5D1A98[index].field_0 != 0) {
-            if (stru_5D1A98[index].field_4 == a1) {
+        if (stru_5D1A98[index].scheme_num != 0) {
+            if (stru_5D1A98[index].scheme_idx == scheme_idx) {
                 *a2 = index;
                 return true;
             }
@@ -899,21 +899,21 @@ void gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
 }
 
 // 0x41BE20
-void sub_41BE20(int num)
+void sub_41BE20(int scheme_idx)
 {
-    SoundSchemeList* scheme;
+    SoundScheme* scheme;
     int index;
     MesFileEntry mes_file_entry;
     char* hash;
     Sound* sound;
     char path[TIG_MAX_PATH];
 
-    if (num == 0) {
+    if (scheme_idx == 0) {
         return;
     }
 
     for (index = 0; index < TWO; index++) {
-        if (stru_5D1A98[index].field_0 == 0) {
+        if (stru_5D1A98[index].scheme_num == 0) {
             break;
         }
     }
@@ -925,9 +925,9 @@ void sub_41BE20(int num)
     scheme = &(stru_5D1A98[index]);
     sub_41AFB0(scheme);
 
-    scheme->field_4 = num;
+    scheme->scheme_idx = scheme_idx;
 
-    mes_file_entry.num = num;
+    mes_file_entry.num = scheme_idx;
     if (!mes_search(gsound_scheme_index_mes_file, &mes_file_entry)) {
         return;
     }
@@ -937,11 +937,11 @@ void sub_41BE20(int num)
         return;
     }
 
-    scheme->field_0 = atoi(hash + 1);
-    scheme->field_8 = 0;
+    scheme->scheme_num = atoi(hash + 1);
+    scheme->count = 0;
 
     for (index = 0; index < 100; index++) {
-        mes_file_entry.num = scheme->field_0 + index;
+        mes_file_entry.num = scheme->scheme_num + index;
         if (mes_search(gsound_scheme_list_mes_file, &mes_file_entry)) {
             sound = sub_41BF70(scheme, mes_file_entry.str);
             if (sound != NULL) {
@@ -962,7 +962,7 @@ void sub_41BE20(int num)
 }
 
 // 0x41BF70
-Sound* sub_41BF70(SoundSchemeList* a1, const char* path)
+Sound* sub_41BF70(SoundScheme* scheme, const char* path)
 {
     Sound* sound = NULL;
     char* copy;
@@ -972,8 +972,8 @@ Sound* sub_41BF70(SoundSchemeList* a1, const char* path)
 
     copy = STRDUP(path);
     if (copy != NULL) {
-        if (a1->field_8 < TWENTY_FIVE) {
-            sound = &(a1->field_C[a1->field_8++]);
+        if (scheme->count < TWENTY_FIVE) {
+            sound = &(scheme->sounds[scheme->count++]);
             memset(sound, 0, sizeof(*sound));
             sound->song = false;
             sound->loop = false;
@@ -1208,8 +1208,8 @@ void gsound_start_combat_music(int64_t obj)
         if (obj != OBJ_HANDLE_NULL) {
             if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
                 for (index = 0; index < TWO; index++) {
-                    if (stru_5D1A98[index].field_0) {
-                        dword_5D1A30[index] = stru_5D1A98[index].field_4;
+                    if (stru_5D1A98[index].scheme_num != 0) {
+                        dword_5D1A30[index] = stru_5D1A98[index].scheme_idx;
                     } else {
                         dword_5D1A30[index] = 0;
                     }
@@ -1251,8 +1251,8 @@ void sub_41C610()
 
     if (dword_5D1A70 == 0) {
         for (index = 0; index < TWO; index++) {
-            if (stru_5D1A98[index].field_0) {
-                dword_5D5484[index] = stru_5D1A98[index].field_4;
+            if (stru_5D1A98[index].scheme_num != 0) {
+                dword_5D5484[index] = stru_5D1A98[index].scheme_idx;
             } else {
                 dword_5D5484[index] = 0;
             }
