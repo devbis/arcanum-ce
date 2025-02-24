@@ -2450,7 +2450,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                 sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             }
 
-            sub_41B930(sound_id, 1, obj);
+            gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
         break;
     case OBJ_TYPE_PROJECTILE:
@@ -2487,7 +2487,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             object_destroy(obj);
             sound_id = sub_4F1050(obj, 1);
         }
-        sub_41B930(sound_id, 1, obj);
+        gsound_play_sfx_on_obj(sound_id, 1, obj);
         break;
     case OBJ_TYPE_PC:
     case OBJ_TYPE_NPC:
@@ -2511,7 +2511,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             object_destroy(obj);
             sound_id = sub_4F1050(obj, 1);
         }
-        sub_41B930(sound_id, 1, obj);
+        gsound_play_sfx_on_obj(sound_id, 1, obj);
         break;
     }
 

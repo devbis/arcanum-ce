@@ -561,12 +561,12 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
                     ui_message.str = mes_file_entry.str;
                     sub_550750(&ui_message);
 
-                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 2), 1);
+                    gsound_play_sfx(sub_4F0FD0(target_obj, 2), 1);
                     return false;
                 }
 
                 if (!sub_441980(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
-                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 2), 1);
+                    gsound_play_sfx(sub_4F0FD0(target_obj, 2), 1);
                     return false;
                 }
             }
@@ -674,7 +674,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
             if (mode == INVEN_UI_MODE_LOOT) {
                 if (tig_art_id_frame_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0) {
                     sub_4EEF20(target_obj);
-                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 0), 1);
+                    gsound_play_sfx(sub_4F0FD0(target_obj, 0), 1);
                 }
             }
             if ((obj_field_int32_get(target_obj, OBJ_F_CONTAINER_FLAGS) & OCOF_INVEN_SPAWN_ONCE) != 0) {
@@ -682,7 +682,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
             }
         } else {
             if (mode == INVEN_UI_MODE_LOOT) {
-                gsound_play_sfx_id(3007, 1);
+                gsound_play_sfx(3007, 1);
             }
         }
     }
@@ -1106,7 +1106,7 @@ void inven_ui_destroy()
                 object_dec_current_aid(qword_6813A8);
 
                 sound_id = sub_4F0FD0(qword_6813A8, 1);
-                gsound_play_sfx_id(sound_id, 1);
+                gsound_play_sfx(sound_id, 1);
             }
         }
         sub_468180();
@@ -2254,7 +2254,7 @@ bool sub_5755A0(S5754C0* entry)
     redraw_inven(false);
 
     sound_id = sub_4F0BF0(entry->field_8, entry->field_10, OBJ_HANDLE_NULL, 0);
-    gsound_play_sfx_id(sound_id, 1);
+    gsound_play_sfx(sound_id, 1);
 
     FREE(entry);
 
@@ -2278,7 +2278,7 @@ void sub_575770()
 
         if (dword_6810E8 >= 2000 && dword_6810E8 <= 2009) {
             sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
-            gsound_play_sfx_id(sound_id, 1);
+            gsound_play_sfx(sound_id, 1);
 
             if (!sub_57F260()) {
                 item_insert(qword_6810E0, qword_681450, dword_6810E8);
@@ -2301,7 +2301,7 @@ void sub_575770()
         }
 
         sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
-        gsound_play_sfx_id(sound_id, 1);
+        gsound_play_sfx(sound_id, 1);
 
         sub_57F260();
         qword_6810E0 = OBJ_HANDLE_NULL;
@@ -2351,7 +2351,7 @@ void sub_575930()
     sub_4A51C0(player_get_pc_obj(), qword_6810E0);
 
     sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
-    gsound_play_sfx_id(sound_id, 1);
+    gsound_play_sfx(sound_id, 1);
 
     qword_6810E0 = OBJ_HANDLE_NULL;
 }
@@ -2366,7 +2366,7 @@ void sub_575BE0()
     sub_466E50(qword_6810E0, location);
 
     sound_id = sub_4F0BF0(qword_6810E0, qword_681450, 0, 1);
-    gsound_play_sfx_id(sound_id, 1);
+    gsound_play_sfx(sound_id, 1);
 }
 
 // 0x575C50
@@ -3627,7 +3627,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
         }
 
         sound_id = sub_4F0BF0(item_obj, target_obj, OBJ_HANDLE_NULL, 1);
-        gsound_play_sfx_id(sound_id, 1);
+        gsound_play_sfx(sound_id, 1);
     } else {
         obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
         qword_739F70 = qword_681450;

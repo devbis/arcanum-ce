@@ -2216,7 +2216,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
-            gsound_play_sfx_id(0, 1);
+            gsound_play_sfx(0, 1);
 
             if (dword_66D868 != 1) {
                 sub_562B70(1);
@@ -2231,31 +2231,31 @@ bool wmap_ui_message_filter(TigMessage* msg)
             return true;
         case DIK_HOME:
             if (dword_66D8AC != 2) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_563590(&(v1->field_3C), true);
             }
             return true;
         case DIK_LEFT:
             if (dword_66D8AC != 2) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_563750(6);
             }
             return true;
         case DIK_UP:
             if (dword_66D8AC != 2) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_563750(0);
             }
             return true;
         case DIK_RIGHT:
             if (dword_66D8AC != 2) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_563750(2);
             }
             return true;
         case DIK_DOWN:
             if (dword_66D8AC != 2) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_563750(4);
             }
             return true;
@@ -2270,7 +2270,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             if (!msg->data.keyboard.pressed
                 && gamelib_cheat_level_get() >= 3
                 && !dword_66D868) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
 
                 for (int area = area_get_count() - 1; area > 0; area--) {
                     area_set_known(player_get_pc_obj(), area);

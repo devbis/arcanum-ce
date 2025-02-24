@@ -40,9 +40,13 @@ static_assert(sizeof(SoundScheme) == 0x1CF4, "wrong size");
 
 static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundScheme* scheme);
+static tig_sound_handle_t gsound_play_sfx_func(const char* path, int loops, int volume, int extra_volume, int id);
 static void sub_41B3A0();
 static void sub_41B3B0(tig_sound_handle_t sound_handle);
 static void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size);
+static tig_sound_handle_t gsound_play_sfx_ex(int id, int loops, int volume, int extra_volume);
+static tig_sound_handle_t gsound_play_sfx_at_xy_ex(int id, int loops, int64_t x, int64_t y, int size);
+static tig_sound_handle_t gsound_play_sfx_at_loc_ex(int id, int loops, int64_t location, int size);
 static void sub_41BA20(int fade_duration, int index);
 static void sub_41BAC0(int fade_duration);
 static void sub_41BAF0();
@@ -499,7 +503,7 @@ void gsound_flush()
 }
 
 // 0x41B2E0
-tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id)
+tig_sound_handle_t gsound_play_sfx_func(const char* path, int loops, int volume, int extra_volume, int id)
 {
     tig_sound_handle_t sound_handle;
 
@@ -609,7 +613,7 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
 }
 
 // 0x41B720
-tig_sound_handle_t gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
+tig_sound_handle_t gsound_play_sfx_ex(int id, int loops, int volume, int extra_volume)
 {
     char path[TIG_MAX_PATH];
 
@@ -618,23 +622,23 @@ tig_sound_handle_t gsound_play_sfx_id_ex(int id, int loops, int volume, int extr
     }
 
     gsound_resolve_path(id, path);
-    return gsound_play_sfx(path, loops, volume, extra_volume, id);
+    return gsound_play_sfx_func(path, loops, volume, extra_volume, id);
 }
 
 // 0x41B780
-tig_sound_handle_t gsound_play_sfx_id(int id, int loops)
+tig_sound_handle_t gsound_play_sfx(int id, int loops)
 {
-    return gsound_play_sfx_id_ex(id, loops, 127, 64);
+    return gsound_play_sfx_ex(id, loops, 127, 64);
 }
 
 // 0x41B7A0
-tig_sound_handle_t sub_41B7A0(int id, int loops, int64_t x, int64_t y)
+tig_sound_handle_t gsound_play_sfx_at_xy(int id, int loops, int64_t x, int64_t y)
 {
-    return sub_41B7D0(id, loops, x, y, TIG_SOUND_SIZE_LARGE);
+    return gsound_play_sfx_at_xy_ex(id, loops, x, y, TIG_SOUND_SIZE_LARGE);
 }
 
 // 0x41B7D0
-tig_sound_handle_t sub_41B7D0(int id, int loops, int64_t x, int64_t y, int size)
+tig_sound_handle_t gsound_play_sfx_at_xy_ex(int id, int loops, int64_t x, int64_t y, int size)
 {
     int volume;
     int extra_volume;
@@ -646,7 +650,7 @@ tig_sound_handle_t sub_41B7D0(int id, int loops, int64_t x, int64_t y, int size)
 
     sub_41B420(x, y, &volume, &extra_volume, size);
 
-    sound_handle = gsound_play_sfx_id_ex(id, loops, volume, extra_volume);
+    sound_handle = gsound_play_sfx_ex(id, loops, volume, extra_volume);
     tig_sound_set_position(sound_handle, x, y);
     tig_sound_set_positional_size(sound_handle, size);
 
@@ -654,13 +658,13 @@ tig_sound_handle_t sub_41B7D0(int id, int loops, int64_t x, int64_t y, int size)
 }
 
 // 0x41B850
-tig_sound_handle_t sub_41B850(int id, int loops, int64_t location)
+tig_sound_handle_t gsound_play_sfx_at_loc(int id, int loops, int64_t location)
 {
-    return sub_41B870(id, loops, location, TIG_SOUND_SIZE_LARGE);
+    return gsound_play_sfx_at_loc_ex(id, loops, location, TIG_SOUND_SIZE_LARGE);
 }
 
 // 0x41B870
-tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size)
+tig_sound_handle_t gsound_play_sfx_at_loc_ex(int id, int loops, int64_t location, int size)
 {
     int64_t x;
     int64_t y;
@@ -676,11 +680,11 @@ tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size)
 
     location_xy(location, &x, &y);
 
-    return sub_41B7D0(id, loops, x - qword_5D55E8, y - qword_5D55E0, size);
+    return gsound_play_sfx_at_xy_ex(id, loops, x - qword_5D55E8, y - qword_5D55E0, size);
 }
 
 // 0x41B930
-tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj)
+tig_sound_handle_t gsound_play_sfx_on_obj(int id, int loops, int64_t obj)
 {
     int64_t location;
     TigSoundPositionalSize size;
@@ -692,7 +696,7 @@ tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj)
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     size = gsound_size(obj);
 
-    return sub_41B870(id, loops, location, size);
+    return gsound_play_sfx_at_loc_ex(id, loops, location, size);
 }
 
 // 0x41B980
@@ -803,7 +807,7 @@ void sub_41BAF0()
                         extra_volume = sound->balance_left;
                     }
 
-                    gsound_play_sfx(path, 1, volume, extra_volume, 0);
+                    gsound_play_sfx_func(path, 1, volume, extra_volume, 0);
                 }
             } else if (sound->over) {
                 if (!tig_sound_is_playing(sound->sound_handle)) {

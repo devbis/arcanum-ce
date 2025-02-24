@@ -6492,7 +6492,7 @@ bool sub_428550(AnimRunInfo* run_info)
 
     if (ai_attempt_open_portal(self_obj, door_obj, object_rot(self_obj, door_obj)) != AI_ATTEMPT_OPEN_PORTAL_OK) {
         sound_id = sub_4F1010(door_obj, 2);
-        sub_41B930(sound_id, 1, door_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, door_obj);
         return false;
     }
 
@@ -7153,7 +7153,7 @@ bool sub_4296D0(AnimRunInfo* run_info)
     }
 
     if (run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data != -1) {
-        sub_41B930(run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data, 1, self_obj);
+        gsound_play_sfx_on_obj(run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data, 1, self_obj);
         for (goal = 0; goal <= run_info->current_goal; goal++) {
             run_info->goals[goal].params[AGDATA_SCRATCH_VAL5].data = -1;
         }
@@ -7620,7 +7620,7 @@ bool sub_42A010(AnimRunInfo* run_info)
             } else {
                 sound_id = sub_4F0ED0(obj, 1);
             }
-            sub_41B930(sound_id, 1, obj);
+            gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
     }
 
@@ -8032,7 +8032,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
 
     if (player_is_pc_obj(source_obj)) {
         sound_id = sub_4F0BF0(target_obj, source_obj, OBJ_HANDLE_NULL, 0);
-        sub_41B930(sound_id, 1, source_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, source_obj);
     }
 
     if (!tig_net_is_active()
@@ -9313,7 +9313,7 @@ bool sub_42CB10(AnimRunInfo* run_info)
             } else {
                 sound_id = sub_4F0ED0(obj, 1);
             }
-             sub_41B930(sound_id, 1, obj);
+             gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
     }
 
@@ -9480,7 +9480,7 @@ bool sub_42CF40(AnimRunInfo* run_info)
     frame = tig_art_id_frame_get(art_id);
     if (frame == 1) {
         sound_id = sub_4F0ED0(obj, 3);
-        sub_41B930(sound_id, 1, obj);
+        gsound_play_sfx_on_obj(sound_id, 1, obj);
     }
 
     if (frame == art_anim_data.num_frames - 1) {
@@ -9526,7 +9526,7 @@ bool sub_42D080(AnimRunInfo* run_info)
     }
 
     run_info->flags &= ~0xC;
-    sub_41B930(sub_4F1010(door_obj, 0), 1, door_obj);
+    gsound_play_sfx_on_obj(sub_4F1010(door_obj, 0), 1, door_obj);
     run_info->flags |= 0x10;
 
     return true;
@@ -9574,7 +9574,7 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     }
 
     run_info->flags &= ~0xC;
-    sub_41B930(sub_4F1010(door_obj, 1), 1, door_obj);
+    gsound_play_sfx_on_obj(sub_4F1010(door_obj, 1), 1, door_obj);
     run_info->flags |= 0x10;
 
     return true;
@@ -9742,7 +9742,7 @@ bool sub_42D570(AnimRunInfo* run_info)
     } else {
         sound_id = sub_4F0ED0(obj, 1);
     }
-    sub_41B930(sound_id, 1, obj);
+    gsound_play_sfx_on_obj(sound_id, 1, obj);
 
     object_set_current_aid(obj, art_id);
 
@@ -9986,7 +9986,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
             run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
         }
     } else if (sound_handle == TIG_SOUND_HANDLE_INVALID) {
-        sound_handle = sub_41B930(sound_id, 1, obj);
+        sound_handle = gsound_play_sfx_on_obj(sound_id, 1, obj);
         if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
             run_info->goals[0].params[AGDATA_SOUND_HANDLE].data = sound_handle;
         } else {
@@ -11623,7 +11623,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                 frame = tig_art_id_frame_get(art_id);
                 if (frame == 3 || frame == 8) {
                     sound_id = sub_4F0ED0(obj, 7);
-                    sub_41B930(sound_id, 1, obj);
+                    gsound_play_sfx_on_obj(sound_id, 1, obj);
                 }
             }
         }
@@ -12088,7 +12088,7 @@ void sub_431550(AnimRunInfo* run_info, int64_t obj)
     if (goal_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID
         && goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data != -1
         && (goal_data->params[AGDATA_FLAGS_DATA].data & 0x80000000) != 0) {
-        sound_handle = sub_41B930(goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data, 0, obj);
+        sound_handle = gsound_play_sfx_on_obj(goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data, 0, obj);
         if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
             goal_data->params[AGDATA_SOUND_HANDLE].data = sound_handle;
         } else {
@@ -12240,7 +12240,7 @@ void sub_431960(AnimRunInfo* run_info, int64_t obj)
                 loops = 0;
             }
 
-            sound_handle = sub_41B930(goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data, loops, obj);
+            sound_handle = gsound_play_sfx_on_obj(goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data, loops, obj);
             if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
                 if (loops != 0) {
                     run_info->flags |= 0x20000;
@@ -12948,7 +12948,7 @@ bool sub_432700(AnimRunInfo* run_info)
 
     if (obj_type_is_critter(source_obj_type) && random_between(1, 4) == 1) {
         sound_id = sub_4F0ED0(source_obj, 4);
-        sub_41B930(sound_id, 1, source_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, source_obj);
     }
 
     mt_item_notify_parent_attacks_obj(source_obj, target_obj);

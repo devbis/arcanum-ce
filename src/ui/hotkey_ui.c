@@ -359,7 +359,7 @@ bool sub_57DC60(TigMessage* msg)
             && !sub_541680()
             && (msg->data.character.ch == 'A' || msg->data.character.ch == 'a')) {
             sub_54FCF0(stru_683518);
-            gsound_play_sfx_id(0, 1);
+            gsound_play_sfx(0, 1);
             return true;
         }
         return false;
@@ -864,7 +864,7 @@ bool sub_57E8D0(int a1)
         if (dword_5CB4E4 == index) {
             sound_id = sub_4F0BF0(hotkey->item_obj.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
             if (sound_id != -1) {
-                gsound_play_sfx_id(sound_id, 1);
+                gsound_play_sfx(sound_id, 1);
             }
 
             hotkey->flags &= ~HOTKEY_DRAGGED;
@@ -950,7 +950,7 @@ bool sub_57E8D0(int a1)
         if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
             sound_id = sub_4F0BF0(stru_683950.item_obj.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
             if (sound_id != -1) {
-                gsound_play_sfx_id(sound_id, 1);
+                gsound_play_sfx(sound_id, 1);
             }
         }
 
@@ -1152,7 +1152,7 @@ void sub_57F1D0(int index)
         return;
     }
 
-    gsound_play_sfx_id(0, 1);
+    gsound_play_sfx(0, 1);
     sub_54FCF0(hotkey);
 }
 

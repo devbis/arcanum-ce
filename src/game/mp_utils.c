@@ -778,7 +778,7 @@ void sub_4EECB0(int sound_id)
 {
     Packet106 pkt;
 
-    gsound_play_sfx_id(sound_id, 1);
+    gsound_play_sfx(sound_id, 1);
 
     if (tig_net_is_active()) {
         pkt.type = 106;
@@ -799,7 +799,7 @@ void sub_4EED00(int64_t obj, int sound_id)
     }
 
     if (player_is_pc_obj(obj)) {
-        gsound_play_sfx_id(sound_id, 1);
+        gsound_play_sfx(sound_id, 1);
         return;
     }
 
@@ -820,7 +820,7 @@ void sub_4EED80(int sound_id, int loops, int64_t obj)
 {
     Packet106 pkt;
 
-    sub_41B930(sound_id, loops, obj);
+    gsound_play_sfx_on_obj(sound_id, loops, obj);
 
     if (tig_net_is_active()) {
         pkt.type = 106;
@@ -853,10 +853,10 @@ void sub_4EEE50(Packet106* pkt)
 {
     switch (pkt->subtype) {
     case 0:
-        gsound_play_sfx_id(pkt->field_8, 1);
+        gsound_play_sfx(pkt->field_8, 1);
         break;
     case 1:
-        sub_41B930(pkt->field_8, pkt->field_C, objp_perm_lookup(pkt->oid));
+        gsound_play_sfx_on_obj(pkt->field_8, pkt->field_C, objp_perm_lookup(pkt->oid));
         break;
     case 2:
         gsound_play_scheme(pkt->music_scheme_idx, pkt->ambient_scheme_idx);
@@ -1639,11 +1639,11 @@ void sub_4F06E0(int64_t a1, int64_t a2)
         object_set_current_aid(a1, art_id);
         sound_id = sub_4F1050(a1, 0);
         sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
-        sub_41B930(sound_id, 1, a1);
+        gsound_play_sfx_on_obj(sound_id, 1, a1);
     } else {
         object_destroy(a1);
         sound_id = sub_4F1050(a1, 1);
-        sub_41B930(sound_id, 1, a1);
+        gsound_play_sfx_on_obj(sound_id, 1, a1);
     }
 }
 

@@ -204,6 +204,6 @@ bool sub_569F40(int num)
 // 0x56A000
 void sub_56A000()
 {
-    gsound_play_sfx_id(8815, 1);
+    gsound_play_sfx(8815, 1);
     sub_569F40(810);
 }

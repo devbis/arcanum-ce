@@ -2475,7 +2475,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         }
 
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         return true;
     } // msg->type == TIG_MESSAGE_CHAR
 
@@ -3691,7 +3691,7 @@ void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
     }
 
     if (sound_id != -1) {
-        gsound_play_sfx_id(sound_id, 1);
+        gsound_play_sfx(sound_id, 1);
     }
 
     sub_57E5A0(hotkey);
@@ -5389,7 +5389,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
 
         if (play_sound) {
-            gsound_play_sfx_id(3005, 1);
+            gsound_play_sfx(3005, 1);
         }
         break;
     case UI_MSG_TYPE_POISON:
@@ -5402,7 +5402,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         sub_550A10(window_handle, str, &stru_5C70D8, dword_64C49C, 0x1);
 
         if (play_sound) {
-            gsound_play_sfx_id(3006, 1);
+            gsound_play_sfx(3006, 1);
         }
         break;
     case UI_MSG_TYPE_CURSE:
@@ -5413,7 +5413,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         sub_550A10(window_handle, str, &stru_5C7138, dword_64C498, 1);
 
         if (play_sound) {
-            gsound_play_sfx_id(3003, 1);
+            gsound_play_sfx(3003, 1);
         }
         break;
     case UI_MSG_TYPE_BLESS:
@@ -5424,12 +5424,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         sub_550A10(window_handle, str, &stru_5C7138, dword_64C498, 1);
 
         if (play_sound) {
-            gsound_play_sfx_id(3002, 1);
+            gsound_play_sfx(3002, 1);
         }
         break;
     case UI_MSG_TYPE_EXCLAMATION:
         if (play_sound) {
-            gsound_play_sfx_id(3004, 1);
+            gsound_play_sfx(3004, 1);
         }
         // FALLTHROUGH
     case UI_MSG_TYPE_QUESTION:

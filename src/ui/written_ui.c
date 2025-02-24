@@ -361,7 +361,7 @@ void written_ui_create()
     }
 
     sub_56C050();
-    gsound_play_sfx_id(3008, 1);
+    gsound_play_sfx(3008, 1);
     written_ui_created = true;
 }
 
@@ -379,7 +379,7 @@ void written_ui_destroy()
         written_ui_window = TIG_WINDOW_HANDLE_INVALID;
     }
 
-    gsound_play_sfx_id(3009, 1);
+    gsound_play_sfx(3009, 1);
     written_ui_created = false;
 }
 
@@ -399,14 +399,14 @@ bool written_ui_message_filter(TigMessage* msg)
             if (stru_5CA4D8[0].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 -= 2;
                 sub_56C050();
-                gsound_play_sfx_id(3010, 1);
+                gsound_play_sfx(3010, 1);
                 return true;
             }
 
             if (stru_5CA4D8[1].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 += 2;
                 sub_56C050();
-                gsound_play_sfx_id(3010, 1);
+                gsound_play_sfx(3010, 1);
                 return true;
             }
         }

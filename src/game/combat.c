@@ -768,17 +768,17 @@ void sub_4B2F60(CombatContext* combat)
 
         if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
-            sub_41B930(sound_id, 1, combat->target_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);
-            sub_41B930(sound_id, 1, combat->attacker_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         } else {
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 4);
-            sub_41B930(sound_id, 1, combat->attacker_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         }
     } else {
         sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 5);
-        sub_41B930(sound_id, 1, combat->attacker_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (combat->target_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
@@ -825,7 +825,7 @@ int sub_4B3170(CombatContext* combat)
         combat->flags |= 0x400;
 
         sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 3);
-        sub_41B930(sound_id, 1, combat->attacker_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             sub_4ADFF0(combat->attacker_obj);
@@ -837,7 +837,7 @@ int sub_4B3170(CombatContext* combat)
     }
 
     sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 2);
-    sub_41B930(sound_id, 1, combat->attacker_obj);
+    gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
     bool is_melee = true;
     if ((combat->flags & 0x200) != 0
@@ -1031,13 +1031,13 @@ void sub_4B3770(CombatContext* combat)
 
         if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
-            sub_41B930(sound_id, 1, combat->target_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);
-            sub_41B930(sound_id, 1, combat->attacker_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         } else {
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 4);
-            sub_41B930(sound_id, 1, combat->attacker_obj);
+            gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         }
 
         if ((obj_field_int32_get(combat->attacker_obj, OBJ_F_SPELL_FLAGS) & OSF_BODY_OF_FIRE) == 0
@@ -1048,7 +1048,7 @@ void sub_4B3770(CombatContext* combat)
         }
     } else {
         sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 5);
-        sub_41B930(sound_id, 1, combat->attacker_obj);
+        gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             ai_process(combat->target_obj);

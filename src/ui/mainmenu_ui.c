@@ -3188,7 +3188,7 @@ bool mainmenu_ui_load_game_button_released(tig_button_handle_t button_handle)
     }
 
     if (button_handle == window->buttons[2].button_handle) {
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_543160();
         return true;
     }
@@ -3550,7 +3550,7 @@ void sub_543060()
         if (window->selected_index < window->top_index) {
             sub_5810D0(stru_64C220, 2, window->selected_index);
         }
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_542560();
         window->refresh_func(NULL);
         sub_5806F0(stru_64C220);
@@ -3568,7 +3568,7 @@ void sub_5430D0()
         if (window->selected_index > window->top_index + window->content_rect.height / 20) {
             sub_5810D0(stru_64C220, 2, window->selected_index - window->content_rect.height / 20);
         }
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_542560();
         window->refresh_func(NULL);
         sub_5806F0(stru_64C220);
@@ -3895,7 +3895,7 @@ bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle)
     }
 
     if (button_handle == window->buttons[2].button_handle) {
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_544320();
         return true;
     }
@@ -4171,7 +4171,7 @@ void sub_544210()
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index > 0) {
         window->selected_index--;
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_544290();
         window->refresh_func(NULL);
     }
@@ -4185,7 +4185,7 @@ void sub_544250()
     window = main_menu_window_info[dword_64C414];
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
-        gsound_play_sfx_id(0, 1);
+        gsound_play_sfx(0, 1);
         sub_544290();
         window->refresh_func(NULL);
     }
@@ -5865,7 +5865,7 @@ bool sub_546EE0(TigMessage* msg)
                             sub_5412D0();
                         }
                     } else {
-                        gsound_play_sfx_id(0, 1);
+                        gsound_play_sfx(0, 1);
                         sub_5417A0(1);
                     }
                     return true;
@@ -5892,7 +5892,7 @@ bool sub_546EE0(TigMessage* msg)
                     && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FE0.y
                     && msg->data.mouse.x < stru_5C3FE0.x + stru_5C3FE0.width
                     && msg->data.mouse.y - stru_5C3628.y < stru_5C3FE0.y + stru_5C3FE0.height) {
-                    gsound_play_sfx_id(0, 1);
+                    gsound_play_sfx(0, 1);
                     sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
                     return true;
                 }
@@ -5901,7 +5901,7 @@ bool sub_546EE0(TigMessage* msg)
                     && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FF0.y
                     && msg->data.mouse.x < stru_5C3FF0.x + stru_5C3FF0.width
                     && msg->data.mouse.y - stru_5C3628.y < stru_5C3FF0.y + stru_5C3FF0.height) {
-                    gsound_play_sfx_id(0, 1);
+                    gsound_play_sfx(0, 1);
                     sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
                     return true;
                 }
@@ -5914,7 +5914,7 @@ bool sub_546EE0(TigMessage* msg)
                 && msg->data.mouse.y - stru_5C3628.y >= window->content_rect.y
                 && msg->data.mouse.x < window->content_rect.x + window->content_rect.width
                 && msg->data.mouse.y - stru_5C3628.y < window->content_rect.y + window->content_rect.height) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 window->mouse_up_func(msg->data.mouse.x - window->content_rect.x, msg->data.mouse.y - window->content_rect.y - stru_5C3628.y);
                 return true;
             }
@@ -6102,7 +6102,7 @@ bool sub_546EE0(TigMessage* msg)
         case 2:
             if (msg->data.keyboard.key == DIK_ESCAPE
                 && dword_64C43C > 1) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_5412D0();
                 dword_64C414 = 0;
                 mainmenu_ui_exit_game();
@@ -6119,7 +6119,7 @@ bool sub_546EE0(TigMessage* msg)
         case 7:
             switch (msg->data.keyboard.key) {
             case DIK_ESCAPE:
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
@@ -6133,7 +6133,7 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             case DIK_BACK:
             case DIK_DELETE:
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_543160();
                 return true;
             case DIK_RETURN:
@@ -6145,7 +6145,7 @@ bool sub_546EE0(TigMessage* msg)
         case 8:
             switch (msg->data.keyboard.key) {
             case DIK_ESCAPE:
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
@@ -6159,7 +6159,7 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             case DIK_BACK:
             case DIK_DELETE:
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_544320();
                 return true;
             case DIK_RETURN:
@@ -6170,7 +6170,7 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         case 17:
             if (msg->data.keyboard.key == DIK_ESCAPE) {
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 tig_net_reset_connection();
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
@@ -6182,7 +6182,7 @@ bool sub_546EE0(TigMessage* msg)
         case 22:
             switch (msg->data.keyboard.key) {
             case DIK_ESCAPE:
-                gsound_play_sfx_id(0, 1);
+                gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
@@ -6275,7 +6275,7 @@ bool sub_546EE0(TigMessage* msg)
         if ((dword_64C414 == 15 || dword_64C414 == 14)
             && msg->data.character.ch == '\r'
             && sub_552070() != 9) {
-            gsound_play_sfx_id(0, 1);
+            gsound_play_sfx(0, 1);
             sub_5480C0(2);
             return true;
         }
@@ -6293,9 +6293,9 @@ bool sub_546EE0(TigMessage* msg)
         }
 
         if (window->buttons[idx].art_num == -1) {
-            gsound_play_sfx_id(3027, 1);
+            gsound_play_sfx(3027, 1);
         } else {
-            gsound_play_sfx_id(0, 1);
+            gsound_play_sfx(0, 1);
         }
 
         if (window->buttons[idx].field_10 > 0) {

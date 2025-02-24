@@ -5855,7 +5855,7 @@ void sub_458C00(int spell, int64_t obj)
         }
 
         if (v2->sound != -1) {
-            sub_41B930(v2->sound, 1, obj);
+            gsound_play_sfx_on_obj(v2->sound, 1, obj);
         }
     }
 }

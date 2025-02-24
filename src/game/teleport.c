@@ -172,7 +172,7 @@ bool teleport_process(TeleportData* teleport_data)
     }
 
     if ((teleport_data->flags & TELEPORT_SOUND) != 0) {
-        sub_41B930(teleport_data->sound_id, 1, teleport_data->obj);
+        gsound_play_sfx_on_obj(teleport_data->sound_id, 1, teleport_data->obj);
     }
 
     if (!tig_net_is_active()) {

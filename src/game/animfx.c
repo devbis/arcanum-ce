@@ -686,7 +686,7 @@ bool animfx_add(AnimFxNode* node)
 
     if (!sound_was_set) {
         if (entry->sound != -1) {
-            sub_41B930(entry->sound, 1, node->obj);
+            gsound_play_sfx_on_obj(entry->sound, 1, node->obj);
             node->sound_id = entry->sound;
         }
     }

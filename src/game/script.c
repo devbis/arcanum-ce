@@ -2500,7 +2500,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
                 }
             } else {
                 if (teleport_data.sound_id > 0) {
-                    gsound_play_sfx_id(teleport_data.sound_id, 1);
+                    gsound_play_sfx(teleport_data.sound_id, 1);
                 }
             }
 
