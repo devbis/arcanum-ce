@@ -2326,9 +2326,9 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             break;
         case OBJ_TYPE_CONTAINER:
             if (tig_art_id_frame_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {
-                sub_4EEF20(obj);
+                mp_container_open(obj);
             } else {
-                sub_4EEEC0(obj);
+                mp_container_close(obj);
             }
             break;
         }

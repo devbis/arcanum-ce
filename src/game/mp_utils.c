@@ -863,13 +863,13 @@ void sub_4EEE50(PacketPlaySound* pkt)
 }
 
 // 0x4EEEC0
-void sub_4EEEC0(int64_t obj)
+void mp_container_close(int64_t obj)
 {
-    Packet129 pkt;
-
     object_dec_current_aid(obj);
 
     if (tig_net_is_active()) {
+        Packet129 pkt;
+
         pkt.type = 129;
         pkt.subtype = 11;
         pkt.oid = sub_407EF0(obj);
@@ -878,13 +878,13 @@ void sub_4EEEC0(int64_t obj)
 }
 
 // 0x4EEF20
-void sub_4EEF20(int64_t obj)
+void mp_container_open(int64_t obj)
 {
-    Packet129 pkt;
-
     object_inc_current_aid(obj);
 
     if (tig_net_is_active()) {
+        Packet129 pkt;
+
         pkt.type = 129;
         pkt.subtype = 10;
         pkt.oid = sub_407EF0(obj);

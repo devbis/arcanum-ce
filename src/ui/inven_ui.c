@@ -673,7 +673,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             if (mode == INVEN_UI_MODE_LOOT) {
                 if (tig_art_id_frame_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0) {
-                    sub_4EEF20(target_obj);
+                    mp_container_open(target_obj);
                     gsound_play_sfx(sub_4F0FD0(target_obj, 0), 1);
                 }
             }
