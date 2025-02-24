@@ -87,10 +87,10 @@ static mes_file_handle_t gsound_scheme_list_mes_file;
 static int gsound_music_volume;
 
 // 0x5D1A48
-static int dword_5D1A48;
+static tig_sound_handle_t gsound_combat_music_handle;
 
 // 0x5D1A4C
-static int dword_5D1A4C;
+static tig_sound_handle_t gsound_combat_tension_handle;
 
 // 0x5D1A50
 static int64_t qword_5D1A50;
@@ -1202,46 +1202,58 @@ tig_sound_handle_t gsound_play_music_indefinitely(const char* path, int fade_dur
 void gsound_start_combat_music(int64_t obj)
 {
     char path[TIG_MAX_PATH];
-    int index;
+    int type;
 
-    if (!gsound_combat_music_active) {
-        if (obj != OBJ_HANDLE_NULL) {
-            if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-                for (index = 0; index < TWO; index++) {
-                    if (stru_5D1A98[index].scheme_num != 0) {
-                        dword_5D1A30[index] = stru_5D1A98[index].scheme_idx;
-                    } else {
-                        dword_5D1A30[index] = 0;
-                    }
-                }
+    if (gsound_combat_music_active) {
+        return;
+    }
 
-                sub_41BAC0(25);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
 
-                gsound_combat_music_active = true;
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
 
-                sprintf(path, "sound\\music\\combat %d.mp3", random_between(1, 6));
-                dword_5D1A4C = gsound_play_music_once(path, 0);
-                dword_5D1A48 = gsound_play_music_indefinitely("sound\\music\\combatmusic.mp3", 0);
-            }
+    for (type = 0; type < TWO; type++) {
+        if (stru_5D1A98[type].scheme_num != 0) {
+            dword_5D1A30[type] = stru_5D1A98[type].scheme_idx;
+        } else {
+            dword_5D1A30[type] = 0;
         }
     }
+
+    sub_41BAC0(25);
+
+    gsound_combat_music_active = true;
+
+    sprintf(path, "sound\\music\\combat %d.mp3", random_between(1, 6));
+    gsound_combat_tension_handle = gsound_play_music_once(path, 0);
+    gsound_combat_music_handle = gsound_play_music_indefinitely("sound\\music\\combatmusic.mp3", 0);
 }
 
 // 0x41C5A0
 void gsound_stop_combat_music(int64_t obj)
 {
-    if (gsound_combat_music_active) {
-        if (obj != OBJ_HANDLE_NULL) {
-            if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                tig_sound_destroy(dword_5D1A4C);
-                tig_sound_destroy(dword_5D1A48);
-
-                gsound_combat_music_active = false;
-
-                gsound_play_scheme(dword_5D1A30[0], dword_5D1A30[1]);
-            }
-        }
+    if (!gsound_combat_music_active) {
+        return;
     }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    tig_sound_destroy(gsound_combat_tension_handle);
+    tig_sound_destroy(gsound_combat_music_handle);
+
+    gsound_combat_music_active = false;
+
+    gsound_play_scheme(dword_5D1A30[0], dword_5D1A30[1]);
 }
 
 // 0x41C610
