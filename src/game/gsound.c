@@ -41,8 +41,8 @@ static_assert(sizeof(SoundScheme) == 0x1CF4, "wrong size");
 static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundScheme* scheme);
 static tig_sound_handle_t gsound_play_sfx_func(const char* path, int loops, int volume, int extra_volume, int id);
-static void sub_41B3A0();
-static void sub_41B3B0(tig_sound_handle_t sound_handle);
+static void recalc_positional_sounds_volume();
+static void recalc_positional_sound_volume(tig_sound_handle_t sound_handle);
 static void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size);
 static tig_sound_handle_t gsound_play_sfx_ex(int id, int loops, int volume, int extra_volume);
 static tig_sound_handle_t gsound_play_sfx_at_xy_ex(int id, int loops, int64_t x, int64_t y, int size);
@@ -196,7 +196,7 @@ bool gsound_init(GameInitInfo* init_info)
     mes_file_handle_t tmp_mes_file;
     MesFileEntry mes_file_entry;
     int index;
-    int cnt;
+    int positional_sound_params;
 
     (void)init_info;
 
@@ -234,30 +234,30 @@ bool gsound_init(GameInitInfo* init_info)
     mes_load(gsound_build_sound_path("soundparams.mes"), &tmp_mes_file);
 
     if (tmp_mes_file != MES_FILE_HANDLE_INVALID) {
-        cnt = 0;
+        positional_sound_params = 0;
 
         mes_file_entry.num = 1;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
             sound_minimum_radius[TIG_SOUND_SIZE_LARGE] = atoi(mes_file_entry.str);
-            cnt++;
+            positional_sound_params++;
         }
 
         mes_file_entry.num = 2;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
             sound_maximum_radius[TIG_SOUND_SIZE_LARGE] = atoi(mes_file_entry.str);
-            cnt++;
+            positional_sound_params++;
         }
 
         mes_file_entry.num = 3;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
             sound_minimum_pan_distance = atoi(mes_file_entry.str);
-            cnt++;
+            positional_sound_params++;
         }
 
         mes_file_entry.num = 4;
         if (mes_search(tmp_mes_file, &mes_file_entry)) {
             sound_maximum_pan_distance = atoi(mes_file_entry.str);
-            cnt++;
+            positional_sound_params++;
         }
 
         mes_file_entry.num = 10;
@@ -323,8 +323,8 @@ bool gsound_init(GameInitInfo* init_info)
             sound_maximum_volume[TIG_SOUND_SIZE_EXTRA_LARGE] = 100;
         }
 
-        if (cnt != 0) {
-            sub_41B3A0();
+        if (positional_sound_params != 0) {
+            recalc_positional_sounds_volume();
         }
 
         mes_unload(tmp_mes_file);
@@ -528,13 +528,13 @@ tig_sound_handle_t gsound_play_sfx_func(const char* path, int loops, int volume,
 }
 
 // 0x41B3A0
-void sub_41B3A0()
+void recalc_positional_sounds_volume()
 {
-    tig_sound_enumerate_positional(sub_41B3B0);
+    tig_sound_enumerate_positional(recalc_positional_sound_volume);
 }
 
 // 0x41B3B0
-void sub_41B3B0(tig_sound_handle_t sound_handle)
+void recalc_positional_sound_volume(tig_sound_handle_t sound_handle)
 {
     int64_t x;
     int64_t y;
@@ -1301,7 +1301,7 @@ void set_listener_xy(int64_t x, int64_t y)
     gsound_listener_x = x;
     gsound_listener_y = y;
 
-    sub_41B3A0();
+    recalc_positional_sounds_volume();
 }
 
 // 0x41C6D0
@@ -1354,7 +1354,7 @@ void gsound_set_defaults(int min_radius, int max_radius, int min_pan_distance, i
     sound_minimum_pan_distance = min_pan_distance;
     sound_maximum_pan_distance = max_pan_distance;
 
-    sub_41B3A0();
+    recalc_positional_sounds_volume();
 }
 
 // 0x41C8A0
