@@ -893,13 +893,13 @@ void sub_4EEF20(int64_t obj)
 }
 
 // 0x4EEF80
-void sub_4EEF80(int64_t obj)
+void mp_portal_toggle(int64_t obj)
 {
-    Packet107 pkt;
-
     portal_toggle(obj);
 
     if (tig_net_is_active()) {
+        PacketPortalToggle pkt;
+
         pkt.type = 107;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -907,7 +907,7 @@ void sub_4EEF80(int64_t obj)
 }
 
 // 0x4EEFE0
-void sub_4EEFE0(Packet107* pkt)
+void sub_4EEFE0(PacketPortalToggle* pkt)
 {
     portal_toggle(objp_perm_lookup(pkt->oid));
 }

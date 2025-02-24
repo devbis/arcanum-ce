@@ -2322,7 +2322,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
         case OBJ_TYPE_PORTAL:
-            sub_4EEF80(obj);
+            mp_portal_toggle(obj);
             break;
         case OBJ_TYPE_CONTAINER:
             if (tig_art_id_frame_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {

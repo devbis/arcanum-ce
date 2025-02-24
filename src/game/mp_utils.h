@@ -900,12 +900,12 @@ typedef struct PacketPlaySound {
 
 static_assert(sizeof(PacketPlaySound) == 0x28, "wrong size");
 
-typedef struct Packet107 {
+typedef struct PacketPortalToggle {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-} Packet107;
+} PacketPortalToggle;
 
-static_assert(sizeof(Packet107) == 0x20, "wrong size");
+static_assert(sizeof(PacketPortalToggle) == 0x20, "wrong size");
 
 typedef struct PacketSectorBlockSet {
     /* 0000 */ int type;
@@ -1173,7 +1173,7 @@ void sub_4EE4C0(int64_t obj, int64_t a2);
 void mp_ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 void sub_4EEEC0(int64_t obj);
 void sub_4EEF20(int64_t obj);
-void sub_4EEF80(int64_t obj);
+void mp_portal_toggle(int64_t obj);
 void mp_sector_block_set(int64_t sec, bool blocked);
 void mp_spell_mastery_set(int64_t obj, int college);
 void sub_4EF120(int map, int a2);
