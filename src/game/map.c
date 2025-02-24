@@ -1538,15 +1538,15 @@ void sub_4115D0(const char* name)
                 light_scheme_set_map_default(light_scheme);
                 light_scheme_set(LIGHT_SCHEME_MAP_DEFAULT, light_scheme_get_hour());
             } else if (_strcmpi(key, "SoundScheme") == 0) {
-                int v1;
-                int v2;
+                int music_scheme_idx;
+                int ambient_scheme_idx;
 
                 tig_str_parse_set_separator(',');
-                tig_str_parse_value(&str, &v1);
-                tig_str_parse_value(&str, &v2);
+                tig_str_parse_value(&str, &music_scheme_idx);
+                tig_str_parse_value(&str, &ambient_scheme_idx);
 
                 if (!map_editor) {
-                    sub_41BD50(v1, v2);
+                    gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
                 }
             }
         }

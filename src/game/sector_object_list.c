@@ -695,8 +695,9 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
         if (light_scheme != light_scheme_get()) {
             light_scheme_set(light_scheme, datetime_current_hour());
         }
-        if (sector->sounds.field_8 || sector->sounds.field_4) {
-            sub_41BD50(sector->sounds.field_4, sector->sounds.field_8);
+        if (sector->sounds.music_scheme_idx != 0
+            || sector->sounds.ambient_scheme_idx != 0) {
+            gsound_play_scheme(sector->sounds.music_scheme_idx, sector->sounds.ambient_scheme_idx);
         }
         sector_unlock(sector_id);
     }

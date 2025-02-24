@@ -22,8 +22,8 @@ bool sector_sound_list_reset(SectorSoundList* list)
 void sub_4F8120(SectorSoundList* list)
 {
     list->field_0 = 0;
-    list->field_4 = 0;
-    list->field_8 = 0;
+    list->music_scheme_idx = 0;
+    list->ambient_scheme_idx = 0;
 }
 
 // 0x4F8130

@@ -440,7 +440,7 @@ bool gsound_load(GameLoadInfo* load_info)
         }
     }
 
-    sub_41BD50(temp[0], temp[1]);
+    gsound_play_scheme(temp[0], temp[1]);
 
     return true;
 }
@@ -808,7 +808,7 @@ void sub_41BAF0()
             } else if (scheme->field_2) {
                 if (!tig_sound_is_playing(scheme->sound_handle)) {
                     if (dword_5D5594) {
-                        sub_41BD50(dword_5D1A38[0], dword_5D1A38[1]);
+                        gsound_play_scheme(dword_5D1A38[0], dword_5D1A38[1]);
                         dword_5D5594 = false;
                     }
                 }
@@ -859,39 +859,41 @@ bool sub_41BD10(int a1, int* a2)
 }
 
 // 0x41BD50
-void sub_41BD50(int a1, int a2)
+void gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
 {
-    bool v1;
-    int v2;
-    bool v3;
-    int v4;
+    bool music_scheme_active;
+    int music_scheme_slot;
+    bool ambient_scheme_active;
+    int ambient_scheme_slot;
 
-    if (gsound_initialized && !dword_5D1A70) {
-        if (a1 == a2) {
-            a2 = 0;
-        }
+    if (!gsound_initialized) {
+        return;
+    }
 
-        if (gsound_combat_music_active) {
-            dword_5D1A30[1] = a2;
-            dword_5D1A30[0] = a1;
-        } else {
-            v1 = sub_41BD10(a1, &v2);
-            v3 =  sub_41BD10(a2, &v4);
-            if (v1) {
-                if (!v3) {
-                    sub_41BA20(25, 1 - v2);
-                    sub_41BE20(a2);
-                }
-            } else {
-                if (v3) {
-                    sub_41BA20(25, 1 - v4);
-                    sub_41BE20(a1);
-                } else {
-                    sub_41BAC0(25);
-                    sub_41BE20(a1);
-                    sub_41BE20(a2);
-                }
-            }
+    if (dword_5D1A70) {
+        return;
+    }
+
+    if (music_scheme_idx == ambient_scheme_idx) {
+        ambient_scheme_idx = 0;
+    }
+
+    if (gsound_combat_music_active) {
+        dword_5D1A30[0] = music_scheme_idx;
+        dword_5D1A30[1] = ambient_scheme_idx;
+    } else {
+        music_scheme_active = sub_41BD10(music_scheme_idx, &music_scheme_slot);
+        ambient_scheme_active = sub_41BD10(ambient_scheme_idx, &ambient_scheme_slot);
+        if (!music_scheme_active && !ambient_scheme_active) {
+            sub_41BAC0(25);
+            sub_41BE20(music_scheme_idx);
+            sub_41BE20(ambient_scheme_idx);
+        } else if (music_scheme_active && !ambient_scheme_active) {
+            sub_41BA20(25, 1 - music_scheme_slot);
+            sub_41BE20(ambient_scheme_idx);
+        } else if (!music_scheme_active && ambient_scheme_active) {
+            sub_41BA20(25, 1 - ambient_scheme_slot);
+            sub_41BE20(music_scheme_idx);
         }
     }
 }
@@ -1236,7 +1238,7 @@ void gsound_stop_combat_music(int64_t obj)
 
                 gsound_combat_music_active = false;
 
-                sub_41BD50(dword_5D1A30[0], dword_5D1A30[1]);
+                gsound_play_scheme(dword_5D1A30[0], dword_5D1A30[1]);
             }
         }
     }
@@ -1268,7 +1270,7 @@ void sub_41C660()
     if (dword_5D1A70 > 0) {
         dword_5D1A70--;
         if (dword_5D1A70 == 0) {
-            sub_41BD50(dword_5D5484[0], dword_5D5484[1]);
+            gsound_play_scheme(dword_5D5484[0], dword_5D5484[1]);
         }
     }
 }

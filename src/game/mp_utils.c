@@ -837,7 +837,7 @@ void sub_4EEE00(int a1, int a2)
 {
     Packet106 pkt;
 
-    sub_41BD50(a1, a2);
+    gsound_play_scheme(a1, a2);
 
     if (tig_net_is_active()) {
         pkt.type = 106;
@@ -859,7 +859,7 @@ void sub_4EEE50(Packet106* pkt)
         sub_41B930(pkt->field_8, pkt->field_C, objp_perm_lookup(pkt->oid));
         break;
     case 2:
-        sub_41BD50(pkt->field_8, pkt->field_C);
+        gsound_play_scheme(pkt->field_8, pkt->field_C);
         break;
     }
 }

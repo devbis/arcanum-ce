@@ -24,7 +24,7 @@ tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size);
 tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj);
 int gsound_get_positional_size(object_id_t object_id);
 int sub_41B9E0(object_id_t obj);
-void sub_41BD50(int a1, int a2);
+void gsound_play_scheme(int gsound_play_scheme, int ambient_scheme_idx);
 void gsound_stop_all(int fade_duration);
 tig_sound_handle_t gsound_play_voice(const char* path, int fade_duration);
 tig_sound_handle_t gsound_play_music_once(const char* path, int fade_duration);

@@ -5,8 +5,8 @@
 
 typedef struct SectorSoundList {
     /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
+    /* 0004 */ int music_scheme_idx;
+    /* 0008 */ int ambient_scheme_idx;
 } SectorSoundList;
 
 static_assert(sizeof(SectorSoundList) == 0xC, "wrong size");
