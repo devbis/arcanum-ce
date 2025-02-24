@@ -1,5 +1,7 @@
 #include "game/sector_sound_list.h"
 
+#define SECTOR_SOUND_LIST_MODIFIED 0x8000000
+
 static void sub_4F8120(SectorSoundList* list);
 
 // 0x4F80E0
@@ -21,7 +23,7 @@ bool sector_sound_list_reset(SectorSoundList* list)
 // 0x4F8120
 void sub_4F8120(SectorSoundList* list)
 {
-    list->field_0 = 0;
+    list->flags = 0;
     list->music_scheme_idx = 0;
     list->ambient_scheme_idx = 0;
 }
@@ -41,7 +43,7 @@ bool sector_sound_list_load(SectorSoundList* list, TigFile* stream)
         return false;
     }
 
-    list->field_0 &= ~0x8000000;
+    list->flags &= ~SECTOR_SOUND_LIST_MODIFIED;
 
     return true;
 }
@@ -49,7 +51,7 @@ bool sector_sound_list_load(SectorSoundList* list, TigFile* stream)
 // 0x4F8180
 bool sector_sound_list_save(SectorSoundList* list, TigFile* stream)
 {
-    list->field_0 &= ~0x8000000;
+    list->flags &= ~SECTOR_SOUND_LIST_MODIFIED;
 
     if (tig_file_fwrite(list, sizeof(*list), 1, stream) != 1) {
         return false;
@@ -59,9 +61,9 @@ bool sector_sound_list_save(SectorSoundList* list, TigFile* stream)
 }
 
 // 0x4F81B0
-bool sub_4F81B0(SectorSoundList* list)
+bool sector_sound_list_is_modified(SectorSoundList* list)
 {
-    return (list->field_0 & 0x8000000) != 0;
+    return (list->flags & SECTOR_SOUND_LIST_MODIFIED) != 0;
 }
 
 // 0x4F81C0

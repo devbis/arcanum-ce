@@ -1751,7 +1751,7 @@ bool sector_save_editor(Sector* sector)
         flags |= 0x0100;
     }
 
-    if (sub_4F81B0(&(sector->sounds))) {
+    if (sector_sound_list_is_modified(&(sector->sounds))) {
         flags |= 0x0200;
     }
 
@@ -1944,7 +1944,7 @@ bool sector_save_game(Sector* sector)
         flags |= 0x0100;
     }
 
-    if (sub_4F81B0(&(sector->sounds))) {
+    if (sector_sound_list_is_modified(&(sector->sounds))) {
         flags |= 0x0200;
     }
 
