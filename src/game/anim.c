@@ -9976,7 +9976,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
         return true;
     }
 
-    max_sound_distance = sub_41B9E0(obj);
+    max_sound_distance = gsound_range(obj);
     sound_handle = run_info->goals[0].params[AGDATA_SOUND_HANDLE].data;
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     player_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);

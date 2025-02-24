@@ -2,7 +2,6 @@
 #define ARCANUM_GAME_GSOUND_H_
 
 #include "game/context.h"
-#include "game/obj.h"
 
 int gsound_resolve_path(int sound_id, char* path);
 bool gsound_init(GameInitInfo* init_info);
@@ -22,8 +21,8 @@ tig_sound_handle_t sub_41B7D0(int id, int loops, int64_t x, int64_t y, int size)
 tig_sound_handle_t sub_41B850(int id, int loops, int64_t location);
 tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size);
 tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj);
-int gsound_get_positional_size(object_id_t object_id);
-int sub_41B9E0(object_id_t obj);
+TigSoundPositionalSize gsound_size(int64_t obj);
+int gsound_range(int64_t obj);
 void gsound_play_scheme(int gsound_play_scheme, int ambient_scheme_idx);
 void gsound_stop_all(int fade_duration);
 tig_sound_handle_t gsound_play_voice(const char* path, int fade_duration);

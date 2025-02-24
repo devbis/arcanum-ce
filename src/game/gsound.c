@@ -683,32 +683,32 @@ tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size)
 tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj)
 {
     int64_t location;
-    int size;
+    TigSoundPositionalSize size;
 
     if (!gsound_initialized) {
         return TIG_SOUND_HANDLE_INVALID;
     }
 
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    size = gsound_get_positional_size(obj);
+    size = gsound_size(obj);
 
     return sub_41B870(id, loops, location, size);
 }
 
 // 0x41B980
-TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
+TigSoundPositionalSize gsound_size(int64_t obj)
 {
-    unsigned int flags;
+    unsigned int scenery_flags;
 
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
-        flags = obj_field_int32_get(object_id, OBJ_F_SCENERY_FLAGS);
-        if ((flags & OSCF_SOUND_SMALL) != 0) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
+        scenery_flags = obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS);
+        if ((scenery_flags & OSCF_SOUND_SMALL) != 0) {
             return TIG_SOUND_SIZE_SMALL;
         }
-        if ((flags & OSCF_SOUND_MEDIUM) != 0) {
+        if ((scenery_flags & OSCF_SOUND_MEDIUM) != 0) {
             return TIG_SOUND_SIZE_MEDIUM;
         }
-        if ((flags & OSCF_SOUND_EXTRA_LARGE) != 0) {
+        if ((scenery_flags & OSCF_SOUND_EXTRA_LARGE) != 0) {
             return TIG_SOUND_SIZE_EXTRA_LARGE;
         }
     }
@@ -746,11 +746,11 @@ void sub_41BA20(int fade_duration, int index)
 }
 
 // 0x41B9E0
-int sub_41B9E0(object_id_t obj)
+int gsound_range(int64_t obj)
 {
     TigSoundPositionalSize size;
 
-    size = gsound_get_positional_size(obj);
+    size = gsound_size(obj);
     return (int)sound_maximum_radius[size] / 40;
 }
 
