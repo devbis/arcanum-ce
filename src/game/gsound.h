@@ -32,7 +32,7 @@ void gsound_start_combat_music(int64_t obj);
 void gsound_stop_combat_music(int64_t obj);
 void gsound_lock();
 void gsound_unlock();
-void sub_41C6D0(int64_t location);
+void gsound_listener_set(int64_t location);
 void sub_41C780(tig_sound_handle_t sound_handle, int64_t location);
 
 #endif /* ARCANUM_GAME_GSOUND_H_ */

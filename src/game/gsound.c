@@ -52,7 +52,7 @@ static void sub_41BE20(int scheme_idx);
 static Sound* sub_41BF70(SoundScheme* scheme, const char* path);
 static void sub_41C260(char* str);
 static void sub_41C290(const char* str, const char* key, int* value1, int* value2);
-static void sub_41C690(int64_t a1, int64_t a2);
+static void set_listener_xy(int64_t x, int64_t y);
 static void gsound_set_defaults(int min_radius, int max_radius, int a3, int a4);
 static int gsound_effects_volume_get();
 static void gsound_effects_volume_changed();
@@ -93,10 +93,10 @@ static tig_sound_handle_t gsound_combat_music_handle;
 static tig_sound_handle_t gsound_combat_tension_handle;
 
 // 0x5D1A50
-static int64_t qword_5D1A50;
+static int64_t gsound_listener_x;
 
 // 0x5D1A58
-static int64_t qword_5D1A58;
+static int64_t gsound_listener_y;
 
 // 0x5D1A68
 static mes_file_handle_t* gsound_sfx_mes_files;
@@ -222,7 +222,7 @@ bool gsound_init(GameInitInfo* init_info)
 
     gsound_initialized = true;
 
-    sub_41C690(400, 300);
+    set_listener_xy(400, 300);
     gsound_set_defaults(150, 800, 150, 400);
 
     sound_maximum_volume[TIG_SOUND_SIZE_LARGE] = 100;
@@ -553,10 +553,10 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
     int64_t distance;
     int64_t v1;
 
-    distance = (int64_t)sqrt((double)((x - qword_5D1A50) * (x - qword_5D1A50) + 2 * (y - qword_5D1A58) * 2 * (y - y - qword_5D1A58)));
-    v1 = x - qword_5D1A50;
+    distance = (int64_t)sqrt((double)((x - gsound_listener_x) * (x - gsound_listener_x) + 2 * (y - gsound_listener_y) * 2 * (y - gsound_listener_y)));
+    v1 = x - gsound_listener_x;
     if (v1 < 0) {
-        v1 = qword_5D1A50 - x;
+        v1 = gsound_listener_x - x;
     }
 
     if (distance < sound_minimum_radius[size]) {
@@ -573,7 +573,7 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
         extra_volume = 64;
     }
 
-    if (x < qword_5D1A50) {
+    if (x < gsound_listener_x) {
         if (v1 > qword_5D1A20) {
             extra_volume = 0;
         } else if (v1 > qword_5D1A60) {
@@ -586,7 +586,7 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
         }
     }
 
-    if (x > qword_5D1A50) {
+    if (x > gsound_listener_x) {
         if (v1 > qword_5D1A20) {
             extra_volume = 127;
         } else if (v1 > qword_5D1A60) {
@@ -1287,29 +1287,35 @@ void gsound_unlock()
 }
 
 // 0x41C690
-void sub_41C690(int64_t a1, int64_t a2)
+void set_listener_xy(int64_t x, int64_t y)
 {
-    if (gsound_initialized) {
-        qword_5D1A50 = a1;
-        qword_5D1A58 = a2;
-        sub_41B3A0();
+    if (!gsound_initialized) {
+        return;
     }
+
+    gsound_listener_x = x;
+    gsound_listener_y = y;
+
+    sub_41B3A0();
 }
 
 // 0x41C6D0
-void sub_41C6D0(int64_t location)
+void gsound_listener_set(int64_t loc)
 {
     int64_t x;
     int64_t y;
-    if (gsound_initialized) {
-        location_xy(location, &x, &y);
 
-        if (qword_5D1A28 != 0) {
-            location_xy(qword_5D1A28, &qword_5D55E8, &qword_5D55E0);
-        }
-
-        sub_41C690(x - qword_5D55E8, y - qword_5D55E0);
+    if (!gsound_initialized) {
+        return;
     }
+
+    location_xy(loc, &x, &y);
+
+    if (qword_5D1A28 != 0) {
+        location_xy(qword_5D1A28, &qword_5D55E8, &qword_5D55E0);
+    }
+
+    set_listener_xy(x - qword_5D55E8, y - qword_5D55E0);
 }
 
 // 0x41C780
@@ -1364,7 +1370,7 @@ void gsound_effects_volume_changed()
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-        sub_41C6D0(location);
+        gsound_listener_set(location);
     }
 }
 

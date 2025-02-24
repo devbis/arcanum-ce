@@ -376,7 +376,7 @@ void sub_40E630(int64_t dx, int64_t dy)
 
         location_at(scroll_iso_content_rect.width / 2, scroll_iso_content_rect.height / 2, &loc);
         if (loc != qword_5D11B8) {
-            sub_41C6D0(loc);
+            gsound_listener_set(loc);
             qword_5D11B8 = loc;
         }
     }
@@ -425,7 +425,7 @@ void scroll_set_scroll_func(ScrollFunc* func)
 void sub_40E910(int64_t a1)
 {
     if (!scroll_init_info.editor) {
-        sub_41C6D0(a1);
+        gsound_listener_set(a1);
         qword_5D11B8 = a1;
     }
 }
