@@ -833,17 +833,17 @@ void sub_4EED80(int sound_id, int loops, int64_t obj)
 }
 
 // 0x4EEE00
-void sub_4EEE00(int a1, int a2)
+void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
 {
-    Packet106 pkt;
-
-    gsound_play_scheme(a1, a2);
+    gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
 
     if (tig_net_is_active()) {
+        Packet106 pkt;
+
         pkt.type = 106;
         pkt.subtype = 2;
-        pkt.field_8 = a1;
-        pkt.field_C = a2;
+        pkt.music_scheme_idx = music_scheme_idx;
+        pkt.ambient_scheme_idx = ambient_scheme_idx;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -859,7 +859,7 @@ void sub_4EEE50(Packet106* pkt)
         sub_41B930(pkt->field_8, pkt->field_C, objp_perm_lookup(pkt->oid));
         break;
     case 2:
-        gsound_play_scheme(pkt->field_8, pkt->field_C);
+        gsound_play_scheme(pkt->music_scheme_idx, pkt->ambient_scheme_idx);
         break;
     }
 }

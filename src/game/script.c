@@ -2313,9 +2313,9 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         return NEXT;
     }
     case SAT_PLAY_SOUND_SCHEME: {
-        int v1 = script_get_value(action->op_type[0], action->op_value[0], state);
-        int v2 = script_get_value(action->op_type[1], action->op_value[1], state);
-        sub_4EEE00(v1, v2);
+        int music_scheme_idx = script_get_value(action->op_type[0], action->op_value[0], state);
+        int ambient_scheme_idx = script_get_value(action->op_type[1], action->op_value[1], state);
+        mp_gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
         return NEXT;
     }
     case SAT_TOGGLE_OPEN_CLOSED: {

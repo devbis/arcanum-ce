@@ -885,9 +885,17 @@ static_assert(sizeof(Packet104) == 0x20, "wrong size");
 typedef struct Packet106 {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ ObjectID oid;
+    union {
+        struct {
+        /* 0008 */ int field_8;
+        /* 000C */ int field_C;
+        /* 0010 */ ObjectID oid;
+        };
+        struct {
+            int music_scheme_idx;
+            int ambient_scheme_idx;
+        };
+    };
 } Packet106;
 
 static_assert(sizeof(Packet106) == 0x28, "wrong size");
@@ -1182,7 +1190,7 @@ void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);
 void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3);
 void sub_4EED80(int sound_id, int loops, int64_t obj);
-void sub_4EEE00(int a1, int a2);
+void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx);
 void mp_obj_field_int32_set(int64_t obj, int fld, int value);
 void mp_obj_field_int64_set(int64_t obj, int fld, int64_t value);
 void mp_object_flags_unset(int64_t obj, unsigned int flags);
