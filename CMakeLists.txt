@@ -225,6 +225,7 @@ set(SRCS
     "src/game/wallcheck.h"
     "src/game/wp.c"
     "src/game/wp.h"
+    "src/game/written.h"
     "src/ui/anim_ui.c"
     "src/ui/anim_ui.h"
     "src/ui/broadcast_ui.c"

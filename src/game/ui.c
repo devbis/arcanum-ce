@@ -331,18 +331,18 @@ void sub_4606E0()
 }
 
 // 0x4606F0
-void sub_4606F0(int64_t a1, int64_t a2)
+void ui_written_start_obj(int64_t written_obj, int64_t pc_obj)
 {
-    if (ui_callbacks.field_8C != NULL) {
-        ui_callbacks.field_8C(a1, a2);
+    if (ui_callbacks.written_start_obj != NULL) {
+        ui_callbacks.written_start_obj(written_obj, pc_obj);
     }
 }
 
 // 0x460720
-void sub_460720(int a1, int a2)
+void ui_written_start_type(WrittenType written_type, int num)
 {
-    if (ui_callbacks.field_90 != NULL) {
-        ui_callbacks.field_90(a1, a2);
+    if (ui_callbacks.written_start_type != NULL) {
+        ui_callbacks.written_start_type(written_type, num);
     }
 }
 

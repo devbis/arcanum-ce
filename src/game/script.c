@@ -2138,13 +2138,13 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_WRITTEN_UI_START_BOOK: {
         int num = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_4EE290(obj, 0, num);
+        mp_ui_written_start_type(obj, WRITTEN_TYPE_BOOK, num);
         return NEXT;
     }
     case SAT_WRITTEN_UI_START_IMAGE: {
         int num = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_4EE290(obj, 4, num);
+        mp_ui_written_start_type(obj, WRITTEN_TYPE_IMAGE, num);
         return NEXT;
     }
     case SAT_CREATE_ITEM: {
@@ -2600,7 +2600,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_START_WRITTEN_UI: {
         int num = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_4EE290(obj, 6, num);
+        mp_ui_written_start_type(obj, WRITTEN_TYPE_PLAQUE, num);
         return NEXT;
     }
     case SAT_ACTION_TRY_TO_STEAL_100_COINS: {

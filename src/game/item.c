@@ -1456,7 +1456,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     sub_4B7CD0(source_obj, 4);
 
     if (item_type == OBJ_TYPE_WRITTEN) {
-        sub_4606F0(item_obj, source_obj);
+        ui_written_start_obj(item_obj, source_obj);
         return;
     }
 
@@ -1543,7 +1543,7 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
     } else {
         sub_4B7CD0(obj, 4);
         if (obj_type == OBJ_TYPE_WRITTEN) {
-            sub_4606F0(item_obj, obj);
+            ui_written_start_obj(item_obj, obj);
             return;
         }
     }

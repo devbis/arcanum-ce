@@ -13,26 +13,40 @@
 #include "ui/types.h"
 
 #define TWO 2
-#define FIVE 5
 #define TEN 10
 
-typedef struct S5CA538 {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
+typedef enum WrittenMes {
+    WRITTEN_MES_BOOK,
+    WRITTEN_MES_NOTE,
+    WRITTEN_MES_NEWSPAPER,
+    WRITTEN_MES_TELEGRAM,
+    WRITTEN_MES_PLAQUE,
+    WRITTEN_MES_COUNT,
+} WrittenMes;
+
+typedef enum WrittenTextAlignment {
+    WRITTEN_TEXT_ALIGNMENT_LEFT,
+    WRITTEN_TEXT_ALIGNMENT_CENTER,
+    WRITTEN_TEXT_ALIGNMENT_RIGHT,
+} WrittenTextAlignment;
+
+typedef struct WrittenUiElement {
+    /* 0000 */ int font_num;
+    /* 0004 */ int message_num;
     /* 0008 */ int x;
     /* 000C */ int y;
-    /* 0010 */ int alignment;
-} S5CA538;
+    /* 0010 */ WrittenTextAlignment alignment;
+} WrittenUiElement;
 
 static void written_ui_create();
 static void written_ui_destroy();
 static bool written_ui_message_filter(TigMessage* msg);
-static void sub_56C050();
-static void sub_56C590(int num, int x, int y);
-static void sub_56C630(const char* str, int num, int x, int y, int alignment);
-static void sub_56C750(const char* str, int num, TigRect* rect);
+static void written_ui_refresh();
+static void written_ui_draw_background(int num, int x, int y);
+static void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
+static void sub_56C750(const char* str, int font_num, TigRect* rect);
 static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
-static void sub_56C9F0(char* str, int* font_ptr, int* centered_ptr, char** str_ptr);
+static void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
 static void sub_56CAA0(int a1, int* a2, int* a3);
 static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
 
@@ -40,9 +54,9 @@ static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
 static tig_window_handle_t written_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CA480
-static TigRect stru_5CA480 = { 0, 41, 800, 399 };
+static TigRect written_ui_background_frame = { 0, 41, 800, 399 };
 
-static const char* off_5CA490[FIVE] = {
+static const char* off_5CA490[WRITTEN_MES_COUNT] = {
     "mes\\gamebook.mes",
     "mes\\gamenote.mes",
     "mes\\gamenewspaper.mes",
@@ -54,15 +68,14 @@ static const char* off_5CA490[FIVE] = {
 static TigRect stru_5CA4A8 = { 25, 24, 89, 89 };
 
 // 0x5CA4B8
-static int dword_5CA4B8[8] = {
-    477,
-    489,
-    487,
-    491,
-    0,
-    0,
-    633,
-    0,
+static int dword_5CA4B8[WRITTEN_TYPE_COUNT] = {
+    /*      WRITTEN_TYPE_BOOK */ 477, // "bookbackground.art"
+    /*      WRITTEN_TYPE_NOTE */ 489, // "notebackground.art"
+    /* WRITTEN_TYPE_NEWSPAPER */ 487, // "newsbackground.art"
+    /*  WRITTEN_TYPE_TELEGRAM */ 491, // "telebackground.art"
+    /*     WRITTEN_TYPE_IMAGE */ 0,
+    /* WRITTEN_TYPE_SCHEMATIC */ 0,
+    /*    WRITTEN_TYPE_PLAQUE */ 633, // "stone_plaque.art"
 };
 
 // 0x5CA4D8
@@ -84,18 +97,18 @@ static TigRect stru_5CA518 = { 335, 90, 234, 20 };
 static TigRect stru_5CA528 = { 269, 40, 428, 327 };
 
 // 0x5CA538
-static S5CA538 stru_5CA538[11] = {
-    { 481, 1000, 342, 35, 1 },
-    { 481, 1001, 342, 41, 1 },
-    { 481, 1002, 321, 50, 0 },
-    { 481, 1003, 321, 59, 0 },
-    { 481, 1004, 321, 68, 0 },
-    { 479, 1005, 450, 36, 1 },
-    { 479, 1006, 450, 61, 1 },
-    { 481, 1007, 558, 35, 1 },
-    { 481, 1008, 539, 50, 0 },
-    { 481, 1009, 539, 60, 0 },
-    { 481, 1010, 539, 69, 0 },
+static WrittenUiElement written_ui_telegram_elements[11] = {
+    { 481, 1000, 342, 35, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 481, 1001, 342, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 481, 1002, 321, 50, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 481, 1003, 321, 59, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 481, 1004, 321, 68, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 479, 1005, 450, 36, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 479, 1006, 450, 61, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 481, 1007, 558, 35, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 481, 1008, 539, 50, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 481, 1009, 539, 60, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 481, 1010, 539, 69, WRITTEN_TEXT_ALIGNMENT_LEFT },
 };
 
 // 0x5CA618
@@ -105,23 +118,23 @@ static TigRect stru_5CA618[2] = {
 };
 
 // 0x5CA638
-static S5CA538 stru_5CA638[6] = {
-    { 485, 0, 216, 44, 1 },
-    { 484, 1, 453, 41, 1 },
-    { 485, 0, 689, 44, 1 },
-    { 482, 2, 194, 76, 0 },
-    { 482, 3, 449, 76, 1 },
-    { 482, 2, 712, 76, 2 },
+static WrittenUiElement written_ui_newspaper_tarantian_elements[6] = {
+    { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 484, 1, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 485, 0, 689, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 482, 2, 194, 76, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 482, 3, 449, 76, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 482, 2, 712, 76, WRITTEN_TEXT_ALIGNMENT_RIGHT },
 };
 
 // 0x5CA6B0
-static S5CA538 stru_5CA6B0[6] = {
-    { 485, 0, 216, 44, 1 },
-    { 815, 4, 453, 41, 1 },
-    { 485, 0, 689, 44, 1 },
-    { 482, 2, 194, 76, 0 },
-    { 482, 5, 449, 76, 1 },
-    { 482, 2, 712, 76, 2 },
+static WrittenUiElement written_ui_vendigroth_times_elements[6] = {
+    { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 815, 4, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 485, 0, 689, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 482, 2, 194, 76, WRITTEN_TEXT_ALIGNMENT_LEFT },
+    { 482, 5, 449, 76, WRITTEN_TEXT_ALIGNMENT_CENTER },
+    { 482, 2, 712, 76, WRITTEN_TEXT_ALIGNMENT_RIGHT },
 };
 
 // 0x5CA728
@@ -137,7 +150,7 @@ static TigRect stru_5CA728[5] = {
 static int dword_67BC68;
 
 // 0x67BC6C
-static int dword_67BC6C;
+static int written_ui_num;
 
 // 0x67BC70
 static int dword_67BC70[100];
@@ -149,16 +162,16 @@ static char written_ui_text[20000];
 static int dword_680C20[100];
 
 // 0x680DB0
-static bool dword_680DB0;
+static bool written_ui_is_vendigroth_times;
 
 // 0x680DB4
-static int dword_680DB4;
+static mes_file_handle_t dword_680DB4;
 
 // 0x680DB8
-static mes_file_handle_t dword_680DB8[FIVE];
+static mes_file_handle_t written_ui_mes_files[WRITTEN_MES_COUNT];
 
 // 0x680DCC
-static int dword_680DCC;
+static WrittenType written_ui_type;
 
 // 0x680DD0
 static int dword_680DD0;
@@ -181,16 +194,16 @@ bool written_ui_mod_load()
         return false;
     }
 
-    for (index = 0; index < FIVE; index++) {
-        mes_load(off_5CA490[index], &(dword_680DB8[index]));
+    for (index = 0; index < WRITTEN_MES_COUNT; index++) {
+        mes_load(off_5CA490[index], &(written_ui_mes_files[index]));
     }
 
     written_ui_mod_loaded = true;
 
-    dword_680DB0 = false;
+    written_ui_is_vendigroth_times = false;
 
-    if (dword_680DB8[2] != -1) {
-        dword_67BC68 = mes_entries_count_in_range(dword_680DB8[2], 10, 999);
+    if (written_ui_mes_files[WRITTEN_MES_NEWSPAPER] != MES_FILE_HANDLE_INVALID) {
+        dword_67BC68 = mes_entries_count_in_range(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], 10, 999);
     } else {
         dword_67BC68 = 0;
     }
@@ -207,16 +220,16 @@ void written_ui_mod_unload()
         return;
     }
 
-    for (index = 0; index < FIVE; index++) {
-        mes_unload(dword_680DB8[index]);
-        dword_680DB8[index] = MES_FILE_HANDLE_INVALID;
+    for (index = 0; index < WRITTEN_MES_COUNT; index++) {
+        mes_unload(written_ui_mes_files[index]);
+        written_ui_mes_files[index] = MES_FILE_HANDLE_INVALID;
     }
 
     written_ui_mod_loaded = false;
 }
 
 // 0x56BB60
-void sub_56BB60(int64_t written_obj, int64_t pc_obj)
+void written_ui_start_obj(int64_t written_obj, int64_t pc_obj)
 {
     int subtype;
     int start;
@@ -232,33 +245,33 @@ void sub_56BB60(int64_t written_obj, int64_t pc_obj)
     subtype = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_SUBTYPE);
     start = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_TEXT_START_LINE);
 
-    if (subtype == 5) {
+    if (subtype == WRITTEN_TYPE_SCHEMATIC) {
         tech_learn_schematic(pc_obj, written_obj);
     } else {
-        dword_680DB0 = sub_49B290(written_obj) == 14072;
-        sub_4EE290(pc_obj, subtype, start);
+        written_ui_is_vendigroth_times = sub_49B290(written_obj) == 14072;
+        mp_ui_written_start_type(pc_obj, subtype, start);
     }
 }
 
 // 0x56BC00
-void sub_56BC00(int a1, int a2)
+void written_ui_start_type(WrittenType written_type, int num)
 {
     if (!written_ui_mod_loaded) {
         return;
     }
 
     if (written_ui_created) {
-        sub_56BC90();
+        written_ui_close();
         return;
     }
 
-    if (a1 < 4) {
-        dword_680DB4 = dword_680DB8[a1];
-    } else if (a1 == 6) {
-        dword_680DB4 = dword_680DB8[4];
+    if (written_type < 4) {
+        dword_680DB4 = written_ui_mes_files[written_type];
+    } else if (written_type == WRITTEN_TYPE_PLAQUE) {
+        dword_680DB4 = written_ui_mes_files[WRITTEN_MES_PLAQUE];
     }
 
-    if (dword_680DB4 == -1) {
+    if (dword_680DB4 == MES_FILE_HANDLE_INVALID) {
         return;
     }
 
@@ -270,14 +283,14 @@ void sub_56BC00(int a1, int a2)
         return;
     }
 
-    dword_680DCC = a1;
-    dword_67BC6C = a2;
+    written_ui_type = written_type;
+    written_ui_num = num;
     written_ui_text[0] = '\0';
     written_ui_create();
 }
 
 // 0x56BC90
-void sub_56BC90()
+void written_ui_close()
 {
     if (!written_ui_mod_loaded) {
         return;
@@ -288,7 +301,7 @@ void sub_56BC90()
     }
 
     written_ui_destroy();
-    dword_680DB0 = 0;
+    written_ui_is_vendigroth_times = false;
 }
 
 // 0x56BCC0
@@ -307,7 +320,7 @@ void written_ui_create()
     }
 
     window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
-    window_data.rect = stru_5CA480;
+    window_data.rect = written_ui_background_frame;
     window_data.message_filter = written_ui_message_filter;
 
     if (tig_window_create(&window_data, &written_ui_window) != TIG_OK) {
@@ -315,7 +328,7 @@ void written_ui_create()
         exit(0);
     }
 
-    sub_56C590(494, 0, 0);
+    written_ui_draw_background(494, 0, 0);
 
     obj = player_get_pc_obj();
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
@@ -326,19 +339,22 @@ void written_ui_create()
     tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
-    switch (dword_680DCC) {
-    case 0:
+    switch (written_ui_type) {
+    case WRITTEN_TYPE_BOOK:
         for (index = 0; index < TWO; index++) {
-            intgame_button_create_ex(written_ui_window, &stru_5CA480, &(stru_5CA4D8[index]), 9);
+            intgame_button_create_ex(written_ui_window,
+                &written_ui_background_frame,
+                &(stru_5CA4D8[index]),
+                TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
         }
         dword_680DD0 = 0;
         dword_680DD4 = 0;
-        dword_67BC70[0] = dword_67BC6C;
+        dword_67BC70[0] = written_ui_num;
         dword_680C20[0] = 0;
         break;
-    case 1:
+    case WRITTEN_TYPE_NOTE:
         for (index = 0; index < TEN; index++) {
-            mes_file_entry.num = index + dword_67BC6C;
+            mes_file_entry.num = index + written_ui_num;
             if (!mes_search(dword_680DB4, &mes_file_entry)) {
                 break;
             }
@@ -346,21 +362,22 @@ void written_ui_create()
             strcat(written_ui_text, "\n");
         }
         break;
-    case 3:
+    case WRITTEN_TYPE_TELEGRAM:
         for (index = 0; index < TEN; index++) {
-            mes_file_entry.num = index + dword_67BC6C;
+            mes_file_entry.num = index + written_ui_num;
             if (!mes_search(dword_680DB4, &mes_file_entry)) {
                 break;
             }
             strcat(written_ui_text, mes_file_entry.str);
 
-            mes_file_entry.num = index + dword_67BC6C;
-            mes_get_msg(dword_680DB8[3], &mes_file_entry);
+            mes_file_entry.num = index + written_ui_num;
+            mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
             strcat(written_ui_text, mes_file_entry.str);
         }
+        break;
     }
 
-    sub_56C050();
+    written_ui_refresh();
     gsound_play_sfx(3008, 1);
     written_ui_created = true;
 }
@@ -390,7 +407,7 @@ bool written_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
-            sub_56BC90();
+            written_ui_close();
             return true;
         }
         break;
@@ -398,14 +415,14 @@ bool written_ui_message_filter(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
             if (stru_5CA4D8[0].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 -= 2;
-                sub_56C050();
+                written_ui_refresh();
                 gsound_play_sfx(3010, 1);
                 return true;
             }
 
             if (stru_5CA4D8[1].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 += 2;
-                sub_56C050();
+                written_ui_refresh();
                 gsound_play_sfx(3010, 1);
                 return true;
             }
@@ -417,38 +434,38 @@ bool written_ui_message_filter(TigMessage* msg)
 }
 
 // 0x56C050
-void sub_56C050()
+void written_ui_refresh()
 {
-    int v1;
+    int art_num;
     int v2;
     int v3;
-    S5CA538* v4;
+    WrittenUiElement* elements;
     MesFileEntry mes_file_entry;
     int index;
     int width;
     int height;
-    int font;
+    int font_num;
     int centered;
     char* str;
     TigRect rect;
 
-    if (dword_680DCC == 0) {
+    if (written_ui_type == WRITTEN_TYPE_BOOK) {
         tig_button_hide(stru_5CA4D8[0].button_handle);
         tig_button_hide(stru_5CA4D8[1].button_handle);
     }
 
-    if (dword_680DCC == 4) {
-        v1 = dword_67BC6C;
-    } else if (dword_680DB0) {
-        v1 = 817;
+    if (written_ui_type == WRITTEN_TYPE_IMAGE) {
+        art_num = written_ui_num;
+    } else if (written_ui_is_vendigroth_times) {
+        art_num = 817; // "vendnewsback.art"
     } else {
-        v1 = dword_5CA4B8[dword_680DCC];
+        art_num = dword_5CA4B8[written_ui_type];
     }
 
-    sub_56C590(v1, 132, 0);
+    written_ui_draw_background(art_num, 132, 0);
 
-    switch (dword_680DCC) {
-    case 0:
+    switch (written_ui_type) {
+    case WRITTEN_TYPE_BOOK:
         v2 = dword_67BC70[dword_680DD0];
         v3 = dword_680C20[dword_680DD0];
         sub_56CAA0(0, &v2, &v3);
@@ -460,35 +477,37 @@ void sub_56C050()
             tig_button_show(stru_5CA4D8[1].button_handle);
         }
         break;
-    case 1:
+    case WRITTEN_TYPE_NOTE:
         sub_56C750(written_ui_text, 497, &stru_5CA4F8);
         break;
-    case 2:
-        v4 = !dword_680DB0 ? stru_5CA638 : stru_5CA6B0;
+    case WRITTEN_TYPE_NEWSPAPER:
+        elements = written_ui_is_vendigroth_times
+            ? written_ui_vendigroth_times_elements
+            : written_ui_newspaper_tarantian_elements;
         for (index = 0; index < 6; index++) {
-            mes_file_entry.num = v4[index].field_4;
-            mes_get_msg(dword_680DB8[2], &mes_file_entry);
+            mes_file_entry.num = elements[index].message_num;
+            mes_get_msg(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry);
             sub_56C630(mes_file_entry.str,
-                v4[index].field_0,
-                v4[index].x,
-                v4[index].y,
-                v4[index].alignment);
+                elements[index].font_num,
+                elements[index].x,
+                elements[index].y,
+                elements[index].alignment);
         }
 
-        mes_file_entry.num = dword_67BC6C;
+        mes_file_entry.num = written_ui_num;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
-            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
-            sub_56C800(str, font, centered, &(stru_5CA728[0]), &height);
+            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+            sub_56C800(str, font_num, centered, &(stru_5CA728[0]), &height);
         }
 
         mes_file_entry.num++;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
-            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
 
             index = 1;
             rect = stru_5CA728[index];
             while (true) {
-                while (!sub_56C800(str, font, centered, &rect, &height)) {
+                while (!sub_56C800(str, font_num, centered, &rect, &height)) {
                     index++;
                     if (index >= 5) {
                         return;
@@ -502,7 +521,7 @@ void sub_56C050()
                 rect.y += height;
 
                 mes_file_entry.num++;
-                if (mes_file_entry.num >= dword_67BC6C + 10) {
+                if (mes_file_entry.num >= written_ui_num + 10) {
                     break;
                 }
 
@@ -510,20 +529,20 @@ void sub_56C050()
                     break;
                 }
 
-                sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+                sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
             }
 
             if (index < 5) {
-                mes_file_entry.num = dword_67BC6C / 10 + 10;
+                mes_file_entry.num = written_ui_num / 10 + 10;
                 if (mes_file_entry.num >= dword_67BC68 + 10) {
                     mes_file_entry.num = 10;
                 }
 
-                if (mes_search(dword_680DB8[2], &mes_file_entry)) {
-                    sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+                if (mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
+                    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
 
                     while (true) {
-                        while (!sub_56C800(str, font, centered, &rect, &height)) {
+                        while (!sub_56C800(str, font_num, centered, &rect, &height)) {
                             index++;
                             if (index >= 5) {
                                 return;
@@ -538,11 +557,11 @@ void sub_56C050()
                             mes_file_entry.num = 10;
                         }
 
-                        if (!mes_search(dword_680DB8[2], &mes_file_entry)) {
+                        if (!mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
                             break;
                         }
 
-                        sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+                        sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
                         rect.height -= height;
                         rect.y += height;
                     }
@@ -550,24 +569,24 @@ void sub_56C050()
             }
         }
         break;
-    case 3:
+    case WRITTEN_TYPE_TELEGRAM:
         for (index = 0; index < 11; index++) {
-            mes_file_entry.num = stru_5CA538[index].field_4;
-            mes_get_msg(dword_680DB8[3], &mes_file_entry);
+            mes_file_entry.num = written_ui_telegram_elements[index].message_num;
+            mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
             sub_56C630(mes_file_entry.str,
-                stru_5CA538[index].field_0,
-                stru_5CA538[index].x,
-                stru_5CA538[index].y,
-                stru_5CA538[index].alignment);
+                written_ui_telegram_elements[index].font_num,
+                written_ui_telegram_elements[index].x,
+                written_ui_telegram_elements[index].y,
+                written_ui_telegram_elements[index].alignment);
         }
 
         mes_file_entry.num = 1011;
-        mes_get_msg(dword_680DB8[3], &mes_file_entry);
+        mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
         sub_56C750(mes_file_entry.str, 481, &stru_5CA518);
         sub_56C750(written_ui_text, 480, &stru_5CA508);
         break;
-    case 6:
-        width = dword_67BC6C;
+    case WRITTEN_TYPE_PLAQUE:
+        width = written_ui_num;
         height = 0;
         sub_56CB60(&stru_5CA528, &width, &height);
         break;
@@ -575,7 +594,7 @@ void sub_56C050()
 }
 
 // 0x56C590
-void sub_56C590(int num, int x, int y)
+void written_ui_draw_background(int num, int x, int y)
 {
     TigRect src_rect;
     TigRect dst_rect;
@@ -583,8 +602,8 @@ void sub_56C590(int num, int x, int y)
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = stru_5CA480.width;
-    src_rect.height = stru_5CA480.height;
+    src_rect.width = written_ui_background_frame.width;
+    src_rect.height = written_ui_background_frame.height;
 
     dst_rect.x = x;
     dst_rect.y = y;
@@ -600,14 +619,14 @@ void sub_56C590(int num, int x, int y)
 }
 
 // 0x56C630
-void sub_56C630(const char* str, int num, int x, int y, int alignment)
+void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
     TigRect text_rect;
 
     font_info.flags = 0;
-    tig_art_interface_id_create(num, 0, 0, 0, &(font_info.art_id));
+    tig_art_interface_id_create(font_num, 0, 0, 0, &(font_info.art_id));
     font_info.str = NULL;
     font_info.color = tig_color_make(0, 0, 0);
     tig_font_create(&font_info, &font_handle);
@@ -618,13 +637,13 @@ void sub_56C630(const char* str, int num, int x, int y, int alignment)
     tig_font_measure(&font_info);
 
     switch (alignment) {
-    case 0:
+    case WRITTEN_TEXT_ALIGNMENT_LEFT:
         text_rect.x = x;
         break;
-    case 1:
+    case WRITTEN_TEXT_ALIGNMENT_CENTER:
         text_rect.x = x - font_info.width / 2;
         break;
-    case 2:
+    case WRITTEN_TEXT_ALIGNMENT_RIGHT:
         text_rect.x = x - font_info.width;
         break;
     }
@@ -638,13 +657,13 @@ void sub_56C630(const char* str, int num, int x, int y, int alignment)
 }
 
 // 0x56C750
-void sub_56C750(const char* str, int num, TigRect* rect)
+void sub_56C750(const char* str, int font_num, TigRect* rect)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
 
     font_info.flags = 0;
-    tig_art_interface_id_create(num, 0, 0, 0, &(font_info.art_id));
+    tig_art_interface_id_create(font_num, 0, 0, 0, &(font_info.art_id));
     font_info.str = NULL;
     font_info.color = tig_color_make(0, 0, 0);
     tig_font_create(&font_info, &font_handle);
@@ -664,7 +683,7 @@ bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* heigh
     font_desc.flags = centered == 1 ? TIG_FONT_CENTERED : 0;
     tig_art_interface_id_create(font_num, 0, 0, 0, &(font_desc.art_id));
 
-    if (dword_680DCC == 6) {
+    if (written_ui_type == WRITTEN_TYPE_PLAQUE) {
         font_desc.color = tig_color_make(255, 255, 255);
     } else {
         font_desc.color = tig_color_make(0, 0, 0);
@@ -722,9 +741,9 @@ bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* heigh
 }
 
 // 0x56C9F0
-void sub_56C9F0(char* str, int* font_ptr, int* centered_ptr, char** str_ptr)
+void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
 {
-    *font_ptr = atoi(str);
+    *font_num_ptr = atoi(str);
 
     *str_ptr = str;
     while (isdigit(**str_ptr)) {
@@ -754,7 +773,7 @@ void sub_56CAA0(int a1, int* a2, int* a3)
     if (v1 == -1) {
         *a3 += v1;
         mes_file_entry.num = *a2;
-        if (mes_file_entry.num < dword_67BC6C + 10
+        if (mes_file_entry.num < written_ui_num + 10
             && mes_search(dword_680DB4, &mes_file_entry)) {
             dword_67BC70[dword_680DD0 + a1 + 1] = mes_file_entry.num;
             dword_680C20[dword_680DD0 + a1 + 1] = *a3;
@@ -769,14 +788,14 @@ void sub_56CAA0(int a1, int* a2, int* a3)
 int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
 {
     MesFileEntry mes_file_entry;
-    int font;
+    int font_num;
     int centered;
     char* str;
     TigRect v4;
     int v1;
 
     mes_file_entry.num = *num_ptr;
-    if (mes_file_entry.num >= dword_67BC6C + 10) {
+    if (mes_file_entry.num >= written_ui_num + 10) {
         return -1;
     }
 
@@ -784,18 +803,18 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
         return -1;
     }
 
-    sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
 
     v1 = *height_ptr;
     str += *height_ptr;
     v4 = *rect;
-    if (sub_56C800(str, font, centered, &v4, height_ptr)) {
+    if (sub_56C800(str, font_num, centered, &v4, height_ptr)) {
         v1 = 0;
         do {
             v4.y += *height_ptr;
             v4.height -= *height_ptr;
             mes_file_entry.num++;
-            if (mes_file_entry.num >= dword_67BC6C + 10) {
+            if (mes_file_entry.num >= written_ui_num + 10) {
                 break;
             }
 
@@ -803,8 +822,8 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
                 break;
             }
 
-            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
-        } while (sub_56C800(str, font, centered, &v4, height_ptr));
+            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+        } while (sub_56C800(str, font_num, centered, &v4, height_ptr));
     }
 
     *num_ptr = mes_file_entry.num;
@@ -812,10 +831,10 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
 }
 
 // 0x56CCA0
-void sub_56CCA0(int num, char* str)
+void written_ui_newspaper_headline(int num, char* str)
 {
     MesFileEntry mes_file_entry;
-    int font;
+    int font_num;
     int centered;
     char* tmp;
     char* pch;
@@ -827,15 +846,15 @@ void sub_56CCA0(int num, char* str)
     mes_file_entry.num = num;
     str[0] = '\0';
 
-    if (dword_680DB8[2] == MES_FILE_HANDLE_INVALID) {
+    if (written_ui_mes_files[WRITTEN_MES_NEWSPAPER] == MES_FILE_HANDLE_INVALID) {
         return;
     }
 
-    if (!mes_search(dword_680DB8[2], &mes_file_entry)) {
+    if (!mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
         return;
     }
 
-    sub_56C9F0(mes_file_entry.str, &font, &centered, &tmp);
+    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &tmp);
 
     strcpy(str, tmp);
 

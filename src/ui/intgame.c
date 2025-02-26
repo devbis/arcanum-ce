@@ -4849,7 +4849,7 @@ bool sub_551A80(int a1)
             break;
         case 15:
             v1 = true;
-            sub_56BC90();
+            written_ui_close();
             intgame_unforce_fullscreen();
             break;
         case 16:

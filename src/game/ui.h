@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/timeevent.h"
+#include "game/written.h"
 
 typedef enum UiMessageType {
     UI_MSG_TYPE_LEVEL,
@@ -81,8 +82,8 @@ typedef void(UI_CALLBACKS_FUNC_7C)(char* str);
 typedef void(UI_CALLBACKS_FUNC_80)(UiMessage* ui_message);
 typedef void(UI_CALLBACKS_FUNC_84)(int a1);
 typedef void(UI_CALLBACKS_FUNC_88)();
-typedef void(UI_CALLBACKS_FUNC_8C)(int64_t a1, int64_t a2);
-typedef void(UI_CALLBACKS_FUNC_90)(int a1, int a2);
+typedef void(UiWrittenStartObj)(int64_t written_obj, int64_t pc_obj);
+typedef void(UiWrittenStartType)(WrittenType written_type, int num);
 typedef void(UI_CALLBACKS_FUNC_94)(int64_t a1, int64_t a2);
 typedef void(UiFollowerRefresh)();
 typedef void(UI_CALLBACKS_FUNC_9C)();
@@ -175,8 +176,8 @@ typedef struct UiCallbacks {
     /* 0080 */ UI_CALLBACKS_FUNC_80* field_80;
     /* 0084 */ UI_CALLBACKS_FUNC_84* field_84;
     /* 0088 */ UI_CALLBACKS_FUNC_88* field_88;
-    /* 008C */ UI_CALLBACKS_FUNC_8C* field_8C;
-    /* 0090 */ UI_CALLBACKS_FUNC_90* field_90;
+    /* 008C */ UiWrittenStartObj* written_start_obj;
+    /* 0090 */ UiWrittenStartType* written_start_type;
     /* 0094 */ UI_CALLBACKS_FUNC_94* field_94;
     /* 0098 */ UiFollowerRefresh* follower_refresh;
     /* 009C */ UI_CALLBACKS_FUNC_9C* field_9C;
@@ -271,8 +272,8 @@ void sub_460630(UiMessage* ui_message);
 void sub_460650(UiMessage* ui_message, unsigned int milliseconds);
 void sub_4606C0(int a1);
 void sub_4606E0();
-void sub_4606F0(int64_t a1, int64_t a2);
-void sub_460720(int a1, int a2);
+void ui_written_start_obj(int64_t written_obj, int64_t pc_obj);
+void ui_written_start_type(WrittenType written_type, int num);
 void sub_460740(int64_t a1, int64_t a2);
 void ui_follower_refresh();
 void sub_460780();

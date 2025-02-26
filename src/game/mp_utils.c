@@ -496,24 +496,24 @@ void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id)
 }
 
 // 0x4EE290
-void sub_4EE290(int64_t obj, int a2, int a3)
+void mp_ui_written_start_type(int64_t obj, WrittenType written_type, int num)
 {
-    Packet100 pkt;
-    int client_id;
+    if (player_get_pc_obj() != obj) {
+        int client_id = sub_4A2B10(obj);
+        if (client_id != -1) {
+            Packet100 pkt;
 
-    if (player_get_pc_obj() == obj) {
-        sub_460720(a2, a3);
+            pkt.type = 100;
+            pkt.subtype = 3;
+            pkt.d.a.field_8 = written_type;
+            pkt.d.a.field_C = num;
+            tig_net_send_app(&pkt, sizeof(pkt), client_id);
+        }
+
         return;
     }
 
-    client_id = sub_4A2B10(obj);
-    if (client_id != -1) {
-        pkt.type = 100;
-        pkt.subtype = 3;
-        pkt.d.a.field_8 = a2;
-        pkt.d.a.field_C = a3;
-        tig_net_send_app(&pkt, sizeof(pkt), client_id);
-    }
+    ui_written_start_type(written_type, num);
 }
 
 // 0x4EE310
