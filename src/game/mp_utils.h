@@ -1166,7 +1166,7 @@ void mp_ui_follower_refresh();
 void sub_4EE1D0(int64_t obj);
 void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id);
 void sub_4EE290(int64_t obj, int a2, int a3);
-void sub_4EE310(int64_t obj, int64_t a2);
+void mp_ui_show_inven_loot(int64_t obj, int64_t a2);
 void sub_4EE3A0(int64_t obj, int64_t a2);
 void mp_ui_show_inven_identify(int64_t pc_obj, int64_t target_obj);
 void sub_4EE4C0(int64_t obj, int64_t a2);

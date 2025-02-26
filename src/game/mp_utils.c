@@ -517,23 +517,23 @@ void sub_4EE290(int64_t obj, int a2, int a3)
 }
 
 // 0x4EE310
-void sub_4EE310(int64_t obj, int64_t a2)
+void mp_ui_show_inven_loot(int64_t pc_obj, int64_t target_obj)
 {
-    Packet100 pkt;
+    if (!player_is_pc_obj(pc_obj)) {
+        if (tig_net_is_active() && tig_net_is_host()) {
+            Packet100 pkt;
 
-    if (player_is_pc_obj(obj)) {
-        ui_show_inven_loot(obj, a2);
+            pkt.type = 100;
+            pkt.subtype = 6;
+            sub_4F0640(pc_obj, &(pkt.d.s.field_8));
+            sub_4F0640(pc_obj, &(pkt.d.s.field_20));
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
         return;
     }
 
-    if (tig_net_is_active()
-        && tig_net_is_host()) {
-        pkt.type = 100;
-        pkt.subtype = 6;
-        sub_4F0640(obj, &(pkt.d.s.field_8));
-        sub_4F0640(obj, &(pkt.d.s.field_20));
-        tig_net_send_app_all(&pkt, sizeof(pkt));
-    }
+    ui_show_inven_loot(pc_obj, target_obj);
 }
 
 // 0x4EE3A0

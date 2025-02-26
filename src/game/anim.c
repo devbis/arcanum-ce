@@ -6740,7 +6740,7 @@ bool sub_428A10(AnimRunInfo* run_info)
     case OBJ_TYPE_CONTAINER:
         if (!tig_net_is_active()
             || tig_net_is_host()) {
-            sub_4EE310(source_obj, target_obj);
+            mp_ui_show_inven_loot(source_obj, target_obj);
 
             if (tig_net_is_active()) {
                 sub_424070(source_obj, 2, false, false);
@@ -6768,7 +6768,7 @@ bool sub_428A10(AnimRunInfo* run_info)
         }
         if (!tig_net_is_active()
             || tig_net_is_host()) {
-            sub_4EE310(source_obj, target_obj);
+            mp_ui_show_inven_loot(source_obj, target_obj);
 
             if (tig_net_is_active()) {
                 sub_424070(source_obj, 2, false, false);
