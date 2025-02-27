@@ -3542,11 +3542,11 @@ void sub_5786C0(int64_t obj)
 // 0x578760
 void sub_578760(int64_t obj)
 {
-    int v1;
-    int v2;
+    int hp_max;
+    int hp_dam;
     tig_art_id_t art_id;
 
-    v1 = object_hp_max(obj);
+    hp_max = object_hp_max(obj);
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_item_id_destroyed_get(art_id) != 0) {
         if (tech_skill_get_training(qword_682C78, TECH_SKILL_REPAIR) != TRAINING_MASTER) {
@@ -3555,13 +3555,13 @@ void sub_578760(int64_t obj)
             return;
         }
 
-        v2 = v1;
+        hp_dam = hp_max;
     } else {
-        v2 = object_hp_damage_get(obj);
+        hp_dam = object_hp_damage_get(obj);
     }
 
-    if (v2 != 0) {
-        dword_681440 = v1 * (item_cost(obj, inven_ui_pc_obj, qword_682C78, 1) / 2) / v1;
+    if (hp_dam != 0) {
+        dword_681440 = hp_dam * (item_cost(obj, inven_ui_pc_obj, qword_682C78, 1) / 2) / hp_max;
         if (dword_681440 < 2) {
             dword_681440 = 2;
         }
