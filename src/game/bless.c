@@ -116,7 +116,7 @@ void bless_add(object_id_t obj, int bless)
     if (!multiplayer_is_locked()) {
         ChangeBlessPacket pkt;
 
-        if (!!tig_net_is_host()) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -170,7 +170,7 @@ void bless_remove(object_id_t obj, int bless)
     if (!multiplayer_is_locked()) {
         ChangeBlessPacket pkt;
 
-        if (!!tig_net_is_host()) {
+        if (!tig_net_is_host()) {
             return;
         }
 
