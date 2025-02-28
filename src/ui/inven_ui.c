@@ -1980,7 +1980,7 @@ bool inven_ui_message_filter(TigMessage* msg)
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
             // 0x573C80
             inven_ui_message_filter_handle_mouse_idle(msg);
-        } else if (msg->type == TIG_MESSAGE_MOUSE_MOVE) {
+        } else if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_MOVE) {
             // 0x573D61
             if (inven_ui_message_filter_handle_mouse_move(msg)) {
                 return true;
