@@ -4338,13 +4338,14 @@ bool sub_424820(AnimRunInfo* run_info)
     ObjectID oid;
 
     oid.type = OID_TYPE_NULL;
-    return sub_4248A0(run_info->params[AGDATA_SCRATCH_VAL4].data,
-        run_info->params[AGDATA_SELF_OBJ].obj,
-        run_info->params[AGDATA_TARGET_OBJ].obj,
-        run_info->params[AGDATA_TARGET_OBJ].obj, // FIXME: Using obj as loc?
-        run_info->params[AGDATA_TARGET_TILE].loc,
-        run_info->params[AGDATA_SPELL_DATA].data,
-        &(run_info->params[AGDATA_SCRATCH_OBJ].obj),
+
+    return sub_4248A0(run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data,
+        run_info->cur_stack_data->params[AGDATA_SELF_OBJ].obj,
+        run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj,
+        run_info->params[1].loc,
+        run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
+        run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data,
+        &(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj),
         run_info->id,
         oid);
 }
