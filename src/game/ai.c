@@ -2177,7 +2177,7 @@ bool sub_4ABC70(Ai* ai)
         return false;
     }
 
-    if (!sub_45E3F0(ai->obj, false) == 0) {
+    if (sub_45E3F0(ai->obj, false) == 0) {
         mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_SUMMON);
         v3.flags = 0x1;
         v3.entries = ai_action_list.actions[AI_ACTION_SUMMON].entries;
