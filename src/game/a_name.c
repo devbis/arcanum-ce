@@ -216,8 +216,8 @@ bool a_name_tile_init()
     dword_687680[2] = 16 * (num_indoor_flippable_names + 4);
     dword_687680[3] = 16 * (num_indoor_non_flippable_names + 4);
     dword_687680[4] = 16 * (num_outdoor_flippable_names * num_outdoor_flippable_names + 4);
-    dword_687680[5] = 16 * (num_outdoor_flippable_names * num_outdoor_non_flippable_names + 4);
-    dword_687680[6] = 16 * (num_outdoor_non_flippable_names * num_outdoor_non_flippable_names + 4);
+    dword_687680[5] = 16 * (num_outdoor_non_flippable_names * num_outdoor_non_flippable_names + 4);
+    dword_687680[6] = 16 * (num_outdoor_flippable_names * num_outdoor_non_flippable_names + 4);
 
     return true;
 }
