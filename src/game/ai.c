@@ -2118,7 +2118,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
         }
     }
 
-    if (!object_dist(source_obj, target_obj) > 20) {
+    if (object_dist(source_obj, target_obj) > 20) {
         return false;
     }
 
