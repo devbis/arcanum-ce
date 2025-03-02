@@ -35,7 +35,7 @@ typedef struct TeleportData {
 static_assert(sizeof(TeleportData) == 0x60, "wrong size");
 
 bool teleport_init(GameInitInfo* init_info);
-bool teleport_reset();
+void teleport_reset();
 void teleport_exit();
 void teleport_ping(tig_timestamp_t timestamp);
 bool teleport_do(TeleportData* teleport_data);

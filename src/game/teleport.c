@@ -77,12 +77,10 @@ bool teleport_init(GameInitInfo* init_info)
 }
 
 // 0x4D3300
-bool teleport_reset()
+void teleport_reset()
 {
     teleport_clear();
     teleport_pending = false;
-
-    return true;
 }
 
 // 0x4D3320
