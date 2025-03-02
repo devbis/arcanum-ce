@@ -1722,6 +1722,7 @@ static MainMenuButtonInfo stru_5C5408[2] = {
         TIG_BUTTON_HANDLE_INVALID,
         -2,
         -1,
+        1,
         { 0 },
         7002, // "Previous Screen"
     },
