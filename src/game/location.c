@@ -435,7 +435,7 @@ bool location_in_range(int64_t loc, int dir, int range, int64_t* new_loc_ptr)
 bool sub_4B9130(TigRect* rect, LocRect* loc_rect)
 {
     TigRect frame;
-    uint64_t tmp;
+    int64_t tmp;
 
     if (rect != NULL) {
         frame = *rect;
