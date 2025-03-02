@@ -25,7 +25,7 @@ static unsigned int fate_flags[FATE_COUNT] = {
 };
 
 // 0x603D48
-static void(*fate_callback)(int64_t obj, int index);
+static FateCallback* fate_callback;
 
 // 0x4F5090
 bool fate_is_activated(int64_t obj, int fate)
