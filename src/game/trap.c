@@ -961,7 +961,7 @@ bool mp_save(TigFile* stream)
     }
 
     sentinel = TRAP_START_SENTINEL;
-    if (!tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
+    if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
         tig_debug_printf("TRAP: mp_save: FAILURE: could not write START sentinel.\n");
         return false;
     }
@@ -973,7 +973,7 @@ bool mp_save(TigFile* stream)
         node = node->next;
     }
 
-    if (!tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         tig_debug_printf("TRAP: mp_save: FAILURE: could not write count.\n");
         return false;
     }
@@ -995,7 +995,7 @@ bool mp_save(TigFile* stream)
     }
 
     sentinel = TRAP_END_SENTINEL;
-    if (!tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
+    if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
         tig_debug_printf("TRAP: mp_save: FAILURE: could not write END sentinel.\n");
         return false;
     }
