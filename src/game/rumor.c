@@ -23,7 +23,7 @@ typedef enum RumorInteractionType {
 } RumorInteractionType;
 
 static void rumor_set_known_internal(int64_t obj, int rumor, int64_t timestamp);
-static int rumor_compare(const RumorInfo* a, const RumorInfo* b);
+static int rumor_compare(const void* va, const void* vb);
 
 // 0x5B6E98
 static const char* rumor_mes_file_names[RUMOR_INTERACTION_TYPE_COUNT] = {
@@ -286,8 +286,11 @@ int rumor_copy_state(int64_t obj, RumorInfo* rumors)
 }
 
 // 0x4C5AF0
-int rumor_compare(const RumorInfo* a, const RumorInfo* b)
+int rumor_compare(const void* va, const void* vb)
 {
+    const RumorInfo* a = (const RumorInfo*)va;
+    const RumorInfo* b = (const RumorInfo*)vb;
+
     return datetime_compare(&(a->datetime), &(b->datetime));
 }
 
