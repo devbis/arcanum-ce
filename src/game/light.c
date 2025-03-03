@@ -538,6 +538,7 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
                             } else {
                                 *color_ptr = tig_color_add(color, *color_ptr);
                             }
+                            break;
                         }
                         default:
                             __assume(0);
