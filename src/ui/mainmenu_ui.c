@@ -6867,7 +6867,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
 
     if (rect == NULL
         || (rect->x < frame.x + frame.width
-            && rect->y, rect->y < frame.y + frame.height
+            && rect->y < frame.y + frame.height
             && frame.x < rect->x + rect->width
             && frame.y < rect->y + rect->height)) {
         sub_548B60(&frame);
