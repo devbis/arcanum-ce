@@ -989,7 +989,6 @@ void sub_4D0B40()
 void sector_flush(unsigned int flags)
 {
     unsigned int index;
-    unsigned int v1 = 0x3FFFFFFF;
     SectorCacheEntry* cache_entry;
 
     for (index = 0; index < dword_601784; index++) {
@@ -999,15 +998,13 @@ void sector_flush(unsigned int flags)
             if ((flags & 0x1) == 0) {
                 sub_4D1400(&(cache_entry->sector));
                 cache_entry->used = false;
-                memcpy(&(sector_cache_indexes[index]),
+                memmove(&(sector_cache_indexes[index]),
                     &(sector_cache_indexes[index + 1]),
-                    sizeof(*sector_cache_indexes) * (v1 + dword_601784));
+                    sizeof(*sector_cache_indexes) * (dword_601784 - 1));
                 index--;
                 dword_601784--;
-                v1 -= 0x3FFFFFFF;
             }
         }
-        v1 += 0x3FFFFFFF;
     }
 
     sector_block_save_internal();
