@@ -26,7 +26,7 @@ typedef struct Quest {
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
 static bool quest_parse(const char* path, int start, int end);
-static int quest_compare(const QuestInfo* a, const QuestInfo* b);
+static int quest_compare(const void* va, const void* vb);
 
 // 0x5B6E34
 static mes_file_handle_t quest_log_mes_file = MES_FILE_HANDLE_INVALID;
@@ -510,8 +510,10 @@ int quest_copy_state(int64_t obj, QuestInfo* quests1)
 }
 
 // 0x4C53A0
-int quest_compare(const QuestInfo* a, const QuestInfo* b)
+int quest_compare(const void* va, const void* vb)
 {
+    const QuestInfo* a = (const QuestInfo*)va;
+    const QuestInfo* b = (const QuestInfo*)vb;
     return datetime_compare(&(a->datetime), &(b->datetime));
 }
 
