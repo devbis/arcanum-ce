@@ -1630,7 +1630,7 @@ void sub_4045A0()
 bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
 {
     if (long_version != NULL) {
-        _snprintf(long_version,
+        snprintf(long_version,
             GAMELIB_LONG_VERSION_LENGTH - 1,
             "Arcanum %d.%d.%d.%d %s",
             VERSION_MAJOR,
@@ -1641,7 +1641,7 @@ bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
     }
 
     if (short_version != NULL) {
-        _snprintf(short_version,
+        snprintf(short_version,
             GAMELIB_SHORT_VERSION_LENGTH - 1,
             "%d.%d.%d.%d",
             VERSION_MAJOR,
@@ -1882,7 +1882,7 @@ bool sub_404C10(const char* module_name)
         path1[end] = '\0';
 
         for (index = 0; index < TEN; index++) {
-            _snprintf(path2, TIG_MAX_PATH, "%s.patch%d", path1, index);
+            snprintf(path2, TIG_MAX_PATH, "%s.patch%d", path1, index);
             if (tig_file_exists(path2, NULL)) {
                 if (!tig_file_repository_add(path2)) {
                     return false;

@@ -3013,7 +3013,7 @@ void anim_id_to_str(AnimID* anim_id, char* buffer)
     ASSERT(anim_id != NULL); // pAnimID != NULL
     ASSERT(buffer != NULL); // str != NULL
 
-    _snprintf(buffer, ANIM_ID_STR_SIZE,
+    snprintf(buffer, ANIM_ID_STR_SIZE,
         "[%d:%dr%d]",
         anim_id->slot_num,
         anim_id->field_4,

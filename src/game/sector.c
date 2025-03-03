@@ -2090,7 +2090,7 @@ void sub_4D2C30(const char* section)
     char str[300];
 
     if (!obj_validate_system(1)) {
-        _snprintf(str, sizeof(str) - 1, "Object system validate failed in %s", section);
+        snprintf(str, sizeof(str) - 1, "Object system validate failed in %s", section);
         str[sizeof(str) - 1] = '\0';
         MessageBoxA(NULL, str, "Execution Halting", MB_TASKMODAL | MB_ICONHAND);
         tig_message_post_quit(0);
