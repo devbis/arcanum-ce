@@ -900,7 +900,7 @@ bool sub_4F2D20(S603CB8* a1)
         while (node != NULL) {
             if (node->obj != OBJ_HANDLE_NULL) {
                 if (!obj_type_is_item(obj_field_int32_get(node->obj, OBJ_F_TYPE))
-                    && (obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_VERIFY) == 0) {
+                    && (obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {
                     v51 = false;
                     break;
                 }
@@ -926,7 +926,7 @@ bool sub_4F2D20(S603CB8* a1)
         while (node != NULL) {
             if (node->obj != OBJ_HANDLE_NULL) {
                 if (!obj_type_is_item(obj_field_int32_get(node->obj, OBJ_F_TYPE))
-                    && (obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_VERIFY) == 0) {
+                    && (obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {
                     v54 = false;
                     break;
                 }
