@@ -13,7 +13,7 @@
 
 static bool sub_4CC240();
 static void sub_4CC270();
-static int sub_4CC2D0(const AiActionListEntry* a, const AiActionListEntry* b);
+static int sub_4CC2D0(const void* va, const void* vb);
 static int sub_4CC310(int spl);
 static bool sub_4CC350(int index, S600A20* a2);
 static bool sub_4CC380(S600A20* a2, const char* name);
@@ -141,8 +141,10 @@ int sub_4CC2A0(int spl)
 }
 
 // 0x4CC2D0
-int sub_4CC2D0(const AiActionListEntry* a, const AiActionListEntry* b)
+int sub_4CC2D0(const void* va, const void* vb)
 {
+    const AiActionListEntry* a = (const AiActionListEntry*)va;
+    const AiActionListEntry* b = (const AiActionListEntry*)vb;
     int v1;
     int v2;
 
