@@ -54,7 +54,7 @@ bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 Sector601808* sub_4D02E0(LocRect* loc_rect);
 void sub_4D0400(Sector601808* node);
 bool sector_map_name_set(const char* base_map_name, const char* current_map_name);
-bool sub_4D04A0(uint64_t a1);
+bool sector_exists(uint64_t id);
 bool sub_4D04E0(int64_t id);
 bool sector_lock(int64_t id, Sector** sector_ptr);
 bool sector_unlock(int64_t id);

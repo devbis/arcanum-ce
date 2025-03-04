@@ -1,5 +1,6 @@
 #include "game/sector.h"
 
+#include <inttypes.h>
 #include <stdio.h>
 
 #include "game/gamelib.h"
@@ -816,10 +817,10 @@ bool sector_map_name_set(const char* base_map_name, const char* current_map_name
 }
 
 // 0x4D04A0
-bool sub_4D04A0(uint64_t a1)
+bool sector_exists(uint64_t id)
 {
     char path[TIG_MAX_PATH];
-    sprintf(path, "%s\\%I64u.sec", sector_base_map_name, a1);
+    sprintf(path, "%s\\%" PRIu64 ".sec", sector_base_map_name, id);
     return tig_file_exists(path, NULL);
 }
 

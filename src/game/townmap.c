@@ -280,7 +280,7 @@ bool sub_4BE8F0(int64_t loc)
 
     sector_id = sector_id_from_loc(loc);
 
-    if (!sub_4D04A0(sector_id)) {
+    if (!sector_exists(sector_id)) {
         return false;
     }
 
