@@ -573,15 +573,15 @@ bool timeevent_save(TigFile* stream)
     int pos;
     TimeEventTypeInfo* info;
 
-    if (!tig_file_fwrite(&timeevent_real_time, sizeof(timeevent_real_time), 1, stream) != 1) {
+    if (tig_file_fwrite(&timeevent_real_time, sizeof(timeevent_real_time), 1, stream) != 1) {
         return false;
     }
 
-    if (!tig_file_fwrite(&timeevent_game_time, sizeof(timeevent_game_time), 1, stream) != 1) {
+    if (tig_file_fwrite(&timeevent_game_time, sizeof(timeevent_game_time), 1, stream) != 1) {
         return false;
     }
 
-    if (!tig_file_fwrite(&timeevent_anim_time, sizeof(timeevent_anim_time), 1, stream) != 1) {
+    if (tig_file_fwrite(&timeevent_anim_time, sizeof(timeevent_anim_time), 1, stream) != 1) {
         return false;
     }
 
