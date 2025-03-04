@@ -547,14 +547,14 @@ static int dword_5C7054[7] = {
 };
 
 // 0x5C7070
-static dword_5C7070[7] = {
-    428,
-    429,
-    431,
-    430,
-    428,
-    462,
-    428,
+static int intgame_written_icons[WRITTEN_TYPE_COUNT] = {
+    /*      WRITTEN_TYPE_BOOK */ 428, // "booksicon.art"
+    /*      WRITTEN_TYPE_NOTE */ 429, // "note_icon.art"
+    /* WRITTEN_TYPE_NEWSPAPER */ 431, // "newpaper_icon.art"
+    /*  WRITTEN_TYPE_TELEGRAM */ 430, // "telegram_icon.art"
+    /*     WRITTEN_TYPE_IMAGE */ 428, // "booksicon.art"
+    /* WRITTEN_TYPE_SCHEMATIC */ 462, // "schematic_icon.art"
+    /*    WRITTEN_TYPE_PLAQUE */ 428, // "booksicon.art"
 };
 
 // 0x5C708C
@@ -6706,7 +6706,7 @@ int sub_554C20(int64_t item_obj)
         num = 427;
         break;
     case OBJ_TYPE_WRITTEN:
-        num = dword_5C7070[obj_field_int32_get(item_obj, OBJ_F_WRITTEN_SUBTYPE)];
+        num = intgame_written_icons[obj_field_int32_get(item_obj, OBJ_F_WRITTEN_SUBTYPE)];
         break;
     case OBJ_TYPE_GENERIC:
         num = 432;
