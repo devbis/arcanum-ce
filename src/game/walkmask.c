@@ -83,7 +83,7 @@ bool sub_4F6F60(TigFile* stream)
     char str[100];
 
     if (tig_file_fread(str, strlen(off_5BCFCC), 1, stream) != 1) return false;
-    if (strncmp(str, off_5BCFCC, sizeof(off_5BCFCC)) != 0) return false;
+    if (strncmp(str, off_5BCFCC, strlen(off_5BCFCC)) != 0) return false;
 
     return true;
 }
