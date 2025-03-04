@@ -1270,20 +1270,21 @@ void sub_4EFBE0()
 }
 
 // 0x4EFC30
-void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3)
+void sub_4EFC30(int64_t pc_obj, const char* name, const char* rule)
 {
     int size;
     Packet123* pkt;
 
-    size = sizeof(*pkt) + (int)strlen(a2) + (int)strlen(a3) + 2;
+    // NOTE: Unclear what additional 4 bytes are for.
+    size = sizeof(*pkt) + (int)strlen(name) + (int)strlen(rule) + 2 + 4;
     pkt = (Packet123*)MALLOC(size);
     pkt->type = 123;
     pkt->total_size = size;
     pkt->player = sub_4A2B10(pc_obj);
-    pkt->field_10 = (int)strlen(a2) + 1;
-    pkt->field_C = (int)strlen(a3) + 1;
-    strncpy((uint8_t*)(pkt + 1), a2, pkt->field_10);
-    strncpy((uint8_t*)(pkt + 1) + pkt->field_10, a3, pkt->field_C);
+    pkt->name_length = (int)strlen(name) + 1;
+    pkt->rule_length = (int)strlen(rule) + 1;
+    strncpy((char*)(pkt + 1), name, pkt->name_length);
+    strncpy((char*)(pkt + 1) + pkt->name_length, rule, pkt->rule_length);
     tig_net_send_app_all(&pkt, size);
     FREE(pkt);
 }

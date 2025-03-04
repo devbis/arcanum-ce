@@ -1011,12 +1011,11 @@ typedef struct Packet123 {
     /* 0000 */ int type;
     /* 0004 */ int total_size;
     /* 0008 */ int player;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
+    /* 000C */ int rule_length;
+    /* 0010 */ int name_length;
 } Packet123;
 
-static_assert(sizeof(Packet123) == 0x18, "wrong size");
+static_assert(sizeof(Packet123) == 0x14, "wrong size");
 
 typedef struct Packet105 {
     /* 0000 */ int type;
@@ -1187,7 +1186,7 @@ bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr);
 void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);
-void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3);
+void sub_4EFC30(int64_t pc_obj, const char* name, const char* rule);
 void mp_gsound_play_sfx(int sound_id);
 void sub_4EED00(int64_t obj, int sound_id);
 void mp_gsound_play_sfx_on_obj(int sound_id, int loops, int64_t obj);
