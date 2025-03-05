@@ -278,7 +278,7 @@ int matchmaker_ad_clicked()
 }
 
 // 0x4F5C90
-int matchmaker_gamelist_get(void** games, int* count)
+int matchmaker_gamelist_get(MatchmakerRegisterInfo** games, int* count)
 {
     if (mm.gamelist_get != NULL) {
         return mm.gamelist_get(games, count);
@@ -296,7 +296,7 @@ int matchmaker_gamelist_get(void** games, int* count)
 }
 
 // 0x4F5CE0
-int matchmaker_gamelist_free(void* games)
+int matchmaker_gamelist_free(MatchmakerRegisterInfo* games)
 {
     if (mm.gamelist_free != NULL) {
         return mm.gamelist_free(games);
@@ -368,7 +368,7 @@ int matchmaker_chatserver_join(int a1)
 }
 
 // 0x4F5E20
-int matchmaker_chatroom_list_get(void** chatrooms, int* count)
+int matchmaker_chatroom_list_get(MatchmakerChatroom** chatrooms, int* count)
 {
     if (mm.chatroom_list_get != NULL) {
         return mm.chatroom_list_get(chatrooms, count);
@@ -386,7 +386,7 @@ int matchmaker_chatroom_list_get(void** chatrooms, int* count)
 }
 
 // 0x4F5E70
-int matchmaker_chatroom_list_free(void* chatrooms)
+int matchmaker_chatroom_list_free(MatchmakerChatroom* chatrooms)
 {
     if (mm.chatroom_list_free != NULL) {
         return mm.chatroom_list_free(chatrooms);
@@ -440,7 +440,7 @@ int matchmaker_chatroom_get(int a1)
 }
 
 // 0x4F5FA0
-int matchmaker_chatroom_members_get(void** members, int* count)
+int matchmaker_chatroom_members_get(MatchmakerChatroomMember** members, int* count)
 {
     if (mm.chatroom_members_get != NULL) {
         return mm.chatroom_members_get(members, count);
@@ -458,7 +458,7 @@ int matchmaker_chatroom_members_get(void** members, int* count)
 }
 
 // 0x4F5FF0
-int matchmaker_chatroom_members_free(void* members)
+int matchmaker_chatroom_members_free(MatchmakerChatroomMember* members)
 {
     if (mm.chatroom_members_free != NULL) {
         return mm.chatroom_members_free(members);

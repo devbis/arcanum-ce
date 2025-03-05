@@ -2367,13 +2367,13 @@ int multiplayer_mm_register(int a1)
 }
 
 // 0x4A4FB0
-int multiplayer_mm_gamelist_get(void** games, int* count)
+int multiplayer_mm_gamelist_get(MatchmakerRegisterInfo** games, int* count)
 {
     return matchmaker_gamelist_get(games, count);
 }
 
 // 0x4A4FD0
-int multiplayer_mm_gamelist_free(void* games)
+int multiplayer_mm_gamelist_free(MatchmakerRegisterInfo* games)
 {
     return matchmaker_gamelist_free(games);
 }
@@ -2397,13 +2397,13 @@ int multiplayer_mm_chatserver_join(int a1)
 }
 
 // 0x4A5020
-int multiplayer_mm_chatroom_list_get(void** chatrooms, int* count)
+int multiplayer_mm_chatroom_list_get(MatchmakerChatroom** chatrooms, int* count)
 {
     return matchmaker_chatroom_list_get(chatrooms, count);
 }
 
 // 0x4A5040
-int multiplayer_mm_chatroom_list_free(void* chatrooms)
+int multiplayer_mm_chatroom_list_free(MatchmakerChatroom* chatrooms)
 {
     return matchmaker_chatroom_list_free(chatrooms);
 }
@@ -2415,13 +2415,13 @@ int multiplayer_mm_chatroom_join(MatchmakerChatroom* room, int a2)
 }
 
 // 0x4A5070
-int multiplayer_mm_chatroom_members_get(void** members, int* count)
+int multiplayer_mm_chatroom_members_get(MatchmakerChatroomMember** members, int* count)
 {
     return matchmaker_chatroom_members_get(members, count);
 }
 
 // 0x4A5090
-int multiplayer_mm_chatroom_members_free(void* members)
+int multiplayer_mm_chatroom_members_free(MatchmakerChatroomMember* members)
 {
     return matchmaker_chatroom_members_free(members);
 }
