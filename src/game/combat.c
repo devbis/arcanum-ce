@@ -137,9 +137,6 @@ static mes_file_handle_t combat_mes_file;
 // 0x5FC180
 static ObjectList stru_5FC180;
 
-// 0x5FC1D0
-static ObjectNode* dword_5FC1D0;
-
 // 0x5FC1D8
 static bool combat_editor;
 
@@ -3692,7 +3689,7 @@ void combat_turn_based_add_critter(int64_t obj)
         return;
     }
 
-    curr = dword_5FC1D0;
+    curr = stru_5FC180.head;
     while (curr != NULL && curr->obj != obj) {
         prev = curr;
         curr = curr->next;
@@ -3716,7 +3713,7 @@ void combat_turn_based_add_critter(int64_t obj)
         prev->next = curr;
     } else {
         tig_debug_printf("Combat: combat_turn_based_add_critter: ERROR: Base list is EMPTY!\n");
-        dword_5FC1D0 = curr;
+        stru_5FC180.head = curr;
     }
 
     sub_4B7EB0();
