@@ -3486,7 +3486,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
                         critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
                         if (((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_ENSHROUDED) != 0
                                 && (critter_flags & OCF_UNDEAD) != 0)
-                            || (obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OSF_FAMILIAR) != 0
+                            || (obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL_ENSHROUD) != 0
                                 && (critter_flags & OCF_ANIMAL) != 0) {
                             return 0;
                         }
