@@ -6178,7 +6178,7 @@ bool sub_427990(AnimRunInfo* run_info)
             run_info->path.flags &= ~0x03;
 
             if (range > 0) {
-                run_info->path.max -= (int)range + 1;
+                run_info->path.max -= (int)range - 1;
                 if (run_info->path.max < 1) {
                     if (!sub_40DA20(source_obj)) {
                         sub_4B7C90(source_obj);
@@ -6273,7 +6273,7 @@ bool sub_427990(AnimRunInfo* run_info)
     run_info->path.flags &= ~0x03;
 
     if (orig_range >= 0) {
-        run_info->path.max -= (int)orig_range + 1;
+        run_info->path.max -= (int)orig_range - 1;
         if (run_info->path.max < 1) {
             return false;
         }
@@ -6399,7 +6399,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     run_info->path.curr = 0;
 
     if (range > 0) {
-        run_info->path.max -= (int)range + 1;
+        run_info->path.max -= (int)range - 1;
         if (run_info->path.max < 1) {
             if (!sub_40DA20(source_obj)) {
                 sub_4B7C90(source_obj);
