@@ -40,7 +40,7 @@ int critter_faction_set(long long obj, int value);
 bool critter_faction_same(long long a, long long b);
 int critter_origin_get(long long obj);
 int critter_origin_set(long long obj, int value);
-bool critter_origin_same(long long a, long long b);
+bool critter_origin_same(int64_t a, int64_t b);
 bool critter_is_pc(long long obj);
 int critter_fatigue_pts_get(long long obj);
 int critter_fatigue_pts_set(long long obj, int value);

@@ -253,9 +253,10 @@ int critter_origin_set(long long obj, int value)
 }
 
 // 0x45D320
-bool critter_origin_same(long long a, long long b)
+bool critter_origin_same(int64_t a, int64_t b)
 {
-    return critter_origin_get(a) == critter_origin_get(b);
+    int origin = critter_origin_get(a);
+    return origin != 0 && origin == critter_origin_get(b);
 }
 
 // 0x45D360
