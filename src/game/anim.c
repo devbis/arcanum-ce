@@ -3896,23 +3896,25 @@ bool anim_timeevent_process(TimeEvent* timeevent)
     dword_5A5978 = -1;
 
     if ((run_info->flags & 0x02) != 0) {
-        if (run_info->anim_obj == OBJ_HANDLE_NULL) {
+        int64_t anim_obj = run_info->anim_obj;
+
+        if (anim_obj == OBJ_HANDLE_NULL) {
             return true;
         }
 
         bool rc = sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
 
         if (!combat_turn_based_is_active()) {
-            sub_4B4320(run_info->anim_obj);
+            sub_4B4320(anim_obj);
             return rc;
         }
 
-        if (obj_type_is_critter(obj_field_int32_get(run_info->anim_obj, OBJ_F_TYPE))) {
-            sub_4B7010(run_info->anim_obj);
+        if (obj_type_is_critter(obj_field_int32_get(anim_obj, OBJ_F_TYPE))) {
+            sub_4B7010(anim_obj);
         }
 
         if (combat_get_action_points() > 0) {
-            sub_4B4320(run_info->anim_obj);
+            sub_4B4320(anim_obj);
         }
 
         return rc;
