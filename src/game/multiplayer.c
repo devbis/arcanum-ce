@@ -629,7 +629,7 @@ bool sub_49CBD0()
 {
     multiplayer_lock_cnt = 0;
     if (tig_net_start_client() != TIG_OK) {
-        return FALSE;
+        return false;
     }
 
     sub_4A2AE0(0);
