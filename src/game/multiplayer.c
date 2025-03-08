@@ -2893,7 +2893,45 @@ int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
 // 0x4A5CA0
 void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int race;
+    int wearable_armor_size;
+    int level;
+    int strength;
+    int score;
+    int num;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    race = stat_level_get(obj, STAT_RACE);
+    wearable_armor_size = sub_465C90(race);
+
+    switch (wearable_armor_size) {
+    case OARF_SIZE_SMALL:
+        num = stat_level_get(obj, STAT_MAGICK_POINTS) < 50 ? 400 : 200;
+        break;
+    case OARF_SIZE_MEDIUM:
+        num = stat_level_get(obj, STAT_MAGICK_POINTS) < 50 ? 300 : 100;
+        break;
+    case OARF_SIZE_LARGE:
+        num = 500;
+        break;
+    default:
+        // Should be unreachable.
+        assert(0);
+    }
+
+    level = stat_level_get(obj, STAT_LEVEL);
+    strength = stat_level_get(obj, STAT_STRENGTH);
+    score = strength + level - 21;
+    if (score < 1) {
+        num += 1;
+    } else if (score > 50) {
+        num += 5;
+    } else {
+        num += (strength + level - 12) / 10;
+    }
+
+    sub_4A5920(obj, mes_file, num);
 }
 
 // 0x4A5D80
