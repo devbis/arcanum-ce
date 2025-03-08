@@ -143,7 +143,7 @@ void tc_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4C95F0
-void tc_render(UnknownContext* render_info)
+void tc_draw(UnknownContext* render_info)
 {
     if (tc_editor) {
         return;

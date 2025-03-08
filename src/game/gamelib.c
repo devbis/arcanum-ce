@@ -1698,7 +1698,7 @@ void gamelib_render_game(UnknownContext* render_info)
         roof_draw(render_info);
         tb_draw(render_info);
         tf_draw(render_info);
-        tc_render(render_info);
+        tc_draw(render_info);
         tig_video_3d_end_scene();
     }
 }
