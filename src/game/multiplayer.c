@@ -248,7 +248,7 @@ static int sub_4A5840(int64_t obj, mes_file_handle_t mes_file);
 static int sub_4A5920(int64_t obj, mes_file_handle_t mes_file, int num);
 static int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file);
 static void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file);
-static int sub_4A5D80(int64_t obj, const char* str);
+static int sub_4A5D80(int64_t obj, char* str);
 static int sub_4A5E10(int64_t obj, char* str);
 static bool sub_4A5EE0(int64_t obj);
 static void sub_4A6010(int64_t obj);
@@ -2897,9 +2897,27 @@ void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file)
 }
 
 // 0x4A5D80
-int sub_4A5D80(int64_t obj, const char* str)
+int sub_4A5D80(int64_t obj, char* str)
 {
-    // TODO: Incomplete.
+    int cnt = 0;
+    int basic_proto;
+
+    while (str != NULL && *str != '\0') {
+        while (isspace(*str)) {
+            str++;
+        }
+
+        if (*str == '\0') {
+            break;
+        }
+
+        tig_str_parse_value(&str, &basic_proto);
+        if (sub_462540(obj, sub_4685A0(basic_proto), 0)) {
+            cnt++;
+        }
+    }
+
+    return cnt;
 }
 
 // 0x4A5E10
