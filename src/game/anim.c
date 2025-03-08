@@ -3728,7 +3728,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
         err = true;
     }
 
-    if (!sub_44DD80(run_info, NULL)) {
+    if (!anim_recover_handles(run_info, NULL)) {
         return true;
     }
 
@@ -3760,7 +3760,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
         }
 
         goal_subnode = &(goal_node->subnodes[run_info->current_state]);
-        if (!sub_44DD80(run_info, goal_subnode)) {
+        if (!anim_recover_handles(run_info, goal_subnode)) {
             return true;
         }
 
@@ -3844,14 +3844,14 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
                     goal_subnode = &(anim_goal_nodes[run_info->goals[idx].type]->subnodes[14]);
                     if (goal_subnode->func != NULL
-                        && sub_44DD80(run_info, goal_subnode)) {
+                        && anim_recover_handles(run_info, goal_subnode)) {
                         goal_subnode->func(run_info);
                     }
                 }
 
                 goal_subnode = &(anim_goal_nodes[run_info->goals[0].type]->subnodes[14]);
                 if (goal_subnode->func != NULL
-                    && sub_44DD80(run_info, goal_subnode)) {
+                    && anim_recover_handles(run_info, goal_subnode)) {
                     goal_subnode->func(run_info);
                 }
 
@@ -3959,7 +3959,7 @@ void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** g
     if ((*goal_node_ptr)->subnodes[14].func != NULL
         && ((*flags_ptr & 0x70000000) == 0
             || (*flags_ptr & 0x4000000) == 0)
-        && sub_44DD80(run_info, &((*goal_node_ptr)->subnodes[14]))) {
+        && anim_recover_handles(run_info, &((*goal_node_ptr)->subnodes[14]))) {
         (*goal_node_ptr)->subnodes[14].func(run_info);
     }
 
@@ -15589,7 +15589,7 @@ void sub_437D00(AnimRunInfo* run_info)
     if (goal_data->type >= 0 && goal_data->type < 87) {
         goal_node = anim_goal_nodes[goal_data->type];
         if (goal_node->subnodes[14].func != NULL
-            && sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
+            && anim_recover_handles(run_info, &(goal_node->subnodes[14]))) {
             goal_node->subnodes[14].func(run_info);
         }
 

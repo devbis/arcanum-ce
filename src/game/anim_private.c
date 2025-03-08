@@ -939,7 +939,7 @@ bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
 }
 
 // 0x44DD80
-bool sub_44DD80(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode)
+bool anim_recover_handles(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode)
 {
     int idx;
     int64_t obj;
@@ -1098,7 +1098,7 @@ bool sub_44E160(AnimID* anim_id)
         for (idx = run_info->current_goal; idx >= 0; idx--) {
             goal_node = anim_goal_nodes[run_info->goals[idx].type];
             if (goal_node->subnodes[14].func != NULL) {
-                if (sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
+                if (anim_recover_handles(run_info, &(goal_node->subnodes[14]))) {
                     goal_node->subnodes[14].func(run_info);
                 }
             }
@@ -1184,7 +1184,7 @@ bool sub_44E2C0(AnimID* anim_id, int priority)
             goal_node = anim_goal_nodes[run_info->goals[idx].type];
             if (!in_reset) {
                 if (goal_node->subnodes[14].func != NULL) {
-                    if (sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
+                    if (anim_recover_handles(run_info, &(goal_node->subnodes[14]))) {
                         goal_node->subnodes[14].func(run_info);
                     }
                 }
