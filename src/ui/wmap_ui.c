@@ -61,17 +61,17 @@ typedef struct WmapNote {
 
 static_assert(sizeof(WmapNote) == 0x130, "wrong size");
 
-typedef struct S5C9228_F180 {
+typedef struct WmapTile {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigVideoBuffer* video_buffer;
     /* 0008 */ TigRect rect;
     /* 0018 */ void* field_18;
     /* 001C */ int field_1C;
-} S5C9228_F180;
+} WmapTile;
 
-static_assert(sizeof(S5C9228_F180) == 0x20, "wrong size");
+static_assert(sizeof(WmapTile) == 0x20, "wrong size");
 
-typedef struct S5C9228 {
+typedef struct Wmap {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigRect rect;
     /* 0014 */ TigRect field_14;
@@ -83,7 +83,7 @@ typedef struct S5C9228 {
     /* 0038 */ int field_38;
     /* 003C */ WmapCoords field_3C;
     /* 0044 */ int field_44;
-    /* 0048 */ void(*field_48)();
+    /* 0048 */ void(*refresh)();
     /* 004C */ void(*refresh_rect)(TigRect* rect);
     /* 0050 */ void(*field_50)(int direction);
     /* 0054 */ int field_54;
@@ -94,11 +94,11 @@ typedef struct S5C9228 {
     /* 0068 */ char field_68[TIG_MAX_PATH];
     /* 016C */ int field_16C;
     /* 0170 */ int field_170;
-    /* 0174 */ int field_174;
-    /* 0178 */ int field_178;
-    /* 017C */ int field_17C;
-    /* 0180 */ S5C9228_F180* field_180;
-    /* 0184 */ int field_184;
+    /* 0174 */ int num_tiles;
+    /* 0178 */ int num_hor_tiles;
+    /* 017C */ int num_vert_tiles;
+    /* 0180 */ WmapTile* tiles;
+    /* 0184 */ int num_loaded_tiles;
     /* 0188 */ WmapNote* notes;
     /* 018C */ int field_18C;
     /* 0190 */ int* num_notes;
@@ -110,9 +110,9 @@ typedef struct S5C9228 {
     /* 02A8 */ TigRect field_2A8;
     /* 02B8 */ TigVideoBuffer* video_buffer;
     /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
-} S5C9228;
+} Wmap;
 
-static_assert(sizeof(S5C9228) == 0x2C0, "wrong size");
+static_assert(sizeof(Wmap) == 0x2C0, "wrong size");
 
 typedef struct S64E048 {
     /* 0000 */ int field_0;
@@ -177,7 +177,7 @@ static void sub_562A20(int x, int y);
 static void sub_562AF0(int x, int y);
 static void sub_562B70(int a1);
 static bool wmap_load_townmap_info();
-static void sub_562F90(S5C9228_F180* a1);
+static void sub_562F90(WmapTile* a1);
 static bool sub_562FA0(int a1);
 static void sub_562FC0(int a1);
 static bool wmTileArtLockMode(int a1, int a2);
@@ -240,8 +240,8 @@ static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
 static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
-static void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3);
-static void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, S5C9228* a5);
+static void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3);
+static void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5);
 
 // 0x5C9220
 static int dword_5C9220 = -1;
@@ -479,7 +479,7 @@ static WmapNote* dword_66D9D4;
 // obtains references to many internal state variables.
 //
 // 0x5C9228
-static S5C9228 stru_5C9228[3] = {
+static Wmap stru_5C9228[3] = {
     {
         6,
         { 150, 52, 501, 365 },
@@ -755,15 +755,15 @@ void wmap_ui_exit()
     dword_66D8AC = 0;
 
     for (v1 = 0; v1 < 3; v1++) {
-        if (stru_5C9228[v1].field_180 != NULL) {
-            for (v2 = 0; v2 < stru_5C9228[v1].field_174; v2++) {
-                if (stru_5C9228[v1].field_180[v2].field_18 != NULL) {
-                    FREE(stru_5C9228[v1].field_180[v2].field_18);
+        if (stru_5C9228[v1].tiles != NULL) {
+            for (v2 = 0; v2 < stru_5C9228[v1].num_tiles; v2++) {
+                if (stru_5C9228[v1].tiles[v2].field_18 != NULL) {
+                    FREE(stru_5C9228[v1].tiles[v2].field_18);
                 }
             }
 
-            FREE(stru_5C9228[v1].field_180);
-            stru_5C9228[v1].field_180 = NULL;
+            FREE(stru_5C9228[v1].tiles);
+            stru_5C9228[v1].tiles = NULL;
         }
     }
 
@@ -777,10 +777,10 @@ void wmap_ui_exit()
 void sub_560010()
 {
     wmap_ui_town_notes_save();
-    stru_5C9228[2].field_174 = 0;
-    if (stru_5C9228[2].field_180 != NULL) {
-        FREE(stru_5C9228[2].field_180);
-        stru_5C9228[2].field_180 = NULL;
+    stru_5C9228[2].num_tiles = 0;
+    if (stru_5C9228[2].tiles != NULL) {
+        FREE(stru_5C9228[2].tiles);
+        stru_5C9228[2].tiles = NULL;
     }
 }
 
@@ -848,7 +848,7 @@ void sub_560150()
             }
         }
 
-        for (j = 0; j < stru_5C9228[index].field_174; j++) {
+        for (j = 0; j < stru_5C9228[index].num_tiles; j++) {
             sub_562FE0(j);
         }
     }
@@ -1212,7 +1212,7 @@ void sub_5607E0()
         wmap_ui_close();
     }
 
-    stru_5C9228[dword_66D868].field_48();
+    stru_5C9228[dword_66D868].refresh();
 
     ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, false);
 }
@@ -1226,8 +1226,8 @@ bool wmap_load_worldmap_info()
     char* str;
     int wmap;
     int idx;
-    S5C9228_F180* v1;
-    S5C9228* v2;
+    WmapTile* v1;
+    Wmap* v2;
     int map_keyed_to;
 
     name = sub_402FE0();
@@ -1257,16 +1257,16 @@ bool wmap_load_worldmap_info()
         }
         mes_get_msg(dword_66D6FC, &mes_file_entry);
         str = mes_file_entry.str;
-        tig_str_parse_value(&str, &stru_5C9228[0].field_178);
-        tig_str_parse_value(&str, &stru_5C9228[0].field_17C);
+        tig_str_parse_value(&str, &stru_5C9228[0].num_hor_tiles);
+        tig_str_parse_value(&str, &stru_5C9228[0].num_vert_tiles);
 
-        if (stru_5C9228[0].field_180 == NULL) {
-            stru_5C9228[0].field_174 = stru_5C9228[0].field_178 * stru_5C9228[0].field_17C;
-            stru_5C9228[0].field_180 = (S5C9228_F180*)CALLOC(stru_5C9228[0].field_174, sizeof(S5C9228_F180));
+        if (stru_5C9228[0].tiles == NULL) {
+            stru_5C9228[0].num_tiles = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].num_vert_tiles;
+            stru_5C9228[0].tiles = (WmapTile*)CALLOC(stru_5C9228[0].num_tiles, sizeof(WmapTile));
 
             // FIXME: Meaningless, calloc already zeroes it out.
-            for (idx = 0; idx < stru_5C9228[0].field_174; idx++) {
-                stru_5C9228[0].field_180[idx].flags = 0;
+            for (idx = 0; idx < stru_5C9228[0].num_tiles; idx++) {
+                stru_5C9228[0].tiles[idx].flags = 0;
             }
         }
 
@@ -1277,10 +1277,10 @@ bool wmap_load_worldmap_info()
             exit(EXIT_FAILURE);
         }
 
-        stru_5C9228[0].field_16C = stru_5C9228[0].field_180->rect.width;
-        stru_5C9228[0].field_170 = stru_5C9228[0].field_180->rect.height;
-        stru_5C9228[0].field_58 = stru_5C9228[0].field_16C * stru_5C9228[0].field_178;
-        stru_5C9228[0].field_5C = stru_5C9228[0].field_170 * stru_5C9228[0].field_17C;
+        stru_5C9228[0].field_16C = stru_5C9228[0].tiles->rect.width;
+        stru_5C9228[0].field_170 = stru_5C9228[0].tiles->rect.height;
+        stru_5C9228[0].field_58 = stru_5C9228[0].field_16C * stru_5C9228[0].num_hor_tiles;
+        stru_5C9228[0].field_5C = stru_5C9228[0].field_170 * stru_5C9228[0].num_vert_tiles;
         sub_562FC0(0);
         sub_562FE0(0);
 
@@ -1291,8 +1291,8 @@ bool wmap_load_worldmap_info()
             dword_66D87C = map_keyed_to;
         }
 
-        for (idx = 0; idx < stru_5C9228[0].field_174; idx++) {
-            v1 = &(stru_5C9228[0].field_180[idx]);
+        for (idx = 0; idx < stru_5C9228[0].num_tiles; idx++) {
+            v1 = &(stru_5C9228[0].tiles[idx]);
             if ((v1->flags & 0x02) == 0) {
                 v1->flags = 0x02;
                 v1->rect.width = 0;
@@ -1302,8 +1302,8 @@ bool wmap_load_worldmap_info()
             }
         }
     } else {
-        stru_5C9228[0].field_178 = 8;
-        stru_5C9228[0].field_17C = 8;
+        stru_5C9228[0].num_hor_tiles = 8;
+        stru_5C9228[0].num_vert_tiles = 8;
         dword_66D858 = 0;
         stru_5C9228[0].field_16C = 250;
         stru_5C9228[0].field_170 = 250;
@@ -1319,8 +1319,8 @@ bool wmap_load_worldmap_info()
         if (v2->rect.width > 0) {
             v2->field_24 = v2->rect.width / 2;
             v2->field_28 = v2->rect.height / 2;
-            v2->field_2C = stru_5C9228[0].field_178 * stru_5C9228[0].field_16C - v2->field_24;
-            v2->field_30 = stru_5C9228[0].field_17C * stru_5C9228[0].field_170 - v2->field_28;
+            v2->field_2C = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].field_16C - v2->field_24;
+            v2->field_30 = stru_5C9228[0].num_vert_tiles * stru_5C9228[0].field_170 - v2->field_28;
         }
 
         if (v2->num_notes != NULL && idx != 2) {
@@ -1615,7 +1615,7 @@ bool sub_5614F0()
 bool sub_5615D0(int a1)
 {
     bool v1 = false;
-    S5C9228* v2;
+    Wmap* v2;
     tig_art_id_t art_id;
     int64_t pc_obj;
     int64_t loc;
@@ -1684,7 +1684,7 @@ bool sub_5615D0(int a1)
 
         if (v1) {
             sub_5649C0();
-            stru_5C9228[dword_66D868].field_48();
+            stru_5C9228[dword_66D868].refresh();
         }
     }
 
@@ -1721,7 +1721,7 @@ bool sub_561860(int64_t loc)
 // 0x5618B0
 bool wmap_ui_message_filter(TigMessage* msg)
 {
-    S5C9228* v1;
+    Wmap* v1;
     MesFileEntry mes_file_entry;
     char str[48];
     UiMessage ui_message;
@@ -2265,7 +2265,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     sub_562800(area);
                 }
 
-                v1->field_48();
+                v1->refresh();
             }
             return true;
         default:
@@ -2508,7 +2508,7 @@ void sub_562B70(int a1)
             }
         }
 
-        stru_5C9228[dword_66D868].field_48();
+        stru_5C9228[dword_66D868].refresh();
         sub_562880(&stru_64E7E8);
     }
 }
@@ -2516,7 +2516,7 @@ void sub_562B70(int a1)
 // 0x562D80
 bool wmap_load_townmap_info()
 {
-    S5C9228* v1;
+    Wmap* v1;
     int x;
     int y;
     int index;
@@ -2540,34 +2540,34 @@ bool wmap_load_townmap_info()
     v1->field_38 = 0;
 
     strcpy(v1->field_68, townmap_name(dword_66D874));
-    v1->field_178 = stru_64E7F8.width;
-    v1->field_17C = stru_64E7F8.height;
-    v1->field_174 = stru_64E7F8.width * stru_64E7F8.height;
-    v1->field_180 = (S5C9228_F180*)CALLOC(sizeof(*v1->field_180), v1->field_174);
+    v1->num_hor_tiles = stru_64E7F8.width;
+    v1->num_vert_tiles = stru_64E7F8.height;
+    v1->num_tiles = stru_64E7F8.width * stru_64E7F8.height;
+    v1->tiles = (WmapTile*)CALLOC(sizeof(*v1->tiles), v1->num_tiles);
 
     if (!wmTileArtLockMode(2, 0)) {
         tig_debug_printf("wmap_load_townmap_info: ERROR: wmTileArtLockMode failed!\n");
         exit(EXIT_FAILURE);
     }
 
-    v1->field_16C = v1->field_180[0].rect.width;
-    v1->field_170 = v1->field_180[0].rect.height;
-    v1->field_58 = v1->field_178 * v1->field_16C;
-    v1->field_5C = v1->field_170 * v1->field_17C;
+    v1->field_16C = v1->tiles[0].rect.width;
+    v1->field_170 = v1->tiles[0].rect.height;
+    v1->field_58 = v1->num_hor_tiles * v1->field_16C;
+    v1->field_5C = v1->field_170 * v1->num_vert_tiles;
 
     sub_563200(2, 0);
     sub_563210(2, 0);
 
-    for (index = 0; index < v1->field_174; index++) {
-        sub_562F90(&(v1->field_180[index]));
-        v1->field_180[index].rect.width = v1->field_16C;
-        v1->field_180[index].rect.height = v1->field_170;
+    for (index = 0; index < v1->num_tiles; index++) {
+        sub_562F90(&(v1->tiles[index]));
+        v1->tiles[index].rect.width = v1->field_16C;
+        v1->tiles[index].rect.height = v1->field_170;
     }
 
-    v1->field_2C = v1->field_178 * v1->field_16C - v1->field_24;
-    v1->field_60 = v1->field_178 * v1->field_16C - v1->rect.width;
-    v1->field_30 = v1->field_17C * v1->field_170 - v1->field_28;
-    v1->field_64 = v1->field_17C * v1->field_170 - v1->rect.height;
+    v1->field_2C = v1->num_hor_tiles * v1->field_16C - v1->field_24;
+    v1->field_60 = v1->num_hor_tiles * v1->field_16C - v1->rect.width;
+    v1->field_30 = v1->num_vert_tiles * v1->field_170 - v1->field_28;
+    v1->field_64 = v1->num_vert_tiles * v1->field_170 - v1->rect.height;
 
     sub_563590(&(v1->field_3C), false);
 
@@ -2575,7 +2575,7 @@ bool wmap_load_townmap_info()
 }
 
 // 0x562F90
-void sub_562F90(S5C9228_F180* a1)
+void sub_562F90(WmapTile* a1)
 {
     a1->flags = 0;
     a1->field_18 = NULL;
@@ -2605,7 +2605,7 @@ bool wmTileArtLockMode(int a1, int a2)
 {
     char path[TIG_MAX_PATH];
 
-    if ((stru_5C9228[a1].field_180[a2].flags & 0x1) == 0) {
+    if ((stru_5C9228[a1].tiles[a2].flags & 0x1) == 0) {
         if (a1 == 2) {
             snprintf(path, sizeof(path),
                 "townmap\\%s\\%s%06d.bmp",
@@ -2626,9 +2626,9 @@ bool wmTileArtLockMode(int a1, int a2)
                 a2 + 1);
         }
 
-        if (sub_5630F0(path, &(stru_5C9228[a1].field_180[a2].video_buffer), &(stru_5C9228[a1].field_180[a2].rect))) {
-            stru_5C9228[a1].field_180[a2].flags |= 0x1;
-            stru_5C9228[a1].field_184++;
+        if (sub_5630F0(path, &(stru_5C9228[a1].tiles[a2].video_buffer), &(stru_5C9228[a1].tiles[a2].rect))) {
+            stru_5C9228[a1].tiles[a2].flags |= 0x1;
+            stru_5C9228[a1].num_loaded_tiles++;
         } else {
             tig_debug_printf("WMapUI: Blit: ERROR: Bmp Load Failed!\n");
         }
@@ -2677,14 +2677,14 @@ bool sub_563200(int a1, int a2)
 // 0x563210
 void sub_563210(int a1, int a2)
 {
-    if ((stru_5C9228[a1].field_180[a2].flags & 0x1) != 0) {
-        if (tig_video_buffer_destroy(stru_5C9228[a1].field_180[a2].video_buffer) != TIG_OK) {
+    if ((stru_5C9228[a1].tiles[a2].flags & 0x1) != 0) {
+        if (tig_video_buffer_destroy(stru_5C9228[a1].tiles[a2].video_buffer) != TIG_OK) {
             tig_debug_printf("WMapUI: Destroy: ERROR: Video Buffer Destroy FAILED!\n");
             return;
         }
 
-        stru_5C9228[a1].field_180[a2].flags &= ~0x1;
-        stru_5C9228[a1].field_184--;
+        stru_5C9228[a1].tiles[a2].flags &= ~0x1;
+        stru_5C9228[a1].num_loaded_tiles--;
     }
 }
 
@@ -2721,7 +2721,7 @@ void sub_5632A0(int direction)
 // 0x563300
 void sub_563300(int direction, int a2, int a3, int a4)
 {
-    S5C9228* v1;
+    Wmap* v1;
     TigRect one;
     TigRect two;
     TigRect three;
@@ -2825,7 +2825,7 @@ void sub_563300(int direction, int a2, int a3, int a4)
 // 0x563590
 void sub_563590(WmapCoords* coords, bool a2)
 {
-    S5C9228* v3;
+    Wmap* v3;
     int v1;
     int v2;
 
@@ -2851,7 +2851,7 @@ void sub_563590(WmapCoords* coords, bool a2)
         v3->field_38 = v2;
 
         if (a2) {
-            v3->field_48();
+            v3->refresh();
         }
     }
 }
@@ -2947,7 +2947,7 @@ void sub_563770(int direction)
 // 0x563790
 void sub_563790(int direction, int scale)
 {
-    S5C9228* v1;
+    Wmap* v1;
     int sx;
     int sy;
     int dx;
@@ -3134,7 +3134,7 @@ void sub_563C00(int x, int y, WmapCoords* coords)
 // 0x563C60
 bool sub_563C60(WmapNote* note)
 {
-    S5C9228* v1;
+    Wmap* v1;
     int index;
 
     v1 = &(stru_5C9228[dword_66D868]);
@@ -3208,7 +3208,7 @@ bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3)
 {
     int dx;
     int dy;
-    S5C9228* v1;
+    Wmap* v1;
     int idx;
     WmapNote* note;
 
@@ -3342,7 +3342,7 @@ void sub_5640C0(TextEdit* textedit)
     sub_564070(1);
 
     if (v1) {
-        stru_5C9228[dword_66D868].field_48();
+        stru_5C9228[dword_66D868].refresh();
     }
 }
 
@@ -3377,7 +3377,7 @@ bool sub_564160(WmapNote* note, int a2)
 // 0x564210
 bool sub_564210(WmapNote* note)
 {
-    S5C9228* v1;
+    Wmap* v1;
     int index;
 
     v1 = &(stru_5C9228[dword_66D868]);
@@ -3445,7 +3445,7 @@ void sub_564320(TextEdit* textedit)
 // 0x564360
 void sub_564360(int id)
 {
-    S5C9228* v1;
+    Wmap* v1;
     int index;
     int cnt;
 
@@ -3534,7 +3534,7 @@ void sub_564840(int a1)
         }
 
         sub_5649C0();
-        stru_5C9228[dword_66D868].field_48();
+        stru_5C9228[dword_66D868].refresh();
 
         if (stru_64E048[v1].field_3C0 == 0) {
             dword_65E968 = 0;
@@ -3560,7 +3560,7 @@ void sub_5648E0(int a1, int a2, bool a3)
 
     if (a3) {
         sub_5649C0();
-        stru_5C9228[dword_66D868].field_48();
+        stru_5C9228[dword_66D868].refresh();
     }
 }
 
@@ -3598,7 +3598,7 @@ void sub_5649D0(int a1)
 // 0x5649F0
 bool sub_5649F0(int64_t loc)
 {
-    S5C9228* v1;
+    Wmap* v1;
     int area;
 
     v1 = &(stru_5C9228[dword_66D868]);
@@ -3611,8 +3611,8 @@ bool sub_5649F0(int64_t loc)
         sub_561490(loc, &(v1->field_3C));
     }
 
-    if (v1->field_48 != NULL) {
-        v1->field_48();
+    if (v1->refresh != NULL) {
+        v1->refresh();
     }
 
     sub_57D620();
@@ -3693,7 +3693,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 {
     bool v0;
     bool v1;
-    S5C9228* v2;
+    Wmap* v2;
     DateTime v9;
     DateTime datetime;
     TimeEvent next_timeevent;
@@ -3740,7 +3740,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
         sub_563590(&v2->field_3C, false);
         sub_565130(sub_5650E0(&v2->field_3C, &stru_64E048[0].field_0[0].coords));
         sub_5649C0();
-        stru_5C9228[dword_66D868].field_48();
+        stru_5C9228[dword_66D868].refresh();
     }
 
     sub_564EE0(&v8, &(v2->field_3C), &v9);
@@ -4067,7 +4067,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
 // 0x5657A0
 void sub_5657A0(TigRect* rect)
 {
-    S5C9228* v1;
+    Wmap* v1;
     TigRect tmp_rect;
     TigVideoBufferBlitInfo vb_blit_info;
     TigRect vb_src_rect;
@@ -4077,7 +4077,7 @@ void sub_5657A0(TigRect* rect)
     TigRect dst_rect;
     int offset_x;
     int offset_y;
-    S5C9228_F180* v2;
+    WmapTile* v2;
     int min_x;
     int min_y;
     int max_x;
@@ -4131,22 +4131,22 @@ void sub_5657A0(TigRect* rect)
         min_y = 0;
     }
 
-    v2 = &(v1->field_180[min_y * v1->field_178 + min_x]);
+    v2 = &(v1->tiles[min_y * v1->num_hor_tiles + min_x]);
 
     max_x = tmp_rect.width / v2->rect.width + min_x + 1;
-    if (max_x > v1->field_178) {
-        max_x = v1->field_178;
+    if (max_x > v1->num_hor_tiles) {
+        max_x = v1->num_hor_tiles;
     }
 
     max_y = tmp_rect.height / v2->rect.height + min_y + 2;
-    if (max_y > v1->field_17C) {
-        max_y = v1->field_17C;
+    if (max_y > v1->num_vert_tiles) {
+        max_y = v1->num_vert_tiles;
     }
 
     for (y = min_y; y < max_y; y++) {
         for (x = min_x; x < max_x; x++) {
-            idx = y * v1->field_178 + x;
-            v2 = &(v1->field_180[idx]);
+            idx = y * v1->num_hor_tiles + x;
+            v2 = &(v1->tiles[idx]);
             vb_src_rect.x = tmp_rect.x + vb_src_rect.width * x - offset_x;
             vb_src_rect.y = tmp_rect.y + vb_src_rect.height * y - offset_y;
             vb_src_rect.width = v2->rect.width;
@@ -4332,7 +4332,7 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
     int max_x;
     int max_y;
     int idx;
-    S5C9228_F180 *entry;
+    WmapTile *entry;
     int col;
     int row;
     TigRect bounds;
@@ -4371,23 +4371,23 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
         min_y = 0;
     }
 
-    idx = min_x + stru_5C9228[0].field_178 * min_y;
-    entry = &(stru_5C9228[0].field_180[idx]);
+    idx = min_x + stru_5C9228[0].num_hor_tiles * min_y;
+    entry = &(stru_5C9228[0].tiles[idx]);
 
     max_x = rect->width / entry->rect.width + min_x + 1;
-    if (max_x > stru_5C9228[0].field_178) {
-        max_x = stru_5C9228[0].field_178;
+    if (max_x > stru_5C9228[0].num_hor_tiles) {
+        max_x = stru_5C9228[0].num_hor_tiles;
     }
 
     max_y = rect->height / entry->rect.height + min_y + 2;
-    if (max_y > stru_5C9228[0].field_17C) {
-        max_y = stru_5C9228[0].field_17C;
+    if (max_y > stru_5C9228[0].num_vert_tiles) {
+        max_y = stru_5C9228[0].num_vert_tiles;
     }
 
     for (row = min_y; row < max_y; row++) {
         for (col = min_x; col < max_x; col++) {
-            idx = col + stru_5C9228[0].field_178 * row;
-            entry = &(stru_5C9228[0].field_180[idx]);
+            idx = col + stru_5C9228[0].num_hor_tiles * row;
+            entry = &(stru_5C9228[0].tiles[idx]);
 
             src_rect.x = bounds.x + src_rect.width * min_x - offset_x;
             src_rect.y = bounds.y + src_rect.height * min_y - offset_y;
@@ -4433,7 +4433,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     TigArtBlitInfo art_blit_info;
     TigRect art_src_rect;
     TigRect art_dst_rect;
-    S5C9228_F180 *entry;
+    WmapTile *entry;
     int64_t loc;
     int offset_x;
     int offset_y;
@@ -4480,23 +4480,23 @@ void wmap_town_refresh_rect(TigRect* rect)
         min_y = 0;
     }
 
-    idx = min_x + min_y * stru_5C9228[2].field_178;
-    entry = &(stru_5C9228[2].field_180[idx]);
+    idx = min_x + min_y * stru_5C9228[2].num_hor_tiles;
+    entry = &(stru_5C9228[2].tiles[idx]);
 
     max_x = bounds.width / entry->rect.width + min_x + 2;
-    if (max_x > stru_5C9228[2].field_178) {
-        max_x = stru_5C9228[2].field_178;
+    if (max_x > stru_5C9228[2].num_hor_tiles) {
+        max_x = stru_5C9228[2].num_hor_tiles;
     }
 
     max_y = bounds.height / entry->rect.height + min_y + 3;
-    if (max_y > stru_5C9228[2].field_17C) {
-        max_y = stru_5C9228[2].field_17C;
+    if (max_y > stru_5C9228[2].num_vert_tiles) {
+        max_y = stru_5C9228[2].num_vert_tiles;
     }
 
     for (row = min_y; row < max_y; row++) {
         for (col = min_x; col < max_x; col++) {
-            idx = col + row * stru_5C9228[2].field_178;
-            entry = &(stru_5C9228[2].field_180[idx]);
+            idx = col + row * stru_5C9228[2].num_hor_tiles;
+            entry = &(stru_5C9228[2].tiles[idx]);
 
             vb_src_rect.width = entry->rect.width;
             vb_src_rect.height = entry->rect.height;
@@ -4664,7 +4664,7 @@ void wmap_town_refresh_rect(TigRect* rect)
 }
 
 // 0x566A80
-void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3)
+void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
 {
     int v1;
     TigArtBlitInfo art_blit_info;
@@ -4751,7 +4751,7 @@ void sub_566CC0(int64_t* location_ptr)
 }
 
 // 0x566D10
-void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, S5C9228* a5)
+void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
 {
     int dx;
     int dy;
