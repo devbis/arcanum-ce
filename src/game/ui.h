@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_UI_H_
 
 #include "game/context.h"
+#include "game/schematic.h"
 #include "game/timeevent.h"
 #include "game/written.h"
 
@@ -45,7 +46,6 @@ typedef enum UiPrimaryButton {
 typedef struct Packet81 Packet81;
 typedef struct DialogSerializedData DialogSerializedData;
 typedef struct S4F2810 S4F2810;
-typedef struct SchematicInfo SchematicInfo;
 
 typedef void(UI_CALLBACKS_FUNC_0)();
 typedef void(UI_CALLBACKS_FUNC_4)(int64_t obj);

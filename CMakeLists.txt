@@ -153,6 +153,7 @@ set(SRCS
     "src/game/rumor.h"
     "src/game/sa.c"
     "src/game/sa.h"
+    "src/game/schematic.h"
     "src/game/script_name.c"
     "src/game/script_name.h"
     "src/game/script.c"

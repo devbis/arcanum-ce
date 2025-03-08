@@ -2,18 +2,7 @@
 #define ARCANUM_UI_SCHEMATIC_UI_H_
 
 #include "game/context.h"
-
-typedef struct SchematicInfo {
-    int name;
-    int description;
-    int art_num;
-    int item1[3];
-    int item2[3];
-    int prod[3];
-    int qty;
-} SchematicInfo;
-
-static_assert(sizeof(SchematicInfo) == 0x34, "wrong size");
+#include "game/schematic.h"
 
 bool schematic_ui_init(GameInitInfo* init_info);
 void schematic_ui_exit();
