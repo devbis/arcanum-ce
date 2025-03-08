@@ -305,7 +305,7 @@ void tf_ping(tig_timestamp_t timestamp)
 }
 
 // 0x4D5310
-void tf_render(UnknownContext *render_info)
+void tf_draw(UnknownContext *render_info)
 {
     TextFloaterList* list;
     TextFloaterEntry* entry;
