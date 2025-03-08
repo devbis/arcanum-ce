@@ -74,10 +74,7 @@ static_assert(sizeof(S5C9228_F180) == 0x20, "wrong size");
 typedef struct S5C9228 {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigRect rect;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
+    /* 0014 */ TigRect field_14;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;
@@ -486,10 +483,7 @@ static S5C9228 stru_5C9228[3] = {
     {
         6,
         { 150, 52, 501, 365 },
-        0x96,
-        0x34,
-        0x1F5,
-        0x16D,
+        { 150, 52, 501, 365 },
         0,
         0,
         0,
@@ -530,10 +524,7 @@ static S5C9228 stru_5C9228[3] = {
     {
         0,
         { 218, 52, 365, 365 },
-        0xDA,
-        0x34,
-        0x16D,
-        0x16D,
+        { 218, 52, 365, 365 },
         0,
         0,
         0,
@@ -574,10 +565,7 @@ static S5C9228 stru_5C9228[3] = {
     {
         4,
         { 150, 52, 501, 365 },
-        0x96,
-        0x34,
-        0x1F5,
-        0x16D,
+        { 150, 52, 501, 365 },
         0,
         0,
         0,
@@ -1746,10 +1734,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_MOUSE) {
         switch (msg->data.mouse.event) {
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
-            if (msg->data.mouse.x < v1->field_14
-                || msg->data.mouse.y < v1->field_18
-                || msg->data.mouse.x >= v1->field_14 + v1->field_1C
-                || msg->data.mouse.y >= v1->field_18 + v1->field_20) {
+            if (msg->data.mouse.x < v1->field_14.x
+                || msg->data.mouse.y < v1->field_14.y
+                || msg->data.mouse.x >= v1->field_14.x + v1->field_14.width
+                || msg->data.mouse.y >= v1->field_14.y + v1->field_14.height) {
                 if (dword_66D8AC == 4) {
                     sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
@@ -1887,10 +1875,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 break;
             case 1:
                 if (!dword_66D874
-                    && msg->data.mouse.x >= v1->field_14
-                    && msg->data.mouse.y >= v1->field_18
-                    && msg->data.mouse.x < v1->field_14 + v1->field_1C
-                    && msg->data.mouse.y < v1->field_18 + v1->field_20
+                    && msg->data.mouse.x >= v1->field_14.x
+                    && msg->data.mouse.y >= v1->field_14.y
+                    && msg->data.mouse.x < v1->field_14.x + v1->field_14.width
+                    && msg->data.mouse.y < v1->field_14.y + v1->field_14.height
                     && dword_66D8AC == 0) {
                     sub_563B10(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     sub_562B70(0);
@@ -1940,10 +1928,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
             return true;
         }
         case TIG_MESSAGE_MOUSE_MOVE:
-            if (msg->data.mouse.x >= v1->field_14
-                && msg->data.mouse.y >= v1->field_18
-                && msg->data.mouse.x < v1->field_14 + v1->field_1C
-                && msg->data.mouse.y < v1->field_18 + v1->field_20) {
+            if (msg->data.mouse.x >= v1->field_14.x
+                && msg->data.mouse.y >= v1->field_14.y
+                && msg->data.mouse.x < v1->field_14.x + v1->field_14.width
+                && msg->data.mouse.y < v1->field_14.y + v1->field_14.height) {
                 if (dword_66D868 == 0 || dword_66D868 == 1) {
                     v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     sub_562880(&stru_64E7E8);
@@ -2409,15 +2397,15 @@ void sub_562A20(int x, int y)
 // 0x562AF0
 void sub_562AF0(int x, int y)
 {
-    if (y < stru_5C9228[dword_66D868].field_18 + 23) {
+    if (y < stru_5C9228[dword_66D868].field_14.y + 23) {
         sub_563790(0, 10);
-    } else if (y > stru_5C9228[dword_66D868].field_18 + stru_5C9228[dword_66D868].field_20 - 23) {
+    } else if (y > stru_5C9228[dword_66D868].field_14.y + stru_5C9228[dword_66D868].field_14.height - 23) {
         sub_563790(4, 10);
     }
 
-    if (x < stru_5C9228[dword_66D868].field_14 + 23) {
+    if (x < stru_5C9228[dword_66D868].field_14.x + 23) {
         sub_563790(6, 10);
-    } else if (x > stru_5C9228[dword_66D868].field_14 + stru_5C9228[dword_66D868].field_1C - 23) {
+    } else if (x > stru_5C9228[dword_66D868].field_14.x + stru_5C9228[dword_66D868].field_14.width - 23) {
         sub_563790(2, 10);
     }
 }
