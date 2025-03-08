@@ -117,7 +117,7 @@ void tile_toggle_visibility()
 }
 
 // 0x4D6950
-void tile_render(UnknownContext* render_info)
+void tile_draw(UnknownContext* render_info)
 {
     if (!tile_visible) {
         return;
@@ -662,7 +662,7 @@ void tile_render_topdown(UnknownContext* render_info)
     }
 }
 
-// NOTE: In the original code this function is a part of `tile_render`, however
+// NOTE: In the original code this function is a part of `tile_draw`, however
 // if `tile_render_topdown` is definitely there, why `tile_render_iso` should
 // not?
 void tile_render_iso(UnknownContext* render_info)

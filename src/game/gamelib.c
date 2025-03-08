@@ -1692,7 +1692,7 @@ void gamelib_render_game(UnknownContext* render_info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
         light_draw(render_info);
-        tile_render(render_info);
+        tile_draw(render_info);
         sub_43C690(render_info);
         object_render(render_info);
         roof_render(render_info);
@@ -1718,7 +1718,7 @@ void gamelib_render_editor(UnknownContext* render_info)
 
     if (tig_video_3d_begin_scene() == TIG_OK) {
         light_draw(render_info);
-        tile_render(render_info);
+        tile_draw(render_info);
         facade_render(render_info);
         jumppoint_draw(render_info);
         tile_script_render(render_info);
