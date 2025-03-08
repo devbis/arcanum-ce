@@ -219,7 +219,7 @@ void tb_ping(tig_timestamp_t timestamp)
 }
 
 // 0x4D5F10
-void tb_render(UnknownContext* render_info)
+void tb_draw(UnknownContext* render_info)
 {
     int idx;
     TigRect rect;

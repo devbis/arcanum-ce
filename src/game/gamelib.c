@@ -1696,7 +1696,7 @@ void gamelib_render_game(UnknownContext* render_info)
         sub_43C690(render_info);
         object_render(render_info);
         roof_draw(render_info);
-        tb_render(render_info);
+        tb_draw(render_info);
         tf_render(render_info);
         tc_render(render_info);
         tig_video_3d_end_scene();
@@ -1728,7 +1728,7 @@ void gamelib_render_editor(UnknownContext* render_info)
         wall_render(render_info);
         wp_render(render_info);
         roof_draw(render_info);
-        tb_render(render_info);
+        tb_draw(render_info);
         tig_video_3d_end_scene();
     }
 }
