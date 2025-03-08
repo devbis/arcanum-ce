@@ -20,6 +20,7 @@
 #include "game/party.h"
 #include "game/player.h"
 #include "game/portrait.h"
+#include "game/proto.h"
 #include "game/rumor.h"
 #include "game/skill.h"
 #include "game/stat.h"
@@ -2910,7 +2911,52 @@ int sub_4A5E10(int64_t obj, const char* str)
 // 0x4A5EE0
 bool sub_4A5EE0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int race;
+    int wearable_armor_size;
+    int tech;
+    int degree;
+    int schematic;
+    SchematicInfo schematic_info;
+    int idx;
+    int prod_basic_proto;
+    int64_t prod_proto_obj;
+    int size;
+    int qty;
+    int64_t item_obj;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    race = stat_level_get(obj, STAT_RACE);
+    wearable_armor_size = sub_465C90(race);
+
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        degree = tech_degree_get(obj, tech);
+        if (degree > 0) {
+            schematic = tech_schematic_base_lineno(tech, degree);
+            sub_460C00(schematic, &schematic_info);
+
+            for (idx = 0; idx < 3; idx++) {
+                prod_basic_proto = schematic_info.prod[idx];
+                prod_proto_obj = sub_4685A0(schematic_info.prod[idx]);
+                if (obj_field_int32_get(prod_proto_obj, OBJ_F_TYPE) != OBJ_TYPE_ARMOR) {
+                    break;
+                }
+                size = obj_field_int32_get(prod_proto_obj, OBJ_F_ARMOR_FLAGS) & (OARF_SIZE_SMALL | OARF_SIZE_MEDIUM | OARF_SIZE_LARGE);
+                if (size == 0 || size == wearable_armor_size) {
+                    break;
+                }
+            }
+
+            if (idx != 3) {
+                for (qty = 0; qty < schematic_info.qty; qty++) {
+                    mp_object_create(prod_basic_proto, loc, &item_obj);
+                    item_transfer(item_obj, obj);
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x4A6010
