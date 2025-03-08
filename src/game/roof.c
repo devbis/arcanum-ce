@@ -201,7 +201,7 @@ void roof_toggle()
 }
 
 // 0x439140
-void roof_render(UnknownContext* render_info)
+void roof_draw(UnknownContext* render_info)
 {
     TigArtBlitInfo art_blit_info;
     TigRect dst_rect;
