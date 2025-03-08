@@ -84,7 +84,7 @@ typedef struct S5C9228 {
     /* 003C */ WmapCoords field_3C;
     /* 0044 */ int field_44;
     /* 0048 */ void(*field_48)();
-    /* 004C */ void(*field_4C)(TigRect* rect);
+    /* 004C */ void(*refresh_rect)(TigRect* rect);
     /* 0050 */ void(*field_50)(int direction);
     /* 0054 */ int field_54;
     /* 0058 */ int field_58;
@@ -2691,8 +2691,8 @@ void sub_563210(int a1, int a2)
 // 0x563270
 void sub_563270()
 {
-    if (stru_5C9228[dword_66D868].field_4C != NULL) {
-        stru_5C9228[dword_66D868].field_4C(&(stru_5C9228[dword_66D868].rect));
+    if (stru_5C9228[dword_66D868].refresh_rect != NULL) {
+        stru_5C9228[dword_66D868].refresh_rect(&(stru_5C9228[dword_66D868].rect));
     }
 }
 
@@ -2708,8 +2708,8 @@ void sub_5632A0(int direction)
     case 5:
     case 6:
     case 7:
-        if (stru_5C9228[dword_66D868].field_4C != NULL) {
-            stru_5C9228[dword_66D868].field_4C(&(stru_5C9228[dword_66D868].rect));
+        if (stru_5C9228[dword_66D868].refresh_rect != NULL) {
+            stru_5C9228[dword_66D868].refresh_rect(&(stru_5C9228[dword_66D868].rect));
         }
         break;
     default:
@@ -2807,17 +2807,17 @@ void sub_563300(int direction, int a2, int a3, int a4)
 
     tig_window_scroll_rect(wmap_ui_window, &(v1->rect), dx, dy);
 
-    if (v1->field_4C != NULL) {
+    if (v1->refresh_rect != NULL) {
         if (one.width != 0) {
-            v1->field_4C(&one);
+            v1->refresh_rect(&one);
         }
 
         if (three.width != 0) {
-            v1->field_4C(&three);
+            v1->refresh_rect(&three);
         }
 
         if (two.width != 0) {
-            v1->field_4C(&two);
+            v1->refresh_rect(&two);
         }
     }
 }
@@ -3019,12 +3019,12 @@ void sub_563790(int direction, int scale)
         return;
     }
 
-    if (v1->field_4C == NULL) {
+    if (v1->refresh_rect == NULL) {
         return;
     }
 
     if (dword_66D868 != 2) {
-        v1->field_4C(&(v1->rect));
+        v1->refresh_rect(&(v1->rect));
     }
 
     tig_window_scroll_rect(wmap_ui_window,
@@ -3041,7 +3041,7 @@ void sub_563790(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
 
         rect = v1->rect;
         rect.x += rect.width - dx;
@@ -3050,7 +3050,7 @@ void sub_563790(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
     } else if (dx < 0) {
         rect.x = stru_5C9B38.x;
         rect.y = stru_5C9B38.y;
@@ -3060,7 +3060,7 @@ void sub_563790(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
 
         rect = v1->rect;
         rect.width = -dx;
@@ -3068,7 +3068,7 @@ void sub_563790(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
     }
 
     if (dy > 0) {
@@ -3076,19 +3076,19 @@ void sub_563790(int direction, int scale)
         rect.y = stru_5C9B38.y - dy;
         rect.width = stru_5C9B38.width;
         rect.height = stru_5C9B38.height + dy;
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
 
         rect = v1->rect;
         rect.y += rect.height - dy;
         rect.height = dy;
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
     } else if (dy < 0) {
         rect = stru_5C9B38;
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
 
         rect = v1->rect;
         rect.height = -dy;
-        v1->field_4C(&rect);
+        v1->refresh_rect(&rect);
     }
 }
 
