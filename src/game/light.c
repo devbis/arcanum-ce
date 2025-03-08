@@ -325,7 +325,7 @@ void sub_4D8320()
 }
 
 // 0x4D8350
-void light_render(UnknownContext* render_info)
+void light_draw(UnknownContext* render_info)
 {
     int64_t center_loc;
     int64_t cx;

@@ -1691,7 +1691,7 @@ const char* gamelib_get_locale()
 void gamelib_render_game(UnknownContext* render_info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_render(render_info);
+        light_draw(render_info);
         tile_render(render_info);
         sub_43C690(render_info);
         object_render(render_info);
@@ -1717,7 +1717,7 @@ void gamelib_render_editor(UnknownContext* render_info)
     }
 
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_render(render_info);
+        light_draw(render_info);
         tile_render(render_info);
         facade_render(render_info);
         jumppoint_draw(render_info);
