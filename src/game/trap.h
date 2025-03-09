@@ -29,5 +29,6 @@ void sub_4BCB00(int64_t a1, int64_t a2);
 bool sub_4BCB70(ScriptInvocation* invocation);
 bool mp_load(GameLoadInfo* load_info);
 bool mp_save(TigFile* stream);
+void sub_4BD850(int64_t obj);
 
 #endif /* ARCANUM_GAME_TRAP_H_ */
