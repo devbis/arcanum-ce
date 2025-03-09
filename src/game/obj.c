@@ -4162,7 +4162,7 @@ int sub_40C030(ObjectType object_type)
         break;
     default:
         // NOTE: Original code returns `object_type`.
-        __assume(0);
+        assert(0);
     }
 
     if (v1 == -1) {

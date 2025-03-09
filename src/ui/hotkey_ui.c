@@ -738,7 +738,7 @@ bool sub_57E5D0()
             break;
         default:
             // Should be unreachable.
-            __assume(0);
+            assert(0);
         }
 
         stru_683950.slot = index;
@@ -1094,8 +1094,8 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
         tig_art_interface_id_create(spell_get_icon(data), 0, 0, 0, &new_art_id);
         break;
     default:
-        // Unreachable;
-        __assume(0);
+        // Should be unreachable.
+        assert(0);
     }
 
     stru_683518[1].type = stru_683518[0].type;

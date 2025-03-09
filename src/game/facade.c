@@ -298,8 +298,8 @@ void sub_4CA7C0(TigRect* rect)
         max_y += facade_view_options.zoom;
         break;
     default:
-        // NOTE: Should be unreachable.
-        __assume(0);
+        // Should be unreachable.
+        assert(0);
     }
 
     rect->x = (int)min_x;

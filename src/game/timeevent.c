@@ -849,8 +849,8 @@ void timeevent_ping(tig_timestamp_t timestamp)
             datetime = &timeevent_anim_time;
             break;
         default:
-            // Unreachable.
-            __assume(0);
+            // Should be unreachable.
+            assert(0);
         }
 
         // TimeEventNode objects are sorted by their datetime, so we are only

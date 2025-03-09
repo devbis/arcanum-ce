@@ -541,7 +541,8 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
                             break;
                         }
                         default:
-                            __assume(0);
+                            // Should be unreachable.
+                            assert(0);
                         }
                     }
                 }
@@ -1148,7 +1149,7 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
             break;
         default:
             // Should be unreachable.
-            __assume(0);
+            assert(0);
         }
 
         // FIXME: Useless.
@@ -1497,8 +1498,8 @@ void light_set_flags_internal(Light* light, unsigned int flags)
             } else if ((light->flags & LF_OVERLAY_3) != 0) {
                 overlay = 3;
             } else {
-                // Unreachable.
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
 
             obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
@@ -1548,8 +1549,8 @@ void light_unset_flags_internal(Light* light, unsigned int flags)
             } else if ((light->flags & LF_OVERLAY_3) != 0) {
                 overlay = 3;
             } else {
-                // Unreachable.
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
 
             obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
@@ -1666,8 +1667,8 @@ void light_inc_frame(Light* light)
                 } else if ((light->flags & LF_OVERLAY_3) != 0) {
                     overlay = 3;
                 } else {
-                    // Unreachable.
-                    __assume(0);
+                    // Should be unreachable.
+                    assert(0);
                 }
             }
 
@@ -1716,8 +1717,8 @@ void light_dec_frame(Light* light)
                 } else if ((light->flags & LF_OVERLAY_3) != 0) {
                     overlay = 3;
                 } else {
-                    // Unreachable.
-                    __assume(0);
+                    // Should be unreachable.
+                    assert(0);
                 }
             }
 
@@ -1766,8 +1767,8 @@ void light_cycle_rotation(Light* light)
                 } else if ((light->flags & LF_OVERLAY_3) != 0) {
                     overlay = 3;
                 } else {
-                    // Unreachable.
-                    __assume(0);
+                    // Should be unreachable.
+                    assert(0);
                 }
             }
 
@@ -1866,8 +1867,8 @@ void light_set_custom_color(Light* light, uint8_t r, uint8_t g, uint8_t b)
             } else if ((light->flags & LF_OVERLAY_3) != 0) {
                 overlay = 3;
             } else {
-                // Unreachable.
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
 
             obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_COLOR, overlay, color);
@@ -2500,7 +2501,8 @@ void light_render_internal(UnknownContext* render_info)
                                                         break;
                                                     }
                                                     default:
-                                                        __assume(0);
+                                                        // Should be unreachable.
+                                                        assert(0);
                                                     }
                                                 }
                                             }

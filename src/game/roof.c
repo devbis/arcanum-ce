@@ -342,7 +342,7 @@ void roof_draw(UnknownContext* render_info)
                                         break;
                                     default:
                                         // Should be unreachable.
-                                        __assume(0);
+                                        assert(0);
                                     }
                                 } else {
                                     art_blit_info.flags |= roof_blit_flags;
@@ -582,7 +582,7 @@ void roof_recalc(int64_t loc)
         break;
     default:
         // Should be unreachable.
-        __assume(0);
+        assert(0);
     }
 
     if (tig_art_roof_id_fill_get(aid) != fill) {

@@ -1311,7 +1311,7 @@ void sub_587D60(TigRect* rect, tig_window_handle_t window_handle)
                     break;
                 default:
                     // Should be unreachable.
-                    __assume(0);
+                    assert(0);
                 }
 
                 mes_get_msg(serverlist_ui_mainmenu_mes_file, &mes_file_entry);

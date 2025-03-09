@@ -1210,7 +1210,8 @@ void sub_5405C0(char* buffer, int index)
                 desc = dword_648940[LBK_MOST_TECH_NAME];
                 break;
             default:
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
 
             if (desc > 0) {

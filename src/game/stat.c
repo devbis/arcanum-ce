@@ -517,8 +517,8 @@ int stat_base_get(int64_t obj, int stat)
             value += magictech_get_aptitude_adj(sector_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION)));
             break;
         default:
-            // Unreachable.
-            __assume(0);
+            // Should be unreachable.
+            assert(0);
         }
     } else {
         value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat);

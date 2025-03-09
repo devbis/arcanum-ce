@@ -1113,7 +1113,7 @@ void sub_582AD0(TigRect* rect)
                             break;
                         default:
                             // Should be unreachable.
-                            __assume(0);
+                            assert(0);
                         }
                     } else {
                         font = sub_583140(stru_684708[dword_5CBF80].type);

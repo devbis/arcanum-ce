@@ -259,7 +259,8 @@ void sub_460FF0(int64_t critter_obj)
                 proto_obj = sub_4685A0(8135);
                 break;
             default:
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
         } else {
             switch (sub_465C90(race)) {
@@ -273,7 +274,8 @@ void sub_460FF0(int64_t critter_obj)
                 proto_obj = sub_4685A0(8069);
                 break;
             default:
-                __assume(0);
+                // Should be unreachable.
+                assert(0);
             }
         }
 
@@ -294,7 +296,7 @@ void sub_460FF0(int64_t critter_obj)
                     proto_obj = sub_4685A0(8126);
                     break;
                 default:
-                    __assume(0);
+                    assert(0);
                 }
 
                 if (object_create(proto_obj, loc, &new_item_obj)) {
