@@ -4231,6 +4231,8 @@ bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3)
                 break;
             }
         }
+
+        prev_anim_id = cur_anim_id;
     } while (anim_find_next_of_type(obj, AG_EYE_CANDY, &cur_anim_id));
 
     return true;
