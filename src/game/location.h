@@ -3,8 +3,6 @@
 
 #include "game/context.h"
 
-typedef long long location_t;
-
 typedef void(LocationFunc5FC2F8)(int64_t);
 
 typedef struct LocRect {

@@ -80,7 +80,7 @@ typedef union DateTime {
 typedef union TimeEventParam {
     int integer_value;
     object_id_t object_value;
-    location_t location_value;
+    int64_t location_value;
     float float_value;
 } TimeEventParam;
 

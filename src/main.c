@@ -61,7 +61,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     char* pch;
     int value;
     tig_art_id_t cursor_art_id;
-    location_t pc_starting_location;
+    int64_t pc_starting_location;
     char msg[80];
 
     (void)hPrevInstance;
@@ -293,7 +293,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 // 0x401560
 void main_loop()
 {
-    location_t location;
+    int64_t location;
     object_id_t pc_obj;
     object_id_t party_member_obj;
     tig_art_id_t art_id;

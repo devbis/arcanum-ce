@@ -22,7 +22,7 @@ static unsigned int scroll_fps = 1000;
 static GameInitInfo scroll_init_info;
 
 // 0x5D1180
-static location_t scroll_center;
+static int64_t scroll_center;
 
 // 0x5D1188
 static int dword_5D1188;
@@ -410,7 +410,7 @@ int scroll_get_distance()
 }
 
 // 0x40E8E0
-void scroll_set_center(location_t location)
+void scroll_set_center(int64_t location)
 {
     scroll_center = location;
 }

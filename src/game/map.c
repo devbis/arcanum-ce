@@ -1857,7 +1857,7 @@ void map_enable_gender_check()
 void map_gender_check()
 {
     char name[1000];
-    location_t location;
+    int64_t location;
     object_id_t obj;
     int iter;
 
