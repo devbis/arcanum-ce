@@ -4647,7 +4647,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
     case 6:
         background = background_get(pc_obj);
         if (sub_5452C0(pc_obj, &background)) {
-            background_obj_clear(pc_obj);
+            background_clear(pc_obj);
             background_set(pc_obj, background, background_get_description(background));
             window->refresh_func(NULL);
         }
@@ -4655,7 +4655,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
     case 7:
         background = background_get(pc_obj);
         if (sub_5452C0(pc_obj, &background)) {
-            background_obj_clear(pc_obj);
+            background_clear(pc_obj);
             background_set(pc_obj, background, background_get_description(background));
             window->refresh_func(NULL);
         }
@@ -4706,10 +4706,10 @@ bool sub_545300(int64_t obj, int* background_ptr)
 bool sub_545350(int64_t obj)
 {
     if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
-        background_obj_clear(obj);
+        background_clear(obj);
         return sub_5453A0(obj, GENDER_MALE);
     } else {
-        background_obj_clear(obj);
+        background_clear(obj);
         return sub_5453A0(obj, GENDER_FEMALE);
     }
 }
@@ -4744,10 +4744,10 @@ bool sub_5453A0(int64_t obj, int gender)
 bool sub_545440(int64_t obj)
 {
     if (stat_level_get(obj, STAT_GENDER) == GENDER_MALE) {
-        background_obj_clear(obj);
+        background_clear(obj);
         return sub_5453A0(obj, GENDER_FEMALE);
     } else {
-        background_obj_clear(obj);
+        background_clear(obj);
         return sub_5453A0(obj, GENDER_MALE);
     }
 }
@@ -4795,7 +4795,7 @@ bool sub_545490(int64_t obj)
         }
     }
 
-    background_obj_clear(obj);
+    background_clear(obj);
     sub_545550(obj, race);
 
     return true;
@@ -4864,7 +4864,7 @@ bool sub_5455D0(int64_t obj)
     }
 
     if (race < 8) {
-        background_obj_clear(obj);
+        background_clear(obj);
         sub_545550(obj, race);
         return true;
     }

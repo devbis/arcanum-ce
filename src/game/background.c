@@ -225,7 +225,7 @@ void background_set(int64_t obj, int background, int background_text)
 }
 
 // 0x4C2650
-void background_obj_clear(int64_t obj)
+void background_clear(int64_t obj)
 {
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 0);
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 0);
