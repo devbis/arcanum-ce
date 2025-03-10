@@ -4083,14 +4083,15 @@ bool sub_423FF0(int64_t obj)
 // 0x424070
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
 {
-    Packet9 pkt;
-    int prev_slot = -1;
+    int prev = -1;
     int slot;
 
     ASSERT(priority_level >= PRIORITY_NONE && priority_level < PRIORITY_HIGHEST); // (priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)
 
     if (!a4) {
         if (tig_net_is_active() && sub_40DA20(obj)) {
+            Packet9 pkt;
+
             pkt.type = 9;
             pkt.field_4 = 0;
 
@@ -4121,11 +4122,12 @@ bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
     }
 
     slot = sub_44D2F0(obj);
-    while (slot != -1 && slot != prev_slot) {
-        prev_slot = slot;
+    while (slot != -1 && slot != prev) {
+        prev = slot;
         if (!sub_44E2C0(&(anim_run_info[slot].id), priority_level)) {
             return false;
         }
+
         slot = sub_44D340(slot, obj);
     }
 
