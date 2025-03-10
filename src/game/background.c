@@ -253,7 +253,7 @@ int background_text_get(int64_t obj)
 }
 
 // 0x4C26F0
-void sub_4C26F0(int64_t obj)
+void background_generate_inventory(int64_t obj)
 {
     MesFileEntry mes_file_entry;
     char str[MAX_STRING];
@@ -262,7 +262,7 @@ void sub_4C26F0(int64_t obj)
     int64_t proto_obj;
     int64_t loc;
     int64_t item_obj;
-    unsigned int flags;
+    ObjectItemFlags item_flags;
 
     background = obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
@@ -279,9 +279,9 @@ void sub_4C26F0(int64_t obj)
             proto_obj = sub_4685A0(atoi(tok));
             loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
             if (object_create(proto_obj, loc, &item_obj)) {
-                flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
-                flags |= OIF_IDENTIFIED;
-                obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
+                item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+                item_flags |= OIF_IDENTIFIED;
+                obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, item_flags);
                 item_transfer(item_obj, obj);
             }
             tok = strtok(NULL, " \t\n");

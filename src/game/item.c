@@ -234,7 +234,7 @@ void sub_460FF0(int64_t critter_obj)
 
     loc = obj_field_int64_get(critter_obj, OBJ_F_LOCATION);
     sub_463B30(critter_obj, false);
-    sub_4C26F0(critter_obj);
+    background_generate_inventory(critter_obj);
 
     cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
     for (idx = 0; idx < cnt; idx++) {
