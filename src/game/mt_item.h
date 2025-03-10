@@ -45,7 +45,7 @@ bool mt_item_init(GameInitInfo* init_info);
 void mt_item_exit();
 unsigned int mt_item_triggers(int index);
 int sub_4CB790(int a1);
-int mt_item_spell(int64_t obj_handle, int index);
+int mt_item_spell(int64_t item_obj, int index);
 void mt_item_notify_wear(int64_t item_obj, int64_t parent_obj);
 void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj);
 void mt_item_notify_parent_hit(int64_t attacker_obj, CombatContext* combat, int64_t target_obj);

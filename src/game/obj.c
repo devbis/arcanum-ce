@@ -758,16 +758,16 @@ bool obj_validate_system(unsigned int flags)
 }
 
 // 0x405790
-void sub_405790(int64_t obj_handle)
+void sub_405790(int64_t obj)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     tig_debug_printf("{{ Difs on object w/ aid:");
-    sub_408430(obj_field_int32_get(obj_handle, OBJ_F_AID));
+    sub_408430(obj_field_int32_get(obj, OBJ_F_AID));
     if (object->modified) {
         sub_40CBA0(object, sub_40D670);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         tig_debug_println(" }}");
     } else {
         // FIXME: Object not unlocked.
@@ -959,15 +959,15 @@ void sub_405CC0(int64_t obj)
 }
 
 // 0x405D60
-void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
+void sub_405D60(int64_t* new_obj_ptr, int64_t obj)
 {
-    int64_t new_obj_handle;
+    int64_t new_obj;
     Object* new_object;
     Object* object;
     int fld;
 
-    object = obj_lock(obj_handle);
-    new_object = sub_408710(&new_obj_handle);
+    object = obj_lock(obj);
+    new_object = sub_408710(&new_obj);
 
     new_object->type = object->type;
     new_object->oid = object->oid;
@@ -994,11 +994,11 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
         obj_enumerate_fields(new_object, sub_40C730);
     }
 
-    obj_unlock(obj_handle);
-    obj_unlock(new_obj_handle);
-    sub_464470(new_obj_handle, NULL, NULL);
+    obj_unlock(obj);
+    obj_unlock(new_obj);
+    sub_464470(new_obj, NULL, NULL);
 
-    *new_obj_handle_ptr = new_obj_handle;
+    *new_obj_ptr = new_obj;
 }
 
 // 0x406010
@@ -1135,12 +1135,12 @@ void sub_4063A0(int64_t obj, ObjectID** oids_ptr, int* cnt_ptr)
 }
 
 // 0x4064B0
-void sub_4064B0(int64_t obj_handle)
+void sub_4064B0(int64_t obj)
 {
     Object* object;
     unsigned int flags;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     sub_408A20(object, OBJ_F_INTERNAL_FLAGS, &flags);
     if ((flags & 0x1) == 0) {
         sub_40BBF0(object);
@@ -1149,17 +1149,17 @@ void sub_4064B0(int64_t obj_handle)
         sub_408760(object, OBJ_F_INTERNAL_FLAGS, &flags);
         // NOTE: Probably should be outside of this condition block, otherwise
         // object might remain locked.
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
     }
 }
 
 // 0x406520
-void sub_406520(int64_t obj_handle)
+void sub_406520(int64_t obj)
 {
     Object* object;
     unsigned int flags;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     sub_408A20(object, OBJ_F_INTERNAL_FLAGS, &flags);
     if ((flags & 0x1) != 0) {
         sub_40BDB0(object);
@@ -1168,29 +1168,29 @@ void sub_406520(int64_t obj_handle)
         sub_408760(object, OBJ_F_INTERNAL_FLAGS, &flags);
         // NOTE: Probably should be outside of this condition block, otherwise
         // object might remain locked.
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
     }
 }
 
 // 0x406590
-bool obj_write(TigFile* stream, int64_t obj_handle)
+bool obj_write(TigFile* stream, int64_t obj)
 {
     Object* object;
     bool v1;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40D560(stream)) {
         // FIXME: Object not unlocked.
         return false;
     }
 
     v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     if (v1) {
-        return sub_4096B0(stream, obj_handle);
+        return sub_4096B0(stream, obj);
     } else {
-        return sub_409980(stream, obj_handle);
+        return sub_409980(stream, obj);
     }
 }
 
@@ -1277,7 +1277,7 @@ int obj_is_modified(int64_t obj)
 
 
 // 0x4067F0
-bool obj_dif_write(TigFile* stream, int64_t obj_handle)
+bool obj_dif_write(TigFile* stream, int64_t obj)
 {
     Object* object;
     int marker;
@@ -1285,42 +1285,42 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
     int cnt;
     bool written;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (object->modified == 0) {
         // FIXME: Object not unlocked.
         return false;
     }
 
     // FIXME: Unused.
-    obj_field_int32_get(obj_handle, OBJ_F_FLAGS);
+    obj_field_int32_get(obj, OBJ_F_FLAGS);
 
     if (!sub_40D560(stream)) {
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return false;
     }
 
     marker = 0x12344321;
     if (!obj_write_raw(&marker, sizeof(marker), stream)) {
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return false;
     }
 
     if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return false;
     }
 
     cnt = sub_40C030(object->type);
     for (index = 0; index < cnt; index++) {
         if (!obj_write_raw(&(object->field_4C[index]), sizeof(object->field_4C[0]), stream)) {
-            obj_unlock(obj_handle);
+            obj_unlock(obj);
             return false;
         }
     }
 
     dword_5D110C = stream;
     written = sub_40CBA0(object, object_field_write_if_dif);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     marker = 0x23455432;
     if (!obj_write_raw(&marker, sizeof(marker), stream)) {
@@ -1416,13 +1416,13 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
 }
 
 // 0x406B80
-void sub_406B80(int64_t obj_handle)
+void sub_406B80(int64_t obj)
 {
     Object* object;
     int cnt;
     int index;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (object->modified) {
         cnt = sub_40C030(object->type);
         for (index = 0; index < cnt; index++) {
@@ -1433,15 +1433,15 @@ void sub_406B80(int64_t obj_handle)
 }
 
 // 0x406CA0
-int obj_field_int32_get(int64_t obj_handle, int fld)
+int obj_field_int32_get(int64_t obj, int fld)
 {
     Object* object;
     int value;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
@@ -1451,7 +1451,7 @@ int obj_field_int32_get(int64_t obj_handle, int fld)
     }
 
     sub_408A20(object, fld, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return value;
 }
@@ -1466,70 +1466,70 @@ void object_field_not_exists(Object* object, int fld)
 }
 
 // 0x406D40
-void obj_field_int32_set(int64_t obj_handle, int fld, int value)
+void obj_field_int32_set(int64_t obj, int fld, int value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_408760(object, fld, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x406DA0
-int64_t obj_field_int64_get(int64_t obj_handle, int fld)
+int64_t obj_field_int64_get(int64_t obj, int fld)
 {
     Object* object;
     int64_t value;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
     sub_408A20(object, fld, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return value;
 }
 
 // 0x406E10
-void obj_field_int64_set(int64_t obj_handle, int fld, int64_t value)
+void obj_field_int64_set(int64_t obj, int fld, int64_t value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_408760(object, fld, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     if (fld == OBJ_F_LOCATION) {
-        obj_find_move(obj_handle);
+        obj_find_move(obj);
     }
 }
 
 // 0x406E80
-int64_t obj_field_handle_get(int64_t obj_handle, int fld)
+int64_t obj_field_handle_get(int64_t obj, int fld)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return OBJ_HANDLE_NULL;
     }
 
@@ -1539,7 +1539,7 @@ int64_t obj_field_handle_get(int64_t obj_handle, int fld)
     }
 
     sub_408A20(object, fld, &oid);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     if (oid.type == OID_TYPE_NULL || oid.type != OID_TYPE_HANDLE) {
         return OBJ_HANDLE_NULL;
@@ -1549,15 +1549,15 @@ int64_t obj_field_handle_get(int64_t obj_handle, int fld)
 }
 
 // 0x406F20
-void obj_field_handle_set(int64_t obj_handle, int fld, int64_t value)
+void obj_field_handle_set(int64_t obj, int fld, int64_t value)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
@@ -1569,19 +1569,19 @@ void obj_field_handle_set(int64_t obj_handle, int fld, int64_t value)
     }
 
     sub_408760(object, fld, &oid);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x406FB0
-bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
+bool obj_field_obj_get(int64_t obj, int fld, int64_t* value_ptr)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
         return false;
     }
@@ -1599,7 +1599,7 @@ bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
     sub_408A20(object, fld, &oid);
 
     if (oid.type == OID_TYPE_NULL) {
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
         return true;
     }
@@ -1608,12 +1608,12 @@ bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
         if (!sub_4E5470(oid.d.h)) {
             oid.type = OID_TYPE_NULL;
             sub_408760(object, fld, &oid);
-            obj_unlock(obj_handle);
+            obj_unlock(obj);
             *value_ptr = OBJ_HANDLE_NULL;
             return false;
         }
 
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = oid.d.h;
         return true;
     }
@@ -1623,15 +1623,15 @@ bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
 }
 
 // 0x407100
-ObjectID sub_407100(int64_t obj_handle, int fld)
+ObjectID sub_407100(int64_t obj, int fld)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         oid.type = OID_TYPE_BLOCKED;
         return oid;
     }
@@ -1642,22 +1642,22 @@ ObjectID sub_407100(int64_t obj_handle, int fld)
     }
 
     sub_408A20(object, fld, &oid);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return oid;
 }
 
 // 0x4071A0
-void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
+void obj_field_string_get(int64_t obj, int fld, char** value_ptr)
 {
     Object* object;
     int name_num;
     const char* name_str;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = NULL;
         return;
     }
@@ -1671,58 +1671,58 @@ void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
         sub_408A20(object, fld, value_ptr);
     }
 
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407270
-void obj_field_string_set(int64_t obj_handle, int fld, const char* value)
+void obj_field_string_set(int64_t obj, int fld, const char* value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_408760(object, fld, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x4072D0
-int obj_arrayfield_int32_get(int64_t obj_handle, int fld, int index)
+int obj_arrayfield_int32_get(int64_t obj, int fld, int index)
 {
     Object* object;
     int value;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
     sub_408BB0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return value;
 }
 
 // 0x407340
-void obj_arrayfield_int32_set(int64_t obj_handle, int fld, int index, int value)
+void obj_arrayfield_int32_set(int64_t obj, int fld, int index, int value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_4088B0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407470
@@ -1761,55 +1761,55 @@ void obj_arrayfield_uint32_set(int64_t obj, int fld, int index, unsigned int val
 }
 
 // 0x407540
-int64_t obj_arrayfield_int64_get(int64_t obj_handle, int fld, int index)
+int64_t obj_arrayfield_int64_get(int64_t obj, int fld, int index)
 {
     Object* object;
     int64_t value;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
     sub_408BB0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return value;
 }
 
 // 0x4075B0
-void obj_arrayfield_int64_set(int64_t obj_handle, int fld, int index, int64_t value)
+void obj_arrayfield_int64_set(int64_t obj, int fld, int index, int64_t value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_4088B0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407610
-int64_t obj_arrayfield_handle_get(int64_t obj_handle, int fld, int index)
+int64_t obj_arrayfield_handle_get(int64_t obj, int fld, int index)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return OBJ_HANDLE_NULL;
     }
 
     sub_408BB0(object, fld, index, &oid);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     if (oid.type == OID_TYPE_NULL || oid.type != OID_TYPE_HANDLE) {
         return OBJ_HANDLE_NULL;
@@ -1819,15 +1819,15 @@ int64_t obj_arrayfield_handle_get(int64_t obj_handle, int fld, int index)
 }
 
 // 0x4076A0
-bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* value_ptr)
+bool obj_arrayfield_obj_get(int64_t obj, int fld, int index, int64_t* value_ptr)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
         return false;
     }
@@ -1835,7 +1835,7 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
     sub_408BB0(object, fld, index, &oid);
 
     if (oid.type == OID_TYPE_NULL) {
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
         return true;
     }
@@ -1844,12 +1844,12 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
         if (!sub_4E5470(oid.d.h)) {
             oid.type = OID_TYPE_NULL;
             sub_4088B0(object, fld, index, &oid);
-            obj_unlock(obj_handle);
+            obj_unlock(obj);
             *value_ptr = OBJ_HANDLE_NULL;
             return false;
         }
 
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         *value_ptr = oid.d.h;
         return true;
     }
@@ -1859,15 +1859,15 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
 }
 
 // 0x4077B0
-void obj_arrayfield_obj_set(int64_t obj_handle, int fld, int index, int64_t value)
+void obj_arrayfield_obj_set(int64_t obj, int fld, int index, int64_t value)
 {
     Object* object;
     ObjectID oid;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
@@ -1879,7 +1879,7 @@ void obj_arrayfield_obj_set(int64_t obj_handle, int fld, int index, int64_t valu
     }
 
     sub_4088B0(object, fld, index, &oid);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407840
@@ -1947,38 +1947,38 @@ void obj_arrayfield_pc_quest_set(int64_t obj, int fld, int index, void* value)
 }
 
 // 0x4079C0
-int obj_arrayfield_length_get(int64_t obj_handle, int fld)
+int obj_arrayfield_length_get(int64_t obj, int fld)
 {
     Object* object;
     int length;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
     sub_408D60(object, fld, &length);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return length;
 }
 
 // 0x407A20
-void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length)
+void obj_arrayfield_length_set(int64_t obj, int fld, int length)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_408E70(object, fld, length);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407BA0
@@ -2327,15 +2327,15 @@ bool sub_408390(int64_t* obj_ptr, int* iter_ptr)
 }
 
 // 0x408720
-Object* obj_lock(int64_t obj_handle)
+Object* obj_lock(int64_t obj)
 {
-    return sub_4E4F80(obj_handle);
+    return sub_4E4F80(obj);
 }
 
 // 0x408740
-void obj_unlock(int64_t obj_handle)
+void obj_unlock(int64_t obj)
 {
-    sub_4E4FA0(obj_handle);
+    sub_4E4FA0(obj);
 }
 
 // 0x408760
