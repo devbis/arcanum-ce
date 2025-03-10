@@ -4645,7 +4645,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         }
         return true;
     case 6:
-        background = background_obj_get_background(pc_obj);
+        background = background_get(pc_obj);
         if (sub_5452C0(pc_obj, &background)) {
             background_obj_clear(pc_obj);
             sub_4C25E0(pc_obj, background, background_get_description(background));
@@ -4653,7 +4653,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         }
         return true;
     case 7:
-        background = background_obj_get_background(pc_obj);
+        background = background_get(pc_obj);
         if (sub_5452C0(pc_obj, &background)) {
             background_obj_clear(pc_obj);
             sub_4C25E0(pc_obj, background, background_get_description(background));

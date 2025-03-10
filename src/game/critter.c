@@ -2001,7 +2001,7 @@ bool critter_has_dark_sight(int64_t critter_obj)
         return false;
     }
 
-    if (background_obj_get_background(critter_obj) == BACKGROUND_DARK_SIGHT) {
+    if (background_get(critter_obj) == BACKGROUND_DARK_SIGHT) {
         return true;
     }
 
@@ -2029,7 +2029,7 @@ bool critter_is_dumb(int64_t critter_obj)
         return true;
     }
 
-    background = background_obj_get_background(critter_obj);
+    background = background_get(critter_obj);
     if (background == BACKGROUND_IDIOT_SAVANT
         || background == BACKGROUND_FRANKENSTEIN_MONSTER
         || background == BACKGROUND_BRIDE_OF_FRANKENSTEIN) {

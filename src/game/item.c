@@ -2106,7 +2106,7 @@ void sub_463E20(int64_t obj)
                 int pos;
                 int len;
 
-                seed += stat_level_get(pc_obj, STAT_RACE) * background_obj_get_background(pc_obj);
+                seed += stat_level_get(pc_obj, STAT_RACE) * background_get(pc_obj);
                 seed += stat_level_get(pc_obj, STAT_GENDER);
 
                 sub_441B60(pc_obj, pc_obj, buffer);
@@ -2658,7 +2658,7 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
     }
 
     if (obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0
-        && background_obj_get_background(critter_obj) == BACKGROUND_MAGICK_ALLERGY) {
+        && background_get(critter_obj) == BACKGROUND_MAGICK_ALLERGY) {
         return ITEM_CANNOT_WIELD_MAGIC_ITEMS;
     }
 
@@ -3638,7 +3638,7 @@ bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_pt
         }
 
         if (obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) < 0
-            && background_obj_get_background(parent_obj) == BACKGROUND_TECHNOPHOBIA) {
+            && background_get(parent_obj) == BACKGROUND_TECHNOPHOBIA) {
             return ITEM_CANNOT_PICKUP_TECH_ITEMS;
         }
     }

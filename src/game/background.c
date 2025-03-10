@@ -233,14 +233,17 @@ void background_obj_clear(int64_t obj)
 }
 
 // 0x4C2690
-int background_obj_get_background(int64_t obj)
+int background_get(int64_t obj)
 {
-    if (obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
     }
 
-    return 0;
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
 }
 
 // 0x4C26D0
@@ -296,7 +299,7 @@ void sub_4C2950(int64_t obj)
     int follower_training;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && background_obj_get_background(obj) != BACKGROUND_EDUCATOR) {
+        && background_get(obj) != BACKGROUND_EDUCATOR) {
         return;
     }
 

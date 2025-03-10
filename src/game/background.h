@@ -30,7 +30,7 @@ char* background_description_get_body(int num);
 char* background_description_get_name(int num);
 void sub_4C25E0(int64_t obj, int background, int background_text);
 void background_obj_clear(int64_t obj);
-int background_obj_get_background(int64_t obj);
+int background_get(int64_t obj);
 int background_obj_get_background_text(int64_t obj);
 void sub_4C26F0(int64_t obj);
 void sub_4C2950(int64_t obj);

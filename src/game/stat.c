@@ -327,7 +327,7 @@ int stat_level_get(int64_t obj, int stat)
     case STAT_STRENGTH:
     case STAT_WILLPOWER:
         // TODO: Many jumps, check.
-        switch (background_obj_get_background(obj)) {
+        switch (background_get(obj)) {
         case BACKGROUND_AGORAPHOBIC:
             // Indoor:
             // - Intelligence +2
@@ -405,7 +405,7 @@ int stat_level_get(int64_t obj, int stat)
 
         break;
     case STAT_MAGICK_POINTS:
-        switch (background_obj_get_background(obj)) {
+        switch (background_get(obj)) {
         case BACKGROUND_DAY_MAGE:
             if (game_time_is_day()) {
                 value += 4;

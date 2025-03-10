@@ -2736,7 +2736,7 @@ int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
 
     mes_get_msg(mes_file, &mes_file_entry);
     money_amt = atoi(mes_file_entry.str);
-    money_amt = background_adjust_money(money_amt, background_obj_get_background(obj));
+    money_amt = background_adjust_money(money_amt, background_get(obj));
     if (money_amt > 0) {
         mp_object_create(9056, location, &money_obj);
         mp_obj_field_int32_set(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
@@ -2750,7 +2750,7 @@ int sub_4A57F0(int64_t obj)
 {
     char buffer[2000];
 
-    background_get_items(buffer, sizeof(buffer), background_obj_get_background(obj));
+    background_get_items(buffer, sizeof(buffer), background_get(obj));
 
     return sub_4A5E10(obj, buffer);
 }
