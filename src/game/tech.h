@@ -38,7 +38,7 @@ char* tech_discipline_name_get(int tech);
 char* tech_discipline_description_get(int tech);
 char* tech_degree_name_get(int degree);
 char* tech_degree_description_get(int degree, int tech);
-int tech_degree_get(int64_t object_id, int tech);
+int tech_degree_get(int64_t obj, int tech);
 int tech_degree_inc(int64_t obj, int tech);
 int tech_degree_dec(int64_t obj, int tech);
 int tech_degree_cost_get(int degree);

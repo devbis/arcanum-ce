@@ -320,16 +320,16 @@ bool skill_save(TigFile* stream)
 }
 
 // 0x4C5E00
-void skill_set_defaults(int64_t object_id)
+void skill_set_defaults(int64_t obj)
 {
     int index;
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, index, 0);
+        obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, index, 0);
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, index, 0);
+        obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, index, 0);
     }
 }
 

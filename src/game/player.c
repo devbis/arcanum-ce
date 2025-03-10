@@ -58,7 +58,7 @@ void player_exit()
 // 0x40D760
 bool player_save(TigFile* stream)
 {
-    ObjectID temp_object_id;
+    ObjectID temp_oid;
 
     if (stream == NULL) {
         return false;
@@ -68,8 +68,8 @@ bool player_save(TigFile* stream)
         return false;
     }
 
-    temp_object_id = sub_407EF0(player_pc_obj);
-    if (tig_file_fwrite(&temp_object_id, sizeof(temp_object_id), 1, stream) != 1) {
+    temp_oid = sub_407EF0(player_pc_obj);
+    if (tig_file_fwrite(&temp_oid, sizeof(temp_oid), 1, stream) != 1) {
         return false;
     }
 
@@ -79,19 +79,19 @@ bool player_save(TigFile* stream)
 // 0x40D7C0
 bool player_load(GameLoadInfo* load_info)
 {
-    ObjectID temp_object_id;
+    ObjectID temp_oid;
     int64_t location;
 
     if (load_info->stream == NULL) {
         return false;
     }
 
-    if (tig_file_fread(&temp_object_id, sizeof(temp_object_id), 1, load_info->stream) != 1) {
+    if (tig_file_fread(&temp_oid, sizeof(temp_oid), 1, load_info->stream) != 1) {
         return false;
     }
 
-    player_pc_oid = temp_object_id;
-    player_pc_obj = objp_perm_lookup(temp_object_id);
+    player_pc_oid = temp_oid;
+    player_pc_obj = objp_perm_lookup(temp_oid);
     if (player_pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -153,16 +153,16 @@ void player_create()
 }
 
 // 0x40D9F0
-bool player_is_pc_obj(int64_t object_id)
+bool player_is_pc_obj(int64_t obj)
 {
-    return object_id != OBJ_HANDLE_NULL && object_id == player_pc_obj;
+    return obj != OBJ_HANDLE_NULL && obj == player_pc_obj;
 }
 
 // 0x40DA20
-bool sub_40DA20(int64_t object_id)
+bool sub_40DA20(int64_t obj)
 {
-    if (object_id != OBJ_HANDLE_NULL) {
-        return obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC;
+    if (obj != OBJ_HANDLE_NULL) {
+        return obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
     } else {
         return false;
     }

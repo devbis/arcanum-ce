@@ -322,35 +322,35 @@ void sub_460FF0(int64_t critter_obj)
 }
 
 // 0x4612A0
-bool item_parent(int64_t object_id, int64_t* parent_object_id)
+bool item_parent(int64_t item_obj, int64_t* parent_obj_ptr)
 {
-    if (!item_is_item(object_id)) {
+    if (!item_is_item(item_obj)) {
         tig_debug_printf("Item: item_parent: ERROR: Called on non-Item!\n");
         return false;
     }
 
-    if (parent_object_id != NULL) {
-        *parent_object_id = OBJ_HANDLE_NULL;
+    if (parent_obj_ptr != NULL) {
+        *parent_obj_ptr = OBJ_HANDLE_NULL;
     }
 
-    if ((obj_field_int32_get(object_id, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
+    if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
         return false;
     }
 
-    if (parent_object_id != NULL) {
-        *parent_object_id = obj_field_handle_get(object_id, OBJ_F_ITEM_PARENT);
+    if (parent_obj_ptr != NULL) {
+        *parent_obj_ptr = obj_field_handle_get(item_obj, OBJ_F_ITEM_PARENT);
     }
 
     return true;
 }
 
 // 0x461310
-bool item_is_item(int64_t object_id)
+bool item_is_item(int64_t obj)
 {
     int type;
 
-    if (object_id != OBJ_HANDLE_NULL) {
-        type = obj_field_int32_get(object_id, OBJ_F_TYPE);
+    if (obj != OBJ_HANDLE_NULL) {
+        type = obj_field_int32_get(obj, OBJ_F_TYPE);
         if (obj_type_is_item(type)) {
             return true;
         }
@@ -360,11 +360,11 @@ bool item_is_item(int64_t object_id)
 }
 
 // 0x461340
-int item_inventory_location_get(int64_t object_id)
+int item_inventory_location_get(int64_t obj)
 {
     // FIXME: Result is not used.
-    item_parent(object_id, NULL);
-    return obj_field_int32_get(object_id, OBJ_F_ITEM_INV_LOCATION);
+    item_parent(obj, NULL);
+    return obj_field_int32_get(obj, OBJ_F_ITEM_INV_LOCATION);
 }
 
 // 0x461370

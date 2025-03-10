@@ -2104,27 +2104,27 @@ void sub_4E6240()
 }
 
 // 0x4E62A0
-void sub_4E62A0(ObjectID* object_id)
+void sub_4E62A0(ObjectID* oid)
 {
-    if (CoCreateGuid(&(object_id->d.g)) != S_OK) {
+    if (CoCreateGuid(&(oid->d.g)) != S_OK) {
         tig_debug_println("Error: Unable to generate permanent ID!");
         tig_message_post_quit(0);
     }
 
-    object_id->type = OID_TYPE_GUID;
+    oid->type = OID_TYPE_GUID;
 }
 
 // 0x4E62D0
-void objid_id_perm_by_load_order(ObjectID* object_id, int64_t obj)
+void objid_id_perm_by_load_order(ObjectID* oid, int64_t obj)
 {
     if (sub_43D990(obj)) {
-        object_id->d.p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-        object_id->d.p.temp_id = obj_field_int32_get(obj, OBJ_F_TEMP_ID);
-        object_id->d.p.map = sub_40FF40();
-        object_id->type = OID_TYPE_P;
+        oid->d.p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        oid->d.p.temp_id = obj_field_int32_get(obj, OBJ_F_TEMP_ID);
+        oid->d.p.map = sub_40FF40();
+        oid->type = OID_TYPE_P;
     } else {
         tig_debug_println("Error: Resident object passed to objid_id_perm_by_load_order");
-        object_id->type = OID_TYPE_NULL;
+        oid->type = OID_TYPE_NULL;
     }
 }
 
@@ -2209,11 +2209,11 @@ ObjectID sub_4E6540(int a1)
 }
 
 // 0x4E6570
-void objid_id_to_str(char* buffer, ObjectID object_id)
+void objid_id_to_str(char* buffer, ObjectID oid)
 {
-    switch (object_id.type) {
+    switch (oid.type) {
     case OID_TYPE_HANDLE:
-        sprintf(buffer, "Handle_%I64X", object_id.d.h);
+        sprintf(buffer, "Handle_%I64X", oid.d.h);
         break;
     case OID_TYPE_BLOCKED:
         strcpy(buffer, "Blocked");
@@ -2222,50 +2222,50 @@ void objid_id_to_str(char* buffer, ObjectID object_id)
         strcpy(buffer, "NULL");
         break;
     case OID_TYPE_A:
-        sprintf(buffer, "A_%08X", object_id.d.a);
+        sprintf(buffer, "A_%08X", oid.d.a);
         break;
     case OID_TYPE_GUID:
         sprintf(buffer, "G_%08X_%04X_%04X_%02X%02X_%02X%02X%02X%02X%02X%02X",
-            object_id.d.g.Data1,
-            object_id.d.g.Data2,
-            object_id.d.g.Data3,
-            object_id.d.g.Data4[0],
-            object_id.d.g.Data4[1],
-            object_id.d.g.Data4[2],
-            object_id.d.g.Data4[3],
-            object_id.d.g.Data4[4],
-            object_id.d.g.Data4[5],
-            object_id.d.g.Data4[6],
-            object_id.d.g.Data4[7]);
+            oid.d.g.Data1,
+            oid.d.g.Data2,
+            oid.d.g.Data3,
+            oid.d.g.Data4[0],
+            oid.d.g.Data4[1],
+            oid.d.g.Data4[2],
+            oid.d.g.Data4[3],
+            oid.d.g.Data4[4],
+            oid.d.g.Data4[5],
+            oid.d.g.Data4[6],
+            oid.d.g.Data4[7]);
         break;
     case OID_TYPE_P:
         sprintf(buffer, "P_%08I64X_%08I64X_%08X_%08X",
-            LOCATION_GET_X(object_id.d.p.location),
-            LOCATION_GET_Y(object_id.d.p.location),
-            object_id.d.p.temp_id,
-            object_id.d.p.map);
+            LOCATION_GET_X(oid.d.p.location),
+            LOCATION_GET_Y(oid.d.p.location),
+            oid.d.p.temp_id,
+            oid.d.p.map);
         break;
     }
 }
 
 // 0x4E66B0
-bool objid_id_from_str(ObjectID* object_id, const char* str)
+bool objid_id_from_str(ObjectID* oid, const char* str)
 {
-    ObjectID temp_object_id;
+    ObjectID temp_oid;
 
     switch (str[0]) {
     case 'A':
-        temp_object_id.type = OID_TYPE_A;
-        if (!sub_4E6A60(&(temp_object_id.d.a), str)) {
+        temp_oid.type = OID_TYPE_A;
+        if (!sub_4E6A60(&(temp_oid.d.a), str)) {
             return false;
         }
         break;
     case 'B':
-        temp_object_id.type = OID_TYPE_BLOCKED;
+        temp_oid.type = OID_TYPE_BLOCKED;
         break;
     case 'G':
-        temp_object_id.type = OID_TYPE_GUID;
-        if (!sub_4E67A0(&(temp_object_id.d.g), str)) {
+        temp_oid.type = OID_TYPE_GUID;
+        if (!sub_4E67A0(&(temp_oid.d.g), str)) {
             return false;
         }
         break;
@@ -2273,11 +2273,11 @@ bool objid_id_from_str(ObjectID* object_id, const char* str)
         tig_debug_println("Handle not handled in objid_id_from_str");
         return false;
     case 'N':
-        temp_object_id.type = OID_TYPE_NULL;
+        temp_oid.type = OID_TYPE_NULL;
         break;
     case 'P':
-        temp_object_id.type = OID_TYPE_P;
-        if (!sub_4E6970(&(temp_object_id.d.p), str)) {
+        temp_oid.type = OID_TYPE_P;
+        if (!sub_4E6970(&(temp_oid.d.p), str)) {
             return false;
         }
         break;
@@ -2285,7 +2285,7 @@ bool objid_id_from_str(ObjectID* object_id, const char* str)
         return false;
     }
 
-    *object_id = temp_object_id;
+    *oid = temp_oid;
 
     return true;
 }
@@ -2597,7 +2597,7 @@ TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ex
 bool handle_from_fname(int64_t* handle_ptr, const char* path)
 {
     char fname[TIG_MAX_PATH];
-    ObjectID object_id;
+    ObjectID oid;
 
     _splitpath(path, NULL, NULL, fname, NULL);
 
@@ -2606,17 +2606,17 @@ bool handle_from_fname(int64_t* handle_ptr, const char* path)
         return false;
     }
 
-    if (!objid_id_from_str(&object_id, fname)) {
+    if (!objid_id_from_str(&oid, fname)) {
         tig_debug_printf("Unable to extract id from filename [%s]\n", path);
         return false;
     }
 
-    if (object_id.type <= 0 || object_id.type > 3) {
+    if (oid.type <= 0 || oid.type > 3) {
         tig_debug_printf("Wrong id type in filename [%s]\n", path);
         return false;
     }
 
-    *handle_ptr = objp_perm_lookup(object_id);
+    *handle_ptr = objp_perm_lookup(oid);
     if (*handle_ptr == OBJ_HANDLE_NULL) {
         tig_debug_printf("ID not loaded, can't convert to handle in ObjFile,handle_from_fname: [%s]", fname);
         return false;

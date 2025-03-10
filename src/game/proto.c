@@ -280,19 +280,19 @@ void proto_exit()
 // 0x468330
 bool proto_save(int64_t obj)
 {
-    ObjectID object_id;
+    ObjectID oid;
     char* name = NULL;
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    object_id = sub_407EF0(obj);
+    oid = sub_407EF0(obj);
     obj_field_string_get(obj, OBJ_F_NAME, &name);
 
-    if (object_id.type != 1) {
+    if (oid.type != 1) {
         return false;
     }
 
-    sprintf(path, "proto\\%06d - %s.pro", object_id.d.a, name);
+    sprintf(path, "proto\\%06d - %s.pro", oid.d.a, name);
     FREE(name);
 
     stream = tig_file_fopen(path, "wb");
@@ -16032,12 +16032,12 @@ void sub_49B240(int64_t obj, int f, int percent)
 int sub_49B290(int64_t obj)
 {
     int64_t prototype_handle;
-    ObjectID object_id;
+    ObjectID oid;
 
     prototype_handle = obj_field_handle_get(obj, OBJ_F_PROTOTYPE_HANDLE);
-    object_id = sub_407EF0(prototype_handle);
+    oid = sub_407EF0(prototype_handle);
 
-    return object_id.d.a - 20;
+    return oid.d.a - 20;
 }
 
 // 0x49B2E0

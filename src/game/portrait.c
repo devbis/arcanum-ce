@@ -8,7 +8,7 @@
 #include "game/stat.h"
 
 static void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height);
-static bool sub_4CEAC0(int64_t object_id, const char* str);
+static bool sub_4CEAC0(int64_t obj, const char* str);
 
 // 0x5B7C0C
 static const char* portrait_race_specifiers[RACE_COUNT] = {

@@ -803,27 +803,27 @@ void sub_4D9990(int64_t obj)
 }
 
 // 0x4D9A90
-void sub_4D9A90(int64_t object_id)
+void sub_4D9A90(int64_t obj)
 {
     unsigned int render_flags;
     Light* light;
     int index;
 
-    render_flags = obj_field_int32_get(object_id, OBJ_F_RENDER_FLAGS);
+    render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
     if ((render_flags & ORF_80000000) != 0) {
-        light = (Light*)obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE); // TODO: x64
+        light = (Light*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE); // TODO: x64
         if (light != NULL) {
             sub_4D93B0(light);
         }
 
         for (index = 0; index < 4; index++) {
-            light = (Light*)obj_arrayfield_uint32_get(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+            light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
             if (light != NULL) {
                 sub_4D93B0(light);
             }
         }
 
-        obj_field_int32_set(object_id,
+        obj_field_int32_set(obj,
             OBJ_F_RENDER_FLAGS,
             render_flags & ~ORF_80000000);
     }
@@ -1010,19 +1010,19 @@ bool sub_4D9B20(int64_t obj)
 }
 
 // 0x4DA310
-void sub_4DA310(int64_t object_id)
+void sub_4DA310(int64_t obj)
 {
     int index;
     Shadow* shadow;
 
     for (index = 0; index < SHADOW_HANDLE_MAX; index++) {
-        shadow = (Shadow*)obj_arrayfield_int32_get(object_id, OBJ_F_SHADOW_HANDLES, index); // TODO: x64.
+        shadow = (Shadow*)obj_arrayfield_int32_get(obj, OBJ_F_SHADOW_HANDLES, index); // TODO: x64.
         if (shadow == NULL) {
             break;
         }
 
         sub_4DE7A0(shadow);
-        obj_arrayfield_int32_set(object_id, OBJ_F_SHADOW_HANDLES, index, 0);
+        obj_arrayfield_int32_set(obj, OBJ_F_SHADOW_HANDLES, index, 0);
     }
 }
 
@@ -1430,18 +1430,18 @@ void sub_4DD020(int64_t obj, int64_t loc, int offset_x, int offset_y)
 }
 
 // 0x4DD0A0
-void sub_4DD0A0(int64_t object_id, int offset_x, int offset_y)
+void sub_4DD0A0(int64_t obj, int offset_x, int offset_y)
 {
     Light* light;
     int idx;
 
-    light = (Light*)obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE); // TODO: x64
+    light = (Light*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE); // TODO: x64
     if (light != NULL) {
         sub_4DD500(light, offset_x, offset_y);
     }
 
     for (idx = 0; idx < 4; idx++) {
-        light = (Light*)obj_arrayfield_uint32_get(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
         if (light != NULL) {
             sub_4DD500(light, offset_x, offset_y);
         }
