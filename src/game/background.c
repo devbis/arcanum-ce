@@ -247,7 +247,7 @@ int background_get(int64_t obj)
 }
 
 // 0x4C26D0
-int background_obj_get_background_text(int64_t obj)
+int background_text_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
 }

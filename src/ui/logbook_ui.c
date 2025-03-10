@@ -999,7 +999,7 @@ void sub_53FBB0()
         char ch;
 
         dword_648938 = 1;
-        dword_63FAE4[0] = background_obj_get_background_text(logbook_ui_obj);
+        dword_63FAE4[0] = background_text_get(logbook_ui_obj);
         dword_648988[0] = dword_648934;
 
         strcpy(str, background_description_get_body(dword_63FAE4[0]));

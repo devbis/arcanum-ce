@@ -4488,7 +4488,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
             && rect->x < stru_5C4F30.x + stru_5C4F30.width
             && rect->y < stru_5C4F30.y + stru_5C4F30.height)) {
         if (tig_window_fill(dword_5C3624, &stru_5C4F30, tig_color_make(0, 0, 0)) == TIG_OK) {
-            background = background_obj_get_background_text(obj);
+            background = background_text_get(obj);
             sub_542DF0(background_description_get_name(background),
                 &stru_5C4F30,
                 font);
@@ -4514,7 +4514,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
                 }
                 tig_font_pop();
             } else {
-                background = background_obj_get_background_text(obj);
+                background = background_text_get(obj);
                 if (background > 1000 && dword_64C458 == 0) {
                     font = dword_64C210[0];
                     tig_font_push(font);
