@@ -608,7 +608,7 @@ bool sub_44D240(int index)
 }
 
 // 0x44D2F0
-int sub_44D2F0(int64_t obj)
+int anim_find_first(int64_t obj)
 {
     int slot;
     AnimRunInfo* run_info;
@@ -628,7 +628,7 @@ int sub_44D2F0(int64_t obj)
 }
 
 // 0x44D340
-int sub_44D340(int prev, int64_t obj)
+int anim_find_next(int prev, int64_t obj)
 {
     int slot;
     AnimRunInfo* run_info;
@@ -1223,7 +1223,7 @@ bool sub_44E4D0(int64_t obj, int goal_type, int a3)
         priority = PRIORITY_HIGHEST;
     }
 
-    slot = sub_44D2F0(obj);
+    slot = anim_find_first(obj);
     while (slot != -1 && slot != prev_slot) {
         prev_slot = slot;
 
@@ -1238,7 +1238,7 @@ bool sub_44E4D0(int64_t obj, int goal_type, int a3)
             }
         }
 
-        slot = sub_44D340(slot, obj);
+        slot = anim_find_next(slot, obj);
     }
 
     return true;
@@ -1268,7 +1268,7 @@ bool anim_find_next_of_type(int64_t obj, int type, AnimID* anim_id)
         return false;
     }
 
-    slot = anim_id != NULL ? anim_id->slot_num + 1 : sub_44D2F0(obj);
+    slot = anim_id != NULL ? anim_id->slot_num + 1 : anim_find_first(obj);
     while (slot != -1 && slot != prev_slot) {
         prev_slot = slot;
         run_info = &(anim_run_info[slot]);
@@ -1279,7 +1279,7 @@ bool anim_find_next_of_type(int64_t obj, int type, AnimID* anim_id)
             return true;
         }
 
-        slot = sub_44D340(slot, obj);
+        slot = anim_find_next(slot, obj);
     }
 
     return false;
@@ -1306,7 +1306,7 @@ bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id)
         return false;
     }
 
-    slot = sub_44D2F0(obj);
+    slot = anim_find_first(obj);
     while (slot != -1) {
         prev_slot = slot;
 
@@ -1343,7 +1343,7 @@ bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id)
             }
         }
 
-        slot = sub_44D340(slot, obj);
+        slot = anim_find_next(slot, obj);
 
         ASSERT(slot != prev_slot); // 4293, "animRunIndex != lastAnimRunIndex"
 
@@ -1367,7 +1367,7 @@ bool sub_44E830(int64_t obj, int goal_type, AnimID* anim_id)
         return false;
     }
 
-    slot = sub_44D2F0(obj);
+    slot = anim_find_first(obj);
     if (slot == -1) {
         return false;
     }
@@ -1414,7 +1414,7 @@ bool sub_44E8C0(int64_t obj, AnimID* anim_id)
         return false;
     }
 
-    slot = sub_44D2F0(obj);
+    slot = anim_find_first(obj);
     while (slot != -1) {
         if (!anim_goal_nodes[anim_run_info[slot].goals[0].type]->field_C) {
             if (anim_id != NULL) {
@@ -1422,7 +1422,7 @@ bool sub_44E8C0(int64_t obj, AnimID* anim_id)
             }
             return true;
         }
-        slot = sub_44D340(slot, obj);
+        slot = anim_find_next(slot, obj);
     }
 
     return false;
@@ -1445,7 +1445,7 @@ bool sub_44E940(int64_t obj, AnimID* anim_id, int64_t a2)
         return false;
     }
 
-    slot = sub_44D2F0(obj);
+    slot = anim_find_first(obj);
     if (slot == -1) {
         return false;
     }
