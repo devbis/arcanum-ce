@@ -375,7 +375,7 @@ bool sub_56A9D0(TigMessage* msg)
                             if (mes_search(follower_ui_mes_file, &mes_file_entry)) {
                                 sub_441B60(qword_67BC50, qword_67BC20, str);
                                 sprintf(bcast.field_8, "%s %s", str, mes_file_entry.str);
-                                sub_4C2F00(qword_67BC20, &bcast);
+                                broadcast_msg(qword_67BC20, &bcast);
                             }
                             break;
                         }
@@ -573,7 +573,7 @@ void sub_56B180(S4F2810* a1)
         if (mes_search(follower_ui_mes_file, &mes_file_entry)) {
             sub_441B60(qword_67BC50, qword_67BC20, str);
             sprintf(bcast.field_8, "%s %s", str, mes_file_entry.str);
-            sub_4C2F00(qword_67BC20, &bcast);
+            broadcast_msg(qword_67BC20, &bcast);
         }
     }
 }

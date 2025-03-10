@@ -175,24 +175,20 @@ int broadcast_match_str_to_base_type(const char* str)
 }
 
 // 0x4C2F00
-void sub_4C2F00(int64_t obj, Broadcast* bcast)
+void broadcast_msg(int64_t obj, Broadcast* bcast)
 {
-    struct {
-        int type;
-        ObjectID oid;
-        Broadcast bcast;
-    } packet;
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        PacketBroadcastMsg pkt;
 
-    static_assert(sizeof(packet) == 0xA8, "wrong size");
+        pkt.type = 18;
+        pkt.oid = sub_407EF0(obj);
+        pkt.bcast = *bcast;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
 
-    if (!tig_net_is_active() || tig_net_is_host()) {
-        broadcast_msg_client(obj, bcast);
-    } else {
-        packet.type = 18;
-        packet.oid = sub_407EF0(obj);
-        packet.bcast = *bcast;
-        tig_net_send_app_all(&packet, sizeof(packet));
+        return;
     }
+
+    broadcast_msg_client(obj, bcast);
 }
 
 // 0x4C2FA0
@@ -252,6 +248,6 @@ void sub_4C3BE0(unsigned int a1, int64_t loc)
     if (a1 < 6) {
         bcast.loc = loc;
         strcpy(bcast.field_8, byte_5FDC90[a1]);
-        sub_4C2F00(player_get_pc_obj(), &bcast);
+        broadcast_msg(player_get_pc_obj(), &bcast);
     }
 }

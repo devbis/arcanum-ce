@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_MP_UTILS_H_
 
 #include "game/anim_private.h"
+#include "game/broadcast.h"
 #include "game/context.h"
 #include "game/combat.h"
 #include "game/dialog.h"
@@ -142,6 +143,14 @@ typedef struct Packet16 {
 
 // NOTE: May be wrong, see 0x4ED510.
 static_assert(sizeof(Packet16) == 0x58, "wrong size");
+
+typedef struct PacketBroadcastMsg {
+    int type;
+    ObjectID oid;
+    Broadcast bcast;
+} PacketBroadcastMsg;
+
+static_assert(sizeof(PacketBroadcastMsg) == 0xA8, "wrong size");
 
 typedef struct PacketCombatModeSet {
     /* 0000 */ int type;

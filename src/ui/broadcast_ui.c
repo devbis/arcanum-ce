@@ -93,7 +93,7 @@ void sub_571950(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
         intgame_get_location_under_cursor(&(stru_681040.loc));
-        sub_4C2F00(player_get_pc_obj(), &stru_681040);
+        broadcast_msg(player_get_pc_obj(), &stru_681040);
     }
     sub_571910();
 }
