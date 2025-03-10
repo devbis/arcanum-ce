@@ -21,7 +21,7 @@
 #define BACKGROUND_NAME_LENGTH 32
 
 static int background_get_base_money();
-static bool sub_4C2B50(int64_t obj, char* str);
+static bool background_is_legal(int64_t obj, char* str);
 
 // 0x5B6AEC
 static const char* off_5B6AEC[] = {
@@ -82,7 +82,7 @@ bool background_find_first(int64_t obj, int* background_ptr)
 
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
     while (mes_search(background_mes_file, &mes_file_entry)) {
-        if (sub_4C2B50(obj, mes_file_entry.str)) {
+        if (background_is_legal(obj, mes_file_entry.str)) {
             *background_ptr = background;
             return true;
         }
@@ -101,7 +101,7 @@ bool background_find_next(int64_t obj, int* background_ptr)
 
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
     while (mes_search(background_mes_file, &mes_file_entry)) {
-        if (sub_4C2B50(obj, mes_file_entry.str)) {
+        if (background_is_legal(obj, mes_file_entry.str)) {
             *background_ptr = background;
             return true;
         }
@@ -120,7 +120,7 @@ bool background_find_prev(int64_t obj, int* background_ptr)
 
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
     while (mes_search(background_mes_file, &mes_file_entry)) {
-        if (sub_4C2B50(obj, mes_file_entry.str)) {
+        if (background_is_legal(obj, mes_file_entry.str)) {
             *background_ptr = background;
             return true;
         }
@@ -372,7 +372,7 @@ bool background_get_items(char* dest, size_t size, int background)
 }
 
 // 0x4C2B50
-bool sub_4C2B50(int64_t obj, char* str)
+bool background_is_legal(int64_t obj, char* str)
 {
     int gender;
     int race;
