@@ -266,7 +266,7 @@ void sub_44C8F0(AnimRunInfo* run_info, AnimGoalNode* goal_node);
 bool sub_44CCB0(AnimID* anim_id);
 void sub_44D0C0(AnimRunInfo* run_info);
 int sub_44D2F0(int64_t obj);
-int sub_44D340(int slot, int64_t obj);
+int sub_44D340(int prev, int64_t obj);
 bool sub_44D4E0(AnimGoalData* goal_data, int64_t obj, int goal_type);
 bool sub_44D500(AnimGoalData* goal_data, int64_t obj, int goal_type);
 bool sub_44D520(AnimGoalData* goal_data, AnimID* anim_id);

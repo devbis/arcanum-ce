@@ -628,12 +628,12 @@ int sub_44D2F0(int64_t obj)
 }
 
 // 0x44D340
-int sub_44D340(int slot, int64_t obj)
+int sub_44D340(int prev, int64_t obj)
 {
-    slot++;
+    int slot;
     AnimRunInfo* run_info;
 
-    for (; slot < 216; slot++) {
+    for (slot = prev + 1; slot < 216; slot++) {
         run_info = &(anim_run_info[slot]);
         if ((run_info->flags & 0x1) != 0
             && (run_info->flags & 0x2) == 0
