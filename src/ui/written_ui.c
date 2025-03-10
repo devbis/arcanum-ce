@@ -310,8 +310,8 @@ void written_ui_create()
     TigWindowData window_data;
     MesFileEntry mes_file_entry;
     PcLens pc_lens;
-    long long obj;
-    long long location;
+    int64_t obj;
+    int64_t location;
     int index;
 
     if (!written_ui_mod_loaded

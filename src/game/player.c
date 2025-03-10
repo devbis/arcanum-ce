@@ -80,7 +80,7 @@ bool player_save(TigFile* stream)
 bool player_load(GameLoadInfo* load_info)
 {
     ObjectID temp_object_id;
-    long long location;
+    int64_t location;
 
     if (load_info->stream == NULL) {
         return false;

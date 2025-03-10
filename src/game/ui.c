@@ -67,7 +67,7 @@ void sub_4601F0(int64_t obj)
 }
 
 // 0x460240
-void sub_460240(long long a1)
+void sub_460240(int64_t a1)
 {
     if (ui_callbacks.field_10 != NULL) {
         ui_callbacks.field_10(a1);
@@ -75,7 +75,7 @@ void sub_460240(long long a1)
 }
 
 // 0x460260
-void sub_460260(long long a1)
+void sub_460260(int64_t a1)
 {
     if (ui_callbacks.field_14 != NULL) {
         ui_callbacks.field_14(a1);

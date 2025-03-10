@@ -104,7 +104,7 @@ static int schematic_ui_num_found_schematics_by_tech[8];
 static int dword_680E24;
 
 // 0x680E28
-static long long qword_680E28;
+static int64_t qword_680E28;
 
 // 0x680E30
 static int dword_680E30;
@@ -143,7 +143,7 @@ static int dword_680E58;
 static int* dword_680E5C;
 
 // 0x680E60
-static long long qword_680E60;
+static int64_t qword_680E60;
 
 // 0x680E68
 static int dword_680E68;
@@ -152,7 +152,7 @@ static int dword_680E68;
 static int dword_680E6C;
 
 // 0x680E70
-static long long qword_680E70;
+static int64_t qword_680E70;
 
 // 0x680E78
 static int schematic_ui_text_mes_file;
@@ -173,7 +173,7 @@ static tig_font_handle_t dword_680E88;
 static tig_font_handle_t dword_680E8C;
 
 // 0x680E90
-static long long qword_680E90;
+static int64_t qword_680E90;
 
 // 0x680E98
 static int* dword_680E98;
@@ -297,7 +297,7 @@ void sub_56D0D0()
 }
 
 // 0x56D130
-void sub_56D130(long long a1, long long a2)
+void sub_56D130(int64_t a1, int64_t a2)
 {
     int tech;
     int index;
@@ -634,7 +634,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 int sub_56DB00(int schematic)
 {
     SchematicInfo schematic_info;
-    long long obj;
+    int64_t obj;
 
     if (schematic >= 4000) {
         sub_56DBD0(schematic, &schematic_info);
@@ -753,7 +753,7 @@ void sub_56DDC0()
     MesFileEntry mes_file_entry;
     int schematic;
     SchematicInfo schematic_info;
-    long long obj;
+    int64_t obj;
     char icon[2];
     bool v1;
     bool v2;
@@ -1160,7 +1160,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 }
 
 // 0x56E950
-bool sub_56E950(int a1, int64_t a2, long long obj)
+bool sub_56E950(int a1, int64_t a2, int64_t obj)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -1202,7 +1202,7 @@ char* sub_56EA10(int a1, int a2)
 void sub_56EA30(int a1, int a2, char* a3, char* a4)
 {
     SchematicInfo schematic_info;
-    long long obj;
+    int64_t obj;
 
     sub_56DBD0(tech_schematic_base_lineno(a1, a2), &schematic_info);
 

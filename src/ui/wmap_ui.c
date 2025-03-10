@@ -161,8 +161,8 @@ static bool wmap_load_worldmap_info();
 static void sub_560EE0();
 static void sub_560EF0();
 static bool wmap_ui_create();
-static void sub_561430(long long location);
-static void sub_561490(long long location, WmapCoords* coords);
+static void sub_561430(int64_t location);
+static void sub_561490(int64_t location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
 static bool sub_5614F0();
 static bool sub_5615D0(int a1);
@@ -1562,7 +1562,7 @@ bool wmap_ui_create()
 }
 
 // 0x561430
-void sub_561430(long long location)
+void sub_561430(int64_t location)
 {
     WmapCoords coords;
     int x;
@@ -1584,7 +1584,7 @@ void sub_561430(long long location)
 }
 
 // 0x561490
-void sub_561490(long long location, WmapCoords* coords)
+void sub_561490(int64_t location, WmapCoords* coords)
 {
     coords->x = dword_66D6F8 - ((location >> 6) & 0x3FFFFFF);
     coords->y = (location >> 32) >> 6;
@@ -3808,7 +3808,7 @@ int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime)
 }
 
 // 0x564F60
-void sub_564F60(long long a1, long long a2)
+void sub_564F60(int64_t a1, int64_t a2)
 {
     dword_66D874 = sub_4BE380(a2);
     if (dword_66D874) {

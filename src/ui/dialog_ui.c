@@ -40,7 +40,7 @@ typedef struct DialogUiEntry {
     /* 185F */ char field_185F;
 } DialogUiEntry;
 
-static DialogUiEntry* sub_567420(long long obj);
+static DialogUiEntry* sub_567420(int64_t obj);
 static void sub_5679C0(DialogUiEntry* entry);
 static void sub_567D60(DialogUiEntry* entry);
 static bool sub_567E30(DialogUiEntry* entry, int a2);
@@ -51,7 +51,7 @@ static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
 static void sub_568540(int64_t a1, int64_t a2, int type, int expires_in, const char* str, int a6);
 static void sub_5686C0(int64_t a1, int64_t a2, int type, int expires_in, const char* str);
-static void sub_5688D0(int64_t a1, long long obj, int a4);
+static void sub_5688D0(int64_t a1, int64_t obj, int a4);
 static void sub_5689B0();
 
 // 0x66DAB8
@@ -118,13 +118,13 @@ void dialog_ui_reset()
 }
 
 // 0x567400
-bool sub_567400(long long obj)
+bool sub_567400(int64_t obj)
 {
     return sub_567420(obj)->field_1850;
 }
 
 // 0x567420
-DialogUiEntry* sub_567420(long long obj)
+DialogUiEntry* sub_567420(int64_t obj)
 {
     int index = 0;
 
@@ -263,7 +263,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
 }
 
 // 0x5678D0
-void sub_5678D0(long long obj, int a2)
+void sub_5678D0(int64_t obj, int a2)
 {
     DialogUiEntry* entry;
     Packet44 pkt;
@@ -328,7 +328,7 @@ int sub_567A10()
 }
 
 // 0x567A20
-void sub_567A20(long long obj)
+void sub_567A20(int64_t obj)
 {
     sub_567420(obj)->field_1850 = false;
     if (player_is_pc_obj(obj)) {
@@ -338,7 +338,7 @@ void sub_567A20(long long obj)
 }
 
 // 0x567A60
-void sub_567A60(long long obj)
+void sub_567A60(int64_t obj)
 {
     sub_567420(obj)->field_1850 = true;
     if (player_is_pc_obj(obj)) {
@@ -590,7 +590,7 @@ bool sub_5681B0(DialogUiEntry* entry)
 }
 
 // 0x5681C0
-void sub_5681C0(long long a1, long long a2)
+void sub_5681C0(int64_t a1, int64_t a2)
 {
     char text[1000];
 
@@ -797,7 +797,7 @@ void sub_568830(int64_t obj)
 }
 
 // 0x568880
-void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const char* str)
+void sub_568880(int64_t obj, int a2, int a3, int type, int a5, int a6, const char* str)
 {
     (void)a2;
     (void)a3;
@@ -814,7 +814,7 @@ void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const c
 }
 
 // 0x5688D0
-void sub_5688D0(int64_t a1, long long obj, int a4)
+void sub_5688D0(int64_t a1, int64_t obj, int a4)
 {
     int v1;
     int v2;

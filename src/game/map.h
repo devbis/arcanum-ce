@@ -27,14 +27,14 @@ void sub_40FED0();
 bool map_get_name(int map, char** name);
 int sub_40FF40();
 int sub_40FF50(int map_type);
-bool map_get_starting_location(int map, long long* x, long long* y);
+bool map_get_starting_location(int map, int64_t* x, int64_t* y);
 bool map_get_area(int map, int* area);
 bool map_get_worldmap(int map, int* worldmap);
 bool map_is_clearing_objects();
 void map_flush(unsigned int flags);
 void sub_4101D0(int64_t location, int64_t a2);
 int sub_410270();
-void sub_410280(long long* location);
+void sub_410280(int64_t* location);
 void sub_4102C0(char** name, char** folder);
 bool sub_4102F0(const char* name);
 void map_clear_objects();
@@ -43,8 +43,8 @@ void map_enable_gender_check();
 void map_gender_check();
 bool map_list_info_load();
 int map_list_info_find(const char* name);
-bool map_list_info_set(int index, const char* name, long long x, long long y, bool is_start_map, int worldmap, int area);
-bool map_list_info_add(const char* name, long long x, long long y, bool is_start_map);
-bool map_list_info_add_internal(const char* name, long long x, long long y, bool is_start_map);
+bool map_list_info_set(int index, const char* name, int64_t x, int64_t y, bool is_start_map, int worldmap, int area);
+bool map_list_info_add(const char* name, int64_t x, int64_t y, bool is_start_map);
+bool map_list_info_add_internal(const char* name, int64_t x, int64_t y, bool is_start_map);
 
 #endif /* ARCANUM_GAME_MAP_H_ */

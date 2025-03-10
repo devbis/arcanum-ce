@@ -381,7 +381,7 @@ typedef enum ObjectType {
 #define ORF_80000000 0x80000000
 
 typedef struct ObjectID_P {
-    long long location;
+    int64_t location;
     int temp_id;
     int map;
 } ObjectID_P;

@@ -86,7 +86,7 @@ static int dword_67BC14;
 static tig_font_handle_t dword_67BC18;
 
 // 0x67BC20
-static long long qword_67BC20;
+static int64_t qword_67BC20;
 
 // 0x67BC28
 static tig_font_handle_t dword_67BC28;
@@ -98,7 +98,7 @@ static int follower_ui_mes_file;
 static tig_button_handle_t dword_67BC30[8];
 
 // 0x67BC50
-static long long qword_67BC50;
+static int64_t qword_67BC50;
 
 // 0x67BC58
 static int dword_67BC58;

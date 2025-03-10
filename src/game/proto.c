@@ -60,21 +60,21 @@ static int sub_468600(ObjectType object_type);
 static void sub_468660(bool* rescan_ptr);
 static int sub_468720(ObjectType object_type);
 static void sub_468800();
-static bool proto_save(long long obj);
+static bool proto_save(int64_t obj);
 static ObjectID sub_468860(int a1);
 static void sub_468890(int description);
-static void sub_468930(long long obj, int description);
-static void sub_49AFF0(long long obj, int description);
-static void sub_49B010(long long obj, int description);
-static void sub_49B220(long long obj, int description);
-static void sub_49B240(long long obj, int f, int percent);
-static void sub_49B2E0(long long obj);
-static void sub_49B340(long long obj, int description);
-static int sub_49B5A0(TigFile* stream, long long obj, int type);
-static void sub_49BB40(long long obj, int a2);
+static void sub_468930(int64_t obj, int description);
+static void sub_49AFF0(int64_t obj, int description);
+static void sub_49B010(int64_t obj, int description);
+static void sub_49B220(int64_t obj, int description);
+static void sub_49B240(int64_t obj, int f, int percent);
+static void sub_49B2E0(int64_t obj);
+static void sub_49B340(int64_t obj, int description);
+static int sub_49B5A0(TigFile* stream, int64_t obj, int type);
+static void sub_49BB40(int64_t obj, int a2);
 static bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5);
 static int sub_49BF10(const char* str, const char** identifiers, int size);
-static void sub_49C060(long long obj, TigFile* stream, int type);
+static void sub_49C060(int64_t obj, TigFile* stream, int type);
 static void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size);
 static void proto_id_list_create(int** proto_ids_ptr, int* cnt_ptr);
 static int proto_id_list_sort(const int* a, const int* b);
@@ -228,7 +228,7 @@ bool proto_init(GameInitInfo* init_info)
     TigFileList file_list;
     char path[TIG_MAX_PATH];
     TigFile* stream;
-    long long obj;
+    int64_t obj;
 
     if (initialized) {
         return true;
@@ -278,7 +278,7 @@ void proto_exit()
 }
 
 // 0x468330
-bool proto_save(long long obj)
+bool proto_save(int64_t obj)
 {
     ObjectID object_id;
     char* name = NULL;
@@ -312,13 +312,13 @@ bool proto_save(long long obj)
 }
 
 // 0x468570
-long long sub_468570(ObjectType object_type)
+int64_t sub_468570(ObjectType object_type)
 {
     return objp_perm_lookup(dword_5E882C[object_type]);
 }
 
 // 0x4685A0
-long long sub_4685A0(int a1)
+int64_t sub_4685A0(int a1)
 {
     return  objp_perm_lookup(sub_468860(a1));
 }
@@ -481,7 +481,7 @@ ObjectID sub_468860(int a1)
 void sub_468890(int description)
 {
     ObjectType object_type;
-    long long obj;
+    int64_t obj;
 
     object_type = sub_4685D0(description);
     sub_405800(object_type, &obj);
@@ -495,7 +495,7 @@ void sub_468890(int description)
 }
 
 // 0x468930
-void sub_468930(long long obj, int description)
+void sub_468930(int64_t obj, int description)
 {
     Script scr;
     tig_art_id_t art_id;
@@ -15951,13 +15951,13 @@ void sub_468930(long long obj, int description)
 }
 
 // 0x49AFF0
-void sub_49AFF0(long long obj, int description)
+void sub_49AFF0(int64_t obj, int description)
 {
     sub_49B340(obj, description);
 }
 
 // 0x49B010
-void sub_49B010(long long obj, int description)
+void sub_49B010(int64_t obj, int description)
 {
     tig_art_id_t art_id;
     Script scr;
@@ -16014,13 +16014,13 @@ void sub_49B010(long long obj, int description)
 }
 
 // 0x49B220
-void sub_49B220(long long obj, int description)
+void sub_49B220(int64_t obj, int description)
 {
     sub_49B340(obj, description);
 }
 
 // 0x49B240
-void sub_49B240(long long obj, int f, int percent)
+void sub_49B240(int64_t obj, int f, int percent)
 {
     int value;
 
@@ -16029,9 +16029,9 @@ void sub_49B240(long long obj, int f, int percent)
 }
 
 // 0x49B290
-int sub_49B290(long long obj)
+int sub_49B290(int64_t obj)
 {
-    long long prototype_handle;
+    int64_t prototype_handle;
     ObjectID object_id;
 
     prototype_handle = obj_field_handle_get(obj, OBJ_F_PROTOTYPE_HANDLE);
@@ -16041,7 +16041,7 @@ int sub_49B290(long long obj)
 }
 
 // 0x49B2E0
-void sub_49B2E0(long long obj)
+void sub_49B2E0(int64_t obj)
 {
     int complexity;
     int worth;
@@ -16054,7 +16054,7 @@ void sub_49B2E0(long long obj)
 }
 
 // 0x49B340
-void sub_49B340(long long obj, int description)
+void sub_49B340(int64_t obj, int description)
 {
     TigFile* stream;
     int type;
@@ -16128,7 +16128,7 @@ void sub_49B340(long long obj, int description)
 }
 
 // 0x49B5A0
-int sub_49B5A0(TigFile* stream, long long obj, int type)
+int sub_49B5A0(TigFile* stream, int64_t obj, int type)
 {
     tig_art_id_t art_id;
     char str[1000];
@@ -16291,7 +16291,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 }
 
 // 0x49BB40
-void sub_49BB40(long long obj, int a2)
+void sub_49BB40(int64_t obj, int a2)
 {
     object_hp_adj_set(obj, object_hp_adj_get(obj) + a2 - object_hp_max(obj));
 }
@@ -16415,7 +16415,7 @@ int sub_49BF10(const char* str, const char** identifiers, int size)
 }
 
 // 0x49C060
-void sub_49C060(long long obj, TigFile* stream, int type)
+void sub_49C060(int64_t obj, TigFile* stream, int type)
 {
     char description[2000];
     int value;

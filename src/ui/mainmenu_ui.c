@@ -7488,7 +7488,7 @@ void sub_549A70()
 // 0x549A80
 void sub_549A80()
 {
-    long long obj;
+    int64_t obj;
 
     if (!dword_5C3620) {
         obj = objp_perm_lookup(sub_407EF0(sub_4685A0(16075)));

@@ -36,13 +36,13 @@
 #include "ui/written_ui.h"
 
 static void sub_57CAE0();
-static void sub_57CAB0(long long obj);
-static void sub_57CAF0(long long obj);
+static void sub_57CAB0(int64_t obj);
+static void sub_57CAF0(int64_t obj);
 static void show_inven_loot(int64_t pc_obj, int64_t target_obj);
 static void show_inven_identify(int64_t pc_obj, int64_t target_obj);
 static void show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 static void sub_57CBE0(char* str);
-static void sub_57CC10(long long obj);
+static void sub_57CC10(int64_t obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
 static void sub_57CDC0();
 static void sub_57CDE0();
@@ -52,7 +52,7 @@ static void sub_57CE10();
 static void sub_57CE30(int64_t obj, void* a2, int a3);
 static void sub_57CE70(int64_t a1, int64_t a2);
 static void ui_charedit_error_msg(int type, int a2);
-static void sub_57CF70(long long a1, long long a2);
+static void sub_57CF70(int64_t a1, int64_t a2);
 static void sub_57CFA0();
 static bool sub_57CFB0();
 static bool sub_57D080();
@@ -173,7 +173,7 @@ void tb_ui_exit()
 }
 
 // 0x57CAB0
-void sub_57CAB0(long long obj)
+void sub_57CAB0(int64_t obj)
 {
     sub_576100(obj);
     if (player_is_pc_obj(obj)) {
@@ -190,7 +190,7 @@ void sub_57CAE0()
 }
 
 // 0x57CAF0
-void sub_57CAF0(long long obj)
+void sub_57CAF0(int64_t obj)
 {
     sub_573590(obj);
     sub_568830(obj);
@@ -237,7 +237,7 @@ void sub_57CBE0(char* str)
 }
 
 // 0x57CC10
-void sub_57CC10(long long obj)
+void sub_57CC10(int64_t obj)
 {
     if (player_is_pc_obj(obj)) {
         sub_57D350(1, -1);
@@ -266,7 +266,7 @@ void sub_57CC70(int64_t a1, int64_t a2)
 }
 
 // 0x57CCF0
-void sub_57CCF0(long long a1, long long a2)
+void sub_57CCF0(int64_t a1, int64_t a2)
 {
     char buffer[2000];
 
@@ -277,7 +277,7 @@ void sub_57CCF0(long long a1, long long a2)
 }
 
 // 0x57CD60
-bool sub_57CD60(long long a1, long long a2, char* buffer)
+bool sub_57CD60(int64_t a1, int64_t a2, char* buffer)
 {
     if (!player_is_pc_obj(a1)) {
         return false;
@@ -401,7 +401,7 @@ void ui_charedit_error_msg(int type, int a2)
 }
 
 // 0x57CF70
-void sub_57CF70(long long a1, long long a2)
+void sub_57CF70(int64_t a1, int64_t a2)
 {
     if (player_is_pc_obj(a1)) {
         charedit_create(a2, 2);

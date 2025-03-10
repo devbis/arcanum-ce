@@ -119,13 +119,13 @@ void critter_exit()
 }
 
 // 0x45D010
-int critter_social_class_get(long long obj)
+int critter_social_class_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_NPC_SOCIAL_CLASS);
 }
 
 // 0x45D030
-int critter_social_class_set(long long obj, int value)
+int critter_social_class_set(int64_t obj, int value)
 {
     effect_remove_one_caused_by(obj, EFFECT_CAUSE_CLASS);
     obj_field_int32_set(obj, OBJ_F_NPC_SOCIAL_CLASS, value);
@@ -140,7 +140,7 @@ const char* critter_social_class_name(int social_class)
 }
 
 // 0x45D080
-int critter_faction_get(long long obj)
+int critter_faction_get(int64_t obj)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         return obj_field_int32_get(obj, OBJ_F_NPC_FACTION);
@@ -150,7 +150,7 @@ int critter_faction_get(long long obj)
 }
 
 // 0x45D0C0
-int critter_faction_set(long long obj, int value)
+int critter_faction_set(int64_t obj, int value)
 {
     if (obj != 0 && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_field_int32_set(obj, OBJ_F_NPC_FACTION, value);
@@ -159,7 +159,7 @@ int critter_faction_set(long long obj, int value)
 }
 
 // 0x45D110
-bool critter_faction_same(long long obj1, long long obj2)
+bool critter_faction_same(int64_t obj1, int64_t obj2)
 {
     int obj_type1;
     int obj_type2;
@@ -234,7 +234,7 @@ bool critter_faction_same(long long obj1, long long obj2)
 }
 
 // 0x45D290
-int critter_origin_get(long long obj)
+int critter_origin_get(int64_t obj)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         return obj_field_int32_get(obj, OBJ_F_NPC_ORIGIN);
@@ -244,7 +244,7 @@ int critter_origin_get(long long obj)
 }
 
 // 0x45D2D0
-int critter_origin_set(long long obj, int value)
+int critter_origin_set(int64_t obj, int value)
 {
     if (obj != 0 && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_field_int32_set(obj, OBJ_F_NPC_ORIGIN, value);
@@ -260,13 +260,13 @@ bool critter_origin_same(int64_t a, int64_t b)
 }
 
 // 0x45D360
-bool critter_is_pc(long long obj)
+bool critter_is_pc(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
 }
 
 // 0x45D390
-int critter_fatigue_pts_get(long long obj)
+int critter_fatigue_pts_get(int64_t obj)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -276,7 +276,7 @@ int critter_fatigue_pts_get(long long obj)
 }
 
 // 0x45D3E0
-int critter_fatigue_pts_set(long long obj, int value)
+int critter_fatigue_pts_set(int64_t obj, int value)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -307,7 +307,7 @@ int critter_fatigue_pts_set(long long obj, int value)
 }
 
 // 0x45D4A0
-int critter_fatigue_adj_get(long long obj)
+int critter_fatigue_adj_get(int64_t obj)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -319,7 +319,7 @@ int critter_fatigue_adj_get(long long obj)
 // FIXME: Wrong name, sets `OBJ_F_CRITTER_FATIGUE_PTS`, not `OBJ_F_CRITTER_FATIGUE_ADJ`.
 //
 // 0x45D4F0
-int critter_fatigue_adj_set(long long obj, int value)
+int critter_fatigue_adj_set(int64_t obj, int value)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -332,7 +332,7 @@ int critter_fatigue_adj_set(long long obj, int value)
 }
 
 // 0x45D550
-int critter_fatigue_damage_get(long long obj)
+int critter_fatigue_damage_get(int64_t obj)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -342,7 +342,7 @@ int critter_fatigue_damage_get(long long obj)
 }
 
 // 0x45D5A0
-int critter_fatigue_damage_set(long long obj, int value)
+int critter_fatigue_damage_set(int64_t obj, int value)
 {
     bool v1;
 
@@ -374,7 +374,7 @@ int critter_fatigue_damage_set(long long obj, int value)
 }
 
 // 0x45D670
-int critter_fatigue_max(long long obj)
+int critter_fatigue_max(int64_t obj)
 {
     int fatigue_pts;
     int fatigue_adj;
@@ -400,13 +400,13 @@ int critter_fatigue_max(long long obj)
 }
 
 // 0x45D700
-int critter_fatigue_current(long long obj)
+int critter_fatigue_current(int64_t obj)
 {
     return critter_fatigue_max(obj) - critter_fatigue_damage_get(obj);
 }
 
 // 0x45D730
-bool sub_45D730(long long obj)
+bool sub_45D730(int64_t obj)
 {
     tig_art_id_t aid;
 
@@ -427,7 +427,7 @@ bool sub_45D730(long long obj)
 }
 
 // 0x45D790
-bool critter_is_active(long long obj)
+bool critter_is_active(int64_t obj)
 {
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
         && !critter_is_dead(obj)
@@ -454,7 +454,7 @@ bool critter_is_sleeping(int64_t obj)
 }
 
 // 0x45D8D0
-bool critter_is_dead(long long obj)
+bool critter_is_dead(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
         return object_hp_current(obj) <= 0;
@@ -1712,13 +1712,13 @@ bool critter_has_bad_associates(int64_t obj)
 }
 
 // 0x45F550
-bool critter_can_open_portals(long long obj)
+bool critter_can_open_portals(int64_t obj)
 {
     return ai_critter_can_open_portals(obj);
 }
 
 // 0x45F570
-bool critter_can_jump_window(long long obj)
+bool critter_can_jump_window(int64_t obj)
 {
     tig_art_id_t art_id;
     int type;
@@ -1790,7 +1790,7 @@ int64_t critter_substitute_inventory_get(int64_t obj)
 }
 
 // 0x45F6D0
-int critter_teleport_map_get(long long obj)
+int critter_teleport_map_get(int64_t obj)
 {
     int map;
 
@@ -1804,7 +1804,7 @@ int critter_teleport_map_get(long long obj)
 }
 
 // 0x45F710
-void sub_45F710(long long obj)
+void sub_45F710(int64_t obj)
 {
     critter_teleport_map_get(obj);
 }
@@ -1829,7 +1829,7 @@ bool critter_is_monstrous(int64_t critter_obj)
 }
 
 // 0x45F790
-int critter_encumbrance_level_get(long long obj)
+int critter_encumbrance_level_get(int64_t obj)
 {
     int current_weight;
     int max_weight;
@@ -1920,7 +1920,7 @@ int critter_encumbrance_level_ratio(int level)
 }
 
 // 0x45F970
-int critter_description_get(long long a, long long b)
+int critter_description_get(int64_t a, int64_t b)
 {
     if (a == b || b != OBJ_HANDLE_NULL && sub_4C0C40(a, b)) {
         return obj_field_int32_get(a, OBJ_F_DESCRIPTION);

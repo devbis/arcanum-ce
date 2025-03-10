@@ -71,8 +71,8 @@ typedef struct MapModule {
 
 typedef struct MapListInfo {
     char name[MAP_NAME_LENGTH];
-    long long x;
-    long long y;
+    int64_t x;
+    int64_t y;
     int worldmap;
     int area;
 } MapListInfo;
@@ -138,7 +138,7 @@ static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, 
 static char off_59F3DC[] = "*** Deleted Map ***";
 
 // 0x5D11E0
-static long long qword_5D11E0;
+static int64_t qword_5D11E0;
 
 // 0x5D11E8
 static bool dword_5D11E8;
@@ -843,7 +843,7 @@ int sub_40FF50(int map_type)
 }
 
 // 0x40FF70
-bool map_get_starting_location(int map, long long* x, long long* y)
+bool map_get_starting_location(int map, int64_t* x, int64_t* y)
 {
     if (map > 0 && map <= map_list_info_count) {
         *x = map_list_info[map - 1].x;
@@ -964,7 +964,7 @@ int sub_410270()
 }
 
 // 0x410280
-void sub_410280(long long* location)
+void sub_410280(int64_t* location)
 {
     if (location != NULL) {
         *location = qword_5D11E0;
@@ -1990,7 +1990,7 @@ int map_list_info_find(const char* name)
 }
 
 // 0x412830
-bool map_list_info_set(int index, const char* name, long long x, long long y, bool is_start_map, int worldmap, int area)
+bool map_list_info_set(int index, const char* name, int64_t x, int64_t y, bool is_start_map, int worldmap, int area)
 {
     strcpy(map_list_info[index].name, name);
     map_list_info[index].x = x;
@@ -2010,7 +2010,7 @@ bool map_list_info_set(int index, const char* name, long long x, long long y, bo
 }
 
 // 0x412BD0
-bool map_list_info_add(const char* name, long long x, long long y, bool is_start_map)
+bool map_list_info_add(const char* name, int64_t x, int64_t y, bool is_start_map)
 {
     int index;
 
@@ -2028,7 +2028,7 @@ bool map_list_info_add(const char* name, long long x, long long y, bool is_start
 }
 
 // 0x412C90
-bool map_list_info_add_internal(const char* name, long long x, long long y, bool is_start_map)
+bool map_list_info_add_internal(const char* name, int64_t x, int64_t y, bool is_start_map)
 {
     if (map_list_info_count < MAP_LIST_CAPACITY) {
         return map_list_info_set(map_list_info_count++, name, x, y, is_start_map, -1, 0);
