@@ -4060,30 +4060,24 @@ void sub_423FE0(void(*func)())
 // 0x423FF0
 bool sub_423FF0(int64_t obj)
 {
-    int v1 = -1;
-    int v2;
+    int prev = -1;
+    int slot;
 
     if (light_scheme_is_changing()) {
         return true;
     }
 
-    v2 = sub_44D2F0(obj);
-    if (v2 == -1) {
-        return true;
-    }
-
-    while (v2 != v1) {
-        v1 = v2;
-        if (!sub_44E160(&(anim_run_info[v2].id))) {
+    slot = sub_44D2F0(obj);
+    while (slot != -1 && slot != prev) {
+        prev = slot;
+        if (!sub_44E160(&(anim_run_info[slot].id))) {
             return false;
         }
-        v2 = sub_44D340(v2, obj);
-        if (v2 == -1) {
-            return true;
-        }
+
+        slot = sub_44D340(slot, obj);
     }
 
-    return false;
+    return true;
 }
 
 // 0x424070
