@@ -389,7 +389,7 @@ void sub_4A69C0(int64_t pc_obj)
     }
     object_list_destroy(&objects);
 
-    sub_4C2950(pc_obj);
+    background_educate_followers(pc_obj);
 }
 
 // 0x4A6CB0

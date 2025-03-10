@@ -290,7 +290,7 @@ void sub_4C26F0(int64_t obj)
 }
 
 // 0x4C2950
-void sub_4C2950(int64_t obj)
+void background_educate_followers(int64_t obj)
 {
     ObjectList followers;
     ObjectNode* node;
@@ -299,7 +299,7 @@ void sub_4C2950(int64_t obj)
     int follower_training;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && background_get(obj) != BACKGROUND_EDUCATOR) {
+        || background_get(obj) != BACKGROUND_EDUCATOR) {
         return;
     }
 
@@ -310,10 +310,10 @@ void sub_4C2950(int64_t obj)
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
-                follower_training = basic_skill_get_training(node->obj, skill);
-                follower_training++;
+                follower_training = basic_skill_get_training(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
                     basic_skill_set_training(node->obj, skill, follower_training);
+                    follower_training++;
                 }
                 node = node->next;
             }
@@ -325,10 +325,10 @@ void sub_4C2950(int64_t obj)
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
-                follower_training = tech_skill_get_training(node->obj, skill);
-                follower_training++;
+                follower_training = tech_skill_get_training(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
                     tech_skill_set_training(node->obj, skill, follower_training);
+                    follower_training++;
                 }
                 node = node->next;
             }

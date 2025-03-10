@@ -33,7 +33,7 @@ void background_clear(int64_t obj);
 int background_get(int64_t obj);
 int background_text_get(int64_t obj);
 void sub_4C26F0(int64_t obj);
-void sub_4C2950(int64_t obj);
+void background_educate_followers(int64_t obj);
 int background_adjust_money(int amount, int background);
 bool background_get_items(char* dest, size_t size, int background);
 

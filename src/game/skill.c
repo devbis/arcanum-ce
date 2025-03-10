@@ -509,7 +509,7 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
         skill,
         (skill_value & ~(3 << 6)) | (training << 6));
 
-    sub_4C2950(obj);
+    background_educate_followers(obj);
 
     return training;
 }
@@ -869,7 +869,7 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
         skill,
         (skill_value & ~(3 << 6)) | (training << 6));
 
-    sub_4C2950(obj);
+    background_educate_followers(obj);
 
     return training;
 }
