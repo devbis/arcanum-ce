@@ -3641,7 +3641,7 @@ bool sub_423470(int64_t obj)
 // 0x4234F0
 bool sub_4234F0(int64_t obj)
 {
-    return !sub_44E830(obj, 2, NULL);
+    return sub_44E830(obj, 2, NULL);
 }
 
 // 0x423530
