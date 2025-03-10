@@ -210,7 +210,7 @@ char* background_description_get_name(int num)
 }
 
 // 0x4C25E0
-void sub_4C25E0(int64_t obj, int background, int background_text)
+void background_set(int64_t obj, int background, int background_text)
 {
     MesFileEntry mes_file_entry;
 

@@ -28,7 +28,7 @@ int background_get_description(int background);
 char* background_description_get_text(int num);
 char* background_description_get_body(int num);
 char* background_description_get_name(int num);
-void sub_4C25E0(int64_t obj, int background, int background_text);
+void background_set(int64_t obj, int background, int background_text);
 void background_obj_clear(int64_t obj);
 int background_get(int64_t obj);
 int background_text_get(int64_t obj);
