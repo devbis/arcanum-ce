@@ -225,7 +225,7 @@ void sub_4C25E0(int64_t obj, int background, int background_text)
 }
 
 // 0x4C2650
-void background_obj_clear(object_id_t obj)
+void background_obj_clear(int64_t obj)
 {
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 0);
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 0);
@@ -233,7 +233,7 @@ void background_obj_clear(object_id_t obj)
 }
 
 // 0x4C2690
-int background_obj_get_background(object_id_t obj)
+int background_obj_get_background(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
@@ -244,7 +244,7 @@ int background_obj_get_background(object_id_t obj)
 }
 
 // 0x4C26D0
-int background_obj_get_background_text(object_id_t obj)
+int background_obj_get_background_text(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
 }

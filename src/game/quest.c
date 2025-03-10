@@ -466,7 +466,7 @@ int quest_set_state(int num, int state)
 }
 
 // 0x4C5250
-void quest_copy_description(object_id_t obj, int num, char* buffer)
+void quest_copy_description(int64_t obj, int num, char* buffer)
 {
     if (quests[num - 1000].dumb_description != NULL
         && stat_level_get(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {

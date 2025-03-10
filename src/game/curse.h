@@ -16,10 +16,10 @@ bool curse_mod_load();
 void curse_mod_unload();
 void curse_copy_name(int curse, char* buffer);
 void curse_copy_description(int curse, char* buffer);
-int sub_4C3D50(object_id_t obj, CurseInfo* curses);
-bool curse_is_added_to(object_id_t obj, int curse);
-void curse_add(object_id_t obj, int curse);
+int sub_4C3D50(int64_t obj, CurseInfo* curses);
+bool curse_is_added_to(int64_t obj, int curse);
+void curse_add(int64_t obj, int curse);
 int curse_get_effect(int curse);
-void curse_remove(object_id_t obj, int curse);
+void curse_remove(int64_t obj, int curse);
 
 #endif /* ARCANUM_GAME_CURSE_H_ */

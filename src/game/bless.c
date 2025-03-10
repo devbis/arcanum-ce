@@ -60,7 +60,7 @@ void bless_copy_description(int bless, char* buffer)
 }
 
 // 0x4C4200
-int sub_4C4200(object_id_t obj, BlessInfo* blessings)
+int sub_4C4200(int64_t obj, BlessInfo* blessings)
 {
     int cnt;
     int index;
@@ -79,7 +79,7 @@ int sub_4C4200(object_id_t obj, BlessInfo* blessings)
 }
 
 // 0x4C4280
-bool bless_is_added_to(object_id_t obj, int bless)
+bool bless_is_added_to(int64_t obj, int bless)
 {
     int cnt;
     int index;
@@ -99,7 +99,7 @@ bool bless_is_added_to(object_id_t obj, int bless)
 }
 
 // 0x4C42F0
-void bless_add(object_id_t obj, int bless)
+void bless_add(int64_t obj, int bless)
 {
     int cnt;
     MesFileEntry mes_file_entry;
@@ -156,7 +156,7 @@ int bless_get_effect(int bless)
 }
 
 // 0x4C4450
-void bless_remove(object_id_t obj, int bless)
+void bless_remove(int64_t obj, int bless)
 {
     int cnt;
     int index;

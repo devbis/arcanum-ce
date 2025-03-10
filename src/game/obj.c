@@ -1433,7 +1433,7 @@ void sub_406B80(int64_t obj_handle)
 }
 
 // 0x406CA0
-int obj_field_int32_get(object_id_t obj_handle, int fld)
+int obj_field_int32_get(int64_t obj_handle, int fld)
 {
     Object* object;
     int value;
@@ -1466,7 +1466,7 @@ void object_field_not_exists(Object* object, int fld)
 }
 
 // 0x406D40
-void obj_field_int32_set(object_id_t obj_handle, int fld, int value)
+void obj_field_int32_set(int64_t obj_handle, int fld, int value)
 {
     Object* object;
 
@@ -1482,7 +1482,7 @@ void obj_field_int32_set(object_id_t obj_handle, int fld, int value)
 }
 
 // 0x406DA0
-int64_t obj_field_int64_get(object_id_t obj_handle, int fld)
+int64_t obj_field_int64_get(int64_t obj_handle, int fld)
 {
     Object* object;
     int64_t value;
@@ -1501,7 +1501,7 @@ int64_t obj_field_int64_get(object_id_t obj_handle, int fld)
 }
 
 // 0x406E10
-void obj_field_int64_set(object_id_t obj_handle, int fld, int64_t value)
+void obj_field_int64_set(int64_t obj_handle, int fld, int64_t value)
 {
     Object* object;
 

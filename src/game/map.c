@@ -1858,7 +1858,7 @@ void map_gender_check()
 {
     char name[1000];
     int64_t location;
-    object_id_t obj;
+    int64_t obj;
     int iter;
 
     if (!map_gender_check_enabled) {

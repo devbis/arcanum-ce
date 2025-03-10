@@ -583,7 +583,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 }
 
 // 0x4EA4A0
-int sub_4EA4A0(object_id_t obj, int effect_id)
+int sub_4EA4A0(int64_t obj, int effect_id)
 {
     int effect_count = 0;
     int index;
@@ -650,7 +650,7 @@ void sub_4EA520(int64_t obj, int start)
 }
 
 // 0x4EA690
-int effect_adjust_stat_level(object_id_t obj, int stat, int value)
+int effect_adjust_stat_level(int64_t obj, int stat, int value)
 {
     return sub_4EA6C0(obj, stat, value, effect_stat_effects, false);
 }
@@ -752,55 +752,55 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
 }
 
 // 0x4EA930
-int sub_4EA930(object_id_t obj, int stat, int value)
+int sub_4EA930(int64_t obj, int stat, int value)
 {
     return sub_4EA6C0(obj, stat, value, effect_stat_effects, true);
 }
 
 // 0x4EA960
-int effect_adjust_basic_skill_level(object_id_t obj, int skill, int value)
+int effect_adjust_basic_skill_level(int64_t obj, int skill, int value)
 {
     return sub_4EA6C0(obj, skill, value, effect_basic_skill_effects, false);
 }
 
 // 0x4EA990
-int effect_adjust_tech_skill_level(object_id_t obj, int skill, int value)
+int effect_adjust_tech_skill_level(int64_t obj, int skill, int value)
 {
     return sub_4EA6C0(obj, skill, value, effect_tech_skill_effects, false);
 }
 
 // 0x4EA9C0
-int effect_adjust_resistance(object_id_t obj, int resistance, int value)
+int effect_adjust_resistance(int64_t obj, int resistance, int value)
 {
     return sub_4EA6C0(obj, resistance, value, effect_resistance_effects, false);
 }
 
 // 0x4EA9F0
-int effect_adjust_tech_level(object_id_t obj, int tech, int value)
+int effect_adjust_tech_level(int64_t obj, int tech, int value)
 {
     return sub_4EA6C0(obj, tech, value, effect_tech_effects, false);
 }
 
 // 0x4EAA20
-int effect_adjust_max_hit_points(object_id_t obj, int value)
+int effect_adjust_max_hit_points(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_MAX_HIT_POINTS, value, effect_special_effects, false);
 }
 
 // 0x4EAA50
-int effect_adjust_max_fatigue(object_id_t obj, int value)
+int effect_adjust_max_fatigue(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_MAX_FATIGUE, value, effect_special_effects, false);
 }
 
 // 0x4EAA80
-int effect_adjust_reaction(object_id_t obj, int value)
+int effect_adjust_reaction(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_REACTION, value, effect_special_effects, false);
 }
 
 // 0x4EAAB0
-int effect_adjust_good_bad_reaction(object_id_t obj, int value)
+int effect_adjust_good_bad_reaction(int64_t obj, int value)
 {
     if (value < 0) {
         return sub_4EA6C0(obj, EFFECT_SPECIAL_BAD_REACTION_ADJUSTMENT, value, effect_special_effects, false);
@@ -812,37 +812,37 @@ int effect_adjust_good_bad_reaction(object_id_t obj, int value)
 }
 
 // 0x4EAB00
-int effect_adjust_crit_hit_chance(object_id_t obj, int value)
+int effect_adjust_crit_hit_chance(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_HIT_CHANCE, value, effect_special_effects, false);
 }
 
 // 0x4EAB30
-int effect_adjust_crit_hit_effect(object_id_t obj, int value)
+int effect_adjust_crit_hit_effect(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_HIT_EFFECT, value, effect_special_effects, false);
 }
 
 // 0x4EAB60
-int effect_adjust_crit_fail_chance(object_id_t obj, int value)
+int effect_adjust_crit_fail_chance(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_FAIL_CHANCE, value, effect_special_effects, false);
 }
 
 // 0x4EAB90
-int effect_adjust_crit_fail_effect(object_id_t obj, int value)
+int effect_adjust_crit_fail_effect(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_FAIL_EFFECT, value, effect_special_effects, false);
 }
 
 // 0x4EABC0
-int effect_adjust_xp_gain(object_id_t obj, int value)
+int effect_adjust_xp_gain(int64_t obj, int value)
 {
     return sub_4EA6C0(obj, EFFECT_SPECIAL_XP_GAIN, value, effect_special_effects, false);
 }
 
 // 0x4EABF0
-void effect_debug_obj(object_id_t obj)
+void effect_debug_obj(int64_t obj)
 {
     int cnt;
     int index;

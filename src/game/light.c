@@ -803,7 +803,7 @@ void sub_4D9990(int64_t obj)
 }
 
 // 0x4D9A90
-void sub_4D9A90(object_id_t object_id)
+void sub_4D9A90(int64_t object_id)
 {
     unsigned int render_flags;
     Light* light;
@@ -1010,7 +1010,7 @@ bool sub_4D9B20(int64_t obj)
 }
 
 // 0x4DA310
-void sub_4DA310(object_id_t object_id)
+void sub_4DA310(int64_t object_id)
 {
     int index;
     Shadow* shadow;
@@ -1430,7 +1430,7 @@ void sub_4DD020(int64_t obj, int64_t loc, int offset_x, int offset_y)
 }
 
 // 0x4DD0A0
-void sub_4DD0A0(object_id_t object_id, int offset_x, int offset_y)
+void sub_4DD0A0(int64_t object_id, int offset_x, int offset_y)
 {
     Light* light;
     int idx;

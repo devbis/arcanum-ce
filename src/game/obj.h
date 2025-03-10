@@ -6,8 +6,6 @@
 
 #define OBJ_HANDLE_NULL 0LL
 
-typedef long long object_id_t;
-
 typedef enum ObjectField {
     OBJ_F_BEGIN,
     OBJ_F_CURRENT_AID,
@@ -452,10 +450,10 @@ int obj_is_modified(int64_t obj);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
 bool obj_dif_read(TigFile* stream, int64_t obj);
 void sub_406B80(int64_t obj_handle);
-int obj_field_int32_get(object_id_t obj_handle, int field);
-void obj_field_int32_set(object_id_t obj_handle, int field, int value);
-int64_t obj_field_int64_get(object_id_t obj_handle, int field);
-void obj_field_int64_set(object_id_t obj_handle, int fld, int64_t value);
+int obj_field_int32_get(int64_t obj_handle, int field);
+void obj_field_int32_set(int64_t obj_handle, int field, int value);
+int64_t obj_field_int64_get(int64_t obj_handle, int field);
+void obj_field_int64_set(int64_t obj_handle, int fld, int64_t value);
 int64_t obj_field_handle_get(int64_t obj_handle, int fld);
 void obj_field_handle_set(int64_t obj_handle, int fld, int64_t value);
 bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr);

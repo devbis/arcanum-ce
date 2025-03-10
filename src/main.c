@@ -294,8 +294,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 void main_loop()
 {
     int64_t location;
-    object_id_t pc_obj;
-    object_id_t party_member_obj;
+    int64_t pc_obj;
+    int64_t party_member_obj;
     tig_art_id_t art_id;
     bool enable_profiler = false;
     bool disable_profiler = false;

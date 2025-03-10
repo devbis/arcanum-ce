@@ -87,8 +87,8 @@ static_assert(sizeof(S4417A0) == 0x10, "wrong size");
 
 static void sub_43C5C0(UnknownContext* render_info);
 static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);
-static int sub_43D690(object_id_t obj);
-static int sub_43D630(object_id_t obj);
+static int sub_43D690(int64_t obj);
+static int sub_43D630(int64_t obj);
 static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* a6, int* a7, int* a8);
 static void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects);
 static bool sub_441710(S4415C0* entry);
@@ -99,11 +99,11 @@ static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectI
 static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
 static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
-static void object_clear_render_palette(object_id_t obj);
+static void object_clear_render_palette(int64_t obj);
 static void sub_442D90(int64_t obj, ObjectRenderColors* colors);
-static TigPalette object_get_render_palette(object_id_t obj);
-static void sub_442F10(object_id_t obj, const tig_color_t* colors);
-static void sub_442FA0(object_id_t obj);
+static TigPalette object_get_render_palette(int64_t obj);
+static void sub_442F10(int64_t obj, const tig_color_t* colors);
+static void sub_442FA0(int64_t obj);
 static ObjectRenderColors* sub_442FE0();
 static void sub_443010(ObjectRenderColors* colors);
 static void sub_443030();
@@ -114,7 +114,7 @@ static int sub_443440(TigArtBlitInfo* blit_info, int order);
 static void sub_443560();
 static int sub_443600(const S5E2E74* a, const S5E2E74* b);
 static void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect);
-static void sub_4437C0(object_id_t obj);
+static void sub_4437C0(int64_t obj);
 static bool sub_443880(TigRect* rect, tig_art_id_t art_id);
 static bool sub_444150();
 static void sub_444270(int64_t obj, int a2);
@@ -1359,7 +1359,7 @@ void sub_43CF70(int64_t obj)
 }
 
 // 0x43CFF0
-void sub_43CFF0(object_id_t obj)
+void sub_43CFF0(int64_t obj)
 {
     unsigned int flags;
 
@@ -1530,7 +1530,7 @@ void object_flags_unset(int64_t obj, unsigned int flags)
 }
 
 // 0x43D410
-int object_hp_pts_get(object_id_t obj)
+int object_hp_pts_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_PTS);
 }
@@ -1563,13 +1563,13 @@ int object_hp_pts_set(int64_t obj, int value)
 }
 
 // 0x43D4C0
-int object_hp_adj_get(object_id_t obj)
+int object_hp_adj_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_ADJ);
 }
 
 // 0x43D4E0
-int object_hp_adj_set(object_id_t obj, int value)
+int object_hp_adj_set(int64_t obj, int value)
 {
     obj_field_int32_set(obj, OBJ_F_HP_ADJ, value);
     sub_460240(obj);
@@ -1577,13 +1577,13 @@ int object_hp_adj_set(object_id_t obj, int value)
 }
 
 // 0x43D510
-int object_hp_damage_get(object_id_t obj)
+int object_hp_damage_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_DAMAGE);
 }
 
 // 0x43D530
-int object_hp_damage_set(object_id_t obj, int value)
+int object_hp_damage_set(int64_t obj, int value)
 {
     int obj_type;
 
@@ -1610,7 +1610,7 @@ int object_hp_damage_set(object_id_t obj, int value)
 }
 
 // 0x43D5A0
-int object_hp_max(object_id_t obj)
+int object_hp_max(int64_t obj)
 {
     int value;
     int obj_type;
@@ -1624,13 +1624,13 @@ int object_hp_max(object_id_t obj)
 }
 
 // 0x43D600
-int object_hp_current(object_id_t obj)
+int object_hp_current(int64_t obj)
 {
     return object_hp_max(obj) - object_hp_damage_get(obj);
 }
 
 // 0x43D630
-int sub_43D630(object_id_t obj)
+int sub_43D630(int64_t obj)
 {
     int obj_type;
 
@@ -1645,7 +1645,7 @@ int sub_43D630(object_id_t obj)
 }
 
 // 0x43D690
-int sub_43D690(object_id_t obj)
+int sub_43D690(int64_t obj)
 {
     int obj_type;
 
@@ -1711,12 +1711,12 @@ int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
 }
 
 // 0x43D880
-int object_get_ac(object_id_t obj, bool a2)
+int object_get_ac(int64_t obj, bool a2)
 {
     int ac;
     int obj_type;
     int index;
-    object_id_t item_obj;
+    int64_t item_obj;
 
     ac = obj_field_int32_get(obj, OBJ_F_AC);
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
@@ -1744,7 +1744,7 @@ int object_get_ac(object_id_t obj, bool a2)
 }
 
 // 0x43D940
-bool sub_43D940(object_id_t obj)
+bool sub_43D940(int64_t obj)
 {
     int obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type == OBJ_TYPE_PROJECTILE
@@ -1757,7 +1757,7 @@ bool sub_43D940(object_id_t obj)
 }
 
 // 0x43D990
-bool sub_43D990(object_id_t obj)
+bool sub_43D990(int64_t obj)
 {
     int obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type == OBJ_TYPE_PROJECTILE
@@ -2141,7 +2141,7 @@ bool sub_43EAC0(TimeEvent* timeevent)
 }
 
 // 0x43EAF0
-void object_set_offset(object_id_t obj, int offset_x, int offset_y)
+void object_set_offset(int64_t obj, int offset_x, int offset_y)
 {
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         sub_4423E0(obj, offset_x, offset_y);
@@ -2149,7 +2149,7 @@ void object_set_offset(object_id_t obj, int offset_x, int offset_y)
 }
 
 // 0x43EB30
-void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
+void object_set_current_aid(int64_t obj, tig_art_id_t aid)
 {
     TigRect dirty_rect;
     TigRect update_rect;
@@ -2168,7 +2168,7 @@ void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
 }
 
 // 0x43EBD0
-void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color)
+void object_set_light(int64_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color)
 {
     Light* light;
 
@@ -2241,7 +2241,7 @@ void object_overlay_set(int64_t obj, int fld, int index, tig_art_id_t aid)
 }
 
 // 0x43EE10
-void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, tig_art_id_t aid, tig_color_t color)
+void object_set_overlay_light(int64_t obj, int index, unsigned int flags, tig_art_id_t aid, tig_color_t color)
 {
     Light* light;
 
@@ -2262,7 +2262,7 @@ void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, ti
 }
 
 // 0x43EEB0
-void object_set_blit_scale(object_id_t obj, int value)
+void object_set_blit_scale(int64_t obj, int value)
 {
     TigRect dirty_rect;
     TigRect update_rect;
@@ -2275,7 +2275,7 @@ void object_set_blit_scale(object_id_t obj, int value)
 }
 
 // 0x43EF10
-void object_add_flags(object_id_t obj, unsigned int flags)
+void object_add_flags(int64_t obj, unsigned int flags)
 {
     TigRect dirty_rect;
     TigRect update_rect;
@@ -2293,7 +2293,7 @@ void object_add_flags(object_id_t obj, unsigned int flags)
 }
 
 // 0x43EFA0
-void object_remove_flags(object_id_t obj, unsigned int flags)
+void object_remove_flags(int64_t obj, unsigned int flags)
 {
     TigRect dirty_rect;
     TigRect update_rect;
@@ -2311,7 +2311,7 @@ void object_remove_flags(object_id_t obj, unsigned int flags)
 }
 
 // 0x43F030
-void sub_43F030(object_id_t obj)
+void sub_43F030(int64_t obj)
 {
     TigRect rect;
 
@@ -2325,7 +2325,7 @@ void sub_43F030(object_id_t obj)
 }
 
 // 0x43F090
-void object_cycle_palette(object_id_t obj)
+void object_cycle_palette(int64_t obj)
 {
     tig_art_id_t aid;
     TigRect rect;
@@ -2346,7 +2346,7 @@ void object_cycle_palette(object_id_t obj)
 }
 
 // 0x43F130
-void sub_43F130(object_id_t obj, int palette)
+void sub_43F130(int64_t obj, int palette)
 {
     tig_art_id_t aid;
     TigRect rect;
@@ -2523,7 +2523,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
 // 0x43F5F0
 bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
 {
-    object_id_t obj;
+    int64_t obj;
 
     obj = timeevent->params[0].object_value;
     obj_field_int32_set(obj,
@@ -2535,7 +2535,7 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x43F630
-bool object_is_destroyed(object_id_t obj)
+bool object_is_destroyed(int64_t obj)
 {
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
         return false;
@@ -2567,7 +2567,7 @@ bool object_is_destroyed(object_id_t obj)
 }
 
 // 0x43F710
-void sub_43F710(object_id_t obj)
+void sub_43F710(int64_t obj)
 {
     TigArtAnimData art_anim_data;
 
@@ -2594,7 +2594,7 @@ void sub_43F710(object_id_t obj)
 }
 
 // 0x43F7F0
-void object_inc_current_aid(object_id_t obj)
+void object_inc_current_aid(int64_t obj)
 {
     tig_art_id_t current_aid;
     tig_art_id_t next_aid;
@@ -2626,7 +2626,7 @@ void object_inc_current_aid(object_id_t obj)
 }
 
 // 0x43F8F0
-void object_dec_current_aid(object_id_t obj)
+void object_dec_current_aid(int64_t obj)
 {
     tig_art_id_t current_aid;
     tig_art_id_t prev_aid;
@@ -2658,7 +2658,7 @@ void object_dec_current_aid(object_id_t obj)
 }
 
 // 0x43F9F0
-void object_eye_candy_aid_inc(object_id_t obj, int fld, int index)
+void object_eye_candy_aid_inc(int64_t obj, int fld, int index)
 {
     tig_art_id_t current_aid;
     tig_art_id_t next_aid;
@@ -2682,7 +2682,7 @@ void object_eye_candy_aid_inc(object_id_t obj, int fld, int index)
 }
 
 // 0x43FAB0
-void object_eye_candy_aid_dec(object_id_t obj, int fld, int index)
+void object_eye_candy_aid_dec(int64_t obj, int fld, int index)
 {
     tig_art_id_t current_aid;
     tig_art_id_t prev_aid;
@@ -2708,7 +2708,7 @@ void object_eye_candy_aid_dec(object_id_t obj, int fld, int index)
 }
 
 // 0x43FB80
-void sub_43FB80(object_id_t obj, int index)
+void sub_43FB80(int64_t obj, int index)
 {
     tig_art_id_t aid;
 
@@ -2724,7 +2724,7 @@ void sub_43FB80(object_id_t obj, int index)
 }
 
 // 0x43FBF0
-void sub_43FBF0(object_id_t obj, int index)
+void sub_43FBF0(int64_t obj, int index)
 {
     tig_art_id_t aid;
     TigArtAnimData art_anim_data;
@@ -2743,7 +2743,7 @@ void sub_43FBF0(object_id_t obj, int index)
 }
 
 // 0x43FC80
-void sub_43FC80(object_id_t obj, int index)
+void sub_43FC80(int64_t obj, int index)
 {
     Light* light;
 
@@ -2754,7 +2754,7 @@ void sub_43FC80(object_id_t obj, int index)
 }
 
 // 0x43FCB0
-void sub_43FCB0(object_id_t obj, int index)
+void sub_43FCB0(int64_t obj, int index)
 {
     Light* light;
 
@@ -2765,7 +2765,7 @@ void sub_43FCB0(object_id_t obj, int index)
 }
 
 // 0x43FCE0
-void object_cycle_rotation(object_id_t obj)
+void object_cycle_rotation(int64_t obj)
 {
     tig_art_id_t current_aid;
     tig_art_id_t next_aid;
@@ -3896,7 +3896,7 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
 }
 
 // 0x441C70
-void sub_441C70(object_id_t obj, int racial_type, int gender, int race)
+void sub_441C70(int64_t obj, int racial_type, int gender, int race)
 {
     tig_art_id_t aid;
 
@@ -4052,7 +4052,7 @@ bool object_jammed_set(int64_t obj, bool jammed)
 }
 
 // 0x441FC0
-void sub_441FC0(object_id_t obj, int a2)
+void sub_441FC0(int64_t obj, int a2)
 {
     if (!object_editor) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
@@ -4376,7 +4376,7 @@ void sub_442520(int64_t obj)
 }
 
 // 0x442D50
-void object_clear_render_palette(object_id_t obj)
+void object_clear_render_palette(int64_t obj)
 {
     TigPalette palette;
 
@@ -4452,7 +4452,7 @@ void sub_442D90(int64_t obj, ObjectRenderColors* colors)
 }
 
 // 0x442ED0
-TigPalette object_get_render_palette(object_id_t obj)
+TigPalette object_get_render_palette(int64_t obj)
 {
     TigPalette palette;
 
@@ -4466,7 +4466,7 @@ TigPalette object_get_render_palette(object_id_t obj)
 }
 
 // 0x442F10
-void sub_442F10(object_id_t obj, const tig_color_t* colors)
+void sub_442F10(int64_t obj, const tig_color_t* colors)
 {
     tig_color_t* render_colors;
     tig_art_id_t aid;
@@ -4492,7 +4492,7 @@ void sub_442F10(object_id_t obj, const tig_color_t* colors)
 }
 
 // 0x442FA0
-void sub_442FA0(object_id_t obj)
+void sub_442FA0(int64_t obj)
 {
     ObjectRenderColors* colors;
 
@@ -4793,7 +4793,7 @@ void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id
 }
 
 // 0x443770
-void sub_443770(object_id_t obj)
+void sub_443770(int64_t obj)
 {
     sub_4D9A90(obj);
     sub_4437C0(obj);
@@ -4809,7 +4809,7 @@ void sub_443770(object_id_t obj)
 }
 
 // 0x4437C0
-void sub_4437C0(object_id_t obj)
+void sub_4437C0(int64_t obj)
 {
     sub_4DA310(obj);
 }

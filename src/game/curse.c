@@ -60,7 +60,7 @@ void curse_copy_description(int curse, char* buffer)
 }
 
 // 0x4C3D50
-int sub_4C3D50(object_id_t obj, CurseInfo* curses)
+int sub_4C3D50(int64_t obj, CurseInfo* curses)
 {
     int cnt;
     int index;
@@ -79,7 +79,7 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses)
 }
 
 // 0x4C3DD0
-bool curse_is_added_to(object_id_t obj, int curse)
+bool curse_is_added_to(int64_t obj, int curse)
 {
     int cnt;
     int index;
@@ -99,7 +99,7 @@ bool curse_is_added_to(object_id_t obj, int curse)
 }
 
 // 0x4C3E40
-void curse_add(object_id_t obj, int curse)
+void curse_add(int64_t obj, int curse)
 {
     int cnt;
     MesFileEntry mes_file_entry;
@@ -156,7 +156,7 @@ int curse_get_effect(int curse)
 }
 
 // 0x4C3FA0
-void curse_remove(object_id_t obj, int curse)
+void curse_remove(int64_t obj, int curse)
 {
     int cnt;
     int index;

@@ -2040,7 +2040,7 @@ bool critter_is_dumb(int64_t critter_obj)
 }
 
 // 0x45FC70
-void critter_debug_obj(object_id_t obj)
+void critter_debug_obj(int64_t obj)
 {
     char name[1000];
 

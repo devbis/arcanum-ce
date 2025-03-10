@@ -60,9 +60,9 @@ static bool sub_44FFA0(int a1, const char* a2, int a3);
 static void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
 static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
 static void sub_450240();
-static bool sub_4507D0(object_id_t obj, int magictech);
-static int sub_450B90(object_id_t obj);
-static void sub_450C10(object_id_t obj, unsigned int flags);
+static bool sub_4507D0(int64_t obj, int magictech);
+static int sub_450B90(int64_t obj);
+static void sub_450C10(int64_t obj, unsigned int flags);
 static void sub_4510F0();
 static void MTComponentAGoal_ProcFunc();
 static void MTComponentAGoalTerminate_ProcFunc();
@@ -139,10 +139,10 @@ static bool sub_458D90(int64_t a1, int* a2);
 static bool sub_459290(int64_t obj, int spell, int* index_ptr);
 static void sub_459490(int mt_id);
 static bool sub_4594D0(TimeEvent* timeevent);
-static bool sub_459590(object_id_t obj, int a2, bool a3);
+static bool sub_459590(int64_t obj, int a2, bool a3);
 static bool sub_459640(TimeEvent* timeevent);
 static void sub_45A480(MagicTechRunInfo* run_info);
-static void sub_45A760(object_id_t obj, const char* msg);
+static void sub_45A760(int64_t obj, const char* msg);
 
 // 0x596140
 static uint64_t qword_596140[] = {
@@ -1688,13 +1688,13 @@ bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
 }
 
 // 0x4507B0
-void sub_4507B0(object_id_t obj, int magictech)
+void sub_4507B0(int64_t obj, int magictech)
 {
     sub_4507D0(obj, magictech);
 }
 
 // 0x4507D0
-bool sub_4507D0(object_id_t obj, int magictech)
+bool sub_4507D0(int64_t obj, int magictech)
 {
     int cost;
 
@@ -1725,7 +1725,7 @@ bool sub_4507D0(object_id_t obj, int magictech)
 }
 
 // 0x4508A0
-bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
+bool magictech_can_charge_spell_fatigue(int64_t obj, int magictech)
 {
     int cost;
 
@@ -1784,7 +1784,7 @@ bool sub_450940(int mt_id)
 }
 
 // 0x450A50
-int64_t sub_450A50(object_id_t obj)
+int64_t sub_450A50(int64_t obj)
 {
     int type;
 
@@ -1839,13 +1839,13 @@ int sub_450B40(int64_t obj)
 }
 
 // 0x450B90
-int sub_450B90(object_id_t obj)
+int sub_450B90(int64_t obj)
 {
     return stat_level_get(obj, STAT_INTELLIGENCE) / 4;
 }
 
 // 0x450C10
-void sub_450C10(object_id_t obj, unsigned int flags)
+void sub_450C10(int64_t obj, unsigned int flags)
 {
     obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) | flags);
 }
@@ -6219,7 +6219,7 @@ bool sub_459500(int index)
 }
 
 // 0x459590
-bool sub_459590(object_id_t obj, int a2, bool a3)
+bool sub_459590(int64_t obj, int a2, bool a3)
 {
     DateTime datetime;
     TimeEvent timeevent;
@@ -6750,7 +6750,7 @@ void magictech_debug_lists()
 }
 
 // 0x45A760
-void sub_45A760(object_id_t obj, const char* msg)
+void sub_45A760(int64_t obj, const char* msg)
 {
     // 0x5E6D94
     static char buffer[2000];

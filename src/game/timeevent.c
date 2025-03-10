@@ -719,7 +719,7 @@ bool timeevent_load(GameLoadInfo* load_info)
 bool timeevent_load_node(TimeEvent* timeevent, TigFile* stream)
 {
     int index;
-    object_id_t obj;
+    int64_t obj;
 
     if (stream == NULL) {
         return false;

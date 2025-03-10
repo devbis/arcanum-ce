@@ -320,7 +320,7 @@ bool skill_save(TigFile* stream)
 }
 
 // 0x4C5E00
-void skill_set_defaults(object_id_t object_id)
+void skill_set_defaults(int64_t object_id)
 {
     int index;
 

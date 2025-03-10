@@ -110,7 +110,7 @@ void skill_set_callbacks(SkillCallbacks* callbacks);
 void skill_exit();
 bool skill_load(GameLoadInfo* load_info);
 bool skill_save(TigFile* stream);
-void skill_set_defaults(object_id_t object_id);
+void skill_set_defaults(int64_t object_id);
 int sub_4C5E50(int64_t obj, int skill);
 int basic_skill_level(int64_t obj, int skill);
 int basic_skill_get_base(int64_t obj, int skill);

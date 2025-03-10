@@ -56,7 +56,7 @@ static int64_t item_find_key_ring(int64_t critter_obj);
 static bool item_check_invensource_buy_list(int64_t item_obj, int64_t buyer_npc_obj);
 static int sub_465010(int64_t obj);
 static tig_art_id_t sub_4650D0(int64_t critter_obj);
-static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
+static int64_t item_ammo_obj(int64_t obj, int ammo_type);
 static bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
@@ -322,7 +322,7 @@ void sub_460FF0(int64_t critter_obj)
 }
 
 // 0x4612A0
-bool item_parent(object_id_t object_id, object_id_t* parent_object_id)
+bool item_parent(int64_t object_id, int64_t* parent_object_id)
 {
     if (!item_is_item(object_id)) {
         tig_debug_printf("Item: item_parent: ERROR: Called on non-Item!\n");
@@ -345,7 +345,7 @@ bool item_parent(object_id_t object_id, object_id_t* parent_object_id)
 }
 
 // 0x461310
-bool item_is_item(object_id_t object_id)
+bool item_is_item(int64_t object_id)
 {
     int type;
 
@@ -360,7 +360,7 @@ bool item_is_item(object_id_t object_id)
 }
 
 // 0x461340
-int item_inventory_location_get(object_id_t object_id)
+int item_inventory_location_get(int64_t object_id)
 {
     // FIXME: Result is not used.
     item_parent(object_id, NULL);
@@ -393,7 +393,7 @@ int item_weight(int64_t item_obj, int64_t owner_obj)
 }
 
 // 0x461410
-int item_total_weight(object_id_t obj)
+int item_total_weight(int64_t obj)
 {
     int inventory_num_field;
     int inventory_list_idx_field;
@@ -421,7 +421,7 @@ int item_total_weight(object_id_t obj)
 }
 
 // 0x4614A0
-int sub_4614A0(object_id_t item_id, object_id_t owner_id)
+int sub_4614A0(int64_t item_id, int64_t owner_id)
 {
     int complexity;
     int owner_type;
@@ -455,13 +455,13 @@ int sub_4614A0(object_id_t item_id, object_id_t owner_id)
 }
 
 // 0x461520
-int item_magic_tech_complexity(object_id_t item_id)
+int item_magic_tech_complexity(int64_t item_id)
 {
     return obj_field_int32_get(item_id, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
 }
 
 // 0x461540
-int sub_461540(object_id_t item_id, object_id_t owner_id)
+int sub_461540(int64_t item_id, int64_t owner_id)
 {
     int complexity;
 
@@ -474,7 +474,7 @@ int sub_461540(object_id_t item_id, object_id_t owner_id)
 }
 
 // 0x461590
-int sub_461590(object_id_t item_id, object_id_t owner_id, int a3)
+int sub_461590(int64_t item_id, int64_t owner_id, int a3)
 {
     int complexity;
 
@@ -554,7 +554,7 @@ int sub_461700(int64_t item_obj, int64_t owner_obj)
 }
 
 // 0x461780
-void item_inv_icon_size(object_id_t item_id, int* width, int* height)
+void item_inv_icon_size(int64_t item_id, int* width, int* height)
 {
     tig_art_id_t aid;
     TigArtFrameData art_frame_data;
@@ -820,7 +820,7 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
 }
 
 // 0x461F20
-int item_worth(object_id_t item_id)
+int item_worth(int64_t item_id)
 {
     int worth;
 
@@ -837,7 +837,7 @@ int item_worth(object_id_t item_id)
 }
 
 // 0x461F60
-bool sub_461F60(object_id_t item_id)
+bool sub_461F60(int64_t item_id)
 {
     return obj_field_int32_get(item_id, OBJ_F_ITEM_WORTH) == 0;
 }
@@ -1014,7 +1014,7 @@ void item_damage_min_max(int64_t item_obj, int damage_type, int* min_damage, int
 }
 
 // 0x462410
-int sub_462410(object_id_t item_id, int* quantity_field_ptr)
+int sub_462410(int64_t item_id, int* quantity_field_ptr)
 {
     // TODO: Rename.
     int rc = -1;
@@ -1210,7 +1210,7 @@ int64_t item_find_first_generic(int64_t obj, unsigned int flags)
 }
 
 // 0x462820
-int64_t item_find_first(object_id_t obj)
+int64_t item_find_first(int64_t obj)
 {
     int inventory_num_fld;
     int inventory_list_fld;
@@ -2187,7 +2187,7 @@ bool npc_respawn_timevent_process(TimeEvent* timeevent)
 }
 
 // 0x4641A0
-int item_inventory_source(object_id_t obj)
+int item_inventory_source(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
         switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
@@ -3063,9 +3063,9 @@ size_t ammunition_type_get_name_length(int ammo_type)
 }
 
 // 0x465820
-int item_ammo_quantity_get(object_id_t obj, int ammo_type)
+int item_ammo_quantity_get(int64_t obj, int ammo_type)
 {
-    object_id_t ammo_obj;
+    int64_t ammo_obj;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
         ammo_obj = obj;
@@ -3081,7 +3081,7 @@ int item_ammo_quantity_get(object_id_t obj, int ammo_type)
 }
 
 // 0x465870
-int64_t item_ammo_obj(object_id_t obj, int ammo_type)
+int64_t item_ammo_obj(int64_t obj, int ammo_type)
 {
     switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
     case OBJ_TYPE_PC:
@@ -3250,7 +3250,7 @@ int sub_465C90(int race)
 }
 
 // 0x465CA0
-int item_weapon_ammo_type(object_id_t item_id)
+int item_weapon_ammo_type(int64_t item_id)
 {
     if (item_id == OBJ_HANDLE_NULL
         || obj_field_int32_get(item_id, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
@@ -3325,7 +3325,7 @@ int item_weapon_skill(int64_t obj)
 }
 
 // 0x465E30
-int item_weapon_range(object_id_t item_id, object_id_t critter_id)
+int item_weapon_range(int64_t item_id, int64_t critter_id)
 {
     int magic_range_adj;
 

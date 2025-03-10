@@ -105,7 +105,7 @@ void sub_4E5F30(int a1, void* a2);
 void sub_4E5F70(int* a1, uint8_t** data);
 int sub_4E5FE0(int a1, int a2);
 void sub_4E62A0(ObjectID* object_id);
-void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj);
+void objid_id_perm_by_load_order(ObjectID* object_id, int64_t obj);
 bool objid_is_valid(ObjectID a);
 bool objid_is_equal(ObjectID a, ObjectID b);
 ObjectID sub_4E6540(int a1);

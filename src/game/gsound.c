@@ -1368,7 +1368,7 @@ int gsound_effects_volume_get()
 // 0x41C8B0
 void gsound_effects_volume_changed()
 {
-    object_id_t obj;
+    int64_t obj;
     int64_t location;
 
     gsound_effects_volume = 80 * (127 * settings_get_value(&settings, "effects volume") / 10) / 100;

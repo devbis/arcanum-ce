@@ -2115,7 +2115,7 @@ void sub_4E62A0(ObjectID* object_id)
 }
 
 // 0x4E62D0
-void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj)
+void objid_id_perm_by_load_order(ObjectID* object_id, int64_t obj)
 {
     if (sub_43D990(obj)) {
         object_id->d.p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);

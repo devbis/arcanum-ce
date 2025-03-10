@@ -401,7 +401,7 @@ int scroll_get_distance()
         return 0;
     }
 
-    object_id_t pc = player_get_pc_obj();
+    int64_t pc = player_get_pc_obj();
     if (pc == OBJ_HANDLE_NULL) {
         return 0;
     }
