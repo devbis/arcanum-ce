@@ -185,9 +185,9 @@ static bool sub_4175D0(const char* path, int* index_ptr);
 static void sub_417720(Dialog* dialog);
 static bool sub_417860(TigFile* stream, DialogEntry* entry, int* a3);
 static bool sub_417C20(TigFile* stream, char* str, int* line_ptr);
-static TigFile* sub_417D60(const char* fname, const char* mode);
-static int sub_417D80(TigFile* stream);
-static int sub_417D90(TigFile* stream);
+static TigFile* dialog_file_fopen(const char* fname, const char* mode);
+static int dialog_file_fclose(TigFile* stream);
+static int dialog_file_fgetc(TigFile* stream);
 static int sub_417E00(const DialogEntry* a, const DialogEntry* b);
 static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
 static void sub_417F40(DialogEntry* a1);
@@ -352,16 +352,16 @@ static const char* off_5A0750[DIALOG_ACTION_COUNT] = {
 };
 
 // 0x5D1224
-static char byte_5D1224[MAX_STRING];
+static char dialog_file_tmp_str[MAX_STRING];
 
 // 0x5D19F4
 static mes_file_handle_t* dword_5D19F4;
 
 // 0x5D19F8
-static int dword_5D19F8;
+static size_t dialog_file_tmp_str_size;
 
 // 0x5D19FC
-static int dword_5D19FC;
+static size_t dialog_file_tmp_str_pos;
 
 // 0x5D1A00
 static int dword_5D1A00;
@@ -2593,7 +2593,7 @@ void sub_417720(Dialog* dialog)
     char v5[1000];
     int line;
 
-    stream = sub_417D60(dialog->path, "rt");
+    stream = dialog_file_fopen(dialog->path, "rt");
     if (stream == NULL) {
         return;
     }
@@ -2616,7 +2616,7 @@ void sub_417720(Dialog* dialog)
         v1.data.female_str = v2;
     }
 
-    sub_417D80(stream);
+    dialog_file_fclose(stream);
 
     if (dialog->entries_length != 0) {
         qsort(dialog->entries, dialog->entries_length, sizeof(*dialog->entries), sub_417E00);
@@ -2727,9 +2727,9 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
     int len;
     bool overflow;
 
-    ch = sub_417D90(stream);
+    ch = dialog_file_fgetc(stream);
     while (ch != '{') {
-        if (ch == -1) {
+        if (ch == EOF) {
             return false;
         }
 
@@ -2739,8 +2739,8 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
             tig_debug_printf("Warning! Possible missing left brace { on or before line %d\n", *line_ptr);
         } else if (ch == '/' && prev == '/') {
             do {
-                ch = sub_417D90(stream);
-                if (ch == -1) {
+                ch = dialog_file_fgetc(stream);
+                if (ch == EOF) {
                     return false;
                 }
             } while (ch != '\n');
@@ -2750,15 +2750,15 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
             prev = ch;
         }
 
-        ch = sub_417D90(stream);
+        ch = dialog_file_fgetc(stream);
     }
 
     len = 0;
     overflow = false;
 
-    ch = sub_417D90(stream);
+    ch = dialog_file_fgetc(stream);
     while (ch != '}') {
-        if (ch == -1) {
+        if (ch == EOF) {
             tig_debug_printf("Expected right bracket }, reached end of file.\n");
             return false;
         }
@@ -2775,7 +2775,7 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
             overflow = true;
         }
 
-        ch = sub_417D90(stream);
+        ch = dialog_file_fgetc(stream);
     }
 
     str[len] = '\0';
@@ -2788,39 +2788,39 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
 }
 
 // 0x417D60
-TigFile* sub_417D60(const char* fname, const char* mode)
+TigFile* dialog_file_fopen(const char* fname, const char* mode)
 {
-    dword_5D19FC = 0;
-    dword_5D19F8 = 0;
+    dialog_file_tmp_str_pos = 0;
+    dialog_file_tmp_str_size = 0;
     return tig_file_fopen(fname, mode);
 }
 
 // 0x417D80
-int sub_417D80(TigFile* stream)
+int dialog_file_fclose(TigFile* stream)
 {
     return tig_file_fclose(stream);
 }
 
 // 0x417D90
-int sub_417D90(TigFile* stream)
+int dialog_file_fgetc(TigFile* stream)
 {
-    if (dword_5D19FC != dword_5D19F8) {
-        return byte_5D1224[dword_5D19FC++];
+    if (dialog_file_tmp_str_pos != dialog_file_tmp_str_size) {
+        return dialog_file_tmp_str[dialog_file_tmp_str_pos++];
     }
 
-    dword_5D19FC = 0;
-    dword_5D19F8 = 0;
+    dialog_file_tmp_str_pos = 0;
+    dialog_file_tmp_str_size = 0;
 
-    if (tig_file_fgets(byte_5D1224, sizeof(byte_5D1224), stream) == NULL) {
-        return -1;
+    if (tig_file_fgets(dialog_file_tmp_str, sizeof(dialog_file_tmp_str), stream) == NULL) {
+        return EOF;
     }
 
-    dword_5D19F8 = (int)strlen(byte_5D1224);
-    if (dword_5D19F8 == 0) {
-        return -1;
+    dialog_file_tmp_str_size = strlen(dialog_file_tmp_str);
+    if (dialog_file_tmp_str_size == 0) {
+        return EOF;
     }
 
-    return byte_5D1224[dword_5D19FC++];
+    return dialog_file_tmp_str[dialog_file_tmp_str_pos++];
 }
 
 // 0x417E00
