@@ -190,7 +190,7 @@ static int dialog_file_fclose(TigFile* stream);
 static int dialog_file_fgetc(TigFile* stream);
 static int dialog_entry_compare(const void* va, const void* vb);
 static void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src);
-static void sub_417F40(DialogEntry* a1);
+static void dialog_entry_free(DialogEntry* a1);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
@@ -458,7 +458,7 @@ void sub_412F60(int dlg)
     int index;
 
     for (index = 0; index < dword_5D1A08[dlg].entries_length; index++) {
-        sub_417F40(&(dword_5D1A08[dlg].entries[index]));
+        dialog_entry_free(&(dword_5D1A08[dlg].entries[index]));
     }
 
     FREE(dword_5D1A08[dlg].entries);
@@ -2890,19 +2890,20 @@ void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src)
 }
 
 // 0x417F40
-void sub_417F40(DialogEntry* a1)
+void dialog_entry_free(DialogEntry* entry)
 {
-    if (!a1->iq) {
-        FREE(a1->data.female_str);
-    }
-    FREE(a1->str);
-
-    if (a1->conditions != NULL) {
-        FREE(a1->conditions);
+    if (entry->iq == 0) {
+        FREE(entry->data.female_str);
     }
 
-    if (a1->actions != NULL) {
-        FREE(a1->actions);
+    FREE(entry->str);
+
+    if (entry->conditions != NULL) {
+        FREE(entry->conditions);
+    }
+
+    if (entry->actions != NULL) {
+        FREE(entry->actions);
     }
 }
 
