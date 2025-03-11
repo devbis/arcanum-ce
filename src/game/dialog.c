@@ -181,8 +181,8 @@ static bool sub_416AB0(int dlg, DialogEntry* a2);
 static void sub_416B00(char* dst, char* src, DialogEntryNode* a3);
 static bool sub_416C10(int a1, int a2, DialogEntryNode* a3);
 static void sub_417590(int a1, int* a2, int* a3);
-static bool sub_4175D0(const char* path, int* index_ptr);
-static void sub_417720(Dialog* dialog);
+static bool find_dialog(const char* path, int* index_ptr);
+static void dialog_load_internal(Dialog* dialog);
 static bool dialog_parse_entry(TigFile* stream, DialogEntry* entry, int* line_ptr);
 static bool dialog_parse_field(TigFile* stream, char* str, int* line_ptr);
 static TigFile* dialog_file_fopen(const char* fname, const char* mode);
@@ -364,13 +364,13 @@ static size_t dialog_file_tmp_str_size;
 static size_t dialog_file_tmp_str_pos;
 
 // 0x5D1A00
-static int dword_5D1A00;
+static int dialog_files_length;
 
 // 0x5D1A04
-static int dword_5D1A04;
+static int dialog_files_capacity;
 
 // 0x5D1A08
-static Dialog* dword_5D1A08;
+static Dialog* dialog_files;
 
 // 0x5D1A0C
 static bool dialog_numbers_enabled;
@@ -402,28 +402,28 @@ void dialog_exit()
     }
     FREE(dword_5D19F4);
 
-    for (index = 0; index < dword_5D1A04; index++) {
-        if (dword_5D1A08[index].path[0] != '\0') {
+    for (index = 0; index < dialog_files_capacity; index++) {
+        if (dialog_files[index].path[0] != '\0') {
             sub_412F60(index);
         }
     }
 
-    if (dword_5D1A04 > 0) {
-        FREE(dword_5D1A08);
-        dword_5D1A08 = NULL;
-        dword_5D1A04 = 0;
+    if (dialog_files_capacity > 0) {
+        FREE(dialog_files);
+        dialog_files = NULL;
+        dialog_files_capacity = 0;
     }
 }
 
 // 0x412E10
-bool sub_412E10(const char* path, int* a2)
+bool dialog_load(const char* path, int* dlg_ptr)
 {
     int index;
     Dialog dialog;
 
-    if (sub_4175D0(path, &index)) {
-        dword_5D1A08[index].refcount++;
-        dword_5D1A08[index].timestamp = sub_45A7C0();
+    if (find_dialog(path, &index)) {
+        dialog_files[index].refcount++;
+        dialog_files[index].timestamp = sub_45A7C0();
     } else {
         strcpy(dialog.path, path);
         dialog.refcount = 1;
@@ -431,25 +431,25 @@ bool sub_412E10(const char* path, int* a2)
         dialog.entries_length = 0;
         dialog.entries_capacity = 0;
         dialog.entries = NULL;
-        sub_417720(&dialog);
+        dialog_load_internal(&dialog);
 
         if (dialog.entries_length == 0) {
             return false;
         }
 
-        dword_5D1A08[index] = dialog;
-        dword_5D1A00++;
+        dialog_files[index] = dialog;
+        dialog_files_length++;
     }
 
-    *a2 = index;
+    *dlg_ptr = index;
 
     return true;
 }
 
 // 0x412F40
-void sub_412F40(int dlg)
+void dialog_unload(int dlg)
 {
-    dword_5D1A08[dlg].refcount--;
+    dialog_files[dlg].refcount--;
 }
 
 // 0x412F60
@@ -457,14 +457,14 @@ void sub_412F60(int dlg)
 {
     int index;
 
-    for (index = 0; index < dword_5D1A08[dlg].entries_length; index++) {
-        dialog_entry_free(&(dword_5D1A08[dlg].entries[index]));
+    for (index = 0; index < dialog_files[dlg].entries_length; index++) {
+        dialog_entry_free(&(dialog_files[dlg].entries[index]));
     }
 
-    FREE(dword_5D1A08[dlg].entries);
-    dword_5D1A08[dlg].path[0] = '\0';
+    FREE(dialog_files[dlg].entries);
+    dialog_files[dlg].path[0] = '\0';
 
-    dword_5D1A00--;
+    dialog_files_length--;
 }
 
 // 0x412FD0
@@ -1319,7 +1319,7 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
         intelligence = 1;
     }
 
-    dialog = &(dword_5D1A08[a1->field_0]);
+    dialog = &(dialog_files[a1->field_0]);
     entry = bsearch(&key,
         dialog->entries,
         dialog->entries_length,
@@ -2339,8 +2339,8 @@ bool sub_416AB0(int dlg, DialogEntry* a2)
     DialogEntry* v1;
 
     v1 = bsearch(a2,
-        dword_5D1A08[dlg].entries,
-        dword_5D1A08[dlg].entries_length,
+        dialog_files[dlg].entries,
+        dialog_files[dlg].entries_length,
         sizeof(*a2),
         dialog_entry_compare);
     if (v1 == NULL) {
@@ -2542,23 +2542,23 @@ void sub_417590(int a1, int* a2, int* a3)
 }
 
 // 0x4175D0
-bool sub_4175D0(const char* path, int* index_ptr)
+bool find_dialog(const char* path, int* index_ptr)
 {
     int candidate = -1;
     int index;
 
-    for (index = 0; index < dword_5D1A04; index++) {
-        if (strcmpi(path, dword_5D1A08[index].path) == 0) {
+    for (index = 0; index < dialog_files_capacity; index++) {
+        if (strcmpi(path, dialog_files[index].path) == 0) {
             *index_ptr = index;
             return true;
         }
 
-        if (dword_5D1A08[index].refcount == 0) {
+        if (dialog_files[index].refcount == 0) {
             if (candidate == -1) {
                 candidate = index;
-            } else if (dword_5D1A08[candidate].path[0] != '\0') {
-                if (dword_5D1A08[index].path[0] == '\0'
-                    || datetime_compare(&(dword_5D1A08[candidate].timestamp), &(dword_5D1A08[index].timestamp)) > 0) {
+            } else if (dialog_files[candidate].path[0] != '\0') {
+                if (dialog_files[index].path[0] == '\0'
+                    || datetime_compare(&(dialog_files[candidate].timestamp), &(dialog_files[index].timestamp)) > 0) {
                     candidate = index;
                 }
             }
@@ -2567,7 +2567,7 @@ bool sub_4175D0(const char* path, int* index_ptr)
 
     if (candidate != -1) {
         *index_ptr = candidate;
-        if (dword_5D1A08[candidate].path[0] != '\0') {
+        if (dialog_files[candidate].path[0] != '\0') {
             sub_412F60(index);
         }
         return false;
@@ -2575,11 +2575,11 @@ bool sub_4175D0(const char* path, int* index_ptr)
 
     *index_ptr = index;
 
-    dword_5D1A04 += 10;
-    dword_5D1A08 = (Dialog*)REALLOC(dword_5D1A08, sizeof(*dword_5D1A08) * dword_5D1A04);
-    while (index < dword_5D1A04) {
-        dword_5D1A08[index].refcount = 0;
-        dword_5D1A08[index].path[0] = '\0';
+    dialog_files_capacity += 10;
+    dialog_files = (Dialog*)REALLOC(dialog_files, sizeof(*dialog_files) * dialog_files_capacity);
+    while (index < dialog_files_capacity) {
+        dialog_files[index].refcount = 0;
+        dialog_files[index].path[0] = '\0';
         index++;
     }
 
@@ -2587,14 +2587,14 @@ bool sub_4175D0(const char* path, int* index_ptr)
 }
 
 // 0x417720
-void sub_417720(Dialog* dialog)
+void dialog_load_internal(Dialog* dialog)
 {
     TigFile* stream;
-    DialogEntry v1;
-    char v2[1000];
-    char v3[1000];
-    char v4[1000];
-    char v5[1000];
+    DialogEntry tmp_entry;
+    char female_str[1000];
+    char conditions[1000];
+    char str[1000];
+    char actions[1000];
     int line;
 
     stream = dialog_file_fopen(dialog->path, "rt");
@@ -2602,22 +2602,22 @@ void sub_417720(Dialog* dialog)
         return;
     }
 
-    v1.data.female_str = v2;
-    v1.conditions = v3;
-    v1.str = v4;
-    v1.actions = v5;
+    tmp_entry.data.female_str = female_str;
+    tmp_entry.conditions = conditions;
+    tmp_entry.str = str;
+    tmp_entry.actions = actions;
 
     line = 1;
-    while (dialog_parse_entry(stream, &v1, &line)) {
+    while (dialog_parse_entry(stream, &tmp_entry, &line)) {
         if (dialog->entries_length == dialog->entries_capacity) {
             dialog->entries_capacity += 10;
             dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
         }
 
-        dialog_entry_copy(&(dialog->entries[dialog->entries_length]), &v1);
+        dialog_entry_copy(&(dialog->entries[dialog->entries_length]), &tmp_entry);
         dialog->entries_length++;
 
-        v1.data.female_str = v2;
+        tmp_entry.data.female_str = female_str;
     }
 
     dialog_file_fclose(stream);
@@ -2962,9 +2962,9 @@ void dialog_check()
     for (index = 0; index < file_list.count; index++) {
         sprintf(path, "dlg\\%s", file_list.entries[index].path);
         tig_debug_printf("Checking dialog file %s\n", path);
-        if (sub_412E10(path, &dlg)) {
-            for (entry_index = 0; entry_index < dword_5D1A08[dlg].entries_length; entry_index++) {
-                v2 = &(dword_5D1A08[dlg].entries[entry_index]);
+        if (dialog_load(path, &dlg)) {
+            for (entry_index = 0; entry_index < dialog_files[dlg].entries_length; entry_index++) {
+                v2 = &(dialog_files[dlg].entries[entry_index]);
                 if (v2->iq) {
                     overflow = tc_check_size(v2->str);
                     if (overflow > 0) {
@@ -2983,7 +2983,7 @@ void dialog_check()
                     }
                 }
             }
-            sub_412F40(dlg);
+            dialog_unload(dlg);
         }
     }
     tig_file_list_destroy(&file_list);
@@ -3240,13 +3240,13 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
         return false;
     }
 
-    if (!sub_412E10(path, &dlg)) {
+    if (!dialog_load(path, &dlg)) {
         return false;
     }
 
     entry.num = num;
     exists = sub_416AB0(dlg, &entry);
-    sub_412F40(dlg);
+    dialog_unload(dlg);
 
     if (!exists) {
         return false;

@@ -2913,7 +2913,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
         return;
     }
 
-    if (!sub_412E10(path, &(v1.field_0))) {
+    if (!dialog_load(path, &(v1.field_0))) {
         return;
     }
 
@@ -2937,7 +2937,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
     }
 
     sub_44B8F0(action->op_type[1], &objects);
-    sub_412F40(v1.field_0);
+    dialog_unload(v1.field_0);
 }
 
 // 0x44B390
@@ -2956,7 +2956,7 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
         return;
     }
 
-    if (!sub_412E10(path, &(v1.field_0))) {
+    if (!dialog_load(path, &(v1.field_0))) {
         return;
     }
 
@@ -2978,18 +2978,18 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
     if (tig_net_is_active()) {
         player = sub_4A2B10(state->invocation->triggerer_obj);
         if (player == -1) {
-            sub_412F40(v1.field_0);
+            dialog_unload(v1.field_0);
             return;
         }
 
         if (player != 0) {
             sub_4EDA60(&ui_message, player, 0);
-            sub_412F40(v1.field_0);
+            dialog_unload(v1.field_0);
             return;
         }
     } else {
         sub_460630(&ui_message);
-        sub_412F40(v1.field_0);
+        dialog_unload(v1.field_0);
     }
 
 }

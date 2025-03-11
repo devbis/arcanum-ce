@@ -61,8 +61,8 @@ typedef struct DialogSerializedData {
 
 bool dialog_init(GameInitInfo* init_info);
 void dialog_exit();
-bool sub_412E10(const char* path, int* a2);
-void sub_412F40(int dlg);
+bool dialog_load(const char* path, int* dlg_ptr);
+void dialog_unload(int dlg);
 void sub_412F60(int dlg);
 bool sub_412FD0(DialogEntryNode* a1);
 void sub_413130(DialogEntryNode* a1, int a2);

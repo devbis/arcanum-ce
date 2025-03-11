@@ -169,7 +169,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
     entry = sub_567420(a1);
     if (multiplayer_is_locked() || tig_net_is_host()) {
         if (a3 != 0 && script_name_build_dlg_name(a3, path)) {
-            if (!sub_412E10(path, &(entry->field_4))) {
+            if (!dialog_load(path, &(entry->field_4))) {
                 return;
             }
 
@@ -179,7 +179,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             entry->field_8.field_68 = a5;
             entry->field_8.field_6C = a3;
             if (!sub_412FD0(&(entry->field_8))) {
-                sub_412F40(entry->field_4);
+                dialog_unload(entry->field_4);
                 return;
             }
 
@@ -191,14 +191,14 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
                     entry->field_8.field_70,
                     entry->field_8.field_458);
                 sub_413280(&(entry->field_8));
-                sub_412F40(entry->field_4);
+                dialog_unload(entry->field_4);
                 return;
             }
 
             if (player_is_pc_obj(a1)) {
                 if (!intgame_dialog_begin(sub_5680A0)) {
                     sub_413280(&(entry->field_8));
-                    sub_412F40(entry->field_4);
+                    dialog_unload(entry->field_4);
                     return;
                 }
 
@@ -284,7 +284,7 @@ void sub_5678D0(int64_t obj, int a2)
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        sub_412F40(entry->field_4);
+        dialog_unload(entry->field_4);
     }
 
     tb_expire_in(entry->field_8.npc_obj, TB_EXPIRE_DEFAULT);
@@ -313,7 +313,7 @@ void sub_5679C0(DialogUiEntry* entry)
     entry->field_1850 = false;
 
     if (!tig_net_is_active() || tig_net_is_host()) {
-        sub_412F40(entry->field_4);
+        dialog_unload(entry->field_4);
     }
 
     if (!tig_net_is_active() || tig_net_is_host()) {
