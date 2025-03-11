@@ -189,7 +189,7 @@ static TigFile* dialog_file_fopen(const char* fname, const char* mode);
 static int dialog_file_fclose(TigFile* stream);
 static int dialog_file_fgetc(TigFile* stream);
 static int dialog_entry_compare(const void* va, const void* vb);
-static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
+static void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src);
 static void sub_417F40(DialogEntry* a1);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
@@ -2614,7 +2614,7 @@ void sub_417720(Dialog* dialog)
             dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
         }
 
-        sub_417E20(&(dialog->entries[dialog->entries_length]), &v1);
+        dialog_entry_copy(&(dialog->entries[dialog->entries_length]), &v1);
         dialog->entries_length++;
 
         v1.data.female_str = v2;
@@ -2846,46 +2846,46 @@ int dialog_entry_compare(const void* va, const void* vb)
 }
 
 // 0x417E20
-void sub_417E20(DialogEntry* a1, const DialogEntry* a2)
+void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src)
 {
     size_t pos;
     size_t end;
 
-    *a1 = *a2;
-    a1->str = STRDUP(a2->str);
+    *dst = *src;
+    dst->str = STRDUP(src->str);
 
     pos = 0;
-    end = strlen(a2->conditions);
+    end = strlen(src->conditions);
     while (pos < end) {
-        if (!isspace(a2->conditions[pos])) {
+        if (!isspace(src->conditions[pos])) {
             break;
         }
         pos++;
     }
 
     if (pos != end) {
-        a1->conditions = STRDUP(a2->conditions);
+        dst->conditions = STRDUP(src->conditions);
     } else {
-        a1->conditions = NULL;
+        dst->conditions = NULL;
     }
 
     pos = 0;
-    end = strlen(a2->actions);
+    end = strlen(src->actions);
     while (pos < end) {
-        if (!isspace(a2->actions[pos])) {
+        if (!isspace(src->actions[pos])) {
             break;
         }
         pos++;
     }
 
     if (pos != end) {
-        a1->actions = STRDUP(a2->actions);
+        dst->actions = STRDUP(src->actions);
     } else {
-        a1->actions = NULL;
+        dst->actions = NULL;
     }
 
-    if (!a2->iq) {
-        a1->data.female_str = STRDUP(a2->data.female_str);
+    if (src->iq == 0) {
+        dst->data.female_str = STRDUP(src->data.female_str);
     }
 }
 
