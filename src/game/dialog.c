@@ -200,7 +200,7 @@ static void sub_418460(char* str, DialogEntryNode* a2);
 static void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num);
 static void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num);
 static void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int a3, int a4);
-static bool sub_418870(char* str, DialogEntryNode* a2, int a3);
+static bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num);
 static int sub_4189C0(const char* a1, int a2);
 static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6);
 static void sub_418B30(int a1, DialogEntryNode* a2);
@@ -3092,7 +3092,7 @@ void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num)
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (sub_418870(buffer, a2, num / 1000 + 9999)) {
+    if (dialog_copy_override_msg(buffer, a2, num / 1000 + 9999)) {
         return;
     }
 
@@ -3138,7 +3138,7 @@ void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num)
     MesFileEntry mes_file_entry;
     int race;
 
-    if (sub_418870(buffer, a2, num / 1000 + 10999)) {
+    if (dialog_copy_override_msg(buffer, a2, num / 1000 + 10999)) {
         return;
     }
 
@@ -3186,7 +3186,7 @@ void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int start, int e
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (sub_418870(buffer, a2, start / 100 + 11999)) {
+    if (dialog_copy_override_msg(buffer, a2, start / 100 + 11999)) {
         return;
     }
 
@@ -3211,13 +3211,13 @@ void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int start, int e
 }
 
 // 0x418870
-bool sub_418870(char* str, DialogEntryNode* a2, int a3)
+bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
 {
     Script scr;
     char path[TIG_MAX_PATH];
     int dlg;
     DialogEntry entry;
-    bool v1;
+    bool exists;
 
     obj_arrayfield_script_get(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG_OVERRIDE, &scr);
 
@@ -3233,20 +3233,20 @@ bool sub_418870(char* str, DialogEntryNode* a2, int a3)
         return false;
     }
 
-    entry.field_0 = a3;
-    v1 = sub_416AB0(dlg, &entry);
+    entry.field_0 = num;
+    exists = sub_416AB0(dlg, &entry);
     sub_412F40(dlg);
 
-    if (!v1) {
+    if (!exists) {
         return false;
     }
 
     if (a2->pc_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(a2->pc_obj, OBJ_F_TYPE))
         && stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE) {
-        strcpy(str, entry.field_4);
+        strcpy(buffer, entry.field_4);
     } else {
-        strcpy(str, entry.data.field_8);
+        strcpy(buffer, entry.data.field_8);
     }
 
     a2->field_458 = sub_4189C0(entry.field_10, scr.num);
@@ -4061,7 +4061,7 @@ void sub_41A440(char* buffer, DialogEntryNode* a2)
     MesFileEntry mes_file_entry;
 
     v1 = sub_445090();
-    if (!sub_418870(buffer, a2, v1 + 10000)) {
+    if (!dialog_copy_override_msg(buffer, a2, v1 + 10000)) {
         if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
             gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                 ? GD_STO_M2F
