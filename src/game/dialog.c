@@ -198,7 +198,7 @@ static void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end);
 static void sub_418390(char* str, DialogEntryNode* a2, int start);
 static void sub_418460(char* str, DialogEntryNode* a2);
 static void sub_418480(char* str, DialogEntryNode* a2, int a3);
-static void sub_4185F0(char* str, DialogEntryNode* a2, int a3);
+static void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num);
 static void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int a3, int a4);
 static bool sub_418870(char* str, DialogEntryNode* a2, int a3);
 static int sub_4189C0(const char* a1, int a2);
@@ -499,7 +499,7 @@ bool sub_412FD0(DialogEntryNode* a1)
         a1->field_17E8 = 0;
         sub_414E60(a1, 0);
     } else {
-        sub_4185F0(a1->field_70, a1, 1000);
+        dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
         a1->field_17E8 = 4;
     }
 
@@ -538,7 +538,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
         if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
             sub_414810(v1, v2, v3, a2, a1);
         } else {
-            sub_4185F0(a1->field_70, a1, 1000);
+            dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
             a1->field_17E8 = 4;
         }
     }
@@ -834,7 +834,7 @@ void sub_413D40(int64_t a1, int64_t a2, char* a3, int* a4)
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
-        sub_4185F0(a3, &v1, 1000);
+        dialog_copy_race_specific_msg(a3, &v1, 1000);
         *a4 = v1.field_458;
     } else {
         a3[0] = '\0';
@@ -2281,7 +2281,7 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
     }
 
     if (strcmpi(v1.field_4, "i:") == 0) {
-        sub_4185F0(a1->field_70, a1, 1000);
+        dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
         return true;
     }
 
@@ -3129,50 +3129,52 @@ void sub_418480(char* str, DialogEntryNode* a2, int start)
 }
 
 // 0x4185F0
-void sub_4185F0(char* str, DialogEntryNode* a2, int start)
+void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num)
 {
     int gd;
     int cnt;
     MesFileEntry mes_file_entry;
     int race;
 
-    if (!sub_418870(str, a2, start / 1000 + 10999)) {
-        if (critter_is_dumb(a2->npc_obj)) {
-            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                    ? GD_RCE_DUMB_M2M
-                    : GD_RCE_DUMB_M2F;
-            } else {
-                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                    ? GD_RCE_DUMB_F2M
-                    : GD_RCE_DUMB_F2F;
-            }
-        } else {
-            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                    ? GD_RCE_M2M
-                    : GD_RCE_M2F;
-            } else {
-                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                    ? GD_RCE_F2M
-                    : GD_RCE_F2F;
-            }
+    if (sub_418870(buffer, a2, num / 1000 + 10999)) {
+        return;
+    }
 
-            race = stat_level_get(a2->pc_obj, STAT_RACE);
-            if (race != stat_level_get(a2->npc_obj, STAT_RACE)) {
-                start += 50 * (race + 1);
-            }
+    if (critter_is_dumb(a2->npc_obj)) {
+        if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_RCE_DUMB_M2M
+                : GD_RCE_DUMB_M2F;
+        } else {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_RCE_DUMB_F2M
+                : GD_RCE_DUMB_F2F;
+        }
+    } else {
+        if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_RCE_M2M
+                : GD_RCE_M2F;
+        } else {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_RCE_F2M
+                : GD_RCE_F2F;
         }
 
-        dialog_load_generated(gd);
-
-        cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
-        mes_file_entry.num = start + random_between(0, cnt - 1);
-        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
-
-        sub_416B00(str, mes_file_entry.str, a2);
-        a2->field_458 = -1;
+        race = stat_level_get(a2->pc_obj, STAT_RACE);
+        if (race != stat_level_get(a2->npc_obj, STAT_RACE)) {
+            num += 50 * (race + 1);
+        }
     }
+
+    dialog_load_generated(gd);
+
+    cnt = mes_entries_count_in_range(dword_5D19F4[gd], num, num + 49);
+    mes_file_entry.num = num + random_between(0, cnt - 1);
+    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+    sub_416B00(buffer, mes_file_entry.str, a2);
+    a2->field_458 = -1;
 }
 
 // 0x418780
@@ -3474,7 +3476,7 @@ void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
     if (reaction_get(a3->npc_obj, a3->pc_obj) > 20) {
         sub_414810(a1, a2, 0, 0, a3);
     } else {
-        sub_4185F0(a3->field_70, a3, 1000);
+        dialog_copy_race_specific_msg(a3->field_70, a3, 1000);
         a3->field_45C = 0;
         a3->field_17E8 = 4;
     }
@@ -3593,7 +3595,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[6] & 0x2) == 0 && (spell_flags & OSF_SHRUNK) != 0) {
         if (!sub_4197D0(flags[6], values[6], a1)) {
-            sub_4185F0(a1->field_70, a1, 6000);
+            dialog_copy_race_specific_msg(a1->field_70, a1, 6000);
         }
         return;
     }
@@ -3648,10 +3650,10 @@ void sub_419260(DialogEntryNode* a1, const char* str)
                     break;
                 case REACTION_SUSPICIOUS:
                 case REACTION_DISLIKE:
-                    sub_4185F0(a1->field_70, a1, 4000);
+                    dialog_copy_race_specific_msg(a1->field_70, a1, 4000);
                     break;
                 case REACTION_HATRED:
-                    sub_4185F0(a1->field_70, a1, 5000);
+                    dialog_copy_race_specific_msg(a1->field_70, a1, 5000);
                     break;
                 }
             } else {
@@ -3668,10 +3670,10 @@ void sub_419260(DialogEntryNode* a1, const char* str)
                     break;
                 case REACTION_SUSPICIOUS:
                 case REACTION_DISLIKE:
-                    sub_4185F0(a1->field_70, a1, 2000);
+                    dialog_copy_race_specific_msg(a1->field_70, a1, 2000);
                     break;
                 case REACTION_HATRED:
-                    sub_4185F0(a1->field_70, a1, 3000);
+                    dialog_copy_race_specific_msg(a1->field_70, a1, 3000);
                     break;
                 }
             }
