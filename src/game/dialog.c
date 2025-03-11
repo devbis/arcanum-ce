@@ -26,8 +26,6 @@
 #include "game/timeevent.h"
 #include "game/ui.h"
 
-#define THIRTY_TWO 32
-
 typedef enum GeneratedDialog {
     GD_PC2M,
     GD_PC2F,
@@ -61,6 +59,7 @@ typedef enum GeneratedDialog {
     GD_STO_M2F,
     GD_STO_F2F,
     GD_STO_F2M,
+    GD_COUNT,
 } GeneratedDialog;
 
 typedef enum DialogCondition {
@@ -236,7 +235,7 @@ static void sub_41A880(int a1, int a2, DialogEntryNode* a3);
 static void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4);
 
 // 0x5A063C
-static const char* off_5A063C[] = {
+static const char* dialog_gd_mes_file_names[GD_COUNT] = {
     "gd_pc2m",
     "gd_pc2f",
     "gd_cls_m2m",
@@ -355,7 +354,7 @@ static const char* off_5A0750[DIALOG_ACTION_COUNT] = {
 static char dialog_file_tmp_str[MAX_STRING];
 
 // 0x5D19F4
-static mes_file_handle_t* dword_5D19F4;
+static mes_file_handle_t* dialog_mes_files;
 
 // 0x5D19F8
 static size_t dialog_file_tmp_str_size;
@@ -382,9 +381,9 @@ bool dialog_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_5D19F4 = (mes_file_handle_t*)CALLOC(THIRTY_TWO, sizeof(mes_file_handle_t));
-    for (index = 0; index < THIRTY_TWO; index++) {
-        dword_5D19F4[index] = MES_FILE_HANDLE_INVALID;
+    dialog_mes_files = (mes_file_handle_t*)CALLOC(GD_COUNT, sizeof(*dialog_mes_files));
+    for (index = 0; index < GD_COUNT; index++) {
+        dialog_mes_files[index] = MES_FILE_HANDLE_INVALID;
     }
 
     return true;
@@ -395,12 +394,12 @@ void dialog_exit()
 {
     int index;
 
-    for (index = 0; index < THIRTY_TWO; index++) {
-        if (dword_5D19F4[index] != MES_FILE_HANDLE_INVALID) {
-            mes_unload(dword_5D19F4[index]);
+    for (index = 0; index < GD_COUNT; index++) {
+        if (dialog_mes_files[index] != MES_FILE_HANDLE_INVALID) {
+            mes_unload(dialog_mes_files[index]);
         }
     }
-    FREE(dword_5D19F4);
+    FREE(dialog_mes_files);
 
     for (index = 0; index < dialog_files_capacity; index++) {
         if (dialog_files[index].path[0] != '\0') {
@@ -3004,16 +3003,16 @@ void dialog_check_generated(int gd)
     MesFileEntry mes_file_entry;
     int overflow;
 
-    tig_debug_printf("Checking generated dialog file mes\\%s.mes\n", off_5A063C[gd]);
+    tig_debug_printf("Checking generated dialog file mes\\%s.mes\n", dialog_gd_mes_file_names[gd]);
     dialog_load_generated(gd);
 
-    if (mes_find_first(dword_5D19F4[gd], &mes_file_entry)) {
+    if (mes_find_first(dialog_mes_files[gd], &mes_file_entry)) {
         do {
             overflow = tc_check_size(mes_file_entry.str);
             if (overflow > 0) {
                 tig_debug_printf("Generated response %d too long by %d pixels\n", mes_file_entry.num, overflow);
             }
-        } while (mes_find_next(dword_5D19F4[gd], &mes_file_entry));
+        } while (mes_find_next(dialog_mes_files[gd], &mes_file_entry));
     }
 }
 
@@ -3022,9 +3021,9 @@ void dialog_load_generated(int gd)
 {
     char path[TIG_MAX_PATH];
 
-    if (dword_5D19F4[gd] == MES_FILE_HANDLE_INVALID) {
-        sprintf(path, "mes\\%s.mes", off_5A063C[gd]);
-        if (!mes_load(path, &(dword_5D19F4[gd]))) {
+    if (dialog_mes_files[gd] == MES_FILE_HANDLE_INVALID) {
+        sprintf(path, "mes\\%s.mes", dialog_gd_mes_file_names[gd]);
+        if (!mes_load(path, &(dialog_mes_files[gd]))) {
             tig_debug_printf("Cannot open generated dialog file %s\n", path);
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
         }
@@ -3056,9 +3055,9 @@ void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
 
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], start, end);
     mes_file_entry.num = start + random_between(0, cnt - 1);
-    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(str, mes_file_entry.str, a2);
 }
@@ -3082,9 +3081,9 @@ void sub_418390(char* str, DialogEntryNode* a2, int start)
 
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], start, start + 49);
     mes_file_entry.num = start + random_between(0, cnt - 1);
-    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(str, mes_file_entry.str, a2);
 }
@@ -3133,9 +3132,9 @@ void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num)
 
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dword_5D19F4[gd], num, num + 49);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], num, num + 49);
     mes_file_entry.num = num + random_between(0, cnt - 1);
-    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
     a2->field_458 = -1;
@@ -3182,9 +3181,9 @@ void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num)
 
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dword_5D19F4[gd], num, num + 49);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], num, num + 49);
     mes_file_entry.num = num + random_between(0, cnt - 1);
-    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
     a2->field_458 = -1;
@@ -3213,9 +3212,9 @@ void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int start, int e
 
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], start, end);
     mes_file_entry.num = start + random_between(0, cnt - 1);
-    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
     a2->field_458 = -1;
@@ -4086,7 +4085,7 @@ void sub_41A440(char* buffer, DialogEntryNode* a2)
         dialog_load_generated(gd);
 
         mes_file_entry.num = stat_level_get(a2->npc_obj, STAT_RACE) + 100 * v1;
-        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+        mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
         sub_416B00(buffer, mes_file_entry.str, a2);
         a2->field_458 = -1;
     }
