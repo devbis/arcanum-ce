@@ -188,7 +188,7 @@ static bool sub_417C20(TigFile* stream, char* str, int* line_ptr);
 static TigFile* dialog_file_fopen(const char* fname, const char* mode);
 static int dialog_file_fclose(TigFile* stream);
 static int dialog_file_fgetc(TigFile* stream);
-static int sub_417E00(const DialogEntry* a, const DialogEntry* b);
+static int dialog_entry_compare(const void* va, const void* vb);
 static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
 static void sub_417F40(DialogEntry* a1);
 static int sub_417F90(int* values, char* str);
@@ -1324,7 +1324,7 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
         dialog->entries,
         dialog->entries_length,
         sizeof(key),
-        sub_417E00);
+        dialog_entry_compare);
 
     if (entry == NULL) {
         return 0;
@@ -2338,7 +2338,11 @@ bool sub_416AB0(int dlg, DialogEntry* a2)
 {
     DialogEntry* v1;
 
-    v1 = bsearch(a2, dword_5D1A08[dlg].entries, dword_5D1A08[dlg].entries_length, sizeof(*a2), sub_417E00);
+    v1 = bsearch(a2,
+        dword_5D1A08[dlg].entries,
+        dword_5D1A08[dlg].entries_length,
+        sizeof(*a2),
+        dialog_entry_compare);
     if (v1 == NULL) {
         return false;
     }
@@ -2619,7 +2623,10 @@ void sub_417720(Dialog* dialog)
     dialog_file_fclose(stream);
 
     if (dialog->entries_length != 0) {
-        qsort(dialog->entries, dialog->entries_length, sizeof(*dialog->entries), sub_417E00);
+        qsort(dialog->entries,
+            dialog->entries_length,
+            sizeof(*dialog->entries),
+            dialog_entry_compare);
     }
 }
 
@@ -2824,8 +2831,11 @@ int dialog_file_fgetc(TigFile* stream)
 }
 
 // 0x417E00
-int sub_417E00(const DialogEntry* a, const DialogEntry* b)
+int dialog_entry_compare(const void* va, const void* vb)
 {
+    const DialogEntry* a = (const DialogEntry*)va;
+    const DialogEntry* b = (const DialogEntry*)vb;
+
     if (a->num < b->num) {
         return -1;
     } else if (a->num > b->num) {
