@@ -142,7 +142,7 @@ typedef enum DialogAction {
     DIALOG_ACTION_COUNT,
 } DialogAction;
 
-typedef struct DialogEntry {
+typedef struct DialogFileEntry {
     /* 0000 */ int num;
     /* 0004 */ char* str;
     union {
@@ -153,21 +153,20 @@ typedef struct DialogEntry {
     /* 0010 */ char* conditions;
     /* 0014 */ int response_val;
     /* 0018 */ char* actions;
-} DialogEntry;
+} DialogFileEntry;
 
-static_assert(sizeof(DialogEntry) == 0x1C, "wrong size");
+static_assert(sizeof(DialogFileEntry) == 0x1C, "wrong size");
 
-typedef struct Dialog {
+typedef struct DialogFile {
     /* 0000 */ char path[TIG_MAX_PATH];
     /* 0104 */ int refcount;
     /* 0108 */ DateTime timestamp;
     /* 0110 */ int entries_length;
     /* 0114 */ int entries_capacity;
-    /* 0118 */ DialogEntry* entries;
-    /* 011C */ int field_11C;
-} Dialog;
+    /* 0118 */ DialogFileEntry* entries;
+} DialogFile;
 
-static_assert(sizeof(Dialog) == 0x120, "wrong size");
+static_assert(sizeof(DialogFile) == 0x120, "wrong size");
 
 static void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5);
 static void sub_414E60(DialogEntryNode* a1, bool randomize);
@@ -176,20 +175,20 @@ static bool sub_4150D0(DialogEntryNode* a1, char* a2);
 static bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3);
 static int sub_4167C0(const char* str);
 static bool sub_416840(DialogEntryNode* a1, bool a2);
-static bool sub_416AB0(int dlg, DialogEntry* a2);
+static bool dialog_search(int dlg, DialogFileEntry* entry);
 static void sub_416B00(char* dst, char* src, DialogEntryNode* a3);
 static bool sub_416C10(int a1, int a2, DialogEntryNode* a3);
 static void sub_417590(int a1, int* a2, int* a3);
 static bool find_dialog(const char* path, int* index_ptr);
-static void dialog_load_internal(Dialog* dialog);
-static bool dialog_parse_entry(TigFile* stream, DialogEntry* entry, int* line_ptr);
+static void dialog_load_internal(DialogFile* dialog);
+static bool dialog_parse_entry(TigFile* stream, DialogFileEntry* entry, int* line_ptr);
 static bool dialog_parse_field(TigFile* stream, char* str, int* line_ptr);
 static TigFile* dialog_file_fopen(const char* fname, const char* mode);
 static int dialog_file_fclose(TigFile* stream);
 static int dialog_file_fgetc(TigFile* stream);
 static int dialog_entry_compare(const void* va, const void* vb);
-static void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src);
-static void dialog_entry_free(DialogEntry* a1);
+static void dialog_entry_copy(DialogFileEntry* dst, const DialogFileEntry* src);
+static void dialog_entry_free(DialogFileEntry* entry);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
@@ -369,7 +368,7 @@ static int dialog_files_length;
 static int dialog_files_capacity;
 
 // 0x5D1A08
-static Dialog* dialog_files;
+static DialogFile* dialog_files;
 
 // 0x5D1A0C
 static bool dialog_numbers_enabled;
@@ -418,7 +417,7 @@ void dialog_exit()
 bool dialog_load(const char* path, int* dlg_ptr)
 {
     int index;
-    Dialog dialog;
+    DialogFile dialog;
 
     if (find_dialog(path, &index)) {
         dialog_files[index].refcount++;
@@ -1301,11 +1300,11 @@ void sub_414E60(DialogEntryNode* a1, bool randomize)
 // 0x414F50
 int sub_414F50(DialogEntryNode* a1, int* a2)
 {
-    DialogEntry key;
+    DialogFileEntry key;
     int gender;
     int intelligence;
-    Dialog* dialog;
-    DialogEntry *entry;
+    DialogFile* dialog;
+    DialogFileEntry *entry;
     int idx;
     int cnt;
 
@@ -2252,25 +2251,25 @@ int sub_4167C0(const char* str)
 // 0x416840
 bool sub_416840(DialogEntryNode* a1, bool a2)
 {
-    DialogEntry v1;
+    DialogFileEntry entry;
 
-    v1.num = a1->field_17EC;
-    if (!sub_416AB0(a1->field_0, &v1)) {
+    entry.num = a1->field_17EC;
+    if (!dialog_search(a1->field_0, &entry)) {
         a1->field_458 = -1;
         a1->field_70[0] = ' ';
         a1->field_70[1] = '\0';
         return false;
     }
 
-    a1->field_1840 = v1.response_val;
-    a1->field_458 = sub_4189C0(v1.conditions, a1->field_6C);
+    a1->field_1840 = entry.response_val;
+    a1->field_458 = sub_4189C0(entry.conditions, a1->field_6C);
 
     if (!a2) {
-        sub_415BA0(a1, v1.actions, 0);
+        sub_415BA0(a1, entry.actions, 0);
     }
 
-    if (strnicmp(v1.str, "g:", 2) == 0) {
-        sub_419260(a1, &(v1.str[2]));
+    if (strnicmp(entry.str, "g:", 2) == 0) {
+        sub_419260(a1, &(entry.str[2]));
 
         if (a1->field_17E8) {
             a1->field_45C = 0;
@@ -2279,12 +2278,12 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         return true;
     }
 
-    if (strcmpi(v1.str, "i:") == 0) {
+    if (strcmpi(entry.str, "i:") == 0) {
         dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
         return true;
     }
 
-    if (strnicmp(v1.str, "m:", 2) == 0) {
+    if (strnicmp(entry.str, "m:", 2) == 0) {
         char* pch;
         int v2;
         int v3;
@@ -2293,60 +2292,60 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         int v6;
         int v7;
 
-        pch = strchr(v1.str, '$') + 1;
+        pch = strchr(entry.str, '$') + 1;
         v2 = atoi(pch);
 
         pch = strchr(pch, ',') + 1;
         v3 = atoi(pch);
 
         sub_417590(v3, &v4, &v5);
-        sub_417590(v1.response_val, &v6, &v7);
+        sub_417590(entry.response_val, &v6, &v7);
         sub_418A40(v2, v4, v5, v6, v7, a1);
 
         return false;
     }
 
-    if (strnicmp(v1.str, "r:", 2) == 0) {
+    if (strnicmp(entry.str, "r:", 2) == 0) {
         char* pch;
         int v8;
         int v9;
         int v10[100];
 
-        pch = strchr(v1.str, '$') + 1;
+        pch = strchr(entry.str, '$') + 1;
         v8 = atoi(pch);
 
         pch = strchr(pch, ',');
         v9 = sub_417F90(v10, pch + 1);
 
-        sub_418FC0(v8, v10, v9, v1.response_val, a1);
+        sub_418FC0(v8, v10, v9, entry.response_val, a1);
         return false;
     }
 
     if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
         && stat_level_get(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
-        sub_416B00(a1->field_70, v1.data.female_str, a1);
+        sub_416B00(a1->field_70, entry.data.female_str, a1);
     } else {
-        sub_416B00(a1->field_70, v1.str, a1);
+        sub_416B00(a1->field_70, entry.str, a1);
     }
 
     return true;
 }
 
 // 0x416AB0
-bool sub_416AB0(int dlg, DialogEntry* a2)
+bool dialog_search(int dlg, DialogFileEntry* entry)
 {
-    DialogEntry* v1;
+    DialogFileEntry* found;
 
-    v1 = bsearch(a2,
+    found = bsearch(entry,
         dialog_files[dlg].entries,
         dialog_files[dlg].entries_length,
-        sizeof(*a2),
+        sizeof(*entry),
         dialog_entry_compare);
-    if (v1 == NULL) {
+    if (found == NULL) {
         return false;
     }
 
-    *a2 = *v1;
+    *entry = *found;
 
     return true;
 }
@@ -2384,7 +2383,7 @@ void sub_416B00(char* dst, char* src, DialogEntryNode* a3)
 // 0x416C10
 bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 {
-    DialogEntry v1;
+    DialogFileEntry entry;
     char* pch;
     int values[100];
     int cnt;
@@ -2392,26 +2391,26 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
     int v3;
     int v4;
 
-    v1.num = a1;
-    sub_416AB0(a3->field_0, &v1);
+    entry.num = a1;
+    dialog_search(a3->field_0, &entry);
 
-    if (strcmpi(v1.str, "a:") == 0) {
+    if (strcmpi(entry.str, "a:") == 0) {
         sub_418390(a3->field_460[a2], a3, 1000);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.str, "b:") == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(entry.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
             sub_4182D0(a3->field_460[a2], a3, 1600, 1699);
         } else {
             sub_4182D0(a3->field_460[a2], a3, 300, 399);
         }
         a3->field_17F0[a2] = 3;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strnicmp(v1.str, "c:", 2) == 0) {
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strnicmp(entry.str, "c:", 2) == 0) {
         sub_418460(a3->field_460[a2], a3);
         a3->field_17F0[a2] = 24;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strnicmp(v1.str, "d:", 2) == 0) {
-        pch = strchr(v1.str, ',');
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strnicmp(entry.str, "d:", 2) == 0) {
+        pch = strchr(entry.str, ',');
         cnt = sub_417F90(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
@@ -2419,72 +2418,72 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
         sub_4182D0(a3->field_460[a2], a3, 1300, 1399);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
+        strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 18;
-        a3->field_1804[a2] = v1.response_val;
+        a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(v1.str, "e:") == 0) {
+    } else if (strcmpi(entry.str, "e:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 400, 499);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.str, "f:") == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(entry.str, "f:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 800, 899);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.str, "h:") == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(entry.str, "h:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 700, 799);
         a3->field_17F0[a2] = 11;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strcmpi(v1.str, "i:") == 0) {
-        sub_417590(v1.response_val, &v2, &v3);
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strcmpi(entry.str, "i:") == 0) {
+        sub_417590(entry.response_val, &v2, &v3);
         sub_419190(a2, v2, v3, a3);
-    } else if (strcmpi(v1.str, "k:") == 0) {
+    } else if (strcmpi(entry.str, "k:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1500, 1599);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.str, "l:") == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(entry.str, "l:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 2300, 2399);
         a3->field_17F0[a2] = 30;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strcmpi(v1.str, "n:") == 0) {
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strcmpi(entry.str, "n:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 100, 199);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.str, "p:") == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(entry.str, "p:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strnicmp(v1.str, "q:", 2) == 0) {
-        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(v1.str + 2));
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strnicmp(entry.str, "q:", 2) == 0) {
+        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(entry.str + 2));
         if (v4 != -1) {
             return sub_416C10(v4, a2, a3);
         }
         return false;
-    } else if (strnicmp(v1.str, "r:", 2) == 0) {
+    } else if (strnicmp(entry.str, "r:", 2) == 0) {
         sub_418390(a3->field_460[a2], a3, 2000);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
+        strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 8;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strcmpi(v1.str, "s:") == 0) {
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strcmpi(entry.str, "s:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 200, 299);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.str, "r:", 2) == 0) {
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(entry.str, "r:", 2) == 0) {
         sub_4182D0(a3->field_460[a2], a3, 500, 599);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
+        strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 5;
-        a3->field_1804[a2] = v1.response_val;
-    } else if (strnicmp(v1.str, "u:", 2) == 0) {
-        v4 = atoi(v1.str + 2);
+        a3->field_1804[a2] = entry.response_val;
+    } else if (strnicmp(entry.str, "u:", 2) == 0) {
+        v4 = atoi(entry.str + 2);
         if (sub_4AE570(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4)) {
             return false;
         }
 
-        sub_419A00(a2, v4, v1.response_val, a3);
-    } else if (strcmpi(v1.str, "w:") == 0) {
+        sub_419A00(a2, v4, entry.response_val, a3);
+    } else if (strcmpi(entry.str, "w:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1800, 1899);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.str, "x:", 2) == 0) {
-        pch = strchr(v1.str, ',');
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(entry.str, "x:", 2) == 0) {
+        pch = strchr(entry.str, ',');
         cnt = sub_417F90(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
@@ -2492,28 +2491,28 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 
         sub_4182D0(a3->field_460[a2], a3, 1400, 1499);
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
+        strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 21;
-        a3->field_1804[a2] = v1.response_val;
+        a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(v1.str, "y:") == 0) {
+    } else if (strcmpi(entry.str, "y:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1, 99);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.str, "z:", 2) == 0) {
-        sub_419AC0(a2, atoi(v1.str + 2), v1.response_val, a3);
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(entry.str, "z:", 2) == 0) {
+        sub_419AC0(a2, atoi(entry.str + 2), entry.response_val, a3);
     } else {
-        sub_416B00(a3->field_460[a2], v1.str, a3);
-        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+        sub_416B00(a3->field_460[a2], entry.str, a3);
+        sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     }
 
-    a3->field_182C[a2] = v1.actions;
+    a3->field_182C[a2] = entry.actions;
 
     if (dialog_numbers_enabled) {
         char str[20];
         size_t len;
         size_t pos;
 
-        sprintf(str, "[%d]", v1.num);
+        sprintf(str, "[%d]", entry.num);
         len = strlen(str);
         for (pos = 999; pos >= len; pos--) {
             a3->field_460[a2][pos] = a3->field_460[a2][pos - len];
@@ -2575,7 +2574,7 @@ bool find_dialog(const char* path, int* index_ptr)
     *index_ptr = index;
 
     dialog_files_capacity += 10;
-    dialog_files = (Dialog*)REALLOC(dialog_files, sizeof(*dialog_files) * dialog_files_capacity);
+    dialog_files = (DialogFile*)REALLOC(dialog_files, sizeof(*dialog_files) * dialog_files_capacity);
     while (index < dialog_files_capacity) {
         dialog_files[index].refcount = 0;
         dialog_files[index].path[0] = '\0';
@@ -2586,10 +2585,10 @@ bool find_dialog(const char* path, int* index_ptr)
 }
 
 // 0x417720
-void dialog_load_internal(Dialog* dialog)
+void dialog_load_internal(DialogFile* dialog)
 {
     TigFile* stream;
-    DialogEntry tmp_entry;
+    DialogFileEntry tmp_entry;
     char female_str[1000];
     char conditions[1000];
     char str[1000];
@@ -2610,7 +2609,7 @@ void dialog_load_internal(Dialog* dialog)
     while (dialog_parse_entry(stream, &tmp_entry, &line)) {
         if (dialog->entries_length == dialog->entries_capacity) {
             dialog->entries_capacity += 10;
-            dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
+            dialog->entries = (DialogFileEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
         }
 
         dialog_entry_copy(&(dialog->entries[dialog->entries_length]), &tmp_entry);
@@ -2630,7 +2629,7 @@ void dialog_load_internal(Dialog* dialog)
 }
 
 // 0x417860
-bool dialog_parse_entry(TigFile* stream, DialogEntry* entry, int* line_ptr)
+bool dialog_parse_entry(TigFile* stream, DialogFileEntry* entry, int* line_ptr)
 {
     char str[1000];
     char gender_str[1000];
@@ -2832,8 +2831,8 @@ int dialog_file_fgetc(TigFile* stream)
 // 0x417E00
 int dialog_entry_compare(const void* va, const void* vb)
 {
-    const DialogEntry* a = (const DialogEntry*)va;
-    const DialogEntry* b = (const DialogEntry*)vb;
+    const DialogFileEntry* a = (const DialogFileEntry*)va;
+    const DialogFileEntry* b = (const DialogFileEntry*)vb;
 
     if (a->num < b->num) {
         return -1;
@@ -2845,7 +2844,7 @@ int dialog_entry_compare(const void* va, const void* vb)
 }
 
 // 0x417E20
-void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src)
+void dialog_entry_copy(DialogFileEntry* dst, const DialogFileEntry* src)
 {
     size_t pos;
     size_t end;
@@ -2889,7 +2888,7 @@ void dialog_entry_copy(DialogEntry* dst, const DialogEntry* src)
 }
 
 // 0x417F40
-void dialog_entry_free(DialogEntry* entry)
+void dialog_entry_free(DialogFileEntry* entry)
 {
     if (entry->iq == 0) {
         FREE(entry->data.female_str);
@@ -2953,9 +2952,9 @@ void dialog_check()
     char path[80];
     int dlg;
     int entry_index;
-    DialogEntry* v2;
+    DialogFileEntry* entry;
     int overflow;
-    DialogEntry tmp;
+    DialogFileEntry tmp_entry;
 
     tig_file_list_create(&file_list, "dlg\\*.dlg");
     for (index = 0; index < file_list.count; index++) {
@@ -2963,21 +2962,21 @@ void dialog_check()
         tig_debug_printf("Checking dialog file %s\n", path);
         if (dialog_load(path, &dlg)) {
             for (entry_index = 0; entry_index < dialog_files[dlg].entries_length; entry_index++) {
-                v2 = &(dialog_files[dlg].entries[entry_index]);
-                if (v2->iq) {
-                    overflow = tc_check_size(v2->str);
+                entry = &(dialog_files[dlg].entries[entry_index]);
+                if (entry->iq) {
+                    overflow = tc_check_size(entry->str);
                     if (overflow > 0) {
-                        tig_debug_printf("PC response %d too long by %d pixels\n", v2->num, overflow);
+                        tig_debug_printf("PC response %d too long by %d pixels\n", entry->num, overflow);
                     }
 
-                    if (v2->response_val > 0) {
-                        tmp.num = v2->response_val;
-                        if (sub_416AB0(dlg, &tmp)) {
-                            if (tmp.iq) {
-                                tig_debug_printf("PC response %d jumps to non-PC line %d\n", v2->num, v2->response_val);
+                    if (entry->response_val > 0) {
+                        tmp_entry.num = entry->response_val;
+                        if (dialog_search(dlg, &tmp_entry)) {
+                            if (tmp_entry.iq) {
+                                tig_debug_printf("PC response %d jumps to non-PC line %d\n", entry->num, entry->response_val);
                             }
                         } else {
-                            tig_debug_printf("PC response %d jumps to non-existent dialog line %d\n", v2->num, v2->response_val);
+                            tig_debug_printf("PC response %d jumps to non-existent dialog line %d\n", entry->num, entry->response_val);
                         }
                     }
                 }
@@ -3226,7 +3225,7 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
     Script scr;
     char path[TIG_MAX_PATH];
     int dlg;
-    DialogEntry entry;
+    DialogFileEntry entry;
     bool exists;
 
     obj_arrayfield_script_get(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG_OVERRIDE, &scr);
@@ -3244,7 +3243,7 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
     }
 
     entry.num = num;
-    exists = sub_416AB0(dlg, &entry);
+    exists = dialog_search(dlg, &entry);
     dialog_unload(dlg);
 
     if (!exists) {
