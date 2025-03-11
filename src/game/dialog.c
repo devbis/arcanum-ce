@@ -183,8 +183,8 @@ static bool sub_416C10(int a1, int a2, DialogEntryNode* a3);
 static void sub_417590(int a1, int* a2, int* a3);
 static bool sub_4175D0(const char* path, int* index_ptr);
 static void sub_417720(Dialog* dialog);
-static bool sub_417860(TigFile* stream, DialogEntry* entry, int* a3);
-static bool sub_417C20(TigFile* stream, char* str, int* line_ptr);
+static bool dialog_parse_entry(TigFile* stream, DialogEntry* entry, int* line_ptr);
+static bool dialog_parse_field(TigFile* stream, char* str, int* line_ptr);
 static TigFile* dialog_file_fopen(const char* fname, const char* mode);
 static int dialog_file_fclose(TigFile* stream);
 static int dialog_file_fgetc(TigFile* stream);
@@ -2608,7 +2608,7 @@ void sub_417720(Dialog* dialog)
     v1.actions = v5;
 
     line = 1;
-    while (sub_417860(stream, &v1, &line)) {
+    while (dialog_parse_entry(stream, &v1, &line)) {
         if (dialog->entries_length == dialog->entries_capacity) {
             dialog->entries_capacity += 10;
             dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
@@ -2631,64 +2631,64 @@ void sub_417720(Dialog* dialog)
 }
 
 // 0x417860
-bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
+bool dialog_parse_entry(TigFile* stream, DialogEntry* entry, int* line_ptr)
 {
-    char str1[1000];
-    char str2[1000];
+    char str[1000];
+    char gender_str[1000];
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         return false;
     }
-    entry->num = atoi(str1);
+    entry->num = atoi(str);
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         tig_debug_printf("Missing text on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->str, str1);
+    strcpy(entry->str, str);
 
-    if (!sub_417C20(stream, str2, line_ptr)) {
+    if (!dialog_parse_field(stream, gender_str, line_ptr)) {
         tig_debug_printf("Missing gender field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         tig_debug_printf("Missing minimum IQ value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
-    entry->iq = atoi(str1);
-    if (entry->iq == 0 && str1[0] != '\0') {
+    entry->iq = atoi(str);
+    if (entry->iq == 0 && str[0] != '\0') {
         tig_debug_printf("Invalid minimum IQ value on line: %d (dialog line %d). Must be blank (for an NPC) or non-zero (for a PC).\n", *line_ptr, entry->num);
         return false;
     }
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         tig_debug_printf("Missing test field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->conditions, str1);
+    strcpy(entry->conditions, str);
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         tig_debug_printf("Missing response value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
-    if (str1[0] == '#') {
+    if (str[0] == '#') {
         tig_debug_printf("Saw a # in a response value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    entry->response_val = atoi(str1);
+    entry->response_val = atoi(str);
 
-    if (!sub_417C20(stream, str1, line_ptr)) {
+    if (!dialog_parse_field(stream, str, line_ptr)) {
         tig_debug_printf("Missing effect field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->actions, str1);
+    strcpy(entry->actions, str);
 
-    if (entry->iq) {
-        if (str2[0] != '\0') {
-            entry->data.gender = atoi(str2);
+    if (entry->iq != 0) {
+        if (gender_str[0] != '\0') {
+            entry->data.gender = atoi(gender_str);
         } else {
             entry->data.gender = -1;
         }
@@ -2696,12 +2696,12 @@ bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
         size_t pos;
         size_t end;
 
-        strcpy(entry->data.female_str, str2);
+        strcpy(entry->data.female_str, gender_str);
 
         pos = 0;
-        end = strlen(str2);
+        end = strlen(gender_str);
         while (pos < end) {
-            if (!isspace(str2[pos])) {
+            if (!isspace(gender_str[pos])) {
                 break;
             }
             pos++;
@@ -2727,7 +2727,7 @@ bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
 }
 
 // 0x417C20
-bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
+bool dialog_parse_field(TigFile* stream, char* str, int* line_ptr)
 {
     int prev = 0;
     int ch;
