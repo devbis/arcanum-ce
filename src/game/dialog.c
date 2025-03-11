@@ -144,16 +144,16 @@ typedef enum DialogAction {
 } DialogAction;
 
 typedef struct DialogEntry {
-    /* 0000 */ int field_0;
-    /* 0004 */ char* field_4;
+    /* 0000 */ int num;
+    /* 0004 */ char* str;
     union {
-        /* 0008 */ int val;
-        /* 0008 */ char* field_8;
+        /* 0008 */ int gender;
+        /* 0008 */ char* female_str;
     } data;
-    /* 000C */ int field_C;
-    /* 0010 */ char* field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ char* field_18;
+    /* 000C */ int iq;
+    /* 0010 */ char* conditions;
+    /* 0014 */ int response_val;
+    /* 0018 */ char* actions;
 } DialogEntry;
 
 static_assert(sizeof(DialogEntry) == 0x1C, "wrong size");
@@ -1310,7 +1310,7 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
     int idx;
     int cnt;
 
-    key.field_0 = a1->field_17EC;
+    key.num = a1->field_17EC;
     gender = stat_level_get(a1->pc_obj, STAT_GENDER);
     intelligence = stat_level_get(a1->pc_obj, STAT_INTELLIGENCE);
 
@@ -1334,15 +1334,15 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
 
     for (idx = (entry - dialog->entries) + 1; idx < dialog->entries_length && cnt < 5; idx++) {
         entry = &(dialog->entries[idx]);
-        if (entry->field_C == 0) {
+        if (entry->iq == 0) {
             return cnt;
         }
 
-        if (entry->data.val == -1 || entry->data.val == gender) {
-            if ((entry->field_C < 0 && intelligence <= -entry->field_C)
-                || (entry->field_C >= 0 && intelligence >= entry->field_C)) {
-                if (entry->field_10 == NULL || sub_4150D0(a1, entry->field_10)) {
-                    a2[cnt++] = entry->field_0;
+        if (entry->data.gender == -1 || entry->data.gender == gender) {
+            if ((entry->iq < 0 && intelligence <= -entry->iq)
+                || (entry->iq >= 0 && intelligence >= entry->iq)) {
+                if (entry->conditions == NULL || sub_4150D0(a1, entry->conditions)) {
+                    a2[cnt++] = entry->num;
                 }
             }
         }
@@ -2255,7 +2255,7 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
 {
     DialogEntry v1;
 
-    v1.field_0 = a1->field_17EC;
+    v1.num = a1->field_17EC;
     if (!sub_416AB0(a1->field_0, &v1)) {
         a1->field_458 = -1;
         a1->field_70[0] = ' ';
@@ -2263,15 +2263,15 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         return false;
     }
 
-    a1->field_1840 = v1.field_14;
-    a1->field_458 = sub_4189C0(v1.field_10, a1->field_6C);
+    a1->field_1840 = v1.response_val;
+    a1->field_458 = sub_4189C0(v1.conditions, a1->field_6C);
 
     if (!a2) {
-        sub_415BA0(a1, v1.field_18, 0);
+        sub_415BA0(a1, v1.actions, 0);
     }
 
-    if (strnicmp(v1.field_4, "g:", 2) == 0) {
-        sub_419260(a1, &(v1.field_4[2]));
+    if (strnicmp(v1.str, "g:", 2) == 0) {
+        sub_419260(a1, &(v1.str[2]));
 
         if (a1->field_17E8) {
             a1->field_45C = 0;
@@ -2280,12 +2280,12 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         return true;
     }
 
-    if (strcmpi(v1.field_4, "i:") == 0) {
+    if (strcmpi(v1.str, "i:") == 0) {
         dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
         return true;
     }
 
-    if (strnicmp(v1.field_4, "m:", 2) == 0) {
+    if (strnicmp(v1.str, "m:", 2) == 0) {
         char* pch;
         int v2;
         int v3;
@@ -2294,40 +2294,40 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         int v6;
         int v7;
 
-        pch = strchr(v1.field_4, '$') + 1;
+        pch = strchr(v1.str, '$') + 1;
         v2 = atoi(pch);
 
         pch = strchr(pch, ',') + 1;
         v3 = atoi(pch);
 
         sub_417590(v3, &v4, &v5);
-        sub_417590(v1.field_14, &v6, &v7);
+        sub_417590(v1.response_val, &v6, &v7);
         sub_418A40(v2, v4, v5, v6, v7, a1);
 
         return false;
     }
 
-    if (strnicmp(v1.field_4, "r:", 2) == 0) {
+    if (strnicmp(v1.str, "r:", 2) == 0) {
         char* pch;
         int v8;
         int v9;
         int v10[100];
 
-        pch = strchr(v1.field_4, '$') + 1;
+        pch = strchr(v1.str, '$') + 1;
         v8 = atoi(pch);
 
         pch = strchr(pch, ',');
         v9 = sub_417F90(v10, pch + 1);
 
-        sub_418FC0(v8, v10, v9, v1.field_14, a1);
+        sub_418FC0(v8, v10, v9, v1.response_val, a1);
         return false;
     }
 
     if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
         && stat_level_get(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
-        sub_416B00(a1->field_70, v1.data.field_8, a1);
+        sub_416B00(a1->field_70, v1.data.female_str, a1);
     } else {
-        sub_416B00(a1->field_70, v1.field_4, a1);
+        sub_416B00(a1->field_70, v1.str, a1);
     }
 
     return true;
@@ -2389,26 +2389,26 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
     int v3;
     int v4;
 
-    v1.field_0 = a1;
+    v1.num = a1;
     sub_416AB0(a3->field_0, &v1);
 
-    if (strcmpi(v1.field_4, "a:") == 0) {
+    if (strcmpi(v1.str, "a:") == 0) {
         sub_418390(a3->field_460[a2], a3, 1000);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.field_4, "b:") == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
             sub_4182D0(a3->field_460[a2], a3, 1600, 1699);
         } else {
             sub_4182D0(a3->field_460[a2], a3, 300, 399);
         }
         a3->field_17F0[a2] = 3;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strnicmp(v1.field_4, "c:", 2) == 0) {
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strnicmp(v1.str, "c:", 2) == 0) {
         sub_418460(a3->field_460[a2], a3);
         a3->field_17F0[a2] = 24;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strnicmp(v1.field_4, "d:", 2) == 0) {
-        pch = strchr(v1.field_4, ',');
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strnicmp(v1.str, "d:", 2) == 0) {
+        pch = strchr(v1.str, ',');
         cnt = sub_417F90(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
@@ -2416,72 +2416,72 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
         sub_4182D0(a3->field_460[a2], a3, 1300, 1399);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
         a3->field_17F0[a2] = 18;
-        a3->field_1804[a2] = v1.field_14;
+        a3->field_1804[a2] = v1.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(v1.field_4, "e:") == 0) {
+    } else if (strcmpi(v1.str, "e:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 400, 499);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.field_4, "f:") == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.str, "f:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 800, 899);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.field_4, "h:") == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.str, "h:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 700, 799);
         a3->field_17F0[a2] = 11;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strcmpi(v1.field_4, "i:") == 0) {
-        sub_417590(v1.field_14, &v2, &v3);
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strcmpi(v1.str, "i:") == 0) {
+        sub_417590(v1.response_val, &v2, &v3);
         sub_419190(a2, v2, v3, a3);
-    } else if (strcmpi(v1.field_4, "k:") == 0) {
+    } else if (strcmpi(v1.str, "k:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1500, 1599);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.field_4, "l:") == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.str, "l:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 2300, 2399);
         a3->field_17F0[a2] = 30;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strcmpi(v1.field_4, "n:") == 0) {
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strcmpi(v1.str, "n:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 100, 199);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(v1.field_4, "p:") == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.str, "p:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strnicmp(v1.field_4, "q:", 2) == 0) {
-        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(v1.field_4 + 2));
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strnicmp(v1.str, "q:", 2) == 0) {
+        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(v1.str + 2));
         if (v4 != -1) {
             return sub_416C10(v4, a2, a3);
         }
         return false;
-    } else if (strnicmp(v1.field_4, "r:", 2) == 0) {
+    } else if (strnicmp(v1.str, "r:", 2) == 0) {
         sub_418390(a3->field_460[a2], a3, 2000);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
         a3->field_17F0[a2] = 8;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strcmpi(v1.field_4, "s:") == 0) {
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strcmpi(v1.str, "s:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 200, 299);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.field_4, "r:", 2) == 0) {
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.str, "r:", 2) == 0) {
         sub_4182D0(a3->field_460[a2], a3, 500, 599);
 
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
         a3->field_17F0[a2] = 5;
-        a3->field_1804[a2] = v1.field_14;
-    } else if (strnicmp(v1.field_4, "u:", 2) == 0) {
-        v4 = atoi(v1.field_4 + 2);
+        a3->field_1804[a2] = v1.response_val;
+    } else if (strnicmp(v1.str, "u:", 2) == 0) {
+        v4 = atoi(v1.str + 2);
         if (sub_4AE570(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4)) {
             return false;
         }
 
-        sub_419A00(a2, v4, v1.field_14, a3);
-    } else if (strcmpi(v1.field_4, "w:") == 0) {
+        sub_419A00(a2, v4, v1.response_val, a3);
+    } else if (strcmpi(v1.str, "w:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1800, 1899);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.field_4, "x:", 2) == 0) {
-        pch = strchr(v1.field_4, ',');
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.str, "x:", 2) == 0) {
+        pch = strchr(v1.str, ',');
         cnt = sub_417F90(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
@@ -2489,28 +2489,28 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 
         sub_4182D0(a3->field_460[a2], a3, 1400, 1499);
         pch = a3->field_460[a2];
-        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        strcpy(&(pch[strlen(pch) + 1]), v1.str + 2);
         a3->field_17F0[a2] = 21;
-        a3->field_1804[a2] = v1.field_14;
+        a3->field_1804[a2] = v1.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(v1.field_4, "y:") == 0) {
+    } else if (strcmpi(v1.str, "y:") == 0) {
         sub_4182D0(a3->field_460[a2], a3, 1, 99);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(v1.field_4, "z:", 2) == 0) {
-        sub_419AC0(a2, atoi(v1.field_4 + 2), v1.field_14, a3);
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.str, "z:", 2) == 0) {
+        sub_419AC0(a2, atoi(v1.str + 2), v1.response_val, a3);
     } else {
-        sub_416B00(a3->field_460[a2], v1.field_4, a3);
-        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+        sub_416B00(a3->field_460[a2], v1.str, a3);
+        sub_417590(v1.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     }
 
-    a3->field_182C[a2] = v1.field_18;
+    a3->field_182C[a2] = v1.actions;
 
     if (dialog_numbers_enabled) {
         char str[20];
         size_t len;
         size_t pos;
 
-        sprintf(str, "[%d]", v1.field_0);
+        sprintf(str, "[%d]", v1.num);
         len = strlen(str);
         for (pos = 999; pos >= len; pos--) {
             a3->field_460[a2][pos] = a3->field_460[a2][pos - len];
@@ -2598,10 +2598,10 @@ void sub_417720(Dialog* dialog)
         return;
     }
 
-    v1.data.field_8 = v2;
-    v1.field_10 = v3;
-    v1.field_4 = v4;
-    v1.field_18 = v5;
+    v1.data.female_str = v2;
+    v1.conditions = v3;
+    v1.str = v4;
+    v1.actions = v5;
 
     line = 1;
     while (sub_417860(stream, &v1, &line)) {
@@ -2613,7 +2613,7 @@ void sub_417720(Dialog* dialog)
         sub_417E20(&(dialog->entries[dialog->entries_length]), &v1);
         dialog->entries_length++;
 
-        v1.data.field_8 = v2;
+        v1.data.female_str = v2;
     }
 
     sub_417D80(stream);
@@ -2632,64 +2632,64 @@ bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
     if (!sub_417C20(stream, str1, line_ptr)) {
         return false;
     }
-    entry->field_0 = atoi(str1);
+    entry->num = atoi(str1);
 
     if (!sub_417C20(stream, str1, line_ptr)) {
-        tig_debug_printf("Missing text on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing text on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->field_4, str1);
+    strcpy(entry->str, str1);
 
     if (!sub_417C20(stream, str2, line_ptr)) {
-        tig_debug_printf("Missing gender field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing gender field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
     if (!sub_417C20(stream, str1, line_ptr)) {
-        tig_debug_printf("Missing minimum IQ value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing minimum IQ value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
-    entry->field_C = atoi(str1);
-    if (entry->field_C == 0 && str1[0] != '\0') {
-        tig_debug_printf("Invalid minimum IQ value on line: %d (dialog line %d). Must be blank (for an NPC) or non-zero (for a PC).\n", *line_ptr, entry->field_0);
+    entry->iq = atoi(str1);
+    if (entry->iq == 0 && str1[0] != '\0') {
+        tig_debug_printf("Invalid minimum IQ value on line: %d (dialog line %d). Must be blank (for an NPC) or non-zero (for a PC).\n", *line_ptr, entry->num);
         return false;
     }
 
     if (!sub_417C20(stream, str1, line_ptr)) {
-        tig_debug_printf("Missing test field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing test field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->field_10, str1);
+    strcpy(entry->conditions, str1);
 
     if (!sub_417C20(stream, str1, line_ptr)) {
-        tig_debug_printf("Missing response value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing response value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
 
     if (str1[0] == '#') {
-        tig_debug_printf("Saw a # in a response value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Saw a # in a response value on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    entry->field_14 = atoi(str1);
+    entry->response_val = atoi(str1);
 
     if (!sub_417C20(stream, str1, line_ptr)) {
-        tig_debug_printf("Missing effect field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        tig_debug_printf("Missing effect field on line: %d (dialog line %d)\n", *line_ptr, entry->num);
         return false;
     }
-    strcpy(entry->field_18, str1);
+    strcpy(entry->actions, str1);
 
-    if (entry->field_C) {
+    if (entry->iq) {
         if (str2[0] != '\0') {
-            entry->data.val = atoi(str2);
+            entry->data.gender = atoi(str2);
         } else {
-            entry->data.val = -1;
+            entry->data.gender = -1;
         }
     } else {
         size_t pos;
         size_t end;
 
-        strcpy(entry->data.field_8, str2);
+        strcpy(entry->data.female_str, str2);
 
         pos = 0;
         end = strlen(str2);
@@ -2702,16 +2702,16 @@ bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
 
         if (pos == end) {
             pos = 0;
-            end = strlen(entry->field_4);
+            end = strlen(entry->str);
             while (pos < end) {
-                if (!isspace(entry->field_4[pos])) {
+                if (!isspace(entry->str[pos])) {
                     break;
                 }
                 pos++;
             }
 
             if (pos != end) {
-                tig_debug_printf("Missing NPC response line for females: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+                tig_debug_printf("Missing NPC response line for females: %d (dialog line %d)\n", *line_ptr, entry->num);
             }
         }
     }
@@ -2826,9 +2826,9 @@ int sub_417D90(TigFile* stream)
 // 0x417E00
 int sub_417E00(const DialogEntry* a, const DialogEntry* b)
 {
-    if (a->field_0 < b->field_0) {
+    if (a->num < b->num) {
         return -1;
-    } else if (a->field_0 > b->field_0) {
+    } else if (a->num > b->num) {
         return 1;
     } else {
         return 0;
@@ -2842,57 +2842,57 @@ void sub_417E20(DialogEntry* a1, const DialogEntry* a2)
     size_t end;
 
     *a1 = *a2;
-    a1->field_4 = STRDUP(a2->field_4);
+    a1->str = STRDUP(a2->str);
 
     pos = 0;
-    end = strlen(a2->field_10);
+    end = strlen(a2->conditions);
     while (pos < end) {
-        if (!isspace(a2->field_10[pos])) {
+        if (!isspace(a2->conditions[pos])) {
             break;
         }
         pos++;
     }
 
     if (pos != end) {
-        a1->field_10 = STRDUP(a2->field_10);
+        a1->conditions = STRDUP(a2->conditions);
     } else {
-        a1->field_10 = NULL;
+        a1->conditions = NULL;
     }
 
     pos = 0;
-    end = strlen(a2->field_18);
+    end = strlen(a2->actions);
     while (pos < end) {
-        if (!isspace(a2->field_18[pos])) {
+        if (!isspace(a2->actions[pos])) {
             break;
         }
         pos++;
     }
 
     if (pos != end) {
-        a1->field_18 = STRDUP(a2->field_18);
+        a1->actions = STRDUP(a2->actions);
     } else {
-        a1->field_18 = NULL;
+        a1->actions = NULL;
     }
 
-    if (!a2->field_C) {
-        a1->data.field_8 = STRDUP(a2->data.field_8);
+    if (!a2->iq) {
+        a1->data.female_str = STRDUP(a2->data.female_str);
     }
 }
 
 // 0x417F40
 void sub_417F40(DialogEntry* a1)
 {
-    if (!a1->field_C) {
-        FREE(a1->data.field_8);
+    if (!a1->iq) {
+        FREE(a1->data.female_str);
     }
-    FREE(a1->field_4);
+    FREE(a1->str);
 
-    if (a1->field_10 != NULL) {
-        FREE(a1->field_10);
+    if (a1->conditions != NULL) {
+        FREE(a1->conditions);
     }
 
-    if (a1->field_18 != NULL) {
-        FREE(a1->field_18);
+    if (a1->actions != NULL) {
+        FREE(a1->actions);
     }
 }
 
@@ -2954,20 +2954,20 @@ void dialog_check()
         if (sub_412E10(path, &dlg)) {
             for (entry_index = 0; entry_index < dword_5D1A08[dlg].entries_length; entry_index++) {
                 v2 = &(dword_5D1A08[dlg].entries[entry_index]);
-                if (v2->field_C) {
-                    overflow = tc_check_size(v2->field_4);
+                if (v2->iq) {
+                    overflow = tc_check_size(v2->str);
                     if (overflow > 0) {
-                        tig_debug_printf("PC response %d too long by %d pixels\n", v2->field_0, overflow);
+                        tig_debug_printf("PC response %d too long by %d pixels\n", v2->num, overflow);
                     }
 
-                    if (v2->field_14 > 0) {
-                        tmp.field_0 = v2->field_14;
+                    if (v2->response_val > 0) {
+                        tmp.num = v2->response_val;
                         if (sub_416AB0(dlg, &tmp)) {
-                            if (tmp.field_C) {
-                                tig_debug_printf("PC response %d jumps to non-PC line %d\n", v2->field_0, v2->field_14);
+                            if (tmp.iq) {
+                                tig_debug_printf("PC response %d jumps to non-PC line %d\n", v2->num, v2->response_val);
                             }
                         } else {
-                            tig_debug_printf("PC response %d jumps to non-existent dialog line %d\n", v2->field_0, v2->field_14);
+                            tig_debug_printf("PC response %d jumps to non-existent dialog line %d\n", v2->num, v2->response_val);
                         }
                     }
                 }
@@ -3233,7 +3233,7 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
         return false;
     }
 
-    entry.field_0 = num;
+    entry.num = num;
     exists = sub_416AB0(dlg, &entry);
     sub_412F40(dlg);
 
@@ -3244,12 +3244,12 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
     if (a2->pc_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(a2->pc_obj, OBJ_F_TYPE))
         && stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE) {
-        strcpy(buffer, entry.field_4);
+        strcpy(buffer, entry.str);
     } else {
-        strcpy(buffer, entry.data.field_8);
+        strcpy(buffer, entry.data.female_str);
     }
 
-    a2->field_458 = sub_4189C0(entry.field_10, scr.num);
+    a2->field_458 = sub_4189C0(entry.conditions, scr.num);
 
     return true;
 }
