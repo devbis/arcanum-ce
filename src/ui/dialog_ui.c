@@ -49,10 +49,10 @@ static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
-static void sub_568540(int64_t a1, int64_t a2, int type, int expires_in, const char* str, int a6);
-static void sub_5686C0(int64_t a1, int64_t a2, int type, int expires_in, const char* str);
-static void sub_5688D0(int64_t a1, int64_t obj, int a4);
-static void sub_5689B0();
+static void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const char* str, int speech_id);
+static void sub_5686C0(int64_t pc_obj, int64_t npc_obj, int type, int expires_in, const char* str);
+static void dialog_ui_speech_start(int64_t npc_obj, int64_t pc_obj, int speech_id);
+static void dialog_ui_speech_stop();
 
 // 0x66DAB8
 static DialogUiEntry stru_66DAB8[8];
@@ -61,7 +61,7 @@ static DialogUiEntry stru_66DAB8[8];
 static unsigned char byte_679DB8[8]; // boolean
 
 // 0x67B960
-static tig_sound_handle_t dword_67B960;
+static tig_sound_handle_t dialog_ui_speech_handle;
 
 // 0x67B964
 static bool dword_67B964;
@@ -89,7 +89,7 @@ bool dialog_ui_init(GameInitInfo* init_info)
     sub_444990(sub_567460, sub_568430);
     sub_4A84D0(sub_5678D0, sub_568430);
     sub_4C2EA0(sub_568430);
-    dword_67B960 = TIG_SOUND_HANDLE_INVALID;
+    dialog_ui_speech_handle = TIG_SOUND_HANDLE_INVALID;
 
     return true;
 }
@@ -97,7 +97,7 @@ bool dialog_ui_init(GameInitInfo* init_info)
 // 0x5673A0
 void dialog_ui_exit()
 {
-    sub_5689B0();
+    dialog_ui_speech_stop();
 }
 
 // 0x5673B0
@@ -465,7 +465,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         TB_EXPIRE_DEFAULT,
         entry->field_8.options[a2]);
     mp_tb_remove(entry->field_8.npc_obj);
-    sub_5689B0();
+    dialog_ui_speech_stop();
     sub_413130(&(entry->field_8), a2);
     sub_567D60(entry);
 
@@ -715,19 +715,19 @@ void sub_5684C0(DialogUiEntry* entry)
 }
 
 // 0x568540
-void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* str, int a6)
+void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const char* str, int speech_id)
 {
-    Packet44 pkt;
-
     if (!multiplayer_is_locked()) {
+        Packet44 pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(obj);
-        pkt.d.d.field_20 = sub_407EF0(a2);
+        pkt.d.d.field_8 = sub_407EF0(npc_obj);
+        pkt.d.d.field_20 = sub_407EF0(pc_obj);
         pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 0;
@@ -735,33 +735,34 @@ void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* s
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (a2 != OBJ_HANDLE_NULL
-        && !critter_is_dead(obj)
-        && !sub_423300(obj, 0)) {
-        sub_424070(obj, 3, 0, 1);
-        anim_goal_rotate(obj, object_rot(obj, a2));
+    if (pc_obj != OBJ_HANDLE_NULL
+        && !critter_is_dead(npc_obj)
+        && !sub_423300(npc_obj, NULL)) {
+        sub_424070(npc_obj, 3, 0, 1);
+        anim_goal_rotate(npc_obj, object_rot(npc_obj, pc_obj));
     }
 
-    tb_remove(obj);
-    tb_add(obj, type, str);
-    tb_expire_in(obj, expires_in);
-    sub_5688D0(obj, a2, a6);
+    tb_remove(npc_obj);
+    tb_add(npc_obj, type, str);
+    tb_expire_in(npc_obj, expires_in);
+
+    dialog_ui_speech_start(npc_obj, pc_obj, speech_id);
 }
 
 // 0x5686C0
-void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* str)
+void sub_5686C0(int64_t pc_obj, int64_t npc_obj, int type, int expires_in, const char* str)
 {
-    Packet44 pkt;
-
     if (!multiplayer_is_locked()) {
+        Packet44 pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(obj);
-        pkt.d.d.field_20 = sub_407EF0(a2);
+        pkt.d.d.field_8 = sub_407EF0(pc_obj);
+        pkt.d.d.field_20 = sub_407EF0(npc_obj);
         pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 1;
@@ -769,17 +770,17 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* s
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (a2 != OBJ_HANDLE_NULL
-        && !critter_is_dead(obj)
-        && !sub_423300(obj, 0)) {
-        sub_424070(obj, 3, 0, 1);
-        anim_goal_rotate(obj, object_rot(obj, a2));
+    if (npc_obj != OBJ_HANDLE_NULL
+        && !critter_is_dead(pc_obj)
+        && !sub_423300(pc_obj, NULL)) {
+        sub_424070(pc_obj, 3, 0, 1);
+        anim_goal_rotate(pc_obj, object_rot(pc_obj, npc_obj));
     }
 
-    if (!player_is_pc_obj(obj)) {
-        tb_remove(obj);
-        tb_add(obj, type, str);
-        tb_expire_in(obj, expires_in);
+    if (!player_is_pc_obj(pc_obj)) {
+        tb_remove(pc_obj);
+        tb_add(pc_obj, type, str);
+        tb_expire_in(pc_obj, expires_in);
     }
 }
 
@@ -814,37 +815,37 @@ void sub_568880(int64_t obj, int a2, int a3, int type, int a5, int a6, const cha
 }
 
 // 0x5688D0
-void sub_5688D0(int64_t a1, int64_t obj, int a4)
+void dialog_ui_speech_start(int64_t npc_obj, int64_t pc_obj, int speech_id)
 {
     int v1;
     int v2;
     char gender;
     char path[TIG_MAX_PATH];
 
-    (void)a1;
+    (void)npc_obj;
 
-    if (a4 == -1) {
+    if (speech_id == -1) {
         return;
     }
 
-    sub_5689B0();
-    sub_418A00(a4, &v1, &v2);
+    dialog_ui_speech_stop();
+    sub_418A00(speech_id, &v1, &v2);
 
-    gender = stat_level_get(obj, STAT_GENDER) != 0 ? 'm' : 'f';
+    gender = stat_level_get(pc_obj, STAT_GENDER) != 0 ? 'm' : 'f';
     sprintf(path, "sound\\speech\\%.5d\\v%d_%c.mp3", v1, v2, gender);
     if (gender == 'f' && !tig_file_exists(path, NULL)) {
         sprintf(path, "sound\\speech\\%.5d\\v%d_%c.mp3", v1, v2, 'm');
     }
     if (tig_file_exists(path, NULL)) {
-        dword_67B960 = gsound_play_voice(path, 0);
+        dialog_ui_speech_handle = gsound_play_voice(path, 0);
     }
 }
 
 // 0x5689B0
-void sub_5689B0()
+void dialog_ui_speech_stop()
 {
-    if (dword_67B960 != TIG_SOUND_HANDLE_INVALID) {
-        tig_sound_destroy(dword_67B960);
-        dword_67B960 = TIG_SOUND_HANDLE_INVALID;
+    if (dialog_ui_speech_handle != TIG_SOUND_HANDLE_INVALID) {
+        tig_sound_destroy(dialog_ui_speech_handle);
+        dialog_ui_speech_handle = TIG_SOUND_HANDLE_INVALID;
     }
 }
