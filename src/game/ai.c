@@ -2425,7 +2425,7 @@ void ai_action_perform_non_combat(Ai* ai)
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
                 if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                    sub_414290(ai->obj, ai->leader_obj, rc, str, &v3);
+                    dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &v3);
                     dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                 }
             } else if ((npc_flags & ONF_CHECK_LEADER) != 0) {
@@ -2436,7 +2436,7 @@ void ai_action_perform_non_combat(Ai* ai)
                 rc = ai_check_leader(ai->obj, ai->leader_obj);
                 if (rc != AI_FOLLOW_OK) {
                     if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                        sub_414290(ai->obj, ai->leader_obj, rc, str, &v3);
+                        dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &v3);
                         dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                     }
                 }

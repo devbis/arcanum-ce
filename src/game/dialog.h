@@ -86,7 +86,7 @@ void dialog_copy_npc_witness_pc_critical_msg(int64_t npc_obj, int64_t pc_obj, in
 void dialog_copy_npc_gamble_msg(int64_t npc_obj, int64_t pc_obj, int type, char* buffer);
 void dialog_copy_npc_warning_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
 void dialog_copy_npc_newspaper_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
-void sub_414290(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
+void dialog_copy_npc_warning_follow_msg(int64_t npc_obj, int64_t pc_obj, int reason, char* buffer, int* speech_id_ptr);
 void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_414490(int64_t a1, int64_t a2, char* a3, int* a4);
 void sub_414540(int64_t a1, int64_t a2, char* a3);

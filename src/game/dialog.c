@@ -991,39 +991,39 @@ void dialog_copy_npc_newspaper_msg(int64_t npc_obj, int64_t pc_obj, char* buffer
 }
 
 // 0x414290
-void sub_414290(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
+void dialog_copy_npc_warning_follow_msg(int64_t npc_obj, int64_t pc_obj, int reason, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
     int start;
     int end;
 
-    if (sub_4AD800(a1, a2, 1) == 0) {
-        sub_413360(a1, a2, &v1);
+    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
 
-        switch (a3) {
-        case 1:
+        switch (reason) {
+        case AI_FOLLOW_TOO_GOOD:
             start = 5200;
             end = 5299;
             break;
-        case 2:
+        case AI_FOLLOW_TOO_BAD:
             start = 5300;
             end = 5399;
             break;
-        case 3:
+        case AI_FOLLOW_DISLIKE:
             start = 5400;
             end = 5499;
             break;
         default:
-            a4[0] = '\0';
-            *a5 = -1;
+            buffer[0] = '\0';
+            *speech_id_ptr = -1;
             return;
         }
 
-        dialog_copy_npc_generic_msg(a4, &v1, start, end);
-        *a5 = v1.speech_id;
+        dialog_copy_npc_generic_msg(buffer, &state, start, end);
+        *speech_id_ptr = state.speech_id;
     } else {
-        a4[0] = '\0';
-        *a5 = -1;
+        buffer[0] = '\0';
+        *speech_id_ptr = -1;
     }
 }
 
