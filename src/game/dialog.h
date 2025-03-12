@@ -90,7 +90,7 @@ void dialog_copy_npc_warning_follow_msg(int64_t npc_obj, int64_t pc_obj, int rea
 void dialog_copy_npc_upset_attacking_msg(int64_t npc_obj, int64_t pc_obj, int reason, char* buffer, int* speech_id_ptr);
 void dialog_copy_npc_near_death_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
 void dialog_copy_npc_wont_identify_already_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
-void sub_4145D0(int64_t a1, int64_t a2, char* a3);
+void dialog_copy_npc_identify_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void sub_414660(int64_t a1, int64_t a2, char* a3);
 void sub_4146F0(int64_t a1, int64_t a2, char* a3);
 void sub_414780(int64_t a1, int64_t a2, char* a3);

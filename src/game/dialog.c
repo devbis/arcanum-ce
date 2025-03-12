@@ -1097,15 +1097,15 @@ void dialog_copy_npc_wont_identify_already_msg(int64_t npc_obj, int64_t pc_obj, 
 }
 
 // 0x4145D0
-void sub_4145D0(int64_t a1, int64_t a2, char* a3)
+void dialog_copy_npc_identify_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
-        sub_413360(a1, a2, &v1);
-        dialog_copy_npc_generic_msg(a3, &v1, 5800, 5899);
+    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
+        dialog_copy_npc_generic_msg(buffer, &state, 5800, 5899);
     } else {
-        a3[0] = '\0';
+        buffer[0] = '\0';
     }
 }
 

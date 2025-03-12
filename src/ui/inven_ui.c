@@ -3533,7 +3533,7 @@ void sub_5786C0(int64_t obj)
         dialog_copy_npc_wont_identify_already_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
     } else {
         dword_681440 = sub_4B1740(9);
-        sub_4145D0(qword_682C78, inven_ui_pc_obj, byte_682804);
+        dialog_copy_npc_identify_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
         sprintf(byte_68241C, byte_682804, dword_681440);
     }
     redraw_inven(false);
