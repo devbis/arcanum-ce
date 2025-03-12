@@ -1442,7 +1442,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
             sub_4AB2A0(a1, a2);
         } else {
             if (critter_is_active(a1)) {
-                sub_413EA0(a1, a2, str, &v1);
+                dialog_copy_npc_fleeing_msg(a1, a2, str, &v1);
                 dword_5F8488(a1, a2, str, v1);
             }
             anim_goal_flee(a1, a2);
@@ -1666,7 +1666,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
         if (dword_5F8488 != NULL
             && (critter_flags & (OCF_FLEEING | OCF_SURRENDERED)) == 0) {
             if (critter_is_active(source_obj)) {
-                sub_413EA0(source_obj, target_obj, str, &v2);
+                dialog_copy_npc_fleeing_msg(source_obj, target_obj, str, &v2);
                 dword_5F8488(source_obj, target_obj, str, v2);
             }
         }

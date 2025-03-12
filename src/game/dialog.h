@@ -81,7 +81,7 @@ void dialog_copy_npc_order_ok_msg(int64_t npc_obj, int64_t pc_obj, char* buffer,
 void dialog_copy_npc_order_no_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
 void dialog_copy_npc_insult_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
 void dialog_copy_npc_accidental_attack_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
-void sub_413EA0(int64_t a1, int64_t a2, char* a3, int* a4);
+void dialog_copy_npc_fleeing_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr);
 void sub_413F50(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_414020(int64_t a1, int64_t a2, int a3, char* a4);
 void sub_414130(int64_t a1, int64_t a2, char* a3, int* a4);
