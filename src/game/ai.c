@@ -3751,7 +3751,7 @@ void sub_4AEAB0(int64_t a1, int64_t a2)
     char str[1000];
     int v1;
 
-    sub_414490(a1, a2, str, &v1);
+    dialog_copy_npc_near_death_msg(a1, a2, str, &v1);
     dword_5F8488(a1, a2, str, v1);
 }
 
