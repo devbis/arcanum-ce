@@ -3486,7 +3486,7 @@ void sub_578330(int64_t a1, int64_t a2)
             }
         } else {
             if ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_STOLEN) == 0) {
-                sub_4136D0(qword_682C78, inven_ui_pc_obj, byte_68241C);
+                dialog_copy_npc_wont_buy_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             } else {
                 sub_413760(qword_682C78, inven_ui_pc_obj, byte_68241C);
             }
