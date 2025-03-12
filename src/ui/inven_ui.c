@@ -3550,7 +3550,7 @@ void sub_578760(int64_t obj)
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_item_id_destroyed_get(art_id) != 0) {
         if (tech_skill_get_training(qword_682C78, TECH_SKILL_REPAIR) != TRAINING_MASTER) {
-            sub_414660(qword_682C78, inven_ui_pc_obj, byte_68241C);
+            dialog_copy_npc_wont_repair_broken_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             redraw_inven(false);
             return;
         }
