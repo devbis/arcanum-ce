@@ -3566,7 +3566,7 @@ void sub_578760(int64_t obj)
             dword_681440 = 2;
         }
 
-        sub_414780(qword_682C78, inven_ui_pc_obj, byte_682804);
+        dialog_copy_npc_repair_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
         sprintf(byte_68241C, byte_682804, dword_681440);
         redraw_inven(false);
     } else {
