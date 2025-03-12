@@ -3478,7 +3478,7 @@ void sub_578330(int64_t a1, int64_t a2)
             }
 
             if (dword_681440 > gold) {
-                sub_413880(qword_682C78, inven_ui_pc_obj, byte_682804);
+                dialog_copy_npc_buy_for_less_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
                 sprintf(&(byte_68241C[pos]), byte_682804, dword_681440, gold);
             } else {
                 dialog_copy_npc_buy_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
