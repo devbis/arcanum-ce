@@ -92,7 +92,7 @@ void dialog_copy_npc_near_death_msg(int64_t npc_obj, int64_t pc_obj, char* buffe
 void dialog_copy_npc_wont_identify_already_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void dialog_copy_npc_identify_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void dialog_copy_npc_wont_repair_broken_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
-void sub_4146F0(int64_t a1, int64_t a2, char* a3);
+void dialog_copy_npc_wont_repair_undamaged_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void sub_414780(int64_t a1, int64_t a2, char* a3);
 void dialog_check();
 void dialog_enable_numbers();

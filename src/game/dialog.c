@@ -1123,15 +1123,15 @@ void dialog_copy_npc_wont_repair_broken_msg(int64_t npc_obj, int64_t pc_obj, cha
 }
 
 // 0x4146F0
-void sub_4146F0(int64_t a1, int64_t a2, char* a3)
+void dialog_copy_npc_wont_repair_undamaged_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
-        sub_413360(a1, a2, &v1);
-        dialog_copy_npc_generic_msg(a3, &v1, 6000, 6099);
+    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
+        dialog_copy_npc_generic_msg(buffer, &state, 6000, 6099);
     } else {
-        a3[0] = '\0';
+        buffer[0] = '\0';
     }
 }
 
