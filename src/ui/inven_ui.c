@@ -3799,7 +3799,7 @@ bool sub_578EA0(Packet81* pkt)
         && (v8 & 0x18) != 0) {
         int gold = v7 * item_cost(v2, v4, v6, false);
         if (gold > item_gold_get(v6)) {
-            sub_414020(v4, v6, 4, byte_682804);
+            dialog_copy_npc_gamble_msg(v4, v6, 4, byte_682804);
             sprintf(byte_68241C, byte_682804, gold);
             return true;
         }
@@ -3846,14 +3846,14 @@ bool sub_579840(int64_t obj, bool a2)
 
     if (qword_681450 == inven_ui_pc_obj) {
         if (!a2) {
-            sub_414020(qword_682C78, inven_ui_pc_obj, 2, byte_68241C);
+            dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 2, byte_68241C);
         }
         return false;
     }
 
     if (basic_skill_get_base(qword_682C78, BASIC_SKILL_GAMBLING) == 0) {
         if (!a2) {
-            sub_414020(qword_682C78, inven_ui_pc_obj, 9, byte_68241C);
+            dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 9, byte_68241C);
         }
         return false;
     }
@@ -3861,14 +3861,14 @@ bool sub_579840(int64_t obj, bool a2)
     v1 = item_cost(obj, qword_682C78, inven_ui_pc_obj, 0);
     if (v1 > sub_4C6520(inven_ui_pc_obj)) {
         if (!a2) {
-            sub_414020(qword_682C78, inven_ui_pc_obj, 3, byte_68241C);
+            dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 3, byte_68241C);
         }
         return false;
     }
 
     if (v1 > item_gold_get(inven_ui_pc_obj)) {
         if (!a2) {
-            sub_414020(qword_682C78, inven_ui_pc_obj, 4, byte_682804);
+            dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 4, byte_682804);
             sprintf(byte_68241C, byte_682804, v1);
         }
         return false;
@@ -3878,7 +3878,7 @@ bool sub_579840(int64_t obj, bool a2)
     if (IS_WEAR_INV_LOC(item_inventory_location_get(obj))) {
         if (training < TRAINING_EXPERT) {
             if (!a2) {
-                sub_414020(qword_682C78, inven_ui_pc_obj, 5, byte_68241C);
+                dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 5, byte_68241C);
             }
             return false;
         }
@@ -3889,7 +3889,7 @@ bool sub_579840(int64_t obj, bool a2)
     if ((obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0) {
         if (training < TRAINING_MASTER) {
             if (!a2) {
-                sub_414020(qword_682C78, inven_ui_pc_obj, 6, byte_68241C);
+                dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 6, byte_68241C);
             }
             return false;
         }
@@ -3899,14 +3899,14 @@ bool sub_579840(int64_t obj, bool a2)
 
     if (!a2) {
         if (v2) {
-            sub_414020(qword_682C78, inven_ui_pc_obj, 7, byte_68241C);
+            dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 7, byte_68241C);
             strcat(byte_68241C, " ");
             pos = strlen(byte_68241C);
         } else {
             pos = 0;
         }
 
-        sub_414020(qword_682C78, inven_ui_pc_obj, 8, byte_682804);
+        dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 8, byte_682804);
         sprintf(&(byte_68241C[pos]), byte_682804, v1);
     }
 

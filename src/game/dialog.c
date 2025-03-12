@@ -904,15 +904,15 @@ void dialog_copy_npc_witness_pc_critical_msg(int64_t npc_obj, int64_t pc_obj, in
 }
 
 // 0x414020
-void sub_414020(int64_t a1, int64_t a2, int a3, char* a4)
+void dialog_copy_npc_gamble_msg(int64_t npc_obj, int64_t pc_obj, int type, char* buffer)
 {
-    DialogState v1;
+    DialogState state;
     int start;
     int end;
 
-    sub_413360(a1, a2, &v1);
+    sub_413360(npc_obj, pc_obj, &state);
 
-    switch (a3) {
+    switch (type) {
     case 0:
         start = 3100;
         end = 3199;
@@ -957,7 +957,7 @@ void sub_414020(int64_t a1, int64_t a2, int a3, char* a4)
         return;
     }
 
-    dialog_copy_npc_generic_msg(a4, &v1, start, end);
+    dialog_copy_npc_generic_msg(buffer, &state, start, end);
 }
 
 // 0x414130
