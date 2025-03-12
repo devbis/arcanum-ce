@@ -1811,7 +1811,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 && item_gold_get(inven_ui_pc_obj) >= dword_681440) {
                 sub_467440(v1, qword_682C78, inven_ui_pc_obj, dword_681440);
             } else {
-                sub_413910(qword_682C78, inven_ui_pc_obj, byte_68241C);
+                dialog_copy_npc_not_enough_money_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             }
             break;
         case INVEN_UI_MODE_NPC_REPAIR:
@@ -1820,7 +1820,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 && item_gold_get(inven_ui_pc_obj) >= dword_681440) {
                 sub_4C8E60(v1, qword_682C78, inven_ui_pc_obj, dword_681440);
             } else {
-                sub_413910(qword_682C78, inven_ui_pc_obj, byte_68241C);
+                dialog_copy_npc_not_enough_money_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             }
             break;
         default:
@@ -2128,7 +2128,7 @@ void sub_575200(int a1)
 
         if (dword_681440 != 0 || dword_6810FC) {
             if (item_gold_get(inven_ui_pc_obj) < dword_681440) {
-                sub_413910(qword_682C78, inven_ui_pc_obj, byte_68241C);
+                dialog_copy_npc_not_enough_money_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
                 sub_575770();
             } else {
                 sub_5788C0(qword_6810E0, inven_ui_pc_obj, a1, 1);
