@@ -3966,7 +3966,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                     }
                     if (critter_is_active(node->obj)) {
                         if (dword_5F8488 != NULL && critter_is_active(node->obj)) {
-                            sub_414130(node->obj, critter_obj, str, &v2);
+                            dialog_copy_npc_warning_msg(node->obj, critter_obj, str, &v2);
                             dword_5F8488(node->obj, critter_obj, str, v2);
                         }
                     }
