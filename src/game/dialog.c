@@ -796,17 +796,17 @@ void dialog_copy_npc_wont_follow_msg(int64_t npc_obj, int64_t pc_obj, int reason
 }
 
 // 0x413BE0
-void sub_413BE0(int64_t a1, int64_t a2, char* a3, int* a4)
+void dialog_copy_npc_order_ok_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (sub_4AD800(a1, a2, 1) == 0) {
-        sub_413360(a1, a2, &v1);
-        dialog_copy_npc_generic_msg(a3, &v1, 2100, 2199);
-        *a4 = v1.speech_id;
+    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
+        dialog_copy_npc_generic_msg(buffer, &state, 2100, 2199);
+        *speech_id_ptr = state.speech_id;
     } else {
-        a3[0] = '\0';
-        *a4 = -1;
+        buffer[0] = '\0';
+        *speech_id_ptr = -1;
     }
 }
 
@@ -2154,7 +2154,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             newspaper_queue(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_CE:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
+            dialog_copy_npc_order_ok_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 5;
             v57 = false;
             break;
@@ -2164,7 +2164,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 stat_base_get(a1->pc_obj, STAT_FATE_POINTS) + 1);
             break;
         case DIALOG_ACTION_SU:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
+            dialog_copy_npc_order_ok_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 7;
             v57 = false;
             break;
@@ -2172,12 +2172,12 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             critter_origin_set(a1->npc_obj, value);
             break;
         case DIALOG_ACTION_II:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
+            dialog_copy_npc_order_ok_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 8;
             v57 = false;
             break;
         case DIALOG_ACTION_RI:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
+            dialog_copy_npc_order_ok_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 9;
             v57 = false;
             break;
