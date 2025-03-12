@@ -177,7 +177,7 @@ void sub_571CB0(S4F2810* a1)
         } else {
             item_obj = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
             dialog_copy_npc_let_me_handle_msg(skill_invocation.source.obj, pc_obj, str);
-            sub_568430(skill_invocation.source.obj, pc_obj, str, 0);
+            dialog_ui_float_line(skill_invocation.source.obj, pc_obj, str, 0);
             if (item_obj == OBJ_HANDLE_NULL) {
                 anim_goal_use_item_on_obj_with_skill(skill_invocation.source.obj,
                     OBJ_HANDLE_NULL,

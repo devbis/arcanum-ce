@@ -467,7 +467,7 @@ void sub_412F60(int dlg)
 }
 
 // 0x412FD0
-bool sub_412FD0(DialogState* a1)
+bool sub_412FD0(DialogState* state)
 {
     int64_t pc_loc;
     int64_t npc_loc;
@@ -475,16 +475,16 @@ bool sub_412FD0(DialogState* a1)
     int64_t pc_loc_y;
     int64_t npc_loc_y;
 
-    if (ai_can_speak(a1->npc_obj, a1->pc_obj, false) != AI_SPEAK_OK) {
+    if (ai_can_speak(state->npc_obj, state->pc_obj, false) != AI_SPEAK_OK) {
         return false;
     }
 
-    sub_4C1020(a1->npc_obj, a1->pc_obj);
+    sub_4C1020(state->npc_obj, state->pc_obj);
 
-    if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
-        if (player_is_pc_obj(a1->pc_obj)) {
-            pc_loc = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
-            npc_loc = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
+    if (critter_is_dead(state->npc_obj) || sub_4AE120(state->npc_obj, state->pc_obj) == 0) {
+        if (player_is_pc_obj(state->pc_obj)) {
+            pc_loc = obj_field_int64_get(state->pc_obj, OBJ_F_LOCATION);
+            npc_loc = obj_field_int64_get(state->npc_obj, OBJ_F_LOCATION);
             location_xy(pc_loc, &tmp, &pc_loc_y);
             location_xy(npc_loc, &tmp, &npc_loc_y);
             if (npc_loc_y > pc_loc_y) {
@@ -494,74 +494,76 @@ bool sub_412FD0(DialogState* a1)
             }
         }
 
-        a1->field_17EC = a1->num;
-        a1->field_17E8 = 0;
-        sub_414E60(a1, 0);
+        state->field_17EC = state->num;
+        state->field_17E8 = 0;
+        sub_414E60(state, 0);
     } else {
-        dialog_copy_npc_race_specific_msg(a1->reply, a1, 1000);
-        a1->field_17E8 = 4;
+        dialog_copy_npc_race_specific_msg(state->reply, state, 1000);
+        state->field_17E8 = 4;
     }
 
     return true;
 }
 
 // 0x413130
-void sub_413130(DialogState* a1, int a2)
+void sub_413130(DialogState* state, int index)
 {
     int v1;
     int v2;
     int v3;
 
-    if (a1->field_17E8 != 4
-        && a1->field_17E8 != 5
-        && a1->field_17E8 != 7
-        && a1->field_17E8 != 6
-        && a1->field_17E8 != 8
-        && a1->field_17E8 != 9) {
-        if (ai_can_speak(a1->npc_obj, a1->pc_obj, false) != AI_SPEAK_OK) {
-            a1->field_17E8 = 1;
-            return;
-        }
+    if (state->field_17E8 == 4
+        || state->field_17E8 == 5
+        || state->field_17E8 == 7
+        || state->field_17E8 == 6
+        || state->field_17E8 == 8
+        || state->field_17E8 == 9) {
+        return;
+    }
 
-        if (a1->field_17E8 == 3) {
-            sub_417590(a1->field_17EC, &v1, &v2);
-            v3 = 0;
-        } else if (sub_415BA0(a1, a1->actions[a2], a2)) {
-            v1 = a1->field_17F0[a2];
-            v2 = a1->field_1804[a2];
-            v3 = a1->field_1818[a2];
-        } else {
-            return;
-        }
+    if (ai_can_speak(state->npc_obj, state->pc_obj, false) != AI_SPEAK_OK) {
+        state->field_17E8 = 1;
+        return;
+    }
 
-        if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
-            sub_414810(v1, v2, v3, a2, a1);
-        } else {
-            dialog_copy_npc_race_specific_msg(a1->reply, a1, 1000);
-            a1->field_17E8 = 4;
-        }
+    if (state->field_17E8 == 3) {
+        sub_417590(state->field_17EC, &v1, &v2);
+        v3 = 0;
+    } else if (sub_415BA0(state, state->actions[index], index)) {
+        v1 = state->field_17F0[index];
+        v2 = state->field_1804[index];
+        v3 = state->field_1818[index];
+    } else {
+        return;
+    }
+
+    if (critter_is_dead(state->npc_obj) || sub_4AE120(state->npc_obj, state->pc_obj) == 0) {
+        sub_414810(v1, v2, v3, index, state);
+    } else {
+        dialog_copy_npc_race_specific_msg(state->reply, state, 1000);
+        state->field_17E8 = 4;
     }
 }
 
 // 0x413280
-void sub_413280(DialogState* a1)
+void sub_413280(DialogState* state)
 {
-    sub_4C10A0(a1->npc_obj, a1->pc_obj);
+    sub_4C10A0(state->npc_obj, state->pc_obj);
 }
 
 // 0x4132A0
-void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
+void sub_4132A0(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (ai_can_speak(a1, a2, false) == AI_SPEAK_OK) {
-        dialog_state_init(a1, a2, &v1);
-        if (critter_pc_leader_get(a1) == a2) {
-            sub_419260(&v1, "1 0, 2 0, 3 0, 4 0, 5 0, 6 0, 7 0, 8 0");
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
+        dialog_state_init(npc_obj, pc_obj, &state);
+        if (critter_pc_leader_get(npc_obj) == pc_obj) {
+            sub_419260(&state, "1 0, 2 0, 3 0, 4 0, 5 0, 6 0, 7 0, 8 0");
         } else {
-            sub_419260(&v1, NULL);
+            sub_419260(&state, NULL);
         }
-        strcpy(buffer, v1.reply);
+        strcpy(buffer, state.reply);
     } else {
         buffer[0] = '\0';
     }

@@ -76,12 +76,12 @@ typedef struct ScriptState {
 static_assert(sizeof(ScriptState) == 0x418, "wrong size");
 
 static int script_execute_condition(ScriptCondition* condition, int line, ScriptState* state);
-static int script_execute_action(ScriptAction* action, int index, ScriptState* state);
+static int script_execute_action(ScriptAction* action, int line, ScriptState* state);
 static bool sub_44AFF0(TimeEvent* timeevent);
 static void sub_44B030(ScriptAction* action, ScriptState* state);
 static void sub_44B170(ScriptAction* action, ScriptState* state);
-static void sub_44B1F0(ScriptAction* action, ScriptState* state);
-static void sub_44B390(ScriptAction* action, ScriptState* state);
+static void script_float_line(ScriptAction* action, ScriptState* state);
+static void script_print_line(ScriptAction* action, ScriptState* state);
 static int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* state, int64_t* objs, ObjectList* l);
 static void sub_44B8F0(ScriptFocusObject type, ObjectList* l);
 static int64_t script_get_obj(ScriptFocusObject type, int index, ScriptState* state);
@@ -138,10 +138,10 @@ static IsoRedrawFunc* script_iso_window_redraw;
 static int dword_5E2FE4;
 
 // 0x5E2FE8
-static Func5E2FE8* dword_5E2FE8;
+static ScriptFloatLineFunc* script_float_line_func;
 
 // 0x5E2FEC
-static Func5E2FEC* dword_5E2FEC;
+static ScriptStartDialogFunc* script_start_dialog_func;
 
 // 0x5E2FF0
 static ScriptCacheEntry* script_cache_entries;
@@ -163,8 +163,8 @@ bool script_init(GameInitInfo* init_info)
         script_cache_entries[index].script_id = 0;
     }
 
-    dword_5E2FEC = NULL;
-    dword_5E2FE8 = NULL;
+    script_start_dialog_func = NULL;
+    script_float_line_func = NULL;
     dword_5E2FA4 = 0;
 
     for (index = 0; index < MAX_GL_VARS; index++) {
@@ -271,10 +271,10 @@ bool script_save(TigFile* stream)
 }
 
 // 0x444990
-void sub_444990(Func5E2FEC* a1, Func5E2FE8* a2)
+void script_set_callbacks(ScriptStartDialogFunc* start_dialog_func, ScriptFloatLineFunc* float_line_func)
 {
-    dword_5E2FEC = a1;
-    dword_5E2FE8 = a2;
+    script_start_dialog_func = start_dialog_func;
+    script_float_line_func = float_line_func;
 }
 
 // 0x4449B0
@@ -1539,7 +1539,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 }
 
 // 0x447220
-int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
+int script_execute_action(ScriptAction* action, int line, ScriptState* state)
 {
     ObjectList objects;
     int64_t handles[100];
@@ -1553,7 +1553,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GOTO:
         return script_get_value(action->op_type[0], action->op_value[0], state);
     case SAT_DIALOG:
-        if (dword_5E2FEC != NULL && sub_40DA20(state->invocation->triggerer_obj)) {
+        if (script_start_dialog_func != NULL && sub_40DA20(state->invocation->triggerer_obj)) {
             int num;
             Script scr;
 
@@ -1567,10 +1567,10 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
                 obj_arrayfield_script_set(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
             }
 
-            dword_5E2FEC(state->invocation->triggerer_obj,
+            script_start_dialog_func(state->invocation->triggerer_obj,
                 state->invocation->attachee_obj,
                 state->invocation->script->num,
-                a2,
+                line,
                 num);
         }
         return RETURN_AND_SKIP_DEFAULT;
@@ -1668,7 +1668,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         }
 
         state->field_4 = 0;
-        state->field_C = a2 + 1;
+        state->field_C = line + 1;
         state->field_398 = action->op_type[0];
         state->loop_cnt = script_resolve_focus_obj(action->op_type[0],
             action->op_value[0],
@@ -1717,10 +1717,10 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         return NEXT;
     }
     case SAT_FLOAT_LINE:
-        sub_44B1F0(action, state);
+        script_float_line(action, state);
         return NEXT;
     case SAT_PRINT_LINE:
-        sub_44B390(action, state);
+        script_print_line(action, state);
         return NEXT;
     case SAT_ADD_BLESSING: {
         int bless = script_get_value(action->op_type[0], action->op_value[0], state);
@@ -2892,7 +2892,7 @@ void sub_44B170(ScriptAction* action, ScriptState* state)
 }
 
 // 0x44B1F0
-void sub_44B1F0(ScriptAction* action, ScriptState* state)
+void script_float_line(ScriptAction* action, ScriptState* state)
 {
     char path[TIG_MAX_PATH];
     DialogState v1;
@@ -2901,7 +2901,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
     int cnt;
     int index;
 
-    if (dword_5E2FE8 == NULL) {
+    if (script_float_line_func == NULL) {
         return;
     }
 
@@ -2933,7 +2933,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
     for (index = 0; index < cnt; index++) {
         v1.npc_obj = objs[index];
         sub_413A30(&v1, true);
-        dword_5E2FE8(objs[index], v1.pc_obj, v1.reply, v1.speech_id);
+        script_float_line_func(objs[index], v1.pc_obj, v1.reply, v1.speech_id);
     }
 
     sub_44B8F0(action->op_type[1], &objects);
@@ -2941,7 +2941,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
 }
 
 // 0x44B390
-void sub_44B390(ScriptAction* action, ScriptState* state)
+void script_print_line(ScriptAction* action, ScriptState* state)
 {
     char path[TIG_MAX_PATH];
     DialogState v1;

@@ -123,7 +123,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_DC = sub_57CFA0;
     callbacks.field_E0 = sub_575C50;
     callbacks.field_E4 = gameuilib_reset;
-    callbacks.field_E8 = sub_567460;
+    callbacks.field_E8 = dialog_ui_start_dialog;
     callbacks.field_EC = sub_5678D0;
     callbacks.field_F0 = sub_568880;
     callbacks.field_F4 = sub_568220;

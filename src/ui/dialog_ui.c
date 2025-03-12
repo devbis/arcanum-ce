@@ -28,12 +28,12 @@
 #define MAX_ENTRIES 8
 
 typedef struct DialogUiEntry {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ DialogState field_8;
+    /* 0000 */ int slot;
+    /* 0004 */ int dlg;
+    /* 0008 */ DialogState state;
     /* 1850 */ int field_1850;
-    /* 1854 */ int field_1854;
-    /* 1858 */ int field_1858;
+    /* 1854 */ int script_num;
+    /* 1858 */ int script_line;
     /* 185C */ char field_185C;
     /* 185D */ char field_185D;
     /* 185E */ char field_185E;
@@ -44,7 +44,7 @@ static DialogUiEntry* sub_567420(int64_t obj);
 static void sub_5679C0(DialogUiEntry* entry);
 static void sub_567D60(DialogUiEntry* entry);
 static bool sub_567E30(DialogUiEntry* entry, int a2);
-static bool sub_5680A0(TigMessage* msg);
+static bool dialog_ui_message_filter(TigMessage* msg);
 static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
@@ -83,12 +83,12 @@ bool dialog_ui_init(GameInitInfo* init_info)
 
     for (index = 0; index < MAX_ENTRIES; index++) {
         stru_66DAB8[index].field_1850 = false;
-        stru_66DAB8[index].field_0 = index;
+        stru_66DAB8[index].slot = index;
     }
 
-    sub_444990(sub_567460, sub_568430);
-    sub_4A84D0(sub_5678D0, sub_568430);
-    sub_4C2EA0(sub_568430);
+    script_set_callbacks(dialog_ui_start_dialog, dialog_ui_float_line);
+    sub_4A84D0(sub_5678D0, dialog_ui_float_line);
+    broadcast_set_float_line_func(dialog_ui_float_line);
     dialog_ui_speech_handle = TIG_SOUND_HANDLE_INVALID;
 
     return true;
@@ -136,124 +136,124 @@ DialogUiEntry* sub_567420(int64_t obj)
 }
 
 // 0x567460
-void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
+void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int script_line, int num)
 {
     DialogUiEntry* entry;
     char path[TIG_MAX_PATH];
     char str[2000];
     Packet44 pkt;
 
-    if (critter_is_dead(a1)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 
-    if (critter_is_unconscious(a1)) {
+    if (critter_is_unconscious(pc_obj)) {
         return;
     }
 
-    if (ai_can_speak(a2, a1, false) != AI_SPEAK_OK) {
+    if (ai_can_speak(npc_obj, pc_obj, false) != AI_SPEAK_OK) {
         return;
     }
 
-    if (player_is_pc_obj(a1) && sub_551A00() == 3) {
+    if (player_is_pc_obj(pc_obj) && sub_551A00() == 3) {
         return;
     }
 
-    if (combat_critter_is_combat_mode_active(a1)) {
-        if (!sub_4B3D90(a1)) {
+    if (combat_critter_is_combat_mode_active(pc_obj)) {
+        if (!sub_4B3D90(pc_obj)) {
             return;
         }
-        combat_critter_deactivate_combat_mode(a1);
+        combat_critter_deactivate_combat_mode(pc_obj);
     }
 
-    entry = sub_567420(a1);
+    entry = sub_567420(pc_obj);
     if (multiplayer_is_locked() || tig_net_is_host()) {
-        if (a3 != 0 && script_name_build_dlg_name(a3, path)) {
-            if (!dialog_load(path, &(entry->field_4))) {
+        if (script_num != 0 && script_name_build_dlg_name(script_num, path)) {
+            if (!dialog_load(path, &(entry->dlg))) {
                 return;
             }
 
-            entry->field_8.dlg = entry->field_4;
-            entry->field_8.pc_obj = a1;
-            entry->field_8.npc_obj = a2;
-            entry->field_8.num = a5;
-            entry->field_8.script_num = a3;
-            if (!sub_412FD0(&(entry->field_8))) {
-                dialog_unload(entry->field_4);
+            entry->state.dlg = entry->dlg;
+            entry->state.pc_obj = pc_obj;
+            entry->state.npc_obj = npc_obj;
+            entry->state.num = num;
+            entry->state.script_num = script_num;
+            if (!sub_412FD0(&(entry->state))) {
+                dialog_unload(entry->dlg);
                 return;
             }
 
-            if (entry->field_8.field_17E8 == 4) {
-                sub_568540(entry->field_8.npc_obj,
-                    entry->field_8.pc_obj,
+            if (entry->state.field_17E8 == 4) {
+                sub_568540(entry->state.npc_obj,
+                    entry->state.pc_obj,
                     TB_TYPE_WHITE,
                     TB_EXPIRE_DEFAULT,
-                    entry->field_8.reply,
-                    entry->field_8.speech_id);
-                sub_413280(&(entry->field_8));
-                dialog_unload(entry->field_4);
+                    entry->state.reply,
+                    entry->state.speech_id);
+                sub_413280(&(entry->state));
+                dialog_unload(entry->dlg);
                 return;
             }
 
-            if (player_is_pc_obj(a1)) {
-                if (!intgame_dialog_begin(sub_5680A0)) {
-                    sub_413280(&(entry->field_8));
-                    dialog_unload(entry->field_4);
+            if (player_is_pc_obj(pc_obj)) {
+                if (!intgame_dialog_begin(dialog_ui_message_filter)) {
+                    sub_413280(&(entry->state));
+                    dialog_unload(entry->dlg);
                     return;
                 }
 
                 dword_67B964 = true;
 
                 if (!intgame_is_compact_interface()) {
-                    sub_57CD60(a1, a2, str);
-                    sub_553BE0(a1, a2, str);
-                    sub_43C270(a2);
+                    sub_57CD60(pc_obj, npc_obj, str);
+                    sub_553BE0(pc_obj, npc_obj, str);
+                    sub_43C270(npc_obj);
                 }
             }
 
-            sub_424070(a1, 3, 0, true);
-            anim_goal_rotate(a1, object_rot(a1, a2));
+            sub_424070(pc_obj, 3, 0, true);
+            anim_goal_rotate(pc_obj, object_rot(pc_obj, npc_obj));
 
-            if (critter_is_concealed(a1)) {
-                critter_set_concealed(a1, false);
+            if (critter_is_concealed(pc_obj)) {
+                critter_set_concealed(pc_obj, false);
             }
 
-            if (critter_is_concealed(a2)) {
-                critter_set_concealed(a2, false);
+            if (critter_is_concealed(npc_obj)) {
+                critter_set_concealed(npc_obj, false);
             }
 
-            entry->field_1854 = a3;
-            entry->field_1858 = a4;
+            entry->script_num = script_num;
+            entry->script_line = script_line;
             entry->field_1850 = 1;
 
             if (tig_net_is_active()
                 && tig_net_is_host()) {
                 pkt.type = 44;
                 pkt.subtype = 0;
-                pkt.d.d.field_8 = sub_407EF0(a1);
-                pkt.d.d.field_20 = sub_407EF0(a2);
-                pkt.d.d.field_38 = a3;
-                pkt.d.d.field_3C = a4;
-                pkt.d.d.field_40 = a5;
+                pkt.d.d.field_8 = sub_407EF0(pc_obj);
+                pkt.d.d.field_20 = sub_407EF0(npc_obj);
+                pkt.d.d.field_38 = script_num;
+                pkt.d.d.field_3C = script_line;
+                pkt.d.d.field_40 = num;
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
 
             sub_5684C0(entry);
             sub_567D60(entry);
         } else {
-            sub_5681C0(a1, a2);
+            sub_5681C0(pc_obj, npc_obj);
         }
     } else {
-        if (a3 != 0
-            && script_name_build_dlg_name(a3, path)
-            && player_is_pc_obj(a1)) {
-            if (intgame_dialog_begin(sub_5680A0)) {
-                entry->field_8.num = a5;
-                entry->field_8.pc_obj = a1;
-                entry->field_8.npc_obj = a2;
-                entry->field_8.script_num = a3;
-                entry->field_1854 = a3;
-                entry->field_1858 = a4;
+        if (script_num != 0
+            && script_name_build_dlg_name(script_num, path)
+            && player_is_pc_obj(pc_obj)) {
+            if (intgame_dialog_begin(dialog_ui_message_filter)) {
+                entry->state.num = num;
+                entry->state.pc_obj = pc_obj;
+                entry->state.npc_obj = npc_obj;
+                entry->state.script_num = script_num;
+                entry->script_num = script_num;
+                entry->script_line = script_line;
                 entry->field_1850 = 1;
 
                 dword_67B964 = true;
@@ -284,14 +284,14 @@ void sub_5678D0(int64_t obj, int a2)
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        dialog_unload(entry->field_4);
+        dialog_unload(entry->dlg);
     }
 
-    tb_expire_in(entry->field_8.npc_obj, TB_EXPIRE_DEFAULT);
+    tb_expire_in(entry->state.npc_obj, TB_EXPIRE_DEFAULT);
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        sub_413280(&(entry->field_8));
+        sub_413280(&(entry->state));
     }
 
     if (tig_net_is_active()
@@ -313,11 +313,11 @@ void sub_5679C0(DialogUiEntry* entry)
     entry->field_1850 = false;
 
     if (!tig_net_is_active() || tig_net_is_host()) {
-        dialog_unload(entry->field_4);
+        dialog_unload(entry->dlg);
     }
 
     if (!tig_net_is_active() || tig_net_is_host()) {
-        sub_413280(&(entry->field_8));
+        sub_413280(&(entry->state));
     }
 }
 
@@ -342,7 +342,7 @@ void sub_567A60(int64_t obj)
 {
     sub_567420(obj)->field_1850 = true;
     if (player_is_pc_obj(obj)) {
-        if (intgame_dialog_begin(sub_5680A0)) {
+        if (intgame_dialog_begin(dialog_ui_message_filter)) {
             dword_67B964 = true;
         }
     }
@@ -354,37 +354,37 @@ void sub_567AB0(DialogUiEntry* entry, DialogSerializedData* serialized_data, cha
     int index;
     int pos;
 
-    if (entry->field_8.pc_obj != OBJ_HANDLE_NULL) {
-        serialized_data->field_8 = sub_407EF0(entry->field_8.pc_obj);
+    if (entry->state.pc_obj != OBJ_HANDLE_NULL) {
+        serialized_data->field_8 = sub_407EF0(entry->state.pc_obj);
     } else {
         serialized_data->field_8.type = OID_TYPE_NULL;
     }
 
-    if (entry->field_8.npc_obj != OBJ_HANDLE_NULL) {
-        serialized_data->field_20 = sub_407EF0(entry->field_8.npc_obj);
+    if (entry->state.npc_obj != OBJ_HANDLE_NULL) {
+        serialized_data->field_20 = sub_407EF0(entry->state.npc_obj);
     } else {
         serialized_data->field_20.type = OID_TYPE_NULL;
     }
 
-    serialized_data->field_3C = entry->field_8.script_num;
+    serialized_data->field_3C = entry->state.script_num;
     serialized_data->field_40 = 0;
-    serialized_data->field_44 = (int)strlen(entry->field_8.reply) + 1;
-    strncpy(buffer, entry->field_8.reply, serialized_data->field_44);
-    serialized_data->field_78 = entry->field_8.field_17E8;
-    serialized_data->field_7C = entry->field_8.field_17EC;
+    serialized_data->field_44 = (int)strlen(entry->state.reply) + 1;
+    strncpy(buffer, entry->state.reply, serialized_data->field_44);
+    serialized_data->field_78 = entry->state.field_17E8;
+    serialized_data->field_7C = entry->state.field_17EC;
 
     pos = serialized_data->field_44;
     for (index = 0; index < 5; index++) {
         serialized_data->field_50[index] = pos;
-        serialized_data->field_64[index] = (int)strlen(entry->field_8.options[index]) + 1;
-        strncpy(&(buffer[pos]), entry->field_8.options[index], serialized_data->field_64[index]);
-        serialized_data->field_80[index] = entry->field_8.field_17F0[index];
-        serialized_data->field_94[index] = entry->field_8.field_1804[index];
-        serialized_data->field_A8[index] = entry->field_8.field_1818[index];
+        serialized_data->field_64[index] = (int)strlen(entry->state.options[index]) + 1;
+        strncpy(&(buffer[pos]), entry->state.options[index], serialized_data->field_64[index]);
+        serialized_data->field_80[index] = entry->state.field_17F0[index];
+        serialized_data->field_94[index] = entry->state.field_1804[index];
+        serialized_data->field_A8[index] = entry->state.field_1818[index];
     }
 
-    serialized_data->field_BC = entry->field_8.field_1840;
-    serialized_data->field_C0 = entry->field_8.seed;
+    serialized_data->field_BC = entry->state.field_1840;
+    serialized_data->field_C0 = entry->state.seed;
 }
 
 // 0x567C30
@@ -393,33 +393,33 @@ void sub_567C30(DialogSerializedData* serialized_data, DialogUiEntry* entry, con
     int index;
 
     if (serialized_data->field_8.type != OID_TYPE_NULL) {
-        entry->field_8.pc_obj = objp_perm_lookup(serialized_data->field_8);
+        entry->state.pc_obj = objp_perm_lookup(serialized_data->field_8);
     } else {
-        entry->field_8.pc_obj = OBJ_HANDLE_NULL;
+        entry->state.pc_obj = OBJ_HANDLE_NULL;
     }
 
     if (serialized_data->field_20.type != OID_TYPE_NULL) {
-        entry->field_8.npc_obj = objp_perm_lookup(serialized_data->field_20);
+        entry->state.npc_obj = objp_perm_lookup(serialized_data->field_20);
     } else {
-        entry->field_8.npc_obj = OBJ_HANDLE_NULL;
+        entry->state.npc_obj = OBJ_HANDLE_NULL;
     }
 
-    entry->field_8.script_num = serialized_data->field_3C;
-    entry->field_8.num = serialized_data->field_38;
-    strncpy(entry->field_8.reply, &(buffer[serialized_data->field_40]), serialized_data->field_44);
-    entry->field_8.num_options = serialized_data->field_4C;
-    entry->field_8.field_17E8 = serialized_data->field_78;
-    entry->field_8.field_17EC = serialized_data->field_7C;
+    entry->state.script_num = serialized_data->field_3C;
+    entry->state.num = serialized_data->field_38;
+    strncpy(entry->state.reply, &(buffer[serialized_data->field_40]), serialized_data->field_44);
+    entry->state.num_options = serialized_data->field_4C;
+    entry->state.field_17E8 = serialized_data->field_78;
+    entry->state.field_17EC = serialized_data->field_7C;
 
     for (index = 0; index < 5; index++) {
-        strncpy(entry->field_8.options[index], &(buffer[serialized_data->field_50[index]]), serialized_data->field_64[index]);
-        entry->field_8.field_17F0[index] = serialized_data->field_80[index];
-        entry->field_8.field_1804[index] = serialized_data->field_94[index];
-        entry->field_8.field_1818[index] = serialized_data->field_A8[index];
+        strncpy(entry->state.options[index], &(buffer[serialized_data->field_50[index]]), serialized_data->field_64[index]);
+        entry->state.field_17F0[index] = serialized_data->field_80[index];
+        entry->state.field_1804[index] = serialized_data->field_94[index];
+        entry->state.field_1818[index] = serialized_data->field_A8[index];
     }
 
-    entry->field_8.field_1840 = serialized_data->field_BC;
-    entry->field_8.seed = serialized_data->field_C0;
+    entry->state.field_1840 = serialized_data->field_BC;
+    entry->state.seed = serialized_data->field_C0;
 }
 
 // 0x567D60
@@ -432,10 +432,10 @@ void sub_567D60(DialogUiEntry* entry)
         && tig_net_is_host()) {
         stru_679DC0.pkt.type = 44;
         stru_679DC0.pkt.subtype = 3;
-        stru_679DC0.pkt.d.e.field_8 = entry->field_0;
+        stru_679DC0.pkt.d.e.field_8 = entry->slot;
         stru_679DC0.pkt.d.e.field_C = entry->field_1850;
-        stru_679DC0.pkt.d.e.field_10 = entry->field_1854;
-        stru_679DC0.pkt.d.e.field_14 = entry->field_1858;
+        stru_679DC0.pkt.d.e.field_10 = entry->script_num;
+        stru_679DC0.pkt.d.e.field_14 = entry->script_line;
         sub_567AB0(entry, &(stru_679DC0.pkt.d.e.serialized_data), stru_679DC0.buffer);
 
         size = sizeof(stru_679DC0) + stru_679DC0.pkt.d.e.serialized_data.field_44;
@@ -458,51 +458,51 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(entry->field_8.pc_obj);
-    sub_5686C0(entry->field_8.pc_obj,
-        entry->field_8.npc_obj,
+    is_pc = player_is_pc_obj(entry->state.pc_obj);
+    sub_5686C0(entry->state.pc_obj,
+        entry->state.npc_obj,
         TB_TYPE_GREEN,
         TB_EXPIRE_DEFAULT,
-        entry->field_8.options[a2]);
-    mp_tb_remove(entry->field_8.npc_obj);
+        entry->state.options[a2]);
+    mp_tb_remove(entry->state.npc_obj);
     dialog_ui_speech_stop();
-    sub_413130(&(entry->field_8), a2);
+    sub_413130(&(entry->state), a2);
     sub_567D60(entry);
 
-    switch (entry->field_8.field_17E8) {
+    switch (entry->state.field_17E8) {
     case 0:
         sub_5684C0(entry);
         break;
     case 1:
-        sub_5678D0(entry->field_8.pc_obj, 0);
+        sub_5678D0(entry->state.pc_obj, 0);
         sub_568480(entry, 0);
         break;
     case 2:
-        sub_5678D0(entry->field_8.pc_obj, 0);
-        sub_568480(entry, entry->field_8.field_17EC);
+        sub_5678D0(entry->state.pc_obj, 0);
+        sub_568480(entry, entry->state.field_17EC);
         break;
     case 3:
         if (is_pc) {
             intgame_dialog_clear();
-            inven_ui_open(entry->field_8.pc_obj, entry->field_8.npc_obj, INVEN_UI_MODE_BARTER);
+            inven_ui_open(entry->state.pc_obj, entry->state.npc_obj, INVEN_UI_MODE_BARTER);
         }
         if (tig_net_is_active()) {
-            sub_5678D0(entry->field_8.pc_obj, 0);
+            sub_5678D0(entry->state.pc_obj, 0);
         }
         break;
     case 4:
-        sub_568540(entry->field_8.npc_obj,
-            entry->field_8.pc_obj,
+        sub_568540(entry->state.npc_obj,
+            entry->state.pc_obj,
             TB_TYPE_WHITE,
             TB_EXPIRE_DEFAULT,
-            entry->field_8.reply,
-            entry->field_8.speech_id);
-        sub_5678D0(entry->field_8.pc_obj, 0);
+            entry->state.reply,
+            entry->state.speech_id);
+        sub_5678D0(entry->state.pc_obj, 0);
         break;
     case 5:
         if (is_pc) {
             intgame_dialog_clear();
-            charedit_create(entry->field_8.npc_obj, 2);
+            charedit_create(entry->state.npc_obj, 2);
         }
         break;
     case 6:
@@ -514,25 +514,25 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 7:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_56D130(entry->field_8.npc_obj, entry->field_8.pc_obj);
+            sub_56D130(entry->state.npc_obj, entry->state.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
             intgame_dialog_clear();
-            mp_ui_show_inven_npc_identify(entry->field_8.pc_obj, entry->field_8.npc_obj);
+            mp_ui_show_inven_npc_identify(entry->state.pc_obj, entry->state.npc_obj);
         }
         if (tig_net_is_active()) {
-            sub_5678D0(entry->field_8.pc_obj, 0);
+            sub_5678D0(entry->state.pc_obj, 0);
         }
         break;
     case 9:
         if (is_pc) {
             intgame_dialog_clear();
-            inven_ui_open(entry->field_8.pc_obj, entry->field_8.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
+            inven_ui_open(entry->state.pc_obj, entry->state.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
         }
         if (tig_net_is_active()) {
-            sub_5678D0(entry->field_8.pc_obj, 0);
+            sub_5678D0(entry->state.pc_obj, 0);
         }
         break;
     }
@@ -541,7 +541,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 }
 
 // 0x5680A0
-bool sub_5680A0(TigMessage* msg)
+bool dialog_ui_message_filter(TigMessage* msg)
 {
     DialogUiEntry* entry;
     int option;
@@ -573,7 +573,7 @@ bool sub_5680A0(TigMessage* msg)
         pkt.type = 44;
         pkt.subtype = 2;
         pkt.d.f.field_8 = sub_407EF0(player_get_pc_obj());
-        pkt.d.f.field_20 = entry->field_0;
+        pkt.d.f.field_20 = entry->slot;
         pkt.d.f.field_24 = option;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -590,12 +590,12 @@ bool sub_5681B0(DialogUiEntry* entry)
 }
 
 // 0x5681C0
-void sub_5681C0(int64_t a1, int64_t a2)
+void sub_5681C0(int64_t pc_obj, int64_t npc_obj)
 {
     char text[1000];
 
-    sub_4132A0(a2, a1, text);
-    sub_568540(a2, a1, TB_TYPE_WHITE, TB_EXPIRE_DEFAULT, text, -1);
+    sub_4132A0(npc_obj, pc_obj, text);
+    sub_568540(npc_obj, pc_obj, TB_TYPE_WHITE, TB_EXPIRE_DEFAULT, text, -1);
 }
 
 // 0x568220
@@ -605,10 +605,10 @@ void sub_568220(DialogSerializedData* serialized_data, int a2, int a3, int a4, i
 
     entry = &(stru_66DAB8[a2]);
     entry->field_1850 = a3;
-    entry->field_1854 = a4;
-    entry->field_1858 = a5;
+    entry->script_num = a4;
+    entry->script_line = a5;
     sub_567C30(serialized_data, entry, buffer);
-    entry->field_0 = a2;
+    entry->slot = a2;
     sub_568280(entry);
 }
 
@@ -617,30 +617,30 @@ bool sub_568280(DialogUiEntry *a1)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(a1->field_8.pc_obj);
+    is_pc = player_is_pc_obj(a1->state.pc_obj);
 
     if (tig_net_is_active() && !tig_net_is_host()) {
         byte_679DB8[sub_4A2B10(player_get_pc_obj())] = 0;
     }
 
-    switch (a1->field_8.field_17E8) {
+    switch (a1->state.field_17E8) {
     case 0:
         sub_5684C0(a1);
         break;
     case 1:
     case 2:
-        sub_5678D0(a1->field_8.pc_obj, 0);
+        sub_5678D0(a1->state.pc_obj, 0);
         break;
     case 3:
         if (is_pc) {
             intgame_dialog_clear();
-            inven_ui_open(a1->field_8.pc_obj, a1->field_8.npc_obj, INVEN_UI_MODE_BARTER);
+            inven_ui_open(a1->state.pc_obj, a1->state.npc_obj, INVEN_UI_MODE_BARTER);
         }
         break;
     case 5:
         if (is_pc) {
             intgame_dialog_clear();
-            charedit_create(a1->field_8.npc_obj, 2);
+            charedit_create(a1->state.npc_obj, 2);
         }
         break;
     case 6:
@@ -652,19 +652,19 @@ bool sub_568280(DialogUiEntry *a1)
     case 7:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_56D130(a1->field_8.npc_obj, a1->field_8.pc_obj);
+            sub_56D130(a1->state.npc_obj, a1->state.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
             intgame_dialog_clear();
-            mp_ui_show_inven_npc_identify(a1->field_8.pc_obj, a1->field_8.npc_obj);
+            mp_ui_show_inven_npc_identify(a1->state.pc_obj, a1->state.npc_obj);
         }
         break;
     case 9:
         if (is_pc) {
             intgame_dialog_clear();
-            inven_ui_open(a1->field_8.pc_obj, a1->field_8.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
+            inven_ui_open(a1->state.pc_obj, a1->state.npc_obj, INVEN_UI_MODE_NPC_REPAIR);
         }
         break;
     }
@@ -673,24 +673,24 @@ bool sub_568280(DialogUiEntry *a1)
 }
 
 // 0x568430
-void sub_568430(int64_t a1, int64_t a2, const char* a3, int a4)
+void dialog_ui_float_line(int64_t npc_obj, int64_t pc_obj, const char* str, int speech_id)
 {
     int type;
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC
+    type = obj_field_int32_get(npc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         ? TB_TYPE_WHITE
         : TB_TYPE_GREEN;
-    sub_568540(a1, a2, type, TB_EXPIRE_DEFAULT, a3, a4);
+    sub_568540(npc_obj, pc_obj, type, TB_EXPIRE_DEFAULT, str, speech_id);
 }
 
 // 0x568480
 void sub_568480(DialogUiEntry* entry, int a2)
 {
     if (a2 == 0) {
-        a2 = entry->field_1858 + 1;
+        a2 = entry->script_line + 1;
     }
 
-    sub_441980(entry->field_8.pc_obj, entry->field_8.npc_obj, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
+    sub_441980(entry->state.pc_obj, entry->state.npc_obj, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
 }
 
 // 0x5684C0
@@ -698,18 +698,18 @@ void sub_5684C0(DialogUiEntry* entry)
 {
     int index;
 
-    sub_568540(entry->field_8.npc_obj,
-        entry->field_8.pc_obj,
+    sub_568540(entry->state.npc_obj,
+        entry->state.pc_obj,
         TB_TYPE_WHITE,
         TB_EXPIRE_NEVER,
-        entry->field_8.reply,
-        entry->field_8.speech_id);
+        entry->state.reply,
+        entry->state.speech_id);
 
-    if (player_is_pc_obj(entry->field_8.pc_obj)) {
+    if (player_is_pc_obj(entry->state.pc_obj)) {
         intgame_dialog_clear();
 
-        for (index = 0; index < entry->field_8.num_options; index++) {
-            intgame_dialog_set_option(index, entry->field_8.options[index]);
+        for (index = 0; index < entry->state.num_options; index++) {
+            intgame_dialog_set_option(index, entry->state.options[index]);
         }
     }
 }
@@ -790,8 +790,8 @@ void sub_568830(int64_t obj)
     int index;
 
     for (index = 0; index < 8; index++) {
-        if (stru_66DAB8[index].field_8.pc_obj == obj
-            || stru_66DAB8[index].field_8.npc_obj == obj) {
+        if (stru_66DAB8[index].state.pc_obj == obj
+            || stru_66DAB8[index].state.npc_obj == obj) {
             sub_5678D0(obj, 0);
         }
     }

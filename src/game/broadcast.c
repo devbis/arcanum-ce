@@ -44,7 +44,7 @@ static char* broadcast_cmd_type_lookup[BROADCAST_CMD_TYPE_COUNT];
 static mes_file_handle_t broadcast_mes_file;
 
 // 0x5FDC88
-static Func5FDC88* dword_5FDC88;
+static BroadcastFloatLineFunc* broadcast_float_line_func;
 
 // 0x5FDC8C
 static mes_file_handle_t broadcast_multiplayer_mes_file;
@@ -70,7 +70,7 @@ bool broadcast_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_5FDC88 = NULL;
+    broadcast_float_line_func = NULL;
 
     if (!mes_load("mes\\broadcast.mes", &broadcast_mes_file)) {
         tig_debug_printf("broadcast_init: ERROR: couldn't load message file: mes\\broadcast.mes!\n");
@@ -154,9 +154,9 @@ void broadcast_exit()
 }
 
 // 0x4C2EA0
-void sub_4C2EA0(Func5FDC88* func)
+void broadcast_set_float_line_func(BroadcastFloatLineFunc* func)
 {
-    dword_5FDC88 = func;
+    broadcast_float_line_func = func;
 }
 
 // 0x4C2EB0

@@ -354,7 +354,7 @@ void sub_57A620(SkillInvocation* skill_invocation)
         sub_4C9050(skill_invocation);
         if (obj != skill_invocation->source.obj) {
             dialog_copy_npc_let_me_handle_msg(skill_invocation->source.obj, obj, str);
-            sub_568430(skill_invocation->source.obj, obj, str, 0);
+            dialog_ui_float_line(skill_invocation->source.obj, obj, str, 0);
         }
     }
 }
