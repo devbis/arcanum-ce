@@ -3502,7 +3502,7 @@ void sub_578330(int64_t a1, int64_t a2)
                 pos = 0;
             }
 
-            sub_413490(qword_682C78, inven_ui_pc_obj, byte_682804);
+            dialog_copy_npc_sell_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
             sprintf(&(byte_68241C[pos]), byte_682804, dword_681440);
 
             if (basic_skill_get_training(inven_ui_pc_obj, BASIC_SKILL_HAGGLE) >= TRAINING_APPRENTICE) {
