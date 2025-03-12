@@ -3530,7 +3530,7 @@ void sub_578330(int64_t a1, int64_t a2)
 void sub_5786C0(int64_t obj)
 {
     if (item_is_identified(obj)) {
-        sub_414540(qword_682C78, inven_ui_pc_obj, byte_68241C);
+        dialog_copy_npc_wont_identify_already_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
     } else {
         dword_681440 = sub_4B1740(9);
         sub_4145D0(qword_682C78, inven_ui_pc_obj, byte_682804);
