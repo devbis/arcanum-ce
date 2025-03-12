@@ -193,7 +193,7 @@ static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
 static void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int end);
-static void sub_418390(char* str, DialogState* a2, int start);
+static void dialog_copy_pc_class_specific_msg(char* buffer, DialogState* state, int num);
 static void sub_418460(char* str, DialogState* a2);
 static void dialog_copy_npc_class_specific_msg(char* buffer, DialogState* state, int num);
 static void dialog_copy_npc_race_specific_msg(char* buffer, DialogState* state, int num);
@@ -2395,7 +2395,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     dialog_search(a3->dlg, &entry);
 
     if (strcmpi(entry.str, "a:") == 0) {
-        sub_418390(a3->options[a2], a3, 1000);
+        dialog_copy_pc_class_specific_msg(a3->options[a2], a3, 1000);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
@@ -2456,7 +2456,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         }
         return false;
     } else if (strnicmp(entry.str, "r:", 2) == 0) {
-        sub_418390(a3->options[a2], a3, 2000);
+        dialog_copy_pc_class_specific_msg(a3->options[a2], a3, 2000);
 
         pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
@@ -3062,29 +3062,31 @@ void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int
 }
 
 // 0x418390
-void sub_418390(char* str, DialogState* a2, int start)
+void dialog_copy_pc_class_specific_msg(char* buffer, DialogState* state, int num)
 {
     int gd;
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (critter_is_dumb(a2->pc_obj)) {
-        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+    if (critter_is_dumb(state->pc_obj)) {
+        gd = stat_level_get(state->npc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_CLS_DUMB_PC2M
             : GD_CLS_DUMB_PC2F;
     } else {
-        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(state->npc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_CLS_PC2M
             : GD_CLS_PC2F;
     }
 
+    num += 50 * critter_social_class_get(state->npc_obj);
+
     dialog_load_generated(gd);
 
-    cnt = mes_entries_count_in_range(dialog_mes_files[gd], start, start + 49);
-    mes_file_entry.num = start + random_between(0, cnt - 1);
+    cnt = mes_entries_count_in_range(dialog_mes_files[gd], num, num + 49);
+    mes_file_entry.num = num + random_between(0, cnt - 1);
     mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
-    sub_416B00(str, mes_file_entry.str, a2);
+    sub_416B00(buffer, mes_file_entry.str, state);
 }
 
 // 0x418460
@@ -3415,7 +3417,7 @@ void sub_418F30(int a1, DialogState* a2)
 
     dialog_copy_npc_class_specific_msg(a2->reply, a2, 6000);
     a2->num_options = 1;
-    sub_418390(a2->options[0], a2, 1000);
+    dialog_copy_pc_class_specific_msg(a2->options[0], a2, 1000);
     a2->field_17F0[0] = a2->field_17F0[1];
     a2->field_1804[0] = a2->field_1804[1];
     a2->actions[0] = NULL;
@@ -3465,7 +3467,7 @@ void sub_4190E0(int a1, int a2, int a3, DialogState* a4)
     a4->speech_id = -1;
     rumor_known_set(a4->pc_obj, a1);
     a4->num_options = 1;
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -3474,7 +3476,7 @@ void sub_4190E0(int a1, int a2, int a3, DialogState* a4)
 // 0x419190
 void sub_419190(int a1, int a2, int a3, DialogState* a4)
 {
-    sub_418390(a4->options[a1], a4, 3000);
+    dialog_copy_pc_class_specific_msg(a4->options[a1], a4, 3000);
     a4->field_17F0[a1] = 10;
     a4->field_1804[a1] = a2;
     a4->field_1818[a1] = a3;
@@ -3859,7 +3861,7 @@ void sub_419CB0(int a1, int a2, int a3, DialogState* a4)
     anim_goal_use_skill_on(a4->npc_obj, a4->pc_obj, item_obj, a1, flags);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
     a4->num_options = 1;
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -3878,7 +3880,7 @@ void sub_419D50(int a1, int a2, int a3, DialogState* a4)
     sub_455AC0(&v1);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
     a4->num_options = 1;
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -3999,7 +4001,7 @@ void sub_41A150(int area, int a2, int a3, DialogState* a4)
 
     dialog_copy_npc_generic_msg(a4->reply, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
 
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -4044,7 +4046,7 @@ void sub_41A290(int area, int a2, int a3, DialogState* a4)
         sprintf(a4->reply, buffer, v3);
     }
 
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -4056,7 +4058,7 @@ void sub_41A290(int area, int a2, int a3, DialogState* a4)
 void sub_41A3E0(int a1, DialogState* a2)
 {
     dialog_copy_story_msg(a2->reply, a2);
-    sub_418390(a2->options[0], a2, 1000);
+    dialog_copy_pc_class_specific_msg(a2->options[0], a2, 1000);
     sub_417590(a1, a2->field_17F0, a2->field_1804);
     a2->actions[0] = NULL;
     a2->num_options = 1;
@@ -4205,7 +4207,7 @@ void sub_41A8C0(int a1, int a2, int a3, DialogState* a4)
     obj = newspaper_create(a1, loc);
     item_transfer(obj, a4->pc_obj);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
-    sub_418390(a4->options[0], a4, 1000);
+    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
