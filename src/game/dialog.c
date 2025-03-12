@@ -811,17 +811,17 @@ void dialog_copy_npc_order_ok_msg(int64_t npc_obj, int64_t pc_obj, char* buffer,
 }
 
 // 0x413C90
-void sub_413C90(int64_t a1, int64_t a2, char* a3, int* a4)
+void dialog_copy_npc_order_no_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
-        sub_413360(a1, a2, &v1);
-        dialog_copy_npc_generic_msg(a3, &v1, 2200, 2299);
-        *a4 = v1.speech_id;
+    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
+        dialog_copy_npc_generic_msg(buffer, &state, 2200, 2299);
+        *speech_id_ptr = state.speech_id;
     } else {
-        a3[0] = '\0';
-        *a4 = -1;
+        buffer[0] = '\0';
+        *speech_id_ptr = -1;
     }
 }
 
