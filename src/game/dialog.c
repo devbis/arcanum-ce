@@ -194,7 +194,7 @@ static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
 static void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int end);
 static void dialog_copy_pc_class_specific_msg(char* buffer, DialogState* state, int num);
-static void sub_418460(char* str, DialogState* a2);
+static void dialog_copy_pc_story_msg(char* buffer, DialogState* state);
 static void dialog_copy_npc_class_specific_msg(char* buffer, DialogState* state, int num);
 static void dialog_copy_npc_race_specific_msg(char* buffer, DialogState* state, int num);
 static void dialog_copy_npc_generic_msg(char* buffer, DialogState* state, int start, int end);
@@ -226,7 +226,7 @@ static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A3E0(int a1, DialogState* a2);
-static void dialog_copy_story_msg(char* buffer, DialogState* state);
+static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void sub_41A520(int a1, DialogState* a2);
 static void sub_41A620(int a1, DialogState* a2);
 static void sub_41A700(int a1, DialogState* a2);
@@ -2406,7 +2406,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_17F0[a2] = 3;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "c:", 2) == 0) {
-        sub_418460(a3->options[a2], a3);
+        dialog_copy_pc_story_msg(a3->options[a2], a3);
         a3->field_17F0[a2] = 24;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "d:", 2) == 0) {
@@ -3090,10 +3090,10 @@ void dialog_copy_pc_class_specific_msg(char* buffer, DialogState* state, int num
 }
 
 // 0x418460
-void sub_418460(char* str, DialogState* a2)
+void dialog_copy_pc_story_msg(char* buffer, DialogState* state)
 {
-    int v1 = sub_445090();
-    dialog_copy_pc_generic_msg(str, a2, v1 + 1700, v1 + 1700);
+    int story_state = sub_445090();
+    dialog_copy_pc_generic_msg(buffer, state, story_state + 1700, story_state + 1700);
 }
 
 // 0x418480
@@ -4057,7 +4057,7 @@ void sub_41A290(int area, int a2, int a3, DialogState* a4)
 // 0x41A3E0
 void sub_41A3E0(int a1, DialogState* a2)
 {
-    dialog_copy_story_msg(a2->reply, a2);
+    dialog_copy_npc_story_msg(a2->reply, a2);
     dialog_copy_pc_class_specific_msg(a2->options[0], a2, 1000);
     sub_417590(a1, a2->field_17F0, a2->field_1804);
     a2->actions[0] = NULL;
@@ -4065,7 +4065,7 @@ void sub_41A3E0(int a1, DialogState* a2)
 }
 
 // 0x41A440
-void dialog_copy_story_msg(char* buffer, DialogState* state)
+void dialog_copy_npc_story_msg(char* buffer, DialogState* state)
 {
     int story_state;
     int gd;
