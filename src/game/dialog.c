@@ -576,26 +576,26 @@ void sub_413360(int64_t a1, int64_t a2, DialogState* a3)
 }
 
 // 0x4133B0
-void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
+void dialog_copy_npc_farewell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
     int reaction_level;
     int reaction_type;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
-        sub_413360(a1, a2, &v1);
+    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
 
-        reaction_level = reaction_get(a1, a2);
+        reaction_level = reaction_get(npc_obj, pc_obj);
         reaction_type = reaction_translate(reaction_level);
         if (reaction_type < REACTION_SUSPICIOUS) {
-            dialog_copy_npc_generic_msg(buffer, &v1, 2000, 2099);
+            dialog_copy_npc_generic_msg(buffer, &state, 2000, 2099);
         } else {
-            dialog_copy_npc_generic_msg(buffer, &v1, 1900, 1999);
+            dialog_copy_npc_generic_msg(buffer, &state, 1900, 1999);
         }
-        *a4 = v1.speech_id;
+        *speech_id_ptr = state.speech_id;
     } else {
         buffer[0] = '\0';
-        *a4 = -1;
+        *speech_id_ptr = -1;
     }
 }
 
