@@ -743,16 +743,16 @@ void sub_413A30(DialogState* a1, bool a2)
 }
 
 // 0x413A90
-void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
+void dialog_copy_npc_wont_follow_msg(int64_t npc_obj, int64_t pc_obj, int reason, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
     int start;
     int end;
 
-    if (sub_4AD800(a1, a2, 1) == 0) {
-        sub_413360(a1, a2, &v1);
+    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
 
-        switch (rc) {
+        switch (reason) {
         case AI_FOLLOW_TOO_GOOD:
             start = 1600;
             end = 1699;
@@ -782,16 +782,16 @@ void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
             end = 2999;
             break;
         default:
-            a4[0] = '\0';
-            *a5 = -1;
+            buffer[0] = '\0';
+            *speech_id_ptr = -1;
             return;
         }
 
-        dialog_copy_npc_generic_msg(a4, &v1, start, end);
-        *a5 = v1.speech_id;
+        dialog_copy_npc_generic_msg(buffer, &state, start, end);
+        *speech_id_ptr = state.speech_id;
     } else {
-        a4[0] = '\0';
-        *a5 = -1;
+        buffer[0] = '\0';
+        *speech_id_ptr = -1;
     }
 }
 
@@ -2083,7 +2083,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 sub_414E60(a1, false);
                 v57 = false;
             } else {
-                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
+                dialog_copy_npc_wont_follow_msg(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
                 a1->num_options = 1;
                 dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
@@ -2121,7 +2121,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 sub_414E60(a1, false);
                 v57 = false;
             } else {
-                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
+                dialog_copy_npc_wont_follow_msg(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
                 a1->num_options = 1;
                 dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
@@ -2196,7 +2196,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             }
 
             if (level < sub_4C69C0(TECH_SKILL_PICK_LOCKS)) {
-                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
+                dialog_copy_npc_wont_follow_msg(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
                 dialog_copy_npc_generic_msg(a1->reply, a1, 6200, 6299);
                 a1->num_options = 1;
                 dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
@@ -2205,7 +2205,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 a1->actions[0] = NULL;
                 v57 = false;
             } else if (training < TRAINING_APPRENTICE) {
-                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
+                dialog_copy_npc_wont_follow_msg(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
                 dialog_copy_npc_generic_msg(a1->reply, a1, 6300, 6399);
                 a1->num_options = 1;
                 dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
