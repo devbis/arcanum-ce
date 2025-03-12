@@ -2065,7 +2065,7 @@ bool sub_575080(int64_t a1, int64_t a2)
         return true;
     }
 
-    if (sub_4AD800(a2, a1, 0) != 0) {
+    if (ai_can_speak(a2, a1, false) != AI_SPEAK_OK) {
         return false;
     }
 

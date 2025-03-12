@@ -151,7 +151,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
         return;
     }
 
-    if (sub_4AD800(a2, a1, 0) != 0) {
+    if (ai_can_speak(a2, a1, false) != AI_SPEAK_OK) {
         return;
     }
 

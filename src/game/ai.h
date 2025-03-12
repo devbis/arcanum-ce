@@ -15,6 +15,16 @@ typedef enum AiDangerSourceType {
     AI_DANGER_SOURCE_TYPE_SURRENDER,
 } AiDangerSourceType;
 
+typedef enum AiSpeak {
+    AI_SPEAK_OK,
+    AI_SPEAK_DEAD,
+    AI_SPEAK_COMBAT,
+    AI_SPEAK_ANIM,
+    AI_SPEAK_REACTION,
+    AI_SPEAK_CANNOT,
+    AI_SPEAK_SLEEP_UNCONSCIOUS,
+} AiSpeak;
+
 typedef enum AiFollow {
     AI_FOLLOW_OK,
 
@@ -92,7 +102,7 @@ int64_t sub_4ABBC0(int64_t obj);
 bool ai_timeevent_process(TimeEvent* timeevent);
 void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
-int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3);
+int ai_can_speak(int64_t npc_obj, int64_t pc_obj, bool a3);
 int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits);
 void sub_4AD790(int64_t obj, int a2);
 int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr);

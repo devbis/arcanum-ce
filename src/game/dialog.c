@@ -474,7 +474,7 @@ bool sub_412FD0(DialogState* a1)
     int64_t pc_loc_y;
     int64_t npc_loc_y;
 
-    if (sub_4AD800(a1->npc_obj, a1->pc_obj, 0) != 0) {
+    if (ai_can_speak(a1->npc_obj, a1->pc_obj, false) != AI_SPEAK_OK) {
         return false;
     }
 
@@ -517,7 +517,7 @@ void sub_413130(DialogState* a1, int a2)
         && a1->field_17E8 != 6
         && a1->field_17E8 != 8
         && a1->field_17E8 != 9) {
-        if (sub_4AD800(a1->npc_obj, a1->pc_obj, 0) != 0) {
+        if (ai_can_speak(a1->npc_obj, a1->pc_obj, false) != AI_SPEAK_OK) {
             a1->field_17E8 = 1;
             return;
         }
@@ -553,7 +553,7 @@ void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 {
     DialogState v1;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
+    if (ai_can_speak(a1, a2, false) == AI_SPEAK_OK) {
         sub_413360(a1, a2, &v1);
         if (critter_pc_leader_get(a1) == a2) {
             sub_419260(&v1, "1 0, 2 0, 3 0, 4 0, 5 0, 6 0, 7 0, 8 0");
@@ -582,7 +582,7 @@ void dialog_copy_npc_farewell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer,
     int reaction_level;
     int reaction_type;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
 
         reaction_level = reaction_get(npc_obj, pc_obj);
@@ -604,7 +604,7 @@ void dialog_copy_npc_sell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 800, 899);
     } else {
@@ -617,7 +617,7 @@ void dialog_copy_npc_wont_sell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 900, 999);
     } else {
@@ -630,7 +630,7 @@ void dialog_copy_npc_normally_wont_sell_msg(int64_t npc_obj, int64_t pc_obj, cha
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 1000, 1099);
     } else {
@@ -643,7 +643,7 @@ void dialog_copy_npc_buy_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 1100, 1199);
     } else {
@@ -656,7 +656,7 @@ void dialog_copy_npc_wont_buy_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 1200, 1299);
     } else {
@@ -669,7 +669,7 @@ void dialog_copy_npc_wont_buy_stolen_msg(int64_t npc_obj, int64_t pc_obj, char* 
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 4600, 4699);
     } else {
@@ -682,7 +682,7 @@ void dialog_copy_npc_normally_wont_buy_msg(int64_t npc_obj, int64_t pc_obj, char
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 1300, 1399);
     } else {
@@ -695,7 +695,7 @@ void dialog_copy_npc_buy_for_less_msg(int64_t npc_obj, int64_t pc_obj, char* buf
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 1400, 1499);
     } else {
@@ -708,7 +708,7 @@ void dialog_copy_npc_not_enough_money_msg(int64_t npc_obj, int64_t pc_obj, char*
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_class_specific_msg(buffer, &state, 2000);
     } else {
@@ -721,7 +721,7 @@ void dialog_copy_npc_let_me_handle_msg(int64_t npc_obj, int64_t pc_obj, char* bu
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 4700, 4799);
     } else {
@@ -732,7 +732,7 @@ void dialog_copy_npc_let_me_handle_msg(int64_t npc_obj, int64_t pc_obj, char* bu
 // 0x413A30
 void sub_413A30(DialogState* a1, bool a2)
 {
-    if (a2 || sub_4AD800(a1->npc_obj, a1->pc_obj, 0) == 0) {
+    if (a2 || ai_can_speak(a1->npc_obj, a1->pc_obj, false) == AI_SPEAK_OK) {
         a1->field_17EC = a1->num;
         a1->field_17E8 = 0;
         sub_416840(a1, 0);
@@ -749,7 +749,7 @@ void dialog_copy_npc_wont_follow_msg(int64_t npc_obj, int64_t pc_obj, int reason
     int start;
     int end;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
 
         switch (reason) {
@@ -800,7 +800,7 @@ void dialog_copy_npc_order_ok_msg(int64_t npc_obj, int64_t pc_obj, char* buffer,
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 2100, 2199);
         *speech_id_ptr = state.speech_id;
@@ -815,7 +815,7 @@ void dialog_copy_npc_order_no_msg(int64_t npc_obj, int64_t pc_obj, char* buffer,
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 2200, 2299);
         *speech_id_ptr = state.speech_id;
@@ -830,7 +830,7 @@ void dialog_copy_npc_insult_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, i
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_race_specific_msg(buffer, &state, 1000);
         *speech_id_ptr = state.speech_id;
@@ -845,7 +845,7 @@ void dialog_copy_npc_accidental_attack_msg(int64_t npc_obj, int64_t pc_obj, char
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 2300, 2399);
         *speech_id_ptr = state.speech_id;
@@ -860,7 +860,7 @@ void dialog_copy_npc_fleeing_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, 
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 3000, 3099);
         *speech_id_ptr = state.speech_id;
@@ -877,7 +877,7 @@ void dialog_copy_npc_witness_pc_critical_msg(int64_t npc_obj, int64_t pc_obj, in
     int start;
     int end;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
 
         switch (type) {
@@ -965,7 +965,7 @@ void dialog_copy_npc_warning_msg(int64_t npc_obj, int64_t pc_obj, char* buffer, 
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 4000, 4099);
         *speech_id_ptr = state.speech_id;
@@ -980,7 +980,7 @@ void dialog_copy_npc_newspaper_msg(int64_t npc_obj, int64_t pc_obj, char* buffer
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 4100, 4199);
         *speech_id_ptr = state.speech_id;
@@ -997,7 +997,7 @@ void dialog_copy_npc_warning_follow_msg(int64_t npc_obj, int64_t pc_obj, int rea
     int start;
     int end;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
 
         switch (reason) {
@@ -1034,7 +1034,7 @@ void dialog_copy_npc_upset_attacking_msg(int64_t npc_obj, int64_t pc_obj, int re
     int start;
     int end;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
 
         switch (reason) {
@@ -1073,7 +1073,7 @@ void dialog_copy_npc_near_death_msg(int64_t npc_obj, int64_t pc_obj, char* buffe
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, true) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 5500, 5599);
         *speech_id_ptr = state.speech_id;
@@ -1088,7 +1088,7 @@ void dialog_copy_npc_wont_identify_already_msg(int64_t npc_obj, int64_t pc_obj, 
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 5700, 5799);
     } else {
@@ -1101,7 +1101,7 @@ void dialog_copy_npc_identify_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 5800, 5899);
     } else {
@@ -1114,7 +1114,7 @@ void dialog_copy_npc_wont_repair_broken_msg(int64_t npc_obj, int64_t pc_obj, cha
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 5900, 5999);
     } else {
@@ -1127,7 +1127,7 @@ void dialog_copy_npc_wont_repair_undamaged_msg(int64_t npc_obj, int64_t pc_obj, 
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 6000, 6099);
     } else {
@@ -1140,7 +1140,7 @@ void dialog_copy_npc_repair_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
     DialogState state;
 
-    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+    if (ai_can_speak(npc_obj, pc_obj, false) == AI_SPEAK_OK) {
         sub_413360(npc_obj, pc_obj, &state);
         dialog_copy_npc_generic_msg(buffer, &state, 6100, 6199);
     } else {

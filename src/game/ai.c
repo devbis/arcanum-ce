@@ -3109,41 +3109,43 @@ void sub_4AD7D0(int64_t obj)
 }
 
 // 0x4AD800
-int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
+int ai_can_speak(int64_t npc_obj, int64_t pc_obj, bool a3)
 {
-    unsigned int critter_flags;
-    unsigned int spell_flags;
+    ObjectCritterFlags critter_flags;
+    ObjectSpellFlags spell_flags;
     int danger_type;
     int64_t reaction_pc_obj;
 
     if ((obj_field_int32_get(npc_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
-        return 5;
+        return AI_SPEAK_CANNOT;
     }
 
     if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         critter_flags = obj_field_int32_get(npc_obj, OBJ_F_CRITTER_FLAGS);
         if ((critter_flags & (OCF_MUTE | OCF_PARALYZED | OCF_STUNNED)) != 0) {
-            return 5;
+            return AI_SPEAK_CANNOT;
         }
         if ((critter_flags & OCF_SLEEPING) != 0) {
-            return 6;
+            return AI_SPEAK_SLEEP_UNCONSCIOUS;
         }
 
-        if (sub_459380(npc_obj, 58)) {
-            return 5;
+        if (sub_459380(npc_obj, SPELL_CREATE_UNDEAD)) {
+            return AI_SPEAK_CANNOT;
         }
 
         spell_flags = obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS);
         if ((spell_flags & OSF_STONED) != 0) {
-            return 5;
+            return AI_SPEAK_CANNOT;
         }
 
         if (critter_is_dead(npc_obj)) {
-            return (spell_flags & OSF_SPOKEN_WITH_DEAD) == 0 ? 1 : 0;
+            return (spell_flags & OSF_SPOKEN_WITH_DEAD) == 0
+                ? AI_SPEAK_DEAD
+                : AI_SPEAK_OK;
         }
 
         if (critter_is_unconscious(npc_obj)) {
-            return 6;
+            return AI_SPEAK_SLEEP_UNCONSCIOUS;
         }
 
         if (!a3) {
@@ -3151,22 +3153,22 @@ int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
 
             if (danger_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS
                 || danger_type == AI_DANGER_SOURCE_TYPE_FLEE) {
-                return 2;
+                return AI_SPEAK_COMBAT;
             }
 
             if (!sub_424070(npc_obj, 2, false, false)) {
-                return 3;
+                return AI_SPEAK_ANIM;
             }
         }
 
         reaction_pc_obj = sub_4C1110(npc_obj);
         if (reaction_pc_obj != OBJ_HANDLE_NULL
             && reaction_pc_obj != pc_obj) {
-            return 4;
+            return AI_SPEAK_REACTION;
         }
     }
 
-    return 0;
+    return AI_SPEAK_OK;
 }
 
 // 0x4AD950
