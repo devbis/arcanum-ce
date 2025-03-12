@@ -1024,7 +1024,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
                             if (random_between(1, 3) == 1
                                 && critter_is_active(target_obj)) {
                                 if (dword_5F8488 != NULL) {
-                                    sub_413DF0(target_obj, source_obj, str, &v2);
+                                    dialog_copy_npc_accidental_attack_msg(target_obj, source_obj, str, &v2);
                                     dword_5F8488(target_obj, source_obj, str, v2);
                                 }
                             }
