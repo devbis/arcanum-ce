@@ -30,7 +30,7 @@
 typedef struct DialogUiEntry {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ DialogEntryNode field_8;
+    /* 0008 */ DialogState field_8;
     /* 1850 */ int field_1850;
     /* 1854 */ int field_1854;
     /* 1858 */ int field_1858;
@@ -173,11 +173,11 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
                 return;
             }
 
-            entry->field_8.field_0 = entry->field_4;
+            entry->field_8.dlg = entry->field_4;
             entry->field_8.pc_obj = a1;
             entry->field_8.npc_obj = a2;
-            entry->field_8.field_68 = a5;
-            entry->field_8.field_6C = a3;
+            entry->field_8.num = a5;
+            entry->field_8.script_num = a3;
             if (!sub_412FD0(&(entry->field_8))) {
                 dialog_unload(entry->field_4);
                 return;
@@ -188,8 +188,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
                     entry->field_8.pc_obj,
                     TB_TYPE_WHITE,
                     TB_EXPIRE_DEFAULT,
-                    entry->field_8.field_70,
-                    entry->field_8.field_458);
+                    entry->field_8.reply,
+                    entry->field_8.speech_id);
                 sub_413280(&(entry->field_8));
                 dialog_unload(entry->field_4);
                 return;
@@ -248,10 +248,10 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             && script_name_build_dlg_name(a3, path)
             && player_is_pc_obj(a1)) {
             if (intgame_dialog_begin(sub_5680A0)) {
-                entry->field_8.field_68 = a5;
+                entry->field_8.num = a5;
                 entry->field_8.pc_obj = a1;
                 entry->field_8.npc_obj = a2;
-                entry->field_8.field_6C = a3;
+                entry->field_8.script_num = a3;
                 entry->field_1854 = a3;
                 entry->field_1858 = a4;
                 entry->field_1850 = 1;
@@ -366,25 +366,25 @@ void sub_567AB0(DialogUiEntry* entry, DialogSerializedData* serialized_data, cha
         serialized_data->field_20.type = OID_TYPE_NULL;
     }
 
-    serialized_data->field_3C = entry->field_8.field_6C;
+    serialized_data->field_3C = entry->field_8.script_num;
     serialized_data->field_40 = 0;
-    serialized_data->field_44 = (int)strlen(entry->field_8.field_70) + 1;
-    strncpy(buffer, entry->field_8.field_70, serialized_data->field_44);
+    serialized_data->field_44 = (int)strlen(entry->field_8.reply) + 1;
+    strncpy(buffer, entry->field_8.reply, serialized_data->field_44);
     serialized_data->field_78 = entry->field_8.field_17E8;
     serialized_data->field_7C = entry->field_8.field_17EC;
 
     pos = serialized_data->field_44;
     for (index = 0; index < 5; index++) {
         serialized_data->field_50[index] = pos;
-        serialized_data->field_64[index] = (int)strlen(entry->field_8.field_460[index]) + 1;
-        strncpy(&(buffer[pos]), entry->field_8.field_460[index], serialized_data->field_64[index]);
+        serialized_data->field_64[index] = (int)strlen(entry->field_8.options[index]) + 1;
+        strncpy(&(buffer[pos]), entry->field_8.options[index], serialized_data->field_64[index]);
         serialized_data->field_80[index] = entry->field_8.field_17F0[index];
         serialized_data->field_94[index] = entry->field_8.field_1804[index];
         serialized_data->field_A8[index] = entry->field_8.field_1818[index];
     }
 
     serialized_data->field_BC = entry->field_8.field_1840;
-    serialized_data->field_C0 = entry->field_8.field_1844;
+    serialized_data->field_C0 = entry->field_8.seed;
 }
 
 // 0x567C30
@@ -404,22 +404,22 @@ void sub_567C30(DialogSerializedData* serialized_data, DialogUiEntry* entry, con
         entry->field_8.npc_obj = OBJ_HANDLE_NULL;
     }
 
-    entry->field_8.field_6C = serialized_data->field_3C;
-    entry->field_8.field_68 = serialized_data->field_38;
-    strncpy(entry->field_8.field_70, &(buffer[serialized_data->field_40]), serialized_data->field_44);
-    entry->field_8.field_45C = serialized_data->field_4C;
+    entry->field_8.script_num = serialized_data->field_3C;
+    entry->field_8.num = serialized_data->field_38;
+    strncpy(entry->field_8.reply, &(buffer[serialized_data->field_40]), serialized_data->field_44);
+    entry->field_8.num_options = serialized_data->field_4C;
     entry->field_8.field_17E8 = serialized_data->field_78;
     entry->field_8.field_17EC = serialized_data->field_7C;
 
     for (index = 0; index < 5; index++) {
-        strncpy(entry->field_8.field_460[index], &(buffer[serialized_data->field_50[index]]), serialized_data->field_64[index]);
+        strncpy(entry->field_8.options[index], &(buffer[serialized_data->field_50[index]]), serialized_data->field_64[index]);
         entry->field_8.field_17F0[index] = serialized_data->field_80[index];
         entry->field_8.field_1804[index] = serialized_data->field_94[index];
         entry->field_8.field_1818[index] = serialized_data->field_A8[index];
     }
 
     entry->field_8.field_1840 = serialized_data->field_BC;
-    entry->field_8.field_1844 = serialized_data->field_C0;
+    entry->field_8.seed = serialized_data->field_C0;
 }
 
 // 0x567D60
@@ -463,7 +463,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         entry->field_8.npc_obj,
         TB_TYPE_GREEN,
         TB_EXPIRE_DEFAULT,
-        entry->field_8.field_460[a2]);
+        entry->field_8.options[a2]);
     mp_tb_remove(entry->field_8.npc_obj);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
@@ -495,8 +495,8 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             entry->field_8.pc_obj,
             TB_TYPE_WHITE,
             TB_EXPIRE_DEFAULT,
-            entry->field_8.field_70,
-            entry->field_8.field_458);
+            entry->field_8.reply,
+            entry->field_8.speech_id);
         sub_5678D0(entry->field_8.pc_obj, 0);
         break;
     case 5:
@@ -702,14 +702,14 @@ void sub_5684C0(DialogUiEntry* entry)
         entry->field_8.pc_obj,
         TB_TYPE_WHITE,
         TB_EXPIRE_NEVER,
-        entry->field_8.field_70,
-        entry->field_8.field_458);
+        entry->field_8.reply,
+        entry->field_8.speech_id);
 
     if (player_is_pc_obj(entry->field_8.pc_obj)) {
         intgame_dialog_clear();
 
-        for (index = 0; index < entry->field_8.field_45C; index++) {
-            intgame_dialog_set_option(index, entry->field_8.field_460[index]);
+        for (index = 0; index < entry->field_8.num_options; index++) {
+            intgame_dialog_set_option(index, entry->field_8.options[index]);
         }
     }
 }

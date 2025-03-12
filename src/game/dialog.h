@@ -5,34 +5,29 @@
 #include "game/obj.h"
 #include "game/object.h"
 
-// TODO: Better name.
-typedef struct DialogEntryNode {
-    /* 0000 */ int field_0;
-    /* 0004 */ char field_4;
-    /* 0005 */ char field_5;
-    /* 0006 */ char field_6;
-    /* 0007 */ char field_7;
+typedef struct DialogState {
+    /* 0000 */ int dlg;
     /* 0008 */ int64_t pc_obj;
     /* 0010 */ Ryan field_10;
     /* 0038 */ int64_t npc_obj;
     /* 0040 */ Ryan field_40;
-    /* 0068 */ int field_68;
-    /* 006C */ int field_6C;
-    /* 0070 */ char field_70[1000];
-    /* 0458 */ int field_458;
-    /* 045C */ int field_45C;
-    /* 0460 */ char field_460[5][1000];
+    /* 0068 */ int num;
+    /* 006C */ int script_num;
+    /* 0070 */ char reply[1000];
+    /* 0458 */ int speech_id;
+    /* 045C */ int num_options;
+    /* 0460 */ char options[5][1000];
     /* 17E8 */ int field_17E8;
     /* 17EC */ int field_17EC;
     /* 17F0 */ int field_17F0[5];
     /* 1804 */ int field_1804[5];
     /* 1818 */ int field_1818[5];
-    /* 182C */ char* field_182C[5];
+    /* 182C */ char* actions[5];
     /* 1840 */ int field_1840;
-    /* 1844 */ int field_1844;
-} DialogEntryNode;
+    /* 1844 */ int seed;
+} DialogState;
 
-static_assert(sizeof(DialogEntryNode) == 0x1848, "wrong size");
+static_assert(sizeof(DialogState) == 0x1848, "wrong size");
 
 typedef struct DialogSerializedData {
     /* 0000 */ int field_0;
@@ -64,11 +59,11 @@ void dialog_exit();
 bool dialog_load(const char* path, int* dlg_ptr);
 void dialog_unload(int dlg);
 void sub_412F60(int dlg);
-bool sub_412FD0(DialogEntryNode* a1);
-void sub_413130(DialogEntryNode* a1, int a2);
-void sub_413280(DialogEntryNode* a1);
+bool sub_412FD0(DialogState* a1);
+void sub_413130(DialogState* a1, int a2);
+void sub_413280(DialogState* a1);
 void sub_4132A0(int64_t a1, int64_t a2, char* buffer);
-void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3);
+void sub_413360(int64_t a1, int64_t a2, DialogState* a3);
 void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4);
 void sub_413490(int64_t a1, int64_t a2, char* a3);
 void sub_413520(int64_t a1, int64_t a2, char* a3);
@@ -80,7 +75,7 @@ void sub_4137F0(int64_t a1, int64_t a2, char* a3);
 void sub_413880(int64_t a1, int64_t a2, char* a3);
 void sub_413910(int64_t a1, int64_t a2, char* a3);
 void sub_4139A0(int64_t a1, int64_t a2, char* a3);
-void sub_413A30(DialogEntryNode* a1, bool a2);
+void sub_413A30(DialogState* a1, bool a2);
 void sub_413A90(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_413DF0(int64_t a1, int64_t a2, char* a3, int* a4);
 void sub_413EA0(int64_t a1, int64_t a2, char* a3, int* a4);

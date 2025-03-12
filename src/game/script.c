@@ -2895,7 +2895,7 @@ void sub_44B170(ScriptAction* action, ScriptState* state)
 void sub_44B1F0(ScriptAction* action, ScriptState* state)
 {
     char path[TIG_MAX_PATH];
-    DialogEntryNode v1;
+    DialogState v1;
     int64_t objs[100];
     ObjectList objects;
     int cnt;
@@ -2913,7 +2913,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
         return;
     }
 
-    if (!dialog_load(path, &(v1.field_0))) {
+    if (!dialog_load(path, &(v1.dlg))) {
         return;
     }
 
@@ -2926,25 +2926,25 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
 
     v1.pc_obj = objects.head->obj;
     object_list_destroy(&objects);
-    v1.field_68 = script_get_value(action->op_type[0], action->op_value[0], state);
-    v1.field_6C = state->invocation->script->num;
+    v1.num = script_get_value(action->op_type[0], action->op_value[0], state);
+    v1.script_num = state->invocation->script->num;
 
     cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, objs, &objects);
     for (index = 0; index < cnt; index++) {
         v1.npc_obj = objs[index];
         sub_413A30(&v1, true);
-        dword_5E2FE8(objs[index], v1.pc_obj, v1.field_70, v1.field_458);
+        dword_5E2FE8(objs[index], v1.pc_obj, v1.reply, v1.speech_id);
     }
 
     sub_44B8F0(action->op_type[1], &objects);
-    dialog_unload(v1.field_0);
+    dialog_unload(v1.dlg);
 }
 
 // 0x44B390
 void sub_44B390(ScriptAction* action, ScriptState* state)
 {
     char path[TIG_MAX_PATH];
-    DialogEntryNode v1;
+    DialogState v1;
     UiMessage ui_message;
     int player;
 
@@ -2956,7 +2956,7 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
         return;
     }
 
-    if (!dialog_load(path, &(v1.field_0))) {
+    if (!dialog_load(path, &(v1.dlg))) {
         return;
     }
 
@@ -2966,30 +2966,30 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
 
     v1.npc_obj = state->invocation->attachee_obj;
     v1.pc_obj = state->invocation->triggerer_obj;
-    v1.field_68 = script_get_value(action->op_type[0], action->op_value[0], state);
-    v1.field_6C = state->invocation->script->num;
+    v1.num = script_get_value(action->op_type[0], action->op_value[0], state);
+    v1.script_num = state->invocation->script->num;
     sub_413A30(&v1, true);
 
     ui_message.type = script_get_value(action->op_type[1], action->op_value[1], state);
-    ui_message.str = v1.field_70;
+    ui_message.str = v1.reply;
     ui_message.field_8 = 0;
 
     // TODO: Refactor.
     if (tig_net_is_active()) {
         player = sub_4A2B10(state->invocation->triggerer_obj);
         if (player == -1) {
-            dialog_unload(v1.field_0);
+            dialog_unload(v1.dlg);
             return;
         }
 
         if (player != 0) {
             sub_4EDA60(&ui_message, player, 0);
-            dialog_unload(v1.field_0);
+            dialog_unload(v1.dlg);
             return;
         }
     } else {
         sub_460630(&ui_message);
-        dialog_unload(v1.field_0);
+        dialog_unload(v1.dlg);
     }
 
 }

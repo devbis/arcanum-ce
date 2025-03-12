@@ -168,16 +168,16 @@ typedef struct DialogFile {
 
 static_assert(sizeof(DialogFile) == 0x120, "wrong size");
 
-static void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5);
-static void sub_414E60(DialogEntryNode* a1, bool randomize);
-static int sub_414F50(DialogEntryNode* a1, int* a2);
-static bool sub_4150D0(DialogEntryNode* a1, char* a2);
-static bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3);
+static void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5);
+static void sub_414E60(DialogState* a1, bool randomize);
+static int sub_414F50(DialogState* a1, int* a2);
+static bool sub_4150D0(DialogState* a1, char* a2);
+static bool sub_415BA0(DialogState* a1, char* a2, int a3);
 static int sub_4167C0(const char* str);
-static bool sub_416840(DialogEntryNode* a1, bool a2);
+static bool sub_416840(DialogState* a1, bool a2);
 static bool dialog_search(int dlg, DialogFileEntry* entry);
-static void sub_416B00(char* dst, char* src, DialogEntryNode* a3);
-static bool sub_416C10(int a1, int a2, DialogEntryNode* a3);
+static void sub_416B00(char* dst, char* src, DialogState* a3);
+static bool sub_416C10(int a1, int a2, DialogState* a3);
 static void sub_417590(int a1, int* a2, int* a3);
 static bool find_dialog(const char* path, int* index_ptr);
 static void dialog_load_internal(DialogFile* dialog);
@@ -192,46 +192,46 @@ static void dialog_entry_free(DialogFileEntry* entry);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
-static void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end);
-static void sub_418390(char* str, DialogEntryNode* a2, int start);
-static void sub_418460(char* str, DialogEntryNode* a2);
-static void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num);
-static void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num);
-static void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int a3, int a4);
-static bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num);
+static void sub_4182D0(char* str, DialogState* a2, int start, int end);
+static void sub_418390(char* str, DialogState* a2, int start);
+static void sub_418460(char* str, DialogState* a2);
+static void dialog_copy_class_specific_msg(char* buffer, DialogState* a2, int num);
+static void dialog_copy_race_specific_msg(char* buffer, DialogState* a2, int num);
+static void dialog_copy_generic_msg(char* buffer, DialogState* a2, int a3, int a4);
+static bool dialog_copy_override_msg(char* buffer, DialogState* a2, int num);
 static int sub_4189C0(const char* a1, int a2);
-static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6);
-static void sub_418B30(int a1, DialogEntryNode* a2);
-static void sub_418C40(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_418CA0(int* a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_418DE0(int a1, DialogEntryNode* a2);
-static void sub_418F30(int a1, DialogEntryNode* a2);
-static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogEntryNode* a5);
-static void sub_4190E0(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_4191E0(int a1, int a2, DialogEntryNode* a3);
-static void sub_419260(DialogEntryNode* a1, const char* a2);
-static bool sub_4197D0(unsigned int flags, int a2, DialogEntryNode* a3);
-static void sub_419830(int a1, int a2, DialogEntryNode* a3);
-static void sub_419A00(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_419AC0(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_419B50(int a1, int a2, DialogEntryNode* a3);
-static void sub_419C30(int a1, int a2, DialogEntryNode* a3);
-static void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6);
+static void sub_418B30(int a1, DialogState* a2);
+static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
+static void sub_418CA0(int* a1, int a2, int a3, DialogState* a4);
+static void sub_418DE0(int a1, DialogState* a2);
+static void sub_418F30(int a1, DialogState* a2);
+static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
+static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
+static void sub_419190(int a1, int a2, int a3, DialogState* a4);
+static void sub_4191E0(int a1, int a2, DialogState* a3);
+static void sub_419260(DialogState* a1, const char* a2);
+static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
+static void sub_419830(int a1, int a2, DialogState* a3);
+static void sub_419A00(int a1, int a2, int a3, DialogState* a4);
+static void sub_419AC0(int a1, int a2, int a3, DialogState* a4);
+static void sub_419B50(int a1, int a2, DialogState* a3);
+static void sub_419C30(int a1, int a2, DialogState* a3);
+static void sub_419CB0(int a1, int a2, int a3, DialogState* a4);
+static void sub_419D50(int a1, int a2, int a3, DialogState* a4);
 static int sub_419E20(int64_t obj, int* a2, int cnt);
-static void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5);
-static void sub_41A0F0(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4);
-static void sub_41A3E0(int a1, DialogEntryNode* a2);
-static void sub_41A440(char* buffer, DialogEntryNode* a2);
-static void sub_41A520(int a1, DialogEntryNode* a2);
-static void sub_41A620(int a1, DialogEntryNode* a2);
-static void sub_41A700(int a1, DialogEntryNode* a2);
-static void sub_41A880(int a1, int a2, DialogEntryNode* a3);
-static void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5);
+static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
+static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
+static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
+static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
+static void sub_41A3E0(int a1, DialogState* a2);
+static void sub_41A440(char* buffer, DialogState* a2);
+static void sub_41A520(int a1, DialogState* a2);
+static void sub_41A620(int a1, DialogState* a2);
+static void sub_41A700(int a1, DialogState* a2);
+static void sub_41A880(int a1, int a2, DialogState* a3);
+static void sub_41A8C0(int a1, int a2, int a3, DialogState* a4);
 
 // 0x5A063C
 static const char* dialog_gd_mes_file_names[GD_COUNT] = {
@@ -466,7 +466,7 @@ void sub_412F60(int dlg)
 }
 
 // 0x412FD0
-bool sub_412FD0(DialogEntryNode* a1)
+bool sub_412FD0(DialogState* a1)
 {
     int64_t pc_loc;
     int64_t npc_loc;
@@ -493,11 +493,11 @@ bool sub_412FD0(DialogEntryNode* a1)
             }
         }
 
-        a1->field_17EC = a1->field_68;
+        a1->field_17EC = a1->num;
         a1->field_17E8 = 0;
         sub_414E60(a1, 0);
     } else {
-        dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
+        dialog_copy_race_specific_msg(a1->reply, a1, 1000);
         a1->field_17E8 = 4;
     }
 
@@ -505,7 +505,7 @@ bool sub_412FD0(DialogEntryNode* a1)
 }
 
 // 0x413130
-void sub_413130(DialogEntryNode* a1, int a2)
+void sub_413130(DialogState* a1, int a2)
 {
     int v1;
     int v2;
@@ -525,7 +525,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
         if (a1->field_17E8 == 3) {
             sub_417590(a1->field_17EC, &v1, &v2);
             v3 = 0;
-        } else if (sub_415BA0(a1, a1->field_182C[a2], a2)) {
+        } else if (sub_415BA0(a1, a1->actions[a2], a2)) {
             v1 = a1->field_17F0[a2];
             v2 = a1->field_1804[a2];
             v3 = a1->field_1818[a2];
@@ -536,14 +536,14 @@ void sub_413130(DialogEntryNode* a1, int a2)
         if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
             sub_414810(v1, v2, v3, a2, a1);
         } else {
-            dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
+            dialog_copy_race_specific_msg(a1->reply, a1, 1000);
             a1->field_17E8 = 4;
         }
     }
 }
 
 // 0x413280
-void sub_413280(DialogEntryNode* a1)
+void sub_413280(DialogState* a1)
 {
     sub_4C10A0(a1->npc_obj, a1->pc_obj);
 }
@@ -551,7 +551,7 @@ void sub_413280(DialogEntryNode* a1)
 // 0x4132A0
 void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -560,14 +560,14 @@ void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
         } else {
             sub_419260(&v1, NULL);
         }
-        strcpy(buffer, v1.field_70);
+        strcpy(buffer, v1.reply);
     } else {
         buffer[0] = '\0';
     }
 }
 
 // 0x413360
-void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3)
+void sub_413360(int64_t a1, int64_t a2, DialogState* a3)
 {
     a3->pc_obj = a2;
     a3->npc_obj = a1;
@@ -578,7 +578,7 @@ void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3)
 // 0x4133B0
 void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int reaction_level;
     int reaction_type;
 
@@ -592,7 +592,7 @@ void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
         } else {
             dialog_copy_generic_msg(buffer, &v1, 1900, 1999);
         }
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         buffer[0] = '\0';
         *a4 = -1;
@@ -602,7 +602,7 @@ void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
 // 0x413490
 void sub_413490(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -615,7 +615,7 @@ void sub_413490(int64_t a1, int64_t a2, char* a3)
 // 0x413520
 void sub_413520(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -628,7 +628,7 @@ void sub_413520(int64_t a1, int64_t a2, char* a3)
 // 0x4135B0
 void sub_4135B0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -641,7 +641,7 @@ void sub_4135B0(int64_t a1, int64_t a2, char* a3)
 // 0x413640
 void sub_413640(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -654,7 +654,7 @@ void sub_413640(int64_t a1, int64_t a2, char* a3)
 // 0x4136D0
 void sub_4136D0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -667,7 +667,7 @@ void sub_4136D0(int64_t a1, int64_t a2, char* a3)
 // 0x413760
 void sub_413760(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -680,7 +680,7 @@ void sub_413760(int64_t a1, int64_t a2, char* a3)
 // 0x4137F0
 void sub_4137F0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -693,7 +693,7 @@ void sub_4137F0(int64_t a1, int64_t a2, char* a3)
 // 0x413880
 void sub_413880(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -706,7 +706,7 @@ void sub_413880(int64_t a1, int64_t a2, char* a3)
 // 0x413910
 void sub_413910(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -719,7 +719,7 @@ void sub_413910(int64_t a1, int64_t a2, char* a3)
 // 0x4139A0
 void sub_4139A0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -730,22 +730,22 @@ void sub_4139A0(int64_t a1, int64_t a2, char* a3)
 }
 
 // 0x413A30
-void sub_413A30(DialogEntryNode* a1, bool a2)
+void sub_413A30(DialogState* a1, bool a2)
 {
     if (a2 || sub_4AD800(a1->npc_obj, a1->pc_obj, 0) == 0) {
-        a1->field_17EC = a1->field_68;
+        a1->field_17EC = a1->num;
         a1->field_17E8 = 0;
         sub_416840(a1, 0);
     } else {
-        a1->field_70[0] = '\0';
-        a1->field_458 = -1;
+        a1->reply[0] = '\0';
+        a1->speech_id = -1;
     }
 }
 
 // 0x413A90
 void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int start;
     int end;
 
@@ -788,7 +788,7 @@ void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
         }
 
         dialog_copy_generic_msg(a4, &v1, start, end);
-        *a5 = v1.field_458;
+        *a5 = v1.speech_id;
     } else {
         a4[0] = '\0';
         *a5 = -1;
@@ -798,12 +798,12 @@ void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
 // 0x413BE0
 void sub_413BE0(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 2100, 2199);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -813,12 +813,12 @@ void sub_413BE0(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x413C90
 void sub_413C90(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 2200, 2299);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -828,12 +828,12 @@ void sub_413C90(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x413D40
 void sub_413D40(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_race_specific_msg(a3, &v1, 1000);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -843,12 +843,12 @@ void sub_413D40(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x413DF0
 void sub_413DF0(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 2300, 2399);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -858,12 +858,12 @@ void sub_413DF0(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x413EA0
 void sub_413EA0(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 3000, 3099);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -873,7 +873,7 @@ void sub_413EA0(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x413F50
 void sub_413F50(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int start;
     int end;
 
@@ -896,7 +896,7 @@ void sub_413F50(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
         }
 
         dialog_copy_generic_msg(a4, &v1, start, end);
-        *a5 = v1.field_458;
+        *a5 = v1.speech_id;
     } else {
         a4[0] = '\0';
         *a5 = -1;
@@ -906,7 +906,7 @@ void sub_413F50(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 // 0x414020
 void sub_414020(int64_t a1, int64_t a2, int a3, char* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int start;
     int end;
 
@@ -963,12 +963,12 @@ void sub_414020(int64_t a1, int64_t a2, int a3, char* a4)
 // 0x414130
 void sub_414130(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 4000, 4099);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -978,12 +978,12 @@ void sub_414130(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x4141E0
 void sub_4141E0(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 4100, 4199);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -993,7 +993,7 @@ void sub_4141E0(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x414290
 void sub_414290(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int start;
     int end;
 
@@ -1020,7 +1020,7 @@ void sub_414290(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
         }
 
         dialog_copy_generic_msg(a4, &v1, start, end);
-        *a5 = v1.field_458;
+        *a5 = v1.speech_id;
     } else {
         a4[0] = '\0';
         *a5 = -1;
@@ -1030,7 +1030,7 @@ void sub_414290(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 // 0x414370
 void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 {
-    DialogEntryNode v1;
+    DialogState v1;
     int start;
     int end;
 
@@ -1061,7 +1061,7 @@ void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
         }
 
         dialog_copy_generic_msg(a4, &v1, start, end);
-        *a5 = v1.field_458;
+        *a5 = v1.speech_id;
     } else {
         a4[0] = '\0';
         *a5 = -1;
@@ -1071,12 +1071,12 @@ void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
 // 0x414490
 void sub_414490(int64_t a1, int64_t a2, char* a3, int* a4)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
         dialog_copy_generic_msg(a3, &v1, 5500, 5599);
-        *a4 = v1.field_458;
+        *a4 = v1.speech_id;
     } else {
         a3[0] = '\0';
         *a4 = -1;
@@ -1086,7 +1086,7 @@ void sub_414490(int64_t a1, int64_t a2, char* a3, int* a4)
 // 0x414540
 void sub_414540(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -1099,7 +1099,7 @@ void sub_414540(int64_t a1, int64_t a2, char* a3)
 // 0x4145D0
 void sub_4145D0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -1112,7 +1112,7 @@ void sub_4145D0(int64_t a1, int64_t a2, char* a3)
 // 0x414660
 void sub_414660(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -1125,7 +1125,7 @@ void sub_414660(int64_t a1, int64_t a2, char* a3)
 // 0x4146F0
 void sub_4146F0(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -1138,7 +1138,7 @@ void sub_4146F0(int64_t a1, int64_t a2, char* a3)
 // 0x414780
 void sub_414780(int64_t a1, int64_t a2, char* a3)
 {
-    DialogEntryNode v1;
+    DialogState v1;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
@@ -1149,7 +1149,7 @@ void sub_414780(int64_t a1, int64_t a2, char* a3)
 }
 
 // 0x414810
-void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
+void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
 {
     int v1[100];
     int cnt;
@@ -1177,7 +1177,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
         sub_418B30(a2, a5);
         break;
     case 5:
-        cnt = sub_417F90(v1, &(a5->field_460[a4][strlen(a5->field_460[a4]) + 1]));
+        cnt = sub_417F90(v1, &(a5->options[a4][strlen(a5->options[a4]) + 1]));
         sub_418CA0(v1, cnt, a2, a5);
         break;
     case 6:
@@ -1187,7 +1187,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
         sub_418F30(a2, a5);
         break;
     case 8:
-        pch = strchr(&(a5->field_460[a4][strlen(a5->field_460[a4]) + 1]), '$');
+        pch = strchr(&(a5->options[a4][strlen(a5->options[a4]) + 1]), '$');
         v2 = atoi(pch + 1);
         pch = strchr(pch, ',');
         cnt = sub_417F90(v1, pch + 1);
@@ -1221,7 +1221,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
         sub_419D50(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 18:
-        sub_419E70(&(a5->field_460[a4][strlen(a5->field_460[a4]) + 1]), a2, a3, 0, a5);
+        sub_419E70(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, 0, a5);
         break;
     case 19:
         sub_41A0F0(a5->field_17EC, a2, a3, a5);
@@ -1230,7 +1230,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
         sub_41A150(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 21:
-        sub_419E70(&(a5->field_460[a4][strlen(a5->field_460[a4]) + 1]), a2, a3, 1, a5);
+        sub_419E70(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, 1, a5);
         break;
     case 22:
         sub_41A230(a5->field_17EC, a2, a3, a5);
@@ -1263,42 +1263,42 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
 }
 
 // 0x414E60
-void sub_414E60(DialogEntryNode* a1, bool randomize)
+void sub_414E60(DialogState* a1, bool randomize)
 {
     int index;
     int v1[5];
     int v2;
 
     for (index = 0; index < 5; index++) {
-        a1->field_182C[index] = NULL;
-        a1->field_460[index][0] = '\0';
+        a1->actions[index] = NULL;
+        a1->options[index][0] = '\0';
     }
 
     if (randomize) {
-        random_seed(a1->field_1844);
+        random_seed(a1->seed);
     } else {
-        a1->field_1844 = random_seed_generate();
+        a1->seed = random_seed_generate();
     }
 
     if (sub_416840(a1, randomize)) {
-        a1->field_45C = sub_414F50(a1, v1);
+        a1->num_options = sub_414F50(a1, v1);
         v2 = 0;
-        for (index = 0; index < a1->field_45C; index++) {
+        for (index = 0; index < a1->num_options; index++) {
             if (!sub_416C10(v1[index], index - v2, a1)) {
                 v2++;
             }
         }
-        a1->field_45C -= v2;
-        if (a1->field_45C == 0) {
-            sub_4182D0(a1->field_460[0], a1, 400, 499);
+        a1->num_options -= v2;
+        if (a1->num_options == 0) {
+            sub_4182D0(a1->options[0], a1, 400, 499);
             a1->field_17F0[0] = 1;
-            a1->field_45C = 1;
+            a1->num_options = 1;
         }
     }
 }
 
 // 0x414F50
-int sub_414F50(DialogEntryNode* a1, int* a2)
+int sub_414F50(DialogState* a1, int* a2)
 {
     DialogFileEntry key;
     int gender;
@@ -1317,7 +1317,7 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
         intelligence = 1;
     }
 
-    dialog = &(dialog_files[a1->field_0]);
+    dialog = &(dialog_files[a1->dlg]);
     entry = bsearch(&key,
         dialog->entries,
         dialog->entries_length,
@@ -1350,7 +1350,7 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
 }
 
 // 0x4150D0
-bool sub_4150D0(DialogEntryNode* a1, char* a2)
+bool sub_4150D0(DialogState* a1, char* a2)
 {
     char* pch;
     int cond;
@@ -1851,7 +1851,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
 }
 
 // 0x415BA0
-bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
+bool sub_415BA0(DialogState* a1, char* a2, int a3)
 {
     char* pch;
     int act;
@@ -1951,7 +1951,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             sub_4C4D20(a1->pc_obj, value, sub_4167C0(pch), a1->npc_obj);
             break;
         case DIALOG_ACTION_FL:
-            a1->field_68 = value;
+            a1->num = value;
             sub_413A30(a1, false);
             a1->field_17E8 = 4;
             v57 = false;
@@ -2083,12 +2083,12 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                 sub_414E60(a1, false);
                 v57 = false;
             } else {
-                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->field_70, &(a1->field_458));
-                a1->field_45C = 1;
-                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
+                a1->num_options = 1;
+                sub_4182D0(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
-                a1->field_182C[0] = 0;
+                a1->actions[0] = 0;
                 v57 = false;
             }
             break;
@@ -2121,12 +2121,12 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                 sub_414E60(a1, false);
                 v57 = false;
             } else {
-                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->field_70, &(a1->field_458));
-                a1->field_45C = 1;
-                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
+                a1->num_options = 1;
+                sub_4182D0(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
-                a1->field_182C[0] = NULL;
+                a1->actions[0] = NULL;
                 v57 = false;
             }
             break;
@@ -2154,7 +2154,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             newspaper_queue(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_CE:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 5;
             v57 = false;
             break;
@@ -2164,7 +2164,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                 stat_base_get(a1->pc_obj, STAT_FATE_POINTS) + 1);
             break;
         case DIALOG_ACTION_SU:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 7;
             v57 = false;
             break;
@@ -2172,12 +2172,12 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             critter_origin_set(a1->npc_obj, value);
             break;
         case DIALOG_ACTION_II:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 8;
             v57 = false;
             break;
         case DIALOG_ACTION_RI:
-            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
             a1->field_17E8 = 9;
             v57 = false;
             break;
@@ -2196,22 +2196,22 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             }
 
             if (level < sub_4C69C0(TECH_SKILL_PICK_LOCKS)) {
-                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->field_70, &(a1->field_458));
-                dialog_copy_generic_msg(a1->field_70, a1, 6200, 6299);
-                a1->field_45C = 1;
-                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
+                dialog_copy_generic_msg(a1->reply, a1, 6200, 6299);
+                a1->num_options = 1;
+                sub_4182D0(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
-                a1->field_182C[0] = NULL;
+                a1->actions[0] = NULL;
                 v57 = false;
             } else if (training < TRAINING_APPRENTICE) {
-                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->field_70, &(a1->field_458));
-                dialog_copy_generic_msg(a1->field_70, a1, 6300, 6399);
-                a1->field_45C = 1;
-                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
+                dialog_copy_generic_msg(a1->reply, a1, 6300, 6399);
+                a1->num_options = 1;
+                sub_4182D0(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
-                a1->field_182C[0] = NULL;
+                a1->actions[0] = NULL;
                 v57 = false;
             } else {
                 a1->field_17EC = v50;
@@ -2249,20 +2249,20 @@ int sub_4167C0(const char* str)
 }
 
 // 0x416840
-bool sub_416840(DialogEntryNode* a1, bool a2)
+bool sub_416840(DialogState* a1, bool a2)
 {
     DialogFileEntry entry;
 
     entry.num = a1->field_17EC;
-    if (!dialog_search(a1->field_0, &entry)) {
-        a1->field_458 = -1;
-        a1->field_70[0] = ' ';
-        a1->field_70[1] = '\0';
+    if (!dialog_search(a1->dlg, &entry)) {
+        a1->speech_id = -1;
+        a1->reply[0] = ' ';
+        a1->reply[1] = '\0';
         return false;
     }
 
     a1->field_1840 = entry.response_val;
-    a1->field_458 = sub_4189C0(entry.conditions, a1->field_6C);
+    a1->speech_id = sub_4189C0(entry.conditions, a1->script_num);
 
     if (!a2) {
         sub_415BA0(a1, entry.actions, 0);
@@ -2272,14 +2272,14 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
         sub_419260(a1, &(entry.str[2]));
 
         if (a1->field_17E8) {
-            a1->field_45C = 0;
+            a1->num_options = 0;
             return false;
         }
         return true;
     }
 
     if (strcmpi(entry.str, "i:") == 0) {
-        dialog_copy_race_specific_msg(a1->field_70, a1, 1000);
+        dialog_copy_race_specific_msg(a1->reply, a1, 1000);
         return true;
     }
 
@@ -2323,9 +2323,9 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
 
     if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
         && stat_level_get(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
-        sub_416B00(a1->field_70, entry.data.female_str, a1);
+        sub_416B00(a1->reply, entry.data.female_str, a1);
     } else {
-        sub_416B00(a1->field_70, entry.str, a1);
+        sub_416B00(a1->reply, entry.str, a1);
     }
 
     return true;
@@ -2351,7 +2351,7 @@ bool dialog_search(int dlg, DialogFileEntry* entry)
 }
 
 // 0x416B00
-void sub_416B00(char* dst, char* src, DialogEntryNode* a3)
+void sub_416B00(char* dst, char* src, DialogState* a3)
 {
     char* remainder;
     char* start;
@@ -2381,7 +2381,7 @@ void sub_416B00(char* dst, char* src, DialogEntryNode* a3)
 }
 
 // 0x416C10
-bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
+bool sub_416C10(int a1, int a2, DialogState* a3)
 {
     DialogFileEntry entry;
     char* pch;
@@ -2392,21 +2392,21 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
     int v4;
 
     entry.num = a1;
-    dialog_search(a3->field_0, &entry);
+    dialog_search(a3->dlg, &entry);
 
     if (strcmpi(entry.str, "a:") == 0) {
-        sub_418390(a3->field_460[a2], a3, 1000);
+        sub_418390(a3->options[a2], a3, 1000);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
-            sub_4182D0(a3->field_460[a2], a3, 1600, 1699);
+            sub_4182D0(a3->options[a2], a3, 1600, 1699);
         } else {
-            sub_4182D0(a3->field_460[a2], a3, 300, 399);
+            sub_4182D0(a3->options[a2], a3, 300, 399);
         }
         a3->field_17F0[a2] = 3;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "c:", 2) == 0) {
-        sub_418460(a3->field_460[a2], a3);
+        sub_418460(a3->options[a2], a3);
         a3->field_17F0[a2] = 24;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "d:", 2) == 0) {
@@ -2415,38 +2415,38 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
         }
-        sub_4182D0(a3->field_460[a2], a3, 1300, 1399);
+        sub_4182D0(a3->options[a2], a3, 1300, 1399);
 
-        pch = a3->field_460[a2];
+        pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 18;
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
     } else if (strcmpi(entry.str, "e:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 400, 499);
+        sub_4182D0(a3->options[a2], a3, 400, 499);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "f:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 800, 899);
+        sub_4182D0(a3->options[a2], a3, 800, 899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "h:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 700, 799);
+        sub_4182D0(a3->options[a2], a3, 700, 799);
         a3->field_17F0[a2] = 11;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "i:") == 0) {
         sub_417590(entry.response_val, &v2, &v3);
         sub_419190(a2, v2, v3, a3);
     } else if (strcmpi(entry.str, "k:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 1500, 1599);
+        sub_4182D0(a3->options[a2], a3, 1500, 1599);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "l:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 2300, 2399);
+        sub_4182D0(a3->options[a2], a3, 2300, 2399);
         a3->field_17F0[a2] = 30;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "n:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 100, 199);
+        sub_4182D0(a3->options[a2], a3, 100, 199);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "p:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 1900, 1999);
+        sub_4182D0(a3->options[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "q:", 2) == 0) {
@@ -2456,19 +2456,19 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
         }
         return false;
     } else if (strnicmp(entry.str, "r:", 2) == 0) {
-        sub_418390(a3->field_460[a2], a3, 2000);
+        sub_418390(a3->options[a2], a3, 2000);
 
-        pch = a3->field_460[a2];
+        pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 8;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "s:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 200, 299);
+        sub_4182D0(a3->options[a2], a3, 200, 299);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "r:", 2) == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 500, 599);
+        sub_4182D0(a3->options[a2], a3, 500, 599);
 
-        pch = a3->field_460[a2];
+        pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 5;
         a3->field_1804[a2] = entry.response_val;
@@ -2480,7 +2480,7 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 
         sub_419A00(a2, v4, entry.response_val, a3);
     } else if (strcmpi(entry.str, "w:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 1800, 1899);
+        sub_4182D0(a3->options[a2], a3, 1800, 1899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "x:", 2) == 0) {
         pch = strchr(entry.str, ',');
@@ -2489,23 +2489,23 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
             return false;
         }
 
-        sub_4182D0(a3->field_460[a2], a3, 1400, 1499);
-        pch = a3->field_460[a2];
+        sub_4182D0(a3->options[a2], a3, 1400, 1499);
+        pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 21;
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
     } else if (strcmpi(entry.str, "y:") == 0) {
-        sub_4182D0(a3->field_460[a2], a3, 1, 99);
+        sub_4182D0(a3->options[a2], a3, 1, 99);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "z:", 2) == 0) {
         sub_419AC0(a2, atoi(entry.str + 2), entry.response_val, a3);
     } else {
-        sub_416B00(a3->field_460[a2], entry.str, a3);
+        sub_416B00(a3->options[a2], entry.str, a3);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     }
 
-    a3->field_182C[a2] = entry.actions;
+    a3->actions[a2] = entry.actions;
 
     if (dialog_numbers_enabled) {
         char str[20];
@@ -2515,10 +2515,10 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
         sprintf(str, "[%d]", entry.num);
         len = strlen(str);
         for (pos = 999; pos >= len; pos--) {
-            a3->field_460[a2][pos] = a3->field_460[a2][pos - len];
+            a3->options[a2][pos] = a3->options[a2][pos - len];
         }
         if (len > 0) {
-            strncpy(a3->field_460[a2], str, len);
+            strncpy(a3->options[a2], str, len);
         }
     }
 
@@ -3036,7 +3036,7 @@ void dialog_enable_numbers()
 }
 
 // 0x4182D0
-void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
+void sub_4182D0(char* str, DialogState* a2, int start, int end)
 {
     int gd;
     int cnt;
@@ -3062,7 +3062,7 @@ void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
 }
 
 // 0x418390
-void sub_418390(char* str, DialogEntryNode* a2, int start)
+void sub_418390(char* str, DialogState* a2, int start)
 {
     int gd;
     int cnt;
@@ -3088,14 +3088,14 @@ void sub_418390(char* str, DialogEntryNode* a2, int start)
 }
 
 // 0x418460
-void sub_418460(char* str, DialogEntryNode* a2)
+void sub_418460(char* str, DialogState* a2)
 {
     int v1 = sub_445090();
     sub_4182D0(str, a2, v1 + 1700, v1 + 1700);
 }
 
 // 0x418480
-void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num)
+void dialog_copy_class_specific_msg(char* buffer, DialogState* a2, int num)
 {
     int gd;
     int cnt;
@@ -3136,11 +3136,11 @@ void dialog_copy_class_specific_msg(char* buffer, DialogEntryNode* a2, int num)
     mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
-    a2->field_458 = -1;
+    a2->speech_id = -1;
 }
 
 // 0x4185F0
-void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num)
+void dialog_copy_race_specific_msg(char* buffer, DialogState* a2, int num)
 {
     int gd;
     int cnt;
@@ -3185,11 +3185,11 @@ void dialog_copy_race_specific_msg(char* buffer, DialogEntryNode* a2, int num)
     mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
-    a2->field_458 = -1;
+    a2->speech_id = -1;
 }
 
 // 0x418780
-void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int start, int end)
+void dialog_copy_generic_msg(char* buffer, DialogState* a2, int start, int end)
 {
     int gd;
     int cnt;
@@ -3216,11 +3216,11 @@ void dialog_copy_generic_msg(char* buffer, DialogEntryNode* a2, int start, int e
     mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
     sub_416B00(buffer, mes_file_entry.str, a2);
-    a2->field_458 = -1;
+    a2->speech_id = -1;
 }
 
 // 0x418870
-bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
+bool dialog_copy_override_msg(char* buffer, DialogState* a2, int num)
 {
     Script scr;
     char path[TIG_MAX_PATH];
@@ -3258,7 +3258,7 @@ bool dialog_copy_override_msg(char* buffer, DialogEntryNode* a2, int num)
         strcpy(buffer, entry.data.female_str);
     }
 
-    a2->field_458 = sub_4189C0(entry.conditions, scr.num);
+    a2->speech_id = sub_4189C0(entry.conditions, scr.num);
 
     return true;
 }
@@ -3286,7 +3286,7 @@ void sub_418A00(int a1, int* a2, int* a3)
 }
 
 // 0x418A40
-void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6)
+void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6)
 {
     int v1;
     char buffer[1000];
@@ -3297,22 +3297,22 @@ void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6)
     }
 
     dialog_copy_class_specific_msg(buffer, a6, 1000);
-    sprintf(a6->field_70, buffer, v1);
-    a6->field_45C = 2;
-    sub_4182D0(a6->field_460[0], a6, 1, 99);
+    sprintf(a6->reply, buffer, v1);
+    a6->num_options = 2;
+    sub_4182D0(a6->options[0], a6, 1, 99);
     a6->field_1804[0] = v1;
     a6->field_17F0[0] = 4;
-    a6->field_182C[0] = NULL;
-    sub_4182D0(a6->field_460[1], a6, 100, 199);
+    a6->actions[0] = NULL;
+    sub_4182D0(a6->options[1], a6, 100, 199);
     a6->field_17F0[1] = a4;
-    a6->field_182C[1] = NULL;
+    a6->actions[1] = NULL;
     a6->field_1804[1] = a5;
     a6->field_17F0[2] = a2;
     a6->field_1804[2] = a3;
 }
 
 // 0x418B30
-void sub_418B30(int a1, DialogEntryNode* a2)
+void sub_418B30(int a1, DialogState* a2)
 {
     Packet82 pkt;
 
@@ -3334,47 +3334,47 @@ void sub_418B30(int a1, DialogEntryNode* a2)
 }
 
 // 0x418C40
-void sub_418C40(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_418C40(int a1, int a2, int a3, DialogState* a4)
 {
-    dialog_copy_class_specific_msg(a4->field_70, a4, a1);
-    a4->field_45C = 1;
-    sub_4182D0(a4->field_460[0], a4, 600, 699);
+    dialog_copy_class_specific_msg(a4->reply, a4, a1);
+    a4->num_options = 1;
+    sub_4182D0(a4->options[0], a4, 600, 699);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
+    a4->actions[0] = NULL;
 }
 
 // 0x418CA0
-void sub_418CA0(int* a1, int a2, int a3, DialogEntryNode* a4)
+void sub_418CA0(int* a1, int a2, int a3, DialogState* a4)
 {
     int index;
 
-    dialog_copy_class_specific_msg(a4->field_70, a4, 3000);
-    a4->field_45C = a2 + 1;
+    dialog_copy_class_specific_msg(a4->reply, a4, 3000);
+    a4->num_options = a2 + 1;
 
     for (index = 0; index < a2; index++) {
         if (IS_TECH_SKILL(a1[index])) {
-            strcpy(a4->field_460[index], tech_skill_get_name(GET_TECH_SKILL(a1[index])));
+            strcpy(a4->options[index], tech_skill_get_name(GET_TECH_SKILL(a1[index])));
         } else {
-            strcpy(a4->field_460[index], tech_skill_get_name(GET_BASIC_SKILL(a1[index])));
+            strcpy(a4->options[index], tech_skill_get_name(GET_BASIC_SKILL(a1[index])));
         }
 
         a4->field_17F0[index] = 6;
         a4->field_1804[index] = a1[index];
-        a4->field_182C[index] = NULL;
+        a4->actions[index] = NULL;
     }
 
-    a4->field_182C[a2] = NULL;
-    sub_4182D0(a4->field_460[a2], a4, 800, 899);
+    a4->actions[a2] = NULL;
+    sub_4182D0(a4->options[a2], a4, 800, 899);
     sub_417590(a3, &(a4->field_17F0[a2]), &(a4->field_1804[a2]));
 }
 
 // 0x418DE0
-void sub_418DE0(int a1, DialogEntryNode* a2)
+void sub_418DE0(int a1, DialogState* a2)
 {
     int v1;
 
-    v1 = a2->field_45C - 1;
+    v1 = a2->num_options - 1;
     if (IS_TECH_SKILL(a1)) {
         if (tech_skill_get_training(a2->pc_obj, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
             sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
@@ -3405,7 +3405,7 @@ void sub_418DE0(int a1, DialogEntryNode* a2)
 }
 
 // 0x418F30
-void sub_418F30(int a1, DialogEntryNode* a2)
+void sub_418F30(int a1, DialogState* a2)
 {
     if (IS_TECH_SKILL(a1)) {
         tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
@@ -3413,16 +3413,16 @@ void sub_418F30(int a1, DialogEntryNode* a2)
         basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
     }
 
-    dialog_copy_class_specific_msg(a2->field_70, a2, 6000);
-    a2->field_45C = 1;
-    sub_418390(a2->field_460[0], a2, 1000);
+    dialog_copy_class_specific_msg(a2->reply, a2, 6000);
+    a2->num_options = 1;
+    sub_418390(a2->options[0], a2, 1000);
     a2->field_17F0[0] = a2->field_17F0[1];
     a2->field_1804[0] = a2->field_1804[1];
-    a2->field_182C[0] = NULL;
+    a2->actions[0] = NULL;
 }
 
 // 0x418FC0
-void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogEntryNode* a5)
+void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
 {
     int index;
     int num_known_rumors = 0;
@@ -3446,55 +3446,55 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogEntryNode* a5
             sub_4190E0(rumors[index], v1, v2, a5);
         }
     } else {
-        dialog_copy_class_specific_msg(a5->field_70, a5, 7000);
-        a5->field_45C = 1;
-        sub_4182D0(a5->field_460[0], a5, 600, 699);
+        dialog_copy_class_specific_msg(a5->reply, a5, 7000);
+        a5->num_options = 1;
+        sub_4182D0(a5->options[0], a5, 600, 699);
         a5->field_17F0[0] = v1;
         a5->field_1804[0] = v2;
-        a5->field_182C[0] = NULL;
+        a5->actions[0] = NULL;
     }
 }
 
 // 0x4190E0
-void sub_4190E0(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_4190E0(int a1, int a2, int a3, DialogState* a4)
 {
     char buffer[1000];
 
     rumor_copy_interaction_str(a4->pc_obj, a4->npc_obj, a1, buffer);
-    sub_416B00(a4->field_70, buffer, a4);
-    a4->field_458 = -1;
+    sub_416B00(a4->reply, buffer, a4);
+    a4->speech_id = -1;
     rumor_known_set(a4->pc_obj, a1);
-    a4->field_45C = 1;
-    sub_418390(a4->field_460[0], a4, 1000);
+    a4->num_options = 1;
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
+    a4->actions[0] = NULL;
 }
 
 // 0x419190
-void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_419190(int a1, int a2, int a3, DialogState* a4)
 {
-    sub_418390(a4->field_460[a1], a4, 3000);
+    sub_418390(a4->options[a1], a4, 3000);
     a4->field_17F0[a1] = 10;
     a4->field_1804[a1] = a2;
     a4->field_1818[a1] = a3;
 }
 
 // 0x4191E0
-void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
+void sub_4191E0(int a1, int a2, DialogState* a3)
 {
     reaction_adj(a3->npc_obj, a3->pc_obj, -10);
     if (reaction_get(a3->npc_obj, a3->pc_obj) > 20) {
         sub_414810(a1, a2, 0, 0, a3);
     } else {
-        dialog_copy_race_specific_msg(a3->field_70, a3, 1000);
-        a3->field_45C = 0;
+        dialog_copy_race_specific_msg(a3->reply, a3, 1000);
+        a3->num_options = 0;
         a3->field_17E8 = 4;
     }
 }
 
 // 0x419260
-void sub_419260(DialogEntryNode* a1, const char* str)
+void sub_419260(DialogState* a1, const char* str)
 {
     unsigned int flags[10];
     int values[10];
@@ -3548,19 +3548,19 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[0] & 0x2) == 0 && critter_is_dead(a1->npc_obj)) {
         if (!sub_4197D0(flags[0], values[0], a1)) {
-            dialog_copy_generic_msg(a1->field_70, a1, 1500, 1599);
+            dialog_copy_generic_msg(a1->reply, a1, 1500, 1599);
         }
         return;
     }
 
     if (sub_4AF210(a1->npc_obj, NULL)) {
-        sub_413EA0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+        sub_413EA0(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
         return;
     }
 
     if ((flags[1] & 0x2) == 0 && critter_has_bad_associates(a1->pc_obj)) {
         if (!sub_4197D0(flags[1], values[1], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 18000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 18000);
 
             if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
                 a1->field_17E8 = 4;
@@ -3573,7 +3573,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[2] & 0x2) == 0 && (spell_flags & OSF_INVISIBLE) != 0) {
         if (!sub_4197D0(flags[2], values[2], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 22000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 22000);
 
             if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
                 a1->field_17E8 = 4;
@@ -3584,7 +3584,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[3] & 0x2) == 0 && (spell_flags & (OSF_BODY_OF_AIR | OSF_BODY_OF_EARTH | OSF_BODY_OF_FIRE | OSF_BODY_OF_WATER)) != 0) {
         if (!sub_4197D0(flags[3], values[3], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 19000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 19000);
 
             if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
                 a1->field_17E8 = 4;
@@ -3595,7 +3595,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[4] & 0x2) == 0 && (spell_flags & OSF_POLYMORPHED) != 0) {
         if (!sub_4197D0(flags[4], values[4], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 20000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 20000);
 
             if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
                 a1->field_17E8 = 4;
@@ -3606,7 +3606,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 
     if ((flags[6] & 0x2) == 0 && (spell_flags & OSF_SHRUNK) != 0) {
         if (!sub_4197D0(flags[6], values[6], a1)) {
-            dialog_copy_race_specific_msg(a1->field_70, a1, 6000);
+            dialog_copy_race_specific_msg(a1->reply, a1, 6000);
         }
         return;
     }
@@ -3617,7 +3617,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
     if ((flags[7] & 0x2) == 0
         && armor_type == TIG_ART_ARMOR_TYPE_UNDERWEAR) {
         if (!sub_4197D0(flags[7], values[7], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 16000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 16000);
         }
         return;
     }
@@ -3625,7 +3625,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
     if ((flags[8] & 0x2) == 0
         && armor_type == TIG_ART_ARMOR_TYPE_BARBARIAN) {
         if (!sub_4197D0(flags[8], values[8], a1)) {
-            dialog_copy_class_specific_msg(a1->field_70, a1, 17000);
+            dialog_copy_class_specific_msg(a1->reply, a1, 17000);
         }
         return;
     }
@@ -3638,9 +3638,9 @@ void sub_419260(DialogEntryNode* a1, const char* str)
             if (random_between(1, 100) <= 20) {
                 v4 = sub_4C1F80(a1->pc_obj, a1->npc_obj);
                 if (v4 != 0) {
-                    sub_4C2100(a1->pc_obj, a1->npc_obj, v4, a1->field_70);
-                    a1->field_458 = -1;
-                    if (a1->field_70[0] != '\0') {
+                    sub_4C2100(a1->pc_obj, a1->npc_obj, v4, a1->reply);
+                    a1->speech_id = -1;
+                    if (a1->reply[0] != '\0') {
                         return;
                     }
                 }
@@ -3650,41 +3650,41 @@ void sub_419260(DialogEntryNode* a1, const char* str)
             if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
                 switch (reaction_level) {
                 case REACTION_LOVE:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 11000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 11000);
                     break;
                 case REACTION_AMIABLE:
                 case REACTION_COURTEOUS:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 12000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 12000);
                     break;
                 case REACTION_NEUTRAL:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 13000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 13000);
                     break;
                 case REACTION_SUSPICIOUS:
                 case REACTION_DISLIKE:
-                    dialog_copy_race_specific_msg(a1->field_70, a1, 4000);
+                    dialog_copy_race_specific_msg(a1->reply, a1, 4000);
                     break;
                 case REACTION_HATRED:
-                    dialog_copy_race_specific_msg(a1->field_70, a1, 5000);
+                    dialog_copy_race_specific_msg(a1->reply, a1, 5000);
                     break;
                 }
             } else {
                 switch (reaction_level) {
                 case REACTION_LOVE:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 8000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 8000);
                     break;
                 case REACTION_AMIABLE:
                 case REACTION_COURTEOUS:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 9000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 9000);
                     break;
                 case REACTION_NEUTRAL:
-                    dialog_copy_class_specific_msg(a1->field_70, a1, 10000);
+                    dialog_copy_class_specific_msg(a1->reply, a1, 10000);
                     break;
                 case REACTION_SUSPICIOUS:
                 case REACTION_DISLIKE:
-                    dialog_copy_race_specific_msg(a1->field_70, a1, 2000);
+                    dialog_copy_race_specific_msg(a1->reply, a1, 2000);
                     break;
                 case REACTION_HATRED:
-                    dialog_copy_race_specific_msg(a1->field_70, a1, 3000);
+                    dialog_copy_race_specific_msg(a1->reply, a1, 3000);
                     break;
                 }
             }
@@ -3694,10 +3694,10 @@ void sub_419260(DialogEntryNode* a1, const char* str)
 }
 
 // 0x4197D0
-bool sub_4197D0(unsigned int flags, int a2, DialogEntryNode* a3)
+bool sub_4197D0(unsigned int flags, int a2, DialogState* a3)
 {
     if ((flags & 0x1) != 0) {
-        a3->field_68 = a2;
+        a3->num = a2;
         sub_413A30(a3, 0);
         a3->field_17E8 = 4;
         return true;
@@ -3714,14 +3714,14 @@ bool sub_4197D0(unsigned int flags, int a2, DialogEntryNode* a3)
 }
 
 // 0x419830
-void sub_419830(int a1, int a2, DialogEntryNode* a3)
+void sub_419830(int a1, int a2, DialogState* a3)
 {
     int v1;
     int64_t item_obj;
     int v3;
     int index;
 
-    dialog_copy_class_specific_msg(a3->field_70, a3, 14000);
+    dialog_copy_class_specific_msg(a3->reply, a3, 14000);
     v1 = spell_college_level_get(a3->npc_obj, 12);
     v3 = 0;
     switch (a1) {
@@ -3732,13 +3732,13 @@ void sub_419830(int a1, int a2, DialogEntryNode* a3)
             v3 = 1;
         }
         if (v1 >= 1) {
-            sub_4182D0(a3->field_460[v3], a3, 1100, 1199);
+            sub_4182D0(a3->options[v3], a3, 1100, 1199);
             a3->field_17F0[v3] = 12;
             a3->field_1804[v3] = a2;
             v3++;
         }
         if (v1 >= 2) {
-            sub_4182D0(a3->field_460[v3], a3, 1200, 1299);
+            sub_4182D0(a3->options[v3], a3, 1200, 1299);
             a3->field_17F0[v3] = 13;
             a3->field_1804[v3] = a2;
             v3++;
@@ -3764,17 +3764,17 @@ void sub_419830(int a1, int a2, DialogEntryNode* a3)
         break;
     }
 
-    sub_4182D0(a3->field_460[v3], a3, 800, 899);
+    sub_4182D0(a3->options[v3], a3, 800, 899);
     sub_417590(a2, &(a3->field_17F0[v3]), &(a3->field_1804[v3]));
-    a3->field_45C = v3 + 1;
+    a3->num_options = v3 + 1;
 
-    for (index = 0; index < a3->field_45C; index++) {
-        a3->field_182C[index] = NULL;
+    for (index = 0; index < a3->num_options; index++) {
+        a3->actions[index] = NULL;
     }
 }
 
 // 0x419A00
-void sub_419A00(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_419A00(int a1, int a2, int a3, DialogState* a4)
 {
     char buffer[1000];
     const char* name;
@@ -3785,26 +3785,26 @@ void sub_419A00(int a1, int a2, int a3, DialogEntryNode* a4)
         name = basic_skill_get_name(GET_BASIC_SKILL(a2));
     }
 
-    sprintf(a4->field_460[a1], buffer, name);
+    sprintf(a4->options[a1], buffer, name);
     a4->field_17F0[a1] = 14;
     a4->field_1804[a1] = a2;
     a4->field_1818[a1] = a3;
 }
 
 // 0x419AC0
-void sub_419AC0(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_419AC0(int a1, int a2, int a3, DialogState* a4)
 {
     char buffer[1000];
 
     sub_4182D0(buffer, a4, 1000, 1099);
-    sprintf(a4->field_460[a1], buffer, spell_get_name(a2));
+    sprintf(a4->options[a1], buffer, spell_get_name(a2));
     a4->field_17F0[a1] = 15;
     a4->field_1804[a1] = a2;
     a4->field_1818[a1] = a3;
 }
 
 // 0x419B50
-void sub_419B50(int a1, int a2, DialogEntryNode* a3)
+void sub_419B50(int a1, int a2, DialogState* a3)
 {
     int v1;
     int v2;
@@ -3830,7 +3830,7 @@ void sub_419B50(int a1, int a2, DialogEntryNode* a3)
 }
 
 // 0x419C30
-void sub_419C30(int a1, int a2, DialogEntryNode* a3)
+void sub_419C30(int a1, int a2, DialogState* a3)
 {
     int v1;
     int v2;
@@ -3844,7 +3844,7 @@ void sub_419C30(int a1, int a2, DialogEntryNode* a3)
 }
 
 // 0x419CB0
-void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_419CB0(int a1, int a2, int a3, DialogState* a4)
 {
     unsigned int flags;
     int64_t item_obj;
@@ -3857,16 +3857,16 @@ void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
 
     item_obj = sub_4C91F0(a4->npc_obj, a1);
     anim_goal_use_skill_on(a4->npc_obj, a4->pc_obj, item_obj, a1, flags);
-    dialog_copy_class_specific_msg(a4->field_70, a4, 15000);
-    a4->field_45C = 1;
-    sub_418390(a4->field_460[0], a4, 1000);
+    dialog_copy_class_specific_msg(a4->reply, a4, 15000);
+    a4->num_options = 1;
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
+    a4->actions[0] = NULL;
 }
 
 // 0x419D50
-void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_419D50(int a1, int a2, int a3, DialogState* a4)
 {
     MagicTechSerializedData v1;
 
@@ -3876,12 +3876,12 @@ void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
         v1.flags |= 0x2;
     }
     sub_455AC0(&v1);
-    dialog_copy_class_specific_msg(a4->field_70, a4, 15000);
-    a4->field_45C = 1;
-    sub_418390(a4->field_460[0], a4, 1000);
+    dialog_copy_class_specific_msg(a4->reply, a4, 15000);
+    a4->num_options = 1;
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
+    a4->actions[0] = NULL;
 }
 
 // 0x419E20
@@ -3900,7 +3900,7 @@ int sub_419E20(int64_t obj, int* a2, int cnt)
 }
 
 // 0x419E70
-void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5)
+void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5)
 {
     char buffer[1000];
     char* pch;
@@ -3923,9 +3923,9 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5)
     v5 = sub_419E20(a5->pc_obj, v3, v2);
 
     if (a4) {
-        dialog_copy_generic_msg(a5->field_70, a5, 500, 599);
+        dialog_copy_generic_msg(a5->reply, a5, 500, 599);
     } else {
-        dialog_copy_generic_msg(a5->field_70, a5, 100, 199);
+        dialog_copy_generic_msg(a5->reply, a5, 100, 199);
     }
 
     if (critter_leader_get(a5->npc_obj) == a5->pc_obj) {
@@ -3939,30 +3939,30 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5)
             break;
         }
 
-        strcpy(a5->field_460[v4], area_get_name(v3[a3 + v4]));
+        strcpy(a5->options[v4], area_get_name(v3[a3 + v4]));
         a5->field_17F0[v4] = a4 ? 22 : 19;
         a5->field_1804[v4] = v3[a3 + v4];
         a5->field_1818[v4] = a2;
     }
 
     if (a3 + v4 < v5) {
-        sub_4182D0(a5->field_460[v4], a5, 600, 699);
+        sub_4182D0(a5->options[v4], a5, 600, 699);
         a5->field_17F0[v4] = a4 ? 21 : 18;
         a5->field_1804[v4] = a2;
         a5->field_1818[v4] = a3 + v4;
     } else {
-        sub_4182D0(a5->field_460[v4], a5, 800, 899);
+        sub_4182D0(a5->options[v4], a5, 800, 899);
         sub_417590(a2, &(a5->field_17F0[v4]), &(a5->field_1804[v4]));
     }
 
-    a5->field_45C = v4 + 1;
-    for (index = 0; index < a5->field_45C; index++) {
-        a5->field_182C[index] = NULL;
+    a5->num_options = v4 + 1;
+    for (index = 0; index < a5->num_options; index++) {
+        a5->actions[index] = NULL;
     }
 }
 
 // 0x41A0F0
-void sub_41A0F0(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_41A0F0(int a1, int a2, int a3, DialogState* a4)
 {
     int v1;
     int v2;
@@ -3976,7 +3976,7 @@ void sub_41A0F0(int a1, int a2, int a3, DialogEntryNode* a4)
 }
 
 // 0x41A150
-void sub_41A150(int area, int a2, int a3, DialogEntryNode* a4)
+void sub_41A150(int area, int a2, int a3, DialogState* a4)
 {
     int64_t loc;
     int64_t area_loc;
@@ -3997,17 +3997,17 @@ void sub_41A150(int area, int a2, int a3, DialogEntryNode* a4)
         v4 = 400;
     }
 
-    dialog_copy_generic_msg(a4->field_70, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
+    dialog_copy_generic_msg(a4->reply, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
 
-    sub_418390(a4->field_460[0], a4, 1000);
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
-    a4->field_45C = 1;
+    a4->actions[0] = NULL;
+    a4->num_options = 1;
 }
 
 // 0x41A230
-void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_41A230(int a1, int a2, int a3, DialogState* a4)
 {
     int v1;
     int v2;
@@ -4021,7 +4021,7 @@ void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4)
 }
 
 // 0x41A290
-void sub_41A290(int area, int a2, int a3, DialogEntryNode* a4)
+void sub_41A290(int area, int a2, int a3, DialogState* a4)
 {
     int64_t loc;
     int64_t area_loc;
@@ -4039,31 +4039,31 @@ void sub_41A290(int area, int a2, int a3, DialogEntryNode* a4)
     dialog_copy_generic_msg(buffer, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
 
     if (v3 < 2) {
-        strcpy(a4->field_70, buffer);
+        strcpy(a4->reply, buffer);
     } else {
-        sprintf(a4->field_70, buffer, v3);
+        sprintf(a4->reply, buffer, v3);
     }
 
-    sub_418390(a4->field_460[0], a4, 1000);
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
-    a4->field_45C = 1;
+    a4->actions[0] = NULL;
+    a4->num_options = 1;
     area_set_known(a4->pc_obj, area);
 }
 
 // 0x41A3E0
-void sub_41A3E0(int a1, DialogEntryNode* a2)
+void sub_41A3E0(int a1, DialogState* a2)
 {
-    sub_41A440(a2->field_70, a2);
-    sub_418390(a2->field_460[0], a2, 1000);
+    sub_41A440(a2->reply, a2);
+    sub_418390(a2->options[0], a2, 1000);
     sub_417590(a1, a2->field_17F0, a2->field_1804);
-    a2->field_182C[0] = NULL;
-    a2->field_45C = 1;
+    a2->actions[0] = NULL;
+    a2->num_options = 1;
 }
 
 // 0x41A440
-void sub_41A440(char* buffer, DialogEntryNode* a2)
+void sub_41A440(char* buffer, DialogState* a2)
 {
     int v1;
     int gd;
@@ -4086,68 +4086,68 @@ void sub_41A440(char* buffer, DialogEntryNode* a2)
         mes_file_entry.num = stat_level_get(a2->npc_obj, STAT_RACE) + 100 * v1;
         mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
         sub_416B00(buffer, mes_file_entry.str, a2);
-        a2->field_458 = -1;
+        a2->speech_id = -1;
     }
 }
 
 // 0x41A520
-void sub_41A520(int a1, DialogEntryNode* a2)
+void sub_41A520(int a1, DialogState* a2)
 {
-    dialog_copy_generic_msg(a2->field_70, a2, 4200, 4299);
-    sub_4182D0(a2->field_460[0], a2, 2200, 2299);
+    dialog_copy_generic_msg(a2->reply, a2, 4200, 4299);
+    sub_4182D0(a2->options[0], a2, 2200, 2299);
     a2->field_17F0[0] = 28;
     a2->field_1804[0] = sub_4BF200(4);
     a2->field_1818[0] = a1;
-    sub_4182D0(a2->field_460[1], a2, 2000, 2099);
+    sub_4182D0(a2->options[1], a2, 2000, 2099);
     a2->field_17F0[1] = 26;
     a2->field_1804[1] = a1;
-    sub_4182D0(a2->field_460[2], a2, 2100, 2199);
+    sub_4182D0(a2->options[2], a2, 2100, 2199);
     a2->field_17F0[2] = 27;
     a2->field_1804[2] = a1;
-    sub_4182D0(a2->field_460[3], a2, 800, 899);
+    sub_4182D0(a2->options[3], a2, 800, 899);
     sub_417590(a1, &a2->field_17F0[3], &a2->field_1804[3]);
-    a2->field_182C[0] = NULL;
-    a2->field_182C[1] = NULL;
-    a2->field_182C[2] = NULL;
-    a2->field_182C[3] = NULL;
-    a2->field_45C = 4;
+    a2->actions[0] = NULL;
+    a2->actions[1] = NULL;
+    a2->actions[2] = NULL;
+    a2->actions[3] = NULL;
+    a2->num_options = 4;
 }
 
 // 0x41A620
-void sub_41A620(int a1, DialogEntryNode* a2)
+void sub_41A620(int a1, DialogState* a2)
 {
     int v1;
     int pos;
 
     v1 = sub_4BF200(4);
-    sub_460800(v1, a2->field_70);
+    sub_460800(v1, a2->reply);
 
-    pos = (int)strlen(a2->field_70);
+    pos = (int)strlen(a2->reply);
     if (pos > 0) {
-        if (a2->field_70[pos - 1] != '.'
-            && a2->field_70[pos - 1] != '?'
-            && a2->field_70[pos - 1] != '!') {
-            a2->field_70[pos++] = '.';
+        if (a2->reply[pos - 1] != '.'
+            && a2->reply[pos - 1] != '?'
+            && a2->reply[pos - 1] != '!') {
+            a2->reply[pos++] = '.';
         }
 
-        a2->field_70[pos++] = ' ';
-        a2->field_70[pos++] = '\0';
+        a2->reply[pos++] = ' ';
+        a2->reply[pos++] = '\0';
     }
 
-    dialog_copy_generic_msg(&(a2->field_70[pos]), a2, 4300, 4399);
-    sub_4182D0(a2->field_460[0], a2, 1, 99);
+    dialog_copy_generic_msg(&(a2->reply[pos]), a2, 4300, 4399);
+    sub_4182D0(a2->options[0], a2, 1, 99);
     a2->field_17F0[0] = 28;
     a2->field_1804[0] = v1;
     a2->field_1818[0] = a1;
-    sub_4182D0(a2->field_460[1], a2, 100, 199);
+    sub_4182D0(a2->options[1], a2, 100, 199);
     sub_417590(a1, &a2->field_17F0[1], &a2->field_1804[1]);
-    a2->field_182C[0] = NULL;
-    a2->field_182C[1] = NULL;
-    a2->field_45C = 2;
+    a2->actions[0] = NULL;
+    a2->actions[1] = NULL;
+    a2->num_options = 2;
 }
 
 // 0x41A700
-void sub_41A700(int a1, DialogEntryNode* a2)
+void sub_41A700(int a1, DialogState* a2)
 {
     int cnt;
     int index;
@@ -4162,29 +4162,29 @@ void sub_41A700(int a1, DialogEntryNode* a2)
     }
 
     if (cnt != 0) {
-        dialog_copy_generic_msg(a2->field_70, a2, 4500, 4599);
+        dialog_copy_generic_msg(a2->reply, a2, 4500, 4599);
         for (index = 0; index < cnt; index++) {
-            sub_460800(v1[index], a2->field_460[index]);
+            sub_460800(v1[index], a2->options[index]);
             a2->field_17F0[index] = 28;
             a2->field_1804[index] = v1[index];
         }
-        sub_4182D0(a2->field_460[cnt], a2, 800, 899);
+        sub_4182D0(a2->options[cnt], a2, 800, 899);
         sub_417590(a1, &a2->field_17F0[cnt], &a2->field_1804[cnt]);
-        a2->field_45C = cnt + 1;
+        a2->num_options = cnt + 1;
     } else {
-        dialog_copy_generic_msg(a2->field_70, a2, 4400, 4499);
-        sub_4182D0(a2->field_460[0], a2, 600, 699);
+        dialog_copy_generic_msg(a2->reply, a2, 4400, 4499);
+        sub_4182D0(a2->options[0], a2, 600, 699);
         sub_417590(a1, a2->field_17F0, a2->field_1804);
-        a2->field_45C = 1;
+        a2->num_options = 1;
     }
 
-    for (index = 0; index < a2->field_45C; index++) {
-        a2->field_182C[index] = NULL;
+    for (index = 0; index < a2->num_options; index++) {
+        a2->actions[index] = NULL;
     }
 }
 
 // 0x41A880
-void sub_41A880(int a1, int a2, DialogEntryNode* a3)
+void sub_41A880(int a1, int a2, DialogState* a3)
 {
     int v1;
     int v2;
@@ -4194,7 +4194,7 @@ void sub_41A880(int a1, int a2, DialogEntryNode* a3)
 }
 
 // 0x41A8C0
-void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_41A8C0(int a1, int a2, int a3, DialogState* a4)
 {
     int64_t loc;
     int64_t obj;
@@ -4202,9 +4202,9 @@ void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4)
     loc = obj_field_int64_get(a4->pc_obj, OBJ_F_LOCATION);
     obj = newspaper_create(a1, loc);
     item_transfer(obj, a4->pc_obj);
-    dialog_copy_class_specific_msg(a4->field_70, a4, 15000);
-    sub_418390(a4->field_460[0], a4, 1000);
+    dialog_copy_class_specific_msg(a4->reply, a4, 15000);
+    sub_418390(a4->options[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = NULL;
+    a4->actions[0] = NULL;
 }
