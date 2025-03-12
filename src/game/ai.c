@@ -3737,7 +3737,7 @@ void sub_4AE9E0(int64_t a1, bool a2)
                 rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
                 follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
                 if (critter_is_active(follower_obj)) {
-                    sub_413F50(follower_obj, a1, a2, str, &v1);
+                    dialog_copy_npc_witness_pc_critical_msg(follower_obj, a1, a2, str, &v1);
                     dword_5F8488(follower_obj, a1, str, v1);
                 }
             }
