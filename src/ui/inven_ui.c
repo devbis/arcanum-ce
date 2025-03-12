@@ -3519,7 +3519,7 @@ void sub_578330(int64_t a1, int64_t a2)
                 strcat(byte_68241C, byte_682804);
             }
         } else {
-            sub_413520(qword_682C78, inven_ui_pc_obj, byte_68241C);
+            dialog_copy_npc_wont_sell_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
         }
     }
 
