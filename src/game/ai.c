@@ -1124,7 +1124,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
                 && !a5
                 && dword_5F8488 != NULL) {
                 if (critter_is_active(source_obj)) {
-                    sub_414370(source_obj, a2, rc, str, &v1);
+                    dialog_copy_npc_upset_attacking_msg(source_obj, a2, rc, str, &v1);
                     dword_5F8488(source_obj, a2, str, v1);
                 }
 

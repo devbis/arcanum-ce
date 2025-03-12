@@ -1028,16 +1028,16 @@ void dialog_copy_npc_warning_follow_msg(int64_t npc_obj, int64_t pc_obj, int rea
 }
 
 // 0x414370
-void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
+void dialog_copy_npc_upset_attacking_msg(int64_t npc_obj, int64_t pc_obj, int reason, char* buffer, int* speech_id_ptr)
 {
-    DialogState v1;
+    DialogState state;
     int start;
     int end;
 
-    if (sub_4AD800(a1, a2, 1) == 0) {
-        sub_413360(a1, a2, &v1);
+    if (sub_4AD800(npc_obj, pc_obj, 1) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
 
-        switch (a3) {
+        switch (reason) {
         case 1:
             start = 4900;
             end = 4999;
@@ -1055,16 +1055,16 @@ void sub_414370(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
             end = 4899;
             break;
         default:
-            a4[0] = '\0';
-            *a5 = -1;
+            buffer[0] = '\0';
+            *speech_id_ptr = -1;
             return;
         }
 
-        dialog_copy_npc_generic_msg(a4, &v1, start, end);
-        *a5 = v1.speech_id;
+        dialog_copy_npc_generic_msg(buffer, &state, start, end);
+        *speech_id_ptr = state.speech_id;
     } else {
-        a4[0] = '\0';
-        *a5 = -1;
+        buffer[0] = '\0';
+        *speech_id_ptr = -1;
     }
 }
 
