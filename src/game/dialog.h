@@ -67,7 +67,7 @@ void sub_413360(int64_t a1, int64_t a2, DialogState* a3);
 void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4);
 void dialog_copy_npc_sell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void dialog_copy_npc_wont_sell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
-void sub_4135B0(int64_t a1, int64_t a2, char* a3);
+void dialog_copy_npc_normally_wont_sell_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void sub_413640(int64_t a1, int64_t a2, char* a3);
 void sub_4136D0(int64_t a1, int64_t a2, char* a3);
 void sub_413760(int64_t a1, int64_t a2, char* a3);
