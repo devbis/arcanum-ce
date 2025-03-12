@@ -192,7 +192,7 @@ static void dialog_entry_free(DialogFileEntry* entry);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
-static void sub_4182D0(char* str, DialogState* a2, int start, int end);
+static void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int end);
 static void sub_418390(char* str, DialogState* a2, int start);
 static void sub_418460(char* str, DialogState* a2);
 static void dialog_copy_npc_class_specific_msg(char* buffer, DialogState* state, int num);
@@ -1290,7 +1290,7 @@ void sub_414E60(DialogState* a1, bool randomize)
         }
         a1->num_options -= v2;
         if (a1->num_options == 0) {
-            sub_4182D0(a1->options[0], a1, 400, 499);
+            dialog_copy_pc_generic_msg(a1->options[0], a1, 400, 499);
             a1->field_17F0[0] = 1;
             a1->num_options = 1;
         }
@@ -2085,7 +2085,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             } else {
                 sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
                 a1->num_options = 1;
-                sub_4182D0(a1->options[0], a1, 600, 699);
+                dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
                 a1->actions[0] = 0;
@@ -2123,7 +2123,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             } else {
                 sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->reply, &(a1->speech_id));
                 a1->num_options = 1;
-                sub_4182D0(a1->options[0], a1, 600, 699);
+                dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
                 a1->actions[0] = NULL;
@@ -2199,7 +2199,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
                 dialog_copy_npc_generic_msg(a1->reply, a1, 6200, 6299);
                 a1->num_options = 1;
-                sub_4182D0(a1->options[0], a1, 600, 699);
+                dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
                 a1->actions[0] = NULL;
@@ -2208,7 +2208,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
                 dialog_copy_npc_generic_msg(a1->reply, a1, 6300, 6399);
                 a1->num_options = 1;
-                sub_4182D0(a1->options[0], a1, 600, 699);
+                dialog_copy_pc_generic_msg(a1->options[0], a1, 600, 699);
                 a1->field_17F0[0] = a1->field_17F0[a3];
                 a1->field_1804[0] = a1->field_1804[a3];
                 a1->actions[0] = NULL;
@@ -2399,9 +2399,9 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
-            sub_4182D0(a3->options[a2], a3, 1600, 1699);
+            dialog_copy_pc_generic_msg(a3->options[a2], a3, 1600, 1699);
         } else {
-            sub_4182D0(a3->options[a2], a3, 300, 399);
+            dialog_copy_pc_generic_msg(a3->options[a2], a3, 300, 399);
         }
         a3->field_17F0[a2] = 3;
         a3->field_1804[a2] = entry.response_val;
@@ -2415,7 +2415,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
         }
-        sub_4182D0(a3->options[a2], a3, 1300, 1399);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1300, 1399);
 
         pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
@@ -2423,30 +2423,30 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
     } else if (strcmpi(entry.str, "e:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 400, 499);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 400, 499);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "f:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 800, 899);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 800, 899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "h:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 700, 799);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 700, 799);
         a3->field_17F0[a2] = 11;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "i:") == 0) {
         sub_417590(entry.response_val, &v2, &v3);
         sub_419190(a2, v2, v3, a3);
     } else if (strcmpi(entry.str, "k:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 1500, 1599);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1500, 1599);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "l:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 2300, 2399);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 2300, 2399);
         a3->field_17F0[a2] = 30;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "n:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 100, 199);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 100, 199);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strcmpi(entry.str, "p:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 1900, 1999);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "q:", 2) == 0) {
@@ -2463,10 +2463,10 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_17F0[a2] = 8;
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "s:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 200, 299);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 200, 299);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "r:", 2) == 0) {
-        sub_4182D0(a3->options[a2], a3, 500, 599);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 500, 599);
 
         pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
@@ -2480,7 +2480,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
 
         sub_419A00(a2, v4, entry.response_val, a3);
     } else if (strcmpi(entry.str, "w:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 1800, 1899);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1800, 1899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "x:", 2) == 0) {
         pch = strchr(entry.str, ',');
@@ -2489,14 +2489,14 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
             return false;
         }
 
-        sub_4182D0(a3->options[a2], a3, 1400, 1499);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1400, 1499);
         pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 21;
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
     } else if (strcmpi(entry.str, "y:") == 0) {
-        sub_4182D0(a3->options[a2], a3, 1, 99);
+        dialog_copy_pc_generic_msg(a3->options[a2], a3, 1, 99);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "z:", 2) == 0) {
         sub_419AC0(a2, atoi(entry.str + 2), entry.response_val, a3);
@@ -3036,18 +3036,18 @@ void dialog_enable_numbers()
 }
 
 // 0x4182D0
-void sub_4182D0(char* str, DialogState* a2, int start, int end)
+void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int end)
 {
     int gd;
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (critter_is_dumb(a2->pc_obj)) {
-        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+    if (critter_is_dumb(state->pc_obj)) {
+        gd = stat_level_get(state->npc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_DUMB_PC2M
             : GD_DUMB_PC2F;
     } else {
-        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(state->npc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_PC2M
             : GD_PC2F;
     }
@@ -3058,7 +3058,7 @@ void sub_4182D0(char* str, DialogState* a2, int start, int end)
     mes_file_entry.num = start + random_between(0, cnt - 1);
     mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
 
-    sub_416B00(str, mes_file_entry.str, a2);
+    sub_416B00(buffer, mes_file_entry.str, state);
 }
 
 // 0x418390
@@ -3091,7 +3091,7 @@ void sub_418390(char* str, DialogState* a2, int start)
 void sub_418460(char* str, DialogState* a2)
 {
     int v1 = sub_445090();
-    sub_4182D0(str, a2, v1 + 1700, v1 + 1700);
+    dialog_copy_pc_generic_msg(str, a2, v1 + 1700, v1 + 1700);
 }
 
 // 0x418480
@@ -3299,11 +3299,11 @@ void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6)
     dialog_copy_npc_class_specific_msg(buffer, a6, 1000);
     sprintf(a6->reply, buffer, v1);
     a6->num_options = 2;
-    sub_4182D0(a6->options[0], a6, 1, 99);
+    dialog_copy_pc_generic_msg(a6->options[0], a6, 1, 99);
     a6->field_1804[0] = v1;
     a6->field_17F0[0] = 4;
     a6->actions[0] = NULL;
-    sub_4182D0(a6->options[1], a6, 100, 199);
+    dialog_copy_pc_generic_msg(a6->options[1], a6, 100, 199);
     a6->field_17F0[1] = a4;
     a6->actions[1] = NULL;
     a6->field_1804[1] = a5;
@@ -3338,7 +3338,7 @@ void sub_418C40(int a1, int a2, int a3, DialogState* a4)
 {
     dialog_copy_npc_class_specific_msg(a4->reply, a4, a1);
     a4->num_options = 1;
-    sub_4182D0(a4->options[0], a4, 600, 699);
+    dialog_copy_pc_generic_msg(a4->options[0], a4, 600, 699);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
     a4->actions[0] = NULL;
@@ -3365,7 +3365,7 @@ void sub_418CA0(int* a1, int a2, int a3, DialogState* a4)
     }
 
     a4->actions[a2] = NULL;
-    sub_4182D0(a4->options[a2], a4, 800, 899);
+    dialog_copy_pc_generic_msg(a4->options[a2], a4, 800, 899);
     sub_417590(a3, &(a4->field_17F0[a2]), &(a4->field_1804[a2]));
 }
 
@@ -3448,7 +3448,7 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
     } else {
         dialog_copy_npc_class_specific_msg(a5->reply, a5, 7000);
         a5->num_options = 1;
-        sub_4182D0(a5->options[0], a5, 600, 699);
+        dialog_copy_pc_generic_msg(a5->options[0], a5, 600, 699);
         a5->field_17F0[0] = v1;
         a5->field_1804[0] = v2;
         a5->actions[0] = NULL;
@@ -3732,13 +3732,13 @@ void sub_419830(int a1, int a2, DialogState* a3)
             v3 = 1;
         }
         if (v1 >= 1) {
-            sub_4182D0(a3->options[v3], a3, 1100, 1199);
+            dialog_copy_pc_generic_msg(a3->options[v3], a3, 1100, 1199);
             a3->field_17F0[v3] = 12;
             a3->field_1804[v3] = a2;
             v3++;
         }
         if (v1 >= 2) {
-            sub_4182D0(a3->options[v3], a3, 1200, 1299);
+            dialog_copy_pc_generic_msg(a3->options[v3], a3, 1200, 1299);
             a3->field_17F0[v3] = 13;
             a3->field_1804[v3] = a2;
             v3++;
@@ -3764,7 +3764,7 @@ void sub_419830(int a1, int a2, DialogState* a3)
         break;
     }
 
-    sub_4182D0(a3->options[v3], a3, 800, 899);
+    dialog_copy_pc_generic_msg(a3->options[v3], a3, 800, 899);
     sub_417590(a2, &(a3->field_17F0[v3]), &(a3->field_1804[v3]));
     a3->num_options = v3 + 1;
 
@@ -3796,7 +3796,7 @@ void sub_419AC0(int a1, int a2, int a3, DialogState* a4)
 {
     char buffer[1000];
 
-    sub_4182D0(buffer, a4, 1000, 1099);
+    dialog_copy_pc_generic_msg(buffer, a4, 1000, 1099);
     sprintf(a4->options[a1], buffer, spell_get_name(a2));
     a4->field_17F0[a1] = 15;
     a4->field_1804[a1] = a2;
@@ -3946,12 +3946,12 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5)
     }
 
     if (a3 + v4 < v5) {
-        sub_4182D0(a5->options[v4], a5, 600, 699);
+        dialog_copy_pc_generic_msg(a5->options[v4], a5, 600, 699);
         a5->field_17F0[v4] = a4 ? 21 : 18;
         a5->field_1804[v4] = a2;
         a5->field_1818[v4] = a3 + v4;
     } else {
-        sub_4182D0(a5->options[v4], a5, 800, 899);
+        dialog_copy_pc_generic_msg(a5->options[v4], a5, 800, 899);
         sub_417590(a2, &(a5->field_17F0[v4]), &(a5->field_1804[v4]));
     }
 
@@ -4096,17 +4096,17 @@ void dialog_copy_story_msg(char* buffer, DialogState* state)
 void sub_41A520(int a1, DialogState* a2)
 {
     dialog_copy_npc_generic_msg(a2->reply, a2, 4200, 4299);
-    sub_4182D0(a2->options[0], a2, 2200, 2299);
+    dialog_copy_pc_generic_msg(a2->options[0], a2, 2200, 2299);
     a2->field_17F0[0] = 28;
     a2->field_1804[0] = sub_4BF200(4);
     a2->field_1818[0] = a1;
-    sub_4182D0(a2->options[1], a2, 2000, 2099);
+    dialog_copy_pc_generic_msg(a2->options[1], a2, 2000, 2099);
     a2->field_17F0[1] = 26;
     a2->field_1804[1] = a1;
-    sub_4182D0(a2->options[2], a2, 2100, 2199);
+    dialog_copy_pc_generic_msg(a2->options[2], a2, 2100, 2199);
     a2->field_17F0[2] = 27;
     a2->field_1804[2] = a1;
-    sub_4182D0(a2->options[3], a2, 800, 899);
+    dialog_copy_pc_generic_msg(a2->options[3], a2, 800, 899);
     sub_417590(a1, &a2->field_17F0[3], &a2->field_1804[3]);
     a2->actions[0] = NULL;
     a2->actions[1] = NULL;
@@ -4137,11 +4137,11 @@ void sub_41A620(int a1, DialogState* a2)
     }
 
     dialog_copy_npc_generic_msg(&(a2->reply[pos]), a2, 4300, 4399);
-    sub_4182D0(a2->options[0], a2, 1, 99);
+    dialog_copy_pc_generic_msg(a2->options[0], a2, 1, 99);
     a2->field_17F0[0] = 28;
     a2->field_1804[0] = v1;
     a2->field_1818[0] = a1;
-    sub_4182D0(a2->options[1], a2, 100, 199);
+    dialog_copy_pc_generic_msg(a2->options[1], a2, 100, 199);
     sub_417590(a1, &a2->field_17F0[1], &a2->field_1804[1]);
     a2->actions[0] = NULL;
     a2->actions[1] = NULL;
@@ -4170,12 +4170,12 @@ void sub_41A700(int a1, DialogState* a2)
             a2->field_17F0[index] = 28;
             a2->field_1804[index] = v1[index];
         }
-        sub_4182D0(a2->options[cnt], a2, 800, 899);
+        dialog_copy_pc_generic_msg(a2->options[cnt], a2, 800, 899);
         sub_417590(a1, &a2->field_17F0[cnt], &a2->field_1804[cnt]);
         a2->num_options = cnt + 1;
     } else {
         dialog_copy_npc_generic_msg(a2->reply, a2, 4400, 4499);
-        sub_4182D0(a2->options[0], a2, 600, 699);
+        dialog_copy_pc_generic_msg(a2->options[0], a2, 600, 699);
         sub_417590(a1, a2->field_17F0, a2->field_1804);
         a2->num_options = 1;
     }
