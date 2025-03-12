@@ -226,7 +226,7 @@ static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A3E0(int a1, DialogState* a2);
-static void sub_41A440(char* buffer, DialogState* a2);
+static void dialog_copy_story_msg(char* buffer, DialogState* state);
 static void sub_41A520(int a1, DialogState* a2);
 static void sub_41A620(int a1, DialogState* a2);
 static void sub_41A700(int a1, DialogState* a2);
@@ -4055,7 +4055,7 @@ void sub_41A290(int area, int a2, int a3, DialogState* a4)
 // 0x41A3E0
 void sub_41A3E0(int a1, DialogState* a2)
 {
-    sub_41A440(a2->reply, a2);
+    dialog_copy_story_msg(a2->reply, a2);
     sub_418390(a2->options[0], a2, 1000);
     sub_417590(a1, a2->field_17F0, a2->field_1804);
     a2->actions[0] = NULL;
@@ -4063,31 +4063,33 @@ void sub_41A3E0(int a1, DialogState* a2)
 }
 
 // 0x41A440
-void sub_41A440(char* buffer, DialogState* a2)
+void dialog_copy_story_msg(char* buffer, DialogState* state)
 {
-    int v1;
+    int story_state;
     int gd;
     MesFileEntry mes_file_entry;
 
-    v1 = sub_445090();
-    if (!dialog_copy_npc_override_msg(buffer, a2, v1 + 10000)) {
-        if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                ? GD_STO_M2F
-                : GD_STO_M2M;
-        } else {
-            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
-                ? GD_STO_F2M
-                : GD_STO_F2F;
-        }
-
-        dialog_load_generated(gd);
-
-        mes_file_entry.num = stat_level_get(a2->npc_obj, STAT_RACE) + 100 * v1;
-        mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
-        sub_416B00(buffer, mes_file_entry.str, a2);
-        a2->speech_id = -1;
+    story_state = sub_445090();
+    if (dialog_copy_npc_override_msg(buffer, state, story_state + 10000)) {
+        return;
     }
+
+    if (stat_level_get(state->npc_obj, STAT_GENDER) == GENDER_MALE) {
+        gd = stat_level_get(state->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_STO_M2F
+            : GD_STO_M2M;
+    } else {
+        gd = stat_level_get(state->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_STO_F2M
+            : GD_STO_F2F;
+    }
+
+    dialog_load_generated(gd);
+
+    mes_file_entry.num = stat_level_get(state->npc_obj, STAT_RACE) + 100 * story_state;
+    mes_get_msg(dialog_mes_files[gd], &mes_file_entry);
+    sub_416B00(buffer, mes_file_entry.str, state);
+    state->speech_id = -1;
 }
 
 // 0x41A520
