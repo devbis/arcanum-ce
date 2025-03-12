@@ -3473,7 +3473,7 @@ void sub_578330(int64_t a1, int64_t a2)
             if (sub_441980(a1, qword_682C78, inven_ui_pc_obj, SAP_BUY_OBJECT, 0)) {
                 pos = 0;
             } else {
-                sub_4137F0(qword_682C78, inven_ui_pc_obj, byte_68241C);
+                dialog_copy_npc_normally_wont_buy_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
                 pos = (int)strlen(byte_68241C);
             }
 

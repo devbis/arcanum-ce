@@ -678,15 +678,15 @@ void dialog_copy_npc_wont_buy_stolen_msg(int64_t npc_obj, int64_t pc_obj, char* 
 }
 
 // 0x4137F0
-void sub_4137F0(int64_t a1, int64_t a2, char* a3)
+void dialog_copy_npc_normally_wont_buy_msg(int64_t npc_obj, int64_t pc_obj, char* buffer)
 {
-    DialogState v1;
+    DialogState state;
 
-    if (sub_4AD800(a1, a2, 0) == 0) {
-        sub_413360(a1, a2, &v1);
-        dialog_copy_npc_generic_msg(a3, &v1, 1300, 1399);
+    if (sub_4AD800(npc_obj, pc_obj, 0) == 0) {
+        sub_413360(npc_obj, pc_obj, &state);
+        dialog_copy_npc_generic_msg(buffer, &state, 1300, 1399);
     } else {
-        a3[0] = '\0';
+        buffer[0] = '\0';
     }
 }
 
