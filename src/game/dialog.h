@@ -74,7 +74,7 @@ void dialog_copy_npc_wont_buy_stolen_msg(int64_t npc_obj, int64_t pc_obj, char* 
 void dialog_copy_npc_normally_wont_buy_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void dialog_copy_npc_buy_for_less_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void dialog_copy_npc_not_enough_money_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
-void sub_4139A0(int64_t a1, int64_t a2, char* a3);
+void dialog_copy_npc_let_me_handle_msg(int64_t npc_obj, int64_t pc_obj, char* buffer);
 void sub_413A30(DialogState* a1, bool a2);
 void sub_413A90(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_413DF0(int64_t a1, int64_t a2, char* a3, int* a4);
