@@ -143,7 +143,7 @@ static void sub_554F10(int64_t a1, int64_t a2, char* a3);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
-static void sub_555D80(int64_t a1, int64_t a2, char* str);
+static void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str);
 static void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str);
 static void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
@@ -6009,7 +6009,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
                 intgame_examine_container(a1, a2, str);
                 break;
             case OBJ_TYPE_SCENERY:
-                sub_555D80(a1, a2, str);
+                intgame_examine_scenery(a1, a2, str);
                 break;
             case OBJ_TYPE_PROJECTILE:
                 break;
@@ -7178,38 +7178,40 @@ void sub_555B50(int64_t obj, char* buffer)
 }
 
 // 0x555D80
-void sub_555D80(int64_t a1, int64_t scenery_obj, char* str)
+void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
 {
-    int art_num;
+    int portrait;
     char buffer[2000];
 
-    if (str[0] != '\0') {
-        sub_550930();
+    if (str[0] == '\0') {
+        return;
+    }
 
-        if (sub_553D10(a1, scenery_obj, &art_num)) {
-            sub_5561D0(scenery_obj, art_num, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
-        } else {
-            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, art_num);
-        }
+    sub_550930();
 
+    if (sub_553D10(pc_obj, scenery_obj, &portrait)) {
+        sub_5561D0(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+    } else {
+        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+    }
+
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C7118,
+        dword_739F88,
+        1);
+
+    if ((obj_field_int32_get(scenery_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
+        sprintf(buffer, "%d/%d", object_hp_current(scenery_obj), object_hp_max(scenery_obj));
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
-            &stru_5C7118,
-            dword_739F88,
-            1);
+            buffer,
+            &stru_5C70F8,
+            dword_64C49C,
+            2);
+    }
 
-        if ((obj_field_int32_get(scenery_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
-            sprintf(buffer, "%d/%d", object_hp_current(scenery_obj), object_hp_max(scenery_obj));
-            sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-                buffer,
-                &stru_5C70F8,
-                dword_64C49C,
-                2);
-        }
-
-        if ((obj_field_int32_get(scenery_obj, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
-            sub_564AF0(scenery_obj);
-        }
+    if ((obj_field_int32_get(scenery_obj, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
+        sub_564AF0(scenery_obj);
     }
 }
 
