@@ -139,7 +139,7 @@ static void sub_554640(int a1, int a2, TigRect* rect, int value);
 static void sub_554830(int64_t a1, int64_t a2);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
 static int sub_554C20(int64_t item_obj);
-static void sub_554F10(int64_t a1, int64_t a2, char* a3);
+static void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
@@ -6023,7 +6023,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
             case OBJ_TYPE_KEY_RING:
             case OBJ_TYPE_WRITTEN:
             case OBJ_TYPE_GENERIC:
-                sub_554F10(a1, a2, str);
+                intgame_examine_item(a1, a2, str);
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
@@ -6722,7 +6722,7 @@ int sub_554C20(int64_t item_obj)
 }
 
 // 0x554F10
-void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
+void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
 {
     int obj_type;
     int64_t parent_obj;
@@ -6730,17 +6730,18 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
     int complexity;
     MesFileEntry mes_file_entry;
     MesFileEntry suffix;
-    char str[MAX_STRING];
+    char buffer[MAX_STRING];
     int quantity_fld;
     int value;
 
     obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+
     sub_550930();
 
     if (item_parent(item_obj, &parent_obj)
         && parent_obj != OBJ_HANDLE_NULL
         && IS_WEAR_INV_LOC(item_inventory_location_get(item_obj))) {
-        critter_obj = parent_obj;
+        pc_obj = parent_obj;
     }
 
     sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle,
@@ -6752,27 +6753,27 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
     if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_HEXED) != 0
         && is_identified) {
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            a3,
+            str,
             &stru_5C70C8,
             dword_64C538,
             0x1);
     } else {
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            a3,
+            str,
             &stru_5C70C8,
             complexity > 0 ? dword_64C470 : dword_739F88,
             0x1);
     }
 
     if (obj_type == OBJ_TYPE_WEAPON) {
-        value = item_weapon_magic_speed(item_obj, critter_obj);
+        value = item_weapon_magic_speed(item_obj, pc_obj);
 
         mes_file_entry.num = 8; // "Speed"
         mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        sprintf(buffer, "%s: %d", mes_file_entry.str, value);
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
+            buffer,
             &stru_5C70C8,
             dword_64C49C,
             0x2);
@@ -6785,9 +6786,9 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         if (mes_file_entry.str != NULL
             && *mes_file_entry.str != '\0'
             && (complexity <= 0 || is_identified)) {
-            strcpy(str, mes_file_entry.str);
+            strcpy(buffer, mes_file_entry.str);
         } else {
-            sub_555910(item_obj, str);
+            sub_555910(item_obj, buffer);
         }
         break;
     case OBJ_TYPE_AMMO:
@@ -6798,7 +6799,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         mes_file_entry.num = 6; // "Quantity"
         mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        sprintf(buffer, "%s: %d", mes_file_entry.str, value);
         break;
     case OBJ_TYPE_ARMOR:
         mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
@@ -6806,21 +6807,21 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         if (mes_file_entry.str != NULL
             && *mes_file_entry.str != '\0'
             && (complexity <= 0 || is_identified)) {
-            strcpy(str, mes_file_entry.str);
+            strcpy(buffer, mes_file_entry.str);
         } else {
-            sub_555B50(item_obj, str);
+            sub_555B50(item_obj, buffer);
         }
         break;
     case OBJ_TYPE_FOOD:
     case OBJ_TYPE_SCROLL:
     case OBJ_TYPE_WRITTEN:
     case OBJ_TYPE_GENERIC:
-        str[0] = '\0';
+        buffer[0] = '\0';
         if (complexity <= 0 || is_identified) {
             mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
             mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
             if (mes_file_entry.str != NULL) {
-                strcpy(str, mes_file_entry.str);
+                strcpy(buffer, mes_file_entry.str);
             }
         }
         if (obj_type == OBJ_TYPE_GENERIC) {
@@ -6835,7 +6836,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
             if (mes_file_entry.num != -1) {
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
-                sprintf(str,
+                sprintf(buffer,
                     "%s: %+d%%",
                     mes_file_entry.str,
                     obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS));
@@ -6843,7 +6844,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         }
         break;
     case OBJ_TYPE_KEY:
-        str[0] = '\0';
+        buffer[0] = '\0';
         break;
     case OBJ_TYPE_KEY_RING:
         value = item_get_keys(item_obj, NULL);
@@ -6851,13 +6852,13 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         mes_file_entry.num = 7; // "Keys"
         mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        sprintf(buffer, "%s: %d", mes_file_entry.str, value);
         break;
     }
 
-    if (str[0] != '\0' || !intgame_is_compact_interface()) {
+    if (buffer[0] != '\0' || !intgame_is_compact_interface()) {
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
+            buffer,
             &stru_5C70D8,
             dword_64C498,
             0x1);
@@ -6868,33 +6869,33 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             || obj_type == OBJ_TYPE_ARMOR
             || obj_type == OBJ_TYPE_SCROLL)) {
         if (complexity > 0) {
-            value = sub_4614A0(item_obj, critter_obj);
+            value = sub_4614A0(item_obj, pc_obj);
 
             mes_file_entry.num = 2; // "Magic power available"
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-            sprintf(str, "%s: %d%%", mes_file_entry.str, 100 * value / complexity);
+            sprintf(buffer, "%s: %d%%", mes_file_entry.str, 100 * value / complexity);
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-                str,
+                buffer,
                 &stru_5C70E8,
                 dword_64C498,
                 0x1);
         } else if (complexity < 0) {
-            value = sub_461700(item_obj, critter_obj);
+            value = sub_461700(item_obj, pc_obj);
 
             mes_file_entry.num = 3; // "Aptitude adj to chance of critical failure"
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-            sprintf(str, "%s: %+d%%", mes_file_entry.str, value);
+            sprintf(buffer, "%s: %+d%%", mes_file_entry.str, value);
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-                str,
+                buffer,
                 &stru_5C70E8,
                 dword_64C498,
                 0x1);
         }
     }
 
-    str[0] = '\0';
+    buffer[0] = '\0';
     value = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
 
     if (complexity > 0 && value != 0) {
@@ -6903,12 +6904,12 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
         if (is_identified) {
             if (value > 0) {
-                sprintf(str, "%s: +", mes_file_entry.str);
+                sprintf(buffer, "%s: +", mes_file_entry.str);
             } else {
-                sprintf(str, "%s: %d", mes_file_entry.str, value);
+                sprintf(buffer, "%s: %d", mes_file_entry.str, value);
             }
         } else {
-            sprintf(str, "%s: ??", mes_file_entry.str);
+            sprintf(buffer, "%s: ??", mes_file_entry.str);
         }
     } else {
         switch (obj_type) {
@@ -6917,7 +6918,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
                 mes_file_entry.num = 19; // "Uses"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-                sprintf(str,
+                sprintf(buffer,
                     "%s: %d",
                     mes_file_entry.str,
                     obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS));
@@ -6928,7 +6929,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             if (ammo_type != 10000) {
                 int consumption = obj_field_int32_get(item_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
                 if (consumption > 0) {
-                    sprintf(str,
+                    sprintf(buffer,
                         "%s: %d",
                         ammunition_type_get_name(ammo_type),
                         consumption);
@@ -6939,22 +6940,22 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         }
     }
 
-    if (str[0] != '\0' || !intgame_is_compact_interface()) {
+    if (buffer[0] != '\0' || !intgame_is_compact_interface()) {
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
+            buffer,
             &stru_5C70E8,
             dword_64C498,
             0x2);
     }
 
-    value = item_weight(item_obj, critter_obj);
+    value = item_weight(item_obj, pc_obj);
     mes_file_entry.num = 4; // "Weight"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     suffix.num = 5; // "stone"
     mes_get_msg(intgame_mes_file, &suffix);
-    sprintf(str, "%s: %d %s", mes_file_entry.str, value, suffix.str);
+    sprintf(buffer, "%s: %d %s", mes_file_entry.str, value, suffix.str);
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        str,
+        buffer,
         &stru_5C70F8,
         dword_64C49C,
         0x1);
@@ -6964,12 +6965,12 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             || obj_type == OBJ_TYPE_ARMOR
             || (obj_type == OBJ_TYPE_GENERIC
                 && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & 0x20) != 0)) {
-            sprintf(str,
+            sprintf(buffer,
                 "%d/%d",
                 object_hp_current(item_obj),
                 object_hp_max(item_obj));
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-                str,
+                buffer,
                 &stru_5C70F8,
                 dword_64C49C,
                 0x2);
