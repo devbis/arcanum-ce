@@ -133,7 +133,7 @@ static void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig
 static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle);
 static void sub_553960();
 static void sub_553A70(TigMessage* msg);
-static void sub_553F70(int64_t a1, int64_t a2, char* a3);
+static void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str);
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
 static void sub_554640(int a1, int a2, TigRect* rect, int value);
 static void sub_554830(int64_t a1, int64_t a2);
@@ -486,13 +486,13 @@ static int dword_5C6FA0[RACE_COUNT] = {
 };
 
 // 0x5C6FCC
-static int dword_5C6FCC[6] = {
-    634,
-    390,
-    389,
-    388,
-    387,
-    386,
+static int intgame_alignment_icons[6] = {
+    634, // "icon_lawfulevil.art"
+    390, // "icon_evil.art"
+    389, // "icon_chaotic.art"
+    388, // "icon_lawful.art"
+    387, // "icon_good.art"
+    386, // "icon_lawfulgood.art"
 };
 
 // 0x5C6FE4
@@ -6027,7 +6027,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
-                sub_553F70(a1, a2, str);
+                intgame_examine_critter(a1, a2, str);
                 break;
             default:
                 sub_550770(-1, str);
@@ -6139,13 +6139,13 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
 }
 
 // 0x553F70
-void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
+void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
 {
     int obj_type;
     bool is_detecting_alignment;
     int alignment;
     MesFileEntry mes_file_entry;
-    char str[80];
+    char buffer[80];
     int64_t leader_obj;
 
     obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
@@ -6153,29 +6153,27 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
 
     leader_obj = critter_pc_leader_get(critter_obj);
 
-
-    is_detecting_alignment = (obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_ALIGNMENT) != 0;
-
+    is_detecting_alignment = (obj_field_int32_get(pc_obj, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_ALIGNMENT) != 0;
     if (is_detecting_alignment) {
         alignment = stat_level_get(critter_obj, STAT_ALIGNMENT);
     }
 
-    if (a1 != critter_obj
-        && combat_critter_is_combat_mode_active(a1)
+    if (pc_obj != critter_obj
+        && combat_critter_is_combat_mode_active(pc_obj)
         && !critter_is_dead(critter_obj)) {
-        sub_554830(a1, critter_obj);
+        sub_554830(pc_obj, critter_obj);
     } else {
         if (is_detecting_alignment) {
-            int v1 = (stat_level_max(critter_obj, STAT_ALIGNMENT) - stat_level_min(critter_obj, STAT_ALIGNMENT)) / 6;
-            int v2 = (alignment - stat_level_min(critter_obj, STAT_ALIGNMENT)) / v1;
-            if (v2 > 5) {
-                v2 = 5;
+            int step = (stat_level_max(critter_obj, STAT_ALIGNMENT) - stat_level_min(critter_obj, STAT_ALIGNMENT)) / 6;
+            int alignment_type = (alignment - stat_level_min(critter_obj, STAT_ALIGNMENT)) / step;
+            if (alignment_type > 5) {
+                alignment_type = 5;
             }
-            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, dword_5C6FCC[v2]);
+            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, intgame_alignment_icons[alignment_type]);
         } else {
             int portrait;
 
-            if (sub_553D10(a1, critter_obj, &portrait)) {
+            if (sub_553D10(pc_obj, critter_obj, &portrait)) {
                 sub_5561D0(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
             } else {
                 sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
@@ -6184,7 +6182,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     }
 
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        a3,
+        str,
         &stru_5C70C8,
         dword_739F88,
         0x1);
@@ -6201,14 +6199,14 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     }
 
     if (obj_type == OBJ_TYPE_NPC) {
-        if (critter_is_concealed(a1)) {
+        if (critter_is_concealed(pc_obj)) {
             mes_file_entry.num = 37; // "Prowling state"
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
             int v4;
-            int v3 = sub_4AF260(critter_obj, a1);
+            int v3 = sub_4AF260(critter_obj, pc_obj);
             if (v3 != 0) {
-                v4 = sub_4AF470(critter_obj, a1, 0);
+                v4 = sub_4AF470(critter_obj, pc_obj, 0);
                 if (v4 >= v3) {
                     v4 = v3;
                 }
@@ -6240,21 +6238,21 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
             }
 
             mes_get_msg(intgame_mes_file, &suffix);
-            sprintf(str, "%s: %s", mes_file_entry.str, suffix.str);
+            sprintf(buffer, "%s: %s", mes_file_entry.str, suffix.str);
         } else {
             if (is_detecting_alignment) {
                 mes_file_entry.num = 36; // "Alignment"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
-                sprintf(str, "%s: %d", mes_file_entry.str, alignment / 10);
+                sprintf(buffer, "%s: %d", mes_file_entry.str, alignment / 10);
             } else {
-                int reaction_value = reaction_get(critter_obj, a1);
+                int reaction_value = reaction_get(critter_obj, pc_obj);
                 int reaction_level = reaction_translate(reaction_value);
                 const char* reaction_name = reaction_get_name(reaction_level);
 
                 mes_file_entry.num = 1; // "Reaction"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-                sprintf(str,
+                sprintf(buffer,
                     "%s: %d (%s)",
                     mes_file_entry.str,
                     reaction_value,
@@ -6263,7 +6261,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         }
 
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
+            buffer,
             &stru_5C70D8,
             dword_64C498,
             0x1);
@@ -6272,9 +6270,9 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     mes_file_entry.num = 0; // "Level"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-    sprintf(str, "%s: %d", mes_file_entry.str, stat_level_get(critter_obj, STAT_LEVEL));
+    sprintf(buffer, "%s: %d", mes_file_entry.str, stat_level_get(critter_obj, STAT_LEVEL));
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        str,
+        buffer,
         &stru_5C70D8,
         dword_64C498,
         0x2);
@@ -6288,13 +6286,13 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         sub_554640(463, 464, &stru_5C70E8, hp_ratio);
     }
 
-    if (a1 == critter_obj || leader_obj == a1) {
-        sprintf(str, "%d/%d", cur_hp, max_hp);
+    if (pc_obj == critter_obj || leader_obj == pc_obj) {
+        sprintf(buffer, "%d/%d", cur_hp, max_hp);
     } else {
-        sprintf(str, "%d%%", hp_ratio);
+        sprintf(buffer, "%d%%", hp_ratio);
     }
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        str,
+        buffer,
         &stru_5C70E8,
         dword_64C49C,
         0x2);
@@ -6304,13 +6302,13 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     int fatigue_ratio = 100 * cur_fatigue / max_fatigue;
     sub_554640(465, 466, &stru_5C70F8, fatigue_ratio);
 
-    if (a1 == critter_obj || leader_obj == a1) {
-        sprintf(str, "%d/%d", cur_fatigue, max_fatigue);
+    if (pc_obj == critter_obj || leader_obj == pc_obj) {
+        sprintf(buffer, "%d/%d", cur_fatigue, max_fatigue);
     } else {
-        sprintf(str, "%d%%", fatigue_ratio);
+        sprintf(buffer, "%d%%", fatigue_ratio);
     }
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        str,
+        buffer,
         &stru_5C70F8,
         dword_64C500,
         0x2);
