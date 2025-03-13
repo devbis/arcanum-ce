@@ -146,7 +146,7 @@ static void sub_555B50(int64_t obj, char* buffer);
 static void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str);
 static void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str);
 static void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str);
-static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
+static void intgame_draw_portrait(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void intgame_refresh_primary_button(UiPrimaryButton btn);
 static void intgame_refresh_experience_gauges(int64_t obj);
 static void sub_556EA0(int64_t item_obj);
@@ -6176,7 +6176,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
             int portrait;
 
             if (sub_553D10(pc_obj, critter_obj, &portrait)) {
-                sub_5561D0(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+                intgame_draw_portrait(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
             } else {
                 sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
             }
@@ -7191,7 +7191,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
     intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, scenery_obj, &portrait)) {
-        sub_5561D0(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+        intgame_draw_portrait(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
@@ -7227,7 +7227,7 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
     intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, portal_obj, &portrait)) {
-        sub_5561D0(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+        intgame_draw_portrait(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
@@ -7270,7 +7270,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
     intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, container_obj, &portrait)) {
-        sub_5561D0(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+        intgame_draw_portrait(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
@@ -7305,7 +7305,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
 }
 
 // 0x5561D0
-void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y)
+void intgame_draw_portrait(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y)
 {
     if (intgame_is_compact_interface()) {
         window_handle = sub_568D20();
