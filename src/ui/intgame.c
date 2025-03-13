@@ -134,7 +134,7 @@ static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handl
 static void sub_553960();
 static void sub_553A70(TigMessage* msg);
 static void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str);
-static void sub_554560(tig_window_handle_t window_handle, int art_num);
+static void intgame_message_window_draw_image(tig_window_handle_t window_handle, int num);
 static void sub_554640(int a1, int a2, TigRect* rect, int value);
 static void sub_554830(int64_t a1, int64_t a2);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
@@ -5370,7 +5370,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
 
     switch (ui_message->type) {
     case UI_MSG_TYPE_LEVEL:
-        sub_554560(window_handle, dword_5C708C[0]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[0]);
 
         mes_file_entry1.num = 21; // "Level Up"
         mes_get_msg(intgame_mes_file, &mes_file_entry1);
@@ -5395,7 +5395,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_POISON:
-        sub_554560(window_handle, dword_5C708C[1]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[1]);
         sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 0x1);
 
         mes_file_entry1.num = 13; // "You have absorbed %d unit(s) of poison."
@@ -5408,7 +5408,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_CURSE:
-        sub_554560(window_handle, dword_5C708C[2]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[2]);
         sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 1);
 
         curse_copy_description(ui_message->field_8, str);
@@ -5419,7 +5419,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_BLESS:
-        sub_554560(window_handle, dword_5C708C[3]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[3]);
         sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 1);
 
         bless_copy_description(ui_message->field_8, str);
@@ -5439,7 +5439,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         size_t pos = 0;
         bool rc;
 
-        sub_554560(window_handle, dword_5C708C[ui_message->type]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[ui_message->type]);
 
         while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
             pos++;
@@ -5483,7 +5483,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_SKILL:
-        sub_554560(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
             IS_TECH_SKILL(ui_message->field_8)
                 ? tech_skill_get_name(GET_TECH_SKILL(ui_message->field_8))
@@ -5509,7 +5509,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_SPELL: {
-        sub_554560(window_handle, spell_college_large_icon(ui_message->field_8 / 5));
+        intgame_message_window_draw_image(window_handle, spell_college_large_icon(ui_message->field_8 / 5));
         sub_550A10(window_handle,
             spell_get_name(ui_message->field_8),
             &stru_5C70C8,
@@ -5562,7 +5562,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_COLLEGE:
-        sub_554560(window_handle, spell_college_large_icon(ui_message->field_8));
+        intgame_message_window_draw_image(window_handle, spell_college_large_icon(ui_message->field_8));
         sub_550A10(window_handle,
             college_get_name(ui_message->field_8),
             &stru_5C70C8,
@@ -5574,7 +5574,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             1);
         break;
     case UI_MSG_TYPE_TECH:
-        sub_554560(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
             tech_discipline_name_get(ui_message->field_8),
             &stru_5C70C8,
@@ -5587,7 +5587,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             1);
         break;
     case UI_MSG_TYPE_DEGREE:
-        sub_554560(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
             tech_degree_name_get(ui_message->field_8 % 8),
             &stru_5C70C8,
@@ -5610,7 +5610,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_STAT: {
         size_t pos = 0;
 
-        sub_554560(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
 
         while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
             pos++;
@@ -5635,7 +5635,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_SCHEMATIC:
-        sub_554560(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
             sub_56E9D0(ui_message->field_8),
             &stru_5C70C8,
@@ -6171,14 +6171,14 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
             if (alignment_type > 5) {
                 alignment_type = 5;
             }
-            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, intgame_alignment_icons[alignment_type]);
+            intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, intgame_alignment_icons[alignment_type]);
         } else {
             int portrait;
 
             if (sub_553D10(pc_obj, critter_obj, &portrait)) {
                 intgame_draw_portrait(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
             } else {
-                sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+                intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
             }
         }
     }
@@ -6317,7 +6317,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
 }
 
 // 0x554560
-void sub_554560(tig_window_handle_t window_handle, int art_num)
+void intgame_message_window_draw_image(tig_window_handle_t window_handle, int num)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -6329,7 +6329,7 @@ void sub_554560(tig_window_handle_t window_handle, int art_num)
         window_handle = sub_568D20();
     }
 
-    tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
+    tig_art_interface_id_create(num, 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
 
     src_rect.x = 0;
@@ -6744,7 +6744,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         pc_obj = parent_obj;
     }
 
-    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle,
+    intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle,
         sub_554C20(item_obj));
 
     is_identified = item_is_identified(item_obj);
@@ -7193,7 +7193,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
     if (sub_553D10(pc_obj, scenery_obj, &portrait)) {
         intgame_draw_portrait(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
-        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+        intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
 
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
@@ -7229,7 +7229,7 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
     if (sub_553D10(pc_obj, portal_obj, &portrait)) {
         intgame_draw_portrait(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
-        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+        intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
 
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, str, &stru_5C70C8, dword_739F88, 1);
@@ -7272,7 +7272,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
     if (sub_553D10(pc_obj, container_obj, &portrait)) {
         intgame_draw_portrait(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
-        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+        intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
 
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, str, &stru_5C70C8, dword_739F88, 1);
@@ -7339,7 +7339,7 @@ void sub_556220(int64_t obj)
 
     intgame_message_window_clear();
 
-    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 675);
+    intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, 675);
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70C8,
@@ -7464,7 +7464,7 @@ void sub_5566B0(int64_t obj)
 
     intgame_message_window_clear();
 
-    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 674);
+    intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, 674);
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70C8,
