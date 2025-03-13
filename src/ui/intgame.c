@@ -145,7 +145,7 @@ static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
 static void sub_555D80(int64_t a1, int64_t a2, char* str);
 static void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str);
-static void sub_556040(int64_t a1, int64_t a2, char* a3);
+static void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void intgame_refresh_primary_button(UiPrimaryButton btn);
 static void intgame_refresh_experience_gauges(int64_t obj);
@@ -6006,7 +6006,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
                 intgame_examine_portal(a1, a2, str);
                 break;
             case OBJ_TYPE_CONTAINER:
-                sub_556040(a1, a2, str);
+                intgame_examine_container(a1, a2, str);
                 break;
             case OBJ_TYPE_SCENERY:
                 sub_555D80(a1, a2, str);
@@ -7257,21 +7257,22 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
 }
 
 // 0x556040
-void sub_556040(int64_t a1, int64_t container_obj, char* a3)
+void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
 {
     int portrait;
     unsigned int container_flags;
     MesFileEntry mes_file_entry;
-    char str[MAX_STRING];
+    char buffer[MAX_STRING];
 
     sub_550930();
-    if (sub_553D10(a1, container_obj, &portrait)) {
+
+    if (sub_553D10(pc_obj, container_obj, &portrait)) {
         sub_5561D0(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
 
-    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, a3, &stru_5C70C8, dword_739F88, 1);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, str, &stru_5C70C8, dword_739F88, 1);
 
     container_flags = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_FLAGS);
     if ((container_flags & OCOF_JAMMED)) {
@@ -7291,9 +7292,9 @@ void sub_556040(int64_t a1, int64_t container_obj, char* a3)
         1);
 
     if ((obj_field_int32_get(container_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
-        sprintf(str, "%d/%d", object_hp_current(container_obj), object_hp_max(container_obj));
+        sprintf(buffer, "%d/%d", object_hp_current(container_obj), object_hp_max(container_obj));
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-            str,
+            buffer,
             &stru_5C70F8,
             dword_64C49C,
             2);
