@@ -2545,26 +2545,26 @@ bool sub_54DC80(TigMessage* msg)
             return true;
         }
         if (msg->data.button.button_handle == stru_5C6F90.button_handle) {
-            sub_550930();
+            intgame_message_window_clear();
         }
         break;
     case 1:
     case 2:
     case 8:
-        sub_550930();
+        intgame_message_window_clear();
         break;
     }
 
     for (index = 0; index < 5; index++) {
         if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
-            sub_550930();
+            intgame_message_window_clear();
             return true;
         }
     }
 
     for (index = 0; index < 5; index++) {
         if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
-            sub_550930();
+            intgame_message_window_clear();
             return true;
         }
     }
@@ -3924,7 +3924,7 @@ void sub_550720()
         if (dword_64C6D4 != NULL) {
             dword_64C6D4(0);
         } else {
-            sub_550930();
+            intgame_message_window_clear();
         }
     }
 }
@@ -4008,17 +4008,19 @@ void sub_5508C0(int value)
 }
 
 // 0x550930
-void sub_550930()
+void intgame_message_window_clear()
 {
-    if (dword_64C6B4) {
-        if (intgame_is_compact_interface()) {
-            sub_568D20();
-            sub_568F40();
-        } else {
-            tig_window_fill(stru_5C6D60[intgame_iso_window_type].window_handle,
-                &(stru_5C6D60[intgame_iso_window_type].rect),
-                tig_color_make(0, 0, 0));
-        }
+    if (!dword_64C6B4) {
+        return;
+    }
+
+    if (intgame_is_compact_interface()) {
+        sub_568D20();
+        sub_568F40();
+    } else {
+        tig_window_fill(stru_5C6D60[intgame_iso_window_type].window_handle,
+            &(stru_5C6D60[intgame_iso_window_type].rect),
+            tig_color_make(0, 0, 0));
     }
 }
 
@@ -4027,7 +4029,7 @@ void sub_5509C0(char* str, TigRect* rect)
 {
     if (dword_64C6B4) {
         if (stru_5C6D60[intgame_iso_window_type].rect.width != 0) {
-            sub_550930();
+            intgame_message_window_clear();
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
                 str,
                 rect,
@@ -5273,7 +5275,7 @@ void sub_552770(UiMessage* ui_message)
     if (ui_message->type >= 6 && ui_message->type <= 12) {
         if (tig_timer_elapsed(dword_64C6EC) > 3000
             && intgame_iso_window_type == 0) {
-            sub_550930();
+            intgame_message_window_clear();
             sub_5529C0(stru_5C6D60[intgame_iso_window_type].window_handle, ui_message, 1);
         }
     } else {
@@ -5346,7 +5348,7 @@ void sub_552960(bool play_sound)
 
         if (intgame_iso_window_type == 0) {
             if (dword_64C6C0 > 0) {
-                sub_550930();
+                intgame_message_window_clear();
                 sub_5529C0(stru_5C6D60[intgame_iso_window_type].window_handle,
                     &(stru_64C540[dword_64C6C8]),
                     play_sound);
@@ -5461,7 +5463,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
 
         if (!rc) {
-            sub_550930();
+            intgame_message_window_clear();
             if (ui_message->str[pos] == '\n') {
                 ui_message->str[pos] = '\0';
                 sub_550A10(window_handle, ui_message->str,
@@ -6149,7 +6151,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
     int64_t leader_obj;
 
     obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
-    sub_550930();
+    intgame_message_window_clear();
 
     leader_obj = critter_pc_leader_get(critter_obj);
 
@@ -6734,7 +6736,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
 
     obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
 
-    sub_550930();
+    intgame_message_window_clear();
 
     if (item_parent(item_obj, &parent_obj)
         && parent_obj != OBJ_HANDLE_NULL
@@ -7186,7 +7188,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
         return;
     }
 
-    sub_550930();
+    intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, scenery_obj, &portrait)) {
         sub_5561D0(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
@@ -7222,7 +7224,7 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
     MesFileEntry mes_file_entry;
     char buffer[MAX_STRING];
 
-    sub_550930();
+    intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, portal_obj, &portrait)) {
         sub_5561D0(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
@@ -7265,7 +7267,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
     MesFileEntry mes_file_entry;
     char buffer[MAX_STRING];
 
-    sub_550930();
+    intgame_message_window_clear();
 
     if (sub_553D10(pc_obj, container_obj, &portrait)) {
         sub_5561D0(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
@@ -7335,7 +7337,7 @@ void sub_556220(int64_t obj)
         return;
     }
 
-    sub_550930();
+    intgame_message_window_clear();
 
     sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 675);
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
@@ -7460,7 +7462,8 @@ void sub_5566B0(int64_t obj)
         return;
     }
 
-    sub_550930();
+    intgame_message_window_clear();
+
     sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 674);
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
