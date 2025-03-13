@@ -144,7 +144,7 @@ static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
 static void sub_555D80(int64_t a1, int64_t a2, char* str);
-static void sub_555EC0(int64_t a1, int64_t a2, char* a3);
+static void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str);
 static void sub_556040(int64_t a1, int64_t a2, char* a3);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void intgame_refresh_primary_button(UiPrimaryButton btn);
@@ -6003,7 +6003,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
             case OBJ_TYPE_WALL:
                 break;
             case OBJ_TYPE_PORTAL:
-                sub_555EC0(a1, a2, str);
+                intgame_examine_portal(a1, a2, str);
                 break;
             case OBJ_TYPE_CONTAINER:
                 sub_556040(a1, a2, str);
@@ -7214,22 +7214,22 @@ void sub_555D80(int64_t a1, int64_t scenery_obj, char* str)
 }
 
 // 0x555EC0
-void sub_555EC0(int64_t a1, int64_t portal_obj, char* a3)
+void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
 {
     int portrait;
-    unsigned int portal_flags;
+    ObjectPortalFlags portal_flags;
     MesFileEntry mes_file_entry;
-    char str[MAX_STRING];
+    char buffer[MAX_STRING];
 
     sub_550930();
 
-    if (sub_553D10(a1, portal_obj, &portrait)) {
+    if (sub_553D10(pc_obj, portal_obj, &portrait)) {
         sub_5561D0(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
     }
 
-    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, a3, &stru_5C70C8, dword_739F88, 1);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, str, &stru_5C70C8, dword_739F88, 1);
 
     portal_flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
     if ((portal_flags & OPF_JAMMED) != 0) {
@@ -7248,9 +7248,9 @@ void sub_555EC0(int64_t a1, int64_t portal_obj, char* a3)
         dword_64C49C,
         1);
 
-    sprintf(str, "%d/%d", object_hp_current(portal_obj), object_hp_max(portal_obj));
+    sprintf(buffer, "%d/%d", object_hp_current(portal_obj), object_hp_max(portal_obj));
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
-        str,
+        buffer,
         &stru_5C70F8,
         dword_64C49C,
         2);
