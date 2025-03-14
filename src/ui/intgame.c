@@ -80,6 +80,20 @@ typedef enum IntgamePrimaryButton {
     INTGAME_PRIMARY_BUTTON_COUNT,
 } IntgamePrimaryButton;
 
+typedef enum IntgamePenalty {
+    INTGAME_PENALTY_MSR,
+    INTGAME_PENALTY_RANGE,
+    INTGAME_PENALTY_PERCEPTION,
+    INTGAME_PENALTY_COVER,
+    INTGAME_PENALTY_LIGHT,
+    INTGAME_PENALTY_INJURY,
+    INTGAME_PENALTY_BLOCKED_SHOT,
+    INTGAME_PENALTY_MAGIC_TECH,
+    INTGAME_PENALTY_COUNT,
+} IntgamePenalty;
+
+#define INTGAME_PENALTY_SLOTS 6
+
 typedef struct IntgameIsoWindowTypeInfo {
     /* 0000 */ TigRect rect;
     /* 0010 */ tig_window_handle_t window_handle;
@@ -722,31 +736,31 @@ static int dword_5C730C[8] = {
 };
 
 // 0x5C732C
-static unsigned int dword_5C732C[8] = {
-    0x40,
-    0x80,
-    0x100,
-    0x200,
-    0x400,
-    0x800,
-    0x20000,
-    0x40000,
+static unsigned int intgame_penalty_flags[INTGAME_PENALTY_COUNT] = {
+    /*          INTGAME_PENALTY_MSR */ 0x40,
+    /*        INTGAME_PENALTY_RANGE */ 0x80,
+    /*   INTGAME_PENALTY_PERCEPTION */ 0x100,
+    /*        INTGAME_PENALTY_COVER */ 0x200,
+    /*        INTGAME_PENALTY_LIGHT */ 0x400,
+    /*       INTGAME_PENALTY_INJURY */ 0x800,
+    /* INTGAME_PENALTY_BLOCKED_SHOT */ 0x20000,
+    /*   INTGAME_PENALTY_MAGIC_TECH */ 0x40000,
 };
 
 // 0x5C734C
-static int dword_5C734C[8] = {
-    586,
-    588,
-    587,
-    583,
-    585,
-    584,
-    845,
-    846,
+static int intgame_penalty_icons[INTGAME_PENALTY_COUNT] = {
+    /*          INTGAME_PENALTY_MSR */ 586, // "pen_msr.art"
+    /*        INTGAME_PENALTY_RANGE */ 588, // "pen_range.art"
+    /*   INTGAME_PENALTY_PERCEPTION */ 587, // "pen_perception.art"
+    /*        INTGAME_PENALTY_COVER */ 583, // "pen_cover.art"
+    /*        INTGAME_PENALTY_LIGHT */ 585, // "pen_light.art"
+    /*       INTGAME_PENALTY_INJURY */ 584, // "pen_injury.art"
+    /* INTGAME_PENALTY_BLOCKED_SHOT */ 845, // "blockedshot.art"
+    /*   INTGAME_PENALTY_MAGIC_TECH */ 846, // "magic-tech-penalty.art"
 };
 
 // 0x5C736C
-static int dword_5C736C[6] = {
+static int intgame_penalty_slot_x[INTGAME_PENALTY_SLOTS] = {
     210,
     248,
     210,
@@ -756,7 +770,7 @@ static int dword_5C736C[6] = {
 };
 
 // 0x5C7384
-static int dword_5C7384[6] = {
+static int intgame_penalty_slot_y[INTGAME_PENALTY_SLOTS] = {
     84,
     84,
     104,
@@ -6521,8 +6535,8 @@ void sub_554830(int64_t a1, int64_t a2)
     int v3;
     TigRect rect;
     char str[20];
-    int v4;
-    int v5;
+    int penalty;
+    int slot;
     MesFileEntry mes_file_entry;
 
     window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
@@ -6576,18 +6590,18 @@ void sub_554830(int64_t a1, int64_t a2)
             dword_64C4A0,
             MSG_TEXT_HALIGN_CENTER);
 
-        v5 = 0;
-        for (v4 = 0; v4 < 8; v4++) {
-            if (v5 >= 6) {
+        slot = 0;
+        for (penalty = 0; penalty < INTGAME_PENALTY_COUNT; penalty++) {
+            if (slot >= INTGAME_PENALTY_SLOTS) {
                 break;
             }
 
-            if ((dword_5C732C[v4] & skill_invocation.flags) != 0) {
+            if ((intgame_penalty_flags[penalty] & skill_invocation.flags) != 0) {
                 sub_554B00(window_handle,
-                    dword_5C734C[v4],
-                    dword_5C736C[v5],
-                    dword_5C7384[v5]);
-                v5++;
+                    intgame_penalty_icons[penalty],
+                    intgame_penalty_slot_x[slot],
+                    intgame_penalty_slot_y[slot]);
+                slot++;
             }
         }
     } else {
