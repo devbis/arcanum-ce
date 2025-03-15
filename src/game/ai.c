@@ -4117,7 +4117,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int loudness)
     unsigned int critter_flags;
     int64_t dist;
     int perception;
-    SkillInvocation script_invocation;
+    SkillInvocation skill_invocation;
     int v2;
 
     critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
@@ -4144,13 +4144,13 @@ int sub_4AF470(int64_t a1, int64_t a2, int loudness)
         int diff;
 
         prowling = sub_4C62E0(a2, BASIC_SKILL_PROWLING, a1);
-        skill_invocation_init(&script_invocation);
-        sub_4440E0(a2, &(script_invocation.source));
-        sub_4440E0(a1, &(script_invocation.target));
-        script_invocation.flags |= 0x2000;
-        script_invocation.skill = BASIC_SKILL_PROWLING;
+        skill_invocation_init(&skill_invocation);
+        sub_4440E0(a2, &(skill_invocation.source));
+        sub_4440E0(a1, &(skill_invocation.target));
+        skill_invocation.flags |= 0x2000;
+        skill_invocation.skill = BASIC_SKILL_PROWLING;
 
-        diff = prowling - sub_4C8430(&script_invocation);
+        diff = prowling - sub_4C8430(&skill_invocation);
         if (diff < 0) {
             diff = 0;
         } else if (diff > 100) {
