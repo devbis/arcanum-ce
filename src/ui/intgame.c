@@ -737,14 +737,14 @@ static int dword_5C730C[8] = {
 
 // 0x5C732C
 static unsigned int intgame_penalty_flags[INTGAME_PENALTY_COUNT] = {
-    /*          INTGAME_PENALTY_MSR */ 0x40,
-    /*        INTGAME_PENALTY_RANGE */ 0x80,
-    /*   INTGAME_PENALTY_PERCEPTION */ 0x100,
-    /*        INTGAME_PENALTY_COVER */ 0x200,
-    /*        INTGAME_PENALTY_LIGHT */ 0x400,
-    /*       INTGAME_PENALTY_INJURY */ 0x800,
-    /* INTGAME_PENALTY_BLOCKED_SHOT */ 0x20000,
-    /*   INTGAME_PENALTY_MAGIC_TECH */ 0x40000,
+    /*          INTGAME_PENALTY_MSR */ SKILL_INVOCATION_PENALTY_MSR,
+    /*        INTGAME_PENALTY_RANGE */ SKILL_INVOCATION_PENALTY_RANGE,
+    /*   INTGAME_PENALTY_PERCEPTION */ SKILL_INVOCATION_PENALTY_PERCEPTION,
+    /*        INTGAME_PENALTY_COVER */ SKILL_INVOCATION_PENALTY_COVER,
+    /*        INTGAME_PENALTY_LIGHT */ SKILL_INVOCATION_PENALTY_LIGHT,
+    /*       INTGAME_PENALTY_INJURY */ SKILL_INVOCATION_PENALTY_INJURY,
+    /* INTGAME_PENALTY_BLOCKED_SHOT */ SKILL_INVOCATION_BLOCKED_SHOT,
+    /*   INTGAME_PENALTY_MAGIC_TECH */ SKILL_INVOCATION_MAGIC_TECH_PENALTY,
 };
 
 // 0x5C734C
@@ -6567,17 +6567,17 @@ void sub_554830(int64_t a1, int64_t a2)
         v3 = sub_461620(weapon_obj, a1, a2);
         if (v3 > 0) {
             if (v3 > 20) {
-                skill_invocation.flags |= 0x40000;
+                skill_invocation.flags |= SKILL_INVOCATION_MAGIC_TECH_PENALTY;
             }
             v1 -= v1 * v3 / 100;
         }
     }
 
-    if (v1 < 0 || (skill_invocation.flags & 0x20080) != 0) {
+    if (v1 < 0 || (skill_invocation.flags & (SKILL_INVOCATION_BLOCKED_SHOT | SKILL_INVOCATION_PENALTY_RANGE)) != 0) {
         v1 = 0;
     }
 
-    if ((skill_invocation.flags & 0x60FC0) != 0) {
+    if ((skill_invocation.flags & SKILL_INVOCATION_PENALTY_MASK) != 0) {
         rect.x = 215;
         rect.y = 66;
         rect.width = 64;

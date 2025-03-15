@@ -1729,7 +1729,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         int strength = stat_level_get(source_obj, STAT_STRENGTH) - item_weapon_min_strength(item_obj, source_obj);
         if (strength < 0) {
             difficulty += -strength * 5;
-            skill_invocation->flags |= 0x40;
+            skill_invocation->flags |= SKILL_INVOCATION_PENALTY_MSR;
         }
     }
 
@@ -1794,7 +1794,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
             if (dist > range) {
                 difficulty += 1000000;
-                skill_invocation->flags |= 0x80;
+                skill_invocation->flags |= SKILL_INVOCATION_PENALTY_RANGE;
             }
         }
 
@@ -1804,7 +1804,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
             int extra_dist = (int)dist - stat_level_get(source_obj, STAT_PERCEPTION) / 2;
             if (extra_dist > 0) {
                 difficulty += 5 * extra_dist;
-                skill_invocation->flags |= 0x100;
+                skill_invocation->flags |= SKILL_INVOCATION_PENALTY_PERCEPTION;
             }
         }
 
@@ -1812,10 +1812,10 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         int v2 = sub_4ADE00(source_obj, skill_invocation->target_loc, &blocking_obj);
         if (blocking_obj != OBJ_HANDLE_NULL) {
             difficulty += 1000000;
-            skill_invocation->flags |= 0x20000;
+            skill_invocation->flags |= SKILL_INVOCATION_BLOCKED_SHOT;
         } else if (v2 > 0) {
             difficulty += v2;
-            skill_invocation->flags |= 0x200;
+            skill_invocation->flags |= SKILL_INVOCATION_PENALTY_COVER;
         }
     }
 
@@ -1865,7 +1865,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
             if (v5 > 0) {
                 difficulty += v5;
-                skill_invocation->flags |= 0x400;
+                skill_invocation->flags |= SKILL_INVOCATION_PENALTY_LIGHT;
             }
         }
     }
@@ -1873,23 +1873,23 @@ int sub_4C8430(SkillInvocation* skill_invocation)
     if ((skill_flags[skill] & 0x80) != 0
         && (critter_flags & OCF_BLINDED) != 0) {
         difficulty += 30;
-        skill_invocation->flags |= 0x800;
+        skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
     }
 
     if ((skill_flags[skill] & 0x100) != 0) {
         if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
             difficulty += 50;
-            skill_invocation->flags |= 0x800;
+            skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
         } else if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
             difficulty += 20;
-            skill_invocation->flags |= 0x800;
+            skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
         }
     }
 
     if ((skill_flags[skill] & 0x200) != 0) {
         if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             difficulty += 30;
-            skill_invocation->flags |= 0x800;
+            skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
         }
     }
 
