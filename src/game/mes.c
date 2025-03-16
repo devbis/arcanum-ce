@@ -248,8 +248,11 @@ int mes_num_entries(mes_file_handle_t mes_file_handle)
 void mes_merge(mes_file_handle_t dst, mes_file_handle_t src)
 {
     int index;
+    char* data;
     MesFile* dst_mes_file = &(mes_files[dst]);
     MesFile* src_mes_file = &(mes_files[src]);
+
+    data = dst_mes_file->data;
 
     dst_mes_file->data = (char*)REALLOC(dst_mes_file->data,
         dst_mes_file->size + src_mes_file->size);
@@ -262,6 +265,10 @@ void mes_merge(mes_file_handle_t dst, mes_file_handle_t src)
     memcpy(&(dst_mes_file->entries[dst_mes_file->num_entries]),
         src_mes_file->entries,
         sizeof(MesFileEntry) * src_mes_file->num_entries);
+
+    for (index = 0; index < dst_mes_file->num_entries; index++) {
+        dst_mes_file->entries[index].str += dst_mes_file->data - data;
+    }
 
     for (index = 0; index < src_mes_file->num_entries; index++) {
         dst_mes_file->entries[dst_mes_file->num_entries + index].str += dst_mes_file->data
