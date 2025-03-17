@@ -1652,7 +1652,12 @@ void sub_44ED90(AnimGoalData* goal_data)
 // 0x44EEB0
 void anim_stat(AnimRunInfo* run_info)
 {
-    (void)run_info;
+    int goal;
+
+    // NOTE: Original code does nothing.
+    for (goal = 0; goal <= run_info->current_goal; goal++) {
+        sub_44ED90(&(run_info->goals[goal]));
+    }
 }
 
 // 0x44EEC0
