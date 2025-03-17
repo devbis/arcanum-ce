@@ -3977,7 +3977,7 @@ void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** g
     run_info->current_goal--;
 
     if (run_info->current_goal >= 0) {
-        *goal_data_ptr = &(run_info->goals[run_info->current_goal]);
+        run_info->cur_stack_data = *goal_data_ptr = &(run_info->goals[run_info->current_goal]);
         *goal_node_ptr = anim_goal_nodes[(*goal_data_ptr)->type];
         *a5 = false;
     } else {
