@@ -434,6 +434,7 @@ void object_ping(tig_timestamp_t timestamp)
                                 while (obj_node != NULL) {
                                     render_flags = obj_field_int32_get(obj_node->obj, OBJ_F_RENDER_FLAGS);
                                     render_flags &= ~(ORF_02000000 | ORF_04000000);
+                                    obj_field_int32_set(obj_node->obj, OBJ_F_RENDER_FLAGS, render_flags);
                                     object_get_rect(obj_node->obj, 0x07, &obj_rect);
                                     object_iso_invalidate_rect(&obj_rect);
                                     obj_node = obj_node->next;
