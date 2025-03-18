@@ -112,7 +112,7 @@ static void object_toggle_flat(int64_t obj, bool a2);
 static void sub_443170(int64_t obj, TigArtBlitInfo* blit_info);
 static int sub_443440(TigArtBlitInfo* blit_info, int order);
 static void sub_443560();
-static int sub_443600(const S5E2E74* a, const S5E2E74* b);
+static int sub_443600(const void* va, const void* vb);
 static void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect);
 static void sub_4437C0(int64_t obj);
 static bool sub_443880(TigRect* rect, tig_art_id_t art_id);
@@ -4725,8 +4725,11 @@ void sub_443560()
 }
 
 // 0x443600
-int sub_443600(const S5E2E74* a, const S5E2E74* b)
+int sub_443600(const void* va, const void* vb)
 {
+    const S5E2E74* a = (const S5E2E74*)va;
+    const S5E2E74* b = (const S5E2E74*)vb;
+
     if (b->order > a->order) {
         return -1;
     } else if (b->order < a->order) {
