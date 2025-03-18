@@ -298,10 +298,9 @@ void sub_4CF320()
 }
 
 // 0x4CF340
-bool sector_update_view(ViewOptions* view_options)
+void sector_update_view(ViewOptions* view_options)
 {
     sector_view_options = *view_options;
-    return true;
 }
 
 // 0x4CF360

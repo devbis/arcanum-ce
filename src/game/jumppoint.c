@@ -166,10 +166,9 @@ bool jumppoint_flush()
 }
 
 // 0x4E32D0
-bool jumppoint_update_view(ViewOptions* view_options)
+void jumppoint_update_view(ViewOptions* view_options)
 {
     jumppoint_view_options = *view_options;
-    return true;
 }
 
 // 0x4E32F0

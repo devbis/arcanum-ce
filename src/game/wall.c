@@ -71,11 +71,9 @@ void wall_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4DF4C0
-bool wall_update_view(ViewOptions* view_options)
+void wall_update_view(ViewOptions* view_options)
 {
     wall_view_options = *view_options;
-
-    return true;
 }
 
 // 0x4DF4E0

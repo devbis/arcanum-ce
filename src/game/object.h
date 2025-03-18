@@ -89,7 +89,7 @@ void object_resize(GameResizeInfo* resize_info);
 void object_reset();
 void object_exit();
 void object_ping(tig_timestamp_t timestamp);
-bool sub_43AA40(ViewOptions* view_options);
+void sub_43AA40(ViewOptions* view_options);
 void object_close();
 bool sub_43AA70(int obj_type);
 void sub_43AA80(int obj_type);

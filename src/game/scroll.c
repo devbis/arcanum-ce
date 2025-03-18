@@ -95,11 +95,10 @@ void scroll_resize(GameResizeInfo* resize_info)
 }
 
 // 0x40E060
-bool scroll_update_view(ViewOptions* view_options)
+void scroll_update_view(ViewOptions* view_options)
 {
     scroll_view_options = *view_options;
     sub_40E940();
-    return true;
 }
 
 // TODO: Review name.

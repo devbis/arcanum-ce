@@ -202,10 +202,9 @@ void tf_exit()
 }
 
 // 0x4D5130
-bool tf_update_view(ViewOptions* view_options)
+void tf_update_view(ViewOptions* view_options)
 {
     text_floater_view_options = *view_options;
-    return true;
 }
 
 // 0x4D5150

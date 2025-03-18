@@ -95,8 +95,6 @@ void wp_resize(GameResizeInfo* resize_info)
     wp_iso_window_handle = resize_info->window_handle;
 }
 
-// NOTE: Original code returns `1` which breaks required signature.
-//
 // 0x4BFDB0
 void wp_update_view(ViewOptions* view_options)
 {

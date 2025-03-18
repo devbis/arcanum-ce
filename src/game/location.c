@@ -93,20 +93,20 @@ void location_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4B85A0
-bool location_update_view(ViewOptions* view_options)
+void location_update_view(ViewOptions* view_options)
 {
     int64_t loc;
 
     if (!location_at(location_screen_center_x, location_screen_center_y, &loc)) {
-        return false;
+        return /* false */;
     }
 
     if (view_options->type == location_view_options.type) {
         if (view_options->type == VIEW_TYPE_ISOMETRIC) {
-            return true;
+            return /* true */;
         }
         if (view_options->zoom == location_view_options.zoom) {
-            return true;
+            return /* true */;
         }
     }
 
@@ -115,7 +115,7 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_y = 0;
         location_view_options = *view_options;
         location_origin_set(loc);
-        return true;
+        return /* true */;
     }
 
     if (view_options->zoom >= 12 && view_options->zoom <= 64) {
@@ -123,10 +123,10 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_y = 0;
         location_view_options = *view_options;
         location_origin_set(loc);
-        return true;
+        return /* true */;
     }
 
-    return false;
+    return /* false */;
 }
 
 // 0x4B8680

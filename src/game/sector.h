@@ -40,7 +40,7 @@ void sector_reset();
 void sector_exit();
 void sector_resize(GameResizeInfo* resize_info);
 void sub_4CF320();
-bool sector_update_view(ViewOptions* view_options);
+void sector_update_view(ViewOptions* view_options);
 void sub_4CF360(SectorLockFunc* func);
 void sub_4CF370();
 void sector_render(UnknownContext* render_info);

@@ -6,7 +6,7 @@
 bool roof_init(GameInitInfo* init_info);
 void roof_exit();
 void roof_resize(GameResizeInfo* resize_info);
-bool render_update_view(ViewOptions* view_options);
+void roof_update_view(ViewOptions* view_options);
 void roof_toggle();
 void roof_draw(UnknownContext* render_info);
 int64_t roof_normalize_loc(int64_t loc);

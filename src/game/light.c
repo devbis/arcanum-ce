@@ -259,10 +259,9 @@ void light_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4D81B0
-bool light_update_view(ViewOptions* view_options)
+void light_update_view(ViewOptions* view_options)
 {
     light_view_options = *view_options;
-    return true;
 }
 
 // 0x4D81F0

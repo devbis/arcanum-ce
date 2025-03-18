@@ -183,10 +183,9 @@ void tb_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4D5E60
-bool tb_update_view(ViewOptions* view_options)
+void tb_update_view(ViewOptions* view_options)
 {
     tb_view_options = *view_options;
-    return true;
 }
 
 // 0x4D5E80

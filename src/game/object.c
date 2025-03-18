@@ -460,10 +460,9 @@ void object_ping(tig_timestamp_t timestamp)
 }
 
 // 0x43AA40
-bool sub_43AA40(ViewOptions* view_options)
+void sub_43AA40(ViewOptions* view_options)
 {
     object_view_options = *view_options;
-    return true;
 }
 
 // 0x43AA60

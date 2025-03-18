@@ -188,10 +188,9 @@ void roof_resize(GameResizeInfo* resize_info)
 }
 
 // 0x439100
-bool render_update_view(ViewOptions* view_options)
+void roof_update_view(ViewOptions* view_options)
 {
     roof_view_options = *view_options;
-    return true;
 }
 
 // 0x439120

@@ -117,7 +117,7 @@ static MapModule map_modules[] = {
     { "Location", location_init, NULL, NULL, NULL, location_exit, NULL, location_update_view, NULL, NULL, NULL, NULL, location_resize },
     { "Light", light_init, NULL, NULL, NULL, light_exit, NULL, light_update_view, NULL, NULL, NULL, NULL, light_resize },
     { "Tile", tile_init, NULL, NULL, NULL, tile_exit, NULL, tile_update_view, NULL, NULL, NULL, NULL, tile_resize },
-    { "Roof", roof_init, NULL, NULL, NULL, roof_exit, NULL, render_update_view, NULL, NULL, NULL, NULL, roof_resize },
+    { "Roof", roof_init, NULL, NULL, NULL, roof_exit, NULL, roof_update_view, NULL, NULL, NULL, NULL, roof_resize },
     { "Effect", effect_init, NULL, effect_mod_load, effect_mod_unload, effect_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "O_Name", o_name_init, NULL, o_name_mod_load, o_name_mod_unload, o_name_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Object_Node", object_node_init, NULL, NULL, NULL, object_node_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },

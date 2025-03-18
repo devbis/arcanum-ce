@@ -102,12 +102,10 @@ void tile_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4D6900
-bool tile_update_view(ViewOptions* view_options)
+void tile_update_view(ViewOptions* view_options)
 {
     sub_4D79C0(view_options);
     tile_view_options = *view_options;
-
-    return true;
 }
 
 // 0x4D6930

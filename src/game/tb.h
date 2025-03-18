@@ -18,7 +18,7 @@ bool tb_init(GameInitInfo* init_info);
 void tb_reset();
 void tb_exit();
 void tb_resize(GameResizeInfo* resize_info);
-bool tb_update_view(ViewOptions* view_options);
+void tb_update_view(ViewOptions* view_options);
 void tb_close();
 void tb_toggle();
 void tb_ping(tig_timestamp_t time);
