@@ -5254,11 +5254,14 @@ void sub_4445A0(int64_t a1, int64_t a2)
 // 0x444690
 void object_lighting_changed()
 {
-    object_lighting = settings_get_value(&settings, "object lighting");
-    if (object_lighting < 0) {
-        object_lighting = 0;
-    } else if (object_lighting > 1) {
-        object_lighting = 1;
+    int value;
+
+    value = settings_get_value(&settings, "object lighting");
+    if (value < 0) {
+        object_lighting = false;
+    } else if (value > 1) {
+        object_lighting = true;
     }
+
     object_iso_invalidate_rect(NULL);
 }
