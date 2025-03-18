@@ -1669,9 +1669,9 @@ void light_inc_frame(Light* light)
                     // Should be unreachable.
                     assert(0);
                 }
-            }
 
-            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+                obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            }
         }
 
         light_get_rect_internal(light, &updated_rect);
@@ -1719,9 +1719,9 @@ void light_dec_frame(Light* light)
                     // Should be unreachable.
                     assert(0);
                 }
-            }
 
-            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+                obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            }
         }
 
         light_get_rect_internal(light, &updated_rect);
@@ -1769,9 +1769,9 @@ void light_cycle_rotation(Light* light)
                     // Should be unreachable.
                     assert(0);
                 }
-            }
 
-            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+                obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            }
         }
 
         light_get_rect_internal(light, &updated_rect);
