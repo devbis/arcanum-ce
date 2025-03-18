@@ -112,8 +112,8 @@ static void mainmenu_ui_new_char_create();
 static void mainmenu_ui_new_char_refresh(TigRect* rect);
 static void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect);
 static bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle);
-static bool sub_5452C0(int64_t obj, int* background_ptr);
-static bool sub_545300(int64_t obj, int* background_ptr);
+static bool mainmenu_ui_new_char_next_background(int64_t obj, int* background_ptr);
+static bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_ptr);
 static bool sub_545350(int64_t obj);
 static bool sub_5453A0(int64_t obj, int gender);
 static bool sub_545440(int64_t obj);
@@ -4646,7 +4646,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         return true;
     case 6:
         background = background_get(pc_obj);
-        if (sub_5452C0(pc_obj, &background)) {
+        if (mainmenu_ui_new_char_prev_background(pc_obj, &background)) {
             background_clear(pc_obj);
             background_set(pc_obj, background, background_get_description(background));
             window->refresh_func(NULL);
@@ -4654,7 +4654,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         return true;
     case 7:
         background = background_get(pc_obj);
-        if (sub_5452C0(pc_obj, &background)) {
+        if (mainmenu_ui_new_char_next_background(pc_obj, &background)) {
             background_clear(pc_obj);
             background_set(pc_obj, background, background_get_description(background));
             window->refresh_func(NULL);
@@ -4676,7 +4676,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
 }
 
 // 0x5452C0
-bool sub_5452C0(int64_t obj, int* background_ptr)
+bool mainmenu_ui_new_char_next_background(int64_t obj, int* background_ptr)
 {
     if (background_find_next(obj, background_ptr)) {
         return true;
@@ -4690,7 +4690,7 @@ bool sub_5452C0(int64_t obj, int* background_ptr)
 }
 
 // 0x545300
-bool sub_545300(int64_t obj, int* background_ptr)
+bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_ptr)
 {
     if (background_find_prev(obj, background_ptr)) {
         return true;
