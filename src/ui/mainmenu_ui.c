@@ -3836,7 +3836,7 @@ bool mainmenu_ui_save_game_execute(int btn)
             pch++;
         }
 
-        if (pch == '\0') {
+        if (*pch == '\0') {
             byte_64C2F8[0] = '\0';
         }
     }
