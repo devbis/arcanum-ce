@@ -7,7 +7,7 @@
 #include "game/timeevent.h"
 
 typedef void(Func5F0E08)();
-typedef void(Func5F0DF8)(tig_button_handle_t button_handle);
+typedef bool(Func5F0DF8)(tig_button_handle_t button_handle);
 
 bool multiplayer_init(GameInitInfo* init_info);
 void multiplayer_exit();
@@ -33,7 +33,7 @@ int64_t multiplayer_find_next_player_obj();
 void sub_4A3230(ObjectID oid, bool(*success_func)(void*), void* success_info, bool(*failure_func)(void*), void* failure_info);
 void sub_4A3890();
 int sub_4A38A0();
-bool sub_4A38B0(void(*func)(tig_button_handle_t), tig_button_handle_t button_handle);
+bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_handle);
 void sub_4A39D0(Func5F0DF8* func, tig_button_handle_t button_handle);
 bool sub_4A3D00(bool a1);
 bool sub_4A3D70(int64_t** objs_ptr, int* cnt_ptr);

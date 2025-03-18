@@ -1525,7 +1525,7 @@ int sub_4A38A0()
 }
 
 // 0x4A38B0
-bool sub_4A38B0(void(*func)(tig_button_handle_t), tig_button_handle_t button_handle)
+bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_handle)
 {
     if (tig_net_is_host()) {
         char oidstr[40];
