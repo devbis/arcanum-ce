@@ -2918,7 +2918,7 @@ void sub_4B6B90(CombatContext* combat)
         return;
     }
 
-    if ((combat->target_obj == combat->field_28)) {
+    if (combat->target_obj == combat->field_28) {
         if ((combat->flags & CF_CRITICAL) != 0) {
             sub_4AE9E0(combat->attacker_obj, false);
         }
