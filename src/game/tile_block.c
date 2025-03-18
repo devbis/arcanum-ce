@@ -48,11 +48,12 @@ void tileblock_exit()
 {
 }
 
+// NOTE: Original code returns `1` which breaks required signature.
+//
 // 0x4BB060
-bool tileblock_update_view(ViewOptions* view_info)
+void tileblock_update_view(ViewOptions* view_info)
 {
     tileblock_view_options = *view_info;
-    return true;
 }
 
 // 0x4BB080
