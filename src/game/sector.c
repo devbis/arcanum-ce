@@ -50,7 +50,7 @@ static void sub_4D2EA0();
 static void sub_4D2ED0(Sector* sector);
 static void sub_4D2F80();
 static void sub_4D2F90();
-static int sub_4D2FB0(const tig_art_id_t* a, const tig_art_id_t* b);
+static int sub_4D2FB0(const void* va, const void* vb);
 static int sector_block_find(int64_t sec);
 static void sector_block_add(int64_t sec);
 static void sector_block_remove(int idx);
@@ -2227,8 +2227,11 @@ void sub_4D2F90()
 }
 
 // 0x4D2FB0
-int sub_4D2FB0(const tig_art_id_t* a, const tig_art_id_t* b)
+int sub_4D2FB0(const void* va, const void* vb)
 {
+    const tig_art_id_t* a = (const tig_art_id_t*)va;
+    const tig_art_id_t* b = (const tig_art_id_t*)vb;
+
     return *a - *b;
 }
 
