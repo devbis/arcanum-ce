@@ -85,7 +85,7 @@ typedef struct Wmap {
     /* 0044 */ int field_44;
     /* 0048 */ void(*refresh)();
     /* 004C */ void(*refresh_rect)(TigRect* rect);
-    /* 0050 */ void(*field_50)(int direction);
+    /* 0050 */ void(*field_50)(int direction, int, int, int);
     /* 0054 */ int field_54;
     /* 0058 */ int field_58;
     /* 005C */ int field_5C;
@@ -185,7 +185,7 @@ static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigR
 static bool sub_563200(int a1, int a2);
 static void sub_563210(int a1, int a2);
 static void sub_563270();
-static void sub_5632A0(int direction);
+static void sub_5632A0(int direction, int a2, int a3, int a4);
 static void sub_563300(int direction, int a2, int a3, int a4);
 static void sub_563590(WmapCoords* a1, bool a2);
 static void sub_563610();
@@ -2697,8 +2697,12 @@ void sub_563270()
 }
 
 // 0x5632A0
-void sub_5632A0(int direction)
+void sub_5632A0(int direction, int a2, int a3, int a4)
 {
+    (void)a2;
+    (void)a3;
+    (void)a4;
+
     switch (direction) {
     case 0:
     case 1:
