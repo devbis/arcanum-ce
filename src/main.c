@@ -381,8 +381,8 @@ void main_loop()
                         if (sub_567A10()
                             || wmap_ui_is_created()
                             || tig_net_is_active()
-                            || combat_turn_based_is_active()
-                            && player_get_pc_obj() != combat_turn_based_whos_turn_get()) {
+                            || (combat_turn_based_is_active()
+                                && player_get_pc_obj() != combat_turn_based_whos_turn_get())) {
                             mainmenu_ui_start(3);
                         } else {
                             mainmenu_ui_start(2);
