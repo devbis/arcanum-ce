@@ -62,8 +62,8 @@ static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466AA0(int64_t critter_obj, int64_t a2);
 static void sub_466BD0(int64_t key_ring_obj);
-static bool item_insert_success(ItemInsertInfo* item_insert_info);
-static bool item_insert_failure(ItemInsertInfo* item_insert_info);
+static bool item_insert_success(void* userinfo);
+static bool item_insert_failure(void* userinfo);
 static bool sub_466EF0(int64_t obj, int64_t loc);
 static char* item_cannot_msg(int reason);
 static int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots);
@@ -3870,8 +3870,9 @@ void sub_466BD0(int64_t key_ring_obj)
 }
 
 // 0x466C40
-bool item_insert_success(ItemInsertInfo* item_insert_info)
+bool item_insert_success(void* userinfo)
 {
+    ItemInsertInfo* item_insert_info = (ItemInsertInfo*)userinfo;
     Packet24 pkt;
     unsigned int item_flags;
 
@@ -3897,8 +3898,9 @@ bool item_insert_success(ItemInsertInfo* item_insert_info)
 }
 
 // 0x466CF0
-bool item_insert_failure(ItemInsertInfo* item_insert_info)
+bool item_insert_failure(void* userinfo)
 {
+    ItemInsertInfo* item_insert_info = (ItemInsertInfo*)userinfo;
     char name[256];
     unsigned int flags;
 
