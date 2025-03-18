@@ -374,7 +374,7 @@ bool sub_4F2CB0(int x, int y, S4F2810* a3, uint64_t tgt, bool fullscreen)
     old_tgt = sub_4F25D0();
     sub_4F25B0(tgt);
     rc = sub_4F28A0(x, y, a3);
-    sub_4F25B0(tgt);
+    sub_4F25B0(old_tgt);
     return rc;
 }
 
