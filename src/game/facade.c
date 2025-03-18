@@ -65,8 +65,10 @@ void facade_resize(GameResizeInfo* resize_info)
     facade_iso_window_handle = resize_info->window_handle;
 }
 
+// NOTE: Original code returns `1` which breaks required signature.
+//
 // 0x4C9E00
-bool facade_update_view(ViewOptions* view_options)
+void facade_update_view(ViewOptions* view_options)
 {
     if (dword_5FF5A0 != NULL) {
         sub_4CA240();
@@ -76,8 +78,6 @@ bool facade_update_view(ViewOptions* view_options)
     } else {
         facade_view_options = *view_options;
     }
-
-    return true;
 }
 
 // 0x4C9E70
