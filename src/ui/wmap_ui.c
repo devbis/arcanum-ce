@@ -4120,7 +4120,7 @@ void sub_5657A0(TigRect* rect)
     vb_blit_info.src_rect = &vb_src_rect;
     vb_blit_info.dst_rect = &vb_dst_rect;
 
-    if (!tig_window_vbid_get(wmap_ui_window, &(vb_blit_info.dst_video_buffer)) != TIG_OK) {
+    if (tig_window_vbid_get(wmap_ui_window, &(vb_blit_info.dst_video_buffer)) != TIG_OK) {
         tig_debug_printf("WMapUI: Zoomed Blit: ERROR: Blit FAILED!\n");
         return;
     }
