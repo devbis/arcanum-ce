@@ -140,7 +140,7 @@ static void sub_545F60();
 static void sub_545FD0(int x, int y);
 static void mainmenu_ui_create_multiplayer_select_char();
 static void mainmenu_ui_destroy_multiplayer_select_char();
-static bool sub_546180(int a1);
+static void sub_546180(int a1);
 static bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height);
 static bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height, unsigned int flags);
 static void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str, TigRect* rect, unsigned int flags);
@@ -5297,11 +5297,10 @@ void mainmenu_ui_destroy_multiplayer_select_char()
 }
 
 // 0x546180
-bool sub_546180(int a1)
+void sub_546180(int a1)
 {
     dword_64C378 = a1;
     mainmenu_ui_refresh_multiplayer_select_char(&stru_5C5640);
-    return false;
 }
 
 // 0x5461A0
