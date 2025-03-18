@@ -77,7 +77,7 @@ static int sub_49BF10(const char* str, const char** identifiers, int size);
 static void sub_49C060(int64_t obj, TigFile* stream, int type);
 static void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size);
 static void proto_id_list_create(int** proto_ids_ptr, int* cnt_ptr);
-static int proto_id_list_sort(const int* a, const int* b);
+static int proto_id_list_sort(const void* va, const void* vb);
 static bool proto_id_list_check(int* proto_ids, int cnt, int id);
 static void proto_id_list_destroy(int* proto_ids);
 
@@ -16655,8 +16655,11 @@ void sub_49C610(TigFile* stream, const char* name, int value, const char** ident
     }
 }
 
-int proto_id_list_sort(const int* a, const int* b)
+int proto_id_list_sort(const void* va, const void* vb)
 {
+    const int* a = (const int*)va;
+    const int* b = (const int*)vb;
+
     return *a - *b;
 }
 
