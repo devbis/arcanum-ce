@@ -3321,7 +3321,7 @@ void object_list_rect(LocRect* loc_rect, unsigned int flags, ObjectList* objects
                                 if ((dword_5E2F88 & obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS)) == 0
                                     && types[obj_field_int32_get(obj_node->obj, OBJ_F_TYPE)]) {
                                     new_node = object_node_create();
-                                    new_node->obj = obj;
+                                    new_node->obj = obj_node->obj;
                                     new_node->next = NULL;
                                     *prev_ptr = new_node;
                                     prev_ptr= &(new_node->next);
