@@ -717,7 +717,6 @@ void wallcheck_ping(tig_timestamp_t timestamp)
 // 0x437E50
 void wallcheck_recalc(int64_t loc)
 {
-    int64_t tmp_loc;
     int v1;
     int v2;
     ObjectList walls;
@@ -734,7 +733,6 @@ void wallcheck_recalc(int64_t loc)
         return;
     }
 
-    tmp_loc = loc;
     x = LOCATION_GET_X(loc);
     y = LOCATION_GET_Y(loc);
     v1 = (int)((LOCATION_GET_X(loc) - 2) % 4);
