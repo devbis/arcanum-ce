@@ -114,9 +114,9 @@ static void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect);
 static bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle);
 static bool mainmenu_ui_new_char_next_background(int64_t obj, int* background_ptr);
 static bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_ptr);
-static bool sub_545350(int64_t obj);
-static bool sub_5453A0(int64_t obj, int gender);
-static bool sub_545440(int64_t obj);
+static bool mainmenu_ui_new_char_prev_gender(int64_t obj);
+static bool mainmenu_ui_new_char_set_gender(int64_t obj, int gender);
+static bool mainmenu_ui_new_char_next_gender(int64_t obj);
 static bool sub_545490(int64_t obj);
 static void sub_545550(int64_t obj, int race);
 static bool sub_5455D0(int64_t obj);
@@ -4661,12 +4661,12 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         }
         return true;
     case 8:
-        if (!dword_5C3620 && sub_545350(pc_obj)) {
+        if (!dword_5C3620 && mainmenu_ui_new_char_prev_gender(pc_obj)) {
             window->refresh_func(NULL);
         }
         return true;
     case 9:
-        if (!dword_5C3620 && sub_545440(pc_obj)) {
+        if (!dword_5C3620 && mainmenu_ui_new_char_next_gender(pc_obj)) {
             window->refresh_func(NULL);
         }
         return true;
@@ -4703,19 +4703,19 @@ bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_ptr)
 }
 
 // 0x545350
-bool sub_545350(int64_t obj)
+bool mainmenu_ui_new_char_prev_gender(int64_t obj)
 {
     if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
         background_clear(obj);
-        return sub_5453A0(obj, GENDER_MALE);
+        return mainmenu_ui_new_char_set_gender(obj, GENDER_MALE);
     } else {
         background_clear(obj);
-        return sub_5453A0(obj, GENDER_FEMALE);
+        return mainmenu_ui_new_char_set_gender(obj, GENDER_FEMALE);
     }
 }
 
 // 0x5453A0
-bool sub_5453A0(int64_t obj, int gender)
+bool mainmenu_ui_new_char_set_gender(int64_t obj, int gender)
 {
     int race;
     int portrait;
@@ -4741,14 +4741,14 @@ bool sub_5453A0(int64_t obj, int gender)
 }
 
 // 0x545440
-bool sub_545440(int64_t obj)
+bool mainmenu_ui_new_char_next_gender(int64_t obj)
 {
     if (stat_level_get(obj, STAT_GENDER) == GENDER_MALE) {
         background_clear(obj);
-        return sub_5453A0(obj, GENDER_FEMALE);
+        return mainmenu_ui_new_char_set_gender(obj, GENDER_FEMALE);
     } else {
         background_clear(obj);
-        return sub_5453A0(obj, GENDER_MALE);
+        return mainmenu_ui_new_char_set_gender(obj, GENDER_MALE);
     }
 }
 
