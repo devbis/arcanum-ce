@@ -23,7 +23,7 @@ static_assert(sizeof(S681000) == 0x8, "wrong size");
 
 static void sub_5706D0();
 static bool sub_570A40(tig_window_handle_t window_handle);
-static void sub_570E10();
+static void sub_570E10(int a1);
 static void sub_570E40();
 static void sub_570EF0();
 static void sub_571100();
@@ -170,7 +170,7 @@ void sub_5700C0()
     dword_68103C = 0;
     sub_5706D0();
     dword_681038 = true;
-    sub_570E10();
+    sub_570E10(0);
 
     datetime.days = 0;
     datetime.milliseconds = 10000;
@@ -680,8 +680,10 @@ bool sub_570BC0(TigMessage* msg)
 }
 
 // 0x570E10
-void sub_570E10()
+void sub_570E10(int a1)
 {
+    (void)a1;
+
     if (dword_681038) {
         sub_570E40();
         sub_570EF0();
