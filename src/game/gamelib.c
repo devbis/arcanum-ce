@@ -117,8 +117,8 @@ typedef struct GameSaveEntry {
     char* path;
 } GameSaveEntry;
 
-static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
-static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
+static int sub_403D40(const void* va, const void* vb);
+static int sub_403DB0(const void* va, const void* vb);
 static void difficulty_changed();
 static void gamelib_render_game(UnknownContext* render_info);
 static void gamelib_render_editor(UnknownContext* render_info);
@@ -1391,8 +1391,11 @@ void sub_403C10(GameSaveList* save_list, int a2, int a3)
 }
 
 // 0x403D40
-int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b)
+int sub_403D40(const void* va, const void* vb)
 {
+    const GameSaveEntry* a = (const GameSaveEntry*)va;
+    const GameSaveEntry* b = (const GameSaveEntry*)vb;
+
     if (dword_5D10DC) {
         if (toupper(a->path[4]) == 'A') {
             return -1;
@@ -1413,8 +1416,11 @@ int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b)
 }
 
 // 0x403DB0
-int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b)
+int sub_403DB0(const void* va, const void* vb)
 {
+    const GameSaveEntry* a = (const GameSaveEntry*)va;
+    const GameSaveEntry* b = (const GameSaveEntry*)vb;
+
     return -strnicmp(a->path, b->path, 8);
 }
 
