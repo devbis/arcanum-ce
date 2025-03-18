@@ -1922,7 +1922,7 @@ int critter_encumbrance_level_ratio(int level)
 // 0x45F970
 int critter_description_get(int64_t a, int64_t b)
 {
-    if (a == b || b != OBJ_HANDLE_NULL && sub_4C0C40(a, b)) {
+    if (a == b || (b != OBJ_HANDLE_NULL && sub_4C0C40(a, b))) {
         return obj_field_int32_get(a, OBJ_F_DESCRIPTION);
     } else {
         return obj_field_int32_get(a, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
