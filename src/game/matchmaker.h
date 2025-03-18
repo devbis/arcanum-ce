@@ -1,6 +1,8 @@
 #ifndef ARCANUM_GAME_MATCHMAKER_H_
 #define ARCANUM_GAME_MATCHMAKER_H_
 
+#include <assert.h>
+
 #include <winsock2.h>
 
 typedef struct MatchmakerInitInfo {
