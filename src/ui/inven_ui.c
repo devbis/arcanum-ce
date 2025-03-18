@@ -68,8 +68,8 @@ static bool sub_575180(bool* a1);
 static void sub_575200(int a1);
 static void sub_575360(int a1);
 static void sub_5754C0(int x, int y);
-static bool sub_575580(S5754C0* entry);
-static bool sub_5755A0(S5754C0* entry);
+static bool sub_575580(void* userinfo);
+static bool sub_5755A0(void* userinfo);
 static void sub_575BE0();
 static int sub_575CB0(int x, int y, int64_t* a3);
 static int64_t sub_575FA0(int x, int y, int64_t* a3);
@@ -2206,16 +2206,19 @@ void sub_5754C0(int x, int y)
 }
 
 // 0x575580
-bool sub_575580(S5754C0* entry)
+bool sub_575580(void* userinfo)
 {
+    S5754C0* entry = (S5754C0*)userinfo;
+
     FREE(entry);
 
     return true;
 }
 
 // 0x5755A0
-bool sub_5755A0(S5754C0* entry)
+bool sub_5755A0(void* userinfo)
 {
+    S5754C0* entry = (S5754C0*)userinfo;
     tig_art_id_t art_id;
     int sound_id;
 
