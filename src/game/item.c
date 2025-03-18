@@ -70,8 +70,8 @@ static int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots);
 static int sub_4676A0(int64_t item_obj, int64_t parent_obj, int* slots);
 static void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
-static bool item_force_remove_success(ItemRemoveInfo* item_remove_info);
-static bool item_force_remove_failure(ItemRemoveInfo* item_remove_info);
+static bool item_force_remove_success(void* userinfo);
+static bool item_force_remove_failure(void* userinfo);
 static bool sub_467E70();
 static void sub_467E80(int64_t a1, int64_t a2);
 static bool sub_468110(int64_t obj);
@@ -4498,8 +4498,9 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
 }
 
 // 0x467D60
-bool item_force_remove_success(ItemRemoveInfo* item_remove_info)
+bool item_force_remove_success(void* userinfo)
 {
+    ItemRemoveInfo* item_remove_info = (ItemRemoveInfo*)userinfo;
     Packet25 pkt;
     unsigned int item_flags;
 
@@ -4524,8 +4525,9 @@ bool item_force_remove_success(ItemRemoveInfo* item_remove_info)
 }
 
 // 0x467E00
-bool item_force_remove_failure(ItemRemoveInfo* item_remove_info)
+bool item_force_remove_failure(void* userinfo)
 {
+    ItemRemoveInfo* item_remove_info = (ItemRemoveInfo*)userinfo;
     char name[256];
     unsigned int flags;
 
