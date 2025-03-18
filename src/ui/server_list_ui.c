@@ -26,7 +26,7 @@ static void sub_588650();
 static void sub_5887F0();
 static void sub_588990();
 static void sub_588B10(TigNetServer* server);
-static int sub_588B70(const TigNetServer* a, const TigNetServer* b);
+static int sub_588B70(const void* va, const void* vb);
 static TigNetServer* sub_588C80(TigNetServer* server, TigNetServer* servers, int cnt);
 static void sub_588CC0(TigNetServer* server, bool a2);
 static TigNetServer* sub_588D00();
@@ -1675,8 +1675,10 @@ void sub_588B10(TigNetServer* server)
 }
 
 // 0x588B70
-int sub_588B70(const TigNetServer* a, const TigNetServer* b)
+int sub_588B70(const void* va, const void* vb)
 {
+    const TigNetServer* a = (const TigNetServer*)va;
+    const TigNetServer* b = (const TigNetServer*)vb;
     int v1[5];
     bool cont;
     int index;
