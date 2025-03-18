@@ -91,10 +91,10 @@ static int sub_43D690(int64_t obj);
 static int sub_43D630(int64_t obj);
 static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* a6, int* a7, int* a8);
 static void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects);
-static bool sub_441710(S4415C0* entry);
-static bool sub_441780(S4415C0* entry);
-static bool sub_4418E0(S4417A0* entry);
-static bool sub_441960(S4417A0* entry);
+static bool sub_441710(void* userinfo);
+static bool sub_441780(void* userinfo);
+static bool sub_4418E0(void* userinfo);
+static bool sub_441960(void* userinfo);
 static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
 static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
@@ -3682,8 +3682,10 @@ void sub_4415C0(int64_t obj, int64_t loc)
 }
 
 // 0x441710
-bool sub_441710(S4415C0* entry)
+bool sub_441710(void* userinfo)
 {
+    S4415C0* entry = (S4415C0*)userinfo;
+
     if (entry != NULL) {
         Packet22 pkt;
 
@@ -3703,8 +3705,10 @@ bool sub_441710(S4415C0* entry)
 }
 
 // 0x441780
-bool sub_441780(S4415C0* entry)
+bool sub_441780(void* userinfo)
 {
+    S4415C0* entry = (S4415C0*)userinfo;
+
     FREE(entry);
 
     return true;
@@ -3750,8 +3754,10 @@ void sub_4417A0(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x4418E0
-bool sub_4418E0(S4417A0* entry)
+bool sub_4418E0(void* userinfo)
 {
+    S4417A0* entry = (S4417A0*)userinfo;
+
     if (entry != NULL) {
         Packet23 pkt;
 
@@ -3770,8 +3776,10 @@ bool sub_4418E0(S4417A0* entry)
 }
 
 // 0x441960
-bool sub_441960(S4417A0* entry)
+bool sub_441960(void* userinfo)
 {
+    S4417A0* entry = (S4417A0*)userinfo;
+
     FREE(entry);
 
     return true;
