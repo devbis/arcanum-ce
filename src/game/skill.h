@@ -61,15 +61,15 @@ typedef enum Training {
     TRAINING_COUNT,
 } Training;
 
-typedef void(SkillCallbacksF0)();
-typedef void(SkillCallbacksF4)();
-typedef void(SkillCallbacksF8)();
-typedef void(SkillCallbacksFC)();
-typedef void(SkillCallbacksF10)();
-typedef void(SkillCallbacksF14)();
-typedef void(SkillCallbacksF18)();
-typedef void(SkillCallbacksF1C)();
-typedef void(SkillCallbacksF20)();
+typedef bool(SkillCallbacksF0)(int64_t, int, int, bool);
+typedef bool(SkillCallbacksF4)(int64_t, int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF8)(int64_t, int64_t, int64_t, bool);
+typedef bool(SkillCallbacksFC)(int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF10)(int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF14)(int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF18)(int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF1C)(int64_t, int64_t, bool);
+typedef bool(SkillCallbacksF20)(int64_t);
 
 typedef struct SkillCallbacks {
     SkillCallbacksF0* field_0;

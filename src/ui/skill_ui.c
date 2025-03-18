@@ -26,13 +26,13 @@ static void sub_57A620(SkillInvocation* skill_invocation);
 static void sub_57A6B0(SkillInvocation* skill_invocation);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
-static bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6);
-static bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6);
-static bool sub_57A990(int64_t obj, int a2, int a3, bool success);
-static bool skill_ui_trap(int64_t obj, int a2, int a3, bool success);
-static bool sub_57AA90(int64_t obj, int a2, int a3, bool success);
-static bool skill_ui_no_repair(int64_t obj);
-static bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success);
+static bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success);
+static bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success);
+static bool sub_57A990(int64_t obj, int64_t a2, bool success);
+static bool skill_ui_trap(int64_t obj, int64_t a2, bool success);
+static bool sub_57AA90(int64_t obj, int64_t a2, bool success);
+static bool skill_ui_no_repair(int64_t obj, int64_t a2, bool a3);
+static bool skill_ui_lock_pick(int64_t obj, int64_t a2, bool success);
 static bool skill_ui_no_lock(int64_t obj);
 
 // 0x5CB220
@@ -439,7 +439,7 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 }
 
 // 0x57A7F0
-bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
+bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -448,10 +448,8 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     (void)a2;
     (void)a3;
-    (void)a4;
-    (void)a5;
 
-    if (a6) {
+    if (success) {
         mes_file_entry.num = 500; // "You succeed."
         tf_type = TF_TYPE_WHITE;
     } else {
@@ -485,7 +483,7 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 // NOTE: Exactly the same implementation as above.
 //
 // 0x57A8C0
-bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
+bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -494,10 +492,8 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     (void)a2;
     (void)a3;
-    (void)a4;
-    (void)a5;
 
-    if (a6) {
+    if (success) {
         mes_file_entry.num = 500; // "You succeed."
         tf_type = TF_TYPE_WHITE;
     } else {
@@ -529,14 +525,13 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 }
 
 // 0x57A990
-bool sub_57A990(int64_t obj, int a2, int a3, bool success)
+bool sub_57A990(int64_t obj, int64_t a2, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
     (void)a2;
-    (void)a3;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -558,14 +553,13 @@ bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 }
 
 // 0x57AA10
-bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
+bool skill_ui_trap(int64_t obj, int64_t a2, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
     (void)a2;
-    (void)a3;
 
     if (success) {
         mes_file_entry.num = 560; // "Trap successfully disarmed."
@@ -587,14 +581,13 @@ bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 }
 
 // 0x57AA90
-bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
+bool sub_57AA90(int64_t obj, int64_t a2, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
     (void)a2;
-    (void)a3;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -616,10 +609,13 @@ bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 }
 
 // 0x57AB10
-bool skill_ui_no_repair(int64_t obj)
+bool skill_ui_no_repair(int64_t obj, int64_t a2, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
+
+    (void)a2;
+    (void)success;
 
     mes_file_entry.num = 505; // "That is not in need of repair."
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -634,14 +630,13 @@ bool skill_ui_no_repair(int64_t obj)
 }
 
 // 0x57AB70
-bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
+bool skill_ui_lock_pick(int64_t obj, int64_t a2, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
     (void)a2;
-    (void)a3;
 
     if (success) {
         mes_file_entry.num = 550; // "Lock successfully picked."
