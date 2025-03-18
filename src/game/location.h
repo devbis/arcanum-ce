@@ -40,17 +40,17 @@ bool sub_4B99C0(int64_t from, int64_t* to);
 #define LOCATION_GET_Y(l) (((l) >> 32) & 0xFFFFFFFF)
 #define LOCATION_MAKE(x, y) ((x) | (y) << 32)
 
-static int64_t location_get_x(int64_t location)
+static inline int64_t location_get_x(int64_t location)
 {
     return location & 0xFFFFFFFF;
 }
 
-static int64_t location_get_y(int64_t location)
+static inline int64_t location_get_y(int64_t location)
 {
     return (location >> 32) & 0xFFFFFFFF;
 }
 
-static int64_t location_make(int64_t x, int64_t y)
+static inline int64_t location_make(int64_t x, int64_t y)
 {
     return x | (y << 32);
 }
