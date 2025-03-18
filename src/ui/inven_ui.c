@@ -3274,7 +3274,7 @@ void redraw_inven(bool a1)
             item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
             item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
             if ((item_flags & OIF_NO_DISPLAY) != 0) {
-                if (!a1 || (item_type != OBJ_TYPE_GOLD || item_type != OBJ_TYPE_AMMO)) {
+                if (!a1 || (item_type != OBJ_TYPE_GOLD && item_type != OBJ_TYPE_AMMO)) {
                     continue;
                 }
                 item_flags &= ~OIF_NO_DISPLAY;
