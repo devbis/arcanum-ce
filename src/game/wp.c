@@ -95,12 +95,12 @@ void wp_resize(GameResizeInfo* resize_info)
     wp_iso_window_handle = resize_info->window_handle;
 }
 
+// NOTE: Original code returns `1` which breaks required signature.
+//
 // 0x4BFDB0
-bool wp_update_view(ViewOptions* view_options)
+void wp_update_view(ViewOptions* view_options)
 {
     wp_view_options = *view_options;
-
-    return true;
 }
 
 // 0x4BFDD0
