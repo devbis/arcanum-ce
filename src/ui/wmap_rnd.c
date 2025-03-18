@@ -71,7 +71,7 @@ static bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num
 static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry);
 static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
 static void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart);
-static int sub_558D20(const WmapRndEncounterChartEntry* a, const WmapRndEncounterChartEntry* b);
+static int wmap_rnd_encounter_entry_compare(const void* va, const void* vb);
 static bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry);
 static bool sub_558DE0(int64_t location);
 static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
@@ -639,12 +639,15 @@ void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart)
 // 0x558D00
 void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart)
 {
-    qsort(chart->entries, chart->num_entries, sizeof(*chart->entries), sub_558D20);
+    qsort(chart->entries, chart->num_entries, sizeof(*chart->entries), wmap_rnd_encounter_entry_compare);
 }
 
 // 0x558D20
-int sub_558D20(const WmapRndEncounterChartEntry* a, const WmapRndEncounterChartEntry* b)
+int wmap_rnd_encounter_entry_compare(const void* va, const void* vb)
 {
+    const WmapRndEncounterChartEntry* a = (const WmapRndEncounterChartEntry*)va;
+    const WmapRndEncounterChartEntry* b = (const WmapRndEncounterChartEntry*)vb;
+
     if (a->radius < b->radius) {
         return -1;
     } else if (a->radius > b->radius) {
