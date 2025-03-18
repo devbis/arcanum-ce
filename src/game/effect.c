@@ -46,7 +46,7 @@ typedef struct Effect {
 static_assert(sizeof(Effect) == 0x58, "wrong size");
 
 static void effect_parse(int num, char* text);
-static void sub_4EA520(int64_t obj, int start);
+static void effect_remove_internal(int64_t obj, int index);
 static int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5);
 
 // 0x5B9BA8
@@ -467,7 +467,7 @@ void effect_remove_one_typed(int64_t obj, int effect)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
-            sub_4EA520(obj, index);
+            effect_remove_internal(obj, index);
             break;
         }
     }
@@ -504,7 +504,7 @@ void effect_remove_all_typed(int64_t obj, int effect)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
-            sub_4EA520(obj, index);
+            effect_remove_internal(obj, index);
             index--;
             cnt--;
         }
@@ -540,7 +540,7 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
-            sub_4EA520(obj, index);
+            effect_remove_internal(obj, index);
             break;
         }
     }
@@ -575,7 +575,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
-            sub_4EA520(obj, index);
+            effect_remove_internal(obj, index);
             index--;
             cnt--;
         }
@@ -603,14 +603,14 @@ int sub_4EA4A0(int64_t obj, int effect_id)
 }
 
 // 0x4EA520
-void sub_4EA520(int64_t obj, int start)
+void effect_remove_internal(int64_t obj, int index)
 {
     int strength;
     int encumbrance_level;
-    int v1;
-    int v2;
+    int hp_max;
+    int fatigue_max;
     int end;
-    int data;
+    unsigned int data;
     int diff;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
@@ -619,16 +619,18 @@ void sub_4EA520(int64_t obj, int start)
 
     strength = stat_level_get(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
-    v1 = object_hp_max(obj);
-    v2 = critter_fatigue_max(obj);
+    hp_max = object_hp_max(obj);
+    fatigue_max = critter_fatigue_max(obj);
 
     end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
-    while (start < end) {
-        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, start + 1);
-        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, start, data);
+    while (index < end) {
+        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index + 1);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, index, data);
 
-        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start + 1);
-        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start, data);
+        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index + 1);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index, data);
+
+        index++;
     }
 
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, end);
@@ -638,12 +640,12 @@ void sub_4EA520(int64_t obj, int start)
         critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
-    diff = object_hp_max(obj) - v1;
+    diff = object_hp_max(obj) - hp_max;
     if (diff != 0) {
         object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
-    diff = critter_fatigue_max(obj) - v2;
+    diff = critter_fatigue_max(obj) - fatigue_max;
     if (diff != 0) {
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }
