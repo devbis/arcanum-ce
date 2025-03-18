@@ -7,7 +7,7 @@ bool tile_script_init(GameInitInfo* init_info);
 void tile_script_reset();
 void tile_script_exit();
 void tile_script_resize(GameResizeInfo* resize_info);
-bool tile_script_update_view(ViewOptions* view_options);
+void tile_script_update_view(ViewOptions* view_options);
 bool tile_script_is_enabled();
 void tile_script_toggle();
 void tile_script_render(UnknownContext* render_info);
