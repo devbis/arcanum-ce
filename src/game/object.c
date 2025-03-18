@@ -2807,7 +2807,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
 {
     bool done = false;
     int cost = 0;
-    uint64_t tmp_loc;
+    int64_t tmp_loc;
     ObjectList objects;
     ObjectNode* node;
     int obj_type;
