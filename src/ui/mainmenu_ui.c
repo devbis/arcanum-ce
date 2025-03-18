@@ -117,9 +117,9 @@ static bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_pt
 static bool mainmenu_ui_new_char_prev_gender(int64_t obj);
 static bool mainmenu_ui_new_char_set_gender(int64_t obj, int gender);
 static bool mainmenu_ui_new_char_next_gender(int64_t obj);
-static bool sub_545490(int64_t obj);
-static void sub_545550(int64_t obj, int race);
-static bool sub_5455D0(int64_t obj);
+static bool mainmenu_ui_new_char_prev_race(int64_t obj);
+static void mainmenu_ui_new_char_set_race(int64_t obj, int race);
+static bool mainmenu_ui_new_char_next_race(int64_t obj);
 static bool mainmenu_ui_new_char_button_hover(tig_button_handle_t button_handle);
 static bool mainmenu_ui_new_char_button_leave(tig_button_handle_t button_handle);
 static void mainmenu_ui_new_char_mouse_idle(int x, int y);
@@ -4635,12 +4635,12 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         window->refresh_func(&stru_5C5060);
         return true;
     case 4:
-        if (sub_545490(pc_obj)) {
+        if (mainmenu_ui_new_char_prev_race(pc_obj)) {
             window->refresh_func(NULL);
         }
         return true;
     case 5:
-        if (sub_5455D0(pc_obj)) {
+        if (mainmenu_ui_new_char_next_race(pc_obj)) {
             window->refresh_func(NULL);
         }
         return true;
@@ -4753,7 +4753,7 @@ bool mainmenu_ui_new_char_next_gender(int64_t obj)
 }
 
 // 0x545490
-bool sub_545490(int64_t obj)
+bool mainmenu_ui_new_char_prev_race(int64_t obj)
 {
     int race;
 
@@ -4796,13 +4796,13 @@ bool sub_545490(int64_t obj)
     }
 
     background_clear(obj);
-    sub_545550(obj, race);
+    mainmenu_ui_new_char_set_race(obj, race);
 
     return true;
 }
 
 // 0x545550
-void sub_545550(int64_t obj, int race)
+void mainmenu_ui_new_char_set_race(int64_t obj, int race)
 {
     int gender;
     int portrait;
@@ -4823,7 +4823,7 @@ void sub_545550(int64_t obj, int race)
 }
 
 // 0x5455D0
-bool sub_5455D0(int64_t obj)
+bool mainmenu_ui_new_char_next_race(int64_t obj)
 {
     int race;
 
@@ -4865,7 +4865,7 @@ bool sub_5455D0(int64_t obj)
 
     if (race < 8) {
         background_clear(obj);
-        sub_545550(obj, race);
+        mainmenu_ui_new_char_set_race(obj, race);
         return true;
     }
 
