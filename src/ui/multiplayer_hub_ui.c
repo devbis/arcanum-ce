@@ -206,14 +206,14 @@ static TigRect stru_5CC4B0 = { 327, 310, 164, 14 };
 
 // 0x5CC4C0
 MainMenuButtonInfo stru_5CC4C0[2] = {
-    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, 0, 0, 0, 0, -1 },
-    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, 0, 0, 0, 0, -1 },
+    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, { 0 }, -1 },
+    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
 };
 
 // 0x5CC520
 MainMenuButtonInfo stru_5CC520[2] = {
-    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, 0, 0, 0, 0, -1 },
-    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, 0, 0, 0, 0, -1 },
+    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, { 0 }, -1 },
+    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
 };
 
 // 0x5CC5F0
@@ -256,26 +256,26 @@ static TextEdit stru_5CC6B0 = {
 
 // 0x5CC6C8
 MainMenuButtonInfo stru_5CC6C8[20] = {
-    { 162, 22, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, 0, 0, 0, 0, -1 },
-    { 162, 56, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 0, 0, 0, 0, 0, -1 },
-    { 162, 90, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, 0, 0, 0, 0, -1 },
-    { 460, 505, 357, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 54, 325, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0,0, 0, 0, -1 },
-    { 250, 325, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 54, 395, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0,0, 0, 0, -1 },
-    { 250, 395, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 565, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 761, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 565, 362, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 761, 362, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 565, 432, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 761, 432, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 565, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 761, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 325, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 521, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 325, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 521, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 162, 22, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
+    { 162, 56, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 0, { 0 }, -1 },
+    { 162, 90, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, { 0 }, -1 },
+    { 460, 505, 357, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 54, 325, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 250, 325, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 54, 395, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 250, 395, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 565, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 761, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 565, 362, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 761, 362, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 565, 432, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 761, 432, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 565, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 761, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 325, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 521, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 325, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
+    { 521, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, { 0 }, -1 },
 };
 
 // 0x684688

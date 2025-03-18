@@ -46,13 +46,13 @@ static int dword_5994BC[3] = {
 
 // 0x5CCAF8
 MainMenuButtonInfo stru_5CCAF8[7] = {
-    { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, 0, 0, 0, 0, -1 },
-    { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, 0, 0, 0, 0, -1 },
-    { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, 0, 0,0, 0, -1 },
-    { 58, 533, 357, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0,0, 0, 0, -1 },
-    { 72, 491, 751, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0,0, 0, 0, -1 },
-    { 232, 492, 752, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0, 0, 0, 0, -1 },
-    { 764, 101, 762, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
+    { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, { 0 }, -1 },
+    { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, { 0 }, -1 },
+    { 58, 533, 357, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
+    { 72, 491, 751, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
+    { 232, 492, 752, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
+    { 764, 101, 762, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
 };
 
 // 0x5CCC48
