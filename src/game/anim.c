@@ -15402,8 +15402,8 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 
     art_type = tig_art_type(art_id);
     if (art_type != TIG_ART_TYPE_CRITTER
-        || art_type != TIG_ART_TYPE_MONSTER
-        || art_type != TIG_ART_TYPE_UNIQUE_NPC) {
+        && art_type != TIG_ART_TYPE_MONSTER
+        && art_type != TIG_ART_TYPE_UNIQUE_NPC) {
         return fps;
     }
 
