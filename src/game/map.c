@@ -100,7 +100,7 @@ static void map_load_postprocess();
 static bool map_load_mobile(const char* a1, const char* a2);
 static bool map_load_dynamic(const char* name);
 static void map_disable_objects();
-static void sub_411830(char* str);
+static void map_obfuscate_name(char* str);
 static bool sub_411880(char** str, char* token);
 static void map_apply_obj_patch(int64_t obj, char* str);
 
@@ -1002,7 +1002,7 @@ bool sub_4102F0(const char* name)
 
     strcpy(path, "maps\\");
     strcat(path, name);
-    sub_411830(&(path[5]));
+    map_obfuscate_name(&(path[5]));
 
     if (tig_file_exists(path, NULL)) {
         stream = tig_file_fopen(path, "rb");
@@ -1331,7 +1331,7 @@ bool map_load_mobile(const char* a1, const char* a2)
     }
 
     strcpy(path2, a1);
-    sub_411830(&(path2[5]));
+    map_obfuscate_name(&(path2[5]));
 
     strcpy(path3, a2);
     strcat(path3, "\\");
@@ -1582,11 +1582,11 @@ void map_disable_objects()
 }
 
 // 0x411830
-void sub_411830(char* str)
+void map_obfuscate_name(char* str)
 {
     unsigned char* pch;
 
-    pch = str;
+    pch = (unsigned char*)str;
     while (*pch != '\0') {
         if (*pch >= 'A' && *pch <= 'Z') {
             *pch += 13;
