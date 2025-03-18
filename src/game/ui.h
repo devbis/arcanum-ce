@@ -324,7 +324,7 @@ void sub_460DB0(const char* a1, const char* a2);
 void sub_460DD0();
 void ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 void sub_460E10(int a1);
-void sub_460E30();
+void sub_460E30(int a1, int a2, int a3);
 void sub_460E50(int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_UI_H_ */
