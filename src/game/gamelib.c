@@ -631,7 +631,7 @@ void gamelib_modlist_create(GameModuleList* module_list, int type)
                 have_mp = tig_file_exists_in_path(path, "mp.txt", NULL);
                 tig_file_repository_remove(path);
 
-                if (have_mp && type == 1 || type == 0) {
+                if ((have_mp && type == 1) || type == 0) {
                     module_list->paths = (char**)REALLOC(module_list->paths, sizeof(module_list->paths) * (module_list->count + 1));
                     module_list->paths[module_list->count] = STRDUP(file_list.entries[file_index].path);
 
