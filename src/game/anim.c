@@ -33,7 +33,7 @@
 static bool sub_421CE0(AnimID* anim_id, AnimRunInfo* run_info);
 static void violence_filter_changed();
 static bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream);
-static bool sub_422350(AnimGoalData* goal_data, TigFile* stream);
+static bool anim_goal_data_save(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool anim_load_internal(GameLoadInfo* load_info);
 static bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream);
@@ -2950,7 +2950,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->current_goal), 8, 1, stream) != 1) return false;
 
     for (idx = 0; idx <= run_info->current_goal; idx++) {
-        if (!sub_422350(&(run_info->goals[idx]), stream)) {
+        if (!anim_goal_data_save(&(run_info->goals[idx]), stream)) {
             return false;
         }
     }
@@ -2963,7 +2963,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
 }
 
 // 0x422350
-bool sub_422350(AnimGoalData* goal_data, TigFile* stream)
+bool anim_goal_data_save(AnimGoalData* goal_data, TigFile* stream)
 {
     int idx;
     AnimRunInfoParam param;
