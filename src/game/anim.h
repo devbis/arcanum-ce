@@ -25,7 +25,7 @@ void anim_id_init(AnimID* anim_id);
 void anim_id_to_str(AnimID* anim_id, char* buffer);
 bool anim_save(TigFile* stream);
 bool anim_load(GameLoadInfo* load_info);
-void sub_4232F0();
+void anim_debug_enable();
 bool sub_423300(int64_t obj, AnimID* anim_id);
 int sub_4233D0(int64_t obj);
 bool sub_423470(int64_t obj);

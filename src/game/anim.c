@@ -3448,7 +3448,7 @@ void anim_load_nodes_from_map(const char* map)
 }
 
 // 0x4232F0
-void sub_4232F0()
+void anim_debug_enable()
 {
 }
 

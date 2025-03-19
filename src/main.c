@@ -111,7 +111,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-animdebug") != NULL) {
-        sub_4232F0();
+        anim_debug_enable();
     }
 
     if (strstr(lpCmdLine, "-norandom") != NULL) {
