@@ -2853,7 +2853,75 @@ void anim_id_to_str(AnimID* anim_id, char* buffer)
 // 0x421EA0
 bool anim_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int idx;
+    int start;
+    int extent_size;
+
+    if (tig_file_fwrite(&dword_6876E4, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&animNumActiveGoals, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6D0, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_739E44, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_739E40, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE650, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE658, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE608, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE640, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE648, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE660, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE668, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6B8, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6B0, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6A0, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE69C, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6C4, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5DE6C0, 4, 1, stream) != 1) return false;
+
+    cnt = 216;
+    if (tig_file_fwrite(&cnt, 4, 1, stream) != 1 ) return false;
+
+    idx = 0;
+    while (idx < cnt) {
+        start = idx;
+
+        while (idx < cnt) {
+            if ((anim_run_info[idx].flags & 0x01) == 0) {
+                break;
+            }
+            idx++;
+        }
+
+        extent_size = idx - start;
+        if (extent_size != 0) {
+            if (tig_file_fwrite(&extent_size, sizeof(extent_size), 1, stream) != 1) {
+                return false;
+            }
+
+            while (start < idx) {
+                if (!sub_4221C0(&(anim_run_info[start]), stream)) {
+                    return false;
+                }
+                start++;
+            }
+        }
+
+        while (idx < cnt) {
+            if ((anim_run_info[idx].flags & 0x01) != 0) {
+                break;
+            }
+            idx++;
+        }
+
+        extent_size = idx - start;
+        if (extent_size > 0) {
+            extent_size = -extent_size;
+            if (tig_file_fwrite(&extent_size, sizeof(extent_size), 1, stream) != 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x4221A0
