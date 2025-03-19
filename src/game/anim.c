@@ -36,7 +36,7 @@ static bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream);
 static bool anim_goal_data_save(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool anim_load_internal(GameLoadInfo* load_info);
-static bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream);
+static bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream);
 static bool sub_4229A0(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422A50(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay);
@@ -3083,7 +3083,7 @@ bool anim_load_internal(GameLoadInfo* load_info)
 
         if (extent_size > 0) {
             while (extent_size > 0) {
-                if (!sub_4227F0(&(anim_run_info[idx]), load_info->stream)) {
+                if (!anim_run_info_load(&(anim_run_info[idx]), load_info->stream)) {
                     return false;
                 }
                 idx++;
@@ -3098,7 +3098,7 @@ bool anim_load_internal(GameLoadInfo* load_info)
 }
 
 // 0x4227F0
-bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream)
+bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
 {
     int index;
 
@@ -3417,7 +3417,7 @@ void anim_load_nodes_from_map(const char* map)
     }
 
     for (idx = 0; idx < cnt; idx++) {
-        if (!sub_4227F0(&run_info, stream)) {
+        if (!anim_run_info_load(&run_info, stream)) {
             break;
         }
 
