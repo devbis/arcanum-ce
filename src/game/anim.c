@@ -3502,7 +3502,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
     AnimGoalNode* goal_node;
     AnimGoalSubNode* goal_subnode;
     char str[128];
-    int state_change;
+    unsigned int state_change;
     int delay;
     bool err = false;
     int num_loops = 0;
