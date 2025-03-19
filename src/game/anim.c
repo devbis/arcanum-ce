@@ -32,7 +32,7 @@
 
 static bool sub_421CE0(AnimID* anim_id, AnimRunInfo* run_info);
 static void violence_filter_changed();
-static bool sub_4221C0(AnimRunInfo* run_info, TigFile* stream);
+static bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream);
 static bool sub_422350(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool anim_load_internal(GameLoadInfo* load_info);
@@ -2898,7 +2898,7 @@ bool anim_save(TigFile* stream)
             }
 
             while (start < idx) {
-                if (!sub_4221C0(&(anim_run_info[start]), stream)) {
+                if (!anim_run_info_save(&(anim_run_info[start]), stream)) {
                     return false;
                 }
                 start++;
@@ -2931,7 +2931,7 @@ void violence_filter_changed()
 }
 
 // 0x4221C0
-bool sub_4221C0(AnimRunInfo* run_info, TigFile* stream)
+bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
 {
     int idx;
 
@@ -3257,7 +3257,7 @@ void anim_break_nodes_to_map(const char* map)
             if (!teleport_is_teleporting_obj(run_info->anim_obj)
                 || !anim_goal_nodes[run_info->goals[0].type]->field_C) {
                 sub_44E2C0(&(run_info->id), 6);
-            } else if (sub_4221C0(run_info, stream)) {
+            } else if (anim_run_info_save(run_info, stream)) {
                 cnt++;
                 sub_44E2C0(&(run_info->id), 6);
             } else {
@@ -3352,7 +3352,7 @@ void anim_save_nodes_to_map(const char* map)
     for (idx = 0; idx < 216; idx++) {
         run_info = &(anim_run_info[idx]);
         if ((run_info->flags & 0x1) != 0) {
-            if (!sub_4221C0(run_info, stream)) {
+            if (!anim_run_info_save(run_info, stream)) {
                 ASSERT(0); // 1199, "0"
                 break;
             }
