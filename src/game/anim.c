@@ -2702,7 +2702,7 @@ static int dword_5DE6CC;
 // compatibility.
 //
 // 0x5DE6D0
-static int dword_5DE6D0;
+static int anim_catch_up;
 
 // 0x5DE6D4
 static bool anim_editor;
@@ -2860,7 +2860,7 @@ bool anim_save(TigFile* stream)
 
     if (tig_file_fwrite(&dword_6876E4, 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&animNumActiveGoals, 4, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_5DE6D0, 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&anim_catch_up, 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_739E44, 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_739E40, 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_5DE650, 4, 1, stream) != 1) return false;
@@ -3057,7 +3057,7 @@ bool anim_load_internal(GameLoadInfo* load_info)
 
     if (tig_file_fread(&dword_6876E4, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&animNumActiveGoals, 4, 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_5DE6D0, 4, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&anim_catch_up, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_739E44, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_739E40, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_5DE650, 4, 1, load_info->stream) != 1) return false;
@@ -3839,7 +3839,7 @@ bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay)
     timeevent.params[1].integer_value = run_info->id.field_4;
     timeevent.params[2].integer_value = 1111;
 
-    if (dword_5DE6D0) {
+    if (anim_catch_up) {
         return sub_45BA30(&timeevent, &datetime, a2, &(run_info->field_18));
     } else {
         return sub_45B880(&timeevent, &datetime, &(run_info->field_18));
@@ -3946,13 +3946,13 @@ void sub_423FB0()
 // 0x423FC0
 void anim_catch_up_enable()
 {
-    dword_5DE6D0 = true;
+    anim_catch_up = true;
 }
 
 // 0x423FD0
 void anim_catch_up_disable()
 {
-    dword_5DE6D0 = false;
+    anim_catch_up = false;
 }
 
 // 0x423FE0
