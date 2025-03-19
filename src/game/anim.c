@@ -3949,6 +3949,12 @@ void anim_catch_up_enable()
     dword_5DE6D0 = true;
 }
 
+// 0x423FD0
+void anim_catch_up_disable()
+{
+    dword_5DE6D0 = false;
+}
+
 // 0x423FE0
 void sub_423FE0(void(*func)())
 {
