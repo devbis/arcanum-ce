@@ -32,7 +32,7 @@ bool sub_423470(int64_t obj);
 bool sub_4234F0(int64_t obj);
 bool anim_timeevent_process(TimeEvent* timeevent);
 void sub_423E60(const char* msg);
-void sub_423FC0();
+void anim_catch_up_enable();
 void sub_423FE0(void(*func)());
 bool sub_423FF0(int64_t obj);
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4);

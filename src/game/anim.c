@@ -3944,7 +3944,7 @@ void sub_423FB0()
 }
 
 // 0x423FC0
-void sub_423FC0()
+void anim_catch_up_enable()
 {
     dword_5DE6D0 = true;
 }

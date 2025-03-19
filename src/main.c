@@ -107,7 +107,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-animcatchup") != NULL) {
-        sub_423FC0();
+        anim_catch_up_enable();
     }
 
     if (strstr(lpCmdLine, "-animdebug") != NULL) {
