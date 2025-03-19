@@ -37,7 +37,7 @@ static bool anim_goal_data_save(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool anim_load_internal(GameLoadInfo* load_info);
 static bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream);
-static bool sub_4229A0(AnimGoalData* goal_data, TigFile* stream);
+static bool anim_goal_data_load(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422A50(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
 static bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay);
 static void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** goal_node_ptr, AnimGoalData** goal_data_ptr, bool* a5);
@@ -3117,7 +3117,7 @@ bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fread(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
     for (index = 0; index <= run_info->current_goal; index++) {
-        if (!sub_4229A0(&(run_info->goals[index]), stream)) {
+        if (!anim_goal_data_load(&(run_info->goals[index]), stream)) {
             return false;
         }
     }
@@ -3134,7 +3134,7 @@ bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
 }
 
 // 0x4229A0
-bool sub_4229A0(AnimGoalData* goal_data, TigFile* stream)
+bool anim_goal_data_load(AnimGoalData* goal_data, TigFile* stream)
 {
     int idx;
 
