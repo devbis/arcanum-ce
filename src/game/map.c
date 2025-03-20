@@ -1167,7 +1167,7 @@ bool map_save_difs()
     if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)
-                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) != 0
+                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0
                 && obj_is_modified(obj)) {
                 oid = sub_407EF0(obj);
                 if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_EXTINCT | OF_DESTROYED)) != 0) {
@@ -1195,6 +1195,8 @@ bool map_save_difs()
                         tig_debug_printf("Cannot save mobile object differences\n");
                         return false;
                     }
+
+                    cnt++;
                 }
             }
         } while (sub_408390(&obj, &iter));
