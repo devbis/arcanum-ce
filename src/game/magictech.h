@@ -60,6 +60,15 @@ typedef struct MagicTechAoe {
 
 static_assert(sizeof(MagicTechAoe) == 0x18, "wrong size");
 
+typedef struct MagicTechComponentTrait {
+    /* 0004 */ int fld;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int value;
+    /* 0014 */ int palette;
+} MagicTechComponentTrait;
+
 typedef struct MagicTechComponentInfo {
     /* 0000 */ int type;
     /* 0008 */ MagicTechAoe aoe;
@@ -141,14 +150,7 @@ typedef struct MagicTechComponentInfo {
             /* 0048 */ int field_48;
             /* 004C */ int field_4C;
         } test_in_branch;
-        struct {
-            /* 0040 */ int field_40;
-            /* 0044 */ int field_44;
-            /* 0048 */ int field_48;
-            /* 004C */ int field_4C;
-            /* 0050 */ int field_50;
-            /* 0054 */ int field_54;
-        } trait;
+        MagicTechComponentTrait trait;
         struct {
             /* 0040 */ int field_40;
             /* 0044 */ int field_44;
@@ -347,7 +349,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info);
 void sub_451070(MagicTechRunInfo* a1);
 void sub_451BB0(int64_t obj, int mt_id);
 void sub_452650(int64_t obj);
-void magictech_process(int64_t obj, void* a2, int a3);
+void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type);
 int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell);
 int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3);
 bool sub_454920(int64_t obj, int num, int max);

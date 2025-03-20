@@ -564,14 +564,13 @@ typedef struct Packet74 {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int mt_id;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
+    union {
+        /* 0020 */ int mt_id;
+        struct {
+            /* 0020 */ MagicTechComponentTrait trait;
+            /* 0038 */ int obj_type;
+        };
+    };
 } Packet74;
 
 static_assert(sizeof(Packet74) == 0x40, "wrong size");

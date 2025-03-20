@@ -2855,13 +2855,68 @@ void MTComponentTestNBranch_ProcFunc()
 // 0x452AD0
 void MTComponentTrait_ProcFunc()
 {
-    magictech_process(stru_5E6D28.field_20, &dword_5E761C->data.trait, dword_5E75AC);
+    magictech_process(stru_5E6D28.field_20, &(dword_5E761C->data.trait), dword_5E75AC);
 }
 
 // 0x452B00
-void magictech_process(int64_t obj, void* a2, int a3)
+void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type)
 {
-    // TODO: Incomplete.
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (!multiplayer_is_locked()) {
+        Packet74 pkt;
+
+        pkt.type = 74;
+        pkt.subtype = 0;
+        pkt.oid = sub_407EF0(obj);
+        pkt.trait = *trait;
+        pkt.obj_type = obj_type;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (trait->fld == OBJ_F_CURRENT_AID && obj_type_is_critter(obj_type)) {
+        tig_art_id_t art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+        if (trait->value != -1) {
+            int inventory_location;
+            int weapon;
+            int anim;
+            int rot;
+
+            for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
+                sub_464C50(obj, inventory_location);
+                if (!sub_464C50(obj, inventory_location)) {
+                    int64_t item_obj = item_wield_get(obj, inventory_location);
+                    if (item_obj != OBJ_HANDLE_NULL) {
+                        if (!item_drop(item_obj)) {
+                            tig_debug_printf("MagicTech: magictech_process: MTComponentTrait: ERROR: Item_Drop Failed!\n");
+                        }
+                    }
+                }
+            }
+
+            weapon = tig_art_critter_id_weapon_get(art_id);
+            anim = tig_art_id_anim_get(art_id);
+            rot = tig_art_id_rotation_get(art_id);
+
+            if (tig_art_monster_id_create(trait->value, 0, 0, 0, rot, anim, weapon, trait->palette, &art_id) != TIG_OK) {
+                tig_debug_printf("MagicTech: magictech_process: MTComponentTrait: ERROR: Monster Art Create Failed!\n");
+                exit(EXIT_FAILURE);
+            }
+
+            object_set_current_aid(obj, art_id);
+
+            if (trait->value >= TIG_ART_MONSTER_SPECIE_FIRE_ELEMENTAL
+                && trait->value <= TIG_ART_MONSTER_SPECIE_AIR_ELEMENTAL) {
+                obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, OCF2_AUTO_ANIMATES);
+                obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, TIG_ART_BLT_BLEND_ADD);
+            }
+        } else {
+            sub_452CD0(obj, art_id);
+        }
+    }
 }
 
 // 0x452CD0
@@ -5744,13 +5799,13 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             break;
         case MTC_TRAIT:
             tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
-            component_info->data.trait.field_40 = dword_5B0CBC[value];
-            component_info->data.trait.field_44 = 0;
+            component_info->data.trait.fld = dword_5B0CBC[value];
+            component_info->data.trait.field_4 = 0;
             tig_str_parse_value(&str, &value);
-            component_info->data.trait.field_50 = value;
-            component_info->data.trait.field_4C = 1;
-            component_info->data.trait.field_48 = 1;
-            tig_str_parse_named_value(&str, "Palette:", &(component_info->data.trait.field_54));
+            component_info->data.trait.value = value;
+            component_info->data.trait.field_C = 1;
+            component_info->data.trait.field_8 = 1;
+            tig_str_parse_named_value(&str, "Palette:", &(component_info->data.trait.palette));
             break;
         case MTC_TRAITIDX:
             tig_str_match_str_to_list(&str, off_5B0CCC, 2, &value);
