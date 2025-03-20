@@ -2947,7 +2947,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->field_14), 4, 1, stream) != 1) return false;
     if (!sub_4439D0(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
     if (tig_file_fwrite(&(run_info->field_28), 8, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->current_goal), 8, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
     for (idx = 0; idx <= run_info->current_goal; idx++) {
         if (!anim_goal_data_save(&(run_info->goals[idx]), stream)) {
