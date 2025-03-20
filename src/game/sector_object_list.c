@@ -119,8 +119,8 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
     int x;
     int y;
     int idx;
+    int tile;
     int64_t obj;
-    int64_t sec;
     int64_t loc;
 
     pos = tig_file_ftell(stream);
@@ -141,8 +141,8 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
     }
 
     if (sector_id != -1) {
-        x = (int)((sector_id & 0x3FFFFFF) << 6);
-        y = (int)(((sector_id >> 26) & 0x3FFFFFF) << 6);
+        x = (int)SECTOR_X(sector_id) << 6;
+        y = (int)SECTOR_Y(sector_id) << 6;
     } else {
         x = -1;
         y = -1;
@@ -156,8 +156,8 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
         }
 
         if (sector_id != -1) {
-            sec = tile_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
-            loc = LOCATION_MAKE((((sec & 0x3FFFFFF) << 6) + x), (((sec >> 26) & 0x3FFFFFF) << 6) + y);
+            tile = tile_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
+            loc = location_make(x + TILE_X(tile), y + TILE_Y(tile));
             obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
             sub_406B80(obj);
         }
