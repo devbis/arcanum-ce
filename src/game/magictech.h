@@ -303,7 +303,7 @@ typedef struct MagicTechSummonInfo {
     /* 0030 */ FollowerInfo field_30;
     /* 0060 */ ObjectID field_60;
     /* 0078 */ int64_t loc;
-    /* 0080 */ int64_t* field_80;
+    /* 0080 */ int64_t* summoned_obj_ptr;
     /* 0084 */ int field_84;
     /* 0088 */ ObjectID field_88;
     /* 00A0 */ int64_t field_A0;

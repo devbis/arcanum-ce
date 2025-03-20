@@ -1899,6 +1899,8 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
         return;
     }
 
+    *summon_info->summoned_obj_ptr = obj;
+
     sub_450C10(obj, OSF_SUMMONED);
 
     if ((obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)) {
@@ -2746,7 +2748,7 @@ void MTComponentSummon_ProcFunc()
     summon_info.field_0.obj = dword_5E75F0->parent_obj.obj;
     summon_info.field_30.obj = dword_5E75F0->target_obj.obj;
     summon_info.loc = stru_5E6D28.field_28;
-    summon_info.field_80 = &qword_5E75B8;
+    summon_info.summoned_obj_ptr = &qword_5E75B8;
     summon_info.palette = dword_5E761C->data.summon.palette;
     summon_info.field_C8 = dword_5E761C->data.summon.list;
 
