@@ -523,7 +523,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
             && tech_skill_get_training(pc_obj, TECH_SKILL_DISARM_TRAPS) >= TRAINING_EXPERT
             && get_disarm_item_name(trap_obj, &disarm_item_name)) {
             prototype_handle = sub_4685A0(disarm_item_name);
-            loc = obj_field_int32_get(pc_obj, OBJ_F_LOCATION);
+            loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
             if (object_create(prototype_handle, loc, &disarm_item_obj)) {
                 if (tig_net_is_active()
                     && tig_net_is_host()) {
