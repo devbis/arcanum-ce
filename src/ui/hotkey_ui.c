@@ -385,8 +385,8 @@ bool intgame_save_hotkey(Hotkey* hotkey, TigFile* stream)
         if (tig_file_fwrite(&(hotkey->item_obj.field_8.objid), sizeof(hotkey->item_obj.field_8.objid), 1, stream) != 1) return false;
         if (tig_file_fwrite(&(hotkey->count), sizeof(hotkey->count), 1, stream) != 1) return false;
         break;
-        if (tig_file_fwrite(&(hotkey->data), sizeof(hotkey->data), 1, stream) != 1) return false;
     case HOTKEY_SKILL:
+        if (tig_file_fwrite(&(hotkey->data), sizeof(hotkey->data), 1, stream) != 1) return false;
         break;
     case HOTKEY_SPELL:
         if (tig_file_fwrite(&(hotkey->data), sizeof(hotkey->data), 1, stream) != 1) return false;
