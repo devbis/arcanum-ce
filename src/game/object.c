@@ -2397,7 +2397,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         } else {
             sub_463730(obj, true);
 
-            loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
             object_destroy(obj);
             object_list_location(loc, 32740, &objects);
             if (objects.head != NULL) {
