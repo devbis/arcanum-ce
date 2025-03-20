@@ -2252,9 +2252,9 @@ void object_set_overlay_light(int64_t obj, int index, unsigned int flags, tig_ar
         }
     }
 
-    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
-    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
-    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
+    obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, index, flags);
+    obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+    obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_COLOR, index, color);
     obj_field_int32_set(obj,
         OBJ_F_RENDER_FLAGS,
         obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
