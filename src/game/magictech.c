@@ -4855,7 +4855,7 @@ bool sub_456D20(int mt_id, tig_art_id_t* art_id_ptr, tig_art_id_t* light_art_id_
         6 * run_info->spell);
 
     if (node.obj != OBJ_HANDLE_NULL) {
-        node.rotation = tig_art_id_rotation_get(obj_field_int32_get(node.obj, OBJ_F_LOCATION));
+        node.rotation = tig_art_id_rotation_get(obj_field_int32_get(node.obj, OBJ_F_CURRENT_AID));
     }
 
     node.art_id_ptr = art_id_ptr;
