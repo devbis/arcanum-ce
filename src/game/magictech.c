@@ -5762,7 +5762,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             }
 
             if (value > 0) {
-                component_info->data.summon.oid = sub_407EF0(value);
+                component_info->data.summon.oid = sub_407EF0(sub_4685A0(value));
             } else {
                 component_info->data.summon.oid.type = OID_TYPE_NULL;
             }
