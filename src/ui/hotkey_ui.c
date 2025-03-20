@@ -1094,8 +1094,7 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
         tig_art_interface_id_create(spell_get_icon(data), 0, 0, 0, &new_art_id);
         break;
     default:
-        // Should be unreachable.
-        assert(0);
+        return;
     }
 
     stru_683518[1].type = stru_683518[0].type;
