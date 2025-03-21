@@ -975,7 +975,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         int weapon;
         char v7;
 
-        mes_file_entry.num = tig_art_num_get(aid);
+        mes_file_entry.num = tig_art_monster_id_specie_get(aid);
         if (!mes_search(name_monster_mes_file, &mes_file_entry)) {
             return TIG_ERR_16;
         }
