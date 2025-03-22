@@ -144,7 +144,7 @@ static bool sub_552050(TigMouseMessageData* a1, S4F2810* a2);
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void intgame_clock_refresh();
-static void sub_552740(int64_t obj, int a2);
+static void sub_552740(int64_t obj, ChareditMode mode);
 static void sub_552770(UiMessage* ui_message);
 static void sub_5528E0();
 static void sub_552930();
@@ -1942,7 +1942,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle) {
-                sub_552740(player_get_pc_obj(), 1);
+                sub_552740(player_get_pc_obj(), CHAREDIT_MODE_ACTIVE);
                 return true;
             }
 
@@ -2463,7 +2463,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'C':
         case 'c':
-            sub_552740(player_get_pc_obj(), 1);
+            sub_552740(player_get_pc_obj(), CHAREDIT_MODE_ACTIVE);
             break;
         case 'F':
         case 'f':
@@ -5280,13 +5280,17 @@ bool intgame_clock_process_callback(TimeEvent* timeevent)
 }
 
 // 0x552740
-void sub_552740(int64_t obj, int a2)
+void sub_552740(int64_t obj, ChareditMode mode)
 {
-    if (dword_64C6B4) {
-        if (obj != OBJ_HANDLE_NULL) {
-            charedit_create(obj, a2);
-        }
+    if (!dword_64C6B4) {
+        return;
     }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    charedit_create(obj, mode);
 }
 
 // 0x552770

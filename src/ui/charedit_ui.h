@@ -3,10 +3,17 @@
 
 #include "game/context.h"
 
+typedef enum ChareditMode {
+    CHAREDIT_MODE_CREATE,
+    CHAREDIT_MODE_ACTIVE,
+    CHAREDIT_MODE_PASSIVE,
+    CHAREDIT_MODE_3,
+} ChareditMode;
+
 bool charedit_init(GameInitInfo* init_info);
 void charedit_exit();
 void charedit_reset();
-bool charedit_create(int64_t obj, int mode);
+bool charedit_create(int64_t obj, ChareditMode mode);
 void charedit_destroy();
 bool charedit_is_created();
 void sub_55A230();

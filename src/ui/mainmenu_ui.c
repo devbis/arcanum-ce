@@ -2151,7 +2151,7 @@ static int mainmenu_ui_progressbar_value;
 static bool dword_64C450;
 
 // 0x64C454
-static int dword_64C454;
+static ChareditMode dword_64C454;
 
 // 0x64C458
 static int dword_64C458;
@@ -4367,7 +4367,7 @@ void mainmenu_ui_create_single_player()
 // 0x5446D0
 void mainmenu_ui_pick_new_or_pregen_create()
 {
-    dword_64C454 = 0;
+    dword_64C454 = CHAREDIT_MODE_CREATE;
     dword_64C414 = 11;
     mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
@@ -5143,7 +5143,7 @@ void sub_545DF0(TigRect* rect)
     if (!charedit_create(pc_obj, dword_64C454)) {
         sub_5417A0(1);
     }
-    dword_64C454 = 3;
+    dword_64C454 = CHAREDIT_MODE_3;
 }
 
 // 0x545E20

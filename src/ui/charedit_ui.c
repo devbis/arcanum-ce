@@ -705,7 +705,7 @@ static tig_button_handle_t charedit_dec_tech_degree_btn;
 static int dword_64CDC8;
 
 // 0x64CDCC
-static int charedit_mode;
+static ChareditMode charedit_mode;
 
 // 0x64CDD0
 static tig_font_handle_t dword_64CDD0;
@@ -883,7 +883,7 @@ void charedit_reset()
 }
 
 // 0x5597C0
-bool charedit_create(int64_t obj, int mode)
+bool charedit_create(int64_t obj, ChareditMode mode)
 {
     int64_t pc_obj;
     tig_art_id_t art_id;
@@ -911,7 +911,7 @@ bool charedit_create(int64_t obj, int mode)
     charedit_obj = obj;
     charedit_mode = mode;
 
-    if (charedit_mode == 0) {
+    if (charedit_mode == CHAREDIT_MODE_CREATE) {
         object_hp_damage_set(charedit_obj, 0);
         critter_fatigue_damage_set(charedit_obj, 0);
     }
@@ -956,7 +956,7 @@ bool charedit_create(int64_t obj, int mode)
 
     tig_art_interface_id_create(24, 0, 0, 0, &button_data.art_id);
     for (index = 0; index < 10; index++) {
-        if (charedit_mode == 2) {
+        if (charedit_mode == CHAREDIT_MODE_PASSIVE) {
             stru_5C7F88[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
         } else {
             button_data.x = stru_5C7F88[index].x;
@@ -971,7 +971,7 @@ bool charedit_create(int64_t obj, int mode)
 
     tig_art_interface_id_create(23, 0, 0, 0, &button_data.art_id);
     for (index = 0; index < 10; index++) {
-        if (charedit_mode == 2) {
+        if (charedit_mode == CHAREDIT_MODE_PASSIVE) {
             stru_5C8028[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
         } else {
             button_data.x = stru_5C8028[index].x;
@@ -1056,7 +1056,7 @@ bool charedit_create(int64_t obj, int mode)
     tig_window_show(dword_64CA60);
     sub_51E850(charedit_skills_win);
 
-    if (charedit_mode == 2) {
+    if (charedit_mode == CHAREDIT_MODE_PASSIVE) {
         for (index = 0; index < 15; index++) {
             tig_button_hide(dword_64C7E8[index]);
         }
@@ -1097,11 +1097,11 @@ bool charedit_create(int64_t obj, int mode)
     pc_lens.rect = &stru_5C8930;
     tig_art_interface_id_create(198, 0, 0, 0, &pc_lens.art_id);
 
-    if (charedit_mode == 1 || charedit_mode == 2) {
+    if (charedit_mode == CHAREDIT_MODE_ACTIVE || charedit_mode == CHAREDIT_MODE_PASSIVE) {
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     }
 
-    if (charedit_mode != 3) {
+    if (charedit_mode != CHAREDIT_MODE_3) {
         if (!tig_net_is_active()
             || tig_net_is_host()
             || multiplayer_is_locked()) {
@@ -1150,7 +1150,7 @@ bool charedit_create(int64_t obj, int mode)
     dword_64C824 = TIG_BUTTON_HANDLE_INVALID;
     dword_64CA5C = TIG_BUTTON_HANDLE_INVALID;
 
-    if (charedit_mode == 2
+    if (charedit_mode == CHAREDIT_MODE_PASSIVE
         && critter_leader_get(charedit_obj) == pc_obj
         && critter_follower_next(charedit_obj) != charedit_obj) {
         button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -1193,10 +1193,10 @@ void charedit_destroy()
 {
     if (charedit_created) {
         charedit_created = false;
-        if (charedit_mode == 1 || charedit_mode == 2) {
+        if (charedit_mode == CHAREDIT_MODE_ACTIVE || charedit_mode == CHAREDIT_MODE_PASSIVE) {
             intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         }
-        if (charedit_mode == 0) {
+        if (charedit_mode == CHAREDIT_MODE_CREATE) {
             object_hp_damage_set(charedit_obj, 0);
             critter_fatigue_damage_set(charedit_obj, 0);
         }
@@ -1582,8 +1582,8 @@ bool charedit_window_message_filter(TigMessage* msg)
             sub_55AE70(dword_64C9CC);
             return false;
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
-            if (charedit_mode != 0
-                && charedit_mode != 3
+            if (charedit_mode != CHAREDIT_MODE_CREATE
+                && charedit_mode != CHAREDIT_MODE_3
                 && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                 charedit_destroy();
                 return true;
@@ -1595,7 +1595,7 @@ bool charedit_window_message_filter(TigMessage* msg)
     case TIG_MESSAGE_CHAR:
         if (toupper(msg->data.character.ch) == 'X'
             && !tig_net_is_active()
-            && charedit_mode == 1
+            && charedit_mode == CHAREDIT_MODE_ACTIVE
             && (!combat_turn_based_is_active()
                 || combat_turn_based_whos_turn_get() == player_get_pc_obj())) {
             gamelib_save("ExportSave", "Export-Save");
@@ -1677,7 +1677,7 @@ void sub_55AE70(int a1)
 void charedit_cycle_obj(bool next)
 {
     int64_t obj;
-    int mode;
+    ChareditMode mode;
 
     if (next) {
         obj = critter_follower_next(charedit_obj);
@@ -2133,7 +2133,7 @@ void sub_55BD10(int group)
 
     dword_64E020 = group;
 
-    if (charedit_mode != 2) {
+    if (charedit_mode != CHAREDIT_MODE_PASSIVE) {
         for (index = 0; index < 4; index++) {
             tig_button_show(charedit_skills_plus_buttons[4 * dword_64E020 + index].button_handle);
             tig_button_show(charedit_skills_minus_buttons[4 * dword_64E020 + index].button_handle);
@@ -2466,7 +2466,7 @@ void charedit_refresh_tech_win()
     button_data.mouse_exit_snd_id = -1;
 
     if (next_degree > degree
-        && charedit_mode != 2) {
+        && charedit_mode != CHAREDIT_MODE_PASSIVE) {
         tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
         button_data.x = charedit_tech_degree_icons_x[next_degree - 1];
         button_data.y = charedit_tech_degree_icons_y[next_degree - 1];
@@ -2474,9 +2474,9 @@ void charedit_refresh_tech_win()
     }
 
     if (degree > 0
-        && charedit_mode != 2
-        && (charedit_mode == 0
-            || charedit_mode == 3
+        && charedit_mode != CHAREDIT_MODE_PASSIVE
+        && (charedit_mode == CHAREDIT_MODE_CREATE
+            || charedit_mode == CHAREDIT_MODE_3
             || dword_64DEEC[charedit_selected_tech] < degree)) {
         tig_art_interface_id_create(648, 0, 0, 0, &(button_data.art_id));
         button_data.x = charedit_tech_degree_icons_x[degree - 1];
@@ -2697,7 +2697,7 @@ void charedit_refresh_spells_win()
         }
 
         sub_55B880(charedit_spells_win,
-            charedit_mode == 2 ? dword_64C828 : dword_64CDD0,
+            charedit_mode == CHAREDIT_MODE_PASSIVE ? dword_64C828 : dword_64CDD0,
             &charedit_spell_title_labels[cnt], NULL, -1, 1);
 
         if (cnt + 1 < 5) {
@@ -2721,7 +2721,7 @@ void charedit_refresh_spells_win()
         }
 
         sub_55B880(charedit_spells_win,
-            charedit_mode == 2 ? dword_64CDB0 : dword_64D420,
+            charedit_mode == CHAREDIT_MODE_PASSIVE ? dword_64CDB0 : dword_64D420,
             &(charedit_spell_minimum_level_labels[cnt]), NULL, -1, 1);
 
         if (cnt + 1 < 5) {
@@ -2739,7 +2739,7 @@ void charedit_refresh_spells_win()
     button_data.mouse_exit_snd_id = -1;
 
     if (v1 > cnt) {
-        if (charedit_mode != 2) {
+        if (charedit_mode != CHAREDIT_MODE_PASSIVE) {
             tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
             button_data.x = dword_5C8FF8[v1 - 1] - 503;
             button_data.y = dword_5C900C[v1 - 1] - 104;
@@ -2752,9 +2752,9 @@ void charedit_refresh_spells_win()
     }
 
     if (cnt > 0
-        && charedit_mode != 2
-        && (charedit_mode == 0
-            || charedit_mode == 3
+        && charedit_mode != CHAREDIT_MODE_PASSIVE
+        && (charedit_mode == CHAREDIT_MODE_CREATE
+            || charedit_mode == CHAREDIT_MODE_3
             || dword_64D364[dword_64E024] < cnt)) {
         tig_art_interface_id_create(648, 0, 0, 0, &(button_data.art_id));
         button_data.x = dword_5C8FF8[cnt - 1] - 503;

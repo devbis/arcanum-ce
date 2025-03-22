@@ -404,7 +404,7 @@ void ui_charedit_error_msg(int type, int a2)
 void sub_57CF70(int64_t a1, int64_t a2)
 {
     if (player_is_pc_obj(a1)) {
-        charedit_create(a2, 2);
+        charedit_create(a2, CHAREDIT_MODE_PASSIVE);
     }
 }
 
