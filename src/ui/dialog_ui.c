@@ -508,7 +508,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 6:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_560760();
+            wmap_ui_open();
         }
         break;
     case 7:
@@ -646,7 +646,7 @@ bool sub_568280(DialogUiEntry *a1)
     case 6:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_560760();
+            wmap_ui_open();
         }
         break;
     case 7:

@@ -12,7 +12,7 @@ bool wmap_ui_load(GameLoadInfo* load_info);
 void sub_560720();
 int sub_560740();
 void sub_560750();
-void sub_560760();
+void wmap_ui_open();
 void sub_560790(int64_t a1, int a2);
 void wmap_ui_close();
 int wmap_ui_is_created();

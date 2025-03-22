@@ -1952,7 +1952,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle) {
-                sub_560760();
+                wmap_ui_open();
                 return true;
             }
 
@@ -2487,7 +2487,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'W':
         case 'w':
-            sub_560760();
+            wmap_ui_open();
             break;
         default:
             if (!v2) {

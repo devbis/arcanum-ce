@@ -416,7 +416,7 @@ static int dword_66D87C;
 static int dword_66D880;
 
 // 0x66D888
-static int64_t qword_66D888;
+static int64_t wmap_ui_obj;
 
 // 0x66D890
 static int dword_66D890;
@@ -1070,18 +1070,18 @@ void sub_560750()
 }
 
 // 0x560760
-void sub_560760()
+void wmap_ui_open()
 {
     dword_5C9220 = -1;
     dword_66D9C8 = 0;
-    qword_66D888 = 0;
+    wmap_ui_obj = OBJ_HANDLE_NULL;
     sub_5607E0();
 }
 
 // 0x560790
 void sub_560790(int64_t a1, int a2)
 {
-    qword_66D888 = a1;
+    wmap_ui_obj = a1;
     dword_65E968 = 0;
     stru_64E048[0].field_3C0 = 0;
     dword_66D9C8 = 1;
@@ -1388,7 +1388,7 @@ void wmap_ui_close()
         }
         tig_video_buffer_destroy(dword_64E7F4);
         wmap_ui_created = 0;
-        qword_66D888 = OBJ_HANDLE_NULL;
+        wmap_ui_obj = OBJ_HANDLE_NULL;
         dword_5C9220 = -1;
         sub_560150();
         sub_560010();
@@ -1792,8 +1792,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                     int64_t pc_obj = player_get_pc_obj();
                     if (antiteleport_check_can_teleport(pc_obj, loc)) {
-                        if (player_is_pc_obj(qword_66D888)) {
-                            sub_4507B0(qword_66D888, dword_5C9220);
+                        if (player_is_pc_obj(wmap_ui_obj)) {
+                            sub_4507B0(wmap_ui_obj, dword_5C9220);
                         }
 
                         if (area_get_last_known_area(pc_obj) == area) {
