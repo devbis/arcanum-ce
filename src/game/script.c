@@ -2309,7 +2309,22 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_FLOAT_NEWSPAPER_HEADLINE: {
-        // TODO: Incomplete.
+        // FIXME: Probably wrong, takes obj from param 2 (at index 1), but this
+        // opcode accepts just 1 param. Check.
+        int64_t npc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        char str[MAX_STRING];
+        sub_460800(sub_4BF200(4), str);
+        size_t len = strlen(str);
+        if (len > 0) {
+            if (str[len] != '.' && str[len] != '?' && str[len] != '!') {
+                str[len++] = '.';
+            }
+            str[len++] = ' ';
+            str[len] = '\0';
+        }
+        int speech_id;
+        dialog_copy_npc_newspaper_msg(npc_obj, player_get_pc_obj(), &(str[len]), &speech_id);
+        script_float_line_func(npc_obj, state->invocation->triggerer_obj, str, speech_id);
         return NEXT;
     }
     case SAT_PLAY_SOUND_SCHEME: {
@@ -2629,7 +2644,14 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_CAST_FREE_SPELL: {
-        // TODO: Incomplete.
+        int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int spell = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        MagicTechSerializedData magictech_invocation;
+        sub_455A20(&magictech_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
+        magictech_invocation.flags |= 0x02;
+        sub_455AC0(&magictech_invocation);
         return NEXT;
     }
     case SAT_SET_PC_QUEST_UNBOTCHED: {
@@ -2648,11 +2670,25 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_ACTION_CAST_UNRESISTABLE_SPELL: {
-        // TODO: Incomplete.
+        int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int spell = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        MagicTechSerializedData magictech_invocation;
+        sub_455A20(&magictech_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
+        magictech_invocation.flags |= 0x04;
+        sub_455AC0(&magictech_invocation);
         return NEXT;
     }
     case SAT_ACTION_CAST_FREE_UNRESISTABLE_SPELL: {
-        // TODO: Incomplete.
+        int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int spell = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        MagicTechSerializedData magictech_invocation;
+        sub_455A20(&magictech_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
+        magictech_invocation.flags |= 0x02 | 0x04;
+        sub_455AC0(&magictech_invocation);
         return NEXT;
     }
     case SAT_TOUCH_ART: {
@@ -2766,7 +2802,13 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_CAST_UNRESISTABLE_SPELL: {
-        // TODO: Incomplete.
+        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        MagicTechSerializedData magictech_invocation;
+        sub_455A20(&magictech_invocation, OBJ_HANDLE_NULL, spell);
+        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
+        magictech_invocation.flags |= 0x04;
+        sub_455AC0(&magictech_invocation);
         return NEXT;
     }
     case SAT_ADJUST_STAT: {
