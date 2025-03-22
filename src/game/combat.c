@@ -2984,7 +2984,7 @@ bool sub_4B6C90(bool turn_based)
 }
 
 // 0x4B6D20
-void sub_4B6D20()
+void combat_turn_based_toggle()
 {
     if (combat_is_turn_based()) {
         settings_set_value(&settings, "turn-based", 0);

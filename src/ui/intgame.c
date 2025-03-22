@@ -1813,7 +1813,7 @@ bool sub_54B5D0(TigMessage* msg)
             if (msg->type != TIG_MESSAGE_KEYBOARD
                 && msg->type == TIG_MESSAGE_CHAR
                 && msg->data.character.ch == ' ') {
-                sub_4B6D20();
+                combat_turn_based_toggle();
                 return true;
             }
             return false;
@@ -2459,7 +2459,7 @@ bool sub_54B5D0(TigMessage* msg)
 
         switch (msg->data.character.ch) {
         case ' ':
-            sub_4B6D20();
+            combat_turn_based_toggle();
             break;
         case 'C':
         case 'c':
