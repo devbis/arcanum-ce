@@ -1295,8 +1295,8 @@ bool wmap_load_worldmap_info()
             v1 = &(stru_5C9228[0].tiles[idx]);
             if ((v1->flags & 0x02) == 0) {
                 v1->flags = 0x02;
-                v1->rect.width = 0;
-                v1->rect.height = 0;
+                v1->rect.width = stru_5C9228[0].field_16C;
+                v1->rect.height = stru_5C9228[0].field_170;
                 v1->field_18 = NULL;
                 v1->field_1C = 0;
             }
