@@ -21,6 +21,8 @@ typedef struct S420330 {
 static int sub_41F6C0(PathCreateInfo* path_create_info);
 static int sub_41F840(PathCreateInfo* path_create_info);
 static int sub_41F9F0(PathCreateInfo* path_create_info);
+static int sub_4200C0(int a1, int a2, int a3);
+static int sub_420110(int a1, int a2, int a3);
 static void sub_420330(int64_t x, int64_t y, S420330* a5);
 static void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void(*fn)(int64_t, int64_t, S420330*));
 static int sub_420660(int64_t from, int64_t to, uint8_t* rotations);
@@ -31,6 +33,21 @@ static int path_limit = 10;
 
 // 0x5A15C4
 static int path_time_limit = 250;
+
+// 0x5D5628
+static int dword_5D5628[4096];
+
+// 0x5D9628
+static int dword_5D9628[4096];
+
+// 0x5DE5F8
+static tig_timestamp_t dword_5DE5F8;
+
+// 0x5DE5FC
+static int dword_5DE5FC;
+
+// 0x5DE600
+static tig_duration_t dword_5DE600;
 
 // 0x41F3C0
 int sub_41F3C0(PathCreateInfo* path_create_info)
@@ -268,7 +285,235 @@ int sub_41F840(PathCreateInfo* path_create_info)
 // 0x41F9F0
 int sub_41F9F0(PathCreateInfo* path_create_info)
 {
-    // TODO: Incomplete.
+    tig_timestamp_t timestamp;
+    bool v1 = false;
+    unsigned int flags;
+    int64_t from_x;
+    int64_t from_y;
+    int64_t to_x;
+    int64_t to_y;
+    int64_t dx;
+    int64_t dy;
+
+    if (obj_field_int32_get(path_create_info->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        if (dword_5DE5F8 == 0
+            || tig_timer_elapsed(dword_5DE5F8) >= 1000) {
+            tig_timer_now(&dword_5DE5F8);
+            dword_5DE5FC = 0;
+            dword_5DE600 = 0;
+        }
+
+        if (dword_5DE5FC > path_limit) {
+            return 0;
+        }
+
+        if (dword_5DE600 > path_time_limit) {
+            return 0;
+        }
+
+        dword_5DE5FC++;
+
+        tig_timer_now(&timestamp);
+    } else {
+        timestamp = 0;
+    }
+
+    from_x = LOCATION_GET_X(path_create_info->from);
+    from_y = LOCATION_GET_Y(path_create_info->from);
+    to_x = LOCATION_GET_X(path_create_info->to);
+    to_y = LOCATION_GET_Y(path_create_info->to);
+
+    if ((path_create_info->flags & 0x08) != 0) {
+        v1 = true;
+    }
+
+    flags = sub_41F570(path_create_info->flags);
+
+    int64_t v57;
+    if (from_x > to_x) {
+        dx = from_x - to_x;
+        v57 = to_x;
+    } else {
+        dx = to_x - from_x;
+        v57 = from_x;
+    }
+
+    int64_t v58;
+    if (from_y > to_y) {
+        dy = from_y - to_y;
+        v58 = to_y;
+    } else {
+        dy = to_y - from_y;
+        v58 = from_y;
+    }
+
+    if (dx > 32 || dy > 32) {
+        return 0;
+    }
+
+    v57 -= (64 - dx) / 2;
+    v58 -= (64 - dy) / 2;
+
+    int v12 = (int)(from_x + (from_y - v58) * 64 - v57);
+    int v50 = (int)(to_x + (to_y - v58) * 64 - v57);
+
+    memset(dword_5D5628, 0, sizeof(dword_5D5628));
+    dword_5D5628[v12] = 1;
+    dword_5D9628[v12] = -1;
+
+    int v14 = -1;
+    while (true) {
+        v14 = -1;
+        for (int i = 0; i < 4096; i++) {
+            if (dword_5D5628[i] > 0) {
+                int v17 = dword_5D5628[i] + sub_4200C0(i, v50, 64);
+                if (v17 / 10 <= path_create_info->max_rotations) {
+                    if (v14 == -1 || v17 < to_x) {
+                        to_x = v17;
+                        v14 = i;
+                    }
+                } else {
+                    dword_5D5628[i] = -32768;
+                }
+            }
+        }
+
+        if (v14 == -1) {
+            if (timestamp != 0) {
+                dword_5DE600 += tig_timer_elapsed(timestamp);
+            }
+
+            return 0;
+        }
+
+        if (v14 == v50) {
+            break;
+        }
+
+        for (int rot = 0; rot < 8; rot++) {
+            int64_t loc = location_make(v57 + v14 % 64, v58 + v14 / 64);
+            int64_t adjacent_loc;
+            if (!location_in_dir(loc, rot, &adjacent_loc)) {
+                continue;
+            }
+
+            dx = LOCATION_GET_X(adjacent_loc) - v57;
+            dy = LOCATION_GET_Y(adjacent_loc) - v58;
+            if (dx < 0 || dx >= 64 || dy < 0 || dy >= 64) {
+                continue;
+            }
+
+            int v49 = (int)dx + (int)dy * 64;
+            if (dword_5D5628[v49] == -32768) {
+                continue;
+            }
+
+            int v46 = 0;
+            if ((path_create_info->flags & 0x40) == 0) {
+                if (adjacent_loc != path_create_info->to
+                    || (path_create_info->flags & 0x01) == 0) {
+                    if ((path_create_info->flags & 0x08) == 0
+                        && tile_is_blocking(adjacent_loc, v1)) {
+                        dword_5D5628[v49] = -32768;
+                        continue;
+                    }
+
+                    int64_t block_obj;
+                    int block_obj_type;
+                    if (sub_43FDC0(path_create_info->obj, loc, rot, flags, &block_obj, &block_obj_type, &v46)
+                        || block_obj != OBJ_HANDLE_NULL) {
+                        if ((rot & 1) != 0
+                            && block_obj != OBJ_HANDLE_NULL
+                            && block_obj_type != OBJ_TYPE_WALL
+                            && block_obj_type != OBJ_TYPE_PORTAL) {
+                            dword_5D5628[v49] = -32768;
+                        }
+                        continue;
+                    }
+                }
+            }
+
+            int cost = 10;
+            int64_t trap_obj = sub_4BCAB0(adjacent_loc);
+            if (trap_obj != OBJ_HANDLE_NULL) {
+                if (sub_4BBFE0(path_create_info->obj, trap_obj)) {
+                    cost += 80;
+                }
+            }
+
+            if (v46) {
+                cost += 50;
+            }
+
+            if ((path_create_info->flags & 0x400) != 0
+                && sub_444500(adjacent_loc)) {
+                cost += 80;
+            }
+
+            if ((path_create_info->flags & 0x200) != 0) {
+                uint8_t src_lum = sub_4D9240(loc, 0, 0);
+                uint8_t dst_lum = sub_4D9240(adjacent_loc, 0, 0);
+                if (dst_lum > src_lum) {
+                    if (dst_lum - src_lum > 20) {
+                        cost += 40;
+                    }
+                } else {
+                    if (src_lum - dst_lum > 20) {
+                        cost -= 6;
+                    }
+                }
+            }
+
+            cost += dword_5D5628[v14];
+
+            if (dword_5D9628[v14] != -1
+                && sub_420110(dword_5D9628[v14], v14, 64) != rot) {
+                cost++;
+            }
+
+            if ((dword_5D5628[v49] > 0
+                    && dword_5D5628[v49] > cost)
+                || (dword_5D5628[v49] < 0
+                    && -dword_5D5628[v49] > cost)
+                || dword_5D5628[v49] == 0) {
+                dword_5D5628[v49] = cost;
+                dword_5D9628[v49] = v14;
+            }
+        }
+
+        dword_5D5628[v14] = -dword_5D5628[v14];
+    }
+
+    int i = 0;
+    int v36 = dword_5D9628[v14];
+    while (v36 != -1) {
+        v36 = dword_5D9628[v36];
+        i++;
+    }
+
+    if (i > path_create_info->max_rotations) {
+        if (timestamp != 0) {
+            dword_5DE600 += tig_timer_elapsed(timestamp);
+        }
+
+        return 0;
+    }
+
+    int v38 = v50;
+    for (int j = i - 1; j >= 0; j--) {
+        path_create_info->rotations[j] = sub_420110(dword_5D9628[v38], v38, 64);
+        v38 = dword_5D9628[v38];
+    }
+
+    if ((path_create_info->flags & 0x01) != 0) {
+        i--;
+    }
+
+    if (timestamp != 0) {
+        dword_5DE600 += tig_timer_elapsed(timestamp);
+    }
+
+    return i;
 }
 
 // 0x4200C0
