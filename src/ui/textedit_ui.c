@@ -197,11 +197,6 @@ bool textedit_ui_process_message(TigMessage* msg)
 // 0x5671E0
 bool sub_5671E0(char ch)
 {
-    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x01) == 0
-        && (textedit_ui_current_textedit->flags & TEXTEDIT_0x02) == 0) {
-        return true;
-    }
-
     if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x01) != 0) {
         switch (ch) {
         case '"':
@@ -218,12 +213,14 @@ bool sub_5671E0(char ch)
         }
     }
 
-    if (ch >= 'A' && ch <= 'Z') {
-        return false;
-    }
+    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x02) != 0) {
+        if (ch >= 'A' && ch <= 'Z') {
+            return false;
+        }
 
-    if (ch >= 'a' && ch <= 'a') {
-        return false;
+        if (ch >= 'a' && ch <= 'z') {
+            return false;
+        }
     }
 
     return true;
