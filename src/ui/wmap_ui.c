@@ -4309,7 +4309,7 @@ void wmap_note_vbid_lock(WmapNote* note)
         vb_create_info.height = 50;
         vb_create_info.background_color = dword_64E03C;
         vb_create_info.color_key = dword_64E03C;
-        if (tig_video_buffer_create(&vb_create_info, &(note->video_buffer)) == TIG_OK) {
+        if (tig_video_buffer_create(&vb_create_info, &(note->video_buffer)) != TIG_OK) {
             tig_debug_printf("wmap_note_vbid_lock: ERROR: tig_video_buffer_create failed!\n");
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
         }
