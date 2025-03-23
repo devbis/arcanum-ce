@@ -2587,7 +2587,7 @@ TigWindowModalDialogChoice mainmenu_ui_confirm(int num)
 void sub_541710()
 {
     inven_ui_destroy();
-    charedit_destroy();
+    charedit_close();
     sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
@@ -2901,7 +2901,7 @@ void mainmenu_ui_create_options()
 void sub_541D40()
 {
     inven_ui_destroy();
-    charedit_destroy();
+    charedit_close();
     sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
@@ -3073,7 +3073,7 @@ void mainmenu_ui_load_game_create()
 void sub_542200()
 {
     inven_ui_destroy();
-    charedit_destroy();
+    charedit_close();
     sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
@@ -5074,7 +5074,7 @@ void sub_545C50()
 void sub_545C60()
 {
     if (charedit_is_created()) {
-        charedit_destroy();
+        charedit_close();
     }
 }
 
@@ -5140,7 +5140,7 @@ void sub_545DF0(TigRect* rect)
     (void)rect;
 
     pc_obj = player_get_pc_obj();
-    if (!charedit_create(pc_obj, dword_64C454)) {
+    if (!charedit_open(pc_obj, dword_64C454)) {
         sub_5417A0(1);
     }
     dword_64C454 = CHAREDIT_MODE_3;

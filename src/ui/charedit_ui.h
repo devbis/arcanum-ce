@@ -13,8 +13,8 @@ typedef enum ChareditMode {
 bool charedit_init(GameInitInfo* init_info);
 void charedit_exit();
 void charedit_reset();
-bool charedit_create(int64_t obj, ChareditMode mode);
-void charedit_destroy();
+bool charedit_open(int64_t obj, ChareditMode mode);
+void charedit_close();
 bool charedit_is_created();
 void sub_55A230();
 void charedit_error_not_enough_character_points();

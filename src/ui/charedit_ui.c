@@ -878,12 +878,12 @@ void charedit_exit()
 void charedit_reset()
 {
     if (charedit_is_created()) {
-        charedit_destroy();
+        charedit_close();
     }
 }
 
 // 0x5597C0
-bool charedit_create(int64_t obj, ChareditMode mode)
+bool charedit_open(int64_t obj, ChareditMode mode)
 {
     int64_t pc_obj;
     tig_art_id_t art_id;
@@ -899,7 +899,7 @@ bool charedit_create(int64_t obj, ChareditMode mode)
     Packet127 pkt;
 
     if (charedit_created) {
-        charedit_destroy();
+        charedit_close();
         return true;
     }
 
@@ -1189,7 +1189,7 @@ bool charedit_create(int64_t obj, ChareditMode mode)
 }
 
 // 0x55A150
-void charedit_destroy()
+void charedit_close()
 {
     if (charedit_created) {
         charedit_created = false;
@@ -1585,7 +1585,7 @@ bool charedit_window_message_filter(TigMessage* msg)
             if (charedit_mode != CHAREDIT_MODE_CREATE
                 && charedit_mode != CHAREDIT_MODE_3
                 && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
-                charedit_destroy();
+                charedit_close();
                 return true;
             }
             return false;
@@ -1687,8 +1687,8 @@ void charedit_cycle_obj(bool next)
 
     if (obj != charedit_obj) {
         mode = charedit_mode;
-        charedit_destroy();
-        charedit_create(obj, mode);
+        charedit_close();
+        charedit_open(obj, mode);
     }
 }
 

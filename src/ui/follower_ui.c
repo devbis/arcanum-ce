@@ -363,7 +363,7 @@ bool sub_56A9D0(TigMessage* msg)
                             }
                             break;
                         case 7:
-                            charedit_create(qword_67BC50, CHAREDIT_MODE_PASSIVE);
+                            charedit_open(qword_67BC50, CHAREDIT_MODE_PASSIVE);
                             break;
                         case 5:
                             if ((obj_field_int32_get(qword_67BC50, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {

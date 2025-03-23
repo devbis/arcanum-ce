@@ -4835,7 +4835,7 @@ bool sub_551A80(int a1)
             break;
         case 9:
             v1 = true;
-            charedit_destroy();
+            charedit_close();
             intgame_unforce_fullscreen();
             break;
         case 10:
@@ -5290,7 +5290,7 @@ void sub_552740(int64_t obj, ChareditMode mode)
         return;
     }
 
-    charedit_create(obj, mode);
+    charedit_open(obj, mode);
 }
 
 // 0x552770
