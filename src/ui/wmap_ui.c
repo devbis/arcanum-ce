@@ -167,7 +167,7 @@ static void sub_5614C0(int x, int y);
 static bool sub_5614F0();
 static bool sub_5615D0(int a1);
 static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
-static bool sub_561860(int64_t loc);
+static bool wmap_ui_teleport(int64_t loc);
 static bool wmap_ui_message_filter(TigMessage* msg);
 static bool sub_5627B0(WmapCoords* coords);
 static bool sub_5627F0(int64_t loc);
@@ -1667,7 +1667,7 @@ bool sub_5615D0(int a1)
             dword_66D8AC = a1;
             intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
             sub_561800(&(v2->field_3C), &loc);
-            sub_561860(loc);
+            wmap_ui_teleport(loc);
             sub_5649F0(loc);
             break;
         case 3:
@@ -1703,7 +1703,7 @@ void sub_561800(WmapCoords* coords, int64_t* loc_ptr)
 }
 
 // 0x561860
-bool sub_561860(int64_t loc)
+bool wmap_ui_teleport(int64_t loc)
 {
     TeleportData teleport_data;
 
@@ -1800,7 +1800,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                             area_reset_last_known_area(pc_obj);
                         }
 
-                        sub_561860(loc);
+                        wmap_ui_teleport(loc);
                         wmap_ui_close();
                     } else {
                         mes_file_entry.num = 640;
@@ -3611,7 +3611,7 @@ bool sub_5649F0(int64_t loc)
         loc = area_get_location(area);
     }
 
-    if (sub_561860(loc)) {
+    if (wmap_ui_teleport(loc)) {
         sub_561490(loc, &(v1->field_3C));
     }
 
