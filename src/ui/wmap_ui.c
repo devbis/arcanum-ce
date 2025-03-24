@@ -156,7 +156,7 @@ static bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream);
 static bool sub_560440(TigRect* rect, TigFile* stream);
 static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool sub_5606B0(TigRect* rect, TigFile* stream);
-static void sub_5607E0();
+static void wmap_ui_open_internal();
 static bool wmap_load_worldmap_info();
 static void sub_560EE0();
 static void sub_560EF0();
@@ -1075,7 +1075,7 @@ void wmap_ui_open()
     wmap_ui_spell = -1;
     dword_66D9C8 = 0;
     wmap_ui_obj = OBJ_HANDLE_NULL;
-    sub_5607E0();
+    wmap_ui_open_internal();
 }
 
 // 0x560790
@@ -1087,11 +1087,11 @@ void wmap_ui_select(int64_t obj, int spell)
     dword_66D9C8 = 1;
     dword_66D880 = 0;
     wmap_ui_spell = spell;
-    sub_5607E0();
+    wmap_ui_open_internal();
 }
 
 // 0x5607E0
-void sub_5607E0()
+void wmap_ui_open_internal()
 {
     int64_t pc_obj;
     int64_t loc;
