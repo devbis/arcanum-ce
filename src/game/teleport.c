@@ -463,7 +463,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
 
     node = teleport_obj_node_head;
     while (node != NULL) {
-        if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
+        if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
             sub_4D3D60(node->obj);
 
             if (!tig_net_is_active()
