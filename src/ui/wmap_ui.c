@@ -4151,8 +4151,8 @@ void sub_5657A0(TigRect* rect)
         for (x = min_x; x < max_x; x++) {
             idx = y * v1->num_hor_tiles + x;
             v2 = &(v1->tiles[idx]);
-            vb_src_rect.x = tmp_rect.x + vb_src_rect.width * x - offset_x;
-            vb_src_rect.y = tmp_rect.y + vb_src_rect.height * y - offset_y;
+            vb_src_rect.x = tmp_rect.x + v2->rect.width * x - offset_x;
+            vb_src_rect.y = tmp_rect.y + v2->rect.height * y - offset_y;
             vb_src_rect.width = v2->rect.width;
             vb_src_rect.height = v2->rect.height;
 
