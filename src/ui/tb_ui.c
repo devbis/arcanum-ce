@@ -114,7 +114,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_B8 = sub_55A230;
     callbacks.progressbar_init = mainmenu_ui_progressbar_init;
     callbacks.progressbar_update = mainmenu_ui_progressbar_update;
-    callbacks.field_C4 = sub_560790;
+    callbacks.field_C4 = wmap_ui_select;
     callbacks.field_C8 = sub_56E720;
     callbacks.field_CC = sub_56E950;
     callbacks.field_D0 = sub_57CF70;

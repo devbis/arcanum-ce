@@ -13,7 +13,7 @@ void sub_560720();
 int sub_560740();
 void sub_560750();
 void wmap_ui_open();
-void sub_560790(int64_t a1, int a2);
+void wmap_ui_select(int64_t obj, int spell);
 void wmap_ui_close();
 int wmap_ui_is_created();
 void sub_563770(int direction);

@@ -244,7 +244,7 @@ static void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3);
 static void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5);
 
 // 0x5C9220
-static int dword_5C9220 = -1;
+static int wmap_ui_spell = -1;
 
 // 0x5C9A68
 static TigRect stru_5C9A68 = { 150, 52, 501, 365 };
@@ -1072,21 +1072,21 @@ void sub_560750()
 // 0x560760
 void wmap_ui_open()
 {
-    dword_5C9220 = -1;
+    wmap_ui_spell = -1;
     dword_66D9C8 = 0;
     wmap_ui_obj = OBJ_HANDLE_NULL;
     sub_5607E0();
 }
 
 // 0x560790
-void sub_560790(int64_t a1, int a2)
+void wmap_ui_select(int64_t obj, int spell)
 {
-    wmap_ui_obj = a1;
+    wmap_ui_obj = obj;
     dword_65E968 = 0;
     stru_64E048[0].field_3C0 = 0;
     dword_66D9C8 = 1;
     dword_66D880 = 0;
-    dword_5C9220 = a2;
+    wmap_ui_spell = spell;
     sub_5607E0();
 }
 
@@ -1389,7 +1389,7 @@ void wmap_ui_close()
         tig_video_buffer_destroy(dword_64E7F4);
         wmap_ui_created = 0;
         wmap_ui_obj = OBJ_HANDLE_NULL;
-        dword_5C9220 = -1;
+        wmap_ui_spell = -1;
         sub_560150();
         sub_560010();
     }
@@ -1786,14 +1786,14 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
 
                     loc = area_get_location(area);
-                    if (loc == 0 || dword_5C9220 == -1) {
+                    if (loc == 0 || wmap_ui_spell == -1) {
                         return true;
                     }
 
                     int64_t pc_obj = player_get_pc_obj();
                     if (antiteleport_check_can_teleport(pc_obj, loc)) {
                         if (player_is_pc_obj(wmap_ui_obj)) {
-                            sub_4507B0(wmap_ui_obj, dword_5C9220);
+                            sub_4507B0(wmap_ui_obj, wmap_ui_spell);
                         }
 
                         if (area_get_last_known_area(pc_obj) == area) {
