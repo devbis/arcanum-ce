@@ -2003,6 +2003,7 @@ bool sub_54B5D0(TigMessage* msg)
                         if (spell_is_known(player_get_pc_obj(), 5 * dword_64C530 + index)) {
                             sub_57EFA0(3, 5 * dword_64C530 + index, OBJ_HANDLE_NULL);
                             sub_57BC70(player_get_pc_obj(), 5 * dword_64C530 + index);
+                            return true;
                         }
                     }
                 }
