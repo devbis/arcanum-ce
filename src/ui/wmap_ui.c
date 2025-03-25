@@ -3029,6 +3029,7 @@ void sub_563790(int direction, int scale)
 
     if (dword_66D868 != 2) {
         v1->refresh_rect(&(v1->rect));
+        return;
     }
 
     tig_window_scroll_rect(wmap_ui_window,
