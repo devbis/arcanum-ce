@@ -290,7 +290,7 @@ static TextEdit stru_5C9B20 = {
 };
 
 // 0x5C9B38
-static TigRect stru_5C9B38 = { 294, 0, 0, 0 };
+static TigRect wmap_ui_nav_cvr_frame = { 294, 0, 0, 0 };
 
 // 0x5C9B48
 static tig_art_id_t wmap_ui_nav_cvr_art_id = TIG_ART_ID_INVALID;
@@ -714,9 +714,9 @@ bool wmap_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_5C9B38.y = 382 - stru_5C9B08.y;
-    stru_5C9B38.width = art_frame_data.width;
-    stru_5C9B38.height = art_frame_data.height;
+    wmap_ui_nav_cvr_frame.y = 382 - stru_5C9B08.y;
+    wmap_ui_nav_cvr_frame.width = art_frame_data.width;
+    wmap_ui_nav_cvr_frame.height = art_frame_data.height;
 
     if (tig_art_interface_id_create(196, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -2734,7 +2734,7 @@ void sub_563300(int direction, int a2, int a3, int a4)
 
     v1 = &(stru_5C9228[dword_66D868]);
     one = v1->rect;
-    two = stru_5C9B38;
+    two = wmap_ui_nav_cvr_frame;
     three = one;
 
     switch (direction) {
@@ -2748,7 +2748,7 @@ void sub_563300(int direction, int a2, int a3, int a4)
         dx = -a4;
         dy = a4;
         one.height = a4;
-        two.x = stru_5C9B38.x - a4;
+        two.x = wmap_ui_nav_cvr_frame.x - a4;
         three.x += three.width - a4;
         three.y += dy;
         three.width = dy;
@@ -2758,7 +2758,7 @@ void sub_563300(int direction, int a2, int a3, int a4)
         dx = -a4;
         dy = 0;
         one.width = 0;
-        two.x = stru_5C9B38.x - a4;
+        two.x = wmap_ui_nav_cvr_frame.x - a4;
         two.width += a4;
         three.x += three.width - a4;
         three.width = a4;
@@ -2766,8 +2766,8 @@ void sub_563300(int direction, int a2, int a3, int a4)
     case 3:
         dx = -a4;
         dy = -a4;
-        one.height = stru_5C9B38.height + a4;
-        one.y = one.height + three.y - (a4 + stru_5C9B38.height);
+        one.height = wmap_ui_nav_cvr_frame.height + a4;
+        one.y = one.height + three.y - (a4 + wmap_ui_nav_cvr_frame.height);
         two.width = 0;
         three.x += three.width - a4;
         three.width = a4;
@@ -2776,16 +2776,16 @@ void sub_563300(int direction, int a2, int a3, int a4)
     case 4:
         dx = 0;
         dy = -a4;
-        one.height = stru_5C9B38.height + a4;
-        one.y = one.height + three.y - (stru_5C9B38.height + a4);
+        one.height = wmap_ui_nav_cvr_frame.height + a4;
+        one.y = one.height + three.y - (wmap_ui_nav_cvr_frame.height + a4);
         two.width = 0;
         three.width = 0;
         break;
     case 5:
         dx = a4;
         dy = -a4;
-        one.y = one.height + three.y - (stru_5C9B38.height + a4);
-        one.height = stru_5C9B38.height + a4;
+        one.y = one.height + three.y - (wmap_ui_nav_cvr_frame.height + a4);
+        one.height = wmap_ui_nav_cvr_frame.height + a4;
         two.width = 0;
         three.x += three.width - a4;
         three.width = a4;
@@ -2796,13 +2796,13 @@ void sub_563300(int direction, int a2, int a3, int a4)
         dy = 0;
         one.width = 0;
         three.width = a4;
-        two.width = a4 + stru_5C9B38.width;
+        two.width = a4 + wmap_ui_nav_cvr_frame.width;
         break;
     case 7:
         dx = a4;
         dy = a4;
         one.height = a4;
-        two.x = stru_5C9B38.x - a4;
+        two.x = wmap_ui_nav_cvr_frame.x - a4;
         three.y = dy + three.y;
         three.width = dy;
         three.height -= dy;
@@ -3038,10 +3038,10 @@ void sub_563790(int direction, int scale)
         -dy);
 
     if (dx > 0) {
-        rect.x = stru_5C9B38.x - dx;
-        rect.y = stru_5C9B38.y;
-        rect.width = stru_5C9B38.width + dx;
-        rect.height = stru_5C9B38.height;
+        rect.x = wmap_ui_nav_cvr_frame.x - dx;
+        rect.y = wmap_ui_nav_cvr_frame.y;
+        rect.width = wmap_ui_nav_cvr_frame.width + dx;
+        rect.height = wmap_ui_nav_cvr_frame.height;
         if (dy > 0) {
             rect.y -= dy;
             rect.height += dy;
@@ -3057,10 +3057,10 @@ void sub_563790(int direction, int scale)
         }
         v1->refresh_rect(&rect);
     } else if (dx < 0) {
-        rect.x = stru_5C9B38.x;
-        rect.y = stru_5C9B38.y;
-        rect.height = stru_5C9B38.height;
-        rect.width = stru_5C9B38.width - dx;
+        rect.x = wmap_ui_nav_cvr_frame.x;
+        rect.y = wmap_ui_nav_cvr_frame.y;
+        rect.height = wmap_ui_nav_cvr_frame.height;
+        rect.width = wmap_ui_nav_cvr_frame.width - dx;
         if (dy > 0) {
             rect.y -= dy;
             rect.height += dy;
@@ -3077,10 +3077,10 @@ void sub_563790(int direction, int scale)
     }
 
     if (dy > 0) {
-        rect.x = stru_5C9B38.x;
-        rect.y = stru_5C9B38.y - dy;
-        rect.width = stru_5C9B38.width;
-        rect.height = stru_5C9B38.height + dy;
+        rect.x = wmap_ui_nav_cvr_frame.x;
+        rect.y = wmap_ui_nav_cvr_frame.y - dy;
+        rect.width = wmap_ui_nav_cvr_frame.width;
+        rect.height = wmap_ui_nav_cvr_frame.height + dy;
         v1->refresh_rect(&rect);
 
         rect = v1->rect;
@@ -3088,7 +3088,7 @@ void sub_563790(int direction, int scale)
         rect.height = dy;
         v1->refresh_rect(&rect);
     } else if (dy < 0) {
-        rect = stru_5C9B38;
+        rect = wmap_ui_nav_cvr_frame;
         v1->refresh_rect(&rect);
 
         rect = v1->rect;
@@ -4228,11 +4228,11 @@ void sub_5657A0(TigRect* rect)
         tig_window_blit_art(wmap_ui_window, &art_blit_info);
     }
 
-    if (tig_rect_intersection(&stru_5C9B38, rect, &dst_rect) == TIG_OK) {
-        src_rect.x = stru_5C9B38.x - dst_rect.x;
-        src_rect.y = stru_5C9B38.y - dst_rect.y;
-        src_rect.width = dword_66D8B4 - (stru_5C9B38.x - dst_rect.x);
-        src_rect.height = dword_66D8B8 - (stru_5C9B38.y - dst_rect.y);
+    if (tig_rect_intersection(&wmap_ui_nav_cvr_frame, rect, &dst_rect) == TIG_OK) {
+        src_rect.x = wmap_ui_nav_cvr_frame.x - dst_rect.x;
+        src_rect.y = wmap_ui_nav_cvr_frame.y - dst_rect.y;
+        src_rect.width = dword_66D8B4 - (wmap_ui_nav_cvr_frame.x - dst_rect.x);
+        src_rect.height = dword_66D8B8 - (wmap_ui_nav_cvr_frame.y - dst_rect.y);
 
         art_blit_info.flags = 0;
         art_blit_info.art_id = wmap_ui_nav_cvr_art_id;
@@ -4654,9 +4654,9 @@ void wmap_town_refresh_rect(TigRect* rect)
         object_list_destroy(&objects);
     }
 
-    if (tig_rect_intersection(&stru_5C9B38, &dirty_rect, &art_dst_rect) == TIG_OK) {
-        art_src_rect.x = art_dst_rect.x - stru_5C9B38.x;
-        art_src_rect.y = art_dst_rect.y - stru_5C9B38.y;
+    if (tig_rect_intersection(&wmap_ui_nav_cvr_frame, &dirty_rect, &art_dst_rect) == TIG_OK) {
+        art_src_rect.x = art_dst_rect.x - wmap_ui_nav_cvr_frame.x;
+        art_src_rect.y = art_dst_rect.y - wmap_ui_nav_cvr_frame.y;
         art_src_rect.width = art_dst_rect.width;
         art_src_rect.height = art_dst_rect.height;
 
