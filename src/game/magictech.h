@@ -187,13 +187,12 @@ typedef union MagicTechInfoAI {
         /* 001C */ int cure_poison;
         /* 0020 */ int fatigue_recover;
         /* 0024 */ int resurrect;
-        /* 0028 */ int defensive2;
     };
-    int values[11];
+    int values[10];
 } MagicTechInfoAI;
 
 // See 0x450090.
-static_assert(sizeof(MagicTechInfoAI) == 0x2C, "wrong size");
+static_assert(sizeof(MagicTechInfoAI) == 0x28, "wrong size");
 
 typedef struct MagicTechResistance {
     int stat;
@@ -257,6 +256,7 @@ typedef struct MagicTechInfo {
     /* 0124 */ unsigned int disallowed_tcf;
     /* 0128 */ unsigned int cancels_envsf;
     /* 012C */ MagicTechInfoAI ai;
+    /* 0154 */ int defensive2;
 } MagicTechInfo;
 
 static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");

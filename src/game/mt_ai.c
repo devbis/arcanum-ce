@@ -134,7 +134,7 @@ void sub_4CC270()
 int sub_4CC2A0(int spl)
 {
     if (mt_ai_initialized) {
-        return magictech_spells[spl].ai.defensive2;
+        return magictech_spells[spl].defensive2;
     } else {
         return 0;
     }

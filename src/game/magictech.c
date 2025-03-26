@@ -1404,7 +1404,7 @@ void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int ma
     }
 
     memset(&(info->ai), 0xFF, sizeof(info->ai));
-    info->ai.defensive2 = 0;
+    info->defensive2 = 0;
 
     mes_file_entry.num++;
     if (mes_search(msg_file, &mes_file_entry)) {
@@ -5530,7 +5530,7 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
 
     if (tig_str_parse_named_complex_value(&curr, "AI_Defensive:", '@', &value1, &value2)) {
         info->ai.defensive1 = value1;
-        info->ai.defensive2 = value2;
+        info->defensive2 = value2;
     }
 
     if (tig_str_parse_named_value(&curr, "AI_Offensive:", &value1)) {
