@@ -69,7 +69,7 @@ static int name_check_anims[] = {
 };
 
 // 0x5A1104
-static int dword_5A1104[] = {
+static int name_check_weapons[] = {
     1,
     1,
     1,
@@ -425,14 +425,14 @@ void sub_41CE60()
     if (!sub_41D1F0()) {
         for (idx = 0; idx < 19; idx++) {
             for (num = 0; num < dword_5D55F0; num++) {
-                if (tig_art_critter_id_create(num & 1, num / 2, 0, 0, 0, 4, name_check_anims[idx], dword_5A1104[idx], 0, &aid) != TIG_OK) {
+                if (tig_art_critter_id_create(num & 1, num / 2, 0, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
                     dword_5D560C[num] |= dword_5A106C[idx];
                     tig_debug_printf("Unable to create valid art id for critter %d (%s%c) using animation %d (%c%c)\n",
                         num,
                         off_5A11A4[num / 2],
                         byte_5A11A0[num & 1],
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     dword_5D560C[num] |= dword_5A106C[idx];
@@ -441,13 +441,13 @@ void sub_41CE60()
                         off_5A11A4[num / 2],
                         byte_5A11A0[num & 1],
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
 
             for (num = 0; num < dword_5D5618; num++) {
-                if (tig_art_monster_id_create(num, 0, 0, 0, 4, name_check_anims[idx], dword_5A1104[idx], 0, &aid) != TIG_OK) {
+                if (tig_art_monster_id_create(num, 0, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
                     dword_5D5608[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
@@ -457,7 +457,7 @@ void sub_41CE60()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     dword_5D5608[num] |= dword_5A106C[idx];
@@ -469,13 +469,13 @@ void sub_41CE60()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
 
             for (num = 0; num < dword_5D5600; num++) {
-                if (tig_art_unique_npc_id_create(num, 0, 0, 4, name_check_anims[idx], dword_5A1104[idx], 0, &aid) != TIG_OK) {
+                if (tig_art_unique_npc_id_create(num, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
                     dword_5D5610[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
@@ -485,7 +485,7 @@ void sub_41CE60()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     dword_5D5610[num] |= dword_5A106C[idx];
@@ -497,7 +497,7 @@ void sub_41CE60()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[dword_5A1104[idx]],
+                        byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
@@ -829,7 +829,7 @@ void sub_41DA40(int a1, int a2, unsigned int* a3, int* a4, int* a5)
         if ((dword_5A106C[idx] & a3[a1]) != 0
             && *a4 == name_check_anims[idx]
             && (*a4 != 21
-                || *a5 == dword_5A1104[idx])) {
+                || *a5 == name_check_weapons[idx])) {
             *a4 = dword_5A1150[idx];
             if (*a4 == 1) {
                 if ((a3[a1] & 0x1) != 0) {
