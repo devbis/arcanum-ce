@@ -2068,14 +2068,14 @@ void sub_4510F0()
                                 }
                             }
                         }
+                    }
 
-                        if (dword_5E75F0->source_obj.obj != qword_5E75B0) {
-                            qword_5E75B8 = dword_5E75F0->source_obj.obj;
-                            dword_5E75F0->source_obj.obj = stru_5E6D28.field_20;
-                            stru_5E6D28.field_20 = qword_5E75B8;
-                            if (qword_5E75B8 != OBJ_HANDLE_NULL) {
-                                dword_5E75AC = obj_field_int32_get(qword_5E75B8, OBJ_F_TYPE);
-                            }
+                    if (dword_5E75F0->source_obj.obj != qword_5E75B0) {
+                        qword_5E75B8 = dword_5E75F0->source_obj.obj;
+                        dword_5E75F0->source_obj.obj = stru_5E6D28.field_20;
+                        stru_5E6D28.field_20 = qword_5E75B8;
+                        if (qword_5E75B8 != OBJ_HANDLE_NULL) {
+                            dword_5E75AC = obj_field_int32_get(qword_5E75B8, OBJ_F_TYPE);
                         }
                     }
                 } else {
