@@ -1313,27 +1313,23 @@ bool sub_44FE30(int a1, const char* path, int a3)
 
     for (magictech = 0; magictech < MT_80; magictech++) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
-        magictech++;
     }
 
-    while (magictech < MT_140) {
+    for (; magictech < MT_140; magictech++) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
         magictech_spells[magictech].iq = 0;
-        magictech++;
     }
 
-    while (magictech < MT_SPELL_COUNT) {
+    for (; magictech < MT_SPELL_COUNT; magictech++) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3 + 2000, magictech);
         magictech_spells[magictech].flags |= MAGICTECH_IS_TECH;
         magictech_spells[magictech].iq = 0;
-        magictech++;
     }
 
-    // NOTE: Meaningless?
-    while (magictech < MT_SPELL_COUNT) {
+    // NOTE: Meaningless, never executed.
+    for (; magictech < MT_SPELL_COUNT; magictech++) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
         magictech_spells[magictech].iq = 0;
-        magictech++;
     }
 
     return true;
