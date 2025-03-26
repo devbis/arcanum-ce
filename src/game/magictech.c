@@ -1379,9 +1379,9 @@ void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int ma
 
     sub_457580(info, magictech);
 
-    mes_file_entry.num = num;
+    mes_file_entry.num = magictech;
     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
-    info->field_0 = mes_file_entry.str;
+    info->name = mes_file_entry.str;
 
     mes_file_entry.num = num + 50 * magictech;
     mes_get_msg(msg_file, &mes_file_entry);

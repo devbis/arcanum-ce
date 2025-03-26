@@ -233,7 +233,7 @@ typedef uint32_t MagicTechFlags;
 #define MAGICTECH_NO_REFLECT 0x0400u
 
 typedef struct MagicTechInfo {
-    /* 0000 */ const char* field_0;
+    /* 0000 */ const char* name;
     /* 0004 */ int iq;
     /* 0008 */ int cost;
     /* 000C */ MagicTechResistance resistance;
