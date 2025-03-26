@@ -5,11 +5,11 @@
 #include "game/a_name.h"
 #include "game/mes.h"
 
-static void sub_41CE60();
-static bool sub_41D1F0();
-static bool sub_41D2C0();
+static void name_missing_art_init();
+static bool name_missing_art_load();
+static bool name_missing_art_save();
 static int sub_41D390();
-static void sub_41DA40(int a1, int a2, unsigned int* a3, int* a4, int* a5);
+static void fix_missing_art(int num, int cnt, unsigned int* missing, int* anim_ptr, int* weapon_ptr);
 static tig_art_id_t sub_41DFC0(int type, int* extra);
 static tig_art_id_t sub_41E200(tig_art_id_t art_id);
 static int sub_41E960(int a1);
@@ -176,7 +176,7 @@ static char byte_5A11EC[3] = {
 };
 
 // 0x5D55F0
-static int dword_5D55F0;
+static int num_critter_art;
 
 // 0x5D55F4
 static mes_file_handle_t name_monster_mes_file;
@@ -188,25 +188,25 @@ static mes_file_handle_t name_eye_candy_mes_file;
 static mes_file_handle_t name_unique_npc_mes_file;
 
 // 0x5D5600
-static int dword_5D5600;
+static int num_unique_npc_art;
 
 // 0x5D5604
 static mes_file_handle_t name_container_mes_file;
 
 // 0x5D5608
-static unsigned int* dword_5D5608;
+static unsigned int* missing_monster_art;
 
 // 0x5D560C
-static unsigned int* dword_5D560C;
+static unsigned int* missing_critter_art;
 
 // 0x5D5610
-static unsigned int* dword_5D5610;
+static unsigned int* missing_unique_npc_art;
 
 // 0x5D5614
 static mes_file_handle_t name_interface_mes_file;
 
 // 0x5D5618
-static int dword_5D5618;
+static int num_monster_art;
 
 // 0x5D561C
 static mes_file_handle_t name_scenery_mes_file;
@@ -215,7 +215,7 @@ static mes_file_handle_t name_scenery_mes_file;
 static bool name_initialized;
 
 // 0x5D5624
-static bool dword_5D5624;
+static bool name_missing_art_initialized;
 
 // 0x739E48
 static tig_window_handle_t dword_739E48;
@@ -374,7 +374,7 @@ bool name_init(GameInitInfo* init_info)
     name_initialized = true;
 
     sub_4EBC40();
-    sub_41CE60();
+    name_missing_art_init();
 
     return true;
 }
@@ -383,9 +383,9 @@ bool name_init(GameInitInfo* init_info)
 void name_exit()
 {
     if (name_initialized) {
-        FREE(dword_5D560C);
-        FREE(dword_5D5608);
-        FREE(dword_5D5610);
+        FREE(missing_critter_art);
+        FREE(missing_monster_art);
+        FREE(missing_unique_npc_art);
 
         a_name_facade_exit();
         a_name_item_exit();
@@ -403,30 +403,31 @@ void name_exit()
         mes_unload(name_scenery_mes_file);
 
         name_initialized = false;
-        dword_5D5624 = false;
+        name_missing_art_initialized = false;
     }
 }
 
 // 0x41CE60
-void sub_41CE60()
+void name_missing_art_init()
 {
     int idx;
     int num;
     tig_art_id_t aid;
     MesFileEntry mes_file_entry;
 
-    dword_5D55F0 = 10;
-    dword_5D5618 = mes_num_entries(name_monster_mes_file);
-    dword_5D5600 = mes_num_entries(name_unique_npc_mes_file);
-    dword_5D560C = (unsigned int*)CALLOC(dword_5D55F0, sizeof(*dword_5D560C));
-    dword_5D5608 = (unsigned int*)CALLOC(dword_5D5618, sizeof(*dword_5D5608));
-    dword_5D5610 = (unsigned int*)CALLOC(dword_5D5600, sizeof(*dword_5D5610));
+    num_critter_art = 10;
+    num_monster_art = mes_num_entries(name_monster_mes_file);
+    num_unique_npc_art = mes_num_entries(name_unique_npc_mes_file);
 
-    if (!sub_41D1F0()) {
+    missing_critter_art = (unsigned int*)CALLOC(num_critter_art, sizeof(*missing_critter_art));
+    missing_monster_art = (unsigned int*)CALLOC(num_monster_art, sizeof(*missing_monster_art));
+    missing_unique_npc_art = (unsigned int*)CALLOC(num_unique_npc_art, sizeof(*missing_unique_npc_art));
+
+    if (!name_missing_art_load()) {
         for (idx = 0; idx < 19; idx++) {
-            for (num = 0; num < dword_5D55F0; num++) {
+            for (num = 0; num < num_critter_art; num++) {
                 if (tig_art_critter_id_create(num & 1, num / 2, 0, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
-                    dword_5D560C[num] |= dword_5A106C[idx];
+                    missing_critter_art[num] |= dword_5A106C[idx];
                     tig_debug_printf("Unable to create valid art id for critter %d (%s%c) using animation %d (%c%c)\n",
                         num,
                         off_5A11A4[num / 2],
@@ -435,7 +436,7 @@ void sub_41CE60()
                         byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
-                    dword_5D560C[num] |= dword_5A106C[idx];
+                    missing_critter_art[num] |= dword_5A106C[idx];
                     tig_debug_printf("Missing art for critter %d (%s%c) using animation %d (%c%c)\n",
                         num,
                         off_5A11A4[num / 2],
@@ -446,9 +447,9 @@ void sub_41CE60()
                 }
             }
 
-            for (num = 0; num < dword_5D5618; num++) {
+            for (num = 0; num < num_monster_art; num++) {
                 if (tig_art_monster_id_create(num, 0, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
-                    dword_5D5608[num] |= dword_5A106C[idx];
+                    missing_monster_art[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
                     mes_get_msg(name_monster_mes_file, &mes_file_entry);
@@ -460,7 +461,7 @@ void sub_41CE60()
                         byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
-                    dword_5D5608[num] |= dword_5A106C[idx];
+                    missing_monster_art[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
                     mes_get_msg(name_monster_mes_file, &mes_file_entry);
@@ -474,9 +475,9 @@ void sub_41CE60()
                 }
             }
 
-            for (num = 0; num < dword_5D5600; num++) {
+            for (num = 0; num < num_unique_npc_art; num++) {
                 if (tig_art_unique_npc_id_create(num, 0, 0, 4, name_check_anims[idx], name_check_weapons[idx], 0, &aid) != TIG_OK) {
-                    dword_5D5610[num] |= dword_5A106C[idx];
+                    missing_unique_npc_art[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
                     mes_get_msg(name_unique_npc_mes_file, &mes_file_entry);
@@ -488,7 +489,7 @@ void sub_41CE60()
                         byte_5A11DC[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
-                    dword_5D5610[num] |= dword_5A106C[idx];
+                    missing_unique_npc_art[num] |= dword_5A106C[idx];
 
                     mes_file_entry.num = num;
                     mes_get_msg(name_monster_mes_file, &mes_file_entry);
@@ -503,14 +504,14 @@ void sub_41CE60()
             }
         }
 
-        sub_41D2C0();
+        name_missing_art_save();
     }
 
-    dword_5D5624 = true;
+    name_missing_art_initialized = true;
 }
 
 // 0x41D1F0
-bool sub_41D1F0()
+bool name_missing_art_load()
 {
     TigFile* stream;
     int expected_cnt;
@@ -533,17 +534,17 @@ bool sub_41D1F0()
         return false;
     }
 
-    if (tig_file_fread(dword_5D560C, sizeof(*dword_5D560C), dword_5D55F0, stream) < dword_5D55F0) {
+    if (tig_file_fread(missing_critter_art, sizeof(*missing_critter_art), num_critter_art, stream) < num_critter_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fread(dword_5D5608, sizeof(*dword_5D5608), dword_5D5618, stream) < dword_5D5618) {
+    if (tig_file_fread(missing_monster_art, sizeof(*missing_monster_art), num_monster_art, stream) < num_monster_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fread(dword_5D5610, sizeof(*dword_5D5610), dword_5D5600, stream) < dword_5D5618) {
+    if (tig_file_fread(missing_unique_npc_art, sizeof(*missing_unique_npc_art), num_unique_npc_art, stream) < num_monster_art) {
         tig_file_fclose(stream);
         return false;
     }
@@ -554,7 +555,7 @@ bool sub_41D1F0()
 }
 
 // 0x41D2C0
-bool sub_41D2C0()
+bool name_missing_art_save()
 {
     int cnt;
     TigFile* stream;
@@ -572,17 +573,17 @@ bool sub_41D2C0()
         return false;
     }
 
-    if (tig_file_fwrite(dword_5D560C, sizeof(*dword_5D560C), dword_5D55F0, stream) != dword_5D55F0) {
+    if (tig_file_fwrite(missing_critter_art, sizeof(*missing_critter_art), num_critter_art, stream) != num_critter_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fwrite(dword_5D5608, sizeof(*dword_5D5608), dword_5D5618, stream) != dword_5D5618) {
+    if (tig_file_fwrite(missing_monster_art, sizeof(*missing_monster_art), num_monster_art, stream) != num_monster_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fwrite(dword_5D5610, sizeof(*dword_5D5610), dword_5D5600, stream) != dword_5D5600) {
+    if (tig_file_fwrite(missing_unique_npc_art, sizeof(*missing_unique_npc_art), num_unique_npc_art, stream) != num_unique_npc_art) {
         tig_file_fclose(stream);
         return false;
     }
@@ -676,7 +677,7 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
             }
         }
 
-        sub_41DA40(gender + 2 * race, dword_5D55F0, dword_5D560C, &anim, &weapon);
+        fix_missing_art(gender + 2 * race, num_critter_art, missing_critter_art, &anim, &weapon);
 
         if (anim == 24) {
             armor = 0;
@@ -751,7 +752,7 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
         weapon = tig_art_critter_id_weapon_get(aid);
-        sub_41DA40(specie, dword_5D5618, dword_5D5608, &anim, &weapon);
+        fix_missing_art(specie, num_monster_art, missing_monster_art, &anim, &weapon);
 
         if (anim == 24) {
             armor = 0;
@@ -784,7 +785,7 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
         weapon = tig_art_critter_id_weapon_get(aid);
-        sub_41DA40(num, dword_5D5600, dword_5D5610, &anim, &weapon);
+        fix_missing_art(num, num_unique_npc_art, missing_unique_npc_art, &anim, &weapon);
         if (anim == 24) {
             shield = 0;
             weapon = 0;
@@ -813,31 +814,31 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
 }
 
 // 0x41DA40
-void sub_41DA40(int a1, int a2, unsigned int* a3, int* a4, int* a5)
+void fix_missing_art(int num, int cnt, unsigned int* missing, int* anim_ptr, int* weapon_ptr)
 {
     int idx;
 
-    if (!dword_5D5624) {
+    if (!name_missing_art_initialized) {
         return;
     }
 
-    if (a1 < 0 || a1 >= a2) {
+    if (num < 0 || num >= cnt) {
         return;
     }
 
     for (idx = 0; idx < 19; idx++) {
-        if ((dword_5A106C[idx] & a3[a1]) != 0
-            && *a4 == name_check_anims[idx]
-            && (*a4 != 21
-                || *a5 == name_check_weapons[idx])) {
-            *a4 = dword_5A1150[idx];
-            if (*a4 == 1) {
-                if ((a3[a1] & 0x1) != 0) {
-                    *a5 = 0;
+        if ((dword_5A106C[idx] & missing[num]) != 0
+            && *anim_ptr == name_check_anims[idx]
+            && (*anim_ptr != 21
+                || *weapon_ptr == name_check_weapons[idx])) {
+            *anim_ptr = dword_5A1150[idx];
+            if (*anim_ptr == 1) {
+                if ((missing[num] & 0x1) != 0) {
+                    *weapon_ptr = 0;
                 }
-            } else if (*a4 == 0) {
-                if (*a5 == 0 && (a3[a1] & 0x8) != 0) {
-                    *a5 = 1;
+            } else if (*anim_ptr == 0) {
+                if (*weapon_ptr == 0 && (missing[num] & 0x8) != 0) {
+                    *weapon_ptr = 1;
                 }
             }
         }
