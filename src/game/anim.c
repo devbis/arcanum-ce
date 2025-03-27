@@ -5061,6 +5061,8 @@ int sub_4261E0(int64_t a1, int64_t a2)
     path.absMaxPathLength = 0;
     path.maxPathLength = 0;
     path.baseRot = 0;
+    path.field_CC = sizeof(path.rotations); // FIX: Initialize to prevent errors in `sub_426320`.
+
     if (!sub_426500(a1, a2, &path, 0x0)) {
         return 0;
     }
@@ -5079,6 +5081,8 @@ int sub_426250(int64_t a1, int64_t a2)
     path.absMaxPathLength = 0;
     path.maxPathLength = 0;
     path.baseRot = 0;
+    path.field_CC = sizeof(path.rotations); // FIX: Initialize to prevent errors in `sub_426320`.
+
     if (!sub_426500(a1, a2, &path, 0x1)) {
         return 0;
     }
@@ -7034,6 +7038,7 @@ bool sub_4294F0(int64_t source_obj, int64_t target_obj)
         path.curr = 0;
         path.max = 0;
         path.baseRot = 0;
+        path.field_CC = sizeof(path.rotations); // FIX: Initialize to prevent errors in `sub_426320`.
 
         if (!sub_426500(source_obj, target_loc, &path, 0x01)) {
             return false;
