@@ -200,7 +200,7 @@ static_assert(sizeof(AnimGoalData) == 0x178, "wrong size");
 
 typedef struct AnimPath {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ uint8_t rotations[200];
+    /* 0004 */ int8_t rotations[200];
     /* 00CC */ int field_CC;
     /* 00D0 */ int baseRot; // TODO: Normalize to snake_case.
     /* 00D4 */ int curr;
