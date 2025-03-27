@@ -1104,10 +1104,10 @@ void sub_4F40B0(S603CB8* a1)
             origin = obj_field_int64_get(a1->field_30, OBJ_F_LOCATION);
         }
 
-        loc_rect.x1 = location_make(location_get_x(origin) - v2->radius, location_get_y(origin));
-        loc_rect.y1 = location_make(location_get_x(origin), location_get_y(origin) - v2->radius);
-        loc_rect.x2 = location_make(location_get_x(origin) + v2->radius, location_get_y(origin));
-        loc_rect.y2 = location_make(location_get_x(origin), location_get_y(origin) + v2->radius);
+        loc_rect.x1 = location_get_x(origin) - v2->radius;
+        loc_rect.y1 = location_get_y(origin) - v2->radius;
+        loc_rect.x2 = location_get_x(origin) + v2->radius;
+        loc_rect.y2 = location_get_y(origin) + v2->radius;
 
         obj_type_mask = OBJ_TM_SCENERY;
         all = false;
