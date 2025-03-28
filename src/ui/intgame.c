@@ -5177,6 +5177,7 @@ void intgame_clock_refresh()
         return;
     }
 
+    dword_5C7308 = v1;
     tig_window_fill(dword_64C4F8[0], &stru_5C6F80, tig_color_make(0, 0, 0));
 
     dst_x = stru_5C6F80.x;
@@ -5196,7 +5197,7 @@ void intgame_clock_refresh()
             int v2;
             int idx;
 
-            v2 = (datetime_seconds_since_reference_date(&datetime) + 43200) % 28;
+            v2 = ((datetime_seconds_since_reference_date(&datetime) + 43200) / 84600) % 28;
 
             for (idx = 0; idx < 8; idx++) {
                 if (v2 <= dword_5C730C[idx]) {
@@ -5210,9 +5211,6 @@ void intgame_clock_refresh()
                 return;
             }
         }
-
-        dst_x = stru_5C6F80.x;
-        dst_width = stru_5C6F80.width;
 
         if (v1 < width) {
             src_rect.x = v1;
@@ -5232,6 +5230,8 @@ void intgame_clock_refresh()
 
             dst_x += src_rect.width;
             dst_width -= src_rect.width;
+
+            v1 = 0;
         } else {
             v1 -= width;
         }
@@ -5240,6 +5240,7 @@ void intgame_clock_refresh()
         num_cycles++;
     }
 
+    // 216: "timepnts.art"
     if (tig_art_interface_id_create(216, 0, 0, 0, &(art_blit_info.art_id)) != TIG_OK) {
         tig_debug_printf("intgame_clock_refresh: ERROR: tig_art_interface_id_create3 failed!\n");
         return;
