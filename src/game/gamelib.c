@@ -1050,7 +1050,7 @@ bool gamelib_save(const char* name, const char* description)
     tig_debug_printf("gamelib_save: creating folder archive...");
 
     tig_timer_now(&time);
-    if (!sub_52E430(path, "Save\\Current")) {
+    if (!tig_file_archive(path, "Save\\Current")) {
         tig_debug_printf("gamelib_save(): error archiving folder to %s\n", path);
         in_save = false;
         return false;
@@ -1109,7 +1109,7 @@ bool gamelib_load(const char* name)
 
     tig_debug_printf("gamelib_load: begin restoring folder archive...");
     tig_timer_now(&time);
-    if (!sub_52E550(path, "Save\\Current")) {
+    if (!tig_file_unarchive(path, "Save\\Current")) {
         tig_debug_printf("gamelib_load(): error restoring archive %s to save\\test\n", path);
         in_load = false;
         return false;
