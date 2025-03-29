@@ -16,6 +16,7 @@
 #include "game/player.h"
 #include "game/portrait.h"
 #include "game/proto.h"
+#include "game/reaction.h"
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/spell.h"
@@ -3926,13 +3927,20 @@ bool sub_578EA0(Packet81* pkt)
     int64_t v4;
     int64_t v5;
     int64_t v6;
-    int v7;
-    int v8;
-    int v9;
+    int qty;
+    int gold_amt;
+    int ammo_type;
+    unsigned int flags;
+    int cost;
+    int inventory_location;
+    bool error;
+    unsigned int item_type;
+    int worth;
 
-    v7 = pkt->field_60;
-    v8 = pkt->field_8;
-    v9 = pkt->field_5C;
+    qty = pkt->field_60;
+    flags = pkt->field_8;
+    cost = pkt->field_5C;
+    inventory_location = pkt->field_58;
 
     v1 = objp_perm_lookup(pkt->field_28);
     v2 = objp_perm_lookup(pkt->field_10);
@@ -3948,22 +3956,220 @@ bool sub_578EA0(Packet81* pkt)
 
     FREE(pkt);
 
-    if (v7 == 0) {
+    if (qty == 0) {
         return true;
     }
 
     if (v6 != OBJ_HANDLE_NULL
         && player_is_pc_obj(v6)
-        && (v8 & 0x18) != 0) {
-        int gold = v7 * item_cost(v2, v4, v6, false);
-        if (gold > item_gold_get(v6)) {
+        && (flags & 0x18) != 0) {
+        gold_amt = qty * item_cost(v2, v4, v6, false);
+        if (gold_amt > item_gold_get(v6)) {
             dialog_copy_npc_gamble_msg(v4, v6, 4, byte_682804);
-            sprintf(byte_68241C, byte_682804, gold);
+            sprintf(byte_68241C, byte_682804, gold_amt);
             return true;
         }
     }
 
-    // TODO: Incomplete.
+    error = false;
+    item_type = obj_field_int32_get(v2, OBJ_F_TYPE);
+
+    if ((flags & 0x10) == 0) {
+        if (item_type == OBJ_TYPE_GOLD) {
+            if (!tig_net_is_active() || tig_net_is_host()) {
+                if (!item_gold_transfer(v1, v3, qty, v2)) {
+                    return true;
+                }
+
+                if ((flags & 0x06) != 0) {
+                    int64_t loc = obj_field_int64_get(v1, OBJ_F_LOCATION);
+                    int64_t gold_obj = item_gold_create(qty, loc);
+                    if (v6 != OBJ_HANDLE_NULL) {
+                        int sound_id = sub_4F0BF0(gold_obj, v1, OBJ_HANDLE_NULL, 1);
+                        sub_4EED00(v6, sound_id);
+                    }
+                    if ((flags & 0x04) != 0) {
+                        sub_4417A0(gold_obj, v1);
+                        if (v6 != OBJ_HANDLE_NULL && player_is_pc_obj(v6)) {
+                            sub_573630(gold_obj);
+                            qword_681450 = v1;
+                        }
+                    } else if ((flags & 0x02) != 0) {
+                        sub_4417A0(gold_obj, v1);
+                        sub_466E50(gold_obj, loc);
+                    }
+                }
+            } else {
+                if ((flags & 0x04) != 0) {
+                    qword_681450 = v1;
+                }
+            }
+        } else if (item_type == OBJ_TYPE_AMMO) {
+            ammo_type = obj_field_int32_get(v2, OBJ_F_AMMO_TYPE);
+            if (!tig_net_is_active() || tig_net_is_host()) {
+                if (!item_ammo_transfer(v1, v3, qty, ammo_type, v2)) {
+                    return true;
+                }
+
+                if ((flags & 0x06) != 0) {
+                    int64_t loc = obj_field_int64_get(v1, OBJ_F_LOCATION);
+                    int64_t ammo_obj = item_ammo_create(qty, ammo_type, loc);
+                    if (v6 != OBJ_HANDLE_NULL) {
+                        int sound_id = sub_4F0BF0(ammo_obj, v1, OBJ_HANDLE_NULL, 0);
+                        sub_4EED00(v6, sound_id);
+                    }
+                    if ((flags & 0x04) != 0) {
+                        sub_4417A0(ammo_obj, v1);
+                        if (v6 != OBJ_HANDLE_NULL && player_is_pc_obj(v6)) {
+                            sub_573630(ammo_obj);
+                            qword_681450 = v1;
+                        }
+                    } else if ((flags & 0x02) != 0) {
+                        sub_4417A0(ammo_obj, v1);
+                        sub_466E50(ammo_obj, loc);
+                    }
+                }
+            } else {
+                if ((flags & 0x04) != 0) {
+                    qword_681450 = v1;
+                }
+            }
+        } else {
+            if ((flags & 0x04) != 0) {
+                if (!tig_net_is_active() || tig_net_is_host()) {
+                    if (sub_466DA0(v2) == ITEM_CANNOT_OK) {
+                        item_remove(v2);
+                    } else {
+                        error = true;
+                    }
+                }
+            } else if ((flags & 0x01) != 0) {
+                if (!tig_net_is_active() || tig_net_is_host()) {
+                    if (v3 != v6) {
+                        if (IS_WEAR_INV_LOC(inventory_location)) {
+                            if (!item_transfer_ex(v2, v4, inventory_location)) {
+                                error = true;
+                            }
+                        } else {
+                            if (!item_transfer_ex(v2, v5, inventory_location)) {
+                                error = true;
+                            }
+                        }
+                    } else {
+                        if (!item_transfer_ex(v2, v3, inventory_location)) {
+                            error = true;
+                        }
+                    }
+
+                    if (v6 != OBJ_HANDLE_NULL) {
+                        int sound_id = sub_4F0BF0(v2, v3, OBJ_HANDLE_NULL, 1);
+                        sub_4EED00(v6, sound_id);
+                    }
+                }
+            } else if ((flags & 0x02) != 0) {
+                if (!tig_net_is_active() || tig_net_is_host()) {
+                    item_drop(v2);
+                }
+                if (v6 != OBJ_HANDLE_NULL) {
+                    int sound_id = sub_4F0BF0(v2, v3, OBJ_HANDLE_NULL, 1);
+                    sub_4EED00(v6, sound_id);
+                }
+            }
+        }
+    }
+
+    // 68
+    if ((flags & 0x08) == 0) {
+        if ((flags & 0x10) != 0) {
+            cost = item_cost(v2, v4, v6, false);
+        }
+    } else {
+        cost = 0;
+    }
+
+    worth = item_worth(v2) * qty;
+    if (!error) {
+        if (cost > 0) {
+            gold_amt = qty * cost;
+            if (!tig_net_is_active() || tig_net_is_host()) {
+                if (v3 == v6) {
+                    if (item_gold_transfer(v3, v4, gold_amt, OBJ_HANDLE_NULL)) {
+                        if (gold_amt < worth) {
+                            gsound_play_sfx(8158, 1);
+                        } else {
+                            sub_4C11D0(v4, v6, gold_amt - worth);
+                        }
+                    } else {
+                        dialog_copy_npc_not_enough_money_msg(v4, v6, byte_68241C);
+                        error = true;
+                    }
+                } else {
+                    if (item_gold_transfer(v4, v1, gold_amt, OBJ_HANDLE_NULL)) {
+                        if (worth < gold_amt) {
+                            gsound_play_sfx(8158, 1);
+                        } else {
+                            sub_4C11D0(v4, v6, worth - gold_amt);
+                        }
+                    } else {
+                        error = true;
+                    }
+                }
+            }
+        }
+    }
+
+    if (error) {
+        if ((flags & 0x10) == 0) {
+            if (!tig_net_is_active() || tig_net_is_host()) {
+                if (item_type == OBJ_TYPE_GOLD) {
+                    item_gold_transfer(v3, v1, qty, OBJ_HANDLE_NULL);
+                } else if (item_type == OBJ_TYPE_AMMO) {
+                    item_ammo_transfer(v3, v1, qty, ammo_type, OBJ_HANDLE_NULL);
+                }
+            }
+        } else {
+            gsound_play_sfx(8158, 1);
+        }
+    }
+
+    // 85
+    if (!error
+        && v3 != OBJ_HANDLE_NULL
+        && v3 != v6
+        && inven_ui_mode == INVEN_UI_MODE_BARTER
+        && !dword_6810FC
+        && (!tig_net_is_active() || tig_net_is_host())) {
+        unsigned int item_flags = obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS);
+        if ((item_flags & OIF_IDENTIFIED) == 0) {
+            item_flags |= OIF_IDENTIFIED;
+            mp_obj_field_int32_set(v2, OBJ_F_ITEM_FLAGS, item_flags);
+        }
+    }
+
+    if (inven_ui_created && player_is_pc_obj(v6)) {
+        redraw_inven(false);
+        sub_466260(v6, dword_68111C);
+        if (v5 != OBJ_HANDLE_NULL) {
+            sub_466260(v5, dword_681518);
+        }
+    }
+
+    if (v6 != OBJ_HANDLE_NULL
+        && player_is_pc_obj(v6)
+        && (flags & 0x04) != 0
+        && !error) {
+        dword_739F58 = 1;
+    }
+
+    if ((flags & 0x08) != 0) {
+        dialog_copy_npc_gamble_msg(v4, v6, 0, byte_68241C);
+        sub_4C11D0(v4, v6, -worth);
+    } else if ((flags & 0x10) != 0) {
+        dialog_copy_npc_gamble_msg(v4, v6, 1, byte_682804);
+        sprintf(byte_68241C, byte_682804, gold_amt);
+    }
+
+    return true;
 }
 
 // 0x579760
