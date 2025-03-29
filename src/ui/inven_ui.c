@@ -1834,7 +1834,162 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
         return false;
     }
 
-
+    if (inven_ui_have_drop_box
+        && msg->data.mouse.x >= inven_ui_drop_box_frame.x
+        && msg->data.mouse.y >= inven_ui_drop_box_frame.y
+        && msg->data.mouse.x < inven_ui_drop_box_frame.x + inven_ui_drop_box_frame.width
+        && msg->data.mouse.y < inven_ui_drop_box_frame.y + inven_ui_drop_box_frame.height) {
+        if (qword_681450 != qword_6813A8
+            || (inven_ui_mode == INVEN_UI_MODE_BARTER && dword_6810FC)
+            || (inven_ui_mode != INVEN_UI_MODE_STEAL
+                && inven_ui_mode != INVEN_UI_MODE_LOOT)) {
+            sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
+        } else {
+            sub_575770();
+        }
+        qword_6810E0 = OBJ_HANDLE_NULL;
+        inven_ui_drop_box_image = 224;
+    } else if (inven_ui_have_gamble_box
+        && msg->data.mouse.x >= inven_ui_gamble_box_frame.x
+        && msg->data.mouse.y >= inven_ui_gamble_box_frame.y
+        && msg->data.mouse.x < inven_ui_gamble_box_frame.x + inven_ui_gamble_box_frame.width
+        && msg->data.mouse.y < inven_ui_gamble_box_frame.y + inven_ui_gamble_box_frame.height) {
+        int64_t item_obj = qword_6810E0;
+        sub_575770();
+        sub_579B60(item_obj);
+        qword_6810E0 = OBJ_HANDLE_NULL;
+        inven_ui_gamble_box_image = 345;
+    } else if (inven_ui_have_use_box
+        && msg->data.mouse.x >= inven_ui_use_box_frame.x
+        && msg->data.mouse.y >= inven_ui_use_box_frame.y
+        && msg->data.mouse.x < inven_ui_use_box_frame.x + inven_ui_use_box_frame.width
+        && msg->data.mouse.y < inven_ui_use_box_frame.y + inven_ui_use_box_frame.height) {
+        if ((qword_681450 != qword_6813A8
+                || (inven_ui_mode != INVEN_UI_MODE_BARTER
+                    && inven_ui_mode != INVEN_UI_MODE_LOOT
+                    && inven_ui_mode != INVEN_UI_MODE_STEAL))
+            && sub_462C30(inven_ui_pc_obj, qword_6810E0) == ITEM_CANNOT_OK) {
+            if ((obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) != 0
+                && inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
+                sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 0x4);
+                redraw_inven(false);
+                sub_466260(inven_ui_pc_obj, dword_68111C);
+                if (qword_6813A8 != OBJ_HANDLE_NULL) {
+                    sub_466260(qword_6813A8, dword_681518);
+                }
+            } else {
+                int64_t item_obj = qword_6810E0;
+                sub_575770();
+                if (!combat_turn_based_is_active()
+                    || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        sub_462CC0(inven_ui_pc_obj, item_obj, inven_ui_pc_obj);
+                    } else {
+                        sub_462CC0(inven_ui_pc_obj, item_obj, OBJ_HANDLE_NULL);
+                    }
+                }
+                if (!inven_ui_created) {
+                    return true;
+                }
+            }
+        } else {
+            sub_575770();
+        }
+        qword_6810E0 = OBJ_HANDLE_NULL;
+        inven_ui_use_box_image = 342;
+    } else {
+        int64_t parent_obj;
+        int inventory_location = sub_575CB0(msg->data.mouse.x, msg->data.mouse.y, &parent_obj);
+        if (!(inventory_location >= 2000 && inventory_location <= 2009)) {
+            if (IS_WEAR_INV_LOC(inventory_location)) {
+                if ((inven_ui_mode != INVEN_UI_MODE_BARTER
+                        || qword_681450 == inven_ui_pc_obj
+                        || parent_obj == inven_ui_pc_obj
+                        || dword_6810FC)
+                    && (inven_ui_mode != INVEN_UI_MODE_STEAL
+                        || qword_681450 == inven_ui_pc_obj
+                        || parent_obj == inven_ui_pc_obj)) {
+                    int wield_reason = sub_464D20(qword_6810E0, inventory_location, parent_obj);
+                    if (wield_reason == ITEM_CANNOT_OK) {
+                        int64_t old_item_obj = item_wield_get(parent_obj, inventory_location);
+                        if (old_item_obj != OBJ_HANDLE_NULL
+                            && old_item_obj != qword_6810E0) {
+                            if (parent_obj == inven_ui_pc_obj) {
+                                int unwield_reason = sub_466DA0(old_item_obj);
+                                if (unwield_reason == ITEM_CANNOT_OK) {
+                                    if ((inven_ui_mode != INVEN_UI_MODE_BARTER
+                                            && inven_ui_mode != INVEN_UI_MODE_STEAL)
+                                        || qword_681450 == parent_obj) {
+                                        sub_45F920();
+                                        item_remove(qword_6810E0);
+                                        int old_inventory_location = item_inventory_location_get(old_item_obj);
+                                        item_remove(old_item_obj);
+                                        int new_inventory_location;
+                                        int transfer_reason = sub_466510(old_item_obj, parent_obj, &new_inventory_location);
+                                        if (transfer_reason == ITEM_CANNOT_OK) {
+                                            item_insert(qword_6810E0, qword_681450, dword_6810E8);
+                                            sub_5788C0(qword_6810E0, parent_obj, inventory_location, 0x1);
+                                            item_insert(old_item_obj, parent_obj, new_inventory_location);
+                                            qword_6810E0 = old_item_obj;
+                                            dword_6810E8 = new_inventory_location;
+                                            qword_681450 = parent_obj;
+                                            dword_683470 = 0;
+                                            sub_5754C0(-1, -1);
+                                        } else {
+                                            sub_4673F0(parent_obj, transfer_reason);
+                                            item_insert(old_item_obj, parent_obj, old_inventory_location);
+                                            sub_575930();
+                                        }
+                                        sub_45F910();
+                                    } else {
+                                        sub_575770();
+                                    }
+                                } else {
+                                    if (parent_obj == inven_ui_pc_obj) {
+                                        sub_4673F0(parent_obj, unwield_reason);
+                                    }
+                                }
+                            } else {
+                                sub_575770();
+                            }
+                        } else {
+                            if (parent_obj == inven_ui_pc_obj) {
+                                if (!sub_575180(v45)) {
+                                    sub_575200(inventory_location);
+                                }
+                            } else {
+                                if (!sub_575100(v45)) {
+                                    sub_575360(inventory_location);
+                                }
+                            }
+                            qword_6810E0 = OBJ_HANDLE_NULL;
+                        }
+                    } else {
+                        sub_4673F0(parent_obj, wield_reason);
+                        sub_575770();
+                    }
+                } else {
+                    sub_575770();
+                }
+            } else {
+                if (inventory_location - dword_683470 < 0) {
+                    if (!sub_57EDA0(1)) {
+                        sub_575770();
+                    }
+                } else if (parent_obj == inven_ui_pc_obj) {
+                    if (!sub_575180(v45)) {
+                        sub_575200(inventory_location - dword_683470);
+                    }
+                } else {
+                    if (!sub_575100(v45)) {
+                        sub_575360(inventory_location - dword_683470);
+                    }
+                }
+                sub_57F260();
+                qword_6810E0 = OBJ_HANDLE_NULL;
+            }
+        }
+    }
 
     redraw_inven(false);
     sub_466260(inven_ui_pc_obj, dword_68111C);
