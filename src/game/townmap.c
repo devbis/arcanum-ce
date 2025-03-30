@@ -255,7 +255,7 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
     int64_t v4;
     int64_t loc;
 
-    loc_ptr = 0;
+    *loc_ptr = 0;
 
     v1 = (int)(x / tmi->field_28) - tmi->field_C / 2;
     v2 = (int)(y / tmi->field_28) - tmi->field_10 / 2;
