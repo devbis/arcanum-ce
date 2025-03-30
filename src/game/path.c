@@ -22,7 +22,7 @@ typedef struct S420330 {
 static int sub_41F6C0(PathCreateInfo* path_create_info);
 static int sub_41F840(PathCreateInfo* path_create_info);
 static int sub_41F9F0(PathCreateInfo* path_create_info);
-static int sub_4200C0(int a1, int a2, int a3);
+static int path_dist(int src, int dst, int width);
 static int sub_420110(int a1, int a2, int a3);
 static void sub_420330(int64_t x, int64_t y, S420330* a5);
 static void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void(*fn)(int64_t, int64_t, S420330*));
@@ -377,7 +377,7 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
         v14 = -1;
         for (int i = 0; i < 4096; i++) {
             if (dword_5D5628[i] > 0) {
-                int v17 = dword_5D5628[i] + sub_4200C0(i, v50, 64);
+                int v17 = dword_5D5628[i] + path_dist(i, v50, 64);
                 if (v17 / 10 <= path_create_info->max_rotations) {
                     if (v14 == -1 || v17 < to_x) {
                         to_x = v17;
@@ -528,26 +528,26 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
 }
 
 // 0x4200C0
-int sub_4200C0(int a1, int a2, int a3)
+int path_dist(int src, int dst, int width)
 {
-    int v1;
-    int v2;
+    int dx;
+    int dy;
 
-    v1 = a1 % a3 - a2 % a3;
-    if (v1 < 0) {
-        v1 = a2 % a3 - a1 % a3;
+    dx = src % width - dst % width;
+    if (dx < 0) {
+        dx = -dx;
     }
 
-    v2 = a1 / a3 - a2 / a3;
-    if (v2 < 0) {
-        v2 = a2 / a3 - a1 / a3;
+    dy = src / width - dst / width;
+    if (dy < 0) {
+        dy = -dy;
     }
 
-    if (v1 <= v2) {
-        v1 = v2;
+    if (dx > dy) {
+        return 10 * dx;
+    } else {
+        return 10 * dy;
     }
-
-    return 10 * v1;
 }
 
 // 0x420110
@@ -875,7 +875,7 @@ int sub_4209C0(WmapPathInfo* path_info)
             // Check if node is open, i.e. it has a positive cost (negative cost
             // are closed nodes, zero cost are unprocessed nodes).
             if (wmap_path_cost_tbl[i] > 0) {
-                int estimated_cost = wmap_path_cost_tbl[i] + sub_4200C0(i, target_index, 16);
+                int estimated_cost = wmap_path_cost_tbl[i] + path_dist(i, target_index, 16);
                 if (estimated_cost / 10 <= path_info->max_rotations) {
                     // If no candidate node selected yet, or this candidate has
                     // a lower cost, update current candidate.
