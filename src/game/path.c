@@ -1,9 +1,10 @@
 #include "game/path.h"
 
 #include "game/critter.h"
-#include "game/object.h"
 #include "game/location.h"
+#include "game/object.h"
 #include "game/sector.h"
+#include "game/terrain.h"
 #include "game/tile.h"
 #include "game/townmap.h"
 #include "game/trap.h"
@@ -26,6 +27,8 @@ static int sub_420110(int a1, int a2, int a3);
 static void sub_420330(int64_t x, int64_t y, S420330* a5);
 static void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void(*fn)(int64_t, int64_t, S420330*));
 static int sub_420660(int64_t from, int64_t to, uint8_t* rotations);
+static int sub_420900(WmapPathInfo* path_info);
+static int sub_4209C0(WmapPathInfo* path_info);
 static int sub_420E30(PathCreateInfo* path_create_info, tig_duration_t ms);
 
 // 0x5A15C0
@@ -39,6 +42,14 @@ static int dword_5D5628[4096];
 
 // 0x5D9628
 static int dword_5D9628[4096];
+
+// NOTE: Unusual size.
+//
+// 0x5DD628
+static int wmap_path_backtrack_tbl[756];
+
+// 0x5DE1F8
+static int wmap_path_cost_tbl[256];
 
 // 0x5DE5F8
 static tig_timestamp_t dword_5DE5F8;
@@ -741,21 +752,230 @@ int sub_420660(int64_t from, int64_t to, uint8_t* rotations)
 }
 
 // 0x4207D0
-void sub_4207D0()
+int sub_4207D0(WmapPathInfo* path_info)
 {
-    // TODO: Incomplete.
+    int idx;
+    int64_t sec = path_info->from;
+    int64_t adjacent_sec;
+    int rot;
+    WmapPathInfo next_path_info;
+    int len;
+
+    for (idx = 0; idx < path_info->max_rotations; idx++) {
+        if (sec == path_info->to) {
+            break;
+        }
+
+        rot = sector_rot(sec, path_info->to);
+        path_info->rotations[idx] = rot;
+        sector_in_dir(sec, rot, &adjacent_sec);
+
+        if (sector_is_blocked(adjacent_sec)
+            || (!sector_exists(adjacent_sec) && sub_4E8E00(adjacent_sec))) {
+            next_path_info = *path_info;
+            next_path_info.from = sec;
+            next_path_info.max_rotations -= idx;
+            next_path_info.rotations += idx;
+            len = sub_420900(&next_path_info);
+            if (len == 0) {
+                break;
+            }
+
+            idx += len;
+            adjacent_sec = next_path_info.to;
+        }
+
+        sec = adjacent_sec;
+    }
+
+    if (sec != path_info->to) {
+        path_info->field_18 = idx;
+        return 0;
+    }
+
+    return idx;
 }
 
 // 0x420900
-void sub_420900()
+int sub_420900(WmapPathInfo* path_info)
 {
-    // TODO: Incomplete.
+    int64_t sec = path_info->from;
+    int64_t adjacent_sec;
+    int rot;
+
+    while (sec != path_info->to) {
+        rot = sector_rot(sec, path_info->to);
+        sector_in_dir(sec, rot, &adjacent_sec);
+
+        if (!sector_is_blocked(adjacent_sec)
+            && (sector_exists(adjacent_sec) || !sub_4E8E00(adjacent_sec))) {
+            path_info->to = adjacent_sec;
+            return sub_4209C0(path_info);
+        }
+
+        sec = adjacent_sec;
+    }
+
+    return 0;
 }
 
 // 0x4209C0
-void sub_4209C0()
+int sub_4209C0(WmapPathInfo* path_info)
 {
-    // TODO: Incomplete.
+    int64_t from_x = SECTOR_X(path_info->from);
+    int64_t from_y = SECTOR_Y(path_info->from);
+    int64_t to_x = SECTOR_X(path_info->to);
+    int64_t to_y = SECTOR_Y(path_info->to);
+    int64_t origin_x;
+    int64_t origin_y;
+    int64_t dx;
+    int64_t dy;
+    int start_index;
+    int target_index;
+    int current_index;
+    int best_estimated_cost;
+
+    if (from_x > to_x) {
+        dx = from_x - to_x;
+        origin_x = to_x;
+    } else {
+        dx = to_x - from_x;
+        origin_x = from_x;
+    }
+
+    if (from_y > to_y) {
+        dy = from_y - to_y;
+        origin_y = to_y;
+    } else {
+        dy = to_y - from_y;
+        origin_y = from_y;
+    }
+
+    // Check if the sectors are too far apart.
+    if (dx >= 8 || dy >= 8) {
+        return 0;
+    }
+
+    origin_x -= (16 - dx) / 2;
+    origin_y -= (16 - dy) / 2;
+
+    start_index = (int)(from_x + (from_y - origin_y) * 16 - origin_x);
+    target_index = (int)(to_x + (to_y - origin_y) * 16 - origin_x);
+
+    // Initialize the cost array to zero (unprocessed state).
+    memset(wmap_path_cost_tbl, 0, sizeof(wmap_path_cost_tbl));
+    wmap_path_cost_tbl[start_index] = 1;
+    wmap_path_backtrack_tbl[start_index] = -1;
+
+    while (true) {
+        current_index = -1;
+
+        // Grab open node with minimal cost.
+        for (int i = 0; i < 256; i++) {
+            // Check if node is open, i.e. it has a positive cost (negative cost
+            // are closed nodes, zero cost are unprocessed nodes).
+            if (wmap_path_cost_tbl[i] > 0) {
+                int estimated_cost = wmap_path_cost_tbl[i] + sub_4200C0(i, target_index, 16);
+                if (estimated_cost / 10 <= path_info->max_rotations) {
+                    // If no candidate node selected yet, or this candidate has
+                    // a lower cost, update current candidate.
+                    if (current_index == -1 || estimated_cost < best_estimated_cost) {
+                        best_estimated_cost = estimated_cost;
+                        current_index = i;
+                    }
+                } else {
+                    // Mark node as unreachable.
+                    wmap_path_cost_tbl[i] = -32768;
+                }
+            }
+        }
+
+        // If no node has been found, path is not reachable.
+        if (current_index == -1) {
+            return 0;
+        }
+
+        // Check if we have reached the target.
+        if (current_index == target_index) {
+            break;
+        }
+
+        for (int rot = 0; rot < 8; rot++) {
+            int64_t sec = SECTOR_MAKE(origin_x + current_index % 16, origin_y + current_index / 16);
+            int64_t adjacent_sec;
+            if (!sector_in_dir(sec, rot, &adjacent_sec)) {
+                continue;
+            }
+
+            dx = SECTOR_X(adjacent_sec) - origin_x;
+            dy = SECTOR_Y(adjacent_sec) - origin_y;
+
+            if (dx < 0 || dx >= 16 || dy < 0 || dy >= 16) {
+                continue;
+            }
+
+            int neighbor_index = (int)dx + (int)dy * 16;
+
+            // Skip if the neighbor has already been marked as unreachable.
+            if (wmap_path_cost_tbl[neighbor_index] == -32768) {
+                continue;
+            }
+
+            // Skip blocked sectors or sectors that do not exist.
+            if (sector_is_blocked(adjacent_sec)
+                || (!sector_exists(adjacent_sec) && sub_4E8E00(adjacent_sec))) {
+                wmap_path_cost_tbl[neighbor_index] = -32768;
+                continue;
+            }
+
+            // Base movement cost.
+            int cost = 10;
+
+            // Add accumulated cost to move the current node.
+            cost += wmap_path_cost_tbl[current_index];
+
+            // Add additional cost in case direction change is needed.
+            if (wmap_path_backtrack_tbl[current_index] != -1
+                && sub_420110(wmap_path_backtrack_tbl[current_index], current_index, 16) != rot) {
+                cost++;
+            }
+
+            // If this neighbor has not been reached or a lower cost is now
+            // available, update its cost and record the current node as its
+            // predecessor.
+            if ((wmap_path_cost_tbl[neighbor_index] > 0 && wmap_path_cost_tbl[neighbor_index] > cost)
+                || (wmap_path_cost_tbl[neighbor_index] < 0 && -wmap_path_cost_tbl[neighbor_index] > cost)
+                || wmap_path_cost_tbl[neighbor_index] == 0) {
+                wmap_path_cost_tbl[neighbor_index] = cost;
+                wmap_path_backtrack_tbl[neighbor_index] = current_index;
+            }
+        }
+
+        // Mark the current node as processed by negating its cost.
+        wmap_path_cost_tbl[current_index] = -wmap_path_cost_tbl[current_index];
+    }
+
+    // Count the number of steps from the current location up to the origin.
+    int step = 0;
+    int prev_index = wmap_path_backtrack_tbl[current_index];
+    while (prev_index != -1) {
+        prev_index = wmap_path_backtrack_tbl[prev_index];
+        step++;
+    }
+
+    // If the number of steps exceeds allowed maximum, there is no valid path.
+    if (step > path_info->max_rotations) {
+        return 0;
+    }
+
+    // Reconstruct the path backwards from dst to src.
+    for (int i = step - 1; i >= 0; i--) {
+        path_info->rotations[i] = sub_420110(wmap_path_backtrack_tbl[target_index], target_index, 16);
+        target_index = wmap_path_backtrack_tbl[target_index];
+    }
+
+    // Return the number of steps in the computed path.
+    return step;
 }
 
 // 0x420E30
