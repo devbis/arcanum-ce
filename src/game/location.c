@@ -625,7 +625,7 @@ bool sub_4B99C0(int64_t from, int64_t* to)
     }
 
     v2.field_50 = &v3;
-    v1.aoe_flags |= Tgt_Damaged_Poisoned;
+    v1.aoe_flags |= Tgt_Tile_Radius_Naked;
     sub_4F40B0(&v2);
 
     for (idx = 0; idx < v3.cnt; idx++) {
