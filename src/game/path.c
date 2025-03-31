@@ -227,7 +227,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
     int rot;
     int64_t adjacent_loc;
     int v2;
-    int64_t obj;
+    int64_t trap_obj;
 
     if (location_dist(path_create_info->from, path_create_info->to) > 32) {
         return 0;
@@ -265,9 +265,9 @@ int sub_41F840(PathCreateInfo* path_create_info)
                     break;
                 }
 
-                obj = sub_4BCAB0(adjacent_loc);
-                if (obj != OBJ_HANDLE_NULL
-                    && sub_4BBFE0(path_create_info->obj, obj)) {
+                trap_obj = get_trap_at_location(adjacent_loc);
+                if (trap_obj != OBJ_HANDLE_NULL
+                    && sub_4BBFE0(path_create_info->obj, trap_obj)) {
                     break;
                 }
 
@@ -445,7 +445,7 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
             }
 
             int cost = 10;
-            int64_t trap_obj = sub_4BCAB0(adjacent_loc);
+            int64_t trap_obj = get_trap_at_location(adjacent_loc);
             if (trap_obj != OBJ_HANDLE_NULL) {
                 if (sub_4BBFE0(path_create_info->obj, trap_obj)) {
                     cost += 80;

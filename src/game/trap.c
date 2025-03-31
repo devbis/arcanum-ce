@@ -430,7 +430,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         return true;
     }
 
-    if (sub_4BCAB0(target_loc) != OBJ_HANDLE_NULL) {
+    if (get_trap_at_location(target_loc) != OBJ_HANDLE_NULL) {
         // There is already a trap there.
         mes_file_entry.num = 3;
         mes_get_msg(trap_mes_file, &mes_file_entry);
@@ -582,21 +582,21 @@ bool trap_is_trap_device(int64_t obj)
 }
 
 // 0x4BCAB0
-int64_t sub_4BCAB0(int64_t loc)
+int64_t get_trap_at_location(int64_t loc)
 {
     ObjectList traps;
-    int64_t first_trap;
+    int64_t obj;
 
     object_list_location(loc, OBJ_TM_TRAP, &traps);
     if (traps.head != NULL) {
-        first_trap = traps.head->obj;
+        obj = traps.head->obj;
     } else {
-        first_trap = OBJ_HANDLE_NULL;
+        obj = OBJ_HANDLE_NULL;
     }
 
     object_list_destroy(&traps);
 
-    return first_trap;
+    return obj;
 }
 
 // 0x4BCB00
