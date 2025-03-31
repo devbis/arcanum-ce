@@ -17,7 +17,7 @@ void trap_exit();
 bool trap_timeevent_process(TimeEvent* timeevent);
 int trap_type(int64_t obj);
 bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj);
-bool sub_4BBFE0(int64_t pc_obj, int64_t trap_obj);
+bool trap_is_spotted(int64_t pc_obj, int64_t trap_obj);
 void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3);
 void sub_4BC220(int64_t trap_obj);
 bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj);

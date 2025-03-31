@@ -5674,7 +5674,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
         object_list_location(adjacent_loc, OBJ_TM_TRAP, &objects);
         node = objects.head;
         while (node != NULL) {
-            if (!sub_4BBFE0(obj, node->obj)
+            if (!trap_is_spotted(obj, node->obj)
                 && sub_4BBE40(obj, node->obj)) {
                 break;
             }

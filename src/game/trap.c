@@ -192,7 +192,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
         return false;
     }
 
-    if (sub_4BBFE0(pc_obj, trap_obj)) {
+    if (trap_is_spotted(pc_obj, trap_obj)) {
         return true;
     }
 
@@ -226,7 +226,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
 }
 
 // 0x4BBFE0
-bool sub_4BBFE0(int64_t pc_obj, int64_t trap_obj)
+bool trap_is_spotted(int64_t pc_obj, int64_t trap_obj)
 {
     int type;
     unsigned int flags;
@@ -512,7 +512,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
         return;
     }
 
-    if (!sub_4BBFE0(pc_obj, trap_obj)) {
+    if (!trap_is_spotted(pc_obj, trap_obj)) {
         *is_success_ptr = false;
         *is_critical_ptr = false;
         return;

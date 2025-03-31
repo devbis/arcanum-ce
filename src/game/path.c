@@ -267,7 +267,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
 
                 trap_obj = get_trap_at_location(adjacent_loc);
                 if (trap_obj != OBJ_HANDLE_NULL
-                    && sub_4BBFE0(path_create_info->obj, trap_obj)) {
+                    && trap_is_spotted(path_create_info->obj, trap_obj)) {
                     break;
                 }
 
@@ -447,7 +447,7 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
             int cost = 10;
             int64_t trap_obj = get_trap_at_location(adjacent_loc);
             if (trap_obj != OBJ_HANDLE_NULL) {
-                if (sub_4BBFE0(path_create_info->obj, trap_obj)) {
+                if (trap_is_spotted(path_create_info->obj, trap_obj)) {
                     cost += 80;
                 }
             }
