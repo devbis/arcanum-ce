@@ -272,7 +272,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
                 }
 
                 if ((path_create_info->flags & 0x400) != 0
-                    && sub_444500(adjacent_loc)) {
+                    && get_fire_at_location(adjacent_loc) != OBJ_HANDLE_NULL) {
                     break;
                 }
             }
@@ -457,7 +457,7 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
             }
 
             if ((path_create_info->flags & 0x400) != 0
-                && sub_444500(adjacent_loc)) {
+                && get_fire_at_location(adjacent_loc) != OBJ_HANDLE_NULL) {
                 cost += 80;
             }
 

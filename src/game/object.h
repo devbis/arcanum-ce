@@ -187,7 +187,7 @@ bool sub_444020(int64_t* obj_ptr, Ryan* a2);
 void sub_4440E0(int64_t obj, FollowerInfo* a2);
 bool sub_444110(FollowerInfo* a1);
 bool sub_444130(FollowerInfo* a1);
-int64_t sub_444500(int64_t loc);
+int64_t get_fire_at_location(int64_t loc);
 void sub_4445A0(int64_t a1, int64_t a2);
 
 #endif /* ARCANUM_GAME_OBJECT_H_ */

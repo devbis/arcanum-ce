@@ -5211,7 +5211,7 @@ void sub_444270(int64_t obj, int a2)
 }
 
 // 0x444500
-int64_t sub_444500(int64_t loc)
+int64_t get_fire_at_location(int64_t loc)
 {
     ObjectList objects;
     ObjectNode* node;
@@ -5231,7 +5231,7 @@ int64_t sub_444500(int64_t loc)
 
     object_list_destroy(&objects);
 
-    return obj;
+    return node != NULL ? obj : OBJ_HANDLE_NULL;
 }
 
 // 0x4445A0
