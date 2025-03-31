@@ -347,7 +347,7 @@ void sector_render(UnknownContext* render_info)
         sector_x = SECTOR_X(node->id);
         sector_y = SECTOR_Y(node->id);
 
-        townmap = sub_4BE380(node->id);
+        townmap = townmap_get(node->id);
         if (townmap != 0) {
             int red = townmap * (255 / townmap_count());
             if ((townmap & 1) != 0) {

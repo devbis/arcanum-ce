@@ -127,18 +127,19 @@ void townmap_flush()
 }
 
 // 0x4BE380
-int sub_4BE380(int64_t sector_id)
+int townmap_get(int64_t sec)
 {
     Sector* sector;
     int num;
 
-    if (sector_lock(sector_id, &sector)) {
-        num = sector->townmap_info;
-        sector_unlock(sector_id);
-        return num;
+    if (!sector_lock(sec, &sector)) {
+        return 0;
     }
 
-    return 0;
+    num = sector->townmap_info;
+    sector_unlock(sec);
+
+    return num;
 }
 
 // 0x4BE400

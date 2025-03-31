@@ -1350,7 +1350,7 @@ void sub_560EE0()
 void sub_560EF0()
 {
     dword_66D880 = 0;
-    dword_66D874 = sub_4BE380(sector_id_from_loc(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
+    dword_66D874 = townmap_get(sector_id_from_loc(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
     if (sub_40FF40() == dword_66D87C) {
         if (dword_66D874 == 0) {
             dword_66D880 = 1;
@@ -3758,10 +3758,10 @@ void sub_564AF0(int64_t obj)
     WmapNote note;
 
     pc_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
-    pc_townmap = sub_4BE380(sector_id_from_loc(pc_loc));
+    pc_townmap = townmap_get(sector_id_from_loc(pc_loc));
 
     obj_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    obj_townmap = sub_4BE380(sector_id_from_loc(obj_loc));
+    obj_townmap = townmap_get(sector_id_from_loc(obj_loc));
 
     if (pc_townmap != obj_townmap) {
         return;
@@ -3917,7 +3917,7 @@ int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime)
 // 0x564F60
 void sub_564F60(int64_t a1, int64_t a2)
 {
-    dword_66D874 = sub_4BE380(a2);
+    dword_66D874 = townmap_get(a2);
     if (dword_66D874) {
         sub_564A70(a1, sector_loc_from_id(a2));
         wmap_ui_town_notes_load();

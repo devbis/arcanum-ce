@@ -721,7 +721,7 @@ bool sub_558DE0(int64_t loc)
     hour = datetime_current_hour();
     dword_64C73C = hour < 6 || hour >= 18;
 
-    if (sub_4BE380(sector_id_from_loc(loc))) {
+    if (townmap_get(sector_id_from_loc(loc))) {
         return false;
     }
 
