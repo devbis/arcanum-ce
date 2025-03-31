@@ -142,6 +142,22 @@ int townmap_get(int64_t sec)
     return num;
 }
 
+// 0x4BE3C0
+void townmap_set(int64_t sec, int townmap)
+{
+    Sector* sector;
+    int num;
+
+    if (!sector_lock(sec, &sector)) {
+        return;
+    }
+
+    sector->townmap_info = townmap;
+    sector->flags |= 0x1;
+
+    sector_unlock(sec);
+}
+
 // 0x4BE400
 int townmap_count()
 {
