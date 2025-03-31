@@ -4733,8 +4733,8 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
         if (tig_rect_intersection(&src_rect, a3, &src_rect) == TIG_OK) {
             dst_rect = src_rect;
 
-            src_rect.x -= x2;
-            src_rect.y -= y2;
+            src_rect.x -= x2 - stru_5C9160[6].width / 2;
+            src_rect.y -= y2 - stru_5C9160[6].height / 2;
 
             art_blit_info.dst_rect = &dst_rect;
             tig_window_blit_art(wmap_ui_window, &art_blit_info);
