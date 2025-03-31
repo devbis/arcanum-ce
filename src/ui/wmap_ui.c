@@ -3519,7 +3519,7 @@ bool sub_5643E0(WmapCoords* coords)
         if (wp_idx == 0) {
             from = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
         } else if (wp_idx < 6) {
-            from = stru_64E048[dword_66D868].field_0[wp_idx - 1].loc;
+            from = stru_64E048[type].field_0[wp_idx - 1].loc;
         } else {
             // "You have reached the maximum allowable number of waypoints and may not add another."
             mes_file_entry.num = 611;
@@ -3531,7 +3531,6 @@ bool sub_5643E0(WmapCoords* coords)
         }
 
         sub_4BE780(&stru_64E7F8, coords->x, coords->y, &to);
-        stru_64E048[dword_66D868].field_0[wp_idx].loc = to;
 
         steps = sub_44EB40(player_get_pc_obj(), from, to);
         if (steps == 0) {
@@ -3554,7 +3553,6 @@ bool sub_5643E0(WmapCoords* coords)
         path_info.from = sector_id_from_loc(from);
 
         sub_561800(coords, &to);
-        wp->loc = to;
         path_info.to = sector_id_from_loc(to);
         path_info.max_rotations = 5000 - start;
         path_info.rotations = &(byte_64E828[start]);
