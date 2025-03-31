@@ -1658,7 +1658,7 @@ int sub_43D690(int64_t obj)
 }
 
 // 0x43D6D0
-int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
+int object_get_resistance(int64_t obj, int resistance_type, bool a2)
 {
     int value;
     int obj_type;

@@ -18,6 +18,7 @@
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/resistance.h"
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/spell.h"
@@ -124,12 +125,12 @@ static int dword_5B32F0[] = {
 static int dword_5B3304 = 24;
 
 // 0x5B3308
-static int dword_5B3308[5] = {
-    25,
-    15,
-    10,
-    16,
-    15,
+static int dword_5B3308[RESISTANCE_TYPE_COUNT] = {
+    /*     RESISTANCE_TYPE_NORMAL */ 25,
+    /*       RESISTANCE_TYPE_FIRE */ 15,
+    /* RESISTANCE_TYPE_ELECTRICAL */ 10,
+    /*     RESISTANCE_TYPE_POISON */ 16,
+    /*      RESISTANCE_TYPE_MAGIC */ 15,
 };
 
 // 0x5E87E0
@@ -2401,14 +2402,14 @@ int item_total_defence(int64_t obj)
 {
     int v1;
     int v2;
-    int damage_type;
+    int resistance_type;
 
     v1 = dword_5B3304 * object_get_ac(obj, true);
     v2 = dword_5B3304;
 
-    for (damage_type = 0; damage_type < 5; damage_type++) {
-        v1 += dword_5B3308[damage_type] * sub_43D6D0(obj, damage_type, true);
-        v2 += dword_5B3308[damage_type];
+    for (resistance_type = 0; resistance_type < RESISTANCE_TYPE_COUNT; resistance_type++) {
+        v1 += dword_5B3308[resistance_type] * object_get_resistance(obj, resistance_type, true);
+        v2 += dword_5B3308[resistance_type];
     }
 
     return 2 * (v1 / (v2 + 6));

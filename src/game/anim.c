@@ -22,6 +22,7 @@
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/resistance.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/teleport.h"
@@ -4896,7 +4897,7 @@ bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
             path_create_info->flags |= 0x0200;
         }
 
-        if (sub_43D6D0(path_create_info->obj, 1, false) < 45
+        if (object_get_resistance(path_create_info->obj, RESISTANCE_TYPE_FIRE, false) < 45
             && stat_level_get(path_create_info->obj, STAT_STRENGTH) != 0) {
             path_create_info->flags |= 0x0400;
         }

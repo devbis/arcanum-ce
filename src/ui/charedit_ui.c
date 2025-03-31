@@ -1738,7 +1738,7 @@ void charedit_refresh_secondary_stats()
     for (index = 8; index < 13; index++) {
         sprintf(buffers[index],
             ": %d  ",
-            sub_43D6D0(charedit_obj, stru_5C81E0[index].value, true));
+            object_get_resistance(charedit_obj, stru_5C81E0[index].value, true));
     }
 
     sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, labels, -1, 13);

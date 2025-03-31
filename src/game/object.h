@@ -115,7 +115,7 @@ int object_hp_damage_get(int64_t obj);
 int object_hp_damage_set(int64_t obj, int value);
 int object_hp_max(int64_t obj);
 int object_hp_current(int64_t obj);
-int sub_43D6D0(int64_t obj, int resistance_type, bool a2);
+int object_get_resistance(int64_t obj, int resistance_type, bool a2);
 int object_get_ac(int64_t obj, bool a2);
 bool sub_43D940(int64_t obj);
 bool sub_43D990(int64_t obj);

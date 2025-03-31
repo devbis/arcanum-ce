@@ -123,12 +123,12 @@ static int dword_5B57FC[2] = {
 };
 
 // 0x5B5804
-static int dword_5B5804[5] = {
-    RESISTANCE_TYPE_NORMAL,
-    RESISTANCE_TYPE_POISON,
-    RESISTANCE_TYPE_ELECTRICAL,
-    RESISTANCE_TYPE_FIRE,
-    RESISTANCE_TYPE_NORMAL,
+static int combat_damage_to_resistance_tbl[DAMAGE_TYPE_COUNT] = {
+    /*     DAMAGE_TYPE_NORMAL */ RESISTANCE_TYPE_NORMAL,
+    /*     DAMAGE_TYPE_POISON */ RESISTANCE_TYPE_POISON,
+    /* DAMAGE_TYPE_ELECTRICAL */ RESISTANCE_TYPE_ELECTRICAL,
+    /*       DAMAGE_TYPE_FIRE */ RESISTANCE_TYPE_FIRE,
+    /*    DAMAGE_TYPE_FATIGUE */ RESISTANCE_TYPE_NORMAL,
 };
 
 // 0x5FC178
@@ -2766,7 +2766,7 @@ void sub_4B6680(CombatContext* combat)
 // 0x4B6860
 void sub_4B6860(CombatContext* combat)
 {
-    int idx;
+    int damage_type;
     int resistance;
 
     if (tig_net_is_active()
@@ -2788,13 +2788,13 @@ void sub_4B6860(CombatContext* combat)
         return;
     }
 
-    for (idx = 0; idx < 5; idx++) {
-        resistance = sub_43D6D0(combat->target_obj, dword_5B5804[idx], false);
-        if (idx == DAMAGE_TYPE_FATIGUE) {
+    for (damage_type = 0; damage_type < 5; damage_type++) {
+        resistance = object_get_resistance(combat->target_obj, combat_damage_to_resistance_tbl[damage_type], false);
+        if (damage_type == DAMAGE_TYPE_FATIGUE) {
             resistance = 3 * resistance / 4;
         }
         if (resistance > 0) {
-            combat->dam[idx] -= resistance * combat->dam[idx] / 100;
+            combat->dam[damage_type] -= resistance * combat->dam[damage_type] / 100;
         }
     }
 }

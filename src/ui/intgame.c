@@ -7611,7 +7611,7 @@ void sub_5566B0(int64_t obj)
     // Magic Resistance
     mes_file_entry.num = 65;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_43D6D0(obj, RESISTANCE_TYPE_MAGIC, true);
+    value = object_get_resistance(obj, RESISTANCE_TYPE_MAGIC, true);
     if (value != 0) {
         sprintf(buffer,
             "%s: %d%%",
@@ -7631,7 +7631,7 @@ void sub_5566B0(int64_t obj)
     // Fire Resistance
     mes_file_entry.num = 67;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_43D6D0(obj, RESISTANCE_TYPE_FIRE, true);
+    value = object_get_resistance(obj, RESISTANCE_TYPE_FIRE, true);
     if (value != 0) {
         sprintf(buffer,
             "%s: %d%%",
@@ -7651,7 +7651,7 @@ void sub_5566B0(int64_t obj)
     // Damage Resistance
     mes_file_entry.num = 64;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_43D6D0(obj, RESISTANCE_TYPE_NORMAL, true);
+    value = object_get_resistance(obj, RESISTANCE_TYPE_NORMAL, true);
     if (value != 0) {
         sprintf(buffer,
             "%s: %d%%",
@@ -7671,7 +7671,7 @@ void sub_5566B0(int64_t obj)
     // Electrical Resistance
     mes_file_entry.num = 66;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_43D6D0(obj, RESISTANCE_TYPE_ELECTRICAL, true);
+    value = object_get_resistance(obj, RESISTANCE_TYPE_ELECTRICAL, true);
     if (value != 0) {
         sprintf(buffer,
             "%s: %d%%",
@@ -7691,7 +7691,7 @@ void sub_5566B0(int64_t obj)
     // Poison Resistance
     mes_file_entry.num = 68;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_43D6D0(obj, RESISTANCE_TYPE_POISON, true);
+    value = object_get_resistance(obj, RESISTANCE_TYPE_POISON, true);
     if (value != 0) {
         sprintf(buffer,
             "%s: %d%%",
