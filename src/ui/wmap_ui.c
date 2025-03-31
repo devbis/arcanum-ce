@@ -14,6 +14,7 @@
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/path.h"
 #include "game/player.h"
 #include "game/sector.h"
 #include "game/teleport.h"
@@ -3485,7 +3486,108 @@ bool sub_5643C0(const char* str)
 // 0x5643E0
 bool sub_5643E0(WmapCoords* coords)
 {
-    // TODO: Incomplete.
+    int start = 0;
+    int type = 0;
+    int wp_idx;
+    S64E048* wp;
+    int64_t from;
+    int64_t to;
+    MesFileEntry mes_file_entry;
+    WmapPathInfo path_info;
+    int steps;
+    UiMessage ui_message;
+
+    if (dword_66D880) {
+        if (dword_66D868 == 2) {
+            type = 1;
+        }
+    } else {
+        if (dword_66D868 != 2) {
+            return false;
+        }
+        type = 1;
+    }
+
+    wp_idx = stru_64E048[type].field_3C0;
+    if (wp_idx >= 30) {
+        return false;
+    }
+
+    wp = &(stru_64E048[type].field_0[wp_idx]);
+
+    if (dword_66D868 == 2) {
+        if (wp_idx == 0) {
+            from = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+        } else if (wp_idx < 6) {
+            from = stru_64E048[dword_66D868].field_0[wp_idx - 1].loc;
+        } else {
+            // "You have reached the maximum allowable number of waypoints and may not add another."
+            mes_file_entry.num = 611;
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
+            return false;
+        }
+
+        sub_4BE780(&stru_64E7F8, coords->x, coords->y, &to);
+        stru_64E048[dword_66D868].field_0[wp_idx].loc = to;
+
+        steps = sub_44EB40(player_get_pc_obj(), from, to);
+        if (steps == 0) {
+            // "Your path is blocked.  Try clicking closer to the previous waypoint."
+            mes_file_entry.num = 610;
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
+            return false;
+        }
+    } else {
+        if (wp_idx == 0) {
+            sub_561800(&(stru_5C9228[dword_66D868].field_3C), &from);
+        } else {
+            start = stru_64E048[type].field_0[wp_idx - 1].field_18 + stru_64E048[type].field_0[wp_idx - 1].field_1C;
+            from = stru_64E048[type].field_0[wp_idx - 1].loc;
+        }
+
+        path_info.from = sector_id_from_loc(from);
+
+        sub_561800(coords, &to);
+        wp->loc = to;
+        path_info.to = sector_id_from_loc(to);
+        path_info.max_rotations = 5000 - start;
+        path_info.rotations = &(byte_64E828[start]);
+
+        steps = sub_4207D0(&path_info);
+        if (steps == 0) {
+            // "Your path is blocked.  You must locate either a bridge, pass or means of transporation in order to travel to this destination."
+            mes_file_entry.num = 601;
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
+            return false;
+        }
+    }
+
+    dword_5C9AD8 = stru_64E048[type].field_3C0;
+
+    wp->field_1C = steps;
+    wp->field_18 = start;
+    wp->field_0 = 0;
+    wp->coords = *coords;
+    wp->loc = to;
+    wp->field_4 = -1;
+
+    sub_5648E0(stru_64E048[type].field_3C0, stru_64E048[type].field_3C4, false);
+    stru_64E048[type].field_3C0++;
+
+    sub_5649C0();
+
+    stru_5C9228[dword_66D868].refresh();
+
+    return true;
 }
 
 // 0x564780
