@@ -859,12 +859,12 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
     switch (tig_art_type(aid)) {
     case TIG_ART_TYPE_TILE:
         if (!a_name_tile_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_WALL:
         if (!sub_4ECEB0(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_CRITTER: {
@@ -881,7 +881,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
 
         armor = tig_art_critter_id_armor_get(aid);
         if (armor >= TIG_ART_ARMOR_TYPE_COUNT) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
 
         race = tig_art_critter_id_race_get(aid);
@@ -923,48 +923,48 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
     }
     case TIG_ART_TYPE_PORTAL:
         if (!a_name_portal_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_SCENERY:
         mes_file_entry.num = 1000 * tig_art_scenery_id_type_get(aid) + tig_art_num_get(aid);
         if (!mes_search(name_scenery_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         sprintf(path, "art\\scenery\\%s", mes_file_entry.str);
         return TIG_OK;
     case TIG_ART_TYPE_INTERFACE:
         mes_file_entry.num = tig_art_num_get(aid);
         if (!mes_search(name_interface_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         sprintf(path, "art\\interface\\%s", mes_file_entry.str);
         return TIG_OK;
     case TIG_ART_TYPE_ITEM:
         if (!a_name_item_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_CONTAINER:
         mes_file_entry.num = 1000 * tig_art_container_id_type_get(aid) + tig_art_num_get(aid);
         if (!mes_search(name_container_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         sprintf(path, "art\\container\\%s", mes_file_entry.str);
         return TIG_OK;
     case TIG_ART_TYPE_LIGHT:
         if (!a_name_light_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_ROOF:
         if (!a_name_roof_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_FACADE:
         if (!a_name_facade_aid_to_fname(aid, path)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         return TIG_OK;
     case TIG_ART_TYPE_MONSTER: {
@@ -978,7 +978,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
 
         mes_file_entry.num = tig_art_monster_id_specie_get(aid);
         if (!mes_search(name_monster_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
 
         anim = tig_art_id_anim_get(aid);
@@ -1013,7 +1013,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
 
         mes_file_entry.num = tig_art_num_get(aid);
         if (!mes_search(name_unique_npc_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
 
         anim = tig_art_id_anim_get(aid);
@@ -1039,7 +1039,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
     case TIG_ART_TYPE_EYE_CANDY:
         mes_file_entry.num = tig_art_num_get(aid);
         if (!mes_search(name_eye_candy_mes_file, &mes_file_entry)) {
-            return TIG_ERR_16;
+            return TIG_ERR_GENERIC;
         }
         sprintf(path,
             "art\\eye_candy\\%s_%c.art",
@@ -1047,7 +1047,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             byte_5A11EC[tig_art_eye_candy_id_type_get(aid)]);
         return TIG_OK;
     default:
-        return TIG_ERR_16;
+        return TIG_ERR_GENERIC;
     }
 }
 

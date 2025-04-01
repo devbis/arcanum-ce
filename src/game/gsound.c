@@ -184,7 +184,7 @@ int gsound_resolve_path(int sound_id, char* path)
     }
 
     path[0] = '\0';
-    return TIG_ERR_16;
+    return TIG_ERR_GENERIC;
 }
 
 // 0x41AA30
