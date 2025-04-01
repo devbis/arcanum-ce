@@ -7321,7 +7321,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
     }
 
     if ((obj_field_int32_get(scenery_obj, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
-        sub_564AF0(scenery_obj);
+        wmap_ui_mark_townmap(scenery_obj);
     }
 }
 

@@ -3747,7 +3747,7 @@ void sub_564A70(int64_t pc_obj, int64_t loc)
 }
 
 // 0x564AF0
-void sub_564AF0(int64_t obj)
+void wmap_ui_mark_townmap(int64_t obj)
 {
     int64_t pc_loc;
     int pc_townmap;

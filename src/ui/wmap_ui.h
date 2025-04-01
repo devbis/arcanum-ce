@@ -18,7 +18,7 @@ void wmap_ui_close();
 int wmap_ui_is_created();
 void wmap_ui_scroll(int direction);
 void sub_564000(int a1);
-void sub_564AF0(int64_t a1);
+void wmap_ui_mark_townmap(int64_t obj);
 bool wmap_ui_bkg_process_callback(TimeEvent* timeevent);
 void sub_564F60(int64_t a1, int64_t a2);
 void sub_566CC0(int64_t* location_ptr);
