@@ -1017,7 +1017,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
         if (sub_558DE0(loc)) {
             if (wmap_ui_is_created()) {
                 wmap_ui_close();
-                sub_560720();
+                wmap_ui_encounter_start();
             } else if (sleep_ui_is_created()) {
                 sleep_ui_close();
             }

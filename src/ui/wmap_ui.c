@@ -462,7 +462,7 @@ static bool dword_66D9BC;
 static const char* wmap_ui_action;
 
 // 0x66D9C4
-static bool dword_66D9C4;
+static bool wmap_ui_encounter;
 
 // 0x66D9C8
 static bool dword_66D9C8;
@@ -890,7 +890,7 @@ void wmap_ui_reset()
         dword_66D8AC = 0;
         dword_65E968 = 0;
         stru_64E048[0].field_3C0 = 0;
-        dword_66D9C4 = 0;
+        wmap_ui_encounter = false;
     }
 }
 
@@ -1052,22 +1052,22 @@ bool sub_5606B0(TigRect* rect, TigFile* stream)
 }
 
 // 0x560720
-void sub_560720()
+void wmap_ui_encounter_start()
 {
-    dword_66D9C4 = 1;
+    wmap_ui_encounter = true;
     sub_57D370(13, 0, 4000);
 }
 
 // 0x560740
-int sub_560740()
+bool wmap_ui_is_encounter()
 {
-    return dword_66D9C4;
+    return wmap_ui_encounter;
 }
 
 // 0x560750
-void sub_560750()
+void wmap_ui_encounter_end()
 {
-    dword_66D9C4 = 0;
+    wmap_ui_encounter = false;
 }
 
 // 0x560760
@@ -1113,7 +1113,7 @@ void wmap_ui_open_internal()
         return;
     }
 
-    if (sub_560740()) {
+    if (wmap_ui_is_encounter()) {
         mes_file_entry.num = 602; // "You cannot access the World Map during an encounter."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
