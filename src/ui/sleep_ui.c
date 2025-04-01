@@ -119,7 +119,7 @@ void sleep_ui_reset()
 }
 
 // 0x57B180
-void sub_57B180(int64_t bed_obj)
+void sleep_ui_open(int64_t bed_obj)
 {
     int64_t pc_obj;
     int64_t loc;

@@ -7,7 +7,7 @@
 bool sleep_ui_init(GameInitInfo* init_info);
 void sleep_ui_exit();
 void sleep_ui_reset();
-void sub_57B180(int64_t obj);
+void sleep_ui_open(int64_t bed_obj);
 void sleep_ui_close();
 bool sleep_ui_is_created();
 bool sleep_ui_process_callback(TimeEvent* timeevent);

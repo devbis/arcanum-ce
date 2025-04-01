@@ -109,7 +109,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.set_map_button = intgame_set_map_button;
     callbacks.field_A8 = sub_57CE70;
     callbacks.field_AC = written_ui_newspaper_headline;
-    callbacks.field_B0 = sub_57B180;
+    callbacks.field_B0 = sleep_ui_open;
     callbacks.field_B4 = ui_charedit_error_msg;
     callbacks.field_B8 = sub_55A230;
     callbacks.progressbar_init = mainmenu_ui_progressbar_init;
