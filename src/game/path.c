@@ -38,10 +38,10 @@ static int path_limit = 10;
 static int path_time_limit = 250;
 
 // 0x5D5628
-static int dword_5D5628[4096];
+static int path_cost_tbl[4096];
 
 // 0x5D9628
-static int dword_5D9628[4096];
+static int path_backtrack_tbl[4096];
 
 // NOTE: Unusual size.
 //
@@ -303,8 +303,14 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
     int64_t from_y;
     int64_t to_x;
     int64_t to_y;
+    int64_t origin_x;
+    int64_t origin_y;
     int64_t dx;
     int64_t dy;
+    int start_index;
+    int target_index;
+    int current_index;
+    int best_estimated_cost;
 
     if (obj_field_int32_get(path_create_info->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if (dword_5DE5F8 == 0
@@ -340,56 +346,63 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
 
     flags = sub_41F570(path_create_info->flags);
 
-    int64_t v57;
     if (from_x > to_x) {
         dx = from_x - to_x;
-        v57 = to_x;
+        origin_x = to_x;
     } else {
         dx = to_x - from_x;
-        v57 = from_x;
+        origin_x = from_x;
     }
 
-    int64_t v58;
     if (from_y > to_y) {
         dy = from_y - to_y;
-        v58 = to_y;
+        origin_y = to_y;
     } else {
         dy = to_y - from_y;
-        v58 = from_y;
+        origin_y = from_y;
     }
 
+    // Check if the locations are too far apart.
     if (dx > 32 || dy > 32) {
         return 0;
     }
 
-    v57 -= (64 - dx) / 2;
-    v58 -= (64 - dy) / 2;
+    origin_x -= (64 - dx) / 2;
+    origin_y -= (64 - dy) / 2;
 
-    int v12 = (int)(from_x + (from_y - v58) * 64 - v57);
-    int v50 = (int)(to_x + (to_y - v58) * 64 - v57);
+    start_index = (int)(from_x + (from_y - origin_y) * 64 - origin_x);
+    target_index = (int)(to_x + (to_y - origin_y) * 64 - origin_x);
 
-    memset(dword_5D5628, 0, sizeof(dword_5D5628));
-    dword_5D5628[v12] = 1;
-    dword_5D9628[v12] = -1;
+    // Initialize the cost array to zero (unprocessed state).
+    memset(path_cost_tbl, 0, sizeof(path_cost_tbl));
+    path_cost_tbl[start_index] = 1;
+    path_backtrack_tbl[start_index] = -1;
 
-    int v14 = -1;
     while (true) {
-        v14 = -1;
+        current_index = -1;
+
+        // Grab open node with minimal cost.
         for (int i = 0; i < 4096; i++) {
-            if (dword_5D5628[i] > 0) {
-                int v17 = dword_5D5628[i] + path_dist(i, v50, 64);
-                if (v17 / 10 <= path_create_info->max_rotations) {
-                    if (v14 == -1 || v17 < to_x) {
-                        to_x = v17;
-                        v14 = i;
+            // Check if node is open, i.e. it has a positive cost (negative cost
+            // are closed nodes, zero cost are unprocessed nodes).
+            if (path_cost_tbl[i] > 0) {
+                int estimated_cost = path_cost_tbl[i] + path_dist(i, target_index, 64);
+                if (estimated_cost / 10 <= path_create_info->max_rotations) {
+                    // If no candidate node selected yet, or this candidate has
+                    // a lower cost, update current candidate.
+                    if (current_index == -1 || estimated_cost < best_estimated_cost) {
+                        best_estimated_cost = estimated_cost;
+                        current_index = i;
                     }
                 } else {
-                    dword_5D5628[i] = -32768;
+                    // Mark node as unreachable.
+                    path_cost_tbl[i] = -32768;
                 }
             }
         }
 
-        if (v14 == -1) {
+        // If no node has been found, path is not reachable.
+        if (current_index == -1) {
             if (timestamp != 0) {
                 dword_5DE600 += tig_timer_elapsed(timestamp);
             }
@@ -397,25 +410,28 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
             return 0;
         }
 
-        if (v14 == v50) {
+        // Check if we have reached the target.
+        if (current_index == target_index) {
             break;
         }
 
         for (int rot = 0; rot < 8; rot++) {
-            int64_t loc = location_make(v57 + v14 % 64, v58 + v14 / 64);
+            int64_t loc = location_make(origin_x + current_index % 64, origin_y + current_index / 64);
             int64_t adjacent_loc;
             if (!location_in_dir(loc, rot, &adjacent_loc)) {
                 continue;
             }
 
-            dx = LOCATION_GET_X(adjacent_loc) - v57;
-            dy = LOCATION_GET_Y(adjacent_loc) - v58;
+            dx = LOCATION_GET_X(adjacent_loc) - origin_x;
+            dy = LOCATION_GET_Y(adjacent_loc) - origin_y;
             if (dx < 0 || dx >= 64 || dy < 0 || dy >= 64) {
                 continue;
             }
 
-            int v49 = (int)dx + (int)dy * 64;
-            if (dword_5D5628[v49] == -32768) {
+            int neighbor_index = (int)dx + (int)dy * 64;
+
+            // Skip if the neighbor has already been marked as unreachable.
+            if (path_cost_tbl[neighbor_index] == -32768) {
                 continue;
             }
 
@@ -425,7 +441,7 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
                     || (path_create_info->flags & PATH_FLAG_0x0001) == 0) {
                     if ((path_create_info->flags & PATH_FLAG_0x0008) == 0
                         && tile_is_blocking(adjacent_loc, v1)) {
-                        dword_5D5628[v49] = -32768;
+                        path_cost_tbl[neighbor_index] = -32768;
                         continue;
                     }
 
@@ -437,14 +453,17 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
                             && block_obj != OBJ_HANDLE_NULL
                             && block_obj_type != OBJ_TYPE_WALL
                             && block_obj_type != OBJ_TYPE_PORTAL) {
-                            dword_5D5628[v49] = -32768;
+                            path_cost_tbl[neighbor_index] = -32768;
                         }
                         continue;
                     }
                 }
             }
 
+            // Base movement cost.
             int cost = 10;
+
+            // Evade spotted traps.
             int64_t trap_obj = get_trap_at_location(adjacent_loc);
             if (trap_obj != OBJ_HANDLE_NULL) {
                 if (trap_is_spotted(path_create_info->obj, trap_obj)) {
@@ -456,11 +475,13 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
                 cost += 50;
             }
 
+            // Evade fire.
             if ((path_create_info->flags & PATH_FLAG_0x0400) != 0
                 && get_fire_at_location(adjacent_loc) != OBJ_HANDLE_NULL) {
                 cost += 80;
             }
 
+            // Evade differently lit areas.
             if ((path_create_info->flags & PATH_FLAG_0x0200) != 0) {
                 uint8_t src_lum = sub_4D9240(loc, 0, 0);
                 uint8_t dst_lum = sub_4D9240(adjacent_loc, 0, 0);
@@ -475,34 +496,40 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
                 }
             }
 
-            cost += dword_5D5628[v14];
+            // Add accumulated cost to move the current node.
+            cost += path_cost_tbl[current_index];
 
-            if (dword_5D9628[v14] != -1
-                && sub_420110(dword_5D9628[v14], v14, 64) != rot) {
+            // Add additional cost in case direction change is needed.
+            if (path_backtrack_tbl[current_index] != -1
+                && sub_420110(path_backtrack_tbl[current_index], current_index, 64) != rot) {
                 cost++;
             }
 
-            if ((dword_5D5628[v49] > 0
-                    && dword_5D5628[v49] > cost)
-                || (dword_5D5628[v49] < 0
-                    && -dword_5D5628[v49] > cost)
-                || dword_5D5628[v49] == 0) {
-                dword_5D5628[v49] = cost;
-                dword_5D9628[v49] = v14;
+            // If this neighbor has not been reached or a lower cost is now
+            // available, update its cost and record the current node as its
+            // predecessor.
+            if ((path_cost_tbl[neighbor_index] > 0 && path_cost_tbl[neighbor_index] > cost)
+                || (path_cost_tbl[neighbor_index] < 0 && -path_cost_tbl[neighbor_index] > cost)
+                || path_cost_tbl[neighbor_index] == 0) {
+                path_cost_tbl[neighbor_index] = cost;
+                path_backtrack_tbl[neighbor_index] = current_index;
             }
         }
 
-        dword_5D5628[v14] = -dword_5D5628[v14];
+        // Mark the current node as processed by negating its cost.
+        path_cost_tbl[current_index] = -path_cost_tbl[current_index];
     }
 
-    int i = 0;
-    int v36 = dword_5D9628[v14];
-    while (v36 != -1) {
-        v36 = dword_5D9628[v36];
-        i++;
+    // Count the number of steps from the current location up to the origin.
+    int step = 0;
+    int prev_index = path_backtrack_tbl[current_index];
+    while (prev_index != -1) {
+        prev_index = path_backtrack_tbl[prev_index];
+        step++;
     }
 
-    if (i > path_create_info->max_rotations) {
+    // If the number of steps exceeds allowed maximum, there is no valid path.
+    if (step > path_create_info->max_rotations) {
         if (timestamp != 0) {
             dword_5DE600 += tig_timer_elapsed(timestamp);
         }
@@ -510,21 +537,22 @@ int sub_41F9F0(PathCreateInfo* path_create_info)
         return 0;
     }
 
-    int v38 = v50;
-    for (int j = i - 1; j >= 0; j--) {
-        path_create_info->rotations[j] = sub_420110(dword_5D9628[v38], v38, 64);
-        v38 = dword_5D9628[v38];
+    // Reconstruct the path backwards from dst to src.
+    for (int i = step - 1; i >= 0; i--) {
+        path_create_info->rotations[i] = sub_420110(path_backtrack_tbl[target_index], target_index, 64);
+        target_index = path_backtrack_tbl[target_index];
     }
 
     if ((path_create_info->flags & PATH_FLAG_0x0001) != 0) {
-        i--;
+        step--;
     }
 
     if (timestamp != 0) {
         dword_5DE600 += tig_timer_elapsed(timestamp);
     }
 
-    return i;
+    // Return the number of steps in the computed path.
+    return step;
 }
 
 // 0x4200C0
