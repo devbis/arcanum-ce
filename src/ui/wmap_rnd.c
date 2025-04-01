@@ -1013,7 +1013,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
 
     if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)
         && sub_4CB6A0(player_get_pc_obj()) == AREA_UNKNOWN) {
-        sub_566CC0(&loc);
+        wmap_ui_get_current_location(&loc);
         if (sub_558DE0(loc)) {
             if (wmap_ui_is_created()) {
                 wmap_ui_close();

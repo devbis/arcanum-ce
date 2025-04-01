@@ -4846,12 +4846,12 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
 }
 
 // 0x566CC0
-void sub_566CC0(int64_t* location_ptr)
+void wmap_ui_get_current_location(int64_t* loc_ptr)
 {
     if (wmap_ui_created && dword_66D8AC == 2) {
-        sub_561800(&stru_5C9228[dword_66D868].field_3C, location_ptr);
+        sub_561800(&stru_5C9228[dword_66D868].field_3C, loc_ptr);
     } else {
-        *location_ptr = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+        *loc_ptr = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
     }
 }
 

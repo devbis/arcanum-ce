@@ -21,6 +21,6 @@ void sub_564000(int a1);
 void wmap_ui_mark_townmap(int64_t obj);
 bool wmap_ui_bkg_process_callback(TimeEvent* timeevent);
 void wmap_ui_notify_sector_changed(int64_t pc_obj, int64_t sec);
-void sub_566CC0(int64_t* location_ptr);
+void wmap_ui_get_current_location(int64_t* loc_ptr);
 
 #endif /* ARCANUM_UI_WMAP_UI_H_ */
