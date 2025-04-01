@@ -797,7 +797,7 @@ void wmap_ui_town_notes_save()
         return;
     }
 
-    if (townmap_count() <= dword_66D878) {
+    if (dword_66D878 >= townmap_count()) {
         dword_66D878 = 0;
         return;
     }
@@ -1012,7 +1012,7 @@ bool wmap_ui_load(GameLoadInfo* load_info)
 
     loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
     sector_id = sector_id_from_loc(loc);
-    sub_564F60(player_get_pc_obj(), sector_id);
+    wmap_ui_notify_sector_changed(player_get_pc_obj(), sector_id);
 
     return true;
 }
@@ -3913,11 +3913,11 @@ int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime)
 }
 
 // 0x564F60
-void sub_564F60(int64_t a1, int64_t a2)
+void wmap_ui_notify_sector_changed(int64_t pc_obj, int64_t sec)
 {
-    dword_66D874 = townmap_get(a2);
-    if (dword_66D874) {
-        sub_564A70(a1, sector_loc_from_id(a2));
+    dword_66D874 = townmap_get(sec);
+    if (dword_66D874 != 0) {
+        sub_564A70(pc_obj, sector_loc_from_id(sec));
         wmap_ui_town_notes_load();
         ui_set_map_button(UI_PRIMARY_BUTTON_TOWNMAP);
     } else {
@@ -3974,7 +3974,7 @@ void wmap_ui_town_notes_load()
 // 0x5650C0
 void sub_5650C0()
 {
-    if (dword_66D878) {
+    if (dword_66D878 != 0) {
         wmap_ui_town_notes_save();
     }
     dword_66D878 = 0;

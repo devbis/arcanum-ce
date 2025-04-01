@@ -50,7 +50,7 @@ static void sub_57CDF0(int a1);
 static void sub_57CE00();
 static void sub_57CE10();
 static void sub_57CE30(int64_t obj, void* a2, int a3);
-static void sub_57CE70(int64_t a1, int64_t a2);
+static void sub_57CE70(int64_t sec, int64_t obj);
 static void ui_charedit_error_msg(int type, int a2);
 static void sub_57CF70(int64_t a1, int64_t a2);
 static void sub_57CFA0();
@@ -346,16 +346,16 @@ void sub_57CE30(int64_t obj, void* a2, int a3)
 }
 
 // 0x57CE70
-void sub_57CE70(int64_t a1, int64_t a2)
+void sub_57CE70(int64_t sec, int64_t obj)
 {
-    if (a2 != OBJ_HANDLE_NULL) {
+    if (obj != OBJ_HANDLE_NULL) {
         if (tig_net_is_active()) {
-            if (sub_4A2B10(a2) != -1) {
-                sub_564F60(a2, a1);
+            if (sub_4A2B10(obj) != -1) {
+                wmap_ui_notify_sector_changed(obj, sec);
             }
         } else {
-            if (player_is_pc_obj(a2)) {
-                sub_564F60(a2, a1);
+            if (player_is_pc_obj(obj)) {
+                wmap_ui_notify_sector_changed(obj, sec);
             }
         }
     }
