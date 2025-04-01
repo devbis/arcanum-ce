@@ -4923,7 +4923,7 @@ bool sub_551A80(int a1)
             break;
         case 5:
             intgame_force_fullscreen();
-            scroll_set_scroll_func(sub_563770);
+            scroll_set_scroll_func(wmap_ui_scroll);
             break;
         case 13:
             obj = sub_579760();

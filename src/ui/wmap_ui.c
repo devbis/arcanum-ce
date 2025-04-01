@@ -189,9 +189,9 @@ static void sub_563270();
 static void sub_5632A0(int direction, int a2, int a3, int a4);
 static void sub_563300(int direction, int a2, int a3, int a4);
 static void sub_563590(WmapCoords* a1, bool a2);
-static void sub_563610();
-static void sub_563750(int direction);
-static void sub_563790(int direction, int scale);
+static void wmap_ui_handle_scroll();
+static void wmap_ui_scroll_with_kb(int direction);
+static void wmap_ui_scroll_internal(int direction, int scale);
 static void sub_563AC0(int x, int y, WmapCoords* coords);
 static void sub_563B10(int x, int y, WmapCoords* coords);
 static void sub_563C00(int x, int y, WmapCoords* coords);
@@ -1728,7 +1728,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
     UiMessage ui_message;
     bool v3 = false;
 
-    sub_563610();
+    wmap_ui_handle_scroll();
 
     v1 = &(stru_5C9228[dword_66D868]);
 
@@ -2227,25 +2227,25 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case DIK_LEFT:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
-                sub_563750(6);
+                wmap_ui_scroll_with_kb(6);
             }
             return true;
         case DIK_UP:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
-                sub_563750(0);
+                wmap_ui_scroll_with_kb(0);
             }
             return true;
         case DIK_RIGHT:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
-                sub_563750(2);
+                wmap_ui_scroll_with_kb(2);
             }
             return true;
         case DIK_DOWN:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
-                sub_563750(4);
+                wmap_ui_scroll_with_kb(4);
             }
             return true;
         case DIK_DELETE:
@@ -2382,15 +2382,15 @@ void sub_562A20(int x, int y)
         dword_66D8A8 = true;
 
         if (y < stru_5C9A88.y) {
-            sub_563790(0, 8);
+            wmap_ui_scroll_internal(0, 8);
         } else if (y > stru_5C9A88.y + stru_5C9A88.height) {
-            sub_563790(4, 8);
+            wmap_ui_scroll_internal(4, 8);
         }
 
         if (x < stru_5C9A88.x) {
-            sub_563790(6, 8);
+            wmap_ui_scroll_internal(6, 8);
         } else if (x > stru_5C9A88.x + stru_5C9A88.width) {
-            sub_563790(2, 8);
+            wmap_ui_scroll_internal(2, 8);
         }
     }
 }
@@ -2399,15 +2399,15 @@ void sub_562A20(int x, int y)
 void sub_562AF0(int x, int y)
 {
     if (y < stru_5C9228[dword_66D868].field_14.y + 23) {
-        sub_563790(0, 10);
+        wmap_ui_scroll_internal(0, 10);
     } else if (y > stru_5C9228[dword_66D868].field_14.y + stru_5C9228[dword_66D868].field_14.height - 23) {
-        sub_563790(4, 10);
+        wmap_ui_scroll_internal(4, 10);
     }
 
     if (x < stru_5C9228[dword_66D868].field_14.x + 23) {
-        sub_563790(6, 10);
+        wmap_ui_scroll_internal(6, 10);
     } else if (x > stru_5C9228[dword_66D868].field_14.x + stru_5C9228[dword_66D868].field_14.width - 23) {
-        sub_563790(2, 10);
+        wmap_ui_scroll_internal(2, 10);
     }
 }
 
@@ -2862,7 +2862,7 @@ void sub_563590(WmapCoords* coords, bool a2)
 }
 
 // 0x563610
-void sub_563610()
+void wmap_ui_handle_scroll()
 {
     // NOTE: Very odd initial values.
     int horizontal_direction = -69;
@@ -2897,36 +2897,36 @@ void sub_563610()
             case 6:
                 switch (vertical_direction) {
                 case 0:
-                    sub_563750(7);
+                    wmap_ui_scroll_with_kb(7);
                     break;
                 case 4:
-                    sub_563750(5);
+                    wmap_ui_scroll_with_kb(5);
                     break;
                 default:
-                    sub_563750(6);
+                    wmap_ui_scroll_with_kb(6);
                     break;
                 }
                 break;
             case 2:
                 switch (vertical_direction) {
                 case 0:
-                    sub_563750(1);
+                    wmap_ui_scroll_with_kb(1);
                     break;
                 case 4:
-                    sub_563750(3);
+                    wmap_ui_scroll_with_kb(3);
                     break;
                 default:
-                    sub_563750(2);
+                    wmap_ui_scroll_with_kb(2);
                     break;
                 }
                 break;
             default:
                 switch (vertical_direction) {
                 case 0:
-                    sub_563750(0);
+                    wmap_ui_scroll_with_kb(0);
                     break;
                 case 4:
-                    sub_563750(4);
+                    wmap_ui_scroll_with_kb(4);
                     break;
                 }
                 break;
@@ -2936,21 +2936,21 @@ void sub_563610()
 }
 
 // 0x563750
-void sub_563750(int direction)
+void wmap_ui_scroll_with_kb(int direction)
 {
-    sub_563790(direction, 4);
+    wmap_ui_scroll_internal(direction, 4);
 }
 
 // 0x563770
-void sub_563770(int direction)
+void wmap_ui_scroll(int direction)
 {
     if (dword_66D8AC != 2) {
-        sub_563790(direction, 8);
+        wmap_ui_scroll_internal(direction, 8);
     }
 }
 
 // 0x563790
-void sub_563790(int direction, int scale)
+void wmap_ui_scroll_internal(int direction, int scale)
 {
     Wmap* v1;
     int sx;

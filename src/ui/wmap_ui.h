@@ -16,7 +16,7 @@ void wmap_ui_open();
 void wmap_ui_select(int64_t obj, int spell);
 void wmap_ui_close();
 int wmap_ui_is_created();
-void sub_563770(int direction);
+void wmap_ui_scroll(int direction);
 void sub_564000(int a1);
 void sub_564AF0(int64_t a1);
 bool wmap_ui_bkg_process_callback(TimeEvent* timeevent);
