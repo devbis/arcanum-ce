@@ -153,9 +153,9 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_158 = sub_582690;
     callbacks.field_15C = sub_5826C0;
     callbacks.show_inven_npc_identify = show_inven_npc_identify;
-    callbacks.field_164 = sub_55F360;
-    callbacks.field_168 = sub_55F450;
-    callbacks.field_16C = sub_55F5F0;
+    callbacks.mp_charedit_cache_traits = mp_charedit_cache_traits;
+    callbacks.mp_charedit_trait_inc = mp_charedit_trait_inc;
+    callbacks.mp_charedit_trait_dec = mp_charedit_trait_dec;
     ui_init(&callbacks);
 
     return true;

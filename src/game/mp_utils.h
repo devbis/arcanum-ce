@@ -1064,14 +1064,20 @@ typedef struct Packet126 {
 
 static_assert(sizeof(Packet126) == 0x58, "wrong size");
 
-typedef struct Packet127 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-} Packet127;
+typedef enum PacketChareditTraitChangeSubtype {
+    PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_CACHE,
+    PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC,
+    PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC,
+} PacketChareditTraitChangeSubtype;
 
-static_assert(sizeof(Packet127) == 0x10, "wrong size");
+typedef struct PacketChareditTraitChange {
+    /* 0000 */ int type;
+    /* 0004 */ int subtype;
+    /* 0008 */ int trait;
+    /* 000C */ int param;
+} PacketChareditTraitChange;
+
+static_assert(sizeof(PacketChareditTraitChange) == 0x10, "wrong size");
 
 typedef struct Packet128 {
     /* 0000 */ int type;

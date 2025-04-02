@@ -91,6 +91,14 @@ typedef enum ChareditError {
     CHAREDIT_ERR_COUNT,
 } ChareditError;
 
+typedef enum MpChareditTrait {
+    MP_CHAREDIT_TRAIT_STAT,
+    MP_CHAREDIT_TRAIT_BASIC_SKILL,
+    MP_CHAREDIT_TRAIT_TECH_SKILL,
+    MP_CHAREDIT_TRAIT_DEGREE,
+    MP_CHAREDIT_TRAIT_COLLEGE,
+} MpChareditTrait;
+
 typedef struct S5C8150 {
     const char* str;
     int x;
@@ -633,7 +641,7 @@ static const char* charedit_fatigue_str;
 static tig_font_handle_t dword_64C848;
 
 // 0x64C84C
-static int dword_64C84C[8][BASIC_SKILL_COUNT];
+static int charedit_player_basic_skills_tbl[8][BASIC_SKILL_COUNT];
 
 // 0x64C9CC
 static int dword_64C9CC;
@@ -642,7 +650,7 @@ static int dword_64C9CC;
 static tig_font_handle_t dword_64C9D0;
 
 // 0x64C9D4
-static int dword_64C9D4[8][TECH_SKILL_COUNT];
+static int charedit_player_tech_skills_tbl[8][TECH_SKILL_COUNT];
 
 // 0x64CA54
 static tig_button_handle_t dword_64CA54;
@@ -717,7 +725,7 @@ static tig_button_handle_t spell_plus_bid;
 static tig_button_handle_t dword_64CDD8;
 
 // 0x64CDDC
-static int dword_64CDDC[8][COLLEGE_COUNT];
+static int charedit_player_spell_college_levels_tbl[8][COLLEGE_COUNT];
 
 // 0x64CFDC
 static tig_button_handle_t dword_64CFDC;
@@ -780,7 +788,7 @@ static tig_font_handle_t dword_64D42C;
 static tig_button_handle_t spell_minus_bid;
 
 // 0x64D434
-static int dword_64D434[8][CHAREDIT_STAT_COUNT];
+static int charedit_player_stats_tbl[8][CHAREDIT_STAT_COUNT];
 
 // 0x64D714
 static char byte_64D714[2000];
@@ -798,7 +806,7 @@ static int dword_64DEEC[TECH_COUNT];
 static tig_font_handle_t dword_64DF0C;
 
 // 0x64DF10
-static int dword_64DF10[8][TECH_COUNT];
+static int charedit_player_tech_degrees_tbl[8][TECH_COUNT];
 
 // 0x64E010
 static int64_t charedit_obj;
@@ -896,7 +904,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     int index;
     int portrait;
     PcLens pc_lens;
-    Packet127 pkt;
+    PacketChareditTraitChange pkt;
 
     if (charedit_created) {
         charedit_close();
@@ -1126,7 +1134,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
             }
         } else {
             pkt.type = 127;
-            pkt.field_4 = 0;
+            pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_CACHE;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
     }
@@ -1406,12 +1414,12 @@ bool charedit_window_message_filter(TigMessage* msg)
                     if (tig_net_is_active()
                         && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
-                        Packet127 pkt;
+                        PacketChareditTraitChange pkt;
 
                         pkt.type = 127;
-                        pkt.field_4 = 1;
-                        pkt.field_8 = 0;
-                        pkt.field_C = param;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_STAT;
+                        pkt.param = param;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
@@ -1451,12 +1459,12 @@ bool charedit_window_message_filter(TigMessage* msg)
                     if (tig_net_is_active()
                         && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
-                        Packet127 pkt;
+                        PacketChareditTraitChange pkt;
 
                         pkt.type = 127;
-                        pkt.field_4 = 2;
-                        pkt.field_8 = 0;
-                        pkt.field_C = param;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_STAT;
+                        pkt.param = param;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
@@ -2979,12 +2987,12 @@ bool sub_55D3A0(TigMessage* msg)
                     if (tig_net_is_active()
                         && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
-                        Packet127 pkt;
+                        PacketChareditTraitChange pkt;
 
                         pkt.type = 127;
-                        pkt.field_4 = 1;
-                        pkt.field_8 = 1;
-                        pkt.field_C = charedit_skills_plus_buttons[index].art_num;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_BASIC_SKILL;
+                        pkt.param = charedit_skills_plus_buttons[index].art_num;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
@@ -3001,12 +3009,12 @@ bool sub_55D3A0(TigMessage* msg)
                     if (tig_net_is_active()
                         && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
-                        Packet127 pkt;
+                        PacketChareditTraitChange pkt;
 
                         pkt.type = 127;
-                        pkt.field_4 = 2;
-                        pkt.field_8 = 1;
-                        pkt.field_C = charedit_skills_minus_buttons[index].art_num;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_BASIC_SKILL;
+                        pkt.param = charedit_skills_minus_buttons[index].art_num;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
@@ -3041,7 +3049,7 @@ bool sub_55D3A0(TigMessage* msg)
 bool sub_55D6F0(TigMessage* msg)
 {
     int index;
-    Packet127 pkt;
+    PacketChareditTraitChange pkt;
 
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
@@ -3088,9 +3096,9 @@ bool sub_55D6F0(TigMessage* msg)
                         skill_ui_inc_skill(charedit_obj, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                     } else {
                         pkt.type = 127;
-                        pkt.field_4 = 1;
-                        pkt.field_8 = 2;
-                        pkt.field_C = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_TECH_SKILL;
+                        pkt.param = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                     }
 
@@ -3109,9 +3117,9 @@ bool sub_55D6F0(TigMessage* msg)
                         }
                     } else {
                         pkt.type = 127;
-                        pkt.field_4 = 2;
-                        pkt.field_8 = 2;
-                        pkt.field_C = charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12;
+                        pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC;
+                        pkt.trait = MP_CHAREDIT_TRAIT_TECH_SKILL;
+                        pkt.param = charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                     }
 
@@ -3132,7 +3140,7 @@ bool sub_55D6F0(TigMessage* msg)
 bool charedit_tech_win_message_filter(TigMessage* msg)
 {
     int index;
-    Packet127 pkt;
+    PacketChareditTraitChange pkt;
     int v1;
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
@@ -3229,9 +3237,9 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                     tech_ui_inc_degree(charedit_obj, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
-                    pkt.field_4 = 1;
-                    pkt.field_8 = 3;
-                    pkt.field_C = charedit_selected_tech;
+                    pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC;
+                    pkt.trait = MP_CHAREDIT_TRAIT_DEGREE;
+                    pkt.param = charedit_selected_tech;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
@@ -3245,9 +3253,9 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                     tech_ui_dec_degree(charedit_obj, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
-                    pkt.field_4 = 2;
-                    pkt.field_8 = 3;
-                    pkt.field_C = charedit_selected_tech;
+                    pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC;
+                    pkt.trait = MP_CHAREDIT_TRAIT_DEGREE;
+                    pkt.param = charedit_selected_tech;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
             }
@@ -3263,7 +3271,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
 bool sub_55DC60(TigMessage* msg)
 {
     int index;
-    Packet127 pkt;
+    PacketChareditTraitChange pkt;
     int v1;
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
@@ -3355,9 +3363,9 @@ bool sub_55DC60(TigMessage* msg)
                     spell_ui_add(charedit_obj, 5 * dword_64E024 + v1);
                 } else {
                     pkt.type = 127;
-                    pkt.field_4 = 1;
-                    pkt.field_8 = 4;
-                    pkt.field_C = dword_64E024;
+                    pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_INC;
+                    pkt.trait = MP_CHAREDIT_TRAIT_COLLEGE;
+                    pkt.param = dword_64E024;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
@@ -3377,9 +3385,9 @@ bool sub_55DC60(TigMessage* msg)
                     }
                 } else {
                     pkt.type = 127;
-                    pkt.field_4 = 2;
-                    pkt.field_8 = 4;
-                    pkt.field_C = dword_64E024;
+                    pkt.subtype = PACKET_CHAREDIT_TRAIT_CHANGE_SUBTYPE_DEC;
+                    pkt.trait = MP_CHAREDIT_TRAIT_COLLEGE;
+                    pkt.param = dword_64E024;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
@@ -3993,7 +4001,7 @@ void charedit_error_skill_at_min()
 }
 
 // 0x55F360
-void sub_55F360(int player)
+void mp_charedit_cache_traits(int player)
 {
     int64_t obj;
     int index;
@@ -4004,28 +4012,28 @@ void sub_55F360(int player)
     }
 
     for (index = 0; index < CHAREDIT_STAT_COUNT; index++) {
-        dword_64D434[player][index] = charedit_stat_value_get(obj, index);
+        charedit_player_stats_tbl[player][index] = charedit_stat_value_get(obj, index);
     }
 
     for (index = 0; index < TECH_COUNT; index++) {
-        dword_64DF10[player][index] = tech_degree_get(obj, index);
+        charedit_player_tech_degrees_tbl[player][index] = tech_degree_get(obj, index);
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
-        dword_64CDDC[player][index] = spell_college_level_get(obj, index);
+        charedit_player_spell_college_levels_tbl[player][index] = spell_college_level_get(obj, index);
     }
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-        dword_64C84C[player][index] = basic_skill_get_base(obj, index);
+        charedit_player_basic_skills_tbl[player][index] = basic_skill_get_base(obj, index);
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-        dword_64C9D4[player][index] = tech_skill_get_base(obj, index);
+        charedit_player_tech_skills_tbl[player][index] = tech_skill_get_base(obj, index);
     }
 }
 
 // 0x55F450
-void sub_55F450(int player, int type, int param)
+void mp_charedit_trait_inc(int player, int trait, int param)
 {
     int64_t obj;
     int value;
@@ -4037,8 +4045,8 @@ void sub_55F450(int player, int type, int param)
         return;
     }
 
-    switch (type) {
-    case 0:
+    switch (trait) {
+    case MP_CHAREDIT_TRAIT_STAT:
         value = charedit_stat_value_get(obj, param) + 1;
         if (param == CHAREDIT_STAT_HP_PTS_MAXIMUM || param == CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM) {
             cost = 1;
@@ -4072,21 +4080,21 @@ void sub_55F450(int player, int type, int param)
 
         stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
         break;
-    case 1:
-    case 2:
+    case MP_CHAREDIT_TRAIT_BASIC_SKILL:
+    case MP_CHAREDIT_TRAIT_TECH_SKILL:
         skill_ui_inc_skill(obj, param);
         break;
-    case 3:
+    case MP_CHAREDIT_TRAIT_DEGREE:
         tech_ui_inc_degree(obj, param);
         break;
-    case 4:
+    case MP_CHAREDIT_TRAIT_COLLEGE:
         spell_ui_add(obj, spell_college_level_get(obj, param) + 5 * param);
         break;
     }
 }
 
 // 0x55F5F0
-void sub_55F5F0(int player, int type, int param)
+void mp_charedit_trait_dec(int player, int trait, int param)
 {
     int64_t obj;
     int value;
@@ -4098,10 +4106,10 @@ void sub_55F5F0(int player, int type, int param)
         return;
     }
 
-    switch (type) {
-    case 0:
+    switch (trait) {
+    case MP_CHAREDIT_TRAIT_STAT:
         value = charedit_stat_value_get(obj, param);
-        if (value == dword_64D434[player][param]) {
+        if (value == charedit_player_stats_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;
@@ -4158,28 +4166,28 @@ void sub_55F5F0(int player, int type, int param)
         unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
         break;
-    case 1:
-        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C84C[player][param]) {
+    case MP_CHAREDIT_TRAIT_BASIC_SKILL:
+        if (basic_skill_get_base(obj, GET_BASIC_SKILL(param)) == charedit_player_basic_skills_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
         skill_ui_dec_skill(obj, param);
         break;
-    case 2:
-        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C9D4[player][param]) {
+    case MP_CHAREDIT_TRAIT_TECH_SKILL:
+        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == charedit_player_tech_skills_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
         skill_ui_dec_skill(obj, param);
         break;
-    case 3:
+    case MP_CHAREDIT_TRAIT_DEGREE:
         tech_ui_dec_degree(obj, param);
         break;
-    case 4:
+    case MP_CHAREDIT_TRAIT_COLLEGE:
         value = spell_college_level_get(obj, param);
-        if (value == dword_64CDDC[player][param]) {
+        if (value == charedit_player_spell_college_levels_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SPELL_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;

@@ -25,8 +25,8 @@ void charedit_error_skill_at_max();
 void charedit_error_not_enough_stat(int stat);
 void charedit_error_skill_is_zero();
 void charedit_error_skill_at_min();
-void sub_55F360(int player);
-void sub_55F450(int player, int type, int param);
-void sub_55F5F0(int a1, int a2, int a3);
+void mp_charedit_cache_traits(int player);
+void mp_charedit_trait_inc(int player, int type, int param);
+void mp_charedit_trait_dec(int player, int type, int param);
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */

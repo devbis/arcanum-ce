@@ -760,25 +760,25 @@ void ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj)
 }
 
 // 0x460E10
-void sub_460E10(int a1)
+void ui_mp_charedit_cache_traits(int player)
 {
-    if (ui_callbacks.field_164 != NULL) {
-        ui_callbacks.field_164(a1);
+    if (ui_callbacks.mp_charedit_cache_traits != NULL) {
+        ui_callbacks.mp_charedit_cache_traits(player);
     }
 }
 
 // 0x460E30
-void sub_460E30(int a1, int a2, int a3)
+void ui_mp_charedit_trait_inc(int player, int trait, int param)
 {
-    if (ui_callbacks.field_168 != NULL) {
-        ui_callbacks.field_168(a1, a2, a3);
+    if (ui_callbacks.mp_charedit_trait_inc != NULL) {
+        ui_callbacks.mp_charedit_trait_inc(player, trait, param);
     }
 }
 
 // 0x460E50
-void sub_460E50(int a1, int a2, int a3)
+void ui_mp_charedit_trait_dec(int player, int trait, int param)
 {
-    if (ui_callbacks.field_16C != NULL) {
-        ui_callbacks.field_16C(a1, a2, a3);
+    if (ui_callbacks.mp_charedit_trait_dec != NULL) {
+        ui_callbacks.mp_charedit_trait_dec(player, trait, param);
     }
 }

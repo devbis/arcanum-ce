@@ -136,9 +136,9 @@ typedef void(UI_CALLBACKS_FUNC_154)(int a1, int a2);
 typedef void(UI_CALLBACKS_FUNC_158)(const char* a1, const char* a2);
 typedef void(UI_CALLBACKS_FUNC_15C)();
 typedef void(UiShowInvenNpcIdentify)(int64_t pc_obj, int64_t target_obj);
-typedef void(UI_CALLBACKS_FUNC_164)(int a1);
-typedef void(UI_CALLBACKS_FUNC_168)(int a1, int a2, int a3);
-typedef void(UI_CALLBACKS_FUNC_16C)(int a1, int a2, int a3);
+typedef void(UiMpChareditCacheTraits)(int player);
+typedef void(UiMultiplayerChareditTraitInc)(int player, int trait, int param);
+typedef void(UiMultiplayerChareditTraitDec)(int player, int trait, int param);
 
 typedef struct UiCallbacks {
     /* 0000 */ UI_CALLBACKS_FUNC_0* field_0;
@@ -230,9 +230,9 @@ typedef struct UiCallbacks {
     /* 0158 */ UI_CALLBACKS_FUNC_158* field_158;
     /* 015C */ UI_CALLBACKS_FUNC_15C* field_15C;
     /* 0160 */ UiShowInvenNpcIdentify* show_inven_npc_identify;
-    /* 0164 */ UI_CALLBACKS_FUNC_164* field_164;
-    /* 0168 */ UI_CALLBACKS_FUNC_168* field_168;
-    /* 016C */ UI_CALLBACKS_FUNC_16C* field_16C;
+    /* 0164 */ UiMpChareditCacheTraits* mp_charedit_cache_traits;
+    /* 0168 */ UiMultiplayerChareditTraitInc* mp_charedit_trait_inc;
+    /* 016C */ UiMultiplayerChareditTraitDec* mp_charedit_trait_dec;
 } UiCallbacks;
 
 void ui_init(UiCallbacks* callbacks);
@@ -323,8 +323,8 @@ void sub_460D90(int a1, int a2);
 void sub_460DB0(const char* a1, const char* a2);
 void sub_460DD0();
 void ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
-void sub_460E10(int a1);
-void sub_460E30(int a1, int a2, int a3);
-void sub_460E50(int a1, int a2, int a3);
+void ui_mp_charedit_cache_traits(int player);
+void ui_mp_charedit_trait_inc(int player, int trait, int param);
+void ui_mp_charedit_trait_dec(int player, int trait, int param);
 
 #endif /* ARCANUM_GAME_UI_H_ */
