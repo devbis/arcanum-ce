@@ -363,10 +363,10 @@ void ui_follower_refresh()
 }
 
 // 0x460780
-void sub_460780()
+void ui_follower_update()
 {
-    if (ui_callbacks.field_9C != NULL) {
-        ui_callbacks.field_9C();
+    if (ui_callbacks.follower_update != NULL) {
+        ui_callbacks.follower_update();
     }
 }
 

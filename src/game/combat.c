@@ -1910,13 +1910,13 @@ void sub_4B4390(CombatContext* combat)
 
             if (obj_type == OBJ_TYPE_NPC
                 && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
-                sub_460780();
+                ui_follower_update();
             }
         } else if (obj_type == OBJ_TYPE_NPC) {
             ai_process(combat->target_obj);
 
             if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
-                sub_460780();
+                ui_follower_update();
             }
         }
 
@@ -2367,7 +2367,7 @@ void sub_4B58C0(CombatContext* combat)
 
     if (type == OBJ_TYPE_NPC) {
         if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
-            sub_460780();
+            ui_follower_update();
         }
     }
 
