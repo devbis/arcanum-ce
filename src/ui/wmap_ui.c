@@ -1231,7 +1231,7 @@ bool wmap_load_worldmap_info()
     Wmap* v2;
     int map_keyed_to;
 
-    name = sub_402FE0();
+    name = gamelib_current_module_name_get();
     if (*name == '\0') {
         return false;
     }

@@ -199,10 +199,10 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
 static int gamelib_renderlock_cnt = 1;
 
 // 0x59ADDC
-static char arcanum1[260] = "Arcanum";
+static char gamelib_current_module_name[TIG_MAX_PATH] = "Arcanum";
 
 // 0x59AEDC
-static char arcanum2[260] = "Arcanum";
+static char gamelib_default_module_name[TIG_MAX_PATH] = "Arcanum";
 
 // 0x5CFF08
 static char byte_5CFF08[TIG_MAX_PATH];
@@ -416,7 +416,7 @@ void gamelib_reset()
     tig_timer_now(&reset_started_at);
 
     in_reset = true;
-    strcpy(arcanum1, "Arcanum");
+    strcpy(gamelib_current_module_name, "Arcanum");
     sub_4D1050();
 
     if (tig_file_is_directory("Save\\Current")) {
@@ -561,13 +561,13 @@ void gamelib_resize(GameResizeInfo* resize_info)
 // 0x402780
 void gamelib_default_module_name_set(const char* name)
 {
-    strcpy(arcanum2, name);
+    strcpy(gamelib_default_module_name, name);
 }
 
 // 0x4027B0
 const char* gamelib_default_module_name_get()
 {
-    return arcanum2;
+    return gamelib_default_module_name;
 }
 
 // 0x4027C0
@@ -919,16 +919,16 @@ void sub_402FC0()
 }
 
 // 0x402FE0
-char* sub_402FE0()
+const char* gamelib_current_module_name_get()
 {
-    return arcanum1;
+    return gamelib_current_module_name;
 }
 
 // 0x402FF0
-void sub_402FF0(const char* name)
+void gamelib_current_mode_name_set(const char* name)
 {
     if (name != NULL && *name != '\0') {
-        strcpy(arcanum1, name);
+        strcpy(gamelib_current_module_name, name);
     }
 }
 
@@ -1441,7 +1441,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
 
     save_info->version = 25;
     strcpy(save_info->name, name);
-    strcpy(save_info->module_name, sub_402FE0());
+    strcpy(save_info->module_name, gamelib_current_module_name_get());
 
     save_info->thumbnail_video_buffer = NULL;
     vb_create_info.width = dword_5D10C0;

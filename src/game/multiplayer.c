@@ -749,7 +749,7 @@ bool sub_49CC70(const char* a1, const char* a2)
 
     if (a2 != NULL) {
         if (gamelib_load(a2)) {
-            sub_402FF0(a1);
+            gamelib_current_mode_name_set(a1);
         }
     } else {
         map = sub_40FF50(MAP_TYPE_START_MAP);

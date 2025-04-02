@@ -3653,7 +3653,7 @@ bool sub_5432B0(const char* name)
         sub_40DAB0();
 
         if (gamelib_load(name)) {
-            sub_402FF0(stru_64B898.module_name);
+            gamelib_current_mode_name_set(stru_64B898.module_name);
 
             mes_file_entry.num = 5000; // "Game Loaded Successfully."
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
