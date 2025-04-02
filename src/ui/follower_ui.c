@@ -23,7 +23,7 @@ static void sub_56AFD0(int a1);
 static void sub_56B0F0();
 static void sub_56B110(bool a1);
 static void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale);
-static void sub_56B620();
+static void follower_ui_toggle();
 static void sub_56B850();
 static void sub_56B880();
 static void sub_56B970(int a1);
@@ -110,7 +110,7 @@ static bool follower_ui_initialized;
 // compatibility.
 //
 // 0x67BC60
-static int dword_67BC60;
+static int follower_ui_visible;
 
 // 0x67BC64
 static bool dword_67BC64;
@@ -170,7 +170,7 @@ bool follower_ui_init(GameInitInfo* init_info)
     tig_font_create(&font_desc, &dword_67BB5C);
 
     follower_ui_initialized = true;
-    dword_67BC60 = true;
+    follower_ui_visible = true;
     dword_67BC0C = TIG_WINDOW_HANDLE_INVALID;
 
     return true;
@@ -252,7 +252,7 @@ void follower_ui_reset()
 {
     int index;
 
-    dword_67BC60 = true;
+    follower_ui_visible = true;
     dword_67BC58 = 0;
     dword_67BC10 = 0;
 
@@ -287,14 +287,14 @@ void follower_ui_resize(GameResizeInfo* resize_info)
     }
 
     follower_ui_refresh();
-    sub_56B620();
-    sub_56B620();
+    follower_ui_toggle();
+    follower_ui_toggle();
 }
 
 // 0x56A940
 bool follower_ui_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(&dword_67BC60, sizeof(dword_67BC60), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&follower_ui_visible, sizeof(follower_ui_visible), 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_67BC10, sizeof(dword_67BC10), 1, load_info->stream) != 1) return false;
 
     follower_ui_refresh();
@@ -305,7 +305,7 @@ bool follower_ui_load(GameLoadInfo* load_info)
 // 0x56A990
 bool follower_ui_save(TigFile* stream)
 {
-    if (tig_file_fwrite(&dword_67BC60, sizeof(dword_67BC60), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&follower_ui_visible, sizeof(follower_ui_visible), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_67BC10, sizeof(dword_67BC10), 1, stream) != 1) return false;
 
     return true;
@@ -427,7 +427,7 @@ bool sub_56A9D0(TigMessage* msg)
             return false;
         case TIG_BUTTON_STATE_RELEASED:
             if (msg->data.button.button_handle == dword_67BB38[6]) {
-                sub_56B620();
+                follower_ui_toggle();
                 return true;
             }
 
@@ -461,7 +461,7 @@ bool sub_56A9D0(TigMessage* msg)
         }
         return false;
     case TIG_MESSAGE_MOUSE:
-        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP && dword_67BC60) {
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP && follower_ui_visible) {
             tig_window_handle_t window_handle;
 
             for (index = 0; index < 6; index++) {
@@ -596,7 +596,7 @@ void sub_56B290()
     int hp;
     int fatigue;
 
-    if (!dword_67BC60) {
+    if (!follower_ui_visible) {
         return;
     }
 
@@ -656,7 +656,7 @@ void sub_56B290()
 // 0x56B4D0
 void sub_56B4D0(int64_t obj)
 {
-    if (dword_67BC60) {
+    if (follower_ui_visible) {
         if (critter_pc_leader_get(obj) == player_get_pc_obj()) {
             sub_56B290();
         }
@@ -706,13 +706,13 @@ void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int sr
 }
 
 // 0x56B620
-void sub_56B620()
+void follower_ui_toggle()
 {
     int index;
     tig_art_id_t art_id;
 
-    dword_67BC60 = !dword_67BC60;
-    if (dword_67BC60) {
+    follower_ui_visible = !follower_ui_visible;
+    if (follower_ui_visible) {
         for (index = 0; index < 6 && index < dword_67BC58; index++) {
             tig_window_show(dword_67BB60[index]);
         }
@@ -774,7 +774,7 @@ void follower_ui_refresh()
 
     object_list_destroy(&followers);
 
-    if (dword_67BC60) {
+    if (follower_ui_visible) {
         for (index = 0; index < 6; index++) {
             if (index >= dword_67BC58) {
                 break;
@@ -815,7 +815,7 @@ void sub_56B880()
 {
     tig_art_id_t art_id;
 
-    if (dword_67BC58 > 6 && dword_67BC60) {
+    if (dword_67BC58 > 6 && follower_ui_visible) {
         if (dword_67BC10 != 0) {
             tig_art_interface_id_create(506, 0, 0, 0, &art_id);
         } else {
