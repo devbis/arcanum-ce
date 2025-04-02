@@ -5940,39 +5940,39 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
             art_blit_info.src_rect = &src_rect;
             art_blit_info.dst_rect = &dst_rect;
             tig_window_blit_art(window_handle, &art_blit_info);
-        } else if (current_num != num + 628) {
-            if (current_num == num + 188) {
-                if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id)) {
-                    tig_button_set_art(button_handle, art_id);
-                    tig_button_hide(button_handle);
-                }
-
-                if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
-                    return;
-                }
-
-                if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
-                    return;
-                }
-
-                src_rect.x = info->x - 1;
-                src_rect.y = info->y - 1;
-                src_rect.width = art_frame_data.width;
-                src_rect.height = art_frame_data.height;
-
-                dst_rect.x = 0;
-                dst_rect.y = 0;
-                dst_rect.width = art_frame_data.width;
-                dst_rect.height = art_frame_data.height;
-
-                art_blit_info.flags = 0;
-                art_blit_info.art_id = art_id;
-                art_blit_info.src_rect = &dst_rect;
-                art_blit_info.dst_rect = &src_rect;
-                tig_window_blit_art(window_handle, &art_blit_info);
-            } else {
-                sub_57C370(num);
+        }
+    } else if (current_num != num + 628) {
+        if (current_num == num + 188) {
+            if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id)) {
+                tig_button_set_art(button_handle, art_id);
+                tig_button_hide(button_handle);
             }
+
+            if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
+                return;
+            }
+
+            if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+                return;
+            }
+
+            src_rect.x = info->x - 1;
+            src_rect.y = info->y - 1;
+            src_rect.width = art_frame_data.width;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = 0;
+            dst_rect.y = 0;
+            dst_rect.width = art_frame_data.width;
+            dst_rect.height = art_frame_data.height;
+
+            art_blit_info.flags = 0;
+            art_blit_info.art_id = art_id;
+            art_blit_info.src_rect = &dst_rect;
+            art_blit_info.dst_rect = &src_rect;
+            tig_window_blit_art(window_handle, &art_blit_info);
+        } else {
+            sub_57C370(num);
         }
     }
 }
