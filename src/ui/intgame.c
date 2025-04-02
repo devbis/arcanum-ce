@@ -2931,11 +2931,11 @@ void sub_54DE50(TigMessage* msg)
             switch (msg->data.mouse.event) {
             case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
                 if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
-                    sub_56B180(&v1);
+                    follower_ui_execute_order(&v1);
                 }
                 break;
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
-                sub_56B280();
+                follower_ui_end_order_mode();
                 break;
             case TIG_MESSAGE_MOUSE_IDLE:
                 sub_551910(msg);
