@@ -249,7 +249,7 @@ static int dword_5D0D78;
 static int dword_5D0D7C;
 
 // 0x5D0D80
-static int dword_5D0D80;
+static int gamelib_thumbnail_height;
 
 // 0x5D0E88
 static GameInitInfo stru_5D0E88;
@@ -276,7 +276,7 @@ static void(*gamelib_render_func)(UnknownContext* render_info);
 static GUID stru_5D10B0;
 
 // 0x5D10C0
-static int dword_5D10C0;
+static int gamelib_thumbnail_width;
 
 // 0x5D10C4
 static bool dword_5D10C4;
@@ -351,8 +351,8 @@ bool gamelib_init(GameInitInfo* init_info)
 
     dword_5D0D78 = window_data.rect.x;
     dword_5D0D7C = window_data.rect.y;
-    dword_5D10C0 = window_data.rect.width / 4;
-    dword_5D0D80 = window_data.rect.height / 4;
+    gamelib_thumbnail_width = window_data.rect.width / 4;
+    gamelib_thumbnail_height = window_data.rect.height / 4;
 
     gamelib_iso_content_rect.x = 0;
     gamelib_iso_content_rect.y = 0;
@@ -1444,8 +1444,8 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
     strcpy(save_info->module_name, gamelib_current_module_name_get());
 
     save_info->thumbnail_video_buffer = NULL;
-    vb_create_info.width = dword_5D10C0;
-    vb_create_info.height = dword_5D0D80;
+    vb_create_info.width = gamelib_thumbnail_width;
+    vb_create_info.height = gamelib_thumbnail_height;
     vb_create_info.flags = 0;
     vb_create_info.background_color = 0;
     if (tig_video_buffer_create(&vb_create_info, &(save_info->thumbnail_video_buffer)) != TIG_OK) {
@@ -1454,8 +1454,8 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
 
     dst_rect.x = 0;
     dst_rect.y = 0;
-    dst_rect.width = dword_5D10C0;
-    dst_rect.height = dword_5D0D80;
+    dst_rect.width = gamelib_thumbnail_width;
+    dst_rect.height = gamelib_thumbnail_height;
 
     win_blit_info.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
     win_blit_info.src_window_handle = stru_5D0E88.iso_window_handle;
@@ -1514,8 +1514,8 @@ bool gamelib_saveinfo_save(GameSaveInfo* save_info)
 
     rect.x = 0;
     rect.y = 0;
-    rect.width = dword_5D10C0;
-    rect.height = dword_5D0D80;
+    rect.width = gamelib_thumbnail_width;
+    rect.height = gamelib_thumbnail_height;
 
     to_bmp_info.flags = 0;
     to_bmp_info.video_buffer = save_info->thumbnail_video_buffer;
@@ -1604,10 +1604,10 @@ bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
 }
 
 // 0x4044A0
-void sub_4044A0(int a1, int a2)
+void gamelib_thumbnail_size_set(int width, int height)
 {
-    dword_5D10C0 = a1;
-    dword_5D0D80 = a2;
+    gamelib_thumbnail_width = width;
+    gamelib_thumbnail_height = height;
 }
 
 // 0x404570

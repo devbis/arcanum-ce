@@ -2275,7 +2275,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
     mainmenu_ui_start(0);
     dword_64C388 = false;
 
-    sub_4044A0(468, 300);
+    gamelib_thumbnail_size_set(468, 300);
     dword_64C418 = 0;
     serverlist_ui_init();
     stru_64C248.type = OID_TYPE_NULL;
