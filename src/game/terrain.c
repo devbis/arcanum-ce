@@ -616,11 +616,11 @@ int sub_4E8DF0(uint16_t a1)
 }
 
 // 0x4E8E00
-bool sub_4E8E00(int64_t a1)
+bool terrain_is_blocked(int64_t sec)
 {
     uint16_t v1;
 
-    v1 = sub_4E87F0(a1);
+    v1 = sub_4E87F0(sec);
     if (v1 == 0xFFFF) {
         return true;
     }
@@ -629,7 +629,7 @@ bool sub_4E8E00(int64_t a1)
         return true;
     }
 
-    if ((dword_603A20[sub_4E8DD0(v1)] & v1) != 0) {
+    if ((dword_603A20[sub_4E8DD0(v1)] & 1) != 0) {
         return true;
     }
 

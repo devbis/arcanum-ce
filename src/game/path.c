@@ -799,7 +799,7 @@ int sub_4207D0(WmapPathInfo* path_info)
         sector_in_dir(sec, rot, &adjacent_sec);
 
         if (sector_is_blocked(adjacent_sec)
-            || (!sector_exists(adjacent_sec) && sub_4E8E00(adjacent_sec))) {
+            || (!sector_exists(adjacent_sec) && terrain_is_blocked(adjacent_sec))) {
             next_path_info = *path_info;
             next_path_info.from = sec;
             next_path_info.max_rotations -= idx;
@@ -836,7 +836,7 @@ int sub_420900(WmapPathInfo* path_info)
         sector_in_dir(sec, rot, &adjacent_sec);
 
         if (!sector_is_blocked(adjacent_sec)
-            && (sector_exists(adjacent_sec) || !sub_4E8E00(adjacent_sec))) {
+            && (sector_exists(adjacent_sec) || !terrain_is_blocked(adjacent_sec))) {
             path_info->to = adjacent_sec;
             return sub_4209C0(path_info);
         }
@@ -951,7 +951,7 @@ int sub_4209C0(WmapPathInfo* path_info)
 
             // Skip blocked sectors or sectors that do not exist.
             if (sector_is_blocked(adjacent_sec)
-                || (!sector_exists(adjacent_sec) && sub_4E8E00(adjacent_sec))) {
+                || (!sector_exists(adjacent_sec) && terrain_is_blocked(adjacent_sec))) {
                 wmap_path_cost_tbl[neighbor_index] = -32768;
                 continue;
             }
