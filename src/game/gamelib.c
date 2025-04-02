@@ -1198,7 +1198,7 @@ bool gamelib_load(const char* name)
 }
 
 // 0x403790
-bool sub_403790(const char* name)
+bool gamelib_delete(const char* name)
 {
     char path[TIG_MAX_PATH];
 
@@ -1209,13 +1209,13 @@ bool sub_403790(const char* name)
     sprintf(path, "save\\%s.gsi", name);
     tig_file_remove(path);
 
-    sprintf(path + 13, ".bmp");
+    sprintf(&(path[13]), ".bmp");
     tig_file_remove(path);
 
-    sprintf(path + 13, ".tfaf");
+    sprintf(&(path[13]), ".tfaf");
     tig_file_remove(path);
 
-    sprintf(path + 13, ".tfai");
+    sprintf(&(path[13]), ".tfai");
     tig_file_remove(path);
 
     return true;

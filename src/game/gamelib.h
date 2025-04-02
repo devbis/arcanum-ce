@@ -72,7 +72,7 @@ const char* gamelib_current_module_name_get();
 void gamelib_current_mode_name_set(const char* name);
 bool gamelib_save(const char* name, const char* description);
 bool gamelib_load(const char* name);
-bool sub_403790(const char* name);
+bool gamelib_delete(const char* name);
 const char* sub_403850();
 bool gamelib_in_save();
 bool gamelib_in_load();

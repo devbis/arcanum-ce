@@ -88,7 +88,7 @@ static void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cn
 static char* sub_543040(int index);
 static void sub_543060();
 static void sub_5430D0();
-static bool sub_543160();
+static bool mainmenu_ui_load_game_handle_delete();
 static bool sub_5432B0(const char* name);
 static void mainmenu_ui_save_game_create();
 static void mainmenu_ui_save_game_destroy();
@@ -101,7 +101,7 @@ static void sub_544100(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_544210();
 static void sub_544250();
 static void sub_544290();
-static bool sub_544320();
+static bool mainmenu_ui_save_game_handle_delete();
 static void sub_544440();
 static void sub_5445F0();
 static void mainmenu_ui_credits_create();
@@ -3190,7 +3190,7 @@ bool mainmenu_ui_load_game_button_released(tig_button_handle_t button_handle)
 
     if (button_handle == window->buttons[2].button_handle) {
         gsound_play_sfx(0, 1);
-        sub_543160();
+        mainmenu_ui_load_game_handle_delete();
         return true;
     }
 
@@ -3577,7 +3577,7 @@ void sub_5430D0()
 }
 
 // 0x543160
-bool sub_543160()
+bool mainmenu_ui_load_game_handle_delete()
 {
     MainMenuWindowInfo* window;
 
@@ -3591,7 +3591,7 @@ bool sub_543160()
         return false;
     }
 
-    if (!sub_403790(stru_64BBF8.paths[window->selected_index])) {
+    if (!gamelib_delete(stru_64BBF8.paths[window->selected_index])) {
         return false;
     }
 
@@ -3897,7 +3897,7 @@ bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle)
 
     if (button_handle == window->buttons[2].button_handle) {
         gsound_play_sfx(0, 1);
-        sub_544320();
+        mainmenu_ui_save_game_handle_delete();
         return true;
     }
 
@@ -4222,7 +4222,7 @@ void sub_544290()
 }
 
 // 0x544320
-bool sub_544320()
+bool mainmenu_ui_save_game_handle_delete()
 {
     MainMenuWindowInfo* window;
 
@@ -4237,7 +4237,7 @@ bool sub_544320()
         return false;
     }
 
-    if (!sub_403790(stru_64BBF8.paths[window->selected_index - 1])) {
+    if (!gamelib_delete(stru_64BBF8.paths[window->selected_index - 1])) {
         return false;
     }
 
@@ -6134,7 +6134,7 @@ bool sub_546EE0(TigMessage* msg)
             case DIK_BACK:
             case DIK_DELETE:
                 gsound_play_sfx(0, 1);
-                sub_543160();
+                mainmenu_ui_load_game_handle_delete();
                 return true;
             case DIK_RETURN:
             case DIK_NUMPADENTER:
@@ -6160,7 +6160,7 @@ bool sub_546EE0(TigMessage* msg)
             case DIK_BACK:
             case DIK_DELETE:
                 gsound_play_sfx(0, 1);
-                sub_544320();
+                mainmenu_ui_save_game_handle_delete();
                 return true;
             case DIK_RETURN:
             case DIK_NUMPADENTER:

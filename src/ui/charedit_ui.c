@@ -1609,7 +1609,7 @@ bool charedit_window_message_filter(TigMessage* msg)
             gamelib_save("ExportSave", "Export-Save");
             sub_4A6470(player_get_pc_obj());
             gamelib_load("ExportSave");
-            sub_403790("ExportSave");
+            gamelib_delete("ExportSave");
             return true;
         }
         return false;
