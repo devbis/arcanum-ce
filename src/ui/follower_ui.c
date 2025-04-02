@@ -29,19 +29,28 @@ typedef enum FollowerUiCommand {
     FOLLOWER_UI_COMMAND_COUNT,
 } FollowerUiCommand;
 
-static void sub_56A6E0(int index);
-static bool sub_56A9D0(TigMessage* msg);
+#define FOLLOWER_UI_SLOTS 6
+
+typedef enum FollowerUiButton {
+    FOLLOWER_UI_BUTTON_TOGGLE = FOLLOWER_UI_SLOTS,
+    FOLLOWER_UI_BUTTON_SCROLL_UP,
+    FOLLOWER_UI_BUTTON_SCROLL_DOWN,
+    FOLLOWER_UI_BUTTON_COUNT,
+} FollowerUiButton;
+
+static void follower_ui_create(int index);
+static bool follower_ui_message_filter(TigMessage* msg);
 static void follower_ui_drop_down_menu_create(int index);
 static void follower_ui_drop_down_menu_destroy();
 static void follower_ui_begin_order_mode(int cmd);
-static void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale);
+static void follower_ui_draw(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale);
 static void follower_ui_toggle();
-static void sub_56B850();
-static void sub_56B880();
+static void update_toggle_button_visibility();
+static void update_scroll_buttons_visibility();
 static void follower_ui_drop_down_menu_refresh(int highlighted_cmd);
 
 // 0x5CA360
-static TigRect stru_5CA360[9] = {
+static TigRect follower_ui_button_rects[FOLLOWER_UI_BUTTON_COUNT] = {
     { 11, 50, 40, 49 },
     { 11, 112, 40, 49 },
     { 11, 174, 40, 49 },
@@ -54,14 +63,14 @@ static TigRect stru_5CA360[9] = {
 };
 
 // 0x5CA3F0
-static TigRect stru_5CA3F0[3] = {
+static TigRect follower_ui_special_button_rects_normal_mode[FOLLOWER_UI_BUTTON_COUNT - FOLLOWER_UI_SLOTS] = {
     { 0, 428, 67, 13 },
     { 0, 415, 33, 13 },
     { 33, 415, 34, 13 },
 };
 
 // 0x5CA420
-static TigRect stru_5CA420[3] = {
+static TigRect follower_ui_special_button_rects_compact_mode[FOLLOWER_UI_BUTTON_COUNT - FOLLOWER_UI_SLOTS] = {
     { 0, 587, 67, 13 },
     { 0, 574, 33, 13 },
     { 33, 574, 34, 13 },
@@ -71,28 +80,25 @@ static TigRect stru_5CA420[3] = {
 static TigRect follower_ui_drop_down_menu_entry_rect = { 10, 3, 118, 15 };
 
 // 0x67BB38
-static tig_button_handle_t dword_67BB38[9];
+static tig_button_handle_t follower_ui_buttons[FOLLOWER_UI_BUTTON_COUNT];
 
 // 0x67BB5C
 static tig_font_handle_t follower_ui_drop_down_menu_item_highlighted_color;
 
 // 0x67BB60
-static tig_window_handle_t dword_67BB60[9];
-
-// 0x67BB84
-static int dword_67BB84;
+static tig_window_handle_t follower_ui_windows[FOLLOWER_UI_BUTTON_COUNT];
 
 // 0x67BB88
 static TigRect follower_ui_drop_down_menu_rects[8];
 
 // 0x67BC08
-static FollowerInfo* dword_67BC08;
+static FollowerInfo* follower_ui_followers;
 
 // 0x67BC10
-static int dword_67BC10;
+static int follower_ui_top_index;
 
 // 0x67BC14
-static int dword_67BC14;
+static int follower_ui_followers_capacity;
 
 // 0x67BC18
 static tig_font_handle_t follower_ui_drop_down_menu_item_disabled_color;
@@ -104,7 +110,7 @@ static int64_t follower_ui_commander_obj;
 static tig_font_handle_t follower_ui_drop_down_menu_item_normal_color;
 
 // 0x67BC2C
-static int follower_ui_mes_file;
+static mes_file_handle_t follower_ui_mes_file;
 
 // 0x67BC30
 static tig_button_handle_t follower_ui_drop_menu_item_buttons[FOLLOWER_UI_COMMAND_COUNT];
@@ -113,7 +119,7 @@ static tig_button_handle_t follower_ui_drop_menu_item_buttons[FOLLOWER_UI_COMMAN
 static int64_t follower_ui_subordinate_obj;
 
 // 0x67BC58
-static int dword_67BC58;
+static int follower_ui_followers_count;
 
 // 0x67BC5C
 static bool follower_ui_initialized;
@@ -125,7 +131,7 @@ static bool follower_ui_initialized;
 static int follower_ui_visible;
 
 // 0x67BC64
-static bool dword_67BC64;
+static bool in_update;
 
 // 0x67BC0C
 static tig_window_handle_t follower_ui_drop_down_menu_window;
@@ -144,24 +150,24 @@ bool follower_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    for (index = 0; index < 9; index++) {
-        sub_56A6E0(index);
+    for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        follower_ui_create(index);
     }
 
     tig_art_interface_id_create(826, 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
 
-    for (index = 0; index < 6; index++) {
-        follower_ui_drop_down_menu_rects[index].x = stru_5CA360[index].x + stru_5CA360[index].width;
-        follower_ui_drop_down_menu_rects[index].y = stru_5CA360[index].y;
+    for (index = 0; index < FOLLOWER_UI_SLOTS; index++) {
+        follower_ui_drop_down_menu_rects[index].x = follower_ui_button_rects[index].x + follower_ui_button_rects[index].width;
+        follower_ui_drop_down_menu_rects[index].y = follower_ui_button_rects[index].y;
         follower_ui_drop_down_menu_rects[index].width = art_frame_data.width;
         follower_ui_drop_down_menu_rects[index].height = art_frame_data.height;
     }
 
-    dword_67BC14 = 10;
-    dword_67BC58 = 0;
-    dword_67BC10 = 0;
-    dword_67BC08 = (FollowerInfo*)MALLOC(sizeof(*dword_67BC08) * dword_67BC14);
+    follower_ui_followers_capacity = 10;
+    follower_ui_followers_count = 0;
+    follower_ui_top_index = 0;
+    follower_ui_followers = (FollowerInfo*)MALLOC(sizeof(*follower_ui_followers) * follower_ui_followers_capacity);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
@@ -189,21 +195,21 @@ bool follower_ui_init(GameInitInfo* init_info)
 }
 
 // 0x56A6E0
-void sub_56A6E0(int index)
+void follower_ui_create(int index)
 {
     TigWindowData window_data;
     TigButtonData button_data;
 
     window_data.flags = TIG_WINDOW_HIDDEN;
-    if (index == 6) {
-        window_data.message_filter = sub_56A9D0;
+    if (index == FOLLOWER_UI_BUTTON_TOGGLE) {
+        window_data.message_filter = follower_ui_message_filter;
         window_data.flags |= TIG_WINDOW_MESSAGE_FILTER;
     } else {
         window_data.message_filter = NULL;
     }
 
-    window_data.rect = stru_5CA360[index];
-    tig_window_create(&window_data, &(dword_67BB60[index]));
+    window_data.rect = follower_ui_button_rects[index];
+    tig_window_create(&window_data, &(follower_ui_windows[index]));
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.mouse_down_snd_id = -1;
@@ -214,24 +220,24 @@ void sub_56A6E0(int index)
     button_data.y = 0;
 
     switch (index) {
-    case 6:
+    case FOLLOWER_UI_BUTTON_TOGGLE:
         tig_art_interface_id_create(501, 0, 0, 0, &(button_data.art_id));
         break;
-    case 7:
+    case FOLLOWER_UI_BUTTON_SCROLL_UP:
         tig_art_interface_id_create(506, 0, 0, 0, &(button_data.art_id));
         break;
-    case 8:
+    case FOLLOWER_UI_BUTTON_SCROLL_DOWN:
         tig_art_interface_id_create(508, 0, 0, 0, &(button_data.art_id));
         break;
     default:
         button_data.art_id = TIG_ART_ID_INVALID;
-        button_data.width = stru_5CA360[index].width;
-        button_data.height = stru_5CA360[index].height;
+        button_data.width = follower_ui_button_rects[index].width;
+        button_data.height = follower_ui_button_rects[index].height;
         break;
     }
 
-    button_data.window_handle = dword_67BB60[index];
-    tig_button_create(&button_data, &(dword_67BB38[index]));
+    button_data.window_handle = follower_ui_windows[index];
+    tig_button_create(&button_data, &(follower_ui_buttons[index]));
 }
 
 // 0x56A820
@@ -241,11 +247,11 @@ void follower_ui_exit()
 
     mes_unload(follower_ui_mes_file);
 
-    for (index = 0; index < 9; index++) {
-        tig_window_destroy(dword_67BB60[index]);
+    for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        tig_window_destroy(follower_ui_windows[index]);
     }
 
-    FREE(dword_67BC08);
+    FREE(follower_ui_followers);
 
     if (follower_ui_drop_down_menu_window != TIG_WINDOW_HANDLE_INVALID) {
         follower_ui_drop_down_menu_destroy();
@@ -265,11 +271,11 @@ void follower_ui_reset()
     int index;
 
     follower_ui_visible = true;
-    dword_67BC58 = 0;
-    dword_67BC10 = 0;
+    follower_ui_followers_count = 0;
+    follower_ui_top_index = 0;
 
-    for (index = 0; index < 9; index++) {
-        tig_window_hide(dword_67BB60[index]);
+    for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        tig_window_hide(follower_ui_windows[index]);
     }
 
     if (follower_ui_drop_down_menu_window != TIG_WINDOW_HANDLE_INVALID) {
@@ -285,17 +291,19 @@ void follower_ui_resize(GameResizeInfo* resize_info)
 
     (void)resize_info;
 
-    rects = intgame_is_compact_interface() ? stru_5CA420 : stru_5CA3F0;
-    for (index = 6; index < 9; index++) {
-        stru_5CA360[index] = rects[index - 6];
+    rects = intgame_is_compact_interface()
+        ? follower_ui_special_button_rects_compact_mode
+        : follower_ui_special_button_rects_normal_mode;
+    for (index = FOLLOWER_UI_SLOTS; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        follower_ui_button_rects[index] = rects[index - FOLLOWER_UI_SLOTS];
     }
 
-    for (index = 6; index < 9; index++) {
-        tig_window_destroy(dword_67BB60[index]);
+    for (index = FOLLOWER_UI_SLOTS; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        tig_window_destroy(follower_ui_windows[index]);
     }
 
-    for (index = 6; index < 9; index++) {
-        sub_56A6E0(index);
+    for (index = FOLLOWER_UI_SLOTS; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        follower_ui_create(index);
     }
 
     follower_ui_refresh();
@@ -307,7 +315,7 @@ void follower_ui_resize(GameResizeInfo* resize_info)
 bool follower_ui_load(GameLoadInfo* load_info)
 {
     if (tig_file_fread(&follower_ui_visible, sizeof(follower_ui_visible), 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_67BC10, sizeof(dword_67BC10), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&follower_ui_top_index, sizeof(follower_ui_top_index), 1, load_info->stream) != 1) return false;
 
     follower_ui_refresh();
 
@@ -318,13 +326,13 @@ bool follower_ui_load(GameLoadInfo* load_info)
 bool follower_ui_save(TigFile* stream)
 {
     if (tig_file_fwrite(&follower_ui_visible, sizeof(follower_ui_visible), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_67BC10, sizeof(dword_67BC10), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&follower_ui_top_index, sizeof(follower_ui_top_index), 1, stream) != 1) return false;
 
     return true;
 }
 
 // 0x56A9D0
-bool sub_56A9D0(TigMessage* msg)
+bool follower_ui_message_filter(TigMessage* msg)
 {
     int64_t pc_obj;
     int index;
@@ -412,11 +420,11 @@ bool sub_56A9D0(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            for (index = 0; index < 6; index++) {
-                if (msg->data.button.button_handle == dword_67BB38[index]) {
+            for (index = 0; index < FOLLOWER_UI_SLOTS; index++) {
+                if (msg->data.button.button_handle == follower_ui_buttons[index]) {
                     follower_ui_commander_obj = player_get_pc_obj();
-                    sub_444130(&dword_67BC08[dword_67BC10 + index]);
-                    follower_ui_subordinate_obj = dword_67BC08[dword_67BC10 + index].obj;
+                    sub_444130(&follower_ui_followers[follower_ui_top_index + index]);
+                    follower_ui_subordinate_obj = follower_ui_followers[follower_ui_top_index + index].obj;
                     if (follower_ui_subordinate_obj != OBJ_HANDLE_NULL) {
                         sub_57CD60(follower_ui_commander_obj, follower_ui_subordinate_obj, str);
                         sub_553BE0(follower_ui_commander_obj, follower_ui_subordinate_obj, str);
@@ -427,8 +435,8 @@ bool sub_56A9D0(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
-            for (index = 0; index < 9; index++) {
-                if (msg->data.button.button_handle == dword_67BB38[index]) {
+            for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+                if (msg->data.button.button_handle == follower_ui_buttons[index]) {
                     sub_550720();
                     sub_43C270(OBJ_HANDLE_NULL);
                     return true;
@@ -436,33 +444,33 @@ bool sub_56A9D0(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_RELEASED:
-            if (msg->data.button.button_handle == dword_67BB38[6]) {
+            if (msg->data.button.button_handle == follower_ui_buttons[FOLLOWER_UI_BUTTON_TOGGLE]) {
                 follower_ui_toggle();
                 return true;
             }
 
-            if (msg->data.button.button_handle == dword_67BB38[7]) {
-                if (dword_67BC10 > 0) {
-                    dword_67BC10--;
-                    sub_56B880();
-                    sub_56B290();
+            if (msg->data.button.button_handle == follower_ui_buttons[FOLLOWER_UI_BUTTON_SCROLL_UP]) {
+                if (follower_ui_top_index > 0) {
+                    follower_ui_top_index--;
+                    update_scroll_buttons_visibility();
+                    follower_ui_update();
                 }
                 return true;
             }
 
-            if (msg->data.button.button_handle == dword_67BB38[8]) {
-                if (dword_67BC10 < dword_67BC58 - 6) {
-                    dword_67BC10++;
-                    sub_56B880();
-                    sub_56B290();
+            if (msg->data.button.button_handle == follower_ui_buttons[FOLLOWER_UI_BUTTON_SCROLL_DOWN]) {
+                if (follower_ui_top_index < follower_ui_followers_count - FOLLOWER_UI_SLOTS) {
+                    follower_ui_top_index++;
+                    update_scroll_buttons_visibility();
+                    follower_ui_update();
                 }
                 return true;
             }
 
-            for (index = 0; index < 9; index++) {
-                if (msg->data.button.button_handle == dword_67BB38[index]) {
-                    sub_444130(&dword_67BC08[dword_67BC10 + index]);
-                    sub_4F2810(&v1, dword_67BC08[dword_67BC10 + index].obj);
+            for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+                if (msg->data.button.button_handle == follower_ui_buttons[index]) {
+                    sub_444130(&follower_ui_followers[follower_ui_top_index + index]);
+                    sub_4F2810(&v1, follower_ui_followers[follower_ui_top_index + index].obj);
                     sub_54EA80(&v1);
                     return true;
                 }
@@ -474,17 +482,17 @@ bool sub_56A9D0(TigMessage* msg)
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP && follower_ui_visible) {
             tig_window_handle_t window_handle;
 
-            for (index = 0; index < 6; index++) {
-                if (dword_67BC10 + index >= dword_67BC58) {
+            for (index = 0; index < FOLLOWER_UI_SLOTS; index++) {
+                if (follower_ui_top_index + index >= follower_ui_followers_count) {
                     break;
                 }
 
-                if (msg->data.mouse.x >= stru_5CA360[index].x
-                    && msg->data.mouse.y >= stru_5CA360[index].y
-                    && msg->data.mouse.x < stru_5CA360[index].x + stru_5CA360[index].width
-                    && msg->data.mouse.y < stru_5CA360[index].y + stru_5CA360[index].height) {
+                if (msg->data.mouse.x >= follower_ui_button_rects[index].x
+                    && msg->data.mouse.y >= follower_ui_button_rects[index].y
+                    && msg->data.mouse.x < follower_ui_button_rects[index].x + follower_ui_button_rects[index].width
+                    && msg->data.mouse.y < follower_ui_button_rects[index].y + follower_ui_button_rects[index].height) {
                     if (tig_window_get_at_position(msg->data.mouse.x, msg->data.mouse.y, &window_handle) == TIG_OK
-                        && window_handle == dword_67BB60[index]) {
+                        && window_handle == follower_ui_windows[index]) {
                         follower_ui_drop_down_menu_create(index);
                     }
                     break;
@@ -506,8 +514,8 @@ void follower_ui_drop_down_menu_create(int index)
 
     follower_ui_commander_obj = player_get_pc_obj();
 
-    sub_444130(&(dword_67BC08[dword_67BC10 + index]));
-    follower_ui_subordinate_obj = dword_67BC08[dword_67BC10 + index].obj;
+    sub_444130(&(follower_ui_followers[follower_ui_top_index + index]));
+    follower_ui_subordinate_obj = follower_ui_followers[follower_ui_top_index + index].obj;
 
     window_data.flags = 0;
     window_data.rect = follower_ui_drop_down_menu_rects[index];
@@ -599,7 +607,7 @@ void follower_ui_end_order_mode()
 }
 
 // 0x56B290
-void sub_56B290()
+void follower_ui_update()
 {
     int64_t pc_obj;
     int64_t follower_obj;
@@ -607,14 +615,14 @@ void sub_56B290()
     TigRect rect;
     int index;
     int portrait;
-    int hp;
-    int fatigue;
+    int hp_percent;
+    int fatigue_percent;
 
     if (!follower_ui_visible) {
         return;
     }
 
-    dword_67BC64 = true;
+    in_update = true;
 
     pc_obj = player_get_pc_obj();
     color = tig_color_make(255, 0, 0);
@@ -624,61 +632,61 @@ void sub_56B290()
     rect.width = 32;
     rect.height = 32;
 
-    for (index = 0; index < 6; index++) {
-        if (dword_67BC10 + index >= dword_67BC58) {
+    for (index = 0; index < FOLLOWER_UI_SLOTS; index++) {
+        if (follower_ui_top_index + index >= follower_ui_followers_count) {
             break;
         }
 
-        sub_444130(&(dword_67BC08[dword_67BC10 + index]));
+        sub_444130(&(follower_ui_followers[follower_ui_top_index + index]));
 
-        follower_obj = dword_67BC08[dword_67BC10 + index].obj;
+        follower_obj = follower_ui_followers[follower_ui_top_index + index].obj;
         if (follower_obj == OBJ_HANDLE_NULL) {
             follower_ui_refresh();
             break;
         }
 
-        sub_56B510(dword_67BB60[index], 503, 0, 0, 100, 100);
+        follower_ui_draw(follower_ui_windows[index], 503, 0, 0, 100, 100);
 
         if (sub_553D10(pc_obj, follower_obj, &portrait)) {
             portrait_draw_32x32(follower_obj,
                 portrait,
-                dword_67BB60[index],
+                follower_ui_windows[index],
                 4,
                 4);
         } else {
-            sub_56B510(dword_67BB60[index], portrait, 4, 4, 100, 50);
+            follower_ui_draw(follower_ui_windows[index], portrait, 4, 4, 100, 50);
         }
 
-        hp = 100 * object_hp_current(follower_obj) / object_hp_max(follower_obj);
+        hp_percent = 100 * object_hp_current(follower_obj) / object_hp_max(follower_obj);
         if (stat_level_get(follower_obj, STAT_POISON_LEVEL) > 20) {
-            sub_56B510(dword_67BB60[index], 616, 3, 39, hp, 100);
+            follower_ui_draw(follower_ui_windows[index], 616, 3, 39, hp_percent, 100);
         } else {
-            sub_56B510(dword_67BB60[index], 505, 3, 39, hp, 100);
+            follower_ui_draw(follower_ui_windows[index], 505, 3, 39, hp_percent, 100);
         }
 
-        if (hp < 20) {
-            tig_window_tint(dword_67BB60[index], &rect, color, 0);
+        if (hp_percent < 20) {
+            tig_window_tint(follower_ui_windows[index], &rect, color, 0);
         }
 
-        fatigue = 100 * critter_fatigue_current(follower_obj) / critter_fatigue_max(follower_obj);
-        sub_56B510(dword_67BB60[index], 504, 3, 44, fatigue, 100);
+        fatigue_percent = 100 * critter_fatigue_current(follower_obj) / critter_fatigue_max(follower_obj);
+        follower_ui_draw(follower_ui_windows[index], 504, 3, 44, fatigue_percent, 100);
     }
 
-    dword_67BC64 = false;
+    in_update = false;
 }
 
 // 0x56B4D0
-void sub_56B4D0(int64_t obj)
+void follower_ui_update_obj(int64_t obj)
 {
     if (follower_ui_visible) {
         if (critter_pc_leader_get(obj) == player_get_pc_obj()) {
-            sub_56B290();
+            follower_ui_update();
         }
     }
 }
 
 // 0x56B510
-void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale)
+void follower_ui_draw(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -727,24 +735,24 @@ void follower_ui_toggle()
 
     follower_ui_visible = !follower_ui_visible;
     if (follower_ui_visible) {
-        for (index = 0; index < 6 && index < dword_67BC58; index++) {
-            tig_window_show(dword_67BB60[index]);
+        for (index = 0; index < FOLLOWER_UI_SLOTS && index < follower_ui_followers_count; index++) {
+            tig_window_show(follower_ui_windows[index]);
         }
 
         tig_art_interface_id_create(501, 0, 0, 0, &art_id);
-        tig_button_set_art(dword_67BB38[6], art_id);
-        sub_56B850();
-        sub_56B880();
-        sub_56B290();
+        tig_button_set_art(follower_ui_buttons[FOLLOWER_UI_BUTTON_TOGGLE], art_id);
+        update_toggle_button_visibility();
+        update_scroll_buttons_visibility();
+        follower_ui_update();
     } else {
-        for (index = 0; index < 9; index++) {
-            tig_window_hide(dword_67BB60[index]);
+        for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+            tig_window_hide(follower_ui_windows[index]);
         }
 
         tig_art_interface_id_create(502, 0, 0, 0, &art_id);
-        tig_button_set_art(dword_67BB38[6], art_id);
-        sub_56B850();
-        sub_56B880();
+        tig_button_set_art(follower_ui_buttons[FOLLOWER_UI_BUTTON_TOGGLE], art_id);
+        update_toggle_button_visibility();
+        update_scroll_buttons_visibility();
     }
 }
 
@@ -760,94 +768,94 @@ void follower_ui_refresh()
         return;
     }
 
-    for (index = 0; index < 9; index++) {
-        tig_window_hide(dword_67BB60[index]);
+    for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
+        tig_window_hide(follower_ui_windows[index]);
     }
 
-    dword_67BC58 = 0;
+    follower_ui_followers_count = 0;
     pc_obj = player_get_pc_obj();
     object_list_followers(pc_obj, &followers);
     node = followers.head;
     while (node != NULL) {
-        dword_67BC58++;
+        follower_ui_followers_count++;
         node = node->next;
     }
 
-    if (dword_67BC58 > dword_67BC14) {
-        dword_67BC14 = dword_67BC58 + 10;
-        dword_67BC08 = (FollowerInfo*)REALLOC(dword_67BC08, sizeof(*dword_67BC08) * dword_67BC14);
+    if (follower_ui_followers_count > follower_ui_followers_capacity) {
+        follower_ui_followers_capacity = follower_ui_followers_count + 10;
+        follower_ui_followers = (FollowerInfo*)REALLOC(follower_ui_followers, sizeof(*follower_ui_followers) * follower_ui_followers_capacity);
     }
 
     index = 0;
     node = followers.head;
     while (node != NULL) {
-        sub_4440E0(node->obj, &(dword_67BC08[index++]));
+        sub_4440E0(node->obj, &(follower_ui_followers[index++]));
         node = node->next;
     }
-    dword_67BC58 = index;
+    follower_ui_followers_count = index;
 
     object_list_destroy(&followers);
 
     if (follower_ui_visible) {
-        for (index = 0; index < 6; index++) {
-            if (index >= dword_67BC58) {
-                break;
-            }
-
-            tig_window_show(dword_67BB60[index]);
+        for (index = 0; index < FOLLOWER_UI_SLOTS && index < follower_ui_followers_count; index++) {
+            tig_window_show(follower_ui_windows[index]);
         }
     }
 
-    if (dword_67BC58 > 6) {
-        if (dword_67BC10 > dword_67BC58 - 6) {
-            dword_67BC10 = dword_67BC58 - 6;
+    if (follower_ui_followers_count > FOLLOWER_UI_SLOTS) {
+        if (follower_ui_top_index > follower_ui_followers_count - FOLLOWER_UI_SLOTS) {
+            follower_ui_top_index = follower_ui_followers_count - FOLLOWER_UI_SLOTS;
         }
     } else {
-        dword_67BC10 = 0;
+        follower_ui_top_index = 0;
     }
 
-    sub_56B850();
-    sub_56B880();
+    update_toggle_button_visibility();
+    update_scroll_buttons_visibility();
 
-    if (!dword_67BC64) {
-        sub_56B290();
+    if (!in_update) {
+        follower_ui_update();
     }
 }
 
 // 0x56B850
-void sub_56B850()
+void update_toggle_button_visibility()
 {
-    if (dword_67BC58 > 0) {
-        tig_window_show(dword_67BB60[6]);
+    if (follower_ui_followers_count > 0) {
+        tig_window_show(follower_ui_windows[FOLLOWER_UI_BUTTON_TOGGLE]);
     } else {
-        tig_window_hide(dword_67BB60[6]);
+        tig_window_hide(follower_ui_windows[FOLLOWER_UI_BUTTON_TOGGLE]);
     }
 }
 
 // 0x56B880
-void sub_56B880()
+void update_scroll_buttons_visibility()
 {
     tig_art_id_t art_id;
 
-    if (dword_67BC58 > 6 && follower_ui_visible) {
-        if (dword_67BC10 != 0) {
+    if (follower_ui_followers_count > FOLLOWER_UI_SLOTS && follower_ui_visible) {
+        if (follower_ui_top_index != 0) {
+            // "follow_scroll_up.art"
             tig_art_interface_id_create(506, 0, 0, 0, &art_id);
         } else {
+            // "follow_scroll_up_off.art"
             tig_art_interface_id_create(507, 0, 0, 0, &art_id);
         }
-        tig_button_set_art(dword_67BB38[7], art_id);
-        tig_window_show(dword_67BB60[7]);
+        tig_button_set_art(follower_ui_buttons[FOLLOWER_UI_BUTTON_SCROLL_UP], art_id);
+        tig_window_show(follower_ui_windows[FOLLOWER_UI_BUTTON_SCROLL_UP]);
 
-        if (dword_67BC10 != dword_67BC58 - 6) {
+        if (follower_ui_top_index != follower_ui_followers_count - FOLLOWER_UI_SLOTS) {
+            // "follow_scroll_dwn.art"
             tig_art_interface_id_create(508, 0, 0, 0, &art_id);
         } else {
+            // "follow_scroll_dwn_off.art"
             tig_art_interface_id_create(509, 0, 0, 0, &art_id);
         }
-        tig_button_set_art(dword_67BB38[8], art_id);
-        tig_window_show(dword_67BB60[8]);
+        tig_button_set_art(follower_ui_buttons[FOLLOWER_UI_BUTTON_SCROLL_DOWN], art_id);
+        tig_window_show(follower_ui_windows[FOLLOWER_UI_BUTTON_SCROLL_DOWN]);
     } else {
-        tig_window_hide(dword_67BB60[7]);
-        tig_window_hide(dword_67BB60[8]);
+        tig_window_hide(follower_ui_windows[FOLLOWER_UI_BUTTON_SCROLL_UP]);
+        tig_window_hide(follower_ui_windows[FOLLOWER_UI_BUTTON_SCROLL_DOWN]);
     }
 }
 
@@ -858,7 +866,7 @@ void follower_ui_drop_down_menu_refresh(int highlighted_cmd)
     int cmd;
     MesFileEntry mes_file_entry;
 
-    sub_56B510(follower_ui_drop_down_menu_window, 826, 0, 0, 100, 100);
+    follower_ui_draw(follower_ui_drop_down_menu_window, 826, 0, 0, 100, 100);
 
     rect = follower_ui_drop_down_menu_entry_rect;
     for (cmd = 0; cmd < FOLLOWER_UI_COMMAND_COUNT; cmd++) {

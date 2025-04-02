@@ -7998,7 +7998,7 @@ void sub_5571C0(int64_t obj)
         sub_57CCF0(player_get_pc_obj(), obj);
     }
 
-    sub_56B4D0(obj);
+    follower_ui_update_obj(obj);
 }
 
 // 0x557230
