@@ -6,7 +6,7 @@
 bool broadcast_ui_init(GameInitInfo* init_info);
 void broadcast_ui_exit();
 void broadcast_ui_reset();
-void sub_5718A0();
-void sub_571910();
+void broadcast_ui_open();
+void broadcast_ui_close();
 
 #endif /* ARCANUM_UI_BROADCAST_UI_H_ */

@@ -2519,7 +2519,7 @@ bool mainmenu_ui_handle()
         }
     }
 
-    sub_571910();
+    broadcast_ui_close();
 
     while (dword_64C384) {
         tig_ping();

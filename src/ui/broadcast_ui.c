@@ -5,30 +5,32 @@
 #include "ui/intgame.h"
 #include "ui/textedit_ui.h"
 
-static void sub_571950(TextEdit* textedit);
-static void sub_571990(TextEdit* textedit);
+static void broadcast_ui_text_edit_on_enter(TextEdit* textedit);
+static void broadcast_ui_text_edit_on_change(TextEdit* textedit);
 
 // 0x5CAC28
-static TextEdit stru_5CAC28 = {
+static TextEdit broadcast_ui_textedit = {
     0,
     NULL,
     125,
-    sub_571950,
-    sub_571990,
+    broadcast_ui_text_edit_on_enter,
+    broadcast_ui_text_edit_on_change,
     NULL,
 };
 
 // 0x681040
-static Broadcast stru_681040;
+static Broadcast broadcast_ui_bcast;
 
 // 0x6810C8
-static tig_font_handle_t dword_6810C8;
+static tig_font_handle_t broadcast_ui_font;
 
+// NOTE: Write-only, follows `broadcast_ui_opened`. Probably some leftover.
+//
 // 0x6810CC
-static int dword_6810CC;
+static bool dword_6810CC;
 
 // 0x6810D0
-static int dword_6810D0;
+static bool broadcast_ui_opened;
 
 // 0x5717F0
 bool broadcast_ui_init(GameInitInfo* init_info)
@@ -37,13 +39,13 @@ bool broadcast_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    stru_681040.field_8[0] = '\0';
-    stru_5CAC28.buffer = stru_681040.field_8;
+    broadcast_ui_bcast.field_8[0] = '\0';
+    broadcast_ui_textedit.buffer = broadcast_ui_bcast.field_8;
 
     font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font_desc.art_id));
     font_desc.color = tig_color_make(120, 120, 175);
-    tig_font_create(&font_desc, &dword_6810C8);
+    tig_font_create(&font_desc, &broadcast_ui_font);
 
     return true;
 }
@@ -51,59 +53,59 @@ bool broadcast_ui_init(GameInitInfo* init_info)
 // 0x571880
 void broadcast_ui_exit()
 {
-    tig_font_destroy(dword_6810C8);
+    tig_font_destroy(broadcast_ui_font);
 }
 
 // 0x571890
 void broadcast_ui_reset()
 {
-    stru_681040.field_8[0] = '\0';
+    broadcast_ui_bcast.field_8[0] = '\0';
 }
 
 // 0x5718A0
-void sub_5718A0()
+void broadcast_ui_open()
 {
-    if (dword_6810D0 == 1 || sub_5533B0() == 7) {
-        sub_571910();
+    if (broadcast_ui_opened || sub_5533B0() == 7) {
+        broadcast_ui_close();
         return;
     }
 
-    stru_681040.loc = 0;
+    broadcast_ui_bcast.loc = 0;
     sub_5506C0(7);
-    textedit_ui_focus(&stru_5CAC28);
-    dword_6810CC = 1;
-    intgame_text_edit_refresh(stru_5CAC28.buffer, dword_6810C8);
-    dword_6810D0 = 1;
+    textedit_ui_focus(&broadcast_ui_textedit);
+    dword_6810CC = true;
+    intgame_text_edit_refresh(broadcast_ui_textedit.buffer, broadcast_ui_font);
+    broadcast_ui_opened = true;
 }
 
 // 0x571910
-void sub_571910()
+void broadcast_ui_close()
 {
-    if (dword_6810D0 == 1) {
-        dword_6810D0 = 0;
-        dword_6810CC = 0;
-        textedit_ui_unfocus(&stru_5CAC28);
-        *stru_5CAC28.buffer = '\0';
+    if (broadcast_ui_opened) {
+        broadcast_ui_opened = false;
+        dword_6810CC = false;
+        textedit_ui_unfocus(&broadcast_ui_textedit);
+        *broadcast_ui_textedit.buffer = '\0';
         sub_5506C0(0);
     }
 }
 
 // 0x571950
-void sub_571950(TextEdit* textedit)
+void broadcast_ui_text_edit_on_enter(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        intgame_get_location_under_cursor(&(stru_681040.loc));
-        broadcast_msg(player_get_pc_obj(), &stru_681040);
+        intgame_get_location_under_cursor(&(broadcast_ui_bcast.loc));
+        broadcast_msg(player_get_pc_obj(), &broadcast_ui_bcast);
     }
-    sub_571910();
+    broadcast_ui_close();
 }
 
 // 0x571990
-void sub_571990(TextEdit* textedit)
+void broadcast_ui_text_edit_on_change(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        intgame_text_edit_refresh(textedit->buffer, dword_6810C8);
+        intgame_text_edit_refresh(textedit->buffer, broadcast_ui_font);
     } else {
-        intgame_text_edit_refresh(" ", dword_6810C8);
+        intgame_text_edit_refresh(" ", broadcast_ui_font);
     }
 }

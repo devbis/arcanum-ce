@@ -2449,7 +2449,7 @@ bool sub_54B5D0(TigMessage* msg)
                 sub_551A80(0);
                 v2 = true;
             } else if (!sub_541680()) {
-                sub_5718A0();
+                broadcast_ui_open();
                 v2 = true;
             }
         }
@@ -3924,7 +3924,7 @@ void iso_interface_window_disable(int window_type)
 // 0x5506C0
 void sub_5506C0(int window_type)
 {
-    sub_571910();
+    broadcast_ui_close();
     if (intgame_iso_window_type == 9) {
         sub_551A80(0);
     }
