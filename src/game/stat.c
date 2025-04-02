@@ -645,7 +645,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         break;
     case STAT_EXPERIENCE_POINTS:
         sub_4A69C0(obj);
-        sub_460860();
+        ui_charedit_refresh();
         break;
     case STAT_ALIGNMENT:
         if (before != value && obj_type == OBJ_TYPE_PC) {

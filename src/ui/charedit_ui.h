@@ -16,7 +16,7 @@ void charedit_reset();
 bool charedit_open(int64_t obj, ChareditMode mode);
 void charedit_close();
 bool charedit_is_created();
-void sub_55A230();
+void charedit_refresh();
 void charedit_error_not_enough_character_points();
 void charedit_error_not_enough_level();
 void charedit_error_not_enough_intelligence();

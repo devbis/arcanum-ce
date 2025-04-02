@@ -118,7 +118,7 @@ static void sub_55A240();
 static bool charedit_window_message_filter(TigMessage* msg);
 static void sub_55AE70(int a1);
 static void charedit_cycle_obj(bool next);
-static void charedit_refresh();
+static void charedit_refresh_internal();
 static void charedit_refresh_secondary_stats();
 static void charedit_refresh_stats();
 static void charedit_refresh_stat(int stat);
@@ -1090,7 +1090,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         tig_button_create(&button_data, &dword_64CFDC);
     }
 
-    charedit_refresh();
+    charedit_refresh_internal();
     location_origin_set(obj_field_int64_get(charedit_obj, OBJ_F_LOCATION));
 
     pc_lens.window_handle = charedit_window_handle;
@@ -1223,10 +1223,10 @@ bool charedit_is_created()
 }
 
 // 0x55A230
-void sub_55A230()
+void charedit_refresh()
 {
     if (charedit_created) {
-        charedit_refresh();
+        charedit_refresh_internal();
     }
 }
 
@@ -1426,7 +1426,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                     }
 
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - cost);
-                    charedit_refresh();
+                    charedit_refresh_internal();
                     sub_550720();
                     return true;
                 }
@@ -1505,7 +1505,7 @@ bool charedit_window_message_filter(TigMessage* msg)
 
                     unspent_points = stat_level_get(charedit_obj, STAT_UNSPENT_POINTS);
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + cost);
-                    charedit_refresh();
+                    charedit_refresh_internal();
                     sub_550720();
                     return true;
                 }
@@ -1517,7 +1517,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                 }
                 sub_51E850(charedit_skills_win);
                 dword_64E01C = 0;
-                charedit_refresh();
+                charedit_refresh_internal();
                 return true;
             }
 
@@ -1527,7 +1527,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                 }
                 sub_51E850(charedit_tech_win);
                 dword_64E01C = 1;
-                charedit_refresh();
+                charedit_refresh_internal();
                 return true;
             }
 
@@ -1537,7 +1537,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                 }
                 sub_51E850(charedit_spells_win);
                 dword_64E01C = 2;
-                charedit_refresh();
+                charedit_refresh_internal();
                 return true;
             }
 
@@ -1547,7 +1547,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                     sub_55EFE0();
                 }
                 dword_64E01C = 3;
-                charedit_refresh();
+                charedit_refresh_internal();
                 return true;
             }
 
@@ -1556,7 +1556,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                 if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
                     unspent_points = stat_base_get(charedit_obj, STAT_UNSPENT_POINTS);
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + 1);
-                    charedit_refresh();
+                    charedit_refresh_internal();
                 }
                 return true;
             }
@@ -1568,7 +1568,7 @@ bool charedit_window_message_filter(TigMessage* msg)
                     if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
                         stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - 1);
                     }
-                    charedit_refresh();
+                    charedit_refresh_internal();
                 }
                 return true;
             }
@@ -1693,7 +1693,7 @@ void charedit_cycle_obj(bool next)
 }
 
 // 0x55B150
-void charedit_refresh()
+void charedit_refresh_internal()
 {
     charedit_refresh_stats();
     charedit_refresh_secondary_stats();

@@ -419,10 +419,10 @@ void sub_460840(int a1, int a2)
 }
 
 // 0x460860
-void sub_460860()
+void ui_charedit_refresh()
 {
-    if (ui_callbacks.field_B8 != NULL) {
-        ui_callbacks.field_B8();
+    if (ui_callbacks.charedit_refresh != NULL) {
+        ui_callbacks.charedit_refresh();
     }
 }
 

@@ -237,5 +237,5 @@ void fate_ui_handle_fate_resolved(int64_t obj, int fate)
         tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_RELEASED);
     }
 
-    sub_55A230();
+    charedit_refresh();
 }

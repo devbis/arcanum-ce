@@ -481,7 +481,7 @@ void main_loop()
                                 for (index = 0; index < 8; index++) {
                                     tech_degree_inc(pc_obj, index);
                                 }
-                                sub_55A230();
+                                charedit_refresh();
                                 break;
                             case DIK_P:
                                 sub_4AF860();

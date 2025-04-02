@@ -549,7 +549,7 @@ void spell_ui_add(int64_t obj, int spell)
 
     stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
     if (charedit_is_created()) {
-        sub_55A230();
+        charedit_refresh();
         sub_550720();
     }
 }
@@ -567,7 +567,7 @@ void spell_ui_remove(int64_t obj, int spell)
         stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
         if (charedit_is_created()) {
-            sub_55A230();
+            charedit_refresh();
             sub_550720();
         }
     }

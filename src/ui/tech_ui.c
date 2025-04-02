@@ -31,7 +31,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
             if (tech_degree_inc(obj, tech) > degree) {
                 stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
                 if (is_pc) {
-                    sub_55A230();
+                    charedit_refresh();
                     sub_550720();
                 }
             } else {
@@ -62,7 +62,7 @@ void tech_ui_dec_degree(int64_t obj, int tech)
         if (tech_degree_dec(obj, tech) < degree) {
             stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
             if (is_pc) {
-                sub_55A230();
+                charedit_refresh();
                 sub_550720();
             }
         }

@@ -111,7 +111,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_AC = written_ui_newspaper_headline;
     callbacks.field_B0 = sleep_ui_open;
     callbacks.field_B4 = ui_charedit_error_msg;
-    callbacks.field_B8 = sub_55A230;
+    callbacks.charedit_refresh = charedit_refresh;
     callbacks.progressbar_init = mainmenu_ui_progressbar_init;
     callbacks.progressbar_update = mainmenu_ui_progressbar_update;
     callbacks.field_C4 = wmap_ui_select;
@@ -186,7 +186,7 @@ void sub_57CAB0(int64_t obj)
 void sub_57CAE0()
 {
     sub_551160();
-    sub_55A230();
+    charedit_refresh();
 }
 
 // 0x57CAF0
@@ -391,7 +391,7 @@ void ui_charedit_error_msg(int type, int a2)
         break;
     case 8:
         if (charedit_is_created()) {
-            sub_55A230();
+            charedit_refresh();
         }
         break;
     default:
