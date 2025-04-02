@@ -95,7 +95,7 @@ static void mainmenu_ui_save_game_destroy();
 static bool mainmenu_ui_save_game_execute(int btn);
 static bool mainmenu_ui_save_game_button_pressed(tig_button_handle_t button_handle);
 static bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle);
-static void mainmenu_ui_save_game_mouse_up(int a1, int a2);
+static void mainmenu_ui_save_game_mouse_up(int x, int y);
 static void mainmenu_ui_save_game_refresh(TigRect* rect);
 static void sub_544100(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_544210();
@@ -3918,7 +3918,10 @@ void mainmenu_ui_save_game_mouse_up(int x, int y)
     (void)x;
 
     window = main_menu_window_info[dword_64C414];
-    window->selected_index = min(y / 90 + window->top_index, window->cnt - 1);
+    window->selected_index = window->top_index + y / 20;
+    if (window->selected_index >= window->cnt) {
+        window->selected_index = window->cnt - 1;
+    }
     sub_544290();
     window->refresh_func(NULL);
     sub_5806F0(stru_64C220);
