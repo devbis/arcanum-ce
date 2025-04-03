@@ -34,24 +34,24 @@ static void sub_408BB0(Object* object, int fld, int index, void* value);
 static bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_handle_ptr);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
-static bool sub_4096B0(TigFile* stream, int64_t obj);
-static bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
-static bool sub_409980(TigFile* stream, int64_t obj);
-static bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
-static void sub_409CB0(S4E4BD0* mem, int64_t obj);
-static bool sub_409D30(uint8_t* data, int64_t* obj_ptr);
-static void sub_409E80(S4E4BD0* mem, int64_t obj);
-static bool sub_409F10(uint8_t* data, int64_t* obj_ptr);
-static bool sub_40A070(Object* object, int fld);
-static bool sub_40A0E0(Object* object, int fld);
-static bool sub_40A140(Object* object, int fld);
-static bool sub_40A1B0(Object* object, int fld);
-static bool object_field_write(Object* object, int fld, ObjectFieldInfo* info);
-static bool sub_40A250(Object* object, int fld, ObjectFieldInfo* info);
-static bool object_field_read(Object* object, int fld, ObjectFieldInfo* info);
-static bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info);
-static bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info);
-static bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info);
+static bool obj_proto_write_file(TigFile* stream, int64_t obj);
+static bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
+static bool obj_inst_write_file(TigFile* stream, int64_t obj);
+static bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
+static void obj_proto_write_mem(S4E4BD0* mem, int64_t obj);
+static bool obj_proto_read_mem(uint8_t* data, int64_t* obj_ptr);
+static void obj_inst_write_mem(S4E4BD0* mem, int64_t obj);
+static bool obj_inst_read_mem(uint8_t* data, int64_t* obj_ptr);
+static bool obj_proto_field_write_file(Object* object, int fld);
+static bool obj_proto_field_write_mem(Object* object, int fld);
+static bool obj_proto_field_read_file(Object* object, int fld);
+static bool obj_proto_field_read_mem(Object* object, int fld);
+static bool object_field_write(Object* object, int idx, ObjectFieldInfo* info);
+static bool obj_inst_field_write_mem(Object* object, int idx, ObjectFieldInfo* info);
+static bool object_field_read(Object* object, int idx, ObjectFieldInfo* info);
+static bool obj_inst_field_read_mem(Object* object, int idx, ObjectFieldInfo* info);
+static bool object_field_write_if_dif(Object* object, int idx, ObjectFieldInfo* info);
+static bool object_field_read_if_dif(Object* object, int idx, ObjectFieldInfo* info);
 static void sub_40A400();
 static void sub_40A740(int fld, int* start_ptr, int* length_ptr);
 static int sub_40A790(int a1);
@@ -97,10 +97,10 @@ static bool sub_40D3D0(Object* object, int fld);
 static void sub_40D400(Object* object, int fld, bool enabled);
 static void sub_40D450(Object* object, int fld);
 static void sub_40D470(Object* object, int fld);
-static bool sub_40D560(TigFile* stream);
-static bool obj_check_version_stream(TigFile* stream);
-static void sub_40D5D0(void* mem);
-static bool obj_check_version_memory(uint8_t** data);
+static bool obj_version_write_file(TigFile* stream);
+static bool obj_version_read_file(TigFile* stream);
+static void obj_version_write_mem(S4E4BD0* mem);
+static bool obj_version_read_mem(uint8_t** data);
 static bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info);
 
 // 0x59BE00
@@ -1176,22 +1176,25 @@ void sub_406520(int64_t obj)
 bool obj_write(TigFile* stream, int64_t obj)
 {
     Object* object;
-    bool v1;
+    bool is_proto;
+    bool ret;
 
     object = obj_lock(obj);
-    if (!sub_40D560(stream)) {
+    if (!obj_version_write_file(stream)) {
         // FIXME: Object not unlocked.
         return false;
     }
 
-    v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
+    is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
-    if (v1) {
-        return sub_4096B0(stream, obj);
+    if (is_proto) {
+        ret = obj_proto_write_file(stream, obj);
     } else {
-        return sub_409980(stream, obj);
+        ret = obj_inst_write_file(stream, obj);
     }
+
+    return ret;
 }
 
 // 0x406600
@@ -1200,7 +1203,7 @@ bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
     ObjectID oid;
     bool ret;
 
-    if (!obj_check_version_stream(stream)) {
+    if (!obj_version_read_file(stream)) {
         return false;
     }
 
@@ -1209,44 +1212,44 @@ bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
     }
 
     if (oid.type == OID_TYPE_BLOCKED) {
-        ret = sub_4097B0(stream, obj_handle_ptr, oid);
+        ret = obj_proto_read_file(stream, obj_handle_ptr, oid);
     } else {
-        ret = sub_409AA0(stream, obj_handle_ptr, oid);
+        ret = obj_inst_read_file(stream, obj_handle_ptr, oid);
     }
 
     return ret;
 }
 
 // 0x4066B0
-void sub_4066B0(uint8_t** a1, int* a2, int64_t obj)
+void obj_write_mem(uint8_t** data_ptr, int* size_ptr, int64_t obj)
 {
     Object* object;
-    S4E4BD0 v1;
-    bool is_empty;
+    S4E4BD0 mem;
+    bool is_proto;
 
     object = obj_lock(obj);
-    sub_4E4BD0(&v1);
-    sub_40D5D0(&v1);
-    is_empty = object->prototype_oid.type == OID_TYPE_BLOCKED;
+    sub_4E4BD0(&mem);
+    obj_version_write_mem(&mem);
+    is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
-    if (is_empty) {
-        sub_409CB0(&v1, obj);
+    if (is_proto) {
+        obj_proto_write_mem(&mem, obj);
     } else {
-        sub_409E80(&v1, obj);
+        obj_inst_write_mem(&mem, obj);
     }
 
-    *a1 = v1.field_0;
-    *a2 = v1.field_4 - v1.field_0;
+    *data_ptr = mem.field_0;
+    *size_ptr = mem.field_4 - mem.field_0;
 }
 
 // 0x406730
-bool sub_406730(uint8_t* data, int64_t* obj_ptr)
+bool obj_read_mem(uint8_t* data, int64_t* obj_ptr)
 {
     ObjectID oid;
     bool ret;
 
-    if (!obj_check_version_memory(&data)) {
+    if (!obj_version_read_mem(&data)) {
         return false;
     }
 
@@ -1254,9 +1257,9 @@ bool sub_406730(uint8_t* data, int64_t* obj_ptr)
     data -= sizeof(oid);
 
     if (oid.type == OID_TYPE_BLOCKED) {
-        ret = sub_409D30(data, obj_ptr);
+        ret = obj_proto_read_mem(data, obj_ptr);
     } else {
-        ret = sub_409F10(data, obj_ptr);
+        ret = obj_inst_read_mem(data, obj_ptr);
     }
 
     return ret;
@@ -1294,7 +1297,7 @@ bool obj_dif_write(TigFile* stream, int64_t obj)
     // FIXME: Unused.
     obj_field_int32_get(obj, OBJ_F_FLAGS);
 
-    if (!sub_40D560(stream)) {
+    if (!obj_version_write_file(stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -1346,7 +1349,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
 
     object = obj_lock(obj);
 
-    if (!obj_check_version_stream(stream)) {
+    if (!obj_version_read_file(stream)) {
         tig_debug_println("Error in obj_dif_read:\n  Object version mismatch.");
         obj_unlock(obj);
         return false;
@@ -2823,7 +2826,7 @@ void sub_409640(int64_t obj, int subtype)
 }
 
 // 0x4096B0
-bool sub_4096B0(TigFile* stream, int64_t obj)
+bool obj_proto_write_file(TigFile* stream, int64_t obj)
 {
     Object* object;
     int cnt;
@@ -2853,7 +2856,7 @@ bool sub_4096B0(TigFile* stream, int64_t obj)
 
     dword_5D10F4 = 0;
     dword_5D110C = stream;
-    if (!obj_enumerate_fields(object, sub_40A070)) {
+    if (!obj_enumerate_fields(object, obj_proto_field_write_file)) {
         obj_unlock(obj);
         return false;
     }
@@ -2863,7 +2866,7 @@ bool sub_4096B0(TigFile* stream, int64_t obj)
 }
 
 // 0x4097B0
-bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
+bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 {
     int64_t obj;
     Object* object;
@@ -2900,7 +2903,7 @@ bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     dword_5D10F4 = 0;
     dword_5D110C = stream;
-    if (!obj_enumerate_fields(object, sub_40A140)) {
+    if (!obj_enumerate_fields(object, obj_proto_field_read_file)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -2919,7 +2922,7 @@ bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 }
 
 // 0x409980
-bool sub_409980(TigFile* stream, int64_t obj)
+bool obj_inst_write_file(TigFile* stream, int64_t obj)
 {
     Object* object;
     int cnt;
@@ -2963,7 +2966,7 @@ bool sub_409980(TigFile* stream, int64_t obj)
 }
 
 // 0x409AA0
-bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
+bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 {
     int64_t obj;
     Object* object;
@@ -3026,7 +3029,7 @@ bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 }
 
 // 0x409CB0
-void sub_409CB0(S4E4BD0* mem, int64_t obj)
+void obj_proto_write_mem(S4E4BD0* mem, int64_t obj)
 {
     Object* object;
     int cnt;
@@ -3039,12 +3042,12 @@ void sub_409CB0(S4E4BD0* mem, int64_t obj)
     sub_4E4C00(object->field_4C, sizeof(object->field_4C[0]) * cnt, mem);
     dword_5D10F4 = 0;
     dword_5D1118 = mem;
-    obj_enumerate_fields(object, sub_40A0E0);
+    obj_enumerate_fields(object, obj_proto_field_write_mem);
     obj_unlock(obj);
 }
 
 // 0x409D30
-bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
+bool obj_proto_read_mem(uint8_t* data, int64_t* obj_ptr)
 {
     int64_t obj;
     Object* object;
@@ -3067,7 +3070,7 @@ bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
 
     dword_5D10F4 = 0;
     dword_5D111C = data;
-    if (!obj_enumerate_fields(object, sub_40A1B0)) {
+    if (!obj_enumerate_fields(object, obj_proto_field_read_mem)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -3086,7 +3089,7 @@ bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
 }
 
 // 0x409E80
-void sub_409E80(S4E4BD0* mem, int64_t obj)
+void obj_inst_write_mem(S4E4BD0* mem, int64_t obj)
 {
     Object* object;
     int cnt;
@@ -3100,12 +3103,12 @@ void sub_409E80(S4E4BD0* mem, int64_t obj)
     sub_4E4C00(object->field_48, sizeof(object->field_48[0]) * cnt, mem);
     dword_5D1118 = mem;
 
-    sub_40CBA0(object, sub_40A250);
+    sub_40CBA0(object, obj_inst_field_write_mem);
     obj_unlock(obj);
 }
 
 // 0x409F10
-bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
+bool obj_inst_read_mem(uint8_t* data, int64_t* obj_ptr)
 {
     Object* object;
     int64_t obj;
@@ -3125,7 +3128,7 @@ bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
     sub_4E4C50(object->field_48, 4 * sub_40C030(object->type), &data);
 
     dword_5D111C = data;
-    if (!sub_40CBA0(object, sub_40A2D0)) {
+    if (!sub_40CBA0(object, obj_inst_field_read_mem)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -3148,7 +3151,7 @@ bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
 }
 
 // 0x40A070
-bool sub_40A070(Object* object, int fld)
+bool obj_proto_field_write_file(Object* object, int fld)
 {
     ObjSa v1;
 
@@ -3164,7 +3167,7 @@ bool sub_40A070(Object* object, int fld)
 }
 
 // 0x40A0E0
-bool sub_40A0E0(Object* object, int fld)
+bool obj_proto_field_write_mem(Object* object, int fld)
 {
     ObjSa v1;
 
@@ -3177,7 +3180,7 @@ bool sub_40A0E0(Object* object, int fld)
 }
 
 // 0x40A140
-bool sub_40A140(Object* object, int fld)
+bool obj_proto_field_read_file(Object* object, int fld)
 {
     ObjSa v1;
 
@@ -3193,7 +3196,7 @@ bool sub_40A140(Object* object, int fld)
 }
 
 // 0x40A1B0
-bool sub_40A1B0(Object* object, int fld)
+bool obj_proto_field_read_mem(Object* object, int fld)
 {
     ObjSa v1;
 
@@ -3206,12 +3209,12 @@ bool sub_40A1B0(Object* object, int fld)
 }
 
 // 0x40A210
-bool object_field_write(Object* object, int fld, ObjectFieldInfo* info)
+bool object_field_write(Object* object, int idx, ObjectFieldInfo* info)
 {
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->data[fld]);
+    v1.ptr = &(object->data[idx]);
     if (!sub_4E47E0(&v1, dword_5D110C)) {
         return false;
     }
@@ -3220,24 +3223,24 @@ bool object_field_write(Object* object, int fld, ObjectFieldInfo* info)
 }
 
 // 0x40A250
-bool sub_40A250(Object* object, int fld, ObjectFieldInfo* info)
+bool obj_inst_field_write_mem(Object* object, int idx, ObjectFieldInfo* info)
 {
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->data[fld]);
+    v1.ptr = &(object->data[idx]);
     sub_4E4990(&v1, dword_5D1118);
 
     return true;
 }
 
 // 0x40A290
-bool object_field_read(Object* object, int fld, ObjectFieldInfo* info)
+bool object_field_read(Object* object, int idx, ObjectFieldInfo* info)
 {
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->data[fld]);
+    v1.ptr = &(object->data[idx]);
     if (!sub_4E44F0(&v1, dword_5D110C)) {
         return false;
     }
@@ -3246,25 +3249,25 @@ bool object_field_read(Object* object, int fld, ObjectFieldInfo* info)
 }
 
 // 0x40A2D0
-bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info)
+bool obj_inst_field_read_mem(Object* object, int idx, ObjectFieldInfo* info)
 {
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->data[fld]);
+    v1.ptr = &(object->data[idx]);
     sub_4E4660(&v1, &dword_5D111C);
 
     return true;
 }
 
 // 0x40A310
-bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info)
+bool object_field_write_if_dif(Object* object, int idx, ObjectFieldInfo* info)
 {
     if ((object->field_4C[info->change_array_idx] & info->mask) == 0) {
         return true;
     }
 
-    if (!object_field_write(object, fld, info)) {
+    if (!object_field_write(object, idx, info)) {
         tig_debug_printf("object_field_write failed in object_field_write_if_dif trying to write field #%d\n", info - object_fields);
         return false;
     }
@@ -3273,18 +3276,18 @@ bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 }
 
 // 0x40A370
-bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info)
+bool object_field_read_if_dif(Object* object, int idx, ObjectFieldInfo* info)
 {
     if ((object->field_4C[info->change_array_idx] & info->mask) == 0) {
         return true;
     }
 
     if ((object->field_48[info->change_array_idx] & info->mask) == 0) {
-        sub_40D470(object, fld);
+        sub_40D470(object, idx);
         sub_40D3A0(object, info, true);
     }
 
-    if (!object_field_read(object, fld, info)) {
+    if (!object_field_read(object, idx, info)) {
         tig_debug_printf("object_field_read failed in object_field_read_if_dif trying to read field #%d\n", info - object_fields);
         return false;
     }
@@ -5007,14 +5010,14 @@ void sub_40D4D0(Object* object, int fld)
 }
 
 // 0x40D560
-bool sub_40D560(TigFile* stream)
+bool obj_version_write_file(TigFile* stream)
 {
     int version = OBJ_FILE_VERSION;
     return obj_write_raw(&version, sizeof(version), stream);
 }
 
 // 0x40D590
-bool obj_check_version_stream(TigFile* stream)
+bool obj_version_read_file(TigFile* stream)
 {
     int version;
 
@@ -5031,14 +5034,14 @@ bool obj_check_version_stream(TigFile* stream)
 }
 
 // 0x40D5D0
-void sub_40D5D0(void* mem)
+void obj_version_write_mem(S4E4BD0* mem)
 {
     int version = OBJ_FILE_VERSION;
     sub_4E4C00(&version, sizeof(version), mem);
 }
 
 // 0x40D5F0
-bool obj_check_version_memory(uint8_t** data)
+bool obj_version_read_mem(uint8_t** data)
 {
     int version;
 

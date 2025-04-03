@@ -4090,14 +4090,14 @@ int object_blit_flags_get()
 void sub_442050(uint8_t** data_ptr, int* size_ptr, int64_t obj)
 {
     sub_4064B0(obj);
-    sub_4066B0(data_ptr, size_ptr, obj);
+    obj_write_mem(data_ptr, size_ptr, obj);
     sub_406520(obj);
 }
 
 // 0x4420D0
 bool sub_4420D0(uint8_t* data, int64_t* obj_ptr, int64_t loc)
 {
-    if (!sub_406730(data, obj_ptr)) {
+    if (!obj_read_mem(data, obj_ptr)) {
         return false;
     }
 
