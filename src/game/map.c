@@ -227,8 +227,8 @@ bool map_init(GameInitInfo* init_info)
 // 0x40EBA0
 void map_reset()
 {
-    unsigned int reset_start;
-    unsigned int start;
+    tig_timestamp_t reset_start;
+    tig_timestamp_t start;
 
     if (dword_5D11F0) {
         tig_debug_printf("\nmap_reset: Resetting...\n");
@@ -261,7 +261,7 @@ void map_reset()
 
         dword_5D11EC = 0;
 
-        tig_debug_printf("map_reset: Done.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(reset_start) / 1000.0));
+        tig_debug_printf("map_reset: Done.  Total time: %d ms.\n", tig_timer_elapsed(reset_start));
     }
 }
 
@@ -348,8 +348,8 @@ void map_ping(unsigned int time)
 bool map_save(TigFile* stream)
 {
     int sentinel = SENTINEL;
-    unsigned int save_start;
-    unsigned int start;
+    tig_timestamp_t save_start;
+    tig_timestamp_t start;
     long start_pos = 0;
 
     tig_debug_printf("\nmap_save()\n");
@@ -417,7 +417,7 @@ bool map_save(TigFile* stream)
         }
     }
 
-    tig_debug_printf("map_save: Save Complete.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(save_start) / 1000.0));
+    tig_debug_printf("map_save: Save Complete.  Total time: %d ms.\n", tig_timer_elapsed(save_start));
 
     return true;
 }
@@ -426,8 +426,8 @@ bool map_save(TigFile* stream)
 bool map_load(GameLoadInfo* load_info)
 {
     int sentinel;
-    unsigned int load_start;
-    unsigned int start;
+    tig_timestamp_t load_start;
+    tig_timestamp_t start;
     long start_pos = 0;
 
     tig_debug_printf("\nmap_load\n");
@@ -502,7 +502,7 @@ bool map_load(GameLoadInfo* load_info)
     bool success = map_open(name, folder, 1);
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
 
-    tig_debug_printf("map_load: Load Complete.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(load_start) / 1000.0));
+    tig_debug_printf("map_load: Load Complete.  Total time: %d ms.\n", tig_timer_elapsed(load_start));
 
     return success;
 }
@@ -723,7 +723,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
     duration = tig_timer_elapsed(start_timestamp);
-    tig_debug_printf("map_open(): Done.  Total time: %f seconds.\n", (float)(duration / 1000.0f));
+    tig_debug_printf("map_open(): Done.  Total time: %d ms.\n", duration);
 
     dword_5D11E8 = 0;
     dword_5D11FC = 1;

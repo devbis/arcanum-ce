@@ -455,7 +455,7 @@ void gamelib_reset()
     in_reset = false;
 
     duration = tig_timer_elapsed(reset_started_at);
-    tig_debug_printf("gamelib_reset(): Done.  Total time: %f seconds.\n", duration);
+    tig_debug_printf("gamelib_reset(): Done.  Total time: %d ms.\n", duration);
 }
 
 // 0x4024D0
@@ -1063,7 +1063,7 @@ bool gamelib_save(const char* name, const char* description)
     in_save = false;
 
     duration = tig_timer_elapsed(start_time);
-    tig_debug_printf("gamelib_save(): Save Complete.  Total time: %f seconds.\n", (float)duration / 1000.0f);
+    tig_debug_printf("gamelib_save(): Save Complete.  Total time: %d ms.\n", duration);
 
     return true;
 }
@@ -1192,7 +1192,7 @@ bool gamelib_load(const char* name)
     in_load = false;
 
     duration = tig_timer_elapsed(start_time);
-    tig_debug_printf("gamelib_load: Load Complete.  Total time: %f seconds.\n", (float)duration / 1000.0f);
+    tig_debug_printf("gamelib_load: Load Complete.  Total time: %d ms.\n", duration);
 
     return true;
 }
