@@ -3364,7 +3364,7 @@ bool sub_4537B0()
             }
 
             if (resistance > 0
-                && (dword_5E7598->flags & 0x80) == 0
+                && (dword_5E7598->flags & MAGICTECH_HAVE_DAMAGE) == 0
                 && dword_5E7598->maintenance.period <= 0) {
                 if (dword_5E7620->stat != -1) {
                     v1 = dword_5E75F0->field_144 / 10;
@@ -3400,7 +3400,7 @@ bool sub_4537B0()
             dword_5E75F0->field_144 += v2 - v3;
             dword_5E75A0 = dword_5E75F0->field_144;
 
-            if ((dword_5E7598->flags & 0x80) != 0) {
+            if ((dword_5E7598->flags & MAGICTECH_HAVE_DAMAGE) != 0) {
                 if (dword_5E75F0->field_144 < 50) {
                     dword_5E75A0 = 50;
                     dword_5E75F0->field_144 = 50;
@@ -5677,7 +5677,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             tig_str_parse_named_range(&str, "Dmg:", &(component_info->data.damage.damage_min), &(component_info->data.damage.damage_max));
             component_info->data.damage.damage_flags = 0;
             tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(component_info->data.damage.damage_flags));
-            component_info->data.damage.damage_flags |= 0x80;
+            info->flags |= MAGICTECH_HAVE_DAMAGE;
             break;
         case MTC_EFFECT:
             tig_str_parse_value(&str, &(component_info->data.effect.num));
