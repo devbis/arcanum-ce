@@ -399,6 +399,17 @@ typedef uint32_t ObjectTrapFlags;
 #define OTF_BUSTED 0x0001u
 // clang-format on
 
+typedef uint32_t ObjectRenderFlags;
+
+#define ORF_01000000 0x01000000
+#define ORF_02000000 0x02000000
+#define ORF_04000000 0x04000000
+#define ORF_08000000 0x08000000
+#define ORF_10000000 0x10000000
+#define ORF_20000000 0x20000000
+#define ORF_40000000 0x40000000
+#define ORF_80000000 0x80000000
+
 typedef enum ObjectFlagSet {
     OFS_FLAGS,
     OFS_SPELL_FLAGS,
