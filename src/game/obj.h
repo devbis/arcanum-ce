@@ -485,7 +485,7 @@ bool obj_inst_next(int64_t* obj_ptr, int* iter_ptr);
 Object* obj_lock(int64_t obj);
 void obj_unlock(int64_t obj);
 int sub_40C030(ObjectType object_type);
-bool sub_40C260(int type, int fld);
+bool object_field_valid(int type, int fld);
 bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback);
 int64_t obj_get_prototype_handle(Object* object);
 

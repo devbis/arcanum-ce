@@ -1442,7 +1442,7 @@ int obj_field_int32_get(int64_t obj, int fld)
     int value;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1474,7 +1474,7 @@ void obj_field_int32_set(int64_t obj, int fld, int value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1491,7 +1491,7 @@ int64_t obj_field_int64_get(int64_t obj, int fld)
     int64_t value;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1509,7 +1509,7 @@ void obj_field_int64_set(int64_t obj, int fld, int64_t value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1530,7 +1530,7 @@ int64_t obj_field_handle_get(int64_t obj, int fld)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return OBJ_HANDLE_NULL;
@@ -1558,7 +1558,7 @@ void obj_field_handle_set(int64_t obj, int fld, int64_t value)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1582,7 +1582,7 @@ bool obj_field_obj_get(int64_t obj, int fld, int64_t* value_ptr)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
@@ -1632,7 +1632,7 @@ ObjectID sub_407100(int64_t obj, int fld)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         oid.type = OID_TYPE_BLOCKED;
@@ -1658,7 +1658,7 @@ void obj_field_string_get(int64_t obj, int fld, char** value_ptr)
     const char* name_str;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         *value_ptr = NULL;
@@ -1683,7 +1683,7 @@ void obj_field_string_set(int64_t obj, int fld, const char* value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1700,7 +1700,7 @@ int obj_arrayfield_int32_get(int64_t obj, int fld, int index)
     int value;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1718,7 +1718,7 @@ void obj_arrayfield_int32_set(int64_t obj, int fld, int index, int value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1735,7 +1735,7 @@ unsigned int obj_arrayfield_uint32_get(int64_t obj, int fld, int index)
     int value;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1753,7 +1753,7 @@ void obj_arrayfield_uint32_set(int64_t obj, int fld, int index, unsigned int val
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1770,7 +1770,7 @@ int64_t obj_arrayfield_int64_get(int64_t obj, int fld, int index)
     int64_t value;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1788,7 +1788,7 @@ void obj_arrayfield_int64_set(int64_t obj, int fld, int index, int64_t value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1805,7 +1805,7 @@ int64_t obj_arrayfield_handle_get(int64_t obj, int fld, int index)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return OBJ_HANDLE_NULL;
@@ -1828,7 +1828,7 @@ bool obj_arrayfield_obj_get(int64_t obj, int fld, int index, int64_t* value_ptr)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         *value_ptr = OBJ_HANDLE_NULL;
@@ -1868,7 +1868,7 @@ void obj_arrayfield_obj_set(int64_t obj, int fld, int index, int64_t value)
     ObjectID oid;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1891,7 +1891,7 @@ void obj_arrayfield_script_get(int64_t obj, int fld, int index, void* value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1907,7 +1907,7 @@ void obj_arrayfield_script_set(int64_t obj, int fld, int index, void* value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1923,7 +1923,7 @@ void obj_arrayfield_pc_quest_get(int64_t obj, int fld, int index, void* value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1939,7 +1939,7 @@ void obj_arrayfield_pc_quest_set(int64_t obj, int fld, int index, void* value)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1956,7 +1956,7 @@ int obj_arrayfield_length_get(int64_t obj, int fld)
     int length;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return 0;
@@ -1974,7 +1974,7 @@ void obj_arrayfield_length_set(int64_t obj, int fld, int length)
     Object* object;
 
     object = obj_lock(obj);
-    if (!sub_40C260(object->type, fld)) {
+    if (!object_field_valid(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj);
         return;
@@ -1993,7 +1993,7 @@ void obj_arrayfield_pc_rumor_copy_to_flat(int64_t obj, int fld, int cnt, void* d
     int64_t prototype_obj;
 
     object = obj_lock(obj);
-    if (sub_40C260(object->type, fld)) {
+    if (object_field_valid(object->type, fld)) {
         prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
         sa_array_copy_to_flat(data, sa_ptr, cnt, sizeof(uint64_t));
         if (prototype_locked) {
@@ -2014,7 +2014,7 @@ void obj_arrayfield_pc_quest_copy_to_flat(int64_t obj, int fld, int cnt, void* d
     int64_t prototype_obj;
 
     object = obj_lock(obj);
-    if (sub_40C260(object->type, fld)) {
+    if (object_field_valid(object->type, fld)) {
         prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
         sa_array_copy_to_flat(data, sa_ptr, cnt, sizeof(PcQuestState));
         if (prototype_locked) {
@@ -2032,7 +2032,7 @@ void sub_407D50(int64_t obj, int fld)
     Object* object;
 
     object = obj_lock(obj);
-    if (sub_40C260(object->type, fld)) {
+    if (object_field_valid(object->type, fld)) {
         if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
             sub_40C6E0(object, fld);
             sub_40D400(object, fld, true);
@@ -3916,7 +3916,7 @@ void sub_40BBF0(Object* object)
 
     for (idx = 0; idx < dword_5D1130; idx++) {
         fld = dword_5D1128[idx];
-        if (sub_40C260(object->type, fld)
+        if (object_field_valid(object->type, fld)
             && sub_40D320(object, fld)) {
             sub_408A20(object, fld, &oid);
             if (oid.type != OID_TYPE_NULL) {
@@ -3953,7 +3953,7 @@ void sub_40BD20(Object* object)
     int64_t prototype_obj;
 
     for (index = 0; index < dword_5D1134; index++) {
-        if (sub_40C260(object->type, dword_5D112C[index])
+        if (object_field_valid(object->type, dword_5D112C[index])
             && sub_40D320(object, dword_5D112C[index])) {
             sub_408F40(object, dword_5D112C[index], &sa_ptr, &prototype_obj);
             if (*sa_ptr != NULL) {
@@ -3975,7 +3975,7 @@ void sub_40BDB0(Object* object)
 
     for (idx = 0; idx < dword_5D1130; idx++) {
         fld = dword_5D1128[idx];
-        if (sub_40C260(object->type, fld)
+        if (object_field_valid(object->type, fld)
             && sub_40D320(object, fld)) {
             sub_408A20(object, fld, &oid);
             if (oid.type != OID_TYPE_NULL) {
@@ -4000,7 +4000,7 @@ void sub_40BE70(Object* object)
     int64_t prototype_obj;
 
     for (index = 0; index < dword_5D1134; index++) {
-        if (sub_40C260(object->type, dword_5D112C[index])
+        if (object_field_valid(object->type, dword_5D112C[index])
             && sub_40D320(object, dword_5D112C[index])) {
             sub_408F40(object, dword_5D112C[index], &sa_ptr, &prototype_obj);
             if (*sa_ptr != NULL) {
@@ -4176,7 +4176,7 @@ int sub_40C030(ObjectType object_type)
 }
 
 // 0x40C260
-bool sub_40C260(int type, int fld)
+bool object_field_valid(int type, int fld)
 {
     if (object_fields[fld].type <= 2) {
         return false;
