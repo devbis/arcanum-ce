@@ -2281,20 +2281,20 @@ ObjectID sub_408020(int64_t obj, int a2)
 }
 
 // 0x4082C0
-bool sub_4082C0(int64_t* obj_ptr, int* iter_ptr)
+bool obj_inst_first(int64_t* obj_ptr, int* iter_ptr)
 {
     int64_t obj;
     int iter;
     Object* object;
-    bool v1;
+    bool is_proto;
 
     if (sub_4E53C0(&obj, &iter)) {
         do {
             object = obj_lock(obj);
-            v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
+            is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
             obj_unlock(obj);
 
-            if (!v1) {
+            if (!is_proto) {
                 *obj_ptr = obj;
                 *iter_ptr = iter;
                 return true;
@@ -2306,20 +2306,20 @@ bool sub_4082C0(int64_t* obj_ptr, int* iter_ptr)
 }
 
 // 0x408390
-bool sub_408390(int64_t* obj_ptr, int* iter_ptr)
+bool obj_inst_next(int64_t* obj_ptr, int* iter_ptr)
 {
     int64_t obj;
     int iter;
     Object* object;
-    bool v1;
+    bool is_proto;
 
     iter = *iter_ptr;
     while (sub_4E5420(&obj, &iter)) {
         object = obj_lock(obj);
-        v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
+        is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
         obj_unlock(obj);
 
-        if (!v1) {
+        if (!is_proto) {
             *obj_ptr = obj;
             *iter_ptr = iter;
             return true;

@@ -1100,12 +1100,12 @@ bool map_save_preprocess()
     int64_t obj;
     int iter;
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 sub_4064B0(obj);
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 
     return true;
@@ -1117,7 +1117,7 @@ bool map_save_objects()
     int64_t obj;
     int iter;
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
@@ -1126,7 +1126,7 @@ bool map_save_objects()
                     return false;
                 }
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 
     return true;
@@ -1164,7 +1164,7 @@ bool map_save_difs()
 
     size = tig_file_filelength(stream2);
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0
@@ -1199,7 +1199,7 @@ bool map_save_difs()
                     cnt++;
                 }
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 
     tig_file_fclose(stream2);
@@ -1234,7 +1234,7 @@ bool map_save_dynamic()
         return false;
     }
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
@@ -1248,7 +1248,7 @@ bool map_save_dynamic()
                     cnt++;
                 }
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 
     tig_file_fclose(stream);
@@ -1268,7 +1268,7 @@ void map_load_postprocess()
     unsigned int flags;
     TimeEvent timeevent;
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 sub_406520(obj);
@@ -1283,7 +1283,7 @@ void map_load_postprocess()
                 flags &= ~OF_TELEPORTED;
                 obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 }
 
@@ -1501,13 +1501,13 @@ void map_clear_objects()
 
         timeevent_clear_for_map_close();
 
-        if (sub_4082C0(&obj, &iter)) {
+        if (obj_inst_first(&obj, &iter)) {
             do {
                 if (!sub_43D990(obj)) {
                     sub_43CF70(obj);
                     sub_43CFF0(obj);
                 }
-            } while (sub_408390(&obj, &iter));
+            } while (obj_inst_next(&obj, &iter));
         }
 
         sub_4D0B40();
@@ -1566,7 +1566,7 @@ void map_disable_objects()
     int64_t sector_id;
     unsigned int flags;
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
@@ -1579,7 +1579,7 @@ void map_disable_objects()
                     }
                 }
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 }
 
@@ -1867,7 +1867,7 @@ void map_gender_check()
         return;
     }
 
-    if (sub_4082C0(&obj, &iter)) {
+    if (obj_inst_first(&obj, &iter)) {
         do {
             if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
                 const int description = obj_field_int32_get(obj, OBJ_F_DESCRIPTION);
@@ -1914,7 +1914,7 @@ void map_gender_check()
                     }
                 }
             }
-        } while (sub_408390(&obj, &iter));
+        } while (obj_inst_next(&obj, &iter));
     }
 }
 
