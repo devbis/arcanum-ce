@@ -484,7 +484,7 @@ void sub_468890(int description)
     int64_t obj;
 
     object_type = sub_4685D0(description);
-    sub_405800(object_type, &obj);
+    obj_create_proto(object_type, &obj);
     obj_field_int32_set(obj, OBJ_F_NAME, sub_468720(object_type));
     sub_408020(obj, description + 20);
     sub_468930(obj, description);

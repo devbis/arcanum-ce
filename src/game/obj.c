@@ -776,7 +776,7 @@ void sub_405790(int64_t obj)
 }
 
 // 0x405800
-void sub_405800(int type, int64_t* obj_ptr)
+void obj_create_proto(int type, int64_t* obj_ptr)
 {
     int64_t handle;
     Object* object;
