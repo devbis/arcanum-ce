@@ -35,7 +35,7 @@ static tig_window_handle_t jumppoint_iso_window_handle;
 static tig_art_id_t jumppoint_iso_art_id;
 
 // 0x60367C
-static bool dword_60367C;
+static bool jumppoint_modified;
 
 // 0x603680
 static bool jumppoint_initialized;
@@ -58,7 +58,7 @@ bool jumppoint_init(GameInitInfo* init_info)
     tig_art_interface_id_create(351, 0, 0, 0, &jumppoint_td_art_id);
 
     jumppoint_initialized = true;
-    dword_60367C = false;
+    jumppoint_modified = false;
     jumppoint_enabled = true;
 
     return true;
@@ -84,15 +84,16 @@ void jumppoint_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4E3050
-void jumppoint_new(MapNewInfo* new_map_info)
+bool jumppoint_new(MapNewInfo* new_map_info)
 {
     jumppoint_close();
 
     sprintf(byte_603560, "%s\\map.jmp", new_map_info->name);
     sprintf(byte_603450, "%s\\map.jmp", new_map_info->folder);
 
-    dword_60367C = true;
-    jumppoint_flush();
+    jumppoint_modified = true;
+
+    return jumppoint_flush();
 }
 
 // 0x4E30A0
@@ -119,7 +120,7 @@ bool jumppoint_open(const char* a1, const char* a2)
         return false;
     }
 
-    dword_60367C = false;
+    jumppoint_modified = false;
     tig_file_fclose(stream);
 
     return true;
@@ -139,7 +140,7 @@ void jumppoint_close()
         jumppoint_iso_invalidate_rect(NULL);
     }
 
-    dword_60367C = false;
+    jumppoint_modified = false;
 }
 
 // 0x4E3270
@@ -147,7 +148,7 @@ bool jumppoint_flush()
 {
     TigFile* stream;
 
-    if (dword_60367C) {
+    if (jumppoint_modified) {
         stream = tig_file_fopen(byte_603450, "wb");
         if (stream == NULL) {
             return false;
@@ -159,7 +160,7 @@ bool jumppoint_flush()
         }
 
         tig_file_fclose(stream);
-        dword_60367C = false;
+        jumppoint_modified = false;
     }
 
     return true;

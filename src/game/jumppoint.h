@@ -20,7 +20,7 @@ bool jumppoint_init(GameInitInfo* init_info);
 void jumppoint_reset();
 void jumppoint_exit();
 void jumppoint_resize(GameResizeInfo* resize_info);
-void jumppoint_new(MapNewInfo* new_map_info);
+bool jumppoint_new(MapNewInfo* new_map_info);
 bool jumppoint_open(const char* a1, const char* a2);
 void jumppoint_close();
 bool jumppoint_flush();
