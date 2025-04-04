@@ -105,7 +105,7 @@ static uint16_t* dword_6039EC;
 static TerrainHeader terrain_header;
 
 // 0x603A10
-static bool dword_603A10;
+static bool terrain_modified;
 
 // 0x603A14
 static int dword_603A14;
@@ -163,7 +163,7 @@ void terrain_exit()
 }
 
 // 0x4E7B90
-void terrain_new(MapNewInfo* new_map_info)
+bool terrain_new(MapNewInfo* new_map_info)
 {
     int index;
 
@@ -188,9 +188,9 @@ void terrain_new(MapNewInfo* new_map_info)
         sprintf(byte_6037C8, "%s\\terrain.tdf", new_map_info->name);
     }
 
-    dword_603A10 = true;
+    terrain_modified = true;
 
-    terrain_flush();
+    return terrain_flush();
 }
 
 
@@ -289,7 +289,7 @@ void terrain_close()
     memset(&terrain_header, 0, sizeof(terrain_header));
     byte_6038E4[0] = '\0';
     byte_6037C8[0] = '\0';
-    dword_603A10 = 0;
+    terrain_modified = false;
 }
 
 // 0x4E7EF0
@@ -431,28 +431,38 @@ void sub_4E86F0(Sector* sector)
 }
 
 // 0x4E8740
-void terrain_flush()
+bool terrain_flush()
 {
     TigFile* stream;
-    unsigned int flags;
     TerrainHeader hdr;
 
-    if (terrain_editor) {
-        if (dword_603A10) {
-            stream = tig_file_fopen(byte_6037C8, "wb");
-            if (stream != NULL) {
-                flags = terrain_header.field_4;
-                hdr = terrain_header;
-                hdr.field_4 = terrain_header.field_4 | 0x1;
-                if (tig_file_fwrite(&hdr, sizeof(hdr), 1, stream) == 1) {
-                    if (sub_4E9680(stream)) {
-                        dword_603A10 = false;
-                        tig_file_fclose(stream);
-                    }
-                }
-            }
-        }
+    if (!terrain_editor) {
+        return false;
     }
+
+    if (terrain_modified) {
+        stream = tig_file_fopen(byte_6037C8, "wb");
+        if (stream == NULL) {
+            return false;
+        }
+
+        hdr = terrain_header;
+        hdr.field_4 = terrain_header.field_4 | 0x1;
+        if (tig_file_fwrite(&hdr, sizeof(hdr), 1, stream) != 1) {
+            // FIXME: Leaks `stream`.
+            return false;
+        }
+
+        if (!sub_4E9680(stream)) {
+            // FIXME: Leaks `stream`.
+            return false;
+        }
+
+        terrain_modified = false;
+        tig_file_fclose(stream);
+    }
+
+    return true;
 }
 
 // 0x4E87F0
@@ -503,7 +513,7 @@ void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec))
         callback(sec);
     }
 
-    dword_603A10 = true;
+    terrain_modified = true;
 }
 
 // 0x4E8B20

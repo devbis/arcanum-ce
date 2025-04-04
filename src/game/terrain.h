@@ -7,7 +7,7 @@
 bool terrain_init(GameInitInfo* init_info);
 void terrain_reset();
 void terrain_exit();
-void terrain_new(MapNewInfo* new_map_info);
+bool terrain_new(MapNewInfo* new_map_info);
 bool terrain_open(const char* a1, const char* a2);
 void terrain_close();
 void terrain_sector_path(int64_t sector_id, char* path);
@@ -17,7 +17,7 @@ int sub_4E8DE0(uint16_t a1);
 int sub_4E8DF0(uint16_t a1);
 bool terrain_is_blocked(int64_t sec);
 void sub_4E86F0(Sector* sector);
-void terrain_flush();
+bool terrain_flush();
 uint16_t sub_4E87F0(int64_t sec);
 
 #endif /* ARCANUM_GAME_TERRAIN_H_ */
