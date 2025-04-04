@@ -1638,7 +1638,7 @@ bool sub_5615D0(int a1)
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_45E1E0(pc_obj);
-                sub_4AA4A0(pc_obj);
+                ai_stop_attacking(pc_obj);
             }
             gsound_stop_all(25);
             dword_66D848 = gsound_play_music_indefinitely("sound\\music\\arcanum.mp3", 25);

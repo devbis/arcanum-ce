@@ -90,7 +90,7 @@ void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj);
 void sub_4AA0D0(int64_t obj);
 void sub_4AA1B0(int64_t a1, int64_t a2);
 void sub_4AA300(int64_t a1, int64_t a2);
-void sub_4AA4A0(int64_t obj);
+void ai_stop_attacking(int64_t obj);
 void sub_4AA580(int64_t obj);
 void sub_4AA7A0(int64_t obj);
 void sub_4AA8C0(int64_t obj, bool force);

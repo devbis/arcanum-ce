@@ -2583,7 +2583,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     }
     case SAT_ACTION_STOP_ATTACKING: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        sub_4AA4A0(obj);
+        ai_stop_attacking(obj);
         return NEXT;
     }
     case SAT_TOGGLE_MONSTER_GENERATOR: {

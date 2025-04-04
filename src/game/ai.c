@@ -1337,17 +1337,15 @@ void sub_4AA420(int64_t obj, int64_t a2)
 }
 
 // 0x4AA4A0
-void sub_4AA4A0(int64_t obj)
+void ai_stop_attacking(int64_t obj)
 {
     int type;
-    int64_t combat_focus_obj;
-    unsigned int flags;
-    ObjectList objects;
-    ObjectNode* node;
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    switch (type) {
-    case OBJ_TYPE_NPC:
+    if (type == OBJ_TYPE_NPC) {
+        int64_t combat_focus_obj;
+        ObjectNpcFlags npc_flags;
+
         combat_focus_obj = obj_field_handle_get(obj, OBJ_F_NPC_COMBAT_FOCUS);
         if (combat_focus_obj != OBJ_HANDLE_NULL) {
             sub_4AA300(obj, combat_focus_obj);
@@ -1355,23 +1353,24 @@ void sub_4AA4A0(int64_t obj)
             combat_critter_deactivate_combat_mode(obj);
         }
         if (critter_pc_leader_get(obj) != OBJ_HANDLE_NULL) {
-            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-            flags |= ONF_NO_ATTACK;
-            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+            npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            npc_flags |= ONF_NO_ATTACK;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
         }
         ai_target_unlock(obj);
-        break;
-    case OBJ_TYPE_PC:
+    } else if (type == OBJ_TYPE_PC) {
+        ObjectList objects;
+        ObjectNode* node;
+
         object_list_all_followers(obj, &objects);
 
         node = objects.head;
         while (node != NULL) {
-            sub_4AA4A0(node->obj);
+            ai_stop_attacking(node->obj);
             node = node->next;
         }
 
         object_list_destroy(&objects);
-        break;
     }
 }
 
