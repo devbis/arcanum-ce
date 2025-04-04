@@ -44,8 +44,8 @@ static void show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 static void sub_57CBE0(char* str);
 static void sub_57CC10(int64_t obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
-static void sub_57CDC0();
-static void sub_57CDE0();
+static void end_death();
+static void end_game();
 static void sub_57CDF0(int a1);
 static void sub_57CE00();
 static void sub_57CE10();
@@ -90,8 +90,8 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_3C = sub_57CC70;
     callbacks.field_40 = sub_567E00;
     callbacks.field_44 = sub_567400;
-    callbacks.field_5C = sub_57CDC0;
-    callbacks.field_60 = sub_57CDE0;
+    callbacks.end_death = end_death;
+    callbacks.end_game = end_game;
     callbacks.field_64 = sub_57CDF0;
     callbacks.field_68 = sub_57EDF0;
     callbacks.field_6C = sub_57EED0;
@@ -240,7 +240,8 @@ void sub_57CBE0(char* str)
 void sub_57CC10(int64_t obj)
 {
     if (player_is_local_pc_obj(obj)) {
-        sub_57D350(1, -1);
+        anim_ui_event_add(ANIM_UI_EVENT_TYPE_UPDATE_FATIGUE_BAR, -1);
+
         if (!critter_is_active(obj)) {
             sub_575770();
         }
@@ -293,15 +294,15 @@ bool sub_57CD60(int64_t a1, int64_t a2, char* buffer)
 }
 
 // 0x57CDC0
-void sub_57CDC0()
+void end_death()
 {
-    sub_57D370(10, -1, 5000);
+    anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_DEATH, -1, 5000);
 }
 
 // 0x57CDE0
-void sub_57CDE0()
+void end_game()
 {
-    sub_57D370(11, -1, 50);
+    anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_GAME, -1, 50);
 }
 
 // 0x57CDF0

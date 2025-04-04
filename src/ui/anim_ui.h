@@ -3,14 +3,32 @@
 
 #include "game/context.h"
 
+typedef enum AnimUiEventType {
+    ANIM_UI_EVENT_TYPE_UPDATE_HEALTH_BAR,
+    ANIM_UI_EVENT_TYPE_UPDATE_FATIGUE_BAR,
+    ANIM_UI_EVENT_TYPE_2,
+    ANIM_UI_EVENT_TYPE_3,
+    ANIM_UI_EVENT_TYPE_4,
+    ANIM_UI_EVENT_TYPE_5,
+    ANIM_UI_EVENT_TYPE_6,
+    ANIM_UI_EVENT_TYPE_7,
+    ANIM_UI_EVENT_TYPE_8,
+    ANIM_UI_EVENT_TYPE_9,
+    ANIM_UI_EVENT_TYPE_END_DEATH,
+    ANIM_UI_EVENT_TYPE_END_GAME,
+    ANIM_UI_EVENT_TYPE_REFRESH_COMBAT_UI,
+    ANIM_UI_EVENT_TYPE_END_RANDOM_ENCOUNTER,
+    ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI,
+} AnimUiEventType;
+
 bool anim_ui_init(GameInitInfo* init_info);
 void anim_ui_exit();
 void anim_ui_reset();
 bool anim_ui_save(TigFile* stream);
 bool anim_ui_load(GameLoadInfo* load_info);
-void sub_57D350(int a1, int a2);
-void sub_57D370(int a1, int a2, int milliseconds);
-void sub_57D3E0(int list, int a2);
+void anim_ui_event_add(int type, int param);
+void anim_ui_event_add_delay(int type, int param, int milliseconds);
+void anim_ui_event_remove(int type, int param);
 void ambient_lighting_enable();
 void ambient_lighting_disable();
 

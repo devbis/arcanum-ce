@@ -238,8 +238,8 @@ tig_window_handle_t sub_568D20()
         }
     }
 
-    sub_57D3E0(TIMEEVENT_TYPE_WORLDMAP, -1);
-    sub_57D370(TIMEEVENT_TYPE_WORLDMAP, -1, 3000);
+    anim_ui_event_remove(ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI, -1);
+    anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI, -1, 3000);
 
     return compact_ui_message_window_handle;
 }
@@ -287,7 +287,7 @@ void sub_568F40()
         tig_window_box(compact_ui_message_window_handle, &rect, tig_color_make(9, 9, 9));
     }
 
-    sub_57D3E0(14, -1);
+    anim_ui_event_remove(14, -1);
     sub_568F20();
 }
 

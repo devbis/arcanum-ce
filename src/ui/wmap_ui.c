@@ -1055,7 +1055,7 @@ bool sub_5606B0(TigRect* rect, TigFile* stream)
 void wmap_ui_encounter_start()
 {
     wmap_ui_encounter = true;
-    sub_57D370(13, 0, 4000);
+    anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_RANDOM_ENCOUNTER, 0, 4000);
 }
 
 // 0x560740

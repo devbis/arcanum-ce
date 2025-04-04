@@ -1305,7 +1305,7 @@ void sub_4EFCD0(Packet124* pkt)
             script_gl_flag_set(pkt->field_8, pkt->field_C);
             break;
         case 3:
-            sub_460530();
+            ui_end_game();
             break;
         }
         multiplayer_unlock();

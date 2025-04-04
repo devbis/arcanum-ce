@@ -5038,7 +5038,7 @@ void sub_552080(int window_type)
 
         if (dword_5C6F78 < 6) {
             dword_5C6F78++;
-            sub_57D350(8, window_type);
+            anim_ui_event_add(ANIM_UI_EVENT_TYPE_8, window_type);
         } else {
             dword_5C6D58 = intgame_iso_window_type;
         }
@@ -7991,7 +7991,7 @@ void sub_5570D0(int64_t obj, bool a2, int a3)
 void sub_5571C0(int64_t obj)
 {
     if (player_is_local_pc_obj(obj)) {
-        sub_57D350(0, -1);
+        anim_ui_event_add(ANIM_UI_EVENT_TYPE_UPDATE_HEALTH_BAR, -1);
     }
 
     if (sub_43C570() == obj || qword_64C690 == obj) {

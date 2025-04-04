@@ -100,20 +100,20 @@ bool anim_ui_load(GameLoadInfo* load_info)
 }
 
 // 0x57D350
-void sub_57D350(int a1, int a2)
+void anim_ui_event_add(int type, int param)
 {
-    sub_57D370(a1, a2, 50);
+    anim_ui_event_add_delay(type, param, 50);
 }
 
 // 0x57D370
-void sub_57D370(int a1, int a2, int milliseconds)
+void anim_ui_event_add_delay(int type, int param, int milliseconds)
 {
     DateTime datetime;
     TimeEvent timeevent;
 
     timeevent.type = TIMEEVENT_TYPE_BKG_ANIM;
-    timeevent.params[0].integer_value = a1;
-    timeevent.params[1].integer_value = a2;
+    timeevent.params[0].integer_value = type;
+    timeevent.params[1].integer_value = param;
     sub_45A950(&datetime, milliseconds);
     sub_45B800(&timeevent, &datetime);
 }
@@ -126,11 +126,12 @@ bool sub_57D3B0(TimeEvent* timeevent)
 }
 
 // 0x57D3E0
-void sub_57D3E0(int list, int a2)
+void anim_ui_event_remove(int type, int param)
 {
-    dword_5CB40C = list;
-    dword_5CB410 = a2;
-    timeevent_clear_one_ex(list, sub_57D3B0);
+    dword_5CB40C = type;
+    dword_5CB410 = param;
+    // FIX: Original code uses `type` as timeevent type which is obviously wrong.
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_BKG_ANIM, sub_57D3B0);
     dword_5CB40C = -1;
     dword_5CB410 = -1;
 }
@@ -141,30 +142,30 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
     FadeData fade_data;
 
     switch (timeevent->params[0].integer_value) {
-    case 0:
+    case ANIM_UI_EVENT_TYPE_UPDATE_HEALTH_BAR:
         intgame_draw_bar(INTGAME_BAR_HEALTH);
         break;
-    case 1:
+    case ANIM_UI_EVENT_TYPE_UPDATE_FATIGUE_BAR:
         intgame_draw_bar(INTGAME_BAR_FATIGUE);
         break;
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
+    case ANIM_UI_EVENT_TYPE_2:
+    case ANIM_UI_EVENT_TYPE_3:
+    case ANIM_UI_EVENT_TYPE_4:
+    case ANIM_UI_EVENT_TYPE_5:
+    case ANIM_UI_EVENT_TYPE_6:
+    case ANIM_UI_EVENT_TYPE_7:
         break;
-    case 8:
+    case ANIM_UI_EVENT_TYPE_8:
         sub_552080(timeevent->params[1].integer_value);
         break;
-    case 10:
+    case ANIM_UI_EVENT_TYPE_END_DEATH:
         if (critter_is_dead(player_get_local_pc_obj())) {
             if (sub_573620() != OBJ_HANDLE_NULL) {
                 sub_575770();
             }
             if (sub_541680()) {
                 sub_5412D0();
-                sub_57D370(10, -1, 300);
+                anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_DEATH, -1, 300);
             } else {
                 slide_ui_run(SLIDE_UI_TYPE_DEATH);
 
@@ -180,15 +181,16 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             }
         }
         break;
-    case 11:
+    case ANIM_UI_EVENT_TYPE_END_GAME:
         if (sub_573620() != OBJ_HANDLE_NULL) {
             sub_575770();
         }
         if (sub_541680()) {
             sub_5412D0();
-            sub_57D370(11, -1, 300);
+            anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_GAME, -1, 300);
         } else {
             slide_ui_run(SLIDE_UI_TYPE_END_GAME);
+
             if (tig_net_is_active()) {
                 fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;
@@ -211,13 +213,13 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             gfade_run(&fade_data);
         }
         break;
-    case 12:
+    case ANIM_UI_EVENT_TYPE_REFRESH_COMBAT_UI:
         combat_ui_refresh();
         break;
-    case 13:
+    case ANIM_UI_EVENT_TYPE_END_RANDOM_ENCOUNTER:
         wmap_ui_encounter_end();
         break;
-    case 14:
+    case ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI:
         sub_568F20();
         break;
     default:

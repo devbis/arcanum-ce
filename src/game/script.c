@@ -2771,7 +2771,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_END_GAME_AND_PLAY_SLIDES: {
-        sub_460530();
+        ui_end_game();
         if (tig_net_is_active()
             && tig_net_is_host()) {
             Packet124 pkt;

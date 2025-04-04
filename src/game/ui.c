@@ -215,18 +215,18 @@ void sub_4604F0(int64_t a1, int64_t a2)
 }
 
 // 0x460520
-void sub_460520()
+void ui_end_death()
 {
-    if (ui_callbacks.field_5C != NULL) {
-        ui_callbacks.field_5C();
+    if (ui_callbacks.end_death != NULL) {
+        ui_callbacks.end_death();
     }
 }
 
 // 0x460530
-void sub_460530()
+void ui_end_game()
 {
-    if (ui_callbacks.field_60 != NULL) {
-        ui_callbacks.field_60();
+    if (ui_callbacks.end_game != NULL) {
+        ui_callbacks.end_game();
     }
 }
 

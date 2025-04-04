@@ -11166,7 +11166,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
 
         if (!tig_net_is_active()) {
             if (player_is_local_pc_obj(obj)) {
-                sub_460520();
+                ui_end_death();
             }
         }
 

@@ -602,7 +602,7 @@ void combat_ui_refresh()
     }
 
     if (combat_ui_created) {
-        sub_57D370(12, -1, 100);
+        anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_REFRESH_COMBAT_UI, -1, 100);
     }
 }
 
