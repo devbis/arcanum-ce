@@ -3559,7 +3559,7 @@ void sub_419260(DialogState* a1, const char* str)
         return;
     }
 
-    if (sub_4AF210(a1->npc_obj, NULL)) {
+    if (ai_surrendered(a1->npc_obj, NULL)) {
         dialog_copy_npc_fleeing_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
         return;
     }

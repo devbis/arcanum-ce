@@ -120,7 +120,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness);
 void ai_flee(int64_t obj, int64_t danger_obj);
 void ai_stop_fleeing(int64_t obj);
 void ai_set_no_flee(int64_t obj);
-bool sub_4AF210(int64_t obj, int64_t* danger_source_ptr);
+bool ai_surrendered(int64_t obj, int64_t* danger_source_ptr);
 int sub_4AF260(int64_t a1, int64_t a2);
 int sub_4AF470(int64_t a1, int64_t a2, int loudness);
 void sub_4AF860();

@@ -4016,7 +4016,7 @@ void ai_set_no_flee(int64_t obj)
 }
 
 // 0x4AF210
-bool sub_4AF210(int64_t obj, int64_t* danger_source_ptr)
+bool ai_surrendered(int64_t obj, int64_t* danger_source_ptr)
 {
     int danger_type;
 

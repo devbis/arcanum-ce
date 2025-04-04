@@ -254,10 +254,10 @@ void sub_57CC10(int64_t obj)
 // 0x57CC70
 void sub_57CC70(int64_t a1, int64_t a2)
 {
-    int64_t v1;
+    int64_t danger_source_obj;
 
     if (object_script_execute(a1, a2, OBJ_HANDLE_NULL, SAP_DIALOG, 0) == 1) {
-        if (sub_4AF210(a2, &v1) && sub_45E2E0(v1, a1)) {
+        if (ai_surrendered(a2, &danger_source_obj) && sub_45E2E0(danger_source_obj, a1)) {
             ai_flee(a2, a1);
         } else {
             sub_5681C0(a1, a2);

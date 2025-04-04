@@ -327,7 +327,7 @@ bool sub_4449B0(ScriptInvocation* invocation)
             return true;
         }
 
-        if (sub_4AF210(invocation->attachee_obj, NULL) && (flags & 0x10) == 0) {
+        if (ai_surrendered(invocation->attachee_obj, NULL) && (flags & 0x10) == 0) {
             return true;
         }
 
@@ -1054,7 +1054,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         matched = 0;
         for (index = 0; index < cnt; index++) {
             if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
-                && sub_4AF210(objs[index], NULL)) {
+                && ai_surrendered(objs[index], NULL)) {
                 matched++;
             }
         }
