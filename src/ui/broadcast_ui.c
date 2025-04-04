@@ -95,7 +95,7 @@ void broadcast_ui_text_edit_on_enter(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
         intgame_get_location_under_cursor(&(broadcast_ui_bcast.loc));
-        broadcast_msg(player_get_pc_obj(), &broadcast_ui_bcast);
+        broadcast_msg(player_get_local_pc_obj(), &broadcast_ui_bcast);
     }
     broadcast_ui_close();
 }

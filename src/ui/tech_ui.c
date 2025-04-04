@@ -21,7 +21,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
         degree = tech_degree_get(obj, tech);
         cost = tech_degree_cost_get(degree + 1);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
-        is_pc = player_is_pc_obj(obj);
+        is_pc = player_is_local_pc_obj(obj);
 
         if (cost > points) {
             if (is_pc) {
@@ -57,7 +57,7 @@ void tech_ui_dec_degree(int64_t obj, int tech)
         degree = tech_degree_get(obj, tech);
         cost = tech_degree_cost_get(degree);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
-        is_pc = player_is_pc_obj(obj);
+        is_pc = player_is_local_pc_obj(obj);
 
         if (tech_degree_dec(obj, tech) < degree) {
             stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);

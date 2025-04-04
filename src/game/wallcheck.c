@@ -938,7 +938,7 @@ bool wallcheck_is_enabled()
 // 0x438530
 void sub_438530(int64_t obj)
 {
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         qword_5E0A08 = obj_field_int64_get(obj, OBJ_F_LOCATION);
         wallcheck_dirty = true;
     }

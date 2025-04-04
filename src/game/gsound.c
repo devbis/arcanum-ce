@@ -1374,7 +1374,7 @@ void gsound_effects_volume_changed()
     gsound_effects_volume = 80 * (127 * settings_get_value(&settings, "effects volume") / 10) / 100;
     tig_sound_set_volume_by_type(TIG_SOUND_TYPE_EFFECT, gsound_effects_volume);
 
-    obj = player_get_pc_obj();
+    obj = player_get_local_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         gsound_listener_set(location);

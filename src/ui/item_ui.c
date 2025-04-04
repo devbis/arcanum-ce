@@ -122,7 +122,7 @@ void sub_571AA0(int64_t a1, int64_t a2)
             if ((*tgt_ptr & Tgt_Object) != 0
                 && (tig_kb_is_key_pressed(DIK_LSHIFT)
                     || tig_kb_is_key_pressed(DIK_RSHIFT))) {
-                sub_4F2810(&v1, player_get_pc_obj());
+                sub_4F2810(&v1, player_get_local_pc_obj());
                 sub_571CB0(&v1);
             }
         }
@@ -150,7 +150,7 @@ void sub_571CB0(S4F2810* a1)
     int64_t item_obj;
     char str[1000];
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if (critter_is_dead(pc_obj)) {
         return;

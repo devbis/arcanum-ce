@@ -341,7 +341,7 @@ bool follower_ui_message_filter(TigMessage* msg)
     Broadcast bcast;
     S4F2810 v1;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (sub_567400(pc_obj)) {
         return false;
     }
@@ -422,7 +422,7 @@ bool follower_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             for (index = 0; index < FOLLOWER_UI_SLOTS; index++) {
                 if (msg->data.button.button_handle == follower_ui_buttons[index]) {
-                    follower_ui_commander_obj = player_get_pc_obj();
+                    follower_ui_commander_obj = player_get_local_pc_obj();
                     sub_444130(&follower_ui_followers[follower_ui_top_index + index]);
                     follower_ui_subordinate_obj = follower_ui_followers[follower_ui_top_index + index].obj;
                     if (follower_ui_subordinate_obj != OBJ_HANDLE_NULL) {
@@ -512,7 +512,7 @@ void follower_ui_drop_down_menu_create(int index)
     TigButtonData button_data;
     int cmd;
 
-    follower_ui_commander_obj = player_get_pc_obj();
+    follower_ui_commander_obj = player_get_local_pc_obj();
 
     sub_444130(&(follower_ui_followers[follower_ui_top_index + index]));
     follower_ui_subordinate_obj = follower_ui_followers[follower_ui_top_index + index].obj;
@@ -624,7 +624,7 @@ void follower_ui_update()
 
     in_update = true;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     color = tig_color_make(255, 0, 0);
 
     rect.x = 4;
@@ -679,7 +679,7 @@ void follower_ui_update()
 void follower_ui_update_obj(int64_t obj)
 {
     if (follower_ui_visible) {
-        if (critter_pc_leader_get(obj) == player_get_pc_obj()) {
+        if (critter_pc_leader_get(obj) == player_get_local_pc_obj()) {
             follower_ui_update();
         }
     }
@@ -773,7 +773,7 @@ void follower_ui_refresh()
     }
 
     follower_ui_followers_count = 0;
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     object_list_followers(pc_obj, &followers);
     node = followers.head;
     while (node != NULL) {

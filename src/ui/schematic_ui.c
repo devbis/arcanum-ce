@@ -1167,7 +1167,7 @@ bool sub_56E950(int a1, int64_t a2, int64_t obj)
 
     (void)a2;
 
-    if (a1 && player_is_pc_obj(obj)) {
+    if (a1 && player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 2;
         mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
         ui_message.type = UI_MSG_TYPE_EXCLAMATION;

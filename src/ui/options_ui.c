@@ -207,7 +207,7 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
     }
 
     if (dword_687260) {
-        location_origin_set(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION));
+        location_origin_set(obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION));
     }
 
     options_ui_initialized = true;
@@ -348,7 +348,7 @@ void options_ui_combat_mode_set(int value)
 // 0x589710
 void options_ui_auto_attack_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    *value_ptr = combat_auto_attack_get(player_get_pc_obj());
+    *value_ptr = combat_auto_attack_get(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
@@ -361,7 +361,7 @@ void options_ui_auto_attack_set(int value)
 // 0x589750
 void options_ui_auto_switch_weapons_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    *value_ptr = combat_auto_switch_weapons_get(player_get_pc_obj());
+    *value_ptr = combat_auto_switch_weapons_get(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
@@ -374,7 +374,7 @@ void options_ui_auto_switch_weapons_set(int value)
 // 0x589790
 void options_ui_awlays_run_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    *value_ptr = get_always_run(player_get_pc_obj());
+    *value_ptr = get_always_run(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
@@ -387,7 +387,7 @@ void options_ui_always_run_set(int value)
 // 0x5897D0
 void options_ui_follower_skills_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    *value_ptr = get_follower_skills(player_get_pc_obj());
+    *value_ptr = get_follower_skills(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 

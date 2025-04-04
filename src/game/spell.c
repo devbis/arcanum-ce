@@ -393,7 +393,7 @@ bool spell_add(int64_t obj, int spell, bool force)
     int magic_points;
     int cost;
 
-    if (!multiplayer_is_locked() && sub_40DA20(obj)) {
+    if (!multiplayer_is_locked() && player_is_pc_obj(obj)) {
         PlayerBuySpellPacket pkt;
 
         if (!tig_net_is_host()) {
@@ -448,7 +448,7 @@ bool spell_add(int64_t obj, int spell, bool force)
 
     spell_college_level_set(obj, college, new_spell_level);
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_4601C0();
     }
 
@@ -496,7 +496,7 @@ char* college_get_name(int college)
 // 0x4B1A50
 char* college_get_description(int college)
 {
-    if (spell_mastery_get(player_get_pc_obj()) == college) {
+    if (spell_mastery_get(player_get_local_pc_obj()) == college) {
         return college_mastery_descriptions[college];
     } else {
         return college_descriptions[college];

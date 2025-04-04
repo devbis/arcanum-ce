@@ -824,7 +824,7 @@ bool sub_57E8D0(int a1)
 
     if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
         if (item_parent(stru_683950.item_obj.obj, &parent_obj)
-            && !player_is_pc_obj(parent_obj)) {
+            && !player_is_local_pc_obj(parent_obj)) {
             dword_6839B0 = false;
             sub_575770();
             intgame_refresh_cursor();
@@ -862,7 +862,7 @@ bool sub_57E8D0(int a1)
     if (index < 10) {
         hotkey = &(stru_6835E0[index]);
         if (dword_5CB4E4 == index) {
-            sound_id = sub_4F0BF0(hotkey->item_obj.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
+            sound_id = sub_4F0BF0(hotkey->item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, 1);
             if (sound_id != -1) {
                 gsound_play_sfx(sound_id, 1);
             }
@@ -915,10 +915,10 @@ bool sub_57E8D0(int a1)
             flags &= ~OIF_NO_DISPLAY;
             obj_field_int32_set(stru_683950.item_obj.obj, OBJ_F_ITEM_FLAGS, flags);
             item_location_set(stru_683950.item_obj.obj, hotkey->slot + 2000);
-            sub_576100(player_get_pc_obj());
+            sub_576100(player_get_local_pc_obj());
             hotkey->item_obj = stru_683950.item_obj;
             hotkey->art_id = sub_554BE0(stru_683950.item_obj.obj);
-            hotkey->count = item_count_items_matching_prototype(player_get_pc_obj(), hotkey->item_obj.obj);
+            hotkey->count = item_count_items_matching_prototype(player_get_local_pc_obj(), hotkey->item_obj.obj);
             break;
         case HOTKEY_SKILL:
             hotkey->data = stru_683950.data;
@@ -948,7 +948,7 @@ bool sub_57E8D0(int a1)
 
     if (stru_683950.type != HOTKEY_ITEM) {
         if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
-            sound_id = sub_4F0BF0(stru_683950.item_obj.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
+            sound_id = sub_4F0BF0(stru_683950.item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, 1);
             if (sound_id != -1) {
                 gsound_play_sfx(sound_id, 1);
             }
@@ -993,7 +993,7 @@ bool sub_57EDA0(int a1)
 // 0x57EDF0
 void sub_57EDF0(int64_t obj, int64_t a2, int a3)
 {
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_57EE30(a2, a3);
     } else {
         item_location_set(a2, a3);
@@ -1043,7 +1043,7 @@ bool sub_57EED0(int64_t obj, int inventory_location)
     hotkey->type = HOTKEY_ITEM;
     sub_4440E0(obj, &(hotkey->item_obj));
     hotkey->art_id = sub_554BE0(obj);
-    hotkey->count = item_count_items_matching_prototype(player_get_pc_obj(), obj);
+    hotkey->count = item_count_items_matching_prototype(player_get_local_pc_obj(), obj);
     intgame_hotkey_refresh(hotkey->slot);
 
     return true;

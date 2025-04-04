@@ -2720,7 +2720,7 @@ void sub_452650(int64_t obj)
             teleport_do(&teleport_data);
         }
     } else {
-        if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             mes_file_entry.num = 1000;
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
             sub_460610(mes_file_entry.str);
@@ -3068,7 +3068,7 @@ bool sub_452F20()
             }
 
             if (v1) {
-                if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+                if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
                     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
                     sub_460610(mes_file_entry.str);
                 }
@@ -3130,7 +3130,7 @@ bool sub_452F20()
             }
 
             if (v1) {
-                if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+                if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
                     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
                     sub_460610(mes_file_entry.str);
                     sub_4604C0(dword_5E75F0->id);
@@ -3303,7 +3303,7 @@ bool sub_453710()
         return true;
     }
 
-    if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+    if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
         mes_file_entry.num = 602;
         mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
         sub_460610(mes_file_entry.str);
@@ -3663,7 +3663,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
         return false;
     }
 
-    if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+    if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
         if ((magictech_spells[dword_5E75F0->spell].flags & MAGICTECH_IS_TECH) == 0
             && !sub_4604A0(dword_5E75F0->id)) {
             dword_5E75F0->action = MAGICTECH_ACTION_END;
@@ -3768,11 +3768,11 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
         switch (fld) {
         case OBJ_F_SPELL_FLAGS:
             if ((a4 & (OSF_DETECTING_INVISIBLE | OSF_DETECTING_TRAPS | OSF_DETECTING_ALIGNMENT | OSF_DETECTING_MAGIC)) != 0) {
-                if (player_is_pc_obj(obj)) {
+                if (player_is_local_pc_obj(obj)) {
                     dword_5E6D24(NULL);
                 }
             } else if ((a4 & OSF_INVISIBLE) != 0) {
-                if (!player_is_pc_obj(obj)) {
+                if (!player_is_local_pc_obj(obj)) {
                     object_flags_set(obj, OF_INVISIBLE);
                 }
                 object_add_flags(obj, OF_TRANSLUCENT);
@@ -3788,7 +3788,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             } else if ((a4 & OSF_MIND_CONTROLLED) != 0) {
                 if (a6 != OBJ_HANDLE_NULL) {
                     if (obj_type == OBJ_TYPE_NPC) {
-                        if (sub_40DA20(a6)
+                        if (player_is_pc_obj(a6)
                             && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_SUMMONED) == 0) {
                             reaction_adj(obj, a6, -50);
                         }
@@ -3807,7 +3807,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 if (obj_type == OBJ_TYPE_NPC) {
                     if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL) != 0) {
                         sub_4AA300(obj, a6);
-                    } else if (sub_40DA20(a6)) {
+                    } else if (player_is_pc_obj(a6)) {
                         reaction_adj(obj, a6, 30);
                     }
 
@@ -3857,11 +3857,11 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
         switch (fld) {
         case OBJ_F_SPELL_FLAGS:
             if ((a4 & (OSF_DETECTING_INVISIBLE | OSF_DETECTING_TRAPS | OSF_DETECTING_ALIGNMENT | OSF_DETECTING_MAGIC)) != 0) {
-                if (player_is_pc_obj(obj)) {
+                if (player_is_local_pc_obj(obj)) {
                     dword_5E6D24(NULL);
                 }
             } else if ((a4 & OSF_INVISIBLE) != 0) {
-                if (!player_is_pc_obj(obj)) {
+                if (!player_is_local_pc_obj(obj)) {
                     object_flags_unset(obj, OF_INVISIBLE);
                 }
                 object_remove_flags(obj, OF_TRANSLUCENT);
@@ -4093,7 +4093,7 @@ void sub_455350(int64_t obj, int64_t target_loc)
         sub_424070(obj, 5, false, true);
         sub_43E770(obj, source_loc, 0, 0);
 
-        if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             location_origin_set(source_loc);
         }
     }
@@ -4139,7 +4139,7 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
 
     if ((a1->field_60 & OSF_ANTI_MAGIC_SHELL) != 0
         && (run_info->field_138 & 0x800) == 0) {
-        if (player_is_pc_obj(run_info->parent_obj.obj)) {
+        if (player_is_local_pc_obj(run_info->parent_obj.obj)) {
             mes_file_entry.num = 603; // "The effect is nullified."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
             sub_460610(mes_file_entry.str);
@@ -4176,7 +4176,7 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
         return true;
     }
 
-    if (player_is_pc_obj(run_info->parent_obj.obj)) {
+    if (player_is_local_pc_obj(run_info->parent_obj.obj)) {
         mes_file_entry.num = 602; // "You lose your concentration."
         mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
         sub_460610(mes_file_entry.str);
@@ -4660,7 +4660,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         return false;
     }
 
-    if (!sub_40DA20(a1->parent_obj.obj)) {
+    if (!player_is_pc_obj(a1->parent_obj.obj)) {
         S603D20 v1;
         S603CB8 v2;
         S603CB8_F50 v3;
@@ -4751,7 +4751,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
     if (a1->parent_obj.obj != OBJ_HANDLE_NULL
         && a1->spell == SPELL_TELEPORTATION
         && !antiteleport_check_can_teleport(a1->parent_obj.obj, 0)) {
-        if (player_is_pc_obj(a1->parent_obj.obj)) {
+        if (player_is_local_pc_obj(a1->parent_obj.obj)) {
             mes_file_entry.num = 10000; // "This place seems to block your attempt to teleport."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
             sub_460610(mes_file_entry.str);
@@ -5831,7 +5831,7 @@ bool sub_458A80(unsigned int flags)
 {
     int64_t pc_obj;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -6341,7 +6341,7 @@ bool magictech_recharge_timeevent_process(TimeEvent* timeevent)
     obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, mana_store + v4);
 
     parent_obj = obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
-    if (parent_obj != OBJ_HANDLE_NULL && player_is_pc_obj(parent_obj)) {
+    if (parent_obj != OBJ_HANDLE_NULL && player_is_local_pc_obj(parent_obj)) {
         sub_4605D0();
     }
 
@@ -6798,7 +6798,7 @@ void magictech_debug_lists()
     }
 
     tig_debug_printf("Local PC Has %d Maintained Spells\n",
-        sub_450AC0(player_get_pc_obj()));
+        sub_450AC0(player_get_local_pc_obj()));
     tig_debug_printf("\n\n");
 }
 

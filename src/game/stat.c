@@ -558,7 +558,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         pkt.oid = sub_407EF0(obj);
 
         if (!tig_net_is_host()) {
-            if (player_is_pc_obj(obj)
+            if (player_is_local_pc_obj(obj)
                 && STAT_IS_PRIMARY(stat)
                 && abs(stat_base_get(obj, stat) - value) == 1) {
                 tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -636,7 +636,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         critter_encumbrance_level_recalc(obj, encumbrance_level);
         break;
     case STAT_INTELLIGENCE:
-        if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             sub_4604E0();
         }
         break;

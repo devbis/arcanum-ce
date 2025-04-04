@@ -365,7 +365,7 @@ int portrait_get(int64_t obj)
     portrait = obj_field_int32_get(obj, OBJ_F_CRITTER_PORTRAIT);
 
     if (portrait != 0 && type == OBJ_TYPE_NPC) {
-        if (portrait == portrait_get(player_get_pc_obj())) {
+        if (portrait == portrait_get(player_get_local_pc_obj())) {
             if (portrait_find_next(obj, &next)) {
                 portrait = next;
             } else if (portrait_find_prev(obj, &prev)) {

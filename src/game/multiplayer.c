@@ -912,12 +912,12 @@ bool multiplayer_timeevent_process(TimeEvent* timeevent)
 
         return true;
     case 3:
-        objid_id_to_str(str, sub_407EF0(player_get_pc_obj()));
+        objid_id_to_str(str, sub_407EF0(player_get_local_pc_obj()));
         snprintf(path, sizeof(path), "Players\\%s.mpc", str);
-        sub_424070(player_get_pc_obj(), PRIORITY_HIGHEST, false, true);
+        sub_424070(player_get_local_pc_obj(), PRIORITY_HIGHEST, false, true);
 
         if (sub_460BB0()) {
-            sub_4A39F0(path, player_get_pc_obj());
+            sub_4A39F0(path, player_get_local_pc_obj());
         }
 
         dword_5F0E14 = 0;
@@ -1163,7 +1163,7 @@ int64_t multiplayer_find_first_player_obj()
     dword_5B40D8 = -1;
 
     if (!tig_net_is_active()) {
-        return player_get_pc_obj();
+        return player_get_local_pc_obj();
     }
 
     for (dword_5B40D8 = 0; dword_5B40D8 < NUM_PLAYERS; dword_5B40D8++) {
@@ -1531,10 +1531,10 @@ bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_han
         char oidstr[40];
         char path[TIG_MAX_PATH];
 
-        objid_id_to_str(oidstr, sub_407EF0(player_get_pc_obj()));
+        objid_id_to_str(oidstr, sub_407EF0(player_get_local_pc_obj()));
         snprintf(path, sizeof(path), "Players\\%s.mpc", oidstr);
         if (sub_460BB0()) {
-            sub_4A39F0(path, player_get_pc_obj());
+            sub_4A39F0(path, player_get_local_pc_obj());
         }
 
         if (func != NULL) {
@@ -1912,10 +1912,10 @@ bool sub_4A4320()
     char str[40];
     char path[TIG_MAX_PATH];
 
-    objid_id_to_str(str, sub_407EF0(player_get_pc_obj()));
+    objid_id_to_str(str, sub_407EF0(player_get_local_pc_obj()));
     snprintf(path, sizeof(path), "Players\\%s.mpc", str);
-    sub_424070(player_get_pc_obj(), 6, false, true);
-    return sub_4A39F0(path, player_get_pc_obj());
+    sub_424070(player_get_local_pc_obj(), 6, false, true);
+    return sub_4A39F0(path, player_get_local_pc_obj());
 }
 
 // 0x4A43B0
@@ -2450,7 +2450,7 @@ bool sub_4A50D0(int64_t pc_obj, int64_t item_obj)
         Packet93 pkt;
         int64_t parent_obj;
 
-        if (pc_obj == player_get_pc_obj()) {
+        if (pc_obj == player_get_local_pc_obj()) {
             client_id = sub_4A2B10(pc_obj);
             if (client_id != -1) {
                 if (sub_4A52C0(client_id, item_obj)) {
@@ -2488,7 +2488,7 @@ bool sub_4A51C0(int64_t pc_obj, int64_t item_obj)
         int client_id;
         Packet93 pkt;
 
-        if (pc_obj != player_get_pc_obj()) {
+        if (pc_obj != player_get_local_pc_obj()) {
             return false;
         }
 
@@ -3171,7 +3171,7 @@ bool sub_4A6470(int64_t pc_obj)
 
     objid_id_to_str(oidstr, sub_407EF0(pc_obj));
     snprintf(path, sizeof(path), "Players\\%s.mpc", oidstr);
-    sub_424070(player_get_pc_obj(), PRIORITY_HIGHEST, false, true);
+    sub_424070(player_get_local_pc_obj(), PRIORITY_HIGHEST, false, true);
 
     if (sub_460BC0()) {
         if (tig_file_exists(path, NULL)) {

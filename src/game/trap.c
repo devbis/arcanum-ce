@@ -279,7 +279,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
         type = obj_field_int32_get(pc_obj, OBJ_F_TYPE);
         switch (type) {
         case OBJ_TYPE_PC:
-            if (!player_is_pc_obj(pc_obj)) {
+            if (!player_is_local_pc_obj(pc_obj)) {
                 return;
             }
             break;
@@ -305,7 +305,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             }
         }
 
-        if (a3 == 0 && pc_obj == player_get_pc_obj()) {
+        if (a3 == 0 && pc_obj == player_get_local_pc_obj()) {
             // You have spotted a trap!
             mes_file_entry.num = 0;
             mes_get_msg(trap_mes_file, &mes_file_entry);
@@ -1034,7 +1034,7 @@ int64_t sub_4BD950(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_TRAP_PC) != 0) {
-        return player_get_pc_obj();
+        return player_get_local_pc_obj();
     }
 
     return OBJ_HANDLE_NULL;

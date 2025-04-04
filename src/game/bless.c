@@ -134,7 +134,7 @@ void bless_add(int64_t obj, int bless)
 
     effect_add(obj, bless, EFFECT_CAUSE_BLESS);
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 1000;
         mes_get_msg(bless_mes_file, &mes_file_entry);
 
@@ -196,7 +196,7 @@ void bless_remove(int64_t obj, int bless)
             obj_arrayfield_length_set(obj, OBJ_F_PC_BLESSING_TS_IDX, cnt - 1);
             effect_remove_one_typed(obj, bless_get_effect(bless));
 
-            if (player_is_pc_obj(obj)) {
+            if (player_is_local_pc_obj(obj)) {
                 ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
             }
             break;

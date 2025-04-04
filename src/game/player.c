@@ -153,23 +153,19 @@ void player_create()
 }
 
 // 0x40D9F0
-bool player_is_pc_obj(int64_t obj)
+bool player_is_local_pc_obj(int64_t obj)
 {
     return obj != OBJ_HANDLE_NULL && obj == player_pc_obj;
 }
 
 // 0x40DA20
-bool sub_40DA20(int64_t obj)
+bool player_is_pc_obj(int64_t obj)
 {
-    if (obj != OBJ_HANDLE_NULL) {
-        return obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
-    } else {
-        return false;
-    }
+    return obj != OBJ_HANDLE_NULL && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
 }
 
 // 0x40DA50
-int64_t player_get_pc_obj()
+int64_t player_get_local_pc_obj()
 {
     int64_t obj = player_pc_obj;
 

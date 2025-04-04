@@ -1256,7 +1256,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
     tig_art_id_t art_id;
     TigArtAnimData art_anim_data;
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     combat_mode_is_active = combat_critter_is_combat_mode_active(obj);
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
@@ -1333,7 +1333,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
         }
 
         if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
-            && !player_is_pc_obj(obj)) {
+            && !player_is_local_pc_obj(obj)) {
             object_flags_set(obj, OF_INVISIBLE);
         }
     } else {
@@ -1501,7 +1501,7 @@ void sub_4B4390(CombatContext* combat)
         dam_flags |= CDF_DAMAGE_ARMOR;
     }
 
-    if (sub_40DA20(combat->attacker_obj)) {
+    if (player_is_pc_obj(combat->attacker_obj)) {
         if (!tig_net_is_active()
             || tig_net_is_host()) {
             combat->game_difficulty = gamelib_get_game_difficulty();
@@ -1556,7 +1556,7 @@ void sub_4B4390(CombatContext* combat)
         if (obj_type == OBJ_TYPE_PC) {
             tf_type = TF_TYPE_RED;
         } else if (obj_type == OBJ_TYPE_NPC
-            && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
+            && critter_pc_leader_get(combat->target_obj) == player_get_local_pc_obj()) {
             tf_type = TF_TYPE_YELLOW;
         } else {
             tf_type = TF_TYPE_WHITE;
@@ -1909,13 +1909,13 @@ void sub_4B4390(CombatContext* combat)
             critter_notify_killed(combat->target_obj, combat->field_30, anim);
 
             if (obj_type == OBJ_TYPE_NPC
-                && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
+                && critter_pc_leader_get(combat->target_obj) == player_get_local_pc_obj()) {
                 ui_follower_update();
             }
         } else if (obj_type == OBJ_TYPE_NPC) {
             ai_process(combat->target_obj);
 
-            if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
+            if (critter_pc_leader_get(combat->target_obj) == player_get_local_pc_obj()) {
                 ui_follower_update();
             }
         }
@@ -2366,7 +2366,7 @@ void sub_4B58C0(CombatContext* combat)
     }
 
     if (type == OBJ_TYPE_NPC) {
-        if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
+        if (critter_pc_leader_get(combat->target_obj) == player_get_local_pc_obj()) {
             ui_follower_update();
         }
     }
@@ -2896,7 +2896,7 @@ void sub_4B6B90(CombatContext* combat)
     int64_t pc_obj;
 
     // FIXME: Unused.
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if (!combat_taunts_get()) {
         return;
@@ -2956,7 +2956,7 @@ bool sub_4B6C90(bool turn_based)
         return true;
     }
 
-    pc = player_get_pc_obj();
+    pc = player_get_local_pc_obj();
     if (!sub_424070(pc, 3, 0, 1)) {
         return false;
     }
@@ -2989,7 +2989,7 @@ void combat_turn_based_toggle()
     if (combat_is_turn_based()) {
         settings_set_value(&settings, "turn-based", 0);
     } else {
-        if (critter_is_active(player_get_pc_obj())) {
+        if (critter_is_active(player_get_local_pc_obj())) {
             settings_set_value(&settings, "turn-based", 1);
         }
     }
@@ -3022,7 +3022,7 @@ void combat_debug(int64_t obj, const char* msg)
 
     if (obj != OBJ_HANDLE_NULL) {
         if (sub_4E5470(obj)) {
-            if (sub_40DA20(obj)) {
+            if (player_is_pc_obj(obj)) {
                 obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &name);
             } else {
                 obj_field_string_get(obj, OBJ_F_NAME, &name);
@@ -3052,7 +3052,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
 
     combat_debug(obj, "Whos Turn Set");
 
-    if (!player_is_pc_obj(qword_5FC248)) {
+    if (!player_is_local_pc_obj(qword_5FC248)) {
         sub_424070(qword_5FC248, 3, 0, 1);
     }
 
@@ -3091,7 +3091,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
 
     tig_debug_printf("Combat: TB: Action Points Available: %d.\n", combat_action_points);
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         combat_callbacks.field_C(combat_action_points);
 
         if (!sub_4BB900()) {
@@ -3118,7 +3118,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
 void sub_4B7010(int64_t obj)
 {
     if (obj == dword_5FC240->obj
-        && !sub_40DA20(obj)
+        && !player_is_pc_obj(obj)
         && !gamelib_in_load()) {
         if (object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0) == 1) {
             ai_process(obj);
@@ -3148,7 +3148,7 @@ void sub_4B7080()
     }
 
     if (dword_5FC240 != NULL) {
-        if (sub_40DA20(dword_5FC240->obj) && combat_action_points > 0) {
+        if (player_is_pc_obj(dword_5FC240->obj) && combat_action_points > 0) {
             return;
         }
 
@@ -3178,7 +3178,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
 
     if (combat_turn_based_active) {
         if (dword_5FC240 != NULL
-            && sub_40DA20(dword_5FC240->obj)
+            && player_is_pc_obj(dword_5FC240->obj)
             && combat_action_points > 0) {
             return true;
         }
@@ -3219,7 +3219,7 @@ bool combat_turn_based_start()
 
     sub_423FE0(sub_4B7080);
 
-    loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     sub_4B7300();
 
     loc_rect.x1 = LOCATION_GET_X(loc) - dword_5B57B8;
@@ -3243,7 +3243,7 @@ bool combat_turn_based_start()
 // 0x4B7300
 void sub_4B7300()
 {
-    dword_5B57B8 = stat_level_get(player_get_pc_obj(), STAT_PERCEPTION) / 2 + 5;
+    dword_5B57B8 = stat_level_get(player_get_local_pc_obj(), STAT_PERCEPTION) / 2 + 5;
     if (dword_5B57B8 < 10) {
         dword_5B57B8 = 10;
     }
@@ -3283,7 +3283,7 @@ bool combat_turn_based_begin_turn()
     ObjectNode* node;
 
     dword_5FC250 = 0;
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     dword_5FC230++;
     pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
     sub_4B7300();
@@ -3371,7 +3371,7 @@ void combat_turn_based_subturn_start()
 void combat_turn_based_subturn_end()
 {
     combat_debug(dword_5FC240->obj, "SubTurn End");
-    if (player_is_pc_obj(dword_5FC240->obj)) {
+    if (player_is_local_pc_obj(dword_5FC240->obj)) {
         combat_callbacks.field_C(0);
     } else {
         object_script_execute(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
@@ -3449,7 +3449,7 @@ bool sub_4B7790(int64_t obj, int a2)
 
     dword_5FC244 = a2;
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     if (is_pc) {
         combat_callbacks.field_C(combat_action_points);
     }
@@ -3640,7 +3640,7 @@ bool sub_4B7CD0(int64_t obj, int action_points)
         return true;
     }
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     if (combat_action_points >= action_points) {
         combat_action_points -= action_points;
 
@@ -3796,7 +3796,7 @@ void sub_4B7EB0()
     while (node != NULL) {
         name = NULL;
         if (sub_4E5470(node->obj)) {
-            if (sub_40DA20(node->obj)) {
+            if (player_is_pc_obj(node->obj)) {
                 obj_field_string_get(node->obj, OBJ_F_PC_PLAYER_NAME, &name);
             } else {
                 obj_field_string_get(node->obj, OBJ_F_NAME, &name);
@@ -3836,7 +3836,7 @@ bool sub_4B8040(int64_t obj)
         return true;
     }
 
-    if (sub_40DA20(obj)) {
+    if (player_is_pc_obj(obj)) {
         return false;
     }
 
@@ -3882,7 +3882,7 @@ void sub_4B80E0(int64_t obj)
     AnimFxNode node;
 
     if (combat_turn_based_active) {
-        pc_obj = player_get_pc_obj();
+        pc_obj = player_get_local_pc_obj();
         reaction_level = reaction_get(obj, pc_obj);
         reaction_type = reaction_translate(reaction_level);
 
@@ -3957,7 +3957,7 @@ void combat_auto_attack_set(bool value)
     settings_set_value(&settings, "auto attack", value);
 
     if (tig_net_is_active()) {
-        player = sub_4A2B10(player_get_pc_obj());
+        player = sub_4A2B10(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
                 sub_4A5510(player, 0x200);
@@ -4011,7 +4011,7 @@ void combat_auto_switch_weapons_set(bool value)
     settings_set_value(&settings, "auto switch", value);
 
     if (tig_net_is_active()) {
-        player = sub_4A2B10(player_get_pc_obj());
+        player = sub_4A2B10(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
                 sub_4A5510(player, 0x400);

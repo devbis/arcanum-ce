@@ -584,7 +584,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
         value += 10;
     }
 
-    if (obj == player_get_pc_obj()) {
+    if (obj == player_get_local_pc_obj()) {
         game_difficulty = gamelib_get_game_difficulty();
         switch (game_difficulty) {
         case 0:
@@ -944,7 +944,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
         value += 10;
     }
 
-    if (obj == player_get_pc_obj()) {
+    if (obj == player_get_local_pc_obj()) {
         game_difficulty = gamelib_get_game_difficulty();
         switch (game_difficulty) {
         case 0:
@@ -1413,7 +1413,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             && (tig_art_item_id_destroyed_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0
                 || training != TRAINING_MASTER)) {
             pkt.field_4 |= 0x10;
-            if (player_is_pc_obj(source_obj)) {
+            if (player_is_local_pc_obj(source_obj)) {
                 if (skill_callbacks.lock_no_repair != NULL) {
                     skill_callbacks.lock_no_repair(source_obj, target_obj, is_success);
                 }
@@ -1475,7 +1475,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
             pkt.field_4 |= 0x08;
 
-            if (player_is_pc_obj(source_obj)) {
+            if (player_is_local_pc_obj(source_obj)) {
                 if (skill_callbacks.field_14 != NULL) {
                     skill_callbacks.field_14(source_obj, target_obj, is_success);
                 }
@@ -1523,7 +1523,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
                 pkt.field_4 |= 0x08;
 
-                if (player_is_pc_obj(source_obj)) {
+                if (player_is_local_pc_obj(source_obj)) {
                     if (skill_callbacks.lock_pick_output_func != NULL) {
                         skill_callbacks.lock_pick_output_func(source_obj, target_obj, is_success);
                     }
@@ -1565,7 +1565,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             }
         } else {
             pkt.field_3C |= 0x01;
-            if (player_is_pc_obj(source_obj)) {
+            if (player_is_local_pc_obj(source_obj)) {
                 if (skill_callbacks.field_C != NULL) {
                     skill_callbacks.field_C(source_obj, target_obj, is_success);
                 }
@@ -1669,12 +1669,12 @@ bool sub_4C83E0(int64_t obj)
 {
     int64_t leader_obj;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         return true;
     }
 
     leader_obj = critter_leader_get(obj);
-    if (leader_obj != OBJ_HANDLE_NULL && player_is_pc_obj(leader_obj)) {
+    if (leader_obj != OBJ_HANDLE_NULL && player_is_local_pc_obj(leader_obj)) {
         return true;
     }
 
@@ -2038,7 +2038,7 @@ void set_follower_skills(bool enabled)
     settings_set_value(&settings, "follower skills", enabled);
 
     if (tig_net_is_active()) {
-        player = sub_4A2B10(player_get_pc_obj());
+        player = sub_4A2B10(player_get_local_pc_obj());
         if (player != -1) {
             if (enabled) {
                 sub_4A5510(player, 0x800);

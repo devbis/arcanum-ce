@@ -1437,7 +1437,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
         return false;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     save_info->version = 25;
     strcpy(save_info->name, name);

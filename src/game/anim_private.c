@@ -491,7 +491,7 @@ bool mp_deallocate_run_index(AnimID* anim_id)
     if ((run_info->flags & 0x1) != 0) {
         if (run_info->goals[0].type == AG_ATTACK
             || run_info->goals[0].type == AG_ATTEMPT_ATTACK) {
-            if (player_is_pc_obj(run_info->anim_obj)) {
+            if (player_is_local_pc_obj(run_info->anim_obj)) {
                 sub_460280(OBJ_HANDLE_NULL);
             }
         }
@@ -723,7 +723,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
     }
 
     if (sub_45B300()
-        || (!tig_net_is_host() && !player_is_pc_obj(anim_data->params[AGDATA_SELF_OBJ].obj))
+        || (!tig_net_is_host() && !player_is_local_pc_obj(anim_data->params[AGDATA_SELF_OBJ].obj))
         || (!tig_net_is_host() && anim_data->type == AG_DYING)) {
         return true;
     }
@@ -823,7 +823,7 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
     sub_423E60("GoalAdd");
     if ((goal_data->type == AG_ATTACK
             || goal_data->type == AG_ATTEMPT_ATTACK)
-        && player_is_pc_obj(run_info->anim_obj)) {
+        && player_is_local_pc_obj(run_info->anim_obj)) {
         sub_460280(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj);
     }
 
@@ -907,7 +907,7 @@ bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
     }
 
     if (!tig_net_is_host()
-        && !player_is_pc_obj(goal_data->params[AGDATA_SELF_OBJ].obj)) {
+        && !player_is_local_pc_obj(goal_data->params[AGDATA_SELF_OBJ].obj)) {
         return true;
     }
 

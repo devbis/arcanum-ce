@@ -1553,7 +1553,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_GOTO:
         return script_get_value(action->op_type[0], action->op_value[0], state);
     case SAT_DIALOG:
-        if (script_start_dialog_func != NULL && sub_40DA20(state->invocation->triggerer_obj)) {
+        if (script_start_dialog_func != NULL && player_is_pc_obj(state->invocation->triggerer_obj)) {
             int num;
             Script scr;
 
@@ -1985,7 +1985,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_QUELL_RUMOR: {
         int rumor = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        if (obj == player_get_pc_obj()) {
+        if (obj == player_get_local_pc_obj()) {
             rumor_qstate_set(rumor);
         }
         return NEXT;
@@ -2323,7 +2323,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
             str[len] = '\0';
         }
         int speech_id;
-        dialog_copy_npc_newspaper_msg(npc_obj, player_get_pc_obj(), &(str[len]), &speech_id);
+        dialog_copy_npc_newspaper_msg(npc_obj, player_get_local_pc_obj(), &(str[len]), &speech_id);
         script_float_line_func(npc_obj, state->invocation->triggerer_obj, str, speech_id);
         return NEXT;
     }
@@ -3170,7 +3170,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         }
         break;
     case SFO_PLAYER:
-        objs[cnt++] = player_get_pc_obj();
+        objs[cnt++] = player_get_local_pc_obj();
         break;
     case SFO_EVERY_ITEM_IN_VICINITY:
     case SFO_ANY_ITEM_IN_VICINITY:

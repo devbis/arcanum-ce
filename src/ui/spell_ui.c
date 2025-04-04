@@ -144,7 +144,7 @@ bool sub_57BC70(int64_t obj, int spl)
         return true;
     }
 
-    if (!sub_40DA20(qword_683500)) {
+    if (!player_is_pc_obj(qword_683500)) {
         return true;
     }
 
@@ -226,7 +226,7 @@ bool sub_57BC70(int64_t obj, int spl)
         if ((*tgt_ptr & Tgt_Object) != 0
             && (tig_kb_is_key_pressed(DIK_LSHIFT)
                 || tig_kb_is_key_pressed(DIK_RSHIFT))) {
-            sub_4F2810(&v2, player_get_pc_obj());
+            sub_4F2810(&v2, player_get_local_pc_obj());
             // FIXME: Odd.
             if ((*tgt_ptr & (Tgt_Obj_No_Self & ~Tgt_Object)) == 0) {
                 sub_57C110(&v2);
@@ -354,7 +354,7 @@ bool sub_57C290(int mt_id)
         return false;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     cnt = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
 
     for (index = 0; index < cnt; index++) {
@@ -430,7 +430,7 @@ void sub_57C3F0(int index)
     int64_t obj;
 
     // FIXME: Unused.
-    player_get_pc_obj();
+    player_get_local_pc_obj();
 
     if (stru_5CB3A8[index].field_4 == 1
         && magictech_id_to_run_info(stru_5CB3A8[index].mt_id, &run_info)) {
@@ -473,7 +473,7 @@ void sub_57C4B0()
     int v1;
     int v2;
 
-    obj = player_get_pc_obj();
+    obj = player_get_local_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
         v1 = stat_level_get(obj, STAT_INTELLIGENCE) / 4;
         if (v1 != dword_5CB3D0) {

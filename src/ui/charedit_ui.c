@@ -911,7 +911,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         return true;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (critter_is_dead(pc_obj) || !sub_551A80(0) || !sub_551A80(9)) {
         return false;
     }
@@ -1180,7 +1180,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     dword_64CDB4 = -1;
     dword_64D360 = -1;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         ui_toggle_primary_button(UI_PRIMARY_BUTTON_CHAR, false);
     }
 
@@ -1605,9 +1605,9 @@ bool charedit_window_message_filter(TigMessage* msg)
             && !tig_net_is_active()
             && charedit_mode == CHAREDIT_MODE_ACTIVE
             && (!combat_turn_based_is_active()
-                || combat_turn_based_whos_turn_get() == player_get_pc_obj())) {
+                || combat_turn_based_whos_turn_get() == player_get_local_pc_obj())) {
             gamelib_save("ExportSave", "Export-Save");
-            sub_4A6470(player_get_pc_obj());
+            sub_4A6470(player_get_local_pc_obj());
             gamelib_load("ExportSave");
             gamelib_delete("ExportSave");
             return true;
@@ -3443,7 +3443,7 @@ bool sub_55DF90(TigMessage* msg)
                     if (index < dword_64CDC8) {
                         level_auto_level_scheme_set(charedit_obj, dword_64CFE4[index + dword_64D424]);
                         if (tig_net_is_active()) {
-                            sub_4A45B0(player_get_pc_obj());
+                            sub_4A45B0(player_get_local_pc_obj());
                         }
                         sub_55D210();
                     }

@@ -272,7 +272,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     tig_debug_printf("[Beginning Game]\n");
 
-    pc_starting_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    pc_starting_location = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     sprintf(msg, "Player Start Position: x: %d, y: %d",
         (int)LOCATION_GET_X(pc_starting_location),
         (int)LOCATION_GET_Y(pc_starting_location));
@@ -312,7 +312,7 @@ void main_loop()
         return;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     sub_43E770(pc_obj, location, 0, 0);
     location_origin_set(location);
 
@@ -348,7 +348,7 @@ void main_loop()
         iso_redraw();
         tig_window_display();
 
-        pc_obj = player_get_pc_obj();
+        pc_obj = player_get_local_pc_obj();
 
         while (tig_message_dequeue(&message) == TIG_OK) {
             if (message.type == TIG_MESSAGE_QUIT
@@ -382,7 +382,7 @@ void main_loop()
                             || wmap_ui_is_created()
                             || tig_net_is_active()
                             || (combat_turn_based_is_active()
-                                && player_get_pc_obj() != combat_turn_based_whos_turn_get())) {
+                                && player_get_local_pc_obj() != combat_turn_based_whos_turn_get())) {
                             mainmenu_ui_start(3);
                         } else {
                             mainmenu_ui_start(2);
@@ -408,7 +408,7 @@ void main_loop()
                         }
                         break;
                     case DIK_F7:
-                        if (!critter_is_dead(player_get_pc_obj())) {
+                        if (!critter_is_dead(player_get_local_pc_obj())) {
                             if (wmap_ui_is_created()) {
                                 wmap_ui_close();
                                 tig_ping();
@@ -417,7 +417,7 @@ void main_loop()
                                 tig_window_display();
                             }
 
-                            if (!combat_turn_based_is_active() || player_get_pc_obj() == combat_turn_based_whos_turn_get()) {
+                            if (!combat_turn_based_is_active() || player_get_local_pc_obj() == combat_turn_based_whos_turn_get()) {
                                 if (!tig_net_is_active()) {
                                     sub_551A80(0);
                                     sub_551A80(0);
@@ -548,7 +548,7 @@ void main_loop()
                                 sub_550770(-1, version_str);
                                 break;
                             case DIK_E:
-                                critter_debug_obj(player_get_pc_obj());
+                                critter_debug_obj(player_get_local_pc_obj());
                                 timeevent_debug_lists();
                                 magictech_debug_lists();
                                 anim_stats();

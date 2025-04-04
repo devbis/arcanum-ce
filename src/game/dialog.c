@@ -482,7 +482,7 @@ bool sub_412FD0(DialogState* state)
     sub_4C1020(state->npc_obj, state->pc_obj);
 
     if (critter_is_dead(state->npc_obj) || sub_4AE120(state->npc_obj, state->pc_obj) == 0) {
-        if (player_is_pc_obj(state->pc_obj)) {
+        if (player_is_local_pc_obj(state->pc_obj)) {
             pc_loc = obj_field_int64_get(state->pc_obj, OBJ_F_LOCATION);
             npc_loc = obj_field_int64_get(state->npc_obj, OBJ_F_LOCATION);
             location_xy(pc_loc, &tmp, &pc_loc_y);

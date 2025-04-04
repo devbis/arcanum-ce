@@ -155,7 +155,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
         return;
     }
 
-    if (player_is_pc_obj(pc_obj) && sub_551A00() == 3) {
+    if (player_is_local_pc_obj(pc_obj) && sub_551A00() == 3) {
         return;
     }
 
@@ -195,7 +195,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
                 return;
             }
 
-            if (player_is_pc_obj(pc_obj)) {
+            if (player_is_local_pc_obj(pc_obj)) {
                 if (!intgame_dialog_begin(dialog_ui_message_filter)) {
                     sub_413280(&(entry->state));
                     dialog_unload(entry->dlg);
@@ -246,7 +246,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
     } else {
         if (script_num != 0
             && script_name_build_dlg_name(script_num, path)
-            && player_is_pc_obj(pc_obj)) {
+            && player_is_local_pc_obj(pc_obj)) {
             if (intgame_dialog_begin(dialog_ui_message_filter)) {
                 entry->state.num = num;
                 entry->state.pc_obj = pc_obj;
@@ -277,7 +277,7 @@ void sub_5678D0(int64_t obj, int a2)
 
     entry->field_1850 = false;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         intgame_dialog_end();
         dword_67B964 = 0;
     }
@@ -331,7 +331,7 @@ int sub_567A10()
 void sub_567A20(int64_t obj)
 {
     sub_567420(obj)->field_1850 = false;
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         intgame_dialog_end();
         dword_67B964 = false;
     }
@@ -341,7 +341,7 @@ void sub_567A20(int64_t obj)
 void sub_567A60(int64_t obj)
 {
     sub_567420(obj)->field_1850 = true;
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         if (intgame_dialog_begin(dialog_ui_message_filter)) {
             dword_67B964 = true;
         }
@@ -458,7 +458,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(entry->state.pc_obj);
+    is_pc = player_is_local_pc_obj(entry->state.pc_obj);
     sub_5686C0(entry->state.pc_obj,
         entry->state.npc_obj,
         TB_TYPE_GREEN,
@@ -548,7 +548,7 @@ bool dialog_ui_message_filter(TigMessage* msg)
     int player;
     Packet44 pkt;
 
-    entry = sub_567420(player_get_pc_obj());
+    entry = sub_567420(player_get_local_pc_obj());
     if (sub_5681B0(entry)) {
         return false;
     }
@@ -566,13 +566,13 @@ bool dialog_ui_message_filter(TigMessage* msg)
         return true;
     }
 
-    player = sub_4A2B10(player_get_pc_obj());
+    player = sub_4A2B10(player_get_local_pc_obj());
     if (byte_679DB8[player] != 1) {
         byte_679DB8[player] = 1;
 
         pkt.type = 44;
         pkt.subtype = 2;
-        pkt.d.f.field_8 = sub_407EF0(player_get_pc_obj());
+        pkt.d.f.field_8 = sub_407EF0(player_get_local_pc_obj());
         pkt.d.f.field_20 = entry->slot;
         pkt.d.f.field_24 = option;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -617,10 +617,10 @@ bool sub_568280(DialogUiEntry *a1)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(a1->state.pc_obj);
+    is_pc = player_is_local_pc_obj(a1->state.pc_obj);
 
     if (tig_net_is_active() && !tig_net_is_host()) {
-        byte_679DB8[sub_4A2B10(player_get_pc_obj())] = 0;
+        byte_679DB8[sub_4A2B10(player_get_local_pc_obj())] = 0;
     }
 
     switch (a1->state.field_17E8) {
@@ -705,7 +705,7 @@ void sub_5684C0(DialogUiEntry* entry)
         entry->state.reply,
         entry->state.speech_id);
 
-    if (player_is_pc_obj(entry->state.pc_obj)) {
+    if (player_is_local_pc_obj(entry->state.pc_obj)) {
         intgame_dialog_clear();
 
         for (index = 0; index < entry->state.num_options; index++) {
@@ -777,7 +777,7 @@ void sub_5686C0(int64_t pc_obj, int64_t npc_obj, int type, int expires_in, const
         anim_goal_rotate(pc_obj, object_rot(pc_obj, npc_obj));
     }
 
-    if (!player_is_pc_obj(pc_obj)) {
+    if (!player_is_local_pc_obj(pc_obj)) {
         tb_remove(pc_obj);
         tb_add(pc_obj, type, str);
         tb_expire_in(pc_obj, expires_in);
@@ -804,7 +804,7 @@ void sub_568880(int64_t obj, int a2, int a3, int type, int a5, int a6, const cha
     (void)a3;
 
     if ((a6 & 1) != 0) {
-        if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             return;
         }
     }

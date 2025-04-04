@@ -1876,7 +1876,7 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
 
     sub_436FA0(obj);
 
-    if (dword_5E8638 > 0 && player_is_pc_obj(obj)) {
+    if (dword_5E8638 > 0 && player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 11 + encumbrance_level;
         mes_get_msg(critter_mes_file, &mes_file_entry);
 

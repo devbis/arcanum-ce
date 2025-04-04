@@ -129,7 +129,7 @@ void sleep_ui_open(int64_t bed_obj)
     UiMessage ui_message;
     bool halt;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if (critter_is_dead(pc_obj)) {
         return;

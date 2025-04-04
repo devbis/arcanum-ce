@@ -325,7 +325,7 @@ bool sub_4A8570(Ai* ai)
         return false;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if ((obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
         return false;
@@ -2965,7 +2965,7 @@ bool sub_4AD420(int64_t obj)
         return false;
     }
 
-    if (object_dist(player_get_pc_obj(), obj) <= 30) {
+    if (object_dist(player_get_local_pc_obj(), obj) <= 30) {
         return true;
     }
 
@@ -3044,7 +3044,7 @@ int sub_4AD610(int64_t obj)
             pc_obj = multiplayer_find_next_player_obj();
         }
     } else {
-        nearest_dist = object_dist(player_get_pc_obj(), obj);
+        nearest_dist = object_dist(player_get_local_pc_obj(), obj);
     }
 
     return nearest_dist >= 0 && nearest_dist <= 30 ? (int)nearest_dist : 30;
@@ -4367,7 +4367,7 @@ bool ai_shitlist_has(int64_t npc_obj, int64_t shit_obj)
 // 0x4AFBB0
 int sub_4AFBB0(int64_t obj)
 {
-    return sub_40DA20(obj) ? 5 : 10;
+    return player_is_pc_obj(obj) ? 5 : 10;
 }
 
 // 0x4AFBD0

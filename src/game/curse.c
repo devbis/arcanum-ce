@@ -134,7 +134,7 @@ void curse_add(int64_t obj, int curse)
 
     effect_add(obj, curse, EFFECT_CAUSE_CURSE);
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 1000;
         mes_get_msg(curse_mes_file, &mes_file_entry);
 
@@ -196,7 +196,7 @@ void curse_remove(int64_t obj, int curse)
             obj_arrayfield_length_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt - 1);
             effect_remove_one_typed(obj, curse_get_effect(curse));
 
-            if (player_is_pc_obj(obj)) {
+            if (player_is_local_pc_obj(obj)) {
                 ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
             }
             break;

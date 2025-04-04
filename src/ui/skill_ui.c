@@ -148,7 +148,7 @@ void sub_579FA0(int64_t obj, int type)
     int64_t pc_obj;
     Packet30 pkt;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (pc_obj != obj) {
         if (critter_is_dead(pc_obj)
             || critter_is_unconscious(pc_obj)) {
@@ -191,7 +191,7 @@ void skill_ui_preprocess(int64_t obj, int type)
     uint64_t tgt;
     SkillInvocation skill_invocation;
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     qword_683490 = obj;
     dword_5CB270 = type;
 
@@ -239,7 +239,7 @@ void sub_57A1F0(S4F2810* a1)
     int64_t pc_obj;
     Packet31 pkt;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if (!multiplayer_is_locked()) {
         pkt.type = 31;
@@ -274,7 +274,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         return;
     }
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     skill = sub_57A6C0(a3, a1);
 
     switch (skill) {
@@ -288,7 +288,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
 
             if ((obj_field_int32_get(a1->obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0) {
                 if (sub_57A5E0(a1->obj)) {
-                    if (player_is_pc_obj(obj)) {
+                    if (player_is_local_pc_obj(obj)) {
                         mes_file_entry.num = 525; // "You cannot pickpocket this creature."
                         mes_get_msg(skill_ui_mes_file, &mes_file_entry);
                         tf_add(obj, TF_TYPE_WHITE, mes_file_entry.str);
@@ -462,7 +462,7 @@ bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success)
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
     ui_message.str = mes_file_entry.str;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(obj);
@@ -506,7 +506,7 @@ bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success)
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
     ui_message.str = mes_file_entry.str;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(obj);
@@ -707,7 +707,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
     int cost;
     int points;
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     if (IS_TECH_SKILL(skill)) {
         skill = GET_TECH_SKILL(skill);
         base = tech_skill_get_base(obj, skill);
@@ -782,7 +782,7 @@ void skill_ui_dec_skill(int64_t obj, int skill)
     int cost;
     int points;
 
-    is_pc = player_is_pc_obj(obj);
+    is_pc = player_is_local_pc_obj(obj);
     if (IS_TECH_SKILL(skill)) {
         skill = GET_TECH_SKILL(skill);
         base = tech_skill_get_base(obj, skill);

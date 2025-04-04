@@ -330,7 +330,7 @@ void written_ui_create()
 
     written_ui_draw_background(494, 0, 0);
 
-    obj = player_get_pc_obj();
+    obj = player_get_local_pc_obj();
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     location_origin_set(location);
 

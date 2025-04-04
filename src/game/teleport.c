@@ -120,7 +120,7 @@ bool teleport_do(TeleportData* teleport_data)
     current_teleport_data = *teleport_data;
     teleport_pending = true;
 
-    if (player_is_pc_obj(teleport_data->obj)) {
+    if (player_is_local_pc_obj(teleport_data->obj)) {
         current_teleport_data.flags |= TELEPORT_0x80000000;
 
         if ((current_teleport_data.flags & TELEPORT_FADE_OUT) != 0) {
@@ -227,7 +227,7 @@ bool teleport_process(TeleportData* teleport_data)
         wallcheck_flush();
     }
 
-    if (teleport_data->map != map && sub_40DA20(teleport_data->obj)) {
+    if (teleport_data->map != map && player_is_pc_obj(teleport_data->obj)) {
         sub_459F50();
         sub_437980();
         sub_45C720(teleport_data->map);
@@ -467,7 +467,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
             sub_4D3D60(node->obj);
 
             if (!tig_net_is_active()
-                && player_is_pc_obj(node->obj)) {
+                && player_is_local_pc_obj(node->obj)) {
                 wallcheck_flush();
                 roof_fill_off(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
             }
@@ -505,7 +505,7 @@ void sub_4D3D60(int64_t obj)
         mp_obj_field_obj_set(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY, OBJ_HANDLE_NULL);
     case OBJ_TYPE_PC:
         mp_obj_field_obj_set(obj, OBJ_F_CRITTER_FLEEING_FROM, OBJ_HANDLE_NULL);
-        if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             sub_460B20();
         }
     }

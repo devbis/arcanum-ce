@@ -322,7 +322,7 @@ void sub_4EDDE0(int64_t obj)
 {
     Packet95 pkt;
 
-    if (obj == OBJ_HANDLE_NULL || player_is_pc_obj(obj)) {
+    if (obj == OBJ_HANDLE_NULL || player_is_local_pc_obj(obj)) {
         sub_4601C0();
     }
 
@@ -338,7 +338,7 @@ void sub_4EDDE0(int64_t obj)
 void sub_4EDE40(Packet95* pkt)
 {
     if (pkt->oid.type == OID_TYPE_NULL
-        || player_is_pc_obj(objp_perm_lookup(pkt->oid))) {
+        || player_is_local_pc_obj(objp_perm_lookup(pkt->oid))) {
         sub_4601C0();
     }
 }
@@ -377,7 +377,7 @@ void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7)
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        if (a7 && player_is_pc_obj(obj)) {
+        if (a7 && player_is_local_pc_obj(obj)) {
             location_origin_set(location);
         }
         sub_43E770(obj, location, dx, dy);
@@ -404,7 +404,7 @@ void sub_4EDFF0(Packet99* pkt)
         obj = objp_perm_lookup(pkt->oid);
         sub_43E770(obj, pkt->location, pkt->dx, pkt->dy);
 
-        if (pkt->field_30 && player_is_pc_obj(obj)) {
+        if (pkt->field_30 && player_is_local_pc_obj(obj)) {
             location_origin_set(pkt->location);
         }
     }
@@ -415,7 +415,7 @@ void sub_4EE060(int64_t a1, int64_t a2)
 {
     Packet100 pkt;
 
-    if (player_is_pc_obj(a1)) {
+    if (player_is_local_pc_obj(a1)) {
         sub_460740(a1, a2);
         return;
     }
@@ -498,7 +498,7 @@ void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id)
 // 0x4EE290
 void mp_ui_written_start_type(int64_t obj, WrittenType written_type, int num)
 {
-    if (player_get_pc_obj() != obj) {
+    if (player_get_local_pc_obj() != obj) {
         int client_id = sub_4A2B10(obj);
         if (client_id != -1) {
             Packet100 pkt;
@@ -519,7 +519,7 @@ void mp_ui_written_start_type(int64_t obj, WrittenType written_type, int num)
 // 0x4EE310
 void mp_ui_show_inven_loot(int64_t pc_obj, int64_t target_obj)
 {
-    if (!player_is_pc_obj(pc_obj)) {
+    if (!player_is_local_pc_obj(pc_obj)) {
         if (tig_net_is_active() && tig_net_is_host()) {
             Packet100 pkt;
 
@@ -541,7 +541,7 @@ void sub_4EE3A0(int64_t obj, int64_t a2)
 {
     Packet100 pkt;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_4604F0(obj, a2);
         return;
     }
@@ -559,7 +559,7 @@ void sub_4EE3A0(int64_t obj, int64_t a2)
 // 0x4EE430
 void mp_ui_show_inven_identify(int64_t pc_obj, int64_t target_obj)
 {
-    if (!player_is_pc_obj(pc_obj)) {
+    if (!player_is_local_pc_obj(pc_obj)) {
         if (tig_net_is_active() && tig_net_is_host()) {
             Packet100 pkt;
 
@@ -581,7 +581,7 @@ void sub_4EE4C0(int64_t obj, int64_t a2)
 {
     Packet100 pkt;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_460930(obj, a2);
         return;
     }
@@ -599,7 +599,7 @@ void sub_4EE4C0(int64_t obj, int64_t a2)
 // 0x4EE550
 void mp_ui_show_inven_npc_identify(int64_t pc_obj, int64_t target_obj)
 {
-    if (!player_is_pc_obj(pc_obj)) {
+    if (!player_is_local_pc_obj(pc_obj)) {
         if (tig_net_is_active() && tig_net_is_host()) {
             Packet100 pkt;
 
@@ -644,48 +644,48 @@ void sub_4EE5E0(Packet100* pkt)
     case 5:
         sub_4F0690(pkt->d.s.field_20, &v2);
         sub_4F0690(pkt->d.s.field_8, &v1);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             sub_460740(v1, v2);
         }
         break;
     case 6:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             ui_show_inven_loot(v1, v2);
         }
         break;
     case 7:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             sub_4604F0(v1, v2);
         }
         break;
     case 8:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             ui_show_inven_identify(v1, v2);
         }
         break;
     case 9:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             ui_show_inven_npc_identify(v1, v2);
         }
         break;
     case 10:
         sub_4F0690(pkt->d.s.field_8, &v1);
         sub_4F0690(pkt->d.s.field_20, &v2);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             sub_460930(v1, v2);
         }
         break;
     case 11:
         sub_4F0690(pkt->d.x.field_8, &v1);
-        if (player_is_pc_obj(v1)) {
+        if (player_is_local_pc_obj(v1)) {
             sub_4673F0(v1, pkt->d.x.field_20);
         }
         // FIXME: Fallthrough?
@@ -795,7 +795,7 @@ void sub_4EED00(int64_t obj, int sound_id)
         return;
     }
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         gsound_play_sfx(sound_id, 1);
         return;
     }
@@ -1000,7 +1000,7 @@ void sub_4EF1E0(int64_t a1, int64_t obj)
 {
     Packet112 pkt;
 
-    if (player_get_pc_obj() == obj) {
+    if (player_get_local_pc_obj() == obj) {
         sub_40FE00(a1);
         return;
     }
@@ -1019,7 +1019,7 @@ void sub_4EF260(Packet112* pkt)
     int64_t obj;
 
     obj = objp_perm_lookup(pkt->oid);
-    if (obj == player_get_pc_obj()) {
+    if (obj == player_get_local_pc_obj()) {
         sub_40FE00(pkt->field_8);
     }
 }
@@ -1800,7 +1800,7 @@ int sub_4F0ED0(int64_t obj, int a2)
         return -1;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (pc_obj == OBJ_HANDLE_NULL) {
         return -1;
     }

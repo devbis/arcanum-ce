@@ -841,7 +841,7 @@ bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
     int64_t pc_obj;
     int level;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -937,7 +937,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             loc = LOCATION_MAKE(LOCATION_GET_X(origin) + dx, LOCATION_GET_Y(origin) + dy);
             wmap_rnd_encounter_build_object(entry->field_18[index], loc, &obj);
             if (tile_is_blocking(loc, 0)) {
-                pc_obj = player_get_pc_obj();
+                pc_obj = player_get_local_pc_obj();
                 if (!sub_4F4E40(pc_obj, 6, &loc) || tile_is_blocking(loc, 0)) {
                     object_destroy(obj);
                     obj = OBJ_HANDLE_NULL;
@@ -1012,7 +1012,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
     wmap_rnd_schedule();
 
     if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)
-        && sub_4CB6A0(player_get_pc_obj()) == AREA_UNKNOWN) {
+        && sub_4CB6A0(player_get_local_pc_obj()) == AREA_UNKNOWN) {
         wmap_ui_get_current_location(&loc);
         if (sub_558DE0(loc)) {
             if (wmap_ui_is_created()) {

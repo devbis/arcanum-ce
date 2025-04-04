@@ -373,7 +373,7 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
 
     ui_message.type = UI_MSG_TYPE_EXCLAMATION;
     ui_message.str = str;
-    if (player_is_pc_obj(a1)) {
+    if (player_is_local_pc_obj(a1)) {
         sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(a1);
@@ -392,7 +392,7 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
 
         ui_message.type = UI_MSG_TYPE_EXCLAMATION;
         ui_message.str = str;
-        if (player_is_pc_obj(a2)) {
+        if (player_is_local_pc_obj(a2)) {
             sub_550750(&ui_message);
         } else {
             client_id = sub_4A2B10(a2);

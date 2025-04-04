@@ -2417,7 +2417,7 @@ void sub_5412E0(bool a1)
     if (dword_64C384) {
         sub_53EB00();
 
-        pc_obj = player_get_pc_obj();
+        pc_obj = player_get_local_pc_obj();
         if (dword_64C424) {
             if (item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON) == OBJ_HANDLE_NULL) {
                 item_wield_best(pc_obj, ITEM_INV_LOC_WEAPON, OBJ_HANDLE_NULL);
@@ -2886,7 +2886,7 @@ void mainmenu_ui_create_options()
     pc_lens.rect = &stru_5C4490;
     tig_art_interface_id_create(670, 0, 0, 0, &pc_lens.art_id);
     if (stru_5C36B0[dword_64C244][0]) {
-        pc_obj = player_get_pc_obj();
+        pc_obj = player_get_local_pc_obj();
         loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
         location_origin_set(loc);
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
@@ -3048,7 +3048,7 @@ void mainmenu_ui_load_game_create()
 
     dword_64C450 = false;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     pc_lens.window_handle = dword_5C3624;
     pc_lens.rect = &stru_5C4780;
@@ -3732,7 +3732,7 @@ void mainmenu_ui_save_game_create()
     stru_64C260.content_rect.height = 232;
     scrollbar_ui_control_create(&stru_64C220, &stru_64C260, dword_5C3624);
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     pc_lens.window_handle = dword_5C3624;
     pc_lens.rect = &stru_5C4780;
@@ -4386,7 +4386,7 @@ void mainmenu_ui_new_char_create()
     multiplayer_lock();
 
     player_create_info_init(&player_create_info);
-    player_create_info.loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     player_create_info.basic_prototype = 16066;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mainmenu_ui_create_pick_new_or_pregen: ERROR: Player Creation Failed!\n");
@@ -4406,7 +4406,7 @@ void mainmenu_ui_new_char_refresh(TigRect* rect)
     char* str;
     MesFileEntry mes_file_entry;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     mmUINewCharRefreshFunc(pc_obj, rect);
 
     if (rect == NULL
@@ -4605,7 +4605,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         return true;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     window = main_menu_window_info[dword_64C414];
 
     switch (index) {
@@ -4925,7 +4925,7 @@ bool mainmenu_ui_new_char_execute(int btn)
 
     (void)btn;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     mes_file_entry.num = 500; // "Choose Name"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
@@ -4995,7 +4995,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         return true;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     window = main_menu_window_info[dword_64C414];
 
     switch (index) {
@@ -5044,7 +5044,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
     dword_64C418 = 1;
 
     player_create_info_init(&player_create_info);
-    player_create_info.loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     player_create_info.basic_prototype = dword_5C5308 + 16066;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mmUIPregenCharExecuteFunc: ERROR: Player Creation Failed!\n");
@@ -5097,7 +5097,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
 
             settings_set_obj_value(&settings,
                 "selected_char_id",
-                sub_407EF0(player_get_pc_obj()));
+                sub_407EF0(player_get_local_pc_obj()));
 
             dword_5C3618 = -1;
             if (dword_64C41C != NULL) {
@@ -5106,10 +5106,10 @@ bool sub_545C70(tig_button_handle_t button_handle)
             }
 
             sub_4A3D70(&dword_64C41C, &dword_64C420);
-            sub_442050(&v1, &v2, player_get_pc_obj());
+            sub_442050(&v1, &v2, player_get_local_pc_obj());
             sub_4A40F0(0,
-                sub_407EF0(player_get_pc_obj()),
-                stat_level_get(player_get_pc_obj(), STAT_LEVEL),
+                sub_407EF0(player_get_local_pc_obj()),
+                stat_level_get(player_get_local_pc_obj(), STAT_LEVEL),
                 v1,
                 v2);
             FREE(v1);
@@ -5142,7 +5142,7 @@ void sub_545DF0(TigRect* rect)
 
     (void)rect;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (!charedit_open(pc_obj, dword_64C454)) {
         sub_5417A0(1);
     }
@@ -5191,7 +5191,7 @@ void sub_545E80(TigRect* rect)
 
     (void)rect;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     sub_460FF0(pc_obj);
     if (!sub_40FF50(2)) {
         sub_5412D0();

@@ -322,7 +322,7 @@ void sub_56EFA0(int a1)
         return;
     }
 
-    if (!player_is_pc_obj(combat_turn_based_whos_turn_get())) {
+    if (!player_is_local_pc_obj(combat_turn_based_whos_turn_get())) {
         return;
     }
 
@@ -554,7 +554,7 @@ void combat_ui_refresh()
     sub_56F840();
 
     obj = combat_turn_based_whos_turn_get();
-    if (!player_is_pc_obj(obj)) {
+    if (!player_is_local_pc_obj(obj)) {
         if (dword_680EB4 >= TWENTY) {
             dword_680EB4 = 0;
         }
@@ -617,7 +617,7 @@ void sub_56F840()
     }
 
     obj = combat_turn_based_whos_turn_get();
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         return;
     }
 
@@ -637,7 +637,7 @@ void sub_56F840()
 void sub_56F990(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        player_get_pc_obj();
+        player_get_local_pc_obj();
     }
 }
 
@@ -654,7 +654,7 @@ bool combat_ui_message_filter(TigMessage* msg)
             && msg->data.button.button_handle == combat_ui_end_turn_button_info.button_handle) {
             obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
-                && player_is_pc_obj(obj)
+                && player_is_local_pc_obj(obj)
                 && (!sub_423300(obj, &curr_anim_id)
                     || (sub_44E830(obj, AG_ANIM_FIDGET, &fidget_anim_id)
                         && sub_421D60(&curr_anim_id, &fidget_anim_id)))) {
@@ -669,7 +669,7 @@ bool combat_ui_message_filter(TigMessage* msg)
             && msg->data.keyboard.key == DIK_E) {
             obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
-                && player_is_pc_obj(obj)
+                && player_is_local_pc_obj(obj)
                 && (!sub_423300(obj, &curr_anim_id)
                     || (sub_44E830(obj, AG_ANIM_FIDGET, &fidget_anim_id)
                         && sub_421D60(&curr_anim_id, &fidget_anim_id)))) {

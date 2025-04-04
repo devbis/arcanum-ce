@@ -281,7 +281,7 @@ bool area_is_known(int64_t pc_obj, int area)
             if (player != -1) {
                 return (area_flags_per_player[player][area] & 1) != 0;
             }
-        } else if (pc_obj == player_get_pc_obj()) {
+        } else if (pc_obj == player_get_local_pc_obj()) {
             return (area_flags[area] & AREA_KNOWN) != 0;
         }
     }
@@ -320,7 +320,7 @@ bool area_set_known(int64_t pc_obj, int area)
                 }
                 return true;
             }
-        } else if (pc_obj == player_get_pc_obj()) {
+        } else if (pc_obj == player_get_local_pc_obj()) {
             area_flags[area] |= AREA_KNOWN;
             ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true);
             area_last_known_area = area;
@@ -344,7 +344,7 @@ int area_get_last_known_area(int64_t pc_obj)
                 return area_last_known_area_per_player[player];
             }
         } else {
-            if (pc_obj == player_get_pc_obj()) {
+            if (pc_obj == player_get_local_pc_obj()) {
                 return area_last_known_area;
             }
         }
@@ -376,7 +376,7 @@ void area_reset_last_known_area(int64_t pc_obj)
                     area_last_known_area_per_player[player] = AREA_UNKNOWN;
                 }
             }
-        } else if (pc_obj == player_get_pc_obj()) {
+        } else if (pc_obj == player_get_local_pc_obj()) {
             area_last_known_area = AREA_UNKNOWN;
         }
     }

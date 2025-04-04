@@ -225,7 +225,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     int64_t loc;
     bool ret = false;
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     // Initialize heads to silence compiler warnings.
     party_members.head = NULL;
@@ -568,7 +568,7 @@ bool sub_4F2D20(S603CB8* a1)
 
                 if ((tgt & 0xC00000000000000) != 0) {
                     if (critter_pc_leader_get(a1->field_20) == OBJ_HANDLE_NULL
-                        && !sub_40DA20(a1->field_20)) {
+                        && !player_is_pc_obj(a1->field_20)) {
                         return false;
                     }
                 } else if ((tgt & 0x1000000000000000) != 0) {

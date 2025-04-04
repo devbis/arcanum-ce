@@ -939,7 +939,7 @@ void sub_43C270(int64_t obj)
             type = obj_field_int32_get(object_hover_obj, OBJ_F_TYPE);
             if (type != OBJ_TYPE_WALL && type != OBJ_TYPE_PROJECTILE) {
                 if (type >= OBJ_TYPE_PC) {
-                    pc_obj = player_get_pc_obj();
+                    pc_obj = player_get_local_pc_obj();
                     if (pc_obj == OBJ_HANDLE_NULL) {
                         object_hover_obj = OBJ_HANDLE_NULL;
                         sub_443EB0(OBJ_HANDLE_NULL, &stru_5E2F60);
@@ -4076,7 +4076,7 @@ void object_blit_flags_set(unsigned int flags)
     object_blit_flags = flags;
     if (object_iso_invalidate_rect != NULL) {
         object_iso_invalidate_rect(NULL);
-        sub_438530(player_get_pc_obj());
+        sub_438530(player_get_local_pc_obj());
     }
 }
 
@@ -5176,8 +5176,8 @@ void sub_444270(int64_t obj, int a2)
         return;
     }
 
-    if (sub_40DA20(obj)) {
-        if (player_is_pc_obj(obj)) {
+    if (player_is_pc_obj(obj)) {
+        if (player_is_local_pc_obj(obj)) {
             sub_4BE8F0(loc);
             roof_recalc(loc);
             wallcheck_recalc(loc);
@@ -5193,13 +5193,13 @@ void sub_444270(int64_t obj, int a2)
 
     v1 = sub_43C570();
     if (v1 != OBJ_HANDLE_NULL) {
-        if (v1 == obj || player_is_pc_obj(obj)) {
-            sub_4604F0(player_get_pc_obj(), v1);
+        if (v1 == obj || player_is_local_pc_obj(obj)) {
+            sub_4604F0(player_get_local_pc_obj(), v1);
         }
     }
 
     if (a2 != 1) {
-        if (sub_40DA20(obj) && player_is_pc_obj(obj)) {
+        if (player_is_pc_obj(obj) && player_is_local_pc_obj(obj)) {
             sub_4F2330(sector_id_from_loc(loc), obj);
         }
         sub_4D9590(obj, true);
@@ -5244,7 +5244,7 @@ void sub_4445A0(int64_t a1, int64_t a2)
     if (obj_type_is_critter(type)
         || (obj_type_is_item(type) && (obj_field_int32_get(a2, OBJ_F_TYPE) & OF_INVENTORY) == 0)) {
         if (object_dist(a1, a2) > 1) {
-            if (player_is_pc_obj(a1)) {
+            if (player_is_local_pc_obj(a1)) {
                 sub_4606C0(0);
             }
         } else {

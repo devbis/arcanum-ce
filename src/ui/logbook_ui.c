@@ -324,7 +324,7 @@ void logbook_ui_open(int64_t obj)
         return;
     }
 
-    if (critter_is_dead(player_get_pc_obj())) {
+    if (critter_is_dead(player_get_local_pc_obj())) {
         return;
     }
 

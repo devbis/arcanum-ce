@@ -1010,9 +1010,9 @@ bool wmap_ui_load(GameLoadInfo* load_info)
         }
     }
 
-    loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     sector_id = sector_id_from_loc(loc);
-    wmap_ui_notify_sector_changed(player_get_pc_obj(), sector_id);
+    wmap_ui_notify_sector_changed(player_get_local_pc_obj(), sector_id);
 
     return true;
 }
@@ -1105,7 +1105,7 @@ void wmap_ui_open_internal()
         return;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     if (pc_obj == OBJ_HANDLE_NULL
         || critter_is_dead(pc_obj)
@@ -1186,7 +1186,7 @@ void wmap_ui_open_internal()
         return;
     }
 
-    sub_424070(player_get_pc_obj(), 4, false, true);
+    sub_424070(player_get_local_pc_obj(), 4, false, true);
 
     if (!wmap_ui_create()) {
         wmap_ui_close();
@@ -1350,7 +1350,7 @@ void sub_560EE0()
 void sub_560EF0()
 {
     dword_66D880 = 0;
-    dword_66D874 = townmap_get(sector_id_from_loc(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
+    dword_66D874 = townmap_get(sector_id_from_loc(obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION)));
     if (sub_40FF40() == dword_66D87C) {
         if (dword_66D874 == 0) {
             dword_66D880 = 1;
@@ -1368,7 +1368,7 @@ void wmap_ui_close()
         return;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
         sub_45E1E0(pc_obj);
@@ -1434,7 +1434,7 @@ bool wmap_ui_create()
 
         loc = area_get_location(area);
     } else {
-        loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+        loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     }
 
     if (!wmap_load_worldmap_info()) {
@@ -1542,7 +1542,7 @@ bool wmap_ui_create()
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
 
     for (index = area_get_count() - 1; index > 0; index--) {
-        if (area_is_known(player_get_pc_obj(), index)) {
+        if (area_is_known(player_get_local_pc_obj(), index)) {
             sub_562800(index);
         }
     }
@@ -1634,7 +1634,7 @@ bool sub_5615D0(int a1)
 
             intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &wmap_ui_pc_lens);
             sub_57D640();
-            pc_obj = player_get_pc_obj();
+            pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_45E1E0(pc_obj);
@@ -1658,7 +1658,7 @@ bool sub_5615D0(int a1)
             break;
         case 2:
             tig_sound_destroy(dword_66D848);
-            pc_obj = player_get_pc_obj();
+            pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
                 sub_45E1E0(pc_obj);
@@ -1711,7 +1711,7 @@ bool wmap_ui_teleport(int64_t loc)
     sector_flush(0);
 
     teleport_data.flags = TELEPORT_0x0020;
-    teleport_data.obj = player_get_pc_obj();
+    teleport_data.obj = player_get_local_pc_obj();
     teleport_data.loc = loc;
     teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
     return teleport_do(&teleport_data);
@@ -1781,7 +1781,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     int64_t loc;
                     sub_561800(&stru_64E7E8, &loc);
 
-                    int area = area_get_nearest_known_area(loc, player_get_pc_obj(), qword_66D850);
+                    int area = area_get_nearest_known_area(loc, player_get_local_pc_obj(), qword_66D850);
                     if (area <= 0) {
                         return true;
                     }
@@ -1791,9 +1791,9 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         return true;
                     }
 
-                    int64_t pc_obj = player_get_pc_obj();
+                    int64_t pc_obj = player_get_local_pc_obj();
                     if (antiteleport_check_can_teleport(pc_obj, loc)) {
-                        if (player_is_pc_obj(wmap_ui_obj)) {
+                        if (player_is_local_pc_obj(wmap_ui_obj)) {
                             sub_4507B0(wmap_ui_obj, wmap_ui_spell);
                         }
 
@@ -2108,11 +2108,11 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         }
                     } else {
                         if (dword_66D868 == 2 && stru_64E048[1].field_3C0 > 0) {
-                            sub_433640(player_get_pc_obj(),
+                            sub_433640(player_get_local_pc_obj(),
                                 stru_64E048[1].field_0[0].loc);
 
                             for (int idx = 1; idx < stru_64E048[1].field_3C0; idx++) {
-                                sub_433A00(player_get_pc_obj(),
+                                sub_433A00(player_get_local_pc_obj(),
                                     stru_64E048[1].field_0[idx].loc,
                                     tig_net_is_active()
                                         && !tig_net_is_host());
@@ -2262,7 +2262,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 gsound_play_sfx(0, 1);
 
                 for (int area = area_get_count() - 1; area > 0; area--) {
-                    area_set_known(player_get_pc_obj(), area);
+                    area_set_known(player_get_local_pc_obj(), area);
                     sub_562800(area);
                 }
 
@@ -2531,7 +2531,7 @@ bool wmap_load_townmap_info()
     }
 
     sub_4BE670(&stru_64E7F8,
-        obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION),
+        obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION),
         &x,
         &y);
 
@@ -3270,7 +3270,7 @@ bool sub_563F00(WmapCoords* coords, int64_t* a2)
     }
 
     sub_561800(coords, &v1);
-    pc_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    pc_location = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     if (location_dist(v1, pc_location) < qword_66D850) {
         sub_561490(pc_location, coords);
         *a2 = pc_location;
@@ -3517,7 +3517,7 @@ bool sub_5643E0(WmapCoords* coords)
 
     if (dword_66D868 == 2) {
         if (wp_idx == 0) {
-            from = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+            from = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
         } else if (wp_idx < 6) {
             from = stru_64E048[type].field_0[wp_idx - 1].loc;
         } else {
@@ -3532,7 +3532,7 @@ bool sub_5643E0(WmapCoords* coords)
 
         sub_4BE780(&stru_64E7F8, coords->x, coords->y, &to);
 
-        steps = sub_44EB40(player_get_pc_obj(), from, to);
+        steps = sub_44EB40(player_get_local_pc_obj(), from, to);
         if (steps == 0) {
             // "Your path is blocked.  Try clicking closer to the previous waypoint."
             mes_file_entry.num = 610;
@@ -3682,7 +3682,7 @@ void sub_564970(S64E048* a1)
 {
     int v1;
 
-    v1 = area_get_nearest_known_area(a1->loc, player_get_pc_obj(), qword_66D850);
+    v1 = area_get_nearest_known_area(a1->loc, player_get_local_pc_obj(), qword_66D850);
     if (v1 > 0) {
         a1->loc = area_get_location(v1);
         sub_561490(a1->loc, &(a1->coords));
@@ -3755,7 +3755,7 @@ void wmap_ui_mark_townmap(int64_t obj)
     int obj_townmap;
     WmapNote note;
 
-    pc_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    pc_loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     pc_townmap = townmap_get(sector_id_from_loc(pc_loc));
 
     obj_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
@@ -3820,7 +3820,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
         sub_564E30(&v6, &loc);
         v2->field_3C = v6;
 
-        sub_564A70(player_get_pc_obj(), loc);
+        sub_564A70(player_get_local_pc_obj(), loc);
 
         if (dword_65E968 >= stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
             v0 = true;
@@ -3885,9 +3885,9 @@ void sub_564E30(WmapCoords* coords, int64_t* loc_ptr)
     y = (coords->y << 6) + 32;
     *loc_ptr = location_make(x, y);
 
-    area = area_get_nearest_known_area(*loc_ptr, player_get_pc_obj(), qword_66D850);
+    area = area_get_nearest_known_area(*loc_ptr, player_get_local_pc_obj(), qword_66D850);
     if (area > 0) {
-        if (!area_is_known(player_get_pc_obj(), area)) {
+        if (!area_is_known(player_get_local_pc_obj(), area)) {
             *loc_ptr = area_get_location(area);
             sub_561490(*loc_ptr, coords);
         }
@@ -4008,11 +4008,11 @@ void sub_565130(int a1)
 // 0x565140
 bool sub_565140()
 {
-    if (!sub_424070(player_get_pc_obj(), 3, 0, 1)) {
+    if (!sub_424070(player_get_local_pc_obj(), 3, 0, 1)) {
         return false;
     }
 
-    sub_457450(player_get_pc_obj());
+    sub_457450(player_get_local_pc_obj());
 
     return true;
 }
@@ -4092,7 +4092,7 @@ void sub_565230()
         }
     }
 
-    area = area_get_last_known_area(player_get_pc_obj());
+    area = area_get_last_known_area(player_get_local_pc_obj());
     if (area != AREA_UNKNOWN) {
         sub_561490(area_get_location(area), &coords);
         tmp_rect.x = vb_dst_rect.x + note->coords.x;
@@ -4299,7 +4299,7 @@ void sub_5657A0(TigRect* rect)
 
     sub_566A80(v1, &tmp_rect, rect);
 
-    area = area_get_last_known_area(player_get_pc_obj());
+    area = area_get_last_known_area(player_get_local_pc_obj());
     if (area != AREA_UNKNOWN) {
         WmapCoords coords;
 
@@ -4691,7 +4691,7 @@ void wmap_town_refresh_rect(TigRect* rect)
         tig_window_blit_art(wmap_ui_window, &art_blit_info);
     }
 
-    object_list_all_followers(player_get_pc_obj(), &objects);
+    object_list_all_followers(player_get_local_pc_obj(), &objects);
     node = objects.head;
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
@@ -4722,10 +4722,10 @@ void wmap_town_refresh_rect(TigRect* rect)
     object_list_destroy(&objects);
 
     if (tig_net_is_active()) {
-        object_list_party(player_get_pc_obj(), &objects);
+        object_list_party(player_get_local_pc_obj(), &objects);
         node = objects.head;
         while (node != NULL) {
-            if (!player_is_pc_obj(node->obj)) {
+            if (!player_is_local_pc_obj(node->obj)) {
                 loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
                 sub_4BE670(&stru_64E7F8, loc, &offset_x, &offset_y);
                 offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
@@ -4851,7 +4851,7 @@ void wmap_ui_get_current_location(int64_t* loc_ptr)
     if (wmap_ui_created && dword_66D8AC == 2) {
         sub_561800(&stru_5C9228[dword_66D868].field_3C, loc_ptr);
     } else {
-        *loc_ptr = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+        *loc_ptr = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     }
 }
 

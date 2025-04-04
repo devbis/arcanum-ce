@@ -3734,7 +3734,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
             if ((state_change & 0x90000000) == 0x90000000) {
                 run_info->flags |= 0x02;
-                if (combat_turn_based_is_active() && !player_is_pc_obj(run_info->anim_obj)) {
+                if (combat_turn_based_is_active() && !player_is_local_pc_obj(run_info->anim_obj)) {
                     sub_4B7CD0(run_info->anim_obj, sub_4B7C20());
                 }
 
@@ -3994,7 +3994,7 @@ bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
     ASSERT(priority_level >= PRIORITY_NONE && priority_level < PRIORITY_HIGHEST); // (priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)
 
     if (!a4) {
-        if (tig_net_is_active() && sub_40DA20(obj)) {
+        if (tig_net_is_active() && player_is_pc_obj(obj)) {
             Packet9 pkt;
 
             pkt.type = 9;
@@ -4845,7 +4845,7 @@ bool sub_425930(AnimRunInfo* run_info)
     if (run_info->path.max == 0 || run_info->path.max > range) {
         path_create_info.flags = PATH_FLAG_0x0001;
         if (!sub_425BF0(&path_create_info, 1)) {
-            if (!sub_40DA20(obj)) {
+            if (!player_is_pc_obj(obj)) {
                 sub_4B7C90(obj);
             }
             return false;
@@ -4853,7 +4853,7 @@ bool sub_425930(AnimRunInfo* run_info)
 
         run_info->path.max = sub_41F3C0(&path_create_info);
         if (run_info->path.max == 0 || run_info->path.max > range) {
-            if (!sub_40DA20(obj)) {
+            if (!player_is_pc_obj(obj)) {
                 sub_4B7C90(obj);
             }
             return false;
@@ -4970,7 +4970,7 @@ bool sub_425D60(AnimRunInfo* run_info)
     if (run_info->path.max == 0 || run_info->path.max > range) {
         path_create_info.flags = PATH_FLAG_0x0001;
         if (!sub_425BF0(&path_create_info, 1)) {
-            if (!sub_40DA20(obj)) {
+            if (!player_is_pc_obj(obj)) {
                 sub_4B7C90(obj);
             }
             return false;
@@ -4978,7 +4978,7 @@ bool sub_425D60(AnimRunInfo* run_info)
 
         run_info->path.max = sub_41F3C0(&path_create_info);
         if (run_info->path.max == 0 || run_info->path.max > range) {
-            if (!sub_40DA20(obj)) {
+            if (!player_is_pc_obj(obj)) {
                 sub_4B7C90(obj);
             }
             return false;
@@ -5036,7 +5036,7 @@ bool sub_426040(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((run_info->flags & 0x400) != 0 || !sub_40DA20(obj)) {
+    if ((run_info->flags & 0x400) != 0 || !player_is_pc_obj(obj)) {
         return false;
     }
 
@@ -5248,7 +5248,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
     }
 
     if (path->max == 0) {
-        if (!sub_40DA20(obj)) {
+        if (!player_is_pc_obj(obj)) {
             sub_4B7C90(obj);
         }
         return false;
@@ -5404,7 +5404,7 @@ bool sub_426A80(AnimRunInfo* run_info)
 
     if (source_obj == OBJ_HANDLE_NULL
         || target_obj == OBJ_HANDLE_NULL) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -5457,7 +5457,7 @@ bool sub_426A80(AnimRunInfo* run_info)
     path_create_info.flags = path_create_flags;
 
     if (!sub_425BF0(&path_create_info, true)) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -5468,7 +5468,7 @@ bool sub_426A80(AnimRunInfo* run_info)
     run_info->path.field_F0 = path_create_info.to;
 
     if (run_info->path.max == 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -5525,7 +5525,7 @@ bool sub_426E80(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_40DA20(obj)) {
+    if (player_is_pc_obj(obj)) {
         return false;
     }
 
@@ -5941,7 +5941,7 @@ bool sub_427730(AnimRunInfo* run_info)
         }
 
         if (run_info->path.max == 0) {
-            if (!sub_40DA20(obj)) {
+            if (!player_is_pc_obj(obj)) {
                 sub_4B7C90(obj);
             }
             return false;
@@ -6067,7 +6067,7 @@ bool sub_427990(AnimRunInfo* run_info)
         path_create_info.flags = path_create_flags;
 
         if (!sub_425BF0(&path_create_info, true)) {
-            if (!sub_40DA20(source_obj)) {
+            if (!player_is_pc_obj(source_obj)) {
                 sub_4B7C90(source_obj);
             }
             return false;
@@ -6084,7 +6084,7 @@ bool sub_427990(AnimRunInfo* run_info)
             if (range > 0) {
                 run_info->path.max -= (int)range - 1;
                 if (run_info->path.max < 1) {
-                    if (!sub_40DA20(source_obj)) {
+                    if (!player_is_pc_obj(source_obj)) {
                         sub_4B7C90(source_obj);
                     }
                     return false;
@@ -6111,7 +6111,7 @@ bool sub_427990(AnimRunInfo* run_info)
     }
 
     if (range != 0 || orig_range == 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6147,7 +6147,7 @@ bool sub_427990(AnimRunInfo* run_info)
     }
 
     if (path_create_info.flags == PATH_FLAG_0x0001 || (run_info->flags & 0x4000) != 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6156,7 +6156,7 @@ bool sub_427990(AnimRunInfo* run_info)
     path_create_info.flags = PATH_FLAG_0x0001;
 
     if (!sub_425BF0(&path_create_info, true)) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6167,7 +6167,7 @@ bool sub_427990(AnimRunInfo* run_info)
     run_info->path.field_F0 = path_create_info.to;
 
     if (run_info->path.max <= 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6274,7 +6274,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
 
     if (path_create_flags == path_create_info.flags
         || (run_info->flags & 0x4000) != 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6282,7 +6282,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
 
     path_create_info.flags = path_create_flags;
     if (!sub_425BF0(&path_create_info, false)) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6293,7 +6293,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     run_info->path.field_F0 = path_create_info.to;
 
     if (run_info->path.max == 0) {
-        if (!sub_40DA20(source_obj)) {
+        if (!player_is_pc_obj(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
@@ -6305,7 +6305,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     if (range > 0) {
         run_info->path.max -= (int)range - 1;
         if (run_info->path.max < 1) {
-            if (!sub_40DA20(source_obj)) {
+            if (!player_is_pc_obj(source_obj)) {
                 sub_4B7C90(source_obj);
             }
             return false;
@@ -7092,7 +7092,7 @@ bool sub_429760(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_40DA20(source_obj)) {
+    if (!player_is_pc_obj(source_obj)) {
         return false;
     }
 
@@ -7152,7 +7152,7 @@ bool sub_4298D0(AnimRunInfo* run_info)
         return false;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     if (object_dist(source_obj, pc_obj) >= 30) {
         return false;
     }
@@ -7936,7 +7936,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
         return false;
     }
 
-    if (player_is_pc_obj(source_obj)) {
+    if (player_is_local_pc_obj(source_obj)) {
         sound_id = sub_4F0BF0(target_obj, source_obj, OBJ_HANDLE_NULL, 0);
         gsound_play_sfx_on_obj(sound_id, 1, source_obj);
     }
@@ -8550,7 +8550,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
 
     combat_critter_activate_combat_mode(source_obj);
 
-    if (sub_40DA20(target_obj)) {
+    if (player_is_pc_obj(target_obj)) {
         combat_critter_activate_combat_mode(target_obj);
     } else {
         leader_obj = critter_pc_leader_get(target_obj);
@@ -8634,7 +8634,7 @@ bool sub_42BC10(AnimRunInfo* run_info)
     anim = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
 
     // FIXME: Meaningless.
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
     obj_field_int32_get(pc_obj, OBJ_F_PC_FLAGS);
 
     if (violence_filter != 0) {
@@ -9315,7 +9315,7 @@ bool sub_42CDF0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (object_dist(obj, player_get_pc_obj()) > 30) {
+    if (object_dist(obj, player_get_local_pc_obj()) > 30) {
         return false;
     }
 
@@ -9778,7 +9778,7 @@ bool sub_42D910(AnimRunInfo* run_info)
     }
 
     // FIXME: Useless.
-    player_is_pc_obj(obj);
+    player_is_local_pc_obj(obj);
 
     if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
         return false;
@@ -9868,7 +9868,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 1;
     if (!tig_net_is_active()) {
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = object_dist(obj, player_get_pc_obj()) < 30;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = object_dist(obj, player_get_local_pc_obj()) < 30;
     }
 
     run_info->flags |= 0x10;
@@ -9885,7 +9885,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
     max_sound_distance = gsound_range(obj);
     sound_handle = run_info->goals[0].params[AGDATA_SOUND_HANDLE].data;
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    player_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    player_loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     if (location_dist(player_loc, loc) > max_sound_distance) {
         if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
             tig_sound_destroy(sound_handle);
@@ -9929,7 +9929,7 @@ bool sub_42DCF0(AnimRunInfo* run_info)
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = 0;
 
     if (!tig_net_is_active()) {
-        if (object_dist(obj, player_get_pc_obj()) >= 30) {
+        if (object_dist(obj, player_get_local_pc_obj()) >= 30) {
             run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 0;
             return false;
         }
@@ -11165,7 +11165,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
         object_flags_set(obj, OF_FLAT | OF_NO_BLOCK);
 
         if (!tig_net_is_active()) {
-            if (player_is_pc_obj(obj)) {
+            if (player_is_local_pc_obj(obj)) {
                 sub_460520();
             }
         }
@@ -11336,7 +11336,7 @@ bool sub_4303D0(int64_t obj)
         && !combat_critter_is_combat_mode_active(obj)
         && critter_is_active(obj)) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-            || !player_is_pc_obj(sub_4C1110(obj))) {
+            || !player_is_local_pc_obj(sub_4C1110(obj))) {
             if (tig_art_id_anim_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {
                 return true;
             }
@@ -11379,7 +11379,7 @@ bool get_always_run(int64_t obj)
 
     always_run = settings_get_value(&settings, "always run");
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         if (always_run) {
             if (tig_kb_is_key_pressed(DIK_LCONTROL)
                 || tig_kb_is_key_pressed(DIK_RCONTROL)) {
@@ -11403,7 +11403,7 @@ void set_always_run(bool value)
     int client_id;
 
     if (tig_net_is_active()) {
-        client_id = sub_4A2B10(player_get_pc_obj());
+        client_id = sub_4A2B10(player_get_local_pc_obj());
         if (client_id != -1) {
             if (value) {
                 sub_4A5510(client_id, 0x100);
@@ -11445,7 +11445,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
     }
 
     // FIXME: Useless.
-    player_is_pc_obj(obj);
+    player_is_local_pc_obj(obj);
 
     v1 = (run_info->flags & 0x40) != 0;
     run_info->flags |= 0x100000;
@@ -11638,7 +11638,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
             }
 
             if ((run_info->flags & 0x80000) != 0
-                && player_is_pc_obj(obj)
+                && player_is_local_pc_obj(obj)
                 && new_loc != loc) {
                 int64_t x;
                 int64_t y;
@@ -12846,7 +12846,7 @@ bool sub_432700(AnimRunInfo* run_info)
     run_info->pause_time.milliseconds = delay;
 
     if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
-        && player_is_pc_obj(source_obj)) {
+        && player_is_local_pc_obj(source_obj)) {
         object_flags_unset(source_obj, OF_INVISIBLE);
     }
 
@@ -13034,7 +13034,7 @@ void sub_432D90(int64_t obj)
         return;
     }
 
-    pc_obj = player_get_pc_obj();
+    pc_obj = player_get_local_pc_obj();
 
     // FIXME: Useless.
     obj_field_int32_get(pc_obj, OBJ_F_PC_FLAGS);
@@ -13140,7 +13140,7 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
     v1 = a2 - 1;
     if (v1 == 0) {
         // FIXME: Useless.
-        obj_field_int32_get(player_get_pc_obj(), OBJ_F_PC_FLAGS);
+        obj_field_int32_get(player_get_local_pc_obj(), OBJ_F_PC_FLAGS);
 
         critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
         spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
@@ -13233,7 +13233,7 @@ bool sub_433270(AnimRunInfo* run_info)
         return false;
     }
 
-    if (player_is_pc_obj(run_info->anim_obj)) {
+    if (player_is_local_pc_obj(run_info->anim_obj)) {
         return true;
     }
 
@@ -13458,7 +13458,7 @@ bool sub_4339A0(int64_t obj)
     return obj != OBJ_HANDLE_NULL
         && critter_is_active(obj)
         && (!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == obj)
-        && (sub_40DA20(obj) || !sub_4C1110(obj));
+        && (player_is_pc_obj(obj) || !sub_4C1110(obj));
 }
 
 // 0x433A00

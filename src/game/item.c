@@ -862,7 +862,7 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
     }
 
     worth = item_worth(item_obj);
-    if (sub_40DA20(seller_obj)) {
+    if (player_is_pc_obj(seller_obj)) {
         if (!a4) {
             if (!item_check_sell(item_obj, seller_obj, buyer_obj)) {
                 return 0;
@@ -1405,7 +1405,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
-        if (player_is_pc_obj(source_obj)) {
+        if (player_is_local_pc_obj(source_obj)) {
             sub_4EF6F0(source_obj, item_obj, target_obj);
         }
         return;
@@ -1697,7 +1697,7 @@ bool sub_463370(int64_t obj, int key_id)
 
     if (tig_net_is_active()
         && (tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
-        if (sub_40DA20(obj)) {
+        if (player_is_pc_obj(obj)) {
             party_member_obj = party_find_first(obj, &iter);
             while (party_member_obj != OBJ_HANDLE_NULL) {
                 if (sub_463240(party_member_obj, key_id)) {
@@ -2100,7 +2100,7 @@ void sub_463E20(int64_t obj)
 
         if (spawn) {
             int seed = (int)loc;
-            int64_t pc_obj = player_get_pc_obj();
+            int64_t pc_obj = player_get_local_pc_obj();
 
             if (pc_obj != OBJ_HANDLE_NULL) {
                 char buffer[80];
@@ -3774,7 +3774,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
     mt_ai_notify_inventory_changed(parent_obj);
 
-    if (player_is_pc_obj(parent_obj)) {
+    if (player_is_local_pc_obj(parent_obj)) {
         ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, true);
 
         if (inventory_location >= 2000 && inventory_location <= 2009) {
@@ -3924,7 +3924,7 @@ void sub_466D60(int64_t obj)
 
     sub_436FA0(obj);
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         sub_4605D0();
     }
 
@@ -4145,7 +4145,7 @@ void sub_4673F0(int64_t obj, int reason)
     UiMessage ui_message;
     char* str;
 
-    if (player_is_pc_obj(obj)) {
+    if (player_is_local_pc_obj(obj)) {
         str = item_cannot_msg(reason);
         if (str != NULL) {
             ui_message.type = UI_MSG_TYPE_EXCLAMATION;
@@ -4310,7 +4310,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
         aid = sub_465020(parent_obj);
         object_set_current_aid(parent_obj, aid);
 
-        if (player_is_pc_obj(parent_obj)) {
+        if (player_is_local_pc_obj(parent_obj)) {
             sub_4605D0();
         }
         break;
@@ -4384,7 +4384,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
             dword_5E8820 = true;
             tig_debug_printf("Warning: item_force_remove called on item with different parent.\n");
         }
-        is_pc = player_is_pc_obj(parent_obj);
+        is_pc = player_is_local_pc_obj(parent_obj);
     } else {
         dword_5E8820 = true;
         tig_debug_printf("Warning: item_force_remove called on item that doesn't think it has a parent.\n");
@@ -4484,7 +4484,7 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
         aid = sub_465020(parent_obj);
         object_set_current_aid(parent_obj, aid);
 
-        if (player_is_pc_obj(parent_obj)) {
+        if (player_is_local_pc_obj(parent_obj)) {
             sub_4605D0();
         }
         break;
