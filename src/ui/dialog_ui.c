@@ -690,7 +690,7 @@ void sub_568480(DialogUiEntry* entry, int a2)
         a2 = entry->script_line + 1;
     }
 
-    sub_441980(entry->state.pc_obj, entry->state.npc_obj, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
+    object_script_execute(entry->state.pc_obj, entry->state.npc_obj, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
 }
 
 // 0x5684C0

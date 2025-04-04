@@ -1246,7 +1246,7 @@ void object_destroy(int64_t obj)
         return;
     }
 
-    if (!sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_DESTROY, 0)) {
+    if (!object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_DESTROY, 0)) {
         return;
     }
 
@@ -2411,7 +2411,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         if ((scenery_flags & OSCF_RESPAWNABLE) != 0) {
             int scenery_respawn_delay;
 
-            sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+            object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             scenery_flags |= OSCF_RESPAWNING;
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags);
             object_flags_set(obj, OF_OFF);
@@ -2447,7 +2447,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                 obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
                 sound_id = sub_4F1050(obj, 0);
                 object_flags_set(obj, OF_INVULNERABLE);
-                sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+                object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             }
 
             gsound_play_sfx_on_obj(sound_id, 1, obj);
@@ -2482,7 +2482,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             }
 
             sound_id = sub_4F1050(obj, 0);
-            sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+            object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
         } else {
             object_destroy(obj);
             sound_id = sub_4F1050(obj, 1);
@@ -2502,7 +2502,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                 object_hp_damage_set(obj, 0);
                 obj_field_int32_set(obj, OBJ_F_TRAP_FLAGS, trap_flags | 0x2);
                 sound_id = sub_4F1050(obj, 0);
-                sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+                object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             } else {
                 object_destroy(obj);
                 sound_id = sub_4F1050(obj, 1);
@@ -3787,7 +3787,7 @@ bool sub_441960(void* userinfo)
 }
 
 // 0x441980
-bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, int attachment_point, int line)
+bool object_script_execute(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, int attachment_point, int line)
 {
     Script scr;
     Script scr_before;

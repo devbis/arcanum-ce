@@ -192,7 +192,7 @@ void sleep_ui_open(int64_t bed_obj)
     }
 
     if (bed_obj != OBJ_HANDLE_NULL) {
-        if (sub_441980(pc_obj, bed_obj, OBJ_HANDLE_NULL, SAP_USE, 0) == 1) {
+        if (object_script_execute(pc_obj, bed_obj, OBJ_HANDLE_NULL, SAP_USE, 0) == 1) {
             // You cannot sleep here. Find an inn and pay for a bed.
             mes_file_entry.num = 8;
             mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
@@ -510,7 +510,7 @@ void sub_57BAC0()
 
     node = objects.head;
     while (node != NULL) {
-        sub_441980(qword_6834A8, node->obj, OBJ_HANDLE_NULL, SAP_LEADER_SLEEPING, 0);
+        object_script_execute(qword_6834A8, node->obj, OBJ_HANDLE_NULL, SAP_LEADER_SLEEPING, 0);
         node = node->next;
     }
 

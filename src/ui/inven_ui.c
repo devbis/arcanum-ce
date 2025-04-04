@@ -566,14 +566,14 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
                     return false;
                 }
 
-                if (!sub_441980(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
+                if (!object_script_execute(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
                     gsound_play_sfx(sub_4F0FD0(target_obj, 2), 1);
                     return false;
                 }
             }
         } else {
             if (mode == INVEN_UI_MODE_LOOT) {
-                if (!sub_441980(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
+                if (!object_script_execute(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
                     return false;
                 }
             }
@@ -3629,7 +3629,7 @@ void sub_578330(int64_t a1, int64_t a2)
         dword_681440 = item_cost(a1, inven_ui_pc_obj, qword_682C78, 0);
         if (dword_681440 != 0) {
             gold = item_gold_get(qword_682C78);
-            if (sub_441980(a1, qword_682C78, inven_ui_pc_obj, SAP_BUY_OBJECT, 0)) {
+            if (object_script_execute(a1, qword_682C78, inven_ui_pc_obj, SAP_BUY_OBJECT, 0)) {
                 pos = 0;
             } else {
                 dialog_copy_npc_normally_wont_buy_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);

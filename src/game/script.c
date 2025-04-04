@@ -2926,7 +2926,7 @@ void sub_44B030(ScriptAction* action, ScriptState* state)
 // 0x44B170
 void sub_44B170(ScriptAction* action, ScriptState* state)
 {
-    sub_441980(script_get_obj(action->op_type[3], action->op_value[3], state),
+    object_script_execute(script_get_obj(action->op_type[3], action->op_value[3], state),
         script_get_obj(action->op_type[0], action->op_value[0], state),
         OBJ_HANDLE_NULL,
         script_get_value(action->op_type[1], action->op_value[1], state),

@@ -350,9 +350,9 @@ bool sub_4A8570(Ai* ai)
 
     if (combat_critter_is_combat_mode_active(ai->obj)) {
         if (!combat_turn_based_is_active()) {
-            sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
+            object_script_execute(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
         }
-        sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_START_COMBAT, 0);
+        object_script_execute(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_START_COMBAT, 0);
     }
 
     if (combat_turn_based_is_active() && combat_turn_based_whos_turn_get() != ai->obj) {
@@ -1693,7 +1693,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
             if ((npc_flags & ONF_FIGHTING) == 0) {
                 npc_flags |= ONF_FIGHTING | ONF_CHECK_WIELD | ONF_40000000;
                 obj_field_int32_set(source_obj, OBJ_F_NPC_FLAGS, npc_flags);
-                sub_441980(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_ENTER_COMBAT, 0);
+                object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_ENTER_COMBAT, 0);
 
                 if (a4 != NULL) {
                     *a4 = sub_4F0ED0(source_obj, 5);
@@ -1725,7 +1725,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
                 obj_field_int32_set(source_obj, OBJ_F_NPC_FLAGS, npc_flags);
             }
 
-            sub_441980(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_EXIT_COMBAT, 0);
+            object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_EXIT_COMBAT, 0);
         }
     }
 
@@ -2890,13 +2890,13 @@ bool ai_timeevent_process(TimeEvent* timeevent)
             ai_standpoints_process(obj, true);
         }
 
-        if (!sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_FIRST_HEARTBEAT, 0)) {
+        if (!object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_FIRST_HEARTBEAT, 0)) {
             skip = true;
         }
     }
 
     if (!skip && sub_4AD420(obj)) {
-        if (sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0)) {
+        if (object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0)) {
             if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_GENERATOR) != 0) {
                 if (sub_4BA790(obj, &datetime)) {
                     sub_4AD730(obj, &datetime);
@@ -3478,7 +3478,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
         pc_leader_obj = critter_pc_leader_get(a1);
         obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
 
-        if (sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
+        if (object_script_execute(a2, a1, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
             ai_danger_source(a1, &danger_source_type, &danger_source_obj);
 
             if (danger_source_type != AI_DANGER_SOURCE_TYPE_SURRENDER || danger_source_obj != a2) {
@@ -3791,7 +3791,7 @@ int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
         return AI_ATTEMPT_OPEN_PORTAL_NOT_CRITTER;
     }
 
-    if (!sub_441980(obj, portal_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
+    if (!object_script_execute(obj, portal_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
         return AI_ATTEMPT_OPEN_PORTAL_NOT_ALLOWED;
     }
 
@@ -3876,7 +3876,7 @@ int ai_attempt_open_container(int64_t obj, int64_t container_obj)
         return AI_ATTEMPT_OPEN_CONTAINER_OK;
     }
 
-    if (!sub_441980(obj, container_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
+    if (!object_script_execute(obj, container_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
         return AI_ATTEMPT_OPEN_CONTAINER_NOT_ALLOWED;
     }
 
@@ -3959,7 +3959,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && (!sub_4AF260(node->obj, critter_obj)
                 || !sub_4AF470(node->obj, critter_obj, loudness))) {
-            if (sub_441980(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
+            if (object_script_execute(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
                     reaction_adj(node->obj, pc_obj, -20);
                     sub_4AAA60(node->obj, &ai_params);

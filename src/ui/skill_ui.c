@@ -294,7 +294,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
                         tf_add(obj, TF_TYPE_WHITE, mes_file_entry.str);
                     }
                 } else if (critter_is_dead(a1->obj)) {
-                    if (sub_441980(obj, a1->obj, obj, SAP_USE, 0)
+                    if (object_script_execute(obj, a1->obj, obj, SAP_USE, 0)
                         && (spell_flags & OSF_POLYMORPHED) == 0
                         && !sub_423300(a1->obj, 0)) {
                         ui_show_inven_loot(obj, a1->obj);

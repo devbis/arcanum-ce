@@ -1236,8 +1236,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             } else {
                 if (is_critical
                     || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0))) {
-                    sub_441980(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
-                    if (sub_441980(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
+                    object_script_execute(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
+                    if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
                             || critter_leader_get(target_obj) != source_obj) {
                             sub_4A9650(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
@@ -1296,8 +1296,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                 if (training < TRAINING_MASTER
                     && (is_critical
                         || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0)))) {
-                    sub_441980(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
-                    if (sub_441980(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
+                    object_script_execute(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
+                    if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
                             || critter_leader_get(target_obj) != source_obj) {
                             sub_4A9650(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);

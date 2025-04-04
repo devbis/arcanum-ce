@@ -256,7 +256,7 @@ void sub_57CC70(int64_t a1, int64_t a2)
 {
     int64_t v1;
 
-    if (sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_DIALOG, 0) == 1) {
+    if (object_script_execute(a1, a2, OBJ_HANDLE_NULL, SAP_DIALOG, 0) == 1) {
         if (sub_4AF210(a2, &v1) && sub_45E2E0(v1, a1)) {
             sub_4AF130(a2, a1);
         } else {
@@ -283,7 +283,7 @@ bool sub_57CD60(int64_t a1, int64_t a2, char* buffer)
         return false;
     }
 
-    if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_EXAMINE, 0)) {
+    if (!object_script_execute(a1, a2, OBJ_HANDLE_NULL, SAP_EXAMINE, 0)) {
         return false;
     }
 

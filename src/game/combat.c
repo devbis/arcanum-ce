@@ -610,11 +610,11 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
             sub_4B2690(proj_obj, attacker_obj, a7, NULL, true);
 
             if (weapon_obj != OBJ_HANDLE_NULL) {
-                sub_441980(attacker_obj, weapon_obj, target_obj, SAP_HIT, 0);
+                object_script_execute(attacker_obj, weapon_obj, target_obj, SAP_HIT, 0);
 
                 if ((proj_flags & 0x04) != 0
                     && weapon_obj_type == OBJ_TYPE_WEAPON) {
-                    sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_HIT, 0);
+                    object_script_execute(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_HIT, 0);
                 }
 
                 mt_item_notify_parent_attacks_loc(attacker_obj, weapon_obj, target_loc);
@@ -726,11 +726,11 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
         sub_4B2690(proj_obj, attacker_obj, target_obj, NULL, true);
 
         if (weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(attacker_obj, weapon_obj, target_obj, SAP_MISS, 0);
+            object_script_execute(attacker_obj, weapon_obj, target_obj, SAP_MISS, 0);
 
             if ((proj_flags & 0x04) != 0
                 && weapon_obj_type == OBJ_TYPE_WEAPON) {
-                sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_MISS, 0);
+                object_script_execute(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_MISS, 0);
             }
 
             mt_item_notify_parent_attacks_loc(attacker_obj, weapon_obj, proj_loc);
@@ -747,17 +747,17 @@ void sub_4B2F60(CombatContext* combat)
 
     if ((combat->flags & CF_HIT) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
+            object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
 
             if ((combat->flags & CF_CRITICAL) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-                sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
+                object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
             }
         }
 
         if (combat->attacker_obj != OBJ_HANDLE_NULL
             && combat->target_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
+            object_script_execute(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
         sub_4B6680(combat);
@@ -783,11 +783,11 @@ void sub_4B2F60(CombatContext* combat)
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
+            object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
 
             if ((combat->flags & CF_CRITICAL) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-                sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
+                object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
             }
         }
     }
@@ -1011,16 +1011,16 @@ void sub_4B3770(CombatContext* combat)
 
     if ((combat->flags & CF_HIT) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
+            object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
 
             if ((combat->flags & CF_CRITICAL) != 0) {
-                sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
+                object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
             }
         }
 
         if (combat->attacker_obj != OBJ_HANDLE_NULL
             && combat->target_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
+            object_script_execute(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
         sub_4B6680(combat);
@@ -1052,10 +1052,10 @@ void sub_4B3770(CombatContext* combat)
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
+            object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
 
             if ((combat->flags & CF_CRITICAL) != 0) {
-                sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
+                object_script_execute(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
             }
         }
     }
@@ -1147,7 +1147,7 @@ void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, in
         item_remove(weapon_obj);
     }
 
-    if (sub_441980(attacker_obj, weapon_obj, target_obj, SAP_THROW, 0)) {
+    if (object_script_execute(attacker_obj, weapon_obj, target_obj, SAP_THROW, 0)) {
         sub_4B2210(attacker_obj, target_obj, &combat);
         combat.hit_loc = hit_loc;
         combat.weapon_obj = weapon_obj;
@@ -1448,7 +1448,7 @@ void sub_4B4390(CombatContext* combat)
         bool def;
 
         dword_5FC26C = true;
-        def = sub_441980(combat->attacker_obj, combat->target_obj, OBJ_HANDLE_NULL, SAP_TAKING_DAMAGE, 0);
+        def = object_script_execute(combat->attacker_obj, combat->target_obj, OBJ_HANDLE_NULL, SAP_TAKING_DAMAGE, 0);
         dword_5FC26C = false;
 
         if (!def) {
@@ -1547,7 +1547,7 @@ void sub_4B4390(CombatContext* combat)
                 item_obj = item_wield_get(combat->target_obj, inventory_location);
                 if (item_obj != OBJ_HANDLE_NULL
                     && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
-                    sub_441980(combat->attacker_obj, item_obj, combat->target_obj, SAP_TAKING_DAMAGE, 0);
+                    object_script_execute(combat->attacker_obj, item_obj, combat->target_obj, SAP_TAKING_DAMAGE, 0);
                 }
             }
         }
@@ -2222,7 +2222,7 @@ void sub_4B58C0(CombatContext* combat)
         v1 = true;
     }
 
-    if (!sub_441980(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || v1) {
+    if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || v1) {
         sub_45A540(combat->target_obj);
         return;
     }
@@ -3120,7 +3120,7 @@ void sub_4B7010(int64_t obj)
     if (obj == dword_5FC240->obj
         && !sub_40DA20(obj)
         && !gamelib_in_load()) {
-        if (sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0) == 1) {
+        if (object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0) == 1) {
             ai_process(obj);
         }
 
@@ -3374,7 +3374,7 @@ void combat_turn_based_subturn_end()
     if (player_is_pc_obj(dword_5FC240->obj)) {
         combat_callbacks.field_C(0);
     } else {
-        sub_441980(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
+        object_script_execute(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
     }
 }
 

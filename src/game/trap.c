@@ -545,7 +545,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
         sub_4BC220(trap_obj);
     } else {
         if (*is_critical_ptr) {
-            sub_441980(pc_obj, trap_obj, OBJ_HANDLE_NULL, 1, 0);
+            object_script_execute(pc_obj, trap_obj, OBJ_HANDLE_NULL, 1, 0);
         }
     }
 }

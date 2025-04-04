@@ -3001,7 +3001,7 @@ void MTComponentTrait64_ProcFunc()
 void MTComponentUse_ProcFunc()
 {
     if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
-        sub_441980(stru_5E6D28.field_20,
+        object_script_execute(stru_5E6D28.field_20,
             stru_5E6D28.field_20,
             stru_5E6D28.field_20,
             SAP_USE,

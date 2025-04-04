@@ -722,7 +722,7 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
     object_list_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
-        sub_441980(obj, node->obj, OBJ_HANDLE_NULL, SAP_NEW_SECTOR, 0);
+        object_script_execute(obj, node->obj, OBJ_HANDLE_NULL, SAP_NEW_SECTOR, 0);
         node = node->next;
     }
     object_list_destroy(&objects);

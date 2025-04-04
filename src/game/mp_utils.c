@@ -1637,7 +1637,7 @@ void sub_4F06E0(int64_t a1, int64_t a2)
         obj_field_int32_set(a1, OBJ_F_PORTAL_FLAGS, flags);
         object_set_current_aid(a1, art_id);
         sound_id = sub_4F1050(a1, 0);
-        sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
+        object_script_execute(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
         gsound_play_sfx_on_obj(sound_id, 1, a1);
     } else {
         object_destroy(a1);

@@ -613,7 +613,7 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
         return sub_461CA0(item_obj, critter_obj, inventory_location);
     }
 
-    if (!sub_441980(critter_obj, item_obj, OBJ_HANDLE_NULL, SAP_GET, 0)) {
+    if (!object_script_execute(critter_obj, item_obj, OBJ_HANDLE_NULL, SAP_GET, 0)) {
         return false;
     }
 
@@ -704,7 +704,7 @@ bool item_drop_ex(int64_t item_obj, int distance)
 
     item_parent(item_obj, &parent_obj);
 
-    if (sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_DROP, 0) == 0) {
+    if (object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_DROP, 0) == 0) {
         return false;
     }
 
@@ -764,7 +764,7 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
         return item_transfer_ex(item_obj, critter_obj, inventory_location);
     }
 
-    if (!sub_441980(parent_obj, critter_obj, item_obj, SAP_TRANSFER, 0)) {
+    if (!object_script_execute(parent_obj, critter_obj, item_obj, SAP_TRANSFER, 0)) {
         return false;
     }
 
@@ -925,7 +925,7 @@ bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_
     }
 
     if (basic_skill_get_training(seller_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_EXPERT) {
-        if (!sub_441980(item_obj, buyer_npc_obj, seller_pc_obj, SAP_BUY_OBJECT, 0)) {
+        if (!object_script_execute(item_obj, buyer_npc_obj, seller_pc_obj, SAP_BUY_OBJECT, 0)) {
             return false;
         }
 
@@ -1436,7 +1436,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    if (!sub_441980(source_obj, item_obj, target_obj, SAP_USE, 0)) {
+    if (!object_script_execute(source_obj, item_obj, target_obj, SAP_USE, 0)) {
         sub_4B7CD0(source_obj, 4);
         return;
     }
@@ -2470,7 +2470,7 @@ bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_
                 }
 
                 if (to_obj != OBJ_HANDLE_NULL) {
-                    sub_441980(to_obj, gold_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+                    object_script_execute(to_obj, gold_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
                 }
 
                 if (from_qty == qty) {
@@ -2967,8 +2967,8 @@ void sub_465530(int64_t obj)
         if (item_obj != OBJ_HANDLE_NULL) {
             dword_5E87E8 = true;
             sub_467E80(item_obj, obj);
-            sub_441980(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
-            sub_441980(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
+            object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+            object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
             dword_5E87E8 = false;
         }
     }
@@ -3122,7 +3122,7 @@ bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type
             }
 
             if (to_obj != OBJ_HANDLE_NULL) {
-                sub_441980(to_obj, ammo_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+                object_script_execute(to_obj, ammo_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
             }
 
             if (remaining_qty == qty) {
@@ -3736,7 +3736,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
             sub_4415C0(item_obj, obj_field_int64_get(parent_obj, OBJ_F_LOCATION));
             sub_466D60(parent_obj);
-            sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+            object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
             object_destroy(item_obj);
             return;
         }
@@ -3771,7 +3771,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     }
 
     sub_466D60(parent_obj);
-    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
     mt_ai_notify_inventory_changed(parent_obj);
 
     if (player_is_pc_obj(parent_obj)) {
@@ -4323,7 +4323,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     mt_item_notify_wear(item_obj, parent_obj);
     sub_467E80(item_obj, parent_obj);
-    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
 }
 
 // 0x467860
@@ -4466,7 +4466,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     }
 
     sub_466D60(parent_obj);
-    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_REMOVE_ITEM, 0);
+    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_REMOVE_ITEM, 0);
 
     if (is_pc) {
         ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, true);
@@ -4497,7 +4497,7 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     mt_item_notify_unwear(item_obj, parent_obj);
     sub_467E80(item_obj, parent_obj);
-    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
 }
 
 // 0x467D60

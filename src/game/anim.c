@@ -6638,7 +6638,7 @@ bool sub_428A10(AnimRunInfo* run_info)
     obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     switch (obj_type) {
     case OBJ_TYPE_PORTAL:
-        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+        if (!object_script_execute(source_obj, target_obj, source_obj, SAP_USE, 0)) {
             return false;
         }
         return true;
@@ -6661,7 +6661,7 @@ bool sub_428A10(AnimRunInfo* run_info)
             sub_460820(target_obj);
             return true;
         }
-        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+        if (!object_script_execute(source_obj, target_obj, source_obj, SAP_USE, 0)) {
             return false;
         }
         return true;
@@ -6685,7 +6685,7 @@ bool sub_428A10(AnimRunInfo* run_info)
             && tig_net_is_host()) {
             sub_424070(source_obj, 2, false, false);
         }
-        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+        if (!object_script_execute(source_obj, target_obj, source_obj, SAP_USE, 0)) {
             return false;
         }
         return true;
@@ -11561,7 +11561,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
                     object_list_location(new_loc, OBJ_TM_TRAP, &traps);
                     if (traps.head != NULL) {
-                        sub_441980(obj, traps.head->obj, traps.head->obj, 1, 0);
+                        object_script_execute(obj, traps.head->obj, traps.head->obj, 1, 0);
                         run_info->path.flags |= 0x08;
                         run_info->path.curr = run_info->path.max;
                     }
