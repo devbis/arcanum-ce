@@ -1379,7 +1379,7 @@ void wmap_ui_close()
         sub_564070(false);
         sub_5615D0(0);
         intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
-        sub_57D620();
+        ambient_lighting_enable();
         intgame_button_destroy(&stru_5C9B70);
         intgame_big_window_unlock();
 
@@ -1633,7 +1633,7 @@ bool sub_5615D0(int a1)
             }
 
             intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &wmap_ui_pc_lens);
-            sub_57D640();
+            ambient_lighting_disable();
             pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
@@ -3720,7 +3720,7 @@ bool sub_5649F0(int64_t loc)
         v1->refresh();
     }
 
-    sub_57D620();
+    ambient_lighting_enable();
 
     return area > 0;
 }

@@ -11,7 +11,7 @@ bool anim_ui_load(GameLoadInfo* load_info);
 void sub_57D350(int a1, int a2);
 void sub_57D370(int a1, int a2, int milliseconds);
 void sub_57D3E0(int list, int a2);
-void sub_57D620();
-void sub_57D640();
+void ambient_lighting_enable();
+void ambient_lighting_disable();
 
 #endif /* ARCANUM_UI_ANIM_UI_H_ */

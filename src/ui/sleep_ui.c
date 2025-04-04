@@ -476,7 +476,7 @@ void sub_57B9E0()
     fade_data.steps = 48;
     fade_data.color = tig_color_make(0, 0, 0);
     gfade_run(&fade_data);
-    sub_57D640();
+    ambient_lighting_disable();
     dword_6834E0 = true;
 }
 
@@ -489,7 +489,7 @@ void sub_57BA70()
         return;
     }
 
-    sub_57D620();
+    ambient_lighting_enable();
 
     fade_data.flags = FADE_IN;
     fade_data.duration = 2.0f;

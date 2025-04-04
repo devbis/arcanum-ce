@@ -21,12 +21,12 @@
 
 static bool sub_57D3B0(TimeEvent* timeevent);
 static bool anim_ui_bkg_process_callback(TimeEvent* timeevent);
-static bool sub_57D650();
+static bool ambient_lighting_is_enabled();
 static bool ambient_lighting_process_callback(TimeEvent* timeevent);
-static void sub_57D6C0();
+static void ambient_lighting_reschedule();
 
 // 0x5CB408
-static bool dword_5CB408 = true;
+static bool ambient_lighting_enabled = true;
 
 // 0x5CB40C
 static int dword_5CB40C = -1;
@@ -229,24 +229,24 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
 }
 
 // 0x57D620
-void sub_57D620()
+void ambient_lighting_enable()
 {
-    if (!dword_5CB408) {
-        dword_5CB408 = true;
-        sub_57D6C0();
+    if (!ambient_lighting_enabled) {
+        ambient_lighting_enabled = true;
+        ambient_lighting_reschedule();
     }
 }
 
 // 0x57D640
-void sub_57D640()
+void ambient_lighting_disable()
 {
-    dword_5CB408 = false;
+    ambient_lighting_enabled = false;
 }
 
 // 0x57D650
-bool sub_57D650()
+bool ambient_lighting_is_enabled()
 {
-    return dword_5CB408;
+    return ambient_lighting_enabled;
 }
 
 // 0x57D660
@@ -259,7 +259,7 @@ bool ambient_lighting_process_callback(TimeEvent* timeevent)
     (void)timeevent;
 
     hour = datetime_current_hour();
-    if (sub_57D650()) {
+    if (ambient_lighting_is_enabled()) {
         light_scheme_set_hour(hour);
     }
 
@@ -272,7 +272,7 @@ bool ambient_lighting_process_callback(TimeEvent* timeevent)
 }
 
 // 0x57D6C0
-void sub_57D6C0()
+void ambient_lighting_reschedule()
 {
     int hour;
     DateTime datetime;
