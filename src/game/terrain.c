@@ -13,11 +13,10 @@
 
 typedef struct TerrainHeader {
     /* 0000 */ float version;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int64_t field_10;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0004 */ unsigned int flags;
+    /* 0008 */ int64_t width;
+    /* 0010 */ int64_t height;
+    /* 0018 */ int base_terrain_type;
 } TerrainHeader;
 
 static_assert(sizeof(TerrainHeader) == 0x20, "wrong size");
@@ -170,15 +169,15 @@ bool terrain_new(MapNewInfo* new_map_info)
     terrain_close();
 
     terrain_header.version = 1.2f;
-    terrain_header.field_4 = 0;
-    terrain_header.field_8 = new_map_info->width;
-    terrain_header.field_10 = new_map_info->height;
-    terrain_header.field_18 = new_map_info->base_terrain_type;
+    terrain_header.flags = 0;
+    terrain_header.width = new_map_info->width;
+    terrain_header.height = new_map_info->height;
+    terrain_header.base_terrain_type = new_map_info->base_terrain_type;
 
-    dword_603A18 = sizeof(uint16_t) * (int)terrain_header.field_8 * (int)terrain_header.field_10;
+    dword_603A18 = sizeof(uint16_t) * (int)terrain_header.width * (int)terrain_header.height;
     dword_6039EC = (uint16_t*)MALLOC(dword_603A18);
 
-    for (index = 0; index < terrain_header.field_10 * terrain_header.field_8; index++) {
+    for (index = 0; index < terrain_header.height * terrain_header.width; index++) {
         dword_6039EC[index] = sub_4E8D60(new_map_info->base_terrain_type, new_map_info->base_terrain_type, 15);
     }
 
@@ -231,15 +230,15 @@ bool terrain_open(const char* a1, const char* a2)
 
     dword_603A18 = tig_file_filelength(stream) - sizeof(terrain_header);
 
-    if ((terrain_header.field_4 & 0x1) != 0) {
+    if ((terrain_header.flags & 0x1) != 0) {
         if (terrain_editor) {
             v1 = true;
-            dword_603A18 = sizeof(int16_t) * terrain_header.field_8 * terrain_header.field_10;
+            dword_603A18 = sizeof(int16_t) * terrain_header.width * terrain_header.height;
         } else {
             int index;
 
             for (index = 0; index < 4; index++) {
-                dword_6038D0[index] = (int16_t*)MALLOC(sizeof(int16_t) * terrain_header.field_8);
+                dword_6038D0[index] = (int16_t*)MALLOC(sizeof(int16_t) * terrain_header.width);
                 qword_603AA0[index] = -1;
             }
 
@@ -256,7 +255,7 @@ bool terrain_open(const char* a1, const char* a2)
             return false;
         }
 
-        terrain_header.field_4 &= ~0x1;
+        terrain_header.flags &= ~0x1;
     } else {
         if (tig_file_fread(dword_6039EC, dword_603A18, 1, stream) != 1) {
             tig_debug_println("Unable to read terrain data");
@@ -275,7 +274,7 @@ void terrain_close()
 {
     int index;
 
-    if ((terrain_header.field_4 & 0x1) != 0) {
+    if ((terrain_header.flags & 0x1) != 0) {
         for (index = 0; index < 4; index++) {
             FREE(dword_6038D0[index]);
         }
@@ -323,13 +322,13 @@ bool sub_4E7F90()
         return false;
     }
 
-    if ((terrain_header.field_4 & 0x1) != 0) {
+    if ((terrain_header.flags & 0x1) != 0) {
         return false;
     }
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
-    vb_create_info.width = (int)terrain_header.field_8; // TODO: Check casts.
-    vb_create_info.height = (int)terrain_header.field_10;
+    vb_create_info.width = (int)terrain_header.width; // TODO: Check casts.
+    vb_create_info.height = (int)terrain_header.height;
     vb_create_info.background_color = 0;
     if (tig_video_buffer_create(&vb_create_info, &vb) != TIG_OK) {
         return false;
@@ -337,8 +336,8 @@ bool sub_4E7F90()
 
     rect.x = 0;
     rect.y = 0;
-    rect.width = (int)terrain_header.field_8; // TODO: Check casts.
-    rect.height = (int)terrain_header.field_10;
+    rect.width = (int)terrain_header.width; // TODO: Check casts.
+    rect.height = (int)terrain_header.height;
     sub_4E80C0(0, 0, vb, &rect);
 
     vb_to_bmp_info.flags = 0;
@@ -447,7 +446,7 @@ bool terrain_flush()
         }
 
         hdr = terrain_header;
-        hdr.field_4 = terrain_header.field_4 | 0x1;
+        hdr.flags = terrain_header.flags | 0x1;
         if (tig_file_fwrite(&hdr, sizeof(hdr), 1, stream) != 1) {
             // FIXME: Leaks `stream`.
             return false;
@@ -475,14 +474,14 @@ uint16_t sub_4E87F0(int64_t sec)
     x = SECTOR_X(sec);
     y = SECTOR_Y(sec);
     if (x < 0
-        || x >= terrain_header.field_8
+        || x >= terrain_header.width
         || y < 0
-        || y >= terrain_header.field_10) {
+        || y >= terrain_header.height) {
         return -1;
     }
 
-    if ((terrain_header.field_4 & 0x1) == 0) {
-        return dword_6039EC[x + y * terrain_header.field_8];
+    if ((terrain_header.flags & 0x1) == 0) {
+        return dword_6039EC[x + y * terrain_header.width];
     }
 
     for (idx = 0; idx < 4; idx++) {
@@ -507,7 +506,7 @@ void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec))
     x = (int)SECTOR_X(sec);
     y = (int)SECTOR_Y(sec);
 
-    dword_6039EC[terrain_header.field_8 * y + x] = tid;
+    dword_6039EC[terrain_header.width * y + x] = tid;
 
     if (callback != NULL) {
         callback(sec);
@@ -922,7 +921,7 @@ void sub_4E9490(void* dst, void* src, int size)
     strm.next_out = dst;
     strm.avail_in = size;
     strm.next_in = src;
-    strm.avail_out = 2 * (int)terrain_header.field_8;
+    strm.avail_out = 2 * (int)terrain_header.width;
 
     rc = inflate(&strm, Z_FINISH);
     if (rc != Z_OK && rc != Z_STREAM_END) {
