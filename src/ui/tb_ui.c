@@ -258,7 +258,7 @@ void sub_57CC70(int64_t a1, int64_t a2)
 
     if (object_script_execute(a1, a2, OBJ_HANDLE_NULL, SAP_DIALOG, 0) == 1) {
         if (sub_4AF210(a2, &v1) && sub_45E2E0(v1, a1)) {
-            sub_4AF130(a2, a1);
+            ai_flee(a2, a1);
         } else {
             sub_5681C0(a1, a2);
         }

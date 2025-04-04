@@ -1250,7 +1250,7 @@ void sub_4AA0D0(int64_t obj)
 // 0x4AA1B0
 void sub_4AA1B0(int64_t a1, int64_t a2)
 {
-    sub_4AF170(a1);
+    ai_stop_fleeing(a1);
     sub_4AA8C0(a1, true);
 
     if (a2 != OBJ_HANDLE_NULL
@@ -3982,15 +3982,15 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
 }
 
 // 0x4AF130
-void sub_4AF130(int64_t a1, int64_t a2)
+void ai_flee(int64_t obj, int64_t danger_obj)
 {
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        sub_4AABE0(a1, AI_DANGER_SOURCE_TYPE_FLEE, a2, 0);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        sub_4AABE0(obj, AI_DANGER_SOURCE_TYPE_FLEE, danger_obj, 0);
     }
 }
 
 // 0x4AF170
-void sub_4AF170(int64_t obj)
+void ai_stop_fleeing(int64_t obj)
 {
     int danger_type;
 
@@ -3999,20 +3999,20 @@ void sub_4AF170(int64_t obj)
         if (danger_type == AI_DANGER_SOURCE_TYPE_FLEE) {
             sub_4AABE0(obj, AI_DANGER_SOURCE_TYPE_NONE, OBJ_HANDLE_NULL, 0);
         }
-        sub_44E4D0(obj, 25, -1);
+        sub_44E4D0(obj, AG_FLEE, -1);
     }
 }
 
 // 0x4AF1D0
-void sub_4AF1D0(int64_t obj)
+void ai_set_no_flee(int64_t obj)
 {
-    unsigned int flags;
+    ObjectCritterFlags critter_flags;
 
-    sub_4AF170(obj);
+    ai_stop_fleeing(obj);
 
-    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
-    flags |= OCF_NO_FLEE;
-    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+    critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    critter_flags |= OCF_NO_FLEE;
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags);
 }
 
 // 0x4AF210

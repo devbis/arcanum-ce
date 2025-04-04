@@ -5476,7 +5476,7 @@ bool sub_426A80(AnimRunInfo* run_info)
 
     if (path_create_info.field_24) {
         run_info->path.flags |= 0x20;
-        sub_4AF1D0(source_obj);
+        ai_set_no_flee(source_obj);
     }
 
     run_info->path.curr = 0;
@@ -6928,7 +6928,7 @@ bool sub_4293D0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4AF1D0(critter_obj);
+    ai_set_no_flee(critter_obj);
 
     return true;
 }

@@ -3799,7 +3799,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                             tig_debug_printf("magictech_component_obj_flag: Error: critter_follow failed!\n");
                         }
 
-                        sub_4AF1D0(obj);
+                        ai_set_no_flee(obj);
                     }
                     return;
                 }
@@ -3821,7 +3821,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             if ((a4 & OCF_UNDEAD) != 0) {
                 object_flags_set(obj, OF_ANIMATED_DEAD);
             } else if ((a4 & OCF_FLEEING) != 0) {
-                sub_4AF130(obj, a2);
+                ai_flee(obj, a2);
                 return;
             } else if ((a4 & OCF_BLINDED) != 0) {
                 combat_set_blinded(obj);
@@ -3896,7 +3896,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             if ((a4 & OCF_UNDEAD) != 0) {
                 object_flags_unset(obj, OF_ANIMATED_DEAD);
             } else if ((a4 & OCF_FLEEING) != 0) {
-                sub_4AF170(obj);
+                ai_stop_fleeing(obj);
                 return;
             }
             break;
