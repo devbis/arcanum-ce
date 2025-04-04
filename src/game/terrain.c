@@ -163,7 +163,7 @@ void terrain_exit()
 }
 
 // 0x4E7B90
-void sub_4E7B90(MapResetInfo* reset_info)
+void terrain_new(MapNewInfo* new_map_info)
 {
     int index;
 
@@ -171,21 +171,21 @@ void sub_4E7B90(MapResetInfo* reset_info)
 
     terrain_header.version = 1.2f;
     terrain_header.field_4 = 0;
-    terrain_header.field_8 = reset_info->field_10;
-    terrain_header.field_10 = reset_info->field_18;
-    terrain_header.field_18 = reset_info->field_8;
+    terrain_header.field_8 = new_map_info->width;
+    terrain_header.field_10 = new_map_info->height;
+    terrain_header.field_18 = new_map_info->base_terrain_type;
 
     dword_603A18 = sizeof(uint16_t) * (int)terrain_header.field_8 * (int)terrain_header.field_10;
     dword_6039EC = (uint16_t*)MALLOC(dword_603A18);
 
     for (index = 0; index < terrain_header.field_10 * terrain_header.field_8; index++) {
-        dword_6039EC[index] = sub_4E8D60(reset_info->field_8, reset_info->field_8, 15);
+        dword_6039EC[index] = sub_4E8D60(new_map_info->base_terrain_type, new_map_info->base_terrain_type, 15);
     }
 
-    sprintf(byte_6038E4, "%s\\terrain.tdf", reset_info->name);
+    sprintf(byte_6038E4, "%s\\terrain.tdf", new_map_info->name);
 
     if (terrain_editor) {
-        sprintf(byte_6037C8, "%s\\terrain.tdf", reset_info->name);
+        sprintf(byte_6037C8, "%s\\terrain.tdf", new_map_info->name);
     }
 
     dword_603A10 = true;

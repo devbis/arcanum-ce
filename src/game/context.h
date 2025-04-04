@@ -93,15 +93,14 @@ typedef struct UnknownContext {
 
 static_assert(sizeof(UnknownContext) == 0x14, "wrong size");
 
-typedef struct MapResetInfo {
+typedef struct MapNewInfo {
     /* 0000 */ const char* name;
     /* 0004 */ const char* folder;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int64_t field_10;
-    /* 0018 */ int64_t field_18;
-} MapResetInfo;
+    /* 0008 */ int base_terrain_type;
+    /* 0010 */ int64_t width;
+    /* 0018 */ int64_t height;
+} MapNewInfo;
 
-static_assert(sizeof(MapResetInfo) == 0x20, "wrong size");
+static_assert(sizeof(MapNewInfo) == 0x20, "wrong size");
 
 #endif /* ARCANUM_GAME_CONTEXT_H_ */

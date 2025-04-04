@@ -84,12 +84,12 @@ void jumppoint_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4E3050
-void sub_4E3050(MapResetInfo* reset_info)
+void jumppoint_new(MapNewInfo* new_map_info)
 {
     jumppoint_close();
 
-    sprintf(byte_603560, "%s\\map.jmp", reset_info->name);
-    sprintf(byte_603450, "%s\\map.jmp", reset_info->folder);
+    sprintf(byte_603560, "%s\\map.jmp", new_map_info->name);
+    sprintf(byte_603450, "%s\\map.jmp", new_map_info->folder);
 
     dword_60367C = true;
     jumppoint_flush();

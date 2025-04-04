@@ -50,23 +50,23 @@ typedef void(MapUpdateViewFunc)(ViewOptions* view_options);
 typedef bool(MapSaveFunc)(TigFile* stream);
 typedef bool(MapLoadFunc)(GameLoadInfo* load_info);
 typedef void(MapCloseFunc)();
-typedef void(MapFlushFunc)(MapResetInfo* reset_info);
+typedef bool(MapNewFunc)(MapNewInfo* new_map_info);
 typedef void(MapResizeFunc)(GameResizeInfo* resize_info);
 
 typedef struct MapModule {
-    const char* name;
-    MapInitFunc* init_func;
-    MapResetFunc* reset_func;
-    MapModuleLoadFunc* mod_load_func;
-    MapModuleUnloadFunc* mod_unload_func;
-    MapExitFunc* exit_func;
-    MapPingFunc* ping_func;
-    MapUpdateViewFunc* update_view_func;
-    MapSaveFunc* save_func;
-    MapLoadFunc* load_func;
-    MapFlushFunc* map_reset_func;
-    MapCloseFunc* close_func;
-    MapResizeFunc* resize_func;
+    /* 0000 */ const char* name;
+    /* 0004 */ MapInitFunc* init_func;
+    /* 0008 */ MapResetFunc* reset_func;
+    /* 000C */ MapModuleLoadFunc* mod_load_func;
+    /* 0010 */ MapModuleUnloadFunc* mod_unload_func;
+    /* 0014 */ MapExitFunc* exit_func;
+    /* 0018 */ MapPingFunc* ping_func;
+    /* 001C */ MapUpdateViewFunc* update_view_func;
+    /* 0020 */ MapSaveFunc* save_func;
+    /* 0024 */ MapLoadFunc* load_func;
+    /* 0028 */ MapNewFunc* new_func;
+    /* 002C */ MapCloseFunc* close_func;
+    /* 0030 */ MapResizeFunc* resize_func;
 } MapModule;
 
 typedef struct MapListInfo {
@@ -81,12 +81,9 @@ typedef struct MapListInfo {
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
 typedef struct MapProperties {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
+    /* 0000 */ int base_terrain_type;
+    /* 0008 */ int64_t width;
+    /* 0010 */ int64_t height;
 } MapProperties;
 
 static_assert(sizeof(MapProperties) == 0x18, "wrong size");
@@ -124,12 +121,12 @@ static MapModule map_modules[] = {
     { "Obj", obj_init, NULL, NULL, NULL, obj_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Proto", proto_init, NULL, NULL, NULL, proto_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, sub_43AA40, NULL, NULL, NULL, object_close, object_resize },
-    { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, sub_4E7B90, terrain_close, NULL },
+    { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, terrain_new, terrain_close, NULL },
     { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sub_4CF320, sector_resize },
     { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_close, tb_resize },
     { "TF", tf_init, tf_reset, NULL, NULL, tf_exit, tf_ping, tf_update_view, NULL, NULL, NULL, tf_map_close, tf_resize },
     { "Wall", wall_init, NULL, NULL, NULL, wall_exit, NULL, wall_update_view, NULL, NULL, NULL, NULL, wall_resize },
-    { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, sub_4E3050, jumppoint_close, jumppoint_resize },
+    { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, jumppoint_new, jumppoint_close, jumppoint_resize },
 };
 
 static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, "wrong size");
@@ -519,6 +516,62 @@ void map_update_view(ViewOptions* view_options)
     }
 }
 
+// 0x40F350
+bool map_new(MapNewInfo* new_map_info)
+{
+    int index;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    MapProperties map_properties;
+
+    if (!dword_5D11F0) {
+        return false;
+    }
+
+    map_close();
+
+    if (!tig_file_is_directory(new_map_info->name)) {
+        if (!tig_file_mkdir(new_map_info->name)) {
+            return false;
+        }
+    }
+
+    if (!sub_52E040(new_map_info->name)) {
+        return false;
+    }
+
+    for (index = 0; index < MAP_MODULE_COUNT; index++) {
+        if (map_modules[index].new_func != NULL) {
+            if (!map_modules[index].new_func(new_map_info)) {
+                tig_debug_printf("map_new(): Error calling new func %d\n", index);
+                map_close();
+                return false;
+            }
+        }
+    }
+
+    sprintf(path, "%s\\map.prp", new_map_info->name);
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Error creating map properties file %s\n", path);
+        return false;
+    }
+
+    map_properties.base_terrain_type = new_map_info->base_terrain_type;
+    map_properties.width = new_map_info->width << 6;
+    map_properties.height = new_map_info->height << 6;
+    if (!tig_file_fwrite(&map_properties, sizeof(map_properties), 1, stream) != 1) {
+        tig_debug_printf("Error writing map properties file %s\n", path);
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    tig_file_fclose(stream);
+
+    return map_open(new_map_info->name, new_map_info->folder, false);
+}
+
 // 0x40F4E0
 bool map_open(const char* a1, const char* a2, bool a3)
 {
@@ -531,7 +584,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     char tmp[80];
     char* pch;
     int map;
-    MapResetInfo reset_info;
+    MapNewInfo new_map_info;
 
     if (!dword_5D11F0) {
         return false;
@@ -642,12 +695,12 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("map_open: loading terrain...");
     tig_timer_now(&timestamp);
     if (!terrain_open(map_name, map_folder)) {
-        reset_info.name = map_name;
-        reset_info.folder = map_name; // FIXME: Using name as folder.
-        reset_info.field_8 = map_properties.field_0;
-        reset_info.field_10 = map_properties.field_8 >> 6;
-        reset_info.field_18 = map_properties.field_10 >> 6;
-        sub_4E7B90(&reset_info);
+        new_map_info.name = map_name;
+        new_map_info.folder = map_name; // FIXME: Using name as folder.
+        new_map_info.base_terrain_type = map_properties.base_terrain_type;
+        new_map_info.width = map_properties.width >> 6;
+        new_map_info.height = map_properties.height >> 6;
+        terrain_new(&new_map_info);
 
         if (!terrain_open(map_name, map_folder)) {
             tig_debug_println("Error: terrain_open failed even after creating a new terrain");
@@ -661,12 +714,12 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("map_open: loading jump points...");
     tig_timer_now(&timestamp);
     if (!jumppoint_open(map_name, map_folder)) {
-        reset_info.name = map_name;
-        reset_info.folder = map_folder;
-        reset_info.field_8 = map_properties.field_0;
-        reset_info.field_10 = map_properties.field_8 >> 6;
-        reset_info.field_18 = map_properties.field_10 >> 6;
-        sub_4E3050(&reset_info);
+        new_map_info.name = map_name;
+        new_map_info.folder = map_folder;
+        new_map_info.base_terrain_type = map_properties.base_terrain_type;
+        new_map_info.width = map_properties.width >> 6;
+        new_map_info.height = map_properties.height >> 6;
+        jumppoint_new(&new_map_info);
 
         if (!jumppoint_open(map_name, map_folder)) {
             tig_debug_println("Error: jumppoint_open failed even after creating a new file");
@@ -687,8 +740,8 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: setting initial map location and state...");
     tig_timer_now(&timestamp);
-    location_limits_set(map_properties.field_8, map_properties.field_10);
-    sector_limits_set(map_properties.field_8 / 64, map_properties.field_10 / 64);
+    location_limits_set(map_properties.width, map_properties.height);
+    sector_limits_set(map_properties.width >> 6, map_properties.height >> 6);
     sector_map_name_set(a1, a2);
     location_origin_set(sub_4B9810());
     dword_5D1210 = 0;

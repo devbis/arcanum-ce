@@ -7,7 +7,7 @@
 bool terrain_init(GameInitInfo* init_info);
 void terrain_reset();
 void terrain_exit();
-void sub_4E7B90(MapResetInfo* reset_info);
+void terrain_new(MapNewInfo* new_map_info);
 bool terrain_open(const char* a1, const char* a2);
 void terrain_close();
 void terrain_sector_path(int64_t sector_id, char* path);
