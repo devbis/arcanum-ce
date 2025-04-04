@@ -69,7 +69,7 @@ static void combat_turn_based_end_turn();
 static int sub_4B7BA0(int64_t obj, int64_t a2, bool a3);
 static bool sub_4B7DC0(int64_t obj);
 static void sub_4B7EB0();
-static void sub_4B83E0(int64_t obj, int64_t a2);
+static void pc_switch_weapon(int64_t pc_obj, int64_t target_obj);
 
 // 0x5B5790
 static struct {
@@ -825,9 +825,9 @@ int sub_4B3170(CombatContext* combat)
         gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4ADFF0(combat->attacker_obj);
+            ai_switch_weapon(combat->attacker_obj);
         } else {
-            sub_4B83E0(combat->attacker_obj, combat->target_obj);
+            pc_switch_weapon(combat->attacker_obj, combat->target_obj);
         }
 
         return 0;
@@ -1933,7 +1933,7 @@ void sub_4B4390(CombatContext* combat)
         sub_4B5580(combat);
 
         if (weapon_dropped) {
-            sub_4B83E0(combat->target_obj, combat->attacker_obj);
+            pc_switch_weapon(combat->target_obj, combat->attacker_obj);
         }
     } else {
         // 0x4B462E
@@ -2123,7 +2123,7 @@ void sub_4B5580(CombatContext* combat)
             if (object_hp_current(combat->weapon_obj) <= 0) {
                 sub_43F1C0(combat->weapon_obj, combat->attacker_obj);
                 mes_file_entry.num = 23; // "Weapon broken"
-                sub_4B83E0(combat->attacker_obj, combat->target_obj);
+                pc_switch_weapon(combat->attacker_obj, combat->target_obj);
             }
 
             mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -4023,13 +4023,12 @@ void combat_auto_switch_weapons_set(bool value)
 }
 
 // 0x4B83E0
-void sub_4B83E0(int64_t obj, int64_t a2)
+void pc_switch_weapon(int64_t pc_obj, int64_t target_obj)
 {
-    if (obj != OBJ_HANDLE_NULL
-        && (!tig_net_is_active()
-            || tig_net_is_host())
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        && combat_auto_switch_weapons_get(obj)) {
-        sub_465170(obj, ITEM_INV_LOC_WEAPON, a2);
+    if (pc_obj != OBJ_HANDLE_NULL
+        && (!tig_net_is_active() || tig_net_is_host())
+        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && combat_auto_switch_weapons_get(pc_obj)) {
+        item_wield_best(pc_obj, ITEM_INV_LOC_WEAPON, target_obj);
     }
 }

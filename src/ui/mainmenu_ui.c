@@ -2420,10 +2420,10 @@ void sub_5412E0(bool a1)
         pc_obj = player_get_pc_obj();
         if (dword_64C424) {
             if (item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON) == OBJ_HANDLE_NULL) {
-                sub_465170(pc_obj, ITEM_INV_LOC_WEAPON, OBJ_HANDLE_NULL);
+                item_wield_best(pc_obj, ITEM_INV_LOC_WEAPON, OBJ_HANDLE_NULL);
             }
             if (item_wield_get(pc_obj, ITEM_INV_LOC_ARMOR) == OBJ_HANDLE_NULL) {
-                sub_465170(pc_obj, ITEM_INV_LOC_ARMOR, OBJ_HANDLE_NULL);
+                item_wield_best(pc_obj, ITEM_INV_LOC_ARMOR, OBJ_HANDLE_NULL);
             }
             dword_64C424 = false;
         }
@@ -5060,7 +5060,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
         }
     }
 
-    sub_4654F0(player_create_info.obj, OBJ_HANDLE_NULL);
+    item_wield_best_all(player_create_info.obj, OBJ_HANDLE_NULL);
     sub_5412D0();
 
     return true;

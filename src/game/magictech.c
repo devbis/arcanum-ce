@@ -2948,7 +2948,7 @@ void sub_452CD0(int64_t obj, tig_art_id_t art_id)
     current_art_id = tig_art_id_frame_set(current_art_id, 0);
     object_set_current_aid(obj, current_art_id);
 
-    sub_4654F0(obj, OBJ_HANDLE_NULL);
+    item_wield_best_all(obj, OBJ_HANDLE_NULL);
 }
 
 // 0x452D80

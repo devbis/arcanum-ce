@@ -2712,7 +2712,7 @@ void sub_4A5670(int64_t obj)
             sub_4A5CA0(obj, mes_file);
             sub_4A59F0(obj, mes_file);
             sub_4A5840(obj, mes_file);
-            sub_4654F0(obj, OBJ_HANDLE_NULL);
+            item_wield_best_all(obj, OBJ_HANDLE_NULL);
         }
     }
 }

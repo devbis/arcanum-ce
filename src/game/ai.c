@@ -393,13 +393,13 @@ bool sub_4A8570(Ai* ai)
     }
 
     if ((npc_flags & ONF_CHECK_WIELD) != 0) {
-        sub_4654F0(ai->obj, ai->danger_source);
+        item_wield_best_all(ai->obj, ai->danger_source);
 
         npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
         npc_flags &= ~ONF_CHECK_WIELD;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
     } else if ((npc_flags & ONF_CHECK_WEAPON) != 0) {
-        sub_465170(ai->obj, ITEM_INV_LOC_WEAPON, ai->danger_source);
+        item_wield_best(ai->obj, ITEM_INV_LOC_WEAPON, ai->danger_source);
 
         npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
         npc_flags &= ~ONF_CHECK_WEAPON;
@@ -3411,15 +3411,15 @@ int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr)
 }
 
 // 0x4ADFF0
-void sub_4ADFF0(int64_t obj)
+void ai_switch_weapon(int64_t obj)
 {
-    unsigned int flags;
+    ObjectNpcFlags npc_flags;
 
-    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-    flags |= ONF_CHECK_WEAPON;
-    flags |= ONF_LOOK_FOR_WEAPON;
-    flags |= ONF_LOOK_FOR_AMMO;
-    obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    npc_flags |= ONF_CHECK_WEAPON;
+    npc_flags |= ONF_LOOK_FOR_WEAPON;
+    npc_flags |= ONF_LOOK_FOR_AMMO;
+    obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
 }
 
 // 0x4AE020

@@ -2136,7 +2136,7 @@ void sub_463E20(int64_t obj)
         }
 
         if (obj_type == OBJ_TYPE_NPC) {
-            sub_4654F0(obj, OBJ_HANDLE_NULL);
+            item_wield_best_all(obj, OBJ_HANDLE_NULL);
         }
 
         if (spawn) {
@@ -2833,7 +2833,7 @@ tig_art_id_t sub_4650D0(int64_t critter_obj)
 }
 
 // 0x465170
-void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
+void item_wield_best(int64_t critter_obj, int inventory_location, int64_t target_obj)
 {
     int cnt;
     int idx;
@@ -2947,12 +2947,12 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
 }
 
 // 0x4654F0
-void sub_4654F0(int64_t critter_obj, int64_t target_obj)
+void item_wield_best_all(int64_t critter_obj, int64_t target_obj)
 {
     int inventory_location;
 
     for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
-        sub_465170(critter_obj, inventory_location, target_obj);
+        item_wield_best(critter_obj, inventory_location, target_obj);
     }
 }
 
