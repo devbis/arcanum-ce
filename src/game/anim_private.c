@@ -1152,7 +1152,7 @@ bool sub_44E2C0(AnimID* anim_id, int priority)
                 }
             }
 
-            if (goal_node->priority_level == 3 && priority < 3) {
+            if (goal_node->priority_level == 3) {
                 if (priority < 3) {
                     return false;
                 }
