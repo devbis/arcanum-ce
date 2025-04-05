@@ -1775,6 +1775,28 @@ bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
     TigRect rect;
     LocRect loc_rect;
     SomeSectorStuff v1;
+    SomeSectorStuffEntry* v3;
+    int row;
+    int col;
+    int indexes[3];
+    int widths[3];
+    bool locks[3];
+    Sector* sectors[3];
+    int64_t v65;
+    int64_t v67;
+    int64_t v69;
+    int v62;
+    int v60;
+    ObjectNode* obj_node;
+    ObjectType obj_type;
+    ObjectFlags obj_flags;
+    TigRect obj_rect;
+    tig_art_id_t aid;
+    int scale;
+    int test_x;
+    int test_y;
+    int ext_x;
+    int ext_y;
 
     if (object_view_options.type == VIEW_TYPE_TOP_DOWN) {
         return false;
@@ -1797,7 +1819,145 @@ bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
         return false;
     }
 
-    // TODO: Incomplete.
+    v65 = OBJ_HANDLE_NULL;
+    v67 = OBJ_HANDLE_NULL;
+    v69 = OBJ_HANDLE_NULL;
+
+    for (row = v1.height - 1; row >= 0; row--) {
+        v3 = &(v1.field_8[row]);
+        for (col = v3->width - 1; col >= 0; col--) {
+            indexes[col] = v3->field_50 * 64 + v3->field_38[col] + v3->field_44[col] - 64 - 1;
+            widths[col] = 64 - v3->field_44[col];
+            locks[col] = sector_lock(v3->field_20[col], &(sectors[col]));
+        }
+
+        for (v62 = v3->field_50 - 1; v62 >= 0; v62--) {
+            for (col = v3->width - 1; col >= 0; col--) {
+                if (locks[col]) {
+                    for (v60 = v3->field_44[col]; v60 >= 0; v60--) {
+                        for (obj_node = obj_node = sectors[col]->objects.heads[indexes[col]]; obj_node != NULL; obj_node = obj_node->next) {
+                            obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
+                            if (!dword_5E2ED4[obj_type]) {
+                                continue;
+                            }
+
+                            // FIX: Original code writes obj flags into `flags`
+                            // parameter, which probably leads to wrong results.
+                            obj_flags = obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS);
+                            if ((dword_5E2F88 & obj_flags) != 0) {
+                                continue;
+                            }
+
+                            if (!object_editor) {
+                                if ((obj_flags & OF_CLICK_THROUGH) != 0) {
+                                    continue;
+                                }
+                            }
+
+                            object_get_rect(obj_node->obj, 0, &obj_rect);
+
+                            aid = obj_field_int32_get(obj_node->obj, OBJ_F_CURRENT_AID);
+                            scale = obj_field_int32_get(obj_node->obj, OBJ_F_BLIT_SCALE);
+
+                            if ((obj_flags & OF_SHRUNK) != 0) {
+                                scale /= 2;
+                            }
+
+                            if (x >= obj_rect.x
+                                && y >= obj_rect.y
+                                && x < obj_rect.x + obj_rect.width
+                                && y < obj_rect.y + obj_rect.height) {
+                                if ((flags & 0x02) != 0 && v65 != OBJ_HANDLE_NULL) {
+                                    v65 = obj_node->obj;
+                                }
+
+                                test_x = x - obj_rect.x;
+                                test_y = y - obj_rect.y;
+
+                                if (scale != 100) {
+                                    test_x = (int)((float)test_x / (float)scale * 100.0f);
+                                    test_y = (int)((float)test_y / (float)scale * 100.0f);
+                                }
+
+                                if (!sub_502FD0(aid, test_x, test_y)) {
+                                    v67 = obj_node->obj;
+
+                                    if (obj_type == OBJ_TYPE_WALL
+                                        && (obj_field_int32_get(obj_node->obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) != 0) {
+                                        v67 = OBJ_HANDLE_NULL;
+                                    }
+                                }
+                            }
+
+                            if ((flags & 0x01) != 0
+                                && v69 == OBJ_HANDLE_NULL
+                                && v67 == OBJ_HANDLE_NULL) {
+                                for (ext_y = y - 2; ext_y < y + 3; ext_y++) {
+                                    for (ext_x = x - 2; ext_x < x + 3; ext_x++) {
+                                        if (ext_x >= obj_rect.x
+                                            && ext_y >= obj_rect.y
+                                            && ext_x < obj_rect.x + obj_rect.width
+                                            && ext_y < obj_rect.y + obj_rect.height) {
+
+                                            test_x = ext_x - obj_rect.x;
+                                            test_y  = ext_y - obj_rect.y;
+
+                                            if (scale != 100) {
+                                                test_x = (int)((float)test_x / (float)scale * 100.0f);
+                                                test_y = (int)((float)test_y / (float)scale * 100.0f);
+                                            }
+
+                                            if (!sub_502FD0(aid, test_x, test_y)) {
+                                                v69 = obj_node->obj;
+                                                if (obj_type == OBJ_TYPE_WALL
+                                                    && (obj_field_int32_get(obj_node->obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) != 0) {
+                                                    v69 = OBJ_HANDLE_NULL;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (v67 != OBJ_HANDLE_NULL) {
+                            *obj_ptr = v67;
+
+                            for (col = 0; col < v3->width; col++) {
+                                if (locks[col]) {
+                                    sector_unlock(v3->field_20[col]);
+                                }
+                            }
+
+                            return true;
+                        }
+
+                        indexes[col]--;
+                    }
+
+                    indexes[col] -= widths[col];
+                }
+            }
+        }
+
+        for (col = 0; col < v3->width; col++) {
+            if (locks[col]) {
+                sector_unlock(v3->field_20[col]);
+            }
+        }
+    }
+
+    if (flags != 0) {
+        if ((flags & 0x01) != 0 && v69 != OBJ_HANDLE_NULL) {
+            *obj_ptr = v69;
+            return true;
+        }
+
+        if ((flags & 0x02) != 0 && v65 != OBJ_HANDLE_NULL) {
+            *obj_ptr = v65;
+            return true;
+        }
+    }
 
     return false;
 }
