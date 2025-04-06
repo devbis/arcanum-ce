@@ -14843,7 +14843,105 @@ bool anim_goal_please_move(int64_t obj, int64_t target_obj)
 // 0x4364D0
 void sub_4364D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    ObjectList critters;
+    ObjectNode* obj_node;
+    ObjectNode* new_node;
+    ObjectNode* npc_head = NULL;
+    ObjectNode* pc_head = NULL;
+    int64_t v1 = OBJ_HANDLE_NULL;
+    int64_t v2 = OBJ_HANDLE_NULL;
+    int cnt = 0;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 16752, "sourceObj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    object_list_location(loc, OBJ_TM_CRITTER, &critters);
+
+    if (critters.head != NULL) {
+        obj_node = critters.head;
+        while (obj_node != NULL) {
+            if (!critter_is_dead(obj_node->obj)
+                && !sub_44E8C0(obj_node->obj, NULL)) {
+                cnt++;
+            }
+            obj_node = obj_node->next;
+        }
+
+        if (cnt > 1) {
+            obj_node = critters.head;
+            while (obj_node != NULL) {
+                if (!critter_is_dead(obj_node->obj)
+                    && !sub_44E8C0(obj_node->obj, NULL)) {
+                    new_node = object_node_create();
+                    new_node->obj = obj_node->obj;
+
+                    if (obj_field_int32_get(obj_node->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                        new_node->next = npc_head;
+                        npc_head = new_node;
+
+                        if (v1 == OBJ_HANDLE_NULL) {
+                            if (v2 == OBJ_HANDLE_NULL || v2 > obj_node->obj) {
+                                v2 = obj_node->obj;
+                            }
+                        }
+                    } else {
+                        new_node->next = pc_head;
+                        pc_head = new_node;
+
+                        if (v1 == OBJ_HANDLE_NULL) {
+                            v1 = obj_node->obj;
+                        } else {
+                            if (v1 > obj_node->obj) {
+                                v1 = obj_node->obj;
+                            }
+                        }
+                    }
+                }
+                obj_node = obj_node->next;
+            }
+
+            if (v1 == OBJ_HANDLE_NULL) {
+                v1 = v2;
+            }
+
+            obj_node = npc_head;
+            while (obj_node != NULL) {
+                if (v1 != obj_node->obj) {
+                    anim_goal_please_move(v1, obj_node->obj);
+                }
+                obj_node = obj_node->next;
+            }
+
+            if (pc_head != NULL
+                && tig_net_is_active()
+                && tig_net_is_host()) {
+                obj_node = pc_head;
+                while (obj_node != NULL) {
+                    anim_goal_please_move(v1, obj_node->obj);
+                    obj_node = obj_node->next;
+                }
+            }
+
+            while (pc_head != NULL) {
+                obj_node = pc_head->next;
+                object_node_destroy(pc_head);
+                pc_head = obj_node;
+            }
+
+            while (npc_head != NULL) {
+                obj_node = npc_head->next;
+                object_node_destroy(npc_head);
+                npc_head = obj_node;
+            }
+        }
+    }
+
+    object_list_destroy(&critters);
 }
 
 // 0x436720
