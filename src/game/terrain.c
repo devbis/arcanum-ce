@@ -947,7 +947,42 @@ uint16_t* sub_4E9540(int64_t a1)
 // 0x4E9580
 bool sub_4E9580(TigFile* stream)
 {
-    // TODO: Incomplete.
+    int64_t y;
+    int size;
+    int tmp_size = 0;
+    void* tmp_buf = NULL;
+    uint16_t* dst = dword_6039EC;
+
+    for (y = 0; y < terrain_header.height; y++) {
+        if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) {
+            if (tmp_size != 0) {
+                FREE(tmp_buf);
+            }
+            return false;
+        }
+
+        if (size > tmp_size) {
+            tmp_buf = REALLOC(tmp_buf, size);
+            tmp_size = size;
+        }
+
+        if (tig_file_fread(tmp_buf, size, 1, stream) != 1) {
+            if (tmp_size != 0) {
+                FREE(tmp_buf);
+            }
+            return false;
+        }
+
+        sub_4E9490(dst, tmp_buf, size);
+
+        dst += terrain_header.width;
+    }
+
+    if (tmp_size != 0) {
+        FREE(tmp_buf);
+    }
+
+    return true;
 }
 
 // 0x4E9680
