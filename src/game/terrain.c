@@ -988,5 +988,102 @@ bool sub_4E9580(TigFile* stream)
 // 0x4E9680
 bool sub_4E9680(TigFile* stream)
 {
-    // TODO: Incomplete.
+    int64_t y;
+    int pos;
+    int size;
+    z_stream strm;
+    uint16_t* src = dword_6039EC;
+    int stride_size = sizeof(*src) * (int)terrain_header.width;
+    uint8_t tmp_buf[4096];
+    int rc;
+
+    for (y = 0; y < terrain_header.height; y++) {
+        pos = tig_file_ftell(stream);
+
+        if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) {
+            return false;
+        }
+
+        strm.zalloc = Z_NULL;
+        strm.zfree = Z_NULL;
+        strm.opaque = Z_NULL;
+
+        if (deflateInit(&strm, Z_BEST_COMPRESSION) != Z_OK) {
+            return false;
+        }
+
+        strm.next_in = (Bytef*)src;
+        strm.avail_in = stride_size;
+        strm.next_out = (Bytef*)tmp_buf;
+        strm.avail_out = sizeof(tmp_buf);
+
+        while (strm.avail_in != 0) {
+            if (strm.avail_out == 0) {
+                if (tig_file_fwrite(tmp_buf, sizeof(tmp_buf), 1, stream) != 1) {
+                    deflateEnd(&strm);
+                    return false;
+                }
+
+                strm.next_out = tmp_buf;
+                strm.avail_out = sizeof(tmp_buf);
+            }
+
+            if (deflate(&strm, Z_NO_FLUSH) != Z_OK) {
+                deflateEnd(&strm);
+                return false;
+            }
+
+            if (strm.total_in == stride_size) {
+                while (strm.avail_out == 0) {
+                    if (tig_file_fwrite(tmp_buf, sizeof(tmp_buf), 1, stream) != 1) {
+                        deflateEnd(&strm);
+                        return false;
+                    }
+
+                    strm.next_out = tmp_buf;
+                    strm.avail_out = sizeof(tmp_buf);
+
+                    rc = deflate(&strm, Z_FINISH);
+                    if (rc == Z_STREAM_END) {
+                        break;
+                    }
+
+                    if (rc != Z_OK) {
+                        deflateEnd(&strm);
+                        return false;
+                    }
+                }
+
+                if (strm.avail_out != sizeof(tmp_buf)) {
+                    if (tig_file_fwrite(tmp_buf, sizeof(tmp_buf) - strm.avail_out, 1, stream) != 1) {
+                        deflateEnd(&strm);
+                        return false;
+                    }
+                }
+
+                if (deflateEnd(&strm) != Z_OK) {
+                    return false;
+                }
+
+                size = tig_file_ftell(stream) - pos - sizeof(size);
+
+                if (tig_file_fseek(stream, pos, SEEK_SET) != 0) {
+                    return false;
+                }
+
+                if (tig_file_fwrite(&size, sizeof(stream), 1, stream) != 1) {
+                    return false;
+                }
+
+                if (tig_file_fseek(stream, size, SEEK_CUR) != 0) {
+                    return false;
+                }
+
+                src += terrain_header.width;
+                break;
+            }
+        }
+    }
+
+    return true;
 }
