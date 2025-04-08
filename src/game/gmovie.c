@@ -28,7 +28,7 @@ void gmovie_mod_unload()
 }
 
 // 0x40DE70
-void gmovie_play(int movie, unsigned int flags, int sound_track)
+void gmovie_play(int movie, GameMovieFlags flags, int sound_track)
 {
     MesFileEntry mes_file_entry;
     char path[TIG_MAX_PATH];
@@ -43,7 +43,7 @@ void gmovie_play(int movie, unsigned int flags, int sound_track)
 }
 
 // 0x40DEE0
-void gmovie_play_path(const char* path, unsigned int flags, int sound_track)
+void gmovie_play_path(const char* path, GameMovieFlags flags, int sound_track)
 {
     char temp_path[TIG_MAX_PATH];
     unsigned int movie_flags;
