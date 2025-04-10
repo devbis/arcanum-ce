@@ -79,7 +79,7 @@ void facade_update_view(ViewOptions* view_options)
 }
 
 // 0x4C9E70
-void facade_render(UnknownContext* info)
+void facade_draw(GameDrawInfo* draw_info)
 {
     LocRect loc_rect;
     int start_x;
@@ -99,7 +99,7 @@ void facade_render(UnknownContext* info)
         return;
     }
 
-    loc_rect = *info->field_4;
+    loc_rect = *draw_info->loc_rect;
     if (!sub_4CA6B0(&loc_rect, &start_x, &start_y)) {
         return;
     }
@@ -130,7 +130,7 @@ void facade_render(UnknownContext* info)
                     tile_rect.x++;
                 }
 
-                rect_node = *info->rects;
+                rect_node = *draw_info->rects;
                 while (rect_node != NULL) {
                     if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &src_rect) == TIG_OK) {
                         dst_rect = src_rect;

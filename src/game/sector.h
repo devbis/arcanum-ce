@@ -43,7 +43,7 @@ void sub_4CF320();
 void sector_update_view(ViewOptions* view_options);
 void sub_4CF360(SectorLockFunc* func);
 void sub_4CF370();
-void sector_render(UnknownContext* render_info);
+void sector_draw(GameDrawInfo* draw_info);
 bool sector_limits_set(int64_t x, int64_t y);
 void sector_limits_get(int64_t* x, int64_t* y);
 int64_t sector_id_from_loc(int64_t loc);

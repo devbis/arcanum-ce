@@ -103,7 +103,7 @@ void tile_script_toggle()
 }
 
 // 0x4C0630
-void tile_script_render(UnknownContext* render_info)
+void tile_script_draw(GameDrawInfo* draw_info)
 {
     TigArtBlitInfo art_blit_info;
     TigArtFrameData art_frame_data;
@@ -140,13 +140,13 @@ void tile_script_render(UnknownContext* render_info)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    sector_node = render_info->field_C;
+    sector_node = draw_info->field_C;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->id, &sector)) {
             tile_script_node = sector->tile_scripts.head;
             while (tile_script_node != NULL) {
                 tile_script_get_rect(sector_node->id, tile_script_node->id, &tile_rect);
-                rect_node = *render_info->rects;
+                rect_node = *draw_info->rects;
                 while (rect_node != NULL) {
                     if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                         src_rect.x = dst_rect.x - tile_rect.x;

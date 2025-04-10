@@ -4,8 +4,8 @@
 #include "game/obj_private.h"
 #include "game/object.h"
 
-static void sub_4E1C00(UnknownContext* render_info);
-static void sub_4E1EB0(UnknownContext* render_info);
+static void sub_4E1C00(GameDrawInfo* draw_info);
+static void sub_4E1EB0(GameDrawInfo* draw_info);
 static void sub_4E20A0(int64_t obj);
 static void sub_4E25B0(int64_t obj);
 static void sub_4E2C50(int64_t obj);
@@ -84,7 +84,7 @@ void wall_toggle()
 }
 
 // 0x4DF500
-void wall_render(UnknownContext* render_info)
+void wall_draw(GameDrawInfo* draw_info)
 {
     if (wall_view_options.type != VIEW_TYPE_TOP_DOWN) {
         return;
@@ -94,8 +94,8 @@ void wall_render(UnknownContext* render_info)
         return;
     }
 
-    sub_4E1C00(render_info);
-    sub_4E1EB0(render_info);
+    sub_4E1C00(draw_info);
+    sub_4E1EB0(draw_info);
 }
 
 // 0x4E1490
@@ -134,7 +134,7 @@ void sub_4E18F0(int64_t obj, bool a2)
 }
 
 // 0x4E1C00
-void sub_4E1C00(UnknownContext* render_info)
+void sub_4E1C00(GameDrawInfo* draw_info)
 {
     LocRect* loc_rect;
     int64_t x;
@@ -148,7 +148,7 @@ void sub_4E1C00(UnknownContext* render_info)
     int rotation;
     TigRect rect;
 
-    loc_rect = render_info->field_4;
+    loc_rect = draw_info->loc_rect;
     for (y = loc_rect->y1; y <= loc_rect->y2; y++) {
         for (x = loc_rect->x1; x <= loc_rect->x2; x++) {
             loc = location_make(x, y);
@@ -203,7 +203,7 @@ void sub_4E1C00(UnknownContext* render_info)
 }
 
 // 0x4E1EB0
-void sub_4E1EB0(UnknownContext* render_info)
+void sub_4E1EB0(GameDrawInfo* draw_info)
 {
     LocRect loc_rect;
     TigRect rect;
@@ -216,7 +216,7 @@ void sub_4E1EB0(UnknownContext* render_info)
     TigRectListNode* rect_node;
     TigRect tmp_rect;
 
-    loc_rect = *render_info->field_4;
+    loc_rect = *draw_info->loc_rect;
 
     if (loc_rect.x1 % 4 >= 3) {
         loc_rect.x1 += 3;
@@ -251,7 +251,7 @@ void sub_4E1EB0(UnknownContext* render_info)
             rect.x = center + (int)loc_x;
             rect.y = center + (int)loc_y;
 
-            rect_node = *render_info->rects;
+            rect_node = *draw_info->rects;
             while (rect_node != NULL) {
                 if (tig_rect_intersection(&rect, &(rect_node->rect), &tmp_rect) == TIG_OK) {
                     tig_window_fill(wall_iso_window_handle, &tmp_rect, dword_603434);

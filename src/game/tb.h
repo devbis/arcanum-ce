@@ -22,7 +22,7 @@ void tb_update_view(ViewOptions* view_options);
 void tb_close();
 void tb_toggle();
 void tb_ping(tig_timestamp_t time);
-void tb_draw(UnknownContext* render_info);
+void tb_draw(GameDrawInfo* draw_info);
 void tb_add(int64_t obj, int type, const char* str);
 void tb_expire_in(int64_t obj, int seconds);
 void tb_notify_moved(int64_t obj, int64_t loc, int offset_x, int offset_y);

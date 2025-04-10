@@ -85,7 +85,7 @@ typedef struct S4417A0 {
 
 static_assert(sizeof(S4417A0) == 0x10, "wrong size");
 
-static void sub_43C5C0(UnknownContext* render_info);
+static void sub_43C5C0(GameDrawInfo* draw_info);
 static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);
 static int sub_43D690(int64_t obj);
 static int sub_43D630(int64_t obj);
@@ -503,7 +503,7 @@ void sub_43AAB0()
     }
 }
 
-// NOTE: Convenience uninline used in `object_render`.
+// NOTE: Convenience uninline used in `object_draw`.
 static inline bool object_render_check_rotation(int64_t obj)
 {
     tig_art_id_t art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -515,7 +515,7 @@ static inline bool object_render_check_rotation(int64_t obj)
 }
 
 // 0x43B390
-void object_render(UnknownContext* render_info)
+void object_draw(GameDrawInfo* draw_info)
 {
     SomeSectorStuff* v1;
     SomeSectorStuffEntry* v2;
@@ -558,7 +558,7 @@ void object_render(UnknownContext* render_info)
         return;
     }
 
-    v1 = render_info->field_8;
+    v1 = draw_info->field_8;
     is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
 
     for (col = 0; col < v1->height; col++) {
@@ -605,7 +605,7 @@ void object_render(UnknownContext* render_info)
                                                         if (art_id != TIG_ART_ID_INVALID) {
                                                             sub_443620(obj_flags, 100, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
 
-                                                            rect_node = *render_info->rects;
+                                                            rect_node = *draw_info->rects;
                                                             while (rect_node != NULL) {
                                                                 if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                     src_rect.x = dst_rect.x - eye_candy_rect.x;
@@ -662,7 +662,7 @@ void object_render(UnknownContext* render_info)
                                                             if (art_id != TIG_ART_ID_INVALID) {
                                                                 sub_443620(obj_flags, scale, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
 
-                                                                rect_node = *render_info->rects;
+                                                                rect_node = *draw_info->rects;
                                                                 while (rect_node != NULL) {
                                                                     if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                         src_rect.x = dst_rect.x - eye_candy_rect.x;
@@ -745,7 +745,7 @@ void object_render(UnknownContext* render_info)
                                                                     art_blit_info.color = tig_color_mul(art_blit_info.color, tig_color_make(92, 92, 92));
                                                                 }
 
-                                                                rect_node = *render_info->rects;
+                                                                rect_node = *draw_info->rects;
                                                                 while (rect_node != NULL) {
                                                                     if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                         src_rect.x = dst_rect.x - eye_candy_rect.x;
@@ -788,7 +788,7 @@ void object_render(UnknownContext* render_info)
                                                         }
 
                                                         art_blit_info_initialized = false;
-                                                        rect_node = *render_info->rects;
+                                                        rect_node = *draw_info->rects;
                                                         while (rect_node != NULL) {
                                                             if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                 if (!art_blit_info_initialized) {
@@ -842,7 +842,7 @@ void object_render(UnknownContext* render_info)
                                                     if (!v71) {
                                                         art_blit_info_initialized = false;
 
-                                                        rect_node = *render_info->rects;
+                                                        rect_node = *draw_info->rects;
                                                         while (rect_node != NULL) {
                                                             if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                 if (!art_blit_info_initialized) {
@@ -910,7 +910,7 @@ void object_render(UnknownContext* render_info)
         }
     }
 
-    sub_43C5C0(render_info);
+    sub_43C5C0(draw_info);
     sub_443560();
 }
 
@@ -985,7 +985,7 @@ int64_t sub_43C570()
 }
 
 // 0x43C5C0
-void sub_43C5C0(UnknownContext* render_info)
+void sub_43C5C0(GameDrawInfo* draw_info)
 {
     TigRect rect;
     TigArtBlitInfo art_blit_info;
@@ -1001,7 +1001,7 @@ void sub_43C5C0(UnknownContext* render_info)
             art_blit_info.dst_rect = &dst_rect;
             art_blit_info.color = object_hover_color;
 
-            node = *render_info->rects;
+            node = *draw_info->rects;
             while (node != NULL) {
                 if (tig_rect_intersection(&rect, &(node->rect), &dst_rect) == TIG_OK) {
                     src_rect.x = dst_rect.x - rect.x;
@@ -1017,7 +1017,7 @@ void sub_43C5C0(UnknownContext* render_info)
 }
 
 // 0x43C690
-void sub_43C690(UnknownContext* render_info)
+void sub_43C690(GameDrawInfo* draw_info)
 {
     TigRectListNode* rect_node;
     TigArtBlitInfo art_blit_info;
@@ -1041,7 +1041,7 @@ void sub_43C690(UnknownContext* render_info)
             art_blit_info.dst_rect = &dst_rect;
             art_blit_info.color = object_hover_color;
 
-            rect_node = *render_info->rects;
+            rect_node = *draw_info->rects;
             while (rect_node != NULL) {
                 if (tig_rect_intersection(&rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                     src_rect.y = dst_rect.y - rect.y;
@@ -1083,7 +1083,7 @@ void sub_43C690(UnknownContext* render_info)
             tmp_rect.y = obj_rect.y + obj_rect.height - 15;
             tmp_rect.height = 15;
 
-            rect_node = *render_info->rects;
+            rect_node = *draw_info->rects;
             while (rect_node != NULL) {
                 if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                     if (!blit_info_initialized) {
@@ -1124,7 +1124,7 @@ void sub_43C690(UnknownContext* render_info)
         }
 
         blit_info_initialized = false;
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&obj_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                 if (!blit_info_initialized) {

@@ -9,7 +9,7 @@ void tileblock_update_view(ViewOptions* view_info);
 void tileblock_resize(GameResizeInfo* resize_info);
 bool tileblock_is_visible();
 void tileblock_toggle();
-void tileblock_render(UnknownContext* info);
+void tileblock_draw(GameDrawInfo* draw_info);
 bool tileblock_is_tile_blocked(int64_t loc);
 void tileblock_set_tile_blocked(int64_t loc, bool blocked);
 void tileblock_get_rect(int64_t loc, TigRect* rect);

@@ -73,7 +73,7 @@ void tileblock_toggle()
 }
 
 // 0x4BB0C0
-void tileblock_render(UnknownContext* render_info)
+void tileblock_draw(GameDrawInfo* draw_info)
 {
     TigArtBlitInfo art_blit_info;
     TigRect src_rect;
@@ -115,7 +115,7 @@ void tileblock_render(UnknownContext* render_info)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    sector_node = render_info->field_C;
+    sector_node = draw_info->field_C;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->id, &sector)) {
             for (tile = 0; tile < 4096; tile++) {
@@ -147,7 +147,7 @@ void tileblock_render(UnknownContext* render_info)
                     tileblock_get_rect_internal(sector_node->id, tile, &tb_rect);
                     tb_rect_calculated = true;
 
-                    rect_node = *render_info->rects;
+                    rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                             if (tileblock_view_options.type != VIEW_TYPE_TOP_DOWN) {
@@ -169,7 +169,7 @@ void tileblock_render(UnknownContext* render_info)
                         tileblock_get_rect_internal(sector_node->id, tile, &tb_rect);
                     }
 
-                    rect_node = *render_info->rects;
+                    rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                             if (tileblock_view_options.type != VIEW_TYPE_TOP_DOWN) {

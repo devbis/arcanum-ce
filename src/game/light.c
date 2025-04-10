@@ -51,7 +51,7 @@ static void sub_4DE7C0();
 static void sub_4DE7F0();
 static bool sub_4DE820(TimeEvent* timeevent);
 static void sub_4DE870(LightCreateInfo* create_info, Light** light_ptr);
-static void light_render_internal(UnknownContext* render_info);
+static void light_render_internal(GameDrawInfo* draw_info);
 static void sub_4DF1D0(TigRect* rect);
 
 // 0x5B9044
@@ -324,7 +324,7 @@ void sub_4D8320()
 }
 
 // 0x4D8350
-void light_draw(UnknownContext* render_info)
+void light_draw(GameDrawInfo* draw_info)
 {
     int64_t center_loc;
     int64_t cx;
@@ -345,7 +345,7 @@ void light_draw(UnknownContext* render_info)
 
     dword_602ED0 = (int)cx - dword_602E44 / 2;
     dword_602ED4 = (int)cy - dword_602EA4 / 2;
-    light_render_internal(render_info);
+    light_render_internal(draw_info);
 }
 
 // 0x4D84B0
@@ -2374,7 +2374,7 @@ void sub_4DE870(LightCreateInfo* create_info, Light** light_ptr)
 }
 
 // 0x4DE900
-void light_render_internal(UnknownContext* render_info)
+void light_render_internal(GameDrawInfo* draw_info)
 {
     tig_color_t indoor_color;
     tig_color_t outdoor_color;
@@ -2399,7 +2399,7 @@ void light_render_internal(UnknownContext* render_info)
     outdoor_color = light_get_outdoor_color();
 
     head = NULL;
-    rect_node = *render_info->rects;
+    rect_node = *draw_info->rects;
     while (rect_node != NULL) {
         tmp_rect = rect_node->rect;
         sub_4DF1D0(&tmp_rect);
@@ -2412,7 +2412,7 @@ void light_render_internal(UnknownContext* render_info)
         rect_node = rect_node->next;
     }
 
-    v1 = render_info->field_C;
+    v1 = draw_info->field_C;
     while (v1 != NULL) {
         if (sector_lock(v1->id, &sector)) {
             light_node = sector->lights.head;

@@ -120,8 +120,8 @@ typedef struct GameSaveEntry {
 static int sub_403D40(const void* va, const void* vb);
 static int sub_403DB0(const void* va, const void* vb);
 static void difficulty_changed();
-static void gamelib_render_game(UnknownContext* render_info);
-static void gamelib_render_editor(UnknownContext* render_info);
+static void gamelib_render_game(GameDrawInfo* draw_info);
+static void gamelib_render_editor(GameDrawInfo* draw_info);
 static void gamelib_logo();
 static void gamelib_splash(tig_window_handle_t window_handle);
 static void sub_404930();
@@ -234,7 +234,7 @@ static char byte_5D0B58[TIG_MAX_PATH];
 static char byte_5D0C5C[TIG_MAX_PATH];
 
 // 0x5D0D60
-static TigRect stru_5D0D60;
+static TigRect gamelib_iso_content_rect_ex;
 
 // 0x5D0D70
 static bool dword_5D0D70;
@@ -270,7 +270,7 @@ static char byte_5D0EA4[TIG_MAX_PATH];
 static char byte_5D0FA8[TIG_MAX_PATH];
 
 // 0x5D10AC
-static void(*gamelib_render_func)(UnknownContext* render_info);
+static void(*gamelib_render_func)(GameDrawInfo* draw_info);
 
 // 0x5D10B0
 static GUID stru_5D10B0;
@@ -359,10 +359,10 @@ bool gamelib_init(GameInitInfo* init_info)
     gamelib_iso_content_rect.width = window_data.rect.width;
     gamelib_iso_content_rect.height = window_data.rect.height;
 
-    stru_5D0D60.x = -256;
-    stru_5D0D60.y = -256;
-    stru_5D0D60.width = window_data.rect.width + 512;
-    stru_5D0D60.height = window_data.rect.height + 512;
+    gamelib_iso_content_rect_ex.x = -256;
+    gamelib_iso_content_rect_ex.y = -256;
+    gamelib_iso_content_rect_ex.width = window_data.rect.width + 512;
+    gamelib_iso_content_rect_ex.height = window_data.rect.height + 512;
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = window_data.rect.width;
@@ -522,10 +522,10 @@ void gamelib_resize(GameResizeInfo* resize_info)
     dword_5D0D78 = resize_info->window_rect.x;
     dword_5D0D7C = resize_info->window_rect.y;
 
-    stru_5D0D60.x = gamelib_iso_content_rect.x - 256;
-    stru_5D0D60.y = gamelib_iso_content_rect.y - 256;
-    stru_5D0D60.width = gamelib_iso_content_rect.width + 512;
-    stru_5D0D60.height = gamelib_iso_content_rect.height + 512;
+    gamelib_iso_content_rect_ex.x = gamelib_iso_content_rect.x - 256;
+    gamelib_iso_content_rect_ex.y = gamelib_iso_content_rect.y - 256;
+    gamelib_iso_content_rect_ex.width = gamelib_iso_content_rect.width + 512;
+    gamelib_iso_content_rect_ex.height = gamelib_iso_content_rect.height + 512;
 
     if (gamelib_scratch_video_buffer != NULL) {
         tig_video_buffer_destroy(gamelib_scratch_video_buffer);
@@ -847,7 +847,7 @@ bool gamelib_redraw()
     LocRect loc_rect;
     SomeSectorStuff v2;
     Sector601808* v3;
-    UnknownContext render_info;
+    GameDrawInfo draw_info;
 
     if (gamelib_renderlock_cnt <= 0) {
         return false;
@@ -859,18 +859,18 @@ bool gamelib_redraw()
 
     in_redraw = true;
 
-    if (sub_4B9130(&stru_5D0D60, &loc_rect)) {
+    if (sub_4B9130(&gamelib_iso_content_rect_ex, &loc_rect)) {
         if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
             sub_4D0090(&loc_rect, &v2);
         }
 
         v3 = sub_4D02E0(&loc_rect);
-        render_info.field_0 = &stru_5D0D60;
-        render_info.field_4 = &loc_rect;
-        render_info.field_8 = &v2;
-        render_info.field_C = v3;
-        render_info.rects = &gamelib_dirty_rects_head;
-        gamelib_render_func(&render_info);
+        draw_info.screen_rect = &gamelib_iso_content_rect_ex;
+        draw_info.loc_rect = &loc_rect;
+        draw_info.field_8 = &v2;
+        draw_info.field_C = v3;
+        draw_info.rects = &gamelib_dirty_rects_head;
+        gamelib_render_func(&draw_info);
         sub_4D0400(v3);
 
         node = gamelib_dirty_rects_head;
@@ -1694,47 +1694,47 @@ const char* gamelib_get_locale()
 }
 
 // 0x4046F0
-void gamelib_render_game(UnknownContext* render_info)
+void gamelib_render_game(GameDrawInfo* draw_info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_draw(render_info);
-        tile_draw(render_info);
-        sub_43C690(render_info);
-        object_render(render_info);
-        roof_draw(render_info);
-        tb_draw(render_info);
-        tf_draw(render_info);
-        tc_draw(render_info);
+        light_draw(draw_info);
+        tile_draw(draw_info);
+        sub_43C690(draw_info);
+        object_draw(draw_info);
+        roof_draw(draw_info);
+        tb_draw(draw_info);
+        tf_draw(draw_info);
+        tc_draw(draw_info);
         tig_video_3d_end_scene();
     }
 }
 
 // 0x404740
-void gamelib_render_editor(UnknownContext* render_info)
+void gamelib_render_editor(GameDrawInfo* draw_info)
 {
     TigRectListNode* node;
     tig_color_t color;
 
     color = tig_color_make(0, 0, 255);
-    node = *render_info->rects;
+    node = *draw_info->rects;
     while (node != NULL) {
         tig_window_fill(stru_5D0E88.iso_window_handle, &(node->rect), color);
         node = node->next;
     }
 
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_draw(render_info);
-        tile_draw(render_info);
-        facade_render(render_info);
-        jumppoint_draw(render_info);
-        tile_script_render(render_info);
-        tileblock_render(render_info);
-        object_render(render_info);
-        sector_render(render_info);
-        wall_render(render_info);
-        wp_render(render_info);
-        roof_draw(render_info);
-        tb_draw(render_info);
+        light_draw(draw_info);
+        tile_draw(draw_info);
+        facade_draw(draw_info);
+        jumppoint_draw(draw_info);
+        tile_script_draw(draw_info);
+        tileblock_draw(draw_info);
+        object_draw(draw_info);
+        sector_draw(draw_info);
+        wall_draw(draw_info);
+        wp_draw(draw_info);
+        roof_draw(draw_info);
+        tb_draw(draw_info);
         tig_video_3d_end_scene();
     }
 }

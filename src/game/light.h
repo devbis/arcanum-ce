@@ -57,7 +57,7 @@ void light_update_view(ViewOptions* view_options);
 void sub_4D81F0();
 void sub_4D8210();
 void sub_4D8320();
-void light_draw(UnknownContext* render_info);
+void light_draw(GameDrawInfo* draw_info);
 void light_build_color(uint8_t red, uint8_t green, uint8_t blue, unsigned int* color);
 void light_get_color_components(unsigned int color, uint8_t* red, uint8_t* green, uint8_t* blue);
 tig_color_t light_get_outdoor_color();

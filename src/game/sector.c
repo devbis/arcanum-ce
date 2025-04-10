@@ -317,7 +317,7 @@ void sub_4CF370()
 }
 
 // 0x4CF390
-void sector_render(UnknownContext* render_info)
+void sector_draw(GameDrawInfo* draw_info)
 {
     Sector601808* node;
     int sector_x;
@@ -342,7 +342,7 @@ void sector_render(UnknownContext* render_info)
         return;
     }
 
-    node = render_info->field_C;
+    node = draw_info->field_C;
     while (node != NULL) {
         sector_x = SECTOR_X(node->id);
         sector_y = SECTOR_Y(node->id);
@@ -371,7 +371,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = size;
         rect.height = 1;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, color);
@@ -384,7 +384,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = 1;
         rect.height = size;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, color);
@@ -397,7 +397,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = 1;
         rect.height = size;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, color);
@@ -410,7 +410,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = size;
         rect.height = 1;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, color);
@@ -423,7 +423,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = 2;
         rect.height = 2 * sector_view_options.zoom;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);
@@ -436,7 +436,7 @@ void sector_render(UnknownContext* render_info)
         rect.width = 2 * sector_view_options.zoom;
         rect.height = 2;
 
-        rect_node = *render_info->rects;
+        rect_node = *draw_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
                 tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);

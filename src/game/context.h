@@ -83,15 +83,15 @@ typedef struct SomeSectorStuff {
 
 static_assert(sizeof(SomeSectorStuff) == 0x110, "wrong size");
 
-typedef struct UnknownContext {
-    TigRect* field_0;
-    LocRect* field_4;
+typedef struct GameDrawInfo {
+    TigRect* screen_rect;
+    LocRect* loc_rect;
     SomeSectorStuff* field_8;
     Sector601808* field_C;
     TigRectListNode** rects;
-} UnknownContext;
+} GameDrawInfo;
 
-static_assert(sizeof(UnknownContext) == 0x14, "wrong size");
+static_assert(sizeof(GameDrawInfo) == 0x14, "wrong size");
 
 typedef struct MapNewInfo {
     /* 0000 */ const char* name;

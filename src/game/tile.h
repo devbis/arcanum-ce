@@ -8,7 +8,7 @@ void tile_exit();
 void tile_resize(GameResizeInfo* resize_info);
 void tile_update_view(ViewOptions* view_options);
 void tile_toggle_visibility();
-void tile_draw(UnknownContext* render_info);
+void tile_draw(GameDrawInfo* draw_info);
 int tile_id_from_loc(int64_t loc);
 tig_art_id_t tile_art_id_at(int64_t loc);
 bool tile_is_blocking(int64_t loc, bool a2);

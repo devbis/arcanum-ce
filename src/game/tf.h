@@ -28,7 +28,7 @@ void tf_map_close();
 int tf_level_set(int value);
 int tf_level_get();
 void tf_ping(tig_timestamp_t timestamp);
-void tf_draw(UnknownContext *render_info);
+void tf_draw(GameDrawInfo* draw_info);
 void tf_add(int64_t obj, int type, const char* str);
 void tf_notify_moved(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void tf_notify_killed(int64_t obj);

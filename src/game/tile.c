@@ -30,8 +30,8 @@ static void sub_4D7A90();
 static void sub_4D7AC0(int zoom);
 static void sub_4D7C70();
 static TigVideoBuffer* sub_4D7E90(unsigned int art_id);
-static void tile_render_topdown(UnknownContext* render_info);
-static void tile_render_iso(UnknownContext* render_info);
+static void tile_draw_topdown(GameDrawInfo* draw_info);
+static void tile_draw_iso(GameDrawInfo* draw_info);
 
 // 0x602AE0
 static TileCacheEntry stru_602AE0[TILE_CACHE_CAPACITY];
@@ -115,7 +115,7 @@ void tile_toggle_visibility()
 }
 
 // 0x4D6950
-void tile_draw(UnknownContext* render_info)
+void tile_draw(GameDrawInfo* draw_info)
 {
     if (!tile_visible) {
         return;
@@ -123,11 +123,11 @@ void tile_draw(UnknownContext* render_info)
 
     switch (tile_view_options.type) {
     case VIEW_TYPE_ISOMETRIC:
-        tile_render_iso(render_info);
+        tile_draw_iso(draw_info);
         break;
     case VIEW_TYPE_TOP_DOWN:
         // NOTE: Refactored into separate function for clarity.
-        tile_render_topdown(render_info);
+        tile_draw_topdown(draw_info);
         break;
     }
 }
@@ -604,7 +604,7 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
 }
 
 // 0x4D7CB0
-void tile_render_topdown(UnknownContext* render_info)
+void tile_draw_topdown(GameDrawInfo* draw_info)
 {
     Sector601808* sector_node;
     Sector* sector;
@@ -619,7 +619,7 @@ void tile_render_topdown(UnknownContext* render_info)
     TigRect dst_rect;
     TigRect src_rect;
 
-    sector_node = render_info->field_C;
+    sector_node = draw_info->field_C;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->id, &sector)) {
             tile = tile_id_from_loc(sector_node->field_8);
@@ -633,7 +633,7 @@ void tile_render_topdown(UnknownContext* render_info)
                 tile_rect.height = tile_view_options.zoom;
 
                 for (x = 0; x < sector_node->field_10; x++) {
-                    rect_node = *render_info->rects;
+                    rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                             src_rect.x = dst_rect.x - tile_rect.x;
@@ -661,9 +661,8 @@ void tile_render_topdown(UnknownContext* render_info)
 }
 
 // NOTE: In the original code this function is a part of `tile_draw`, however
-// if `tile_render_topdown` is definitely there, why `tile_render_iso` should
-// not?
-void tile_render_iso(UnknownContext* render_info)
+// if `tile_draw_topdown` is definitely there, why `tile_draw_iso` should not?
+void tile_draw_iso(GameDrawInfo* draw_info)
 {
     SomeSectorStuff* v1;
     SomeSectorStuffEntry* v3;
@@ -696,7 +695,7 @@ void tile_render_iso(UnknownContext* render_info)
     bool blit_info_initialized;
     int v38;
 
-    v1 = render_info->field_8;
+    v1 = draw_info->field_8;
 
     art_blit_info.flags = 0; // NOTE: Initialize to silence compiler warning.
     art_blit_info.src_rect = &src_rect;
@@ -738,7 +737,7 @@ void tile_render_iso(UnknownContext* render_info)
                             tile_rect.x = center_x + 1;
                             tile_rect.y = center_y;
 
-                            rect_node = *render_info->rects;
+                            rect_node = *draw_info->rects;
                             while (rect_node != NULL) {
                                 if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                     src_rect.x = dst_rect.x - tile_rect.x;

@@ -143,7 +143,7 @@ void tc_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4C95F0
-void tc_draw(UnknownContext* render_info)
+void tc_draw(GameDrawInfo* draw_info)
 {
     if (tc_editor) {
         return;
@@ -153,7 +153,7 @@ void tc_draw(UnknownContext* render_info)
         return;
     }
 
-    tc_render_internal(*render_info->rects);
+    tc_render_internal(*draw_info->rects);
 }
 
 // 0x4C9620

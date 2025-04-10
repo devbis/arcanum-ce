@@ -218,7 +218,7 @@ void tb_ping(tig_timestamp_t timestamp)
 }
 
 // 0x4D5F10
-void tb_draw(UnknownContext* render_info)
+void tb_draw(GameDrawInfo* draw_info)
 {
     int idx;
     TigRect rect;
@@ -238,7 +238,7 @@ void tb_draw(UnknownContext* render_info)
         if ((tb_text_bubbles[idx].flags & TEXT_BUBBLE_IN_USE) != 0) {
             tb_get_rect(&(tb_text_bubbles[idx]), &rect);
 
-            node = *render_info->rects;
+            node = *draw_info->rects;
             while (node != NULL) {
                 if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
                     src_rect.x = intersection.x + tb_text_bubbles[idx].rect.x - rect.x;

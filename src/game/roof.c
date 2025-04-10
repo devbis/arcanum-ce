@@ -200,7 +200,7 @@ void roof_toggle()
 }
 
 // 0x439140
-void roof_draw(UnknownContext* render_info)
+void roof_draw(GameDrawInfo* draw_info)
 {
     TigArtBlitInfo art_blit_info;
     TigRect dst_rect;
@@ -230,7 +230,7 @@ void roof_draw(UnknownContext* render_info)
         flags = 0;
     }
 
-    loc_rect = *render_info->field_4;
+    loc_rect = *draw_info->loc_rect;
 
     for (y = loc_rect.y1; y <= loc_rect.y2; y += 4) {
         for (x = loc_rect.x1; x <= loc_rect.x2; x += 4) {
@@ -243,7 +243,7 @@ void roof_draw(UnknownContext* render_info)
                     && loc_y > INT_MIN
                     && loc_y < INT_MAX) {
                     sub_43A140((int)loc_x, (int)loc_y, aid, &roof_rect);
-                    node = *render_info->rects;
+                    node = *draw_info->rects;
                     while (node != NULL) {
                         if (tig_rect_intersection(&roof_rect, &node->rect, &dst_rect) == TIG_OK) {
                             src_rect.x = dst_rect.x - roof_rect.x;

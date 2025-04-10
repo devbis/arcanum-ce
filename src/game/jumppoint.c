@@ -185,7 +185,7 @@ void jumppoint_toggle()
 }
 
 // 0x4E3320
-void jumppoint_draw(UnknownContext* draw_info)
+void jumppoint_draw(GameDrawInfo* draw_info)
 {
     TigArtBlitInfo art_blit_info;
     TigArtFrameData art_frame_data;

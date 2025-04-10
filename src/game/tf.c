@@ -304,7 +304,7 @@ void tf_ping(tig_timestamp_t timestamp)
 }
 
 // 0x4D5310
-void tf_draw(UnknownContext *render_info)
+void tf_draw(GameDrawInfo* draw_info)
 {
     TextFloaterList* list;
     TextFloaterEntry* entry;
@@ -333,7 +333,7 @@ void tf_draw(UnknownContext *render_info)
     for (list = tf_list_head; list != NULL; list = list->next) {
         tf_list_get_rect(list, &list_rect);
 
-        for (rect_node = *render_info->rects; rect_node != NULL; rect_node = rect_node->next) {
+        for (rect_node = *draw_info->rects; rect_node != NULL; rect_node = rect_node->next) {
             if (tig_rect_intersection(&(rect_node->rect), &list_rect, &dirty_list_rect) != TIG_OK) {
                 continue;
             }

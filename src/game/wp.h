@@ -9,6 +9,6 @@ void wp_resize(GameResizeInfo* resize_info);
 void wp_update_view(ViewOptions* view_options);
 bool wp_is_enabled();
 void wp_toggle();
-void wp_render(UnknownContext* render_info);
+void wp_draw(GameDrawInfo* draw_info);
 
 #endif /* ARCANUM_GAME_WP_H_ */
