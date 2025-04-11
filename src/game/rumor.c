@@ -23,7 +23,7 @@ typedef enum RumorInteractionType {
 } RumorInteractionType;
 
 static void rumor_set_known_internal(int64_t obj, int rumor, int64_t timestamp);
-static int rumor_compare(const void* va, const void* vb);
+static int rumor_logbook_entry_compare(const void* va, const void* vb);
 
 // 0x5B6E98
 static const char* rumor_mes_file_names[RUMOR_INTERACTION_TYPE_COUNT] = {
@@ -262,7 +262,7 @@ void rumor_copy_logbook_dumb_str(int rumor, char* buffer)
 }
 
 // 0x4C5A40
-int rumor_copy_state(int64_t obj, RumorInfo* rumors)
+int rumor_get_logbook_data(int64_t obj, RumorLogbookEntry* logbook_entries)
 {
     int index;
     uint64_t timestamps[MAX_RUMORS];
@@ -273,23 +273,23 @@ int rumor_copy_state(int64_t obj, RumorInfo* rumors)
     cnt = 0;
     for (index = 0; index < MAX_RUMORS; index++) {
         if (timestamps[index] != 0) {
-            rumors[cnt].num = rumor_idx_to_num(index);
-            rumors[cnt].datetime.value = timestamps[index];
-            rumors[cnt].quelled = rumor_qstate_get(rumor_idx_to_num(index));
+            logbook_entries[cnt].num = rumor_idx_to_num(index);
+            logbook_entries[cnt].datetime.value = timestamps[index];
+            logbook_entries[cnt].quelled = rumor_qstate_get(rumor_idx_to_num(index));
             cnt++;
         }
     }
 
-    qsort(rumors, cnt, sizeof(*rumors), rumor_compare);
+    qsort(logbook_entries, cnt, sizeof(*logbook_entries), rumor_logbook_entry_compare);
 
     return cnt;
 }
 
 // 0x4C5AF0
-int rumor_compare(const void* va, const void* vb)
+int rumor_logbook_entry_compare(const void* va, const void* vb)
 {
-    const RumorInfo* a = (const RumorInfo*)va;
-    const RumorInfo* b = (const RumorInfo*)vb;
+    const RumorLogbookEntry* a = (const RumorLogbookEntry*)va;
+    const RumorLogbookEntry* b = (const RumorLogbookEntry*)vb;
 
     return datetime_compare(&(a->datetime), &(b->datetime));
 }

@@ -60,7 +60,7 @@ void bless_copy_description(int bless, char* buffer)
 }
 
 // 0x4C4200
-int sub_4C4200(int64_t obj, BlessInfo* blessings)
+int bless_get_logbook_data(int64_t obj, BlessLogbookEntry* logbook_entries)
 {
     int cnt;
     int index;
@@ -71,8 +71,8 @@ int sub_4C4200(int64_t obj, BlessInfo* blessings)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
-        blessings[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index);
-        blessings[index].datetime.value = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
+        logbook_entries[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index);
+        logbook_entries[index].datetime.value = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
     }
 
     return cnt;

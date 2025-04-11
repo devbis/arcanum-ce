@@ -26,7 +26,7 @@ typedef struct Quest {
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
 static bool quest_parse(const char* path, int start, int end);
-static int quest_compare(const void* va, const void* vb);
+static int quest_logbook_entry_compare(const void* va, const void* vb);
 
 // 0x5B6E34
 static mes_file_handle_t quest_log_mes_file = MES_FILE_HANDLE_INVALID;
@@ -476,10 +476,8 @@ void quest_copy_description(int64_t obj, int num, char* buffer)
     }
 }
 
-// FIXME: Rename `quests1`.
-//
 // 0x4C52E0
-int quest_copy_state(int64_t obj, QuestInfo* quests1)
+int quest_get_logbook_data(int64_t obj, QuestLogbookEntry* logbook_entries)
 {
     int index;
     PcQuestState pc_quests[2000];
@@ -494,26 +492,27 @@ int quest_copy_state(int64_t obj, QuestInfo* quests1)
     cnt = 0;
     for (index = 0; index < 2000; index++) {
         if ((pc_quests[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
-            quests1[cnt].num = index;
-            quests1[cnt].datetime = pc_quests[index].datetime;
+            logbook_entries[cnt].num = index;
+            logbook_entries[cnt].datetime = pc_quests[index].datetime;
             if ((pc_quests[index].state & 0x100) != 0) {
-                quests1[cnt].state = QUEST_STATE_BOTCHED;
+                logbook_entries[cnt].state = QUEST_STATE_BOTCHED;
             } else {
-                quests1[cnt].state = pc_quests[index].state;
+                logbook_entries[cnt].state = pc_quests[index].state;
             }
         }
     }
 
-    qsort(quests1, cnt, sizeof(*quests1), quest_compare);
+    qsort(logbook_entries, cnt, sizeof(*logbook_entries), quest_logbook_entry_compare);
 
     return cnt;
 }
 
 // 0x4C53A0
-int quest_compare(const void* va, const void* vb)
+int quest_logbook_entry_compare(const void* va, const void* vb)
 {
-    const QuestInfo* a = (const QuestInfo*)va;
-    const QuestInfo* b = (const QuestInfo*)vb;
+    const QuestLogbookEntry* a = (const QuestLogbookEntry*)va;
+    const QuestLogbookEntry* b = (const QuestLogbookEntry*)vb;
+
     return datetime_compare(&(a->datetime), &(b->datetime));
 }
 

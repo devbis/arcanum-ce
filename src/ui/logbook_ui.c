@@ -816,9 +816,9 @@ void sub_53FBB0()
     int index;
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_RUMORS_AND_NOTES) {
-        RumorInfo rumors[MAX_RUMORS]; // NOTE: Forces `alloca(72000)`.
+        RumorLogbookEntry rumors[MAX_RUMORS]; // NOTE: Forces `alloca(72000)`.
 
-        dword_648938 = rumor_copy_state(logbook_ui_obj, rumors);
+        dword_648938 = rumor_get_logbook_data(logbook_ui_obj, rumors);
 
         if (dword_648980) {
             dword_648938 = mes_num_entries(quotes_mes_file);
@@ -841,9 +841,9 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_QUESTS) {
-        QuestInfo quests[2000]; // NOTE: Forces `alloca(48000)`.
+        QuestLogbookEntry quests[2000]; // NOTE: Forces `alloca(48000)`.
 
-        dword_648938 = quest_copy_state(logbook_ui_obj, quests);
+        dword_648938 = quest_get_logbook_data(logbook_ui_obj, quests);
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = quests[index].num;
@@ -871,10 +871,9 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_REPUTATIONS) {
-        ReputationStateEntry reps[2000]; // NOTE: Forces `alloca(32000)`.
+        ReputationLogbookEntry reps[2000]; // NOTE: Forces `alloca(32000)`.
 
-
-        dword_648938 = reputation_copy_state(logbook_ui_obj, reps);
+        dword_648938 = reputation_get_logbook_data(logbook_ui_obj, reps);
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = reps[index].reputation;
@@ -887,16 +886,16 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_BLESSINGS_AND_CURSES) {
-        CurseInfo curses[100];
-        BlessInfo blessings[100];
+        CurseLogbookEntry curses[100];
+        BlessLogbookEntry blessings[100];
         int num_blessings;
         int num_curses;
         int bless_idx;
         int curse_idx;
         int idx;
 
-        num_blessings = sub_4C4200(logbook_ui_obj, blessings);
-        num_curses = sub_4C3D50(logbook_ui_obj, curses);
+        num_blessings = bless_get_logbook_data(logbook_ui_obj, blessings);
+        num_curses = curse_get_logbook_data(logbook_ui_obj, curses);
         dword_648938 = num_blessings + num_curses;
 
         bless_idx = 0;

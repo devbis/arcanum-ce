@@ -5,18 +5,18 @@
 #include "game/obj.h"
 #include "game/timeevent.h"
 
-typedef struct BlessInfo {
+typedef struct BlessLogbookEntry {
     /* 0000 */ int id;
     /* 0008 */ DateTime datetime;
-} BlessInfo;
+} BlessLogbookEntry;
 
-static_assert(sizeof(BlessInfo) == 0x10, "wrong size");
+static_assert(sizeof(BlessLogbookEntry) == 0x10, "wrong size");
 
 bool bless_mod_load();
 void bless_mod_unload();
 void bless_copy_name(int bless, char* buffer);
 void bless_copy_description(int bless, char* buffer);
-int sub_4C4200(int64_t obj, BlessInfo* blessings);
+int bless_get_logbook_data(int64_t obj, BlessLogbookEntry* logbook_entries);
 bool bless_is_added_to(int64_t obj, int bless);
 void bless_add(int64_t obj, int bless);
 int bless_get_effect(int bless);

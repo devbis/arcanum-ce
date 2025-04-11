@@ -60,7 +60,7 @@ void curse_copy_description(int curse, char* buffer)
 }
 
 // 0x4C3D50
-int sub_4C3D50(int64_t obj, CurseInfo* curses)
+int curse_get_logbook_data(int64_t obj, CurseLogbookEntry* logbook_entries)
 {
     int cnt;
     int index;
@@ -71,8 +71,8 @@ int sub_4C3D50(int64_t obj, CurseInfo* curses)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
-        curses[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index);
-        curses[index].datetime.value = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
+        logbook_entries[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index);
+        logbook_entries[index].datetime.value = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
     }
 
     return cnt;

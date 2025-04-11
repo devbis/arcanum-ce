@@ -9,13 +9,13 @@
 
 // FIXME: Waste memory due to alignment (current size is 24 bytes, but could
 // be reduced to 16 just by rearranging `datetime`).
-typedef struct RumorInfo {
+typedef struct RumorLogbookEntry {
     /* 0000 */ int num;
     /* 0004 */ DateTime datetime;
     /* 0010 */ bool quelled;
-} RumorInfo;
+} RumorLogbookEntry;
 
-static_assert(sizeof(RumorInfo) == 0x18, "wrong size");
+static_assert(sizeof(RumorLogbookEntry) == 0x18, "wrong size");
 
 bool rumor_init(GameInitInfo* init_info);
 void rumor_reset();
@@ -32,7 +32,7 @@ bool rumor_known_get(int64_t obj, int rumor);
 void rumor_copy_logbook_str(int64_t obj, int rumor, char* buffer);
 void rumor_copy_logbook_normal_str(int rumor, char* buffer);
 void rumor_copy_logbook_dumb_str(int rumor, char* buffer);
-int rumor_copy_state(int64_t obj, RumorInfo* rumors);
+int rumor_get_logbook_data(int64_t obj, RumorLogbookEntry* logbook_entries);
 bool rumor_copy_known(int64_t src_obj, int64_t dst_obj);
 
 #endif /* ARCANUM_GAME_RUMOR_H_ */

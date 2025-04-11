@@ -267,7 +267,7 @@ void reputation_name(int reputation, char* buffer)
 }
 
 // 0x4C1C30
-int reputation_copy_state(int64_t pc_obj, ReputationStateEntry* entries)
+int reputation_get_logbook_data(int64_t pc_obj, ReputationLogbookEntry* logbook_entries)
 {
     int cnt;
     int index;
@@ -278,8 +278,8 @@ int reputation_copy_state(int64_t pc_obj, ReputationStateEntry* entries)
 
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (index = 0; index < cnt; index++) {
-        entries[index].reputation = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index);
-        entries[index].datetime.value = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index);
+        logbook_entries[index].reputation = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index);
+        logbook_entries[index].datetime.value = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index);
     }
 
     return cnt;

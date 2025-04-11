@@ -16,13 +16,13 @@ typedef enum QuestState {
     QUEST_STATE_COUNT,
 } QuestState;
 
-typedef struct QuestInfo {
+typedef struct QuestLogbookEntry {
     /* 0000 */ int num;
     /* 0004 */ DateTime datetime;
     /* 0010 */ int state;
-} QuestInfo;
+} QuestLogbookEntry;
 
-static_assert(sizeof(QuestInfo) == 0x18, "wrong size");
+static_assert(sizeof(QuestLogbookEntry) == 0x18, "wrong size");
 
 typedef struct PcQuestState {
     /* 0000 */ DateTime datetime;
@@ -46,7 +46,7 @@ int sub_4C5070(int64_t obj, int num);
 int quest_get_state(int id);
 int quest_set_state(int id, int state);
 void quest_copy_description(int64_t obj, int quest_id, char* buffer);
-int quest_copy_state(int64_t obj, QuestInfo* quests1);
+int quest_get_logbook_data(int64_t obj, QuestLogbookEntry* logbook_entries);
 int quest_get_xp(int xp_level);
 bool sub_4C5400(int64_t a1, int64_t a2);
 
