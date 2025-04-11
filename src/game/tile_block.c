@@ -79,7 +79,7 @@ void tileblock_draw(GameDrawInfo* draw_info)
     TigRect src_rect;
     TigRect dst_rect;
     TigArtFrameData art_frame_data;
-    Sector601808* sector_node;
+    SectorListNode* sector_node;
     Sector* sector;
     int tile;
     tig_art_id_t aid;
@@ -115,9 +115,9 @@ void tileblock_draw(GameDrawInfo* draw_info)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    sector_node = draw_info->field_C;
+    sector_node = draw_info->sectors;
     while (sector_node != NULL) {
-        if (sector_lock(sector_node->id, &sector)) {
+        if (sector_lock(sector_node->sec, &sector)) {
             for (tile = 0; tile < 4096; tile++) {
                 occupied = false;
                 tb_rect_calculated = false;
@@ -144,7 +144,7 @@ void tileblock_draw(GameDrawInfo* draw_info)
                 if (occupied) {
                     art_blit_info.color = tig_color_make(128, 0, 0);
 
-                    tileblock_get_rect_internal(sector_node->id, tile, &tb_rect);
+                    tileblock_get_rect_internal(sector_node->sec, tile, &tb_rect);
                     tb_rect_calculated = true;
 
                     rect_node = *draw_info->rects;
@@ -166,7 +166,7 @@ void tileblock_draw(GameDrawInfo* draw_info)
                     art_blit_info.color = tig_color_make(255, 0, 0);
 
                     if (!tb_rect_calculated) {
-                        tileblock_get_rect_internal(sector_node->id, tile, &tb_rect);
+                        tileblock_get_rect_internal(sector_node->sec, tile, &tb_rect);
                     }
 
                     rect_node = *draw_info->rects;
@@ -185,7 +185,7 @@ void tileblock_draw(GameDrawInfo* draw_info)
                 }
             }
 
-            sector_unlock(sector_node->id);
+            sector_unlock(sector_node->sec);
         }
         sector_node = sector_node->next;
     }

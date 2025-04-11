@@ -51,8 +51,8 @@ int64_t sector_loc_from_id(int64_t sector_id);
 int sector_rot(int64_t a, int64_t b);
 bool sector_in_dir(int64_t sec, int dir, int64_t* new_sec_ptr);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
-Sector601808* sub_4D02E0(LocRect* loc_rect);
-void sub_4D0400(Sector601808* node);
+SectorListNode* sector_list_create(LocRect* loc_rect);
+void sector_list_destroy(SectorListNode* node);
 bool sector_map_name_set(const char* base_map_name, const char* current_map_name);
 bool sector_exists(uint64_t id);
 bool sub_4D04E0(int64_t id);
@@ -74,7 +74,6 @@ void sub_4D10D0();
 void sub_4D10E0();
 bool sub_4D1150(TigFile* stream);
 bool sub_4D12B0(GameLoadInfo* load_info);
-Sector601808* sub_4D13A0();
 
 #define SECTOR_X(a) ((a) & 0x3FFFFFF)
 #define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)

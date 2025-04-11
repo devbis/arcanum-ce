@@ -606,7 +606,7 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
 // 0x4D7CB0
 void tile_draw_topdown(GameDrawInfo* draw_info)
 {
-    Sector601808* sector_node;
+    SectorListNode* sector_node;
     Sector* sector;
     int tile;
     int skip;
@@ -619,20 +619,20 @@ void tile_draw_topdown(GameDrawInfo* draw_info)
     TigRect dst_rect;
     TigRect src_rect;
 
-    sector_node = draw_info->field_C;
+    sector_node = draw_info->sectors;
     while (sector_node != NULL) {
-        if (sector_lock(sector_node->id, &sector)) {
-            tile = tile_id_from_loc(sector_node->field_8);
-            skip = 64 - sector_node->field_10;
-            location_xy(sector_node->field_8, &loc_x, &loc_y);
+        if (sector_lock(sector_node->sec, &sector)) {
+            tile = tile_id_from_loc(sector_node->loc);
+            skip = 64 - sector_node->width;
+            location_xy(sector_node->loc, &loc_x, &loc_y);
 
-            for (y = 0; y < sector_node->field_14; y++) {
+            for (y = 0; y < sector_node->height; y++) {
                 tile_rect.x = (int)loc_x;
                 tile_rect.y = (int)loc_y + y * tile_view_options.zoom;
                 tile_rect.width = tile_view_options.zoom;
                 tile_rect.height = tile_view_options.zoom;
 
-                for (x = 0; x < sector_node->field_10; x++) {
+                for (x = 0; x < sector_node->width; x++) {
                     rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
@@ -654,7 +654,7 @@ void tile_draw_topdown(GameDrawInfo* draw_info)
 
                 tile += skip;
             }
-            sector_unlock(sector_node->id);
+            sector_unlock(sector_node->sec);
         }
         sector_node = sector_node->next;
     }

@@ -34,7 +34,8 @@ static bool sub_4CF810(unsigned int size);
 static void sector_block_clear();
 static void sub_4D1100();
 static int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4);
-static void sub_4D13D0();
+static SectorListNode* sector_list_node_create();
+static void sector_list_node_reserve();
 static void sub_4D1400(Sector* sector);
 static bool sector_load_editor(int64_t id, Sector* sector);
 static bool sector_load_game(int64_t id, Sector* sector);
@@ -148,7 +149,7 @@ static char* sector_current_map_name;
 static ViewOptions sector_view_options;
 
 // 0x601808
-static Sector601808* dword_601808;
+static SectorListNode* sector_list_free_node_head;
 
 // 0x60180C
 static S60180C* dword_60180C;
@@ -225,16 +226,16 @@ void sector_reset()
 // 0x4CF0E0
 void sector_exit()
 {
-    Sector601808* node;
+    SectorListNode* node;
     unsigned int index;
     Sector* sector;
 
     sub_4D0B40();
 
-    while (dword_601808 != NULL) {
-        node = dword_601808->next;
-        FREE(dword_601808);
-        dword_601808 = node;
+    while (sector_list_free_node_head != NULL) {
+        node = sector_list_free_node_head->next;
+        FREE(sector_list_free_node_head);
+        sector_list_free_node_head = node;
     }
 
     for (index = 0; index < sector_cache_size; index++) {
@@ -319,7 +320,7 @@ void sub_4CF370()
 // 0x4CF390
 void sector_draw(GameDrawInfo* draw_info)
 {
-    Sector601808* node;
+    SectorListNode* node;
     int sector_x;
     int sector_y;
     int townmap;
@@ -342,12 +343,12 @@ void sector_draw(GameDrawInfo* draw_info)
         return;
     }
 
-    node = draw_info->field_C;
+    node = draw_info->sectors;
     while (node != NULL) {
-        sector_x = SECTOR_X(node->id);
-        sector_y = SECTOR_Y(node->id);
+        sector_x = SECTOR_X(node->sec);
+        sector_y = SECTOR_Y(node->sec);
 
-        townmap = townmap_get(node->id);
+        townmap = townmap_get(node->sec);
         if (townmap != 0) {
             int red = townmap * (255 / townmap_count());
             if ((townmap & 1) != 0) {
@@ -753,14 +754,14 @@ bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2)
 }
 
 // 0x4D02E0
-Sector601808* sub_4D02E0(LocRect* loc_rect)
+SectorListNode* sector_list_create(LocRect* loc_rect)
 {
     int x;
     int y;
     int width;
     int height;
-    Sector601808* prev;
-    Sector601808* node;
+    SectorListNode* prev;
+    SectorListNode* node;
 
     width = sub_4D1310(loc_rect->x1, loc_rect->x2 + 1, 64, dword_6017E8) - 1;
     if (width == 0) {
@@ -777,12 +778,12 @@ Sector601808* sub_4D02E0(LocRect* loc_rect)
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            node = sub_4D13A0();
+            node = sector_list_node_create();
             node->next = prev;
-            node->field_8 = LOCATION_MAKE(dword_6017E8[x], dword_6017EC[y]);
-            node->id = sector_id_from_loc(node->field_8);
-            node->field_10 = (dword_6017E8[x + 1] & 0xFFFFFFFF) - (dword_6017E8[x] & 0xFFFFFFFF);
-            node->field_14 = (dword_6017EC[y + 1] & 0xFFFFFFFF) - (dword_6017EC[y] & 0xFFFFFFFF);
+            node->loc = LOCATION_MAKE(dword_6017E8[x], dword_6017EC[y]);
+            node->sec = sector_id_from_loc(node->loc);
+            node->width = (dword_6017E8[x + 1] & 0xFFFFFFFF) - (dword_6017E8[x] & 0xFFFFFFFF);
+            node->height = (dword_6017EC[y + 1] & 0xFFFFFFFF) - (dword_6017EC[y] & 0xFFFFFFFF);
             prev = node;
         }
     }
@@ -791,17 +792,17 @@ Sector601808* sub_4D02E0(LocRect* loc_rect)
 }
 
 // 0x4D0400
-void sub_4D0400(Sector601808* node)
+void sector_list_destroy(SectorListNode* node)
 {
-    Sector601808* tail;
+    SectorListNode* tail;
 
     tail = node;
     while (tail->next != NULL) {
         tail = tail->next;
     }
 
-    tail->next = dword_601808;
-    dword_601808 = node;
+    tail->next = sector_list_free_node_head;
+    sector_list_free_node_head = node;
 }
 
 // 0x4D0440
@@ -1239,16 +1240,16 @@ int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4)
 }
 
 // 0x4D13A0
-Sector601808* sub_4D13A0()
+SectorListNode* sector_list_node_create()
 {
-    Sector601808* node;
+    SectorListNode* node;
 
-    if (dword_601808 == NULL) {
-        sub_4D13D0();
+    if (sector_list_free_node_head == NULL) {
+        sector_list_node_reserve();
     }
 
-    node = dword_601808;
-    dword_601808 = node->next;
+    node = sector_list_free_node_head;
+    sector_list_free_node_head = node->next;
 
     node->next = NULL;
 
@@ -1256,15 +1257,15 @@ Sector601808* sub_4D13A0()
 }
 
 // 0x4D13D0
-void sub_4D13D0()
+void sector_list_node_reserve()
 {
     int index;
-    Sector601808* node;
+    SectorListNode* node;
 
     for (index = 0; index < 4; index++) {
-        node = (Sector601808*)MALLOC(sizeof(*node));
-        node->next = dword_601808;
-        dword_601808 = node;
+        node = (SectorListNode*)MALLOC(sizeof(*node));
+        node->next = sector_list_free_node_head;
+        sector_list_free_node_head = node;
     }
 }
 

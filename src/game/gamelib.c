@@ -846,7 +846,7 @@ bool gamelib_redraw()
     TigRect rect;
     LocRect loc_rect;
     SomeSectorStuff v2;
-    Sector601808* v3;
+    SectorListNode* sectors;
     GameDrawInfo draw_info;
 
     if (gamelib_renderlock_cnt <= 0) {
@@ -864,14 +864,14 @@ bool gamelib_redraw()
             sub_4D0090(&loc_rect, &v2);
         }
 
-        v3 = sub_4D02E0(&loc_rect);
+        sectors = sector_list_create(&loc_rect);
         draw_info.screen_rect = &gamelib_iso_content_rect_ex;
         draw_info.loc_rect = &loc_rect;
         draw_info.field_8 = &v2;
-        draw_info.field_C = v3;
+        draw_info.sectors = sectors;
         draw_info.rects = &gamelib_dirty_rects_head;
         gamelib_render_func(&draw_info);
-        sub_4D0400(v3);
+        sector_list_destroy(sectors);
 
         node = gamelib_dirty_rects_head;
         while (node != NULL) {

@@ -47,18 +47,16 @@ static_assert(sizeof(ViewOptions) == 0x8, "wrong size");
 
 typedef struct LocRect LocRect;
 
-// TODO: Better name.
-typedef struct Sector601808 {
-    /* 0000 */ int64_t id;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ struct Sector601808* next;
-    /* 001C */ int field_1C;
-} Sector601808;
+typedef struct SectorListNode {
+    /* 0000 */ int64_t sec;
+    /* 0008 */ int64_t loc;
+    /* 0010 */ int width;
+    /* 0014 */ int height;
+    /* 0018 */ struct SectorListNode* next;
+} SectorListNode;
 
 // See 0x4D13D0.
-static_assert(sizeof(Sector601808) == 0x20, "wrong size");
+static_assert(sizeof(SectorListNode) == 0x20, "wrong size");
 
 // TODO: Better name.
 typedef struct SomeSectorStuffEntry {
@@ -87,7 +85,7 @@ typedef struct GameDrawInfo {
     TigRect* screen_rect;
     LocRect* loc_rect;
     SomeSectorStuff* field_8;
-    Sector601808* field_C;
+    SectorListNode* sectors;
     TigRectListNode** rects;
 } GameDrawInfo;
 

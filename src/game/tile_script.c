@@ -109,7 +109,7 @@ void tile_script_draw(GameDrawInfo* draw_info)
     TigArtFrameData art_frame_data;
     TigRect src_rect;
     TigRect dst_rect;
-    Sector601808* sector_node;
+    SectorListNode* sector_node;
     Sector* sector;
     TileScriptListNode* tile_script_node;
     TigRect tile_rect;
@@ -140,12 +140,12 @@ void tile_script_draw(GameDrawInfo* draw_info)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    sector_node = draw_info->field_C;
+    sector_node = draw_info->sectors;
     while (sector_node != NULL) {
-        if (sector_lock(sector_node->id, &sector)) {
+        if (sector_lock(sector_node->sec, &sector)) {
             tile_script_node = sector->tile_scripts.head;
             while (tile_script_node != NULL) {
-                tile_script_get_rect(sector_node->id, tile_script_node->id, &tile_rect);
+                tile_script_get_rect(sector_node->sec, tile_script_node->id, &tile_rect);
                 rect_node = *draw_info->rects;
                 while (rect_node != NULL) {
                     if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
@@ -159,7 +159,7 @@ void tile_script_draw(GameDrawInfo* draw_info)
                 }
                 tile_script_node = tile_script_node->next;
             }
-            sector_unlock(sector_node->id);
+            sector_unlock(sector_node->sec);
         }
         sector_node = sector_node->next;
     }

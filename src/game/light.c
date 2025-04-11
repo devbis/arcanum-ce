@@ -451,8 +451,8 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
     LocRect loc_rect;
     tig_color_t indoor_color;
     tig_color_t outdoor_color;
-    Sector601808* head;
-    Sector601808* node;
+    SectorListNode* head;
+    SectorListNode* node;
     Sector* sector;
     SectorBlockListNode* light_node;
     Light* light;
@@ -480,7 +480,7 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
         return false;
     }
 
-    head = sub_4D02E0(&loc_rect);
+    head = sector_list_create(&loc_rect);
     if (head == NULL) {
         return false;
     }
@@ -500,7 +500,7 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
 
     node = head;
     while (node != NULL) {
-        if (sector_lock(node->id, &sector)) {
+        if (sector_lock(node->sec, &sector)) {
             light_node = sector->lights.head;
             while (light_node != NULL) {
                 light = (Light*)light_node->data;
@@ -548,12 +548,12 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
                 light_node = light_node->next;
             }
 
-            sector_unlock(node->id);
+            sector_unlock(node->sec);
         }
         node = node->next;
     }
 
-    sub_4D0400(head);
+    sector_list_destroy(head);
     return true;
 }
 
@@ -837,8 +837,8 @@ bool sub_4D9B20(int64_t obj)
     int64_t loc_y;
     tig_color_t color;
     LocRect loc_rect;
-    Sector601808* head;
-    Sector601808* node;
+    SectorListNode* head;
+    SectorListNode* node;
     Sector* sector;
     SectorBlockListNode* light_node;
     Light* light;
@@ -892,7 +892,7 @@ bool sub_4D9B20(int64_t obj)
             return false;
         }
 
-        head = sub_4D02E0(&loc_rect);
+        head = sector_list_create(&loc_rect);
 
         node = head;
         while (node != NULL) {
@@ -900,7 +900,7 @@ bool sub_4D9B20(int64_t obj)
                 break;
             }
 
-            if (sector_lock(node->id, &sector)) {
+            if (sector_lock(node->sec, &sector)) {
                 light_node = sector->lights.head;
                 while (light_node != NULL) {
                     if (cnt >= 4) {
@@ -941,11 +941,11 @@ bool sub_4D9B20(int64_t obj)
                     }
                     light_node = light_node->next;
                 }
-                sector_unlock(node->id);
+                sector_unlock(node->sec);
             }
             node = node->next;
         }
-        sub_4D0400(head);
+        sector_list_destroy(head);
 
         if (cnt != 0) {
             for (int i = 0; i < cnt - 1; i++) {
@@ -1179,11 +1179,11 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
 
         LocRect loc_rect;
         if (sub_4B9130(&rect, &loc_rect)) {
-            Sector601808* v2 = sub_4D02E0(&loc_rect);
-            Sector601808* curr = v2;
+            SectorListNode* v2 = sector_list_create(&loc_rect);
+            SectorListNode* curr = v2;
             while (curr != NULL) {
                 Sector* sector;
-                if (sector_lock(curr->id, &sector)) {
+                if (sector_lock(curr->sec, &sector)) {
                     SectorBlockListNode* node = sector->lights.head;
                     while (node != NULL) {
                         Light* light = (Light*)node->data;
@@ -1253,12 +1253,12 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
                         }
                         node = node->next;
                     }
-                    sector_unlock(curr->id);
+                    sector_unlock(curr->sec);
                 }
                 curr = curr->next;
             }
 
-            sub_4D0400(v2);
+            sector_list_destroy(v2);
         }
 
         if (dword_60340C) {
@@ -2381,7 +2381,7 @@ void light_render_internal(GameDrawInfo* draw_info)
     TigRectListNode* rect_node;
     TigRect tmp_rect;
     TigRectListNode* head;
-    Sector601808 *v1;
+    SectorListNode *v1;
     Sector* sector;
     SectorBlockListNode* light_node;
     Light* light;
@@ -2412,9 +2412,9 @@ void light_render_internal(GameDrawInfo* draw_info)
         rect_node = rect_node->next;
     }
 
-    v1 = draw_info->field_C;
+    v1 = draw_info->sectors;
     while (v1 != NULL) {
-        if (sector_lock(v1->id, &sector)) {
+        if (sector_lock(v1->sec, &sector)) {
             light_node = sector->lights.head;
             while (light_node != NULL) {
                 light = (Light*)light_node->data;
@@ -2515,7 +2515,7 @@ void light_render_internal(GameDrawInfo* draw_info)
                 }
                 light_node = light_node->next;
             }
-            sector_unlock(v1->id);
+            sector_unlock(v1->sec);
         }
         v1 = v1->next;
     }
