@@ -79,7 +79,7 @@ int bless_get_logbook_data(int64_t obj, BlessLogbookEntry* logbook_entries)
 }
 
 // 0x4C4280
-bool bless_is_added_to(int64_t obj, int bless)
+bool bless_has(int64_t obj, int bless)
 {
     int cnt;
     int index;
@@ -95,7 +95,7 @@ bool bless_is_added_to(int64_t obj, int bless)
         }
     }
 
-    return true;
+    return false;
 }
 
 // 0x4C42F0
@@ -109,7 +109,7 @@ void bless_add(int64_t obj, int bless)
         return;
     }
 
-    if (bless_is_added_to(obj, bless)) {
+    if (bless_has(obj, bless)) {
         return;
     }
 

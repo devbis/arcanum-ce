@@ -17,7 +17,7 @@ void bless_mod_unload();
 void bless_copy_name(int bless, char* buffer);
 void bless_copy_description(int bless, char* buffer);
 int bless_get_logbook_data(int64_t obj, BlessLogbookEntry* logbook_entries);
-bool bless_is_added_to(int64_t obj, int bless);
+bool bless_has(int64_t obj, int bless);
 void bless_add(int64_t obj, int bless);
 int bless_get_effect(int bless);
 void bless_remove(int64_t obj, int bless);

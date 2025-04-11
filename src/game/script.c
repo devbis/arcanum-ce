@@ -735,7 +735,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         bless = script_get_value(condition->op_type[1], condition->op_value[1], state);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (bless_is_added_to(objs[index], bless)) {
+            if (bless_has(objs[index], bless)) {
                 matched++;
             }
         }
@@ -756,7 +756,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         curse = script_get_value(condition->op_type[1], condition->op_value[1], state);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (curse_is_added_to(objs[index], curse)) {
+            if (curse_has(objs[index], curse)) {
                 matched++;
             }
         }

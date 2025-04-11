@@ -79,7 +79,7 @@ int curse_get_logbook_data(int64_t obj, CurseLogbookEntry* logbook_entries)
 }
 
 // 0x4C3DD0
-bool curse_is_added_to(int64_t obj, int curse)
+bool curse_has(int64_t obj, int curse)
 {
     int cnt;
     int index;
@@ -95,7 +95,7 @@ bool curse_is_added_to(int64_t obj, int curse)
         }
     }
 
-    return true;
+    return false;
 }
 
 // 0x4C3E40
@@ -109,7 +109,7 @@ void curse_add(int64_t obj, int curse)
         return;
     }
 
-    if (curse_is_added_to(obj, curse)) {
+    if (curse_has(obj, curse)) {
         return;
     }
 
