@@ -146,7 +146,6 @@ int townmap_get(int64_t sec)
 void townmap_set(int64_t sec, int townmap)
 {
     Sector* sector;
-    int num;
 
     if (!sector_lock(sec, &sector)) {
         return;
