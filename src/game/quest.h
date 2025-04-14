@@ -42,7 +42,7 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num);
 int sub_4C4CB0(int64_t obj, int num);
 void sub_4C4D20(int64_t obj, int num, int state, int64_t a4);
 int sub_4C4E60(int64_t obj, int num, int state, int64_t a4);
-int sub_4C5070(int64_t obj, int num);
+int quest_unbotch(int64_t obj, int num);
 int quest_get_state(int id);
 int quest_set_state(int id, int state);
 void quest_copy_description(int64_t obj, int quest_id, char* buffer);

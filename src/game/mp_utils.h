@@ -333,15 +333,13 @@ typedef struct Packet39 {
 
 static_assert(sizeof(Packet39) == 0x70, "wrong size");
 
-typedef struct Packet40 {
+typedef struct PacketQuestUnbotch {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
     /* 0008 */ FollowerInfo field_8;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-} Packet40;
+    /* 0038 */ int quest;
+} PacketQuestUnbotch;
 
-static_assert(sizeof(Packet40) == 0x40, "wrong size");
+static_assert(sizeof(PacketQuestUnbotch) == 0x40, "wrong size");
 
 typedef struct ChangeBlessPacket {
     /* 0000 */ int type;

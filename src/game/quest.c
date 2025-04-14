@@ -376,11 +376,10 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 }
 
 // 0x4C5070
-int sub_4C5070(int64_t obj, int num)
+int quest_unbotch(int64_t obj, int num)
 {
     int state;
     PcQuestState pc_quest_state;
-    Packet40 pkt;
 
     state = quest_get_state(num);
     if (state != QUEST_STATE_BOTCHED) {
@@ -392,6 +391,8 @@ int sub_4C5070(int64_t obj, int num)
     }
 
     if (!multiplayer_is_locked()) {
+        PacketQuestUnbotch pkt;
+
         if (!tig_net_is_host()) {
             obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
             return pc_quest_state.state;
@@ -399,7 +400,7 @@ int sub_4C5070(int64_t obj, int num)
 
         pkt.type = 40;
         sub_4440E0(obj, &(pkt.field_8));
-        pkt.field_38 = num;
+        pkt.quest = num;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
