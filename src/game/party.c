@@ -207,8 +207,8 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
         party_member_obj = party_find_first(a1, &iter);
         do {
             if (party_member_obj != a2) {
-                sub_4C5400(party_member_obj, a2);
-                sub_4C5400(a2, party_member_obj);
+                quest_copy_accepted(party_member_obj, a2);
+                quest_copy_accepted(a2, party_member_obj);
                 rumor_copy_known(party_member_obj, a2);
                 rumor_copy_known(a2, party_member_obj);
             }

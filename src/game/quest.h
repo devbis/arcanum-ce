@@ -48,6 +48,6 @@ int quest_set_state(int id, int state);
 void quest_copy_description(int64_t obj, int quest_id, char* buffer);
 int quest_get_logbook_data(int64_t obj, QuestLogbookEntry* logbook_entries);
 int quest_get_xp(int xp_level);
-bool sub_4C5400(int64_t a1, int64_t a2);
+bool quest_copy_accepted(int64_t src_obj, int64_t dst_obj);
 
 #endif /* ARCANUM_GAME_QUEST_H_ */

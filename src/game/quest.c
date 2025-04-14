@@ -530,33 +530,33 @@ int quest_get_xp(int xp_level)
 }
 
 // 0x4C5400
-bool sub_4C5400(int64_t a1, int64_t a2)
+bool quest_copy_accepted(int64_t src_obj, int64_t dst_obj)
 {
     PcQuestState pc_quests[2000];
     int index;
     int state;
     int other_state;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(src_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
-    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(dst_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
-    obj_arrayfield_pc_quest_copy_to_flat(a1, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
+    obj_arrayfield_pc_quest_copy_to_flat(src_obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
 
     for (index = 0; index < 2000; index++) {
-        state = sub_4C4CB0(a2, index);
+        state = sub_4C4CB0(dst_obj, index);
         if (state != QUEST_STATE_COMPLETED
             && state != QUEST_STATE_OTHER_COMPLETED
             && state != QUEST_STATE_BOTCHED) {
             other_state = pc_quests[index].state & ~0x100;
             if (state < other_state && other_state == QUEST_STATE_ACCEPTED) {
-                sub_4C4E60(a2, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
+                sub_4C4E60(dst_obj, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
                 if ((pc_quests[index].state & 0x100) != 0) {
-                    sub_4C4E60(a2, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
+                    sub_4C4E60(dst_obj, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
                 }
             }
         }
