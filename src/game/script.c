@@ -720,7 +720,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 
         quest = script_get_value(condition->op_type[0], condition->op_value[0], state);
         quest_state = script_get_value(condition->op_type[1], condition->op_value[1], state);
-        if (quest_get_state(quest) == quest_state) {
+        if (quest_gstate_get(quest) == quest_state) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
@@ -1658,7 +1658,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_SET_QUEST_GLOBAL_STATE: {
         int quest_num = script_get_value(action->op_type[0], action->op_value[0], state);
         int quest_state = script_get_value(action->op_type[1], action->op_value[1], state);
-        quest_set_state(quest_num, quest_state);
+        quest_gstate_set(quest_num, quest_state);
         return NEXT;
     }
     case SAT_LOOP_FOR:

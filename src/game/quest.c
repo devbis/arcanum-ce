@@ -234,7 +234,7 @@ int sub_4C4CB0(int64_t obj, int num)
     int state;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        return quest_get_state(num);
+        return quest_gstate_get(num);
     }
 
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
@@ -381,7 +381,7 @@ int quest_unbotch(int64_t obj, int num)
     int state;
     PcQuestState pc_quest_state;
 
-    state = quest_get_state(num);
+    state = quest_gstate_get(num);
     if (state != QUEST_STATE_BOTCHED) {
         return state;
     }
@@ -425,22 +425,15 @@ int quest_unbotch(int64_t obj, int num)
 }
 
 // 0x4C51A0
-int quest_get_state(int num)
+int quest_gstate_get(int num)
 {
     return quest_states[num - 1000];
 }
 
 // 0x4C51C0
-int quest_set_state(int num, int state)
+int quest_gstate_set(int num, int state)
 {
     int old_state;
-    struct {
-        int type;
-        int field_4;
-        int field_8;
-    } packet;
-
-    static_assert(sizeof(packet) == 0xC, "wrong size");
 
     old_state = quest_states[num - 1000];
     if (old_state == QUEST_STATE_COMPLETED || old_state == QUEST_STATE_BOTCHED) {
@@ -448,14 +441,16 @@ int quest_set_state(int num, int state)
     }
 
     if (!multiplayer_is_locked()) {
+        PacketQuestGStateSet pkt;
+
         if (!tig_net_is_host()) {
             return state;
         }
 
-        packet.type = 41;
-        packet.field_4 = num;
-        packet.field_8 = state;
-        tig_net_send_app_all(&packet, sizeof(packet));
+        pkt.type = 41;
+        pkt.quest = num;
+        pkt.state = state;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_BOTCHED) {
