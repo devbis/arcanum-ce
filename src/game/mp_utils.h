@@ -322,16 +322,15 @@ typedef struct PacketRumorKnownSet {
 
 static_assert(sizeof(PacketRumorKnownSet) == 0x28, "wrong size");
 
-typedef struct Packet39 {
+typedef struct PacketQuestStateSet {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int quest;
     /* 003C */ int state;
     /* 0040 */ FollowerInfo field_40;
-} Packet39;
+} PacketQuestStateSet;
 
-static_assert(sizeof(Packet39) == 0x70, "wrong size");
+static_assert(sizeof(PacketQuestStateSet) == 0x70, "wrong size");
 
 typedef struct PacketQuestUnbotch {
     /* 0000 */ int type;

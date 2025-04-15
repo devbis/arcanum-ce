@@ -156,7 +156,7 @@ bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
     int player;
     char str[256];
     char v1[40];
-    Packet39 pkt;
+    PacketQuestStateSet pkt;
 
     player = sub_4A2B10(obj);
 

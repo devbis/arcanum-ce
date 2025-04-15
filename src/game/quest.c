@@ -26,6 +26,7 @@ typedef struct Quest {
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
 static bool quest_parse(const char* path, int start, int end);
+static int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj);
 static int quest_logbook_entry_compare(const void* va, const void* vb);
 
 // 0x5B6E34
@@ -38,7 +39,7 @@ static mes_file_handle_t quest_log_dumb_mes_file = MES_FILE_HANDLE_INVALID;
 static mes_file_handle_t quest_xp_mes_file;
 
 // 0x5FF418
-static int* quest_states;
+static int* quest_gstate;
 
 // 0x5FF41C
 static Quest* quests;
@@ -48,11 +49,11 @@ bool quest_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    quest_states = (int*)CALLOC(MAX_QUEST, sizeof(*quest_states));
+    quest_gstate = (int*)CALLOC(MAX_QUEST, sizeof(*quest_gstate));
     quests = (Quest*)CALLOC(MAX_QUEST, sizeof(*quests));
 
     if (!mes_load("Rules\\xp_quest.mes", &quest_xp_mes_file)) {
-        FREE(quest_states);
+        FREE(quest_gstate);
         FREE(quests);
         return false;
     }
@@ -66,7 +67,7 @@ void quest_reset()
     int index;
 
     for (index = 0; index < MAX_QUEST; index++) {
-        quest_states[index] = QUEST_STATE_ACCEPTED;
+        quest_gstate[index] = QUEST_STATE_ACCEPTED;
     }
 }
 
@@ -74,7 +75,7 @@ void quest_reset()
 void quest_exit()
 {
     mes_unload(quest_xp_mes_file);
-    FREE(quest_states);
+    FREE(quest_gstate);
     FREE(quests);
 }
 
@@ -140,7 +141,7 @@ void quest_mod_unload()
 // 0x4C4800
 bool quest_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(quest_states, sizeof(*quest_states) * MAX_QUEST, 1, load_info->stream) != 1) {
+    if (tig_file_fread(quest_gstate, sizeof(*quest_gstate) * MAX_QUEST, 1, load_info->stream) != 1) {
         return false;
     }
 
@@ -150,7 +151,7 @@ bool quest_load(GameLoadInfo* load_info)
 // 0x4C4830
 bool quest_save(TigFile* stream)
 {
-    if (tig_file_fwrite(quest_states, sizeof(*quest_states) * MAX_QUEST, 1, stream) != 1) {
+    if (tig_file_fwrite(quest_gstate, sizeof(*quest_gstate) * MAX_QUEST, 1, stream) != 1) {
         return false;
     }
 
@@ -215,7 +216,7 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num)
         return 0;
     }
 
-    state = sub_4C4CB0(a1, num);
+    state = quest_state_get(a1, num);
     if (stat_level_get(a1, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         return quests[num].dumb_dialog[state];
     }
@@ -228,16 +229,16 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num)
 }
 
 // 0x4C4CB0
-int sub_4C4CB0(int64_t obj, int num)
+int quest_state_get(int64_t pc_obj, int num)
 {
     PcQuestState pc_quest_state;
     int state;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return quest_gstate_get(num);
     }
 
-    obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_get(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     state = pc_quest_state.state;
     if ((state & 0x100) != 0) {
@@ -248,7 +249,7 @@ int sub_4C4CB0(int64_t obj, int num)
 }
 
 // 0x4C4D20
-void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
+void quest_state_set(int64_t pc_obj, int num, int state, int64_t npc_obj)
 {
     int old_state;
     int64_t party_member_obj;
@@ -256,7 +257,7 @@ void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
     int64_t player_obj;
     int player_index;
 
-    old_state = sub_4C4CB0(obj, num);
+    old_state = quest_state_get(pc_obj, num);
     if (old_state == QUEST_STATE_COMPLETED
         || old_state == QUEST_STATE_OTHER_COMPLETED
         || old_state == QUEST_STATE_BOTCHED) {
@@ -268,77 +269,78 @@ void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
     }
 
     if (state == QUEST_STATE_COMPLETED) {
-        critter_give_xp(obj, quest_get_xp(quests[num].experience_level));
+        critter_give_xp(pc_obj, quest_get_xp(quests[num].experience_level));
     }
 
     if (!tig_net_is_active()) {
-        sub_4C4E60(obj, num, state, a4);
+        quest_state_set_internal(pc_obj, num, state, npc_obj);
         return;
     }
 
     if (tig_net_is_host()) {
         if (state == QUEST_STATE_ACCEPTED || state == QUEST_STATE_COMPLETED) {
-            party_member_obj = party_find_first(obj, &party_member_index);
+            party_member_obj = party_find_first(pc_obj, &party_member_index);
             do {
-                sub_4C4E60(party_member_obj, num, state, a4);
+                quest_state_set_internal(party_member_obj, num, state, npc_obj);
             } while ((party_member_obj = party_find_next(&party_member_index)) != OBJ_HANDLE_NULL);
         } else if (state == QUEST_STATE_BOTCHED) {
             for (player_index = 0; player_index < 8; player_index++) {
                 player_obj = sub_4A2B60(player_index);
                 if (player_obj != OBJ_HANDLE_NULL) {
-                    sub_4C4E60(player_obj, num, state, a4);
+                    quest_state_set_internal(player_obj, num, state, npc_obj);
                 }
             }
         } else {
-            sub_4C4E60(obj, num, state, a4);
+            quest_state_set_internal(pc_obj, num, state, npc_obj);
             return;
         }
     }
 
-    sub_4C4CB0(obj, num);
+    quest_state_get(pc_obj, num);
 }
 
 // 0x4C4E60
-int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
+int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj)
 {
     int old_state;
-    Packet39 pkt;
     PcQuestState pc_quest_state;
     int reaction;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return state;
     }
 
-    old_state = sub_4C4CB0(obj, num);
+    old_state = quest_state_get(pc_obj, num);
     if (!multiplayer_is_locked()) {
+        PacketQuestStateSet pkt;
+
         if (!tig_net_is_host()) {
             return old_state;
         }
 
         pkt.type = 39;
-        sub_4440E0(obj, &(pkt.field_8));
+        sub_4440E0(pc_obj, &(pkt.field_8));
         pkt.quest = num;
         pkt.state = state;
-        sub_4440E0(a4, &(pkt.field_40));
+        sub_4440E0(npc_obj, &(pkt.field_40));
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (quest_states[num - 1000] == QUEST_STATE_ACCEPTED) {
+    if (quest_gstate[num - 1000] == QUEST_STATE_ACCEPTED) {
         if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_OTHER_COMPLETED) {
-            quest_states[num - 1000] = QUEST_STATE_COMPLETED;
+            quest_gstate[num - 1000] = QUEST_STATE_COMPLETED;
         } else if (state == QUEST_STATE_BOTCHED) {
-            quest_states[num - 1000] = QUEST_STATE_BOTCHED;
+            quest_gstate[num - 1000] = QUEST_STATE_BOTCHED;
         }
     } else {
-        if (quest_states[num - 1000] == QUEST_STATE_COMPLETED) {
+        if (quest_gstate[num - 1000] == QUEST_STATE_COMPLETED) {
             state = QUEST_STATE_OTHER_COMPLETED;
         } else {
             state = QUEST_STATE_BOTCHED;
         }
     }
 
-    obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_get(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     if (state == QUEST_STATE_BOTCHED) {
         pc_quest_state.state |= 0x100;
     } else {
@@ -346,27 +348,27 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
     }
 
     pc_quest_state.datetime = sub_45A7C0();
-    obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_set(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (state == QUEST_STATE_COMPLETED) {
-        stat_base_set(obj,
+        stat_base_set(pc_obj,
             STAT_ALIGNMENT,
-            stat_base_get(obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
+            stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
         tig_sound_quick_play(3028);
     }
 
-    if (a4 != OBJ_HANDLE_NULL) {
+    if (npc_obj != OBJ_HANDLE_NULL) {
         if (state == QUEST_STATE_ACCEPTED) {
-            reaction = reaction_get(a4, obj);
+            reaction = reaction_get(npc_obj, pc_obj);
             if (reaction < 41) {
-                reaction_adj(a4, obj, 41 - reaction);
+                reaction_adj(npc_obj, pc_obj, 41 - reaction);
             }
         } else if (state == QUEST_STATE_COMPLETED) {
-            reaction_adj(a4, obj, 10);
+            reaction_adj(npc_obj, pc_obj, 10);
         }
     }
 
-    if (player_is_local_pc_obj(obj)) {
+    if (player_is_local_pc_obj(pc_obj)) {
         if ((pc_quest_state.state & ~0x100) != QUEST_STATE_UNKNOWN) {
             ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
         }
@@ -404,7 +406,7 @@ int quest_unbotch(int64_t obj, int num)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    quest_states[num - 1000] = QUEST_STATE_ACCEPTED;
+    quest_gstate[num - 1000] = QUEST_STATE_ACCEPTED;
 
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     pc_quest_state.state &= ~0x100;
@@ -427,7 +429,7 @@ int quest_unbotch(int64_t obj, int num)
 // 0x4C51A0
 int quest_gstate_get(int num)
 {
-    return quest_states[num - 1000];
+    return quest_gstate[num - 1000];
 }
 
 // 0x4C51C0
@@ -435,7 +437,7 @@ int quest_gstate_set(int num, int state)
 {
     int old_state;
 
-    old_state = quest_states[num - 1000];
+    old_state = quest_gstate[num - 1000];
     if (old_state == QUEST_STATE_COMPLETED || old_state == QUEST_STATE_BOTCHED) {
         return old_state;
     }
@@ -454,7 +456,7 @@ int quest_gstate_set(int num, int state)
     }
 
     if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_BOTCHED) {
-        quest_states[num - 1000] = state;
+        quest_gstate[num - 1000] = state;
         return state;
     } else {
         return QUEST_STATE_ACCEPTED;
@@ -544,15 +546,15 @@ bool quest_copy_accepted(int64_t src_obj, int64_t dst_obj)
     obj_arrayfield_pc_quest_copy_to_flat(src_obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
 
     for (index = 0; index < 2000; index++) {
-        state = sub_4C4CB0(dst_obj, index);
+        state = quest_state_get(dst_obj, index);
         if (state != QUEST_STATE_COMPLETED
             && state != QUEST_STATE_OTHER_COMPLETED
             && state != QUEST_STATE_BOTCHED) {
             other_state = pc_quests[index].state & ~0x100;
             if (state < other_state && other_state == QUEST_STATE_ACCEPTED) {
-                sub_4C4E60(dst_obj, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
+                quest_state_set_internal(dst_obj, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
                 if ((pc_quests[index].state & 0x100) != 0) {
-                    sub_4C4E60(dst_obj, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
+                    quest_state_set_internal(dst_obj, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
                 }
             }
         }

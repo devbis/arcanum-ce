@@ -700,7 +700,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (sub_4C4CB0(objs[index], quest) == quest_state) {
+            if (quest_state_get(objs[index], quest) == quest_state) {
                 matched++;
             }
         }
@@ -1646,7 +1646,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int quest_state = script_get_value(action->op_type[2], action->op_value[2], state);
 
         for (int idx = 0; idx < cnt; idx++) {
-            sub_4C4D20(handles[idx],
+            quest_state_set(handles[idx],
                 quest_num,
                 quest_state,
                 state->invocation->attachee_obj);

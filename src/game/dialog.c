@@ -1478,7 +1478,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
             }
             break;
         case DIALOG_COND_QU:
-            if (sub_4C4CB0(a1->pc_obj, value) != sub_4167C0(pch)) {
+            if (quest_state_get(a1->pc_obj, value) != sub_4167C0(pch)) {
                 return false;
             }
             break;
@@ -1655,7 +1655,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
             }
             break;
         case DIALOG_COND_QB:
-            if (sub_4C4CB0(a1->pc_obj, value) > sub_4167C0(pch)) {
+            if (quest_state_get(a1->pc_obj, value) > sub_4167C0(pch)) {
                 return false;
             }
             break;
@@ -1703,7 +1703,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
             }
             break;
         case DIALOG_COND_QA:
-            if (sub_4C4CB0(a1->pc_obj, value) < sub_4167C0(pch)) {
+            if (quest_state_get(a1->pc_obj, value) < sub_4167C0(pch)) {
                 return false;
             }
             break;
@@ -1952,7 +1952,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             break;
         }
         case DIALOG_ACTION_QU:
-            sub_4C4D20(a1->pc_obj, value, sub_4167C0(pch), a1->npc_obj);
+            quest_state_set(a1->pc_obj, value, sub_4167C0(pch), a1->npc_obj);
             break;
         case DIALOG_ACTION_FL:
             a1->num = value;
