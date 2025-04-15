@@ -13,6 +13,8 @@
 
 #define MAX_QUEST 1000
 
+#define QUEST_BOTCHED_MODIFIER 0x100
+
 typedef struct Quest {
     int experience_level;
     int alignment_adjustment;
@@ -241,7 +243,7 @@ int quest_state_get(int64_t pc_obj, int num)
     obj_arrayfield_pc_quest_get(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     state = pc_quest_state.state;
-    if ((state & 0x100) != 0) {
+    if ((state & QUEST_BOTCHED_MODIFIER) != 0) {
         state = QUEST_STATE_BOTCHED;
     }
 
@@ -342,7 +344,7 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
 
     obj_arrayfield_pc_quest_get(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     if (state == QUEST_STATE_BOTCHED) {
-        pc_quest_state.state |= 0x100;
+        pc_quest_state.state |= QUEST_BOTCHED_MODIFIER;
     } else {
         pc_quest_state.state = state;
     }
@@ -369,7 +371,7 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
     }
 
     if (player_is_local_pc_obj(pc_obj)) {
-        if ((pc_quest_state.state & ~0x100) != QUEST_STATE_UNKNOWN) {
+        if ((pc_quest_state.state & ~QUEST_BOTCHED_MODIFIER) != QUEST_STATE_UNKNOWN) {
             ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, true);
         }
     }
@@ -409,7 +411,7 @@ int quest_unbotch(int64_t obj, int num)
     quest_gstate[num - 1000] = QUEST_STATE_ACCEPTED;
 
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
-    pc_quest_state.state &= ~0x100;
+    pc_quest_state.state &= ~QUEST_BOTCHED_MODIFIER;
     pc_quest_state.datetime = sub_45A7C0();
     obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
@@ -489,10 +491,10 @@ int quest_get_logbook_data(int64_t obj, QuestLogbookEntry* logbook_entries)
 
     cnt = 0;
     for (index = 0; index < 2000; index++) {
-        if ((pc_quests[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
+        if ((pc_quests[index].state & ~QUEST_BOTCHED_MODIFIER) != QUEST_STATE_UNKNOWN) {
             logbook_entries[cnt].num = index;
             logbook_entries[cnt].datetime = pc_quests[index].datetime;
-            if ((pc_quests[index].state & 0x100) != 0) {
+            if ((pc_quests[index].state & QUEST_BOTCHED_MODIFIER) != 0) {
                 logbook_entries[cnt].state = QUEST_STATE_BOTCHED;
             } else {
                 logbook_entries[cnt].state = pc_quests[index].state;
@@ -551,10 +553,10 @@ bool quest_copy_accepted(int64_t src_obj, int64_t dst_obj)
         if (state != QUEST_STATE_COMPLETED
             && state != QUEST_STATE_OTHER_COMPLETED
             && state != QUEST_STATE_BOTCHED) {
-            other_state = pc_quests[index].state & ~0x100;
+            other_state = pc_quests[index].state & ~QUEST_BOTCHED_MODIFIER;
             if (state < other_state && other_state == QUEST_STATE_ACCEPTED) {
                 quest_state_set_internal(dst_obj, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
-                if ((pc_quests[index].state & 0x100) != 0) {
+                if ((pc_quests[index].state & QUEST_BOTCHED_MODIFIER) != 0) {
                     quest_state_set_internal(dst_obj, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
                 }
             }
