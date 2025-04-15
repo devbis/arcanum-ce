@@ -3639,12 +3639,12 @@ void sub_419260(DialogState* a1, const char* str)
     if ((flags[9] & 0x2) == 0) {
         if (!sub_4197D0(flags[9], values[9], a1)) {
             int reaction_level;
-            int v4;
+            int reputation;
 
             if (random_between(1, 100) <= 20) {
-                v4 = sub_4C1F80(a1->pc_obj, a1->npc_obj);
-                if (v4 != 0) {
-                    sub_4C2100(a1->pc_obj, a1->npc_obj, v4, a1->reply);
+                reputation = reputation_pick(a1->pc_obj, a1->npc_obj);
+                if (reputation != 0) {
+                    sub_4C2100(a1->pc_obj, a1->npc_obj, reputation, a1->reply);
                     a1->speech_id = -1;
                     if (a1->reply[0] != '\0') {
                         return;

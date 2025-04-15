@@ -397,7 +397,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
 }
 
 // 0x4C1F80
-int sub_4C1F80(int64_t pc_obj, int64_t npc_obj)
+int reputation_pick(int64_t pc_obj, int64_t npc_obj)
 {
     int cnt;
     int index;
@@ -438,7 +438,7 @@ int sub_4C1F80(int64_t pc_obj, int64_t npc_obj)
             if ((effect->origin == 0 || effect->origin == origin)
                 && (effect->faction == 0 || effect->faction == faction)) {
                 if ((effect->adj < 0 && reaction_type > REACTION_NEUTRAL)
-                    || (effect > 0 && reaction_type < REACTION_NEUTRAL)) {
+                    || (effect->adj > 0 && reaction_type < REACTION_NEUTRAL)) {
                     dword_5FC8B8[selected++] = index;
                     break;
                 }

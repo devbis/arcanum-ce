@@ -19,7 +19,7 @@ int reputation_get_logbook_data(int64_t pc_obj, ReputationLogbookEntry* logbook_
 bool reputation_has(int64_t pc_obj, int reputation);
 void reputation_add(int64_t pc_obj, int reputation);
 void reputation_remove(int64_t pc_obj, int reputation);
-int sub_4C1F80(int64_t pc_obj, int64_t npc_obj);
+int reputation_pick(int64_t pc_obj, int64_t npc_obj);
 void sub_4C2100(int64_t pc_obj, int64_t npc_obj, int reputation, char* buffer);
 bool sub_4C21E0(int64_t pc_obj, int faction);
 
