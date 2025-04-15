@@ -340,13 +340,13 @@ typedef struct PacketQuestUnbotch {
 
 static_assert(sizeof(PacketQuestUnbotch) == 0x40, "wrong size");
 
-typedef struct PacketQuestGStateSet {
+typedef struct PacketQuestGlobalStateSet {
     /* 0000 */ int type;
     /* 0004 */ int quest;
     /* 0008 */ int state;
-} PacketQuestGStateSet;
+} PacketQuestGlobalStateSet;
 
-static_assert(sizeof(PacketQuestGStateSet) == 0xC, "wrong size");
+static_assert(sizeof(PacketQuestGlobalStateSet) == 0xC, "wrong size");
 
 typedef struct ChangeBlessPacket {
     /* 0000 */ int type;

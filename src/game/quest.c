@@ -235,7 +235,7 @@ int quest_state_get(int64_t pc_obj, int num)
     int state;
 
     if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        return quest_gstate_get(num);
+        return quest_global_state_get(num);
     }
 
     obj_arrayfield_pc_quest_get(pc_obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
@@ -383,7 +383,7 @@ int quest_unbotch(int64_t obj, int num)
     int state;
     PcQuestState pc_quest_state;
 
-    state = quest_gstate_get(num);
+    state = quest_global_state_get(num);
     if (state != QUEST_STATE_BOTCHED) {
         return state;
     }
@@ -427,13 +427,13 @@ int quest_unbotch(int64_t obj, int num)
 }
 
 // 0x4C51A0
-int quest_gstate_get(int num)
+int quest_global_state_get(int num)
 {
     return quest_gstate[num - 1000];
 }
 
 // 0x4C51C0
-int quest_gstate_set(int num, int state)
+int quest_global_state_set(int num, int state)
 {
     int old_state;
 
@@ -443,7 +443,7 @@ int quest_gstate_set(int num, int state)
     }
 
     if (!multiplayer_is_locked()) {
-        PacketQuestGStateSet pkt;
+        PacketQuestGlobalStateSet pkt;
 
         if (!tig_net_is_host()) {
             return state;
