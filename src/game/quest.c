@@ -497,6 +497,7 @@ int quest_get_logbook_data(int64_t obj, QuestLogbookEntry* logbook_entries)
             } else {
                 logbook_entries[cnt].state = pc_quests[index].state;
             }
+            cnt++;
         }
     }
 
