@@ -3644,7 +3644,7 @@ void sub_419260(DialogState* a1, const char* str)
             if (random_between(1, 100) <= 20) {
                 reputation = reputation_pick(a1->pc_obj, a1->npc_obj);
                 if (reputation != 0) {
-                    sub_4C2100(a1->pc_obj, a1->npc_obj, reputation, a1->reply);
+                    reputation_copy_greeting(a1->pc_obj, a1->npc_obj, reputation, a1->reply);
                     a1->speech_id = -1;
                     if (a1->reply[0] != '\0') {
                         return;

@@ -454,7 +454,7 @@ int reputation_pick(int64_t pc_obj, int64_t npc_obj)
 }
 
 // 0x4C2100
-void sub_4C2100(int64_t pc_obj, int64_t npc_obj, int reputation, char* buffer)
+void reputation_copy_greeting(int64_t pc_obj, int64_t npc_obj, int reputation, char* buffer)
 {
     int rp;
     MesFileEntry mes_file_entry;
