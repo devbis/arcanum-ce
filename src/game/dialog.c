@@ -2454,7 +2454,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_17F0[a2] = 25;
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "q:", 2) == 0) {
-        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(entry.str + 2));
+        v4 = quest_dialog_line(a3->pc_obj, a3->npc_obj, atoi(entry.str + 2));
         if (v4 != -1) {
             return sub_416C10(v4, a2, a3);
         }

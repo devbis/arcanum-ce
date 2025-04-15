@@ -208,20 +208,20 @@ bool quest_parse(const char* path, int start, int end)
 }
 
 // 0x4C4C00
-int sub_4C4C00(int64_t a1, int64_t a2, int num)
+int quest_dialog_line(int64_t pc_obj, int64_t npc_obj, int num)
 {
     int state;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return 0;
     }
 
-    state = quest_state_get(a1, num);
-    if (stat_level_get(a1, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+    state = quest_state_get(pc_obj, num);
+    if (stat_level_get(pc_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         return quests[num].dumb_dialog[state];
     }
 
-    if (reaction_get(a2, a1) < 20) {
+    if (reaction_get(npc_obj, pc_obj) < 20) {
         return quests[num].bad_reaction_dialog[state];
     }
 
