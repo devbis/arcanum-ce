@@ -308,7 +308,6 @@ bool reputation_has(int64_t pc_obj, int reputation)
 // 0x4C1D20
 void reputation_add(int64_t pc_obj, int reputation)
 {
-    Packet105 pkt;
     int index;
 
     if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
@@ -320,6 +319,8 @@ void reputation_add(int64_t pc_obj, int reputation)
     }
 
     if (!multiplayer_is_locked()) {
+        PacketChangeReputation pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
@@ -327,7 +328,7 @@ void reputation_add(int64_t pc_obj, int reputation)
         pkt.type = 105;
         pkt.pc_oid = sub_407EF0(pc_obj);
         pkt.reputation = reputation;
-        pkt.field_24 = 0;
+        pkt.action = CHANGE_REPUTATION_ACTION_ADD;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -343,7 +344,6 @@ void reputation_add(int64_t pc_obj, int reputation)
 // 0x4C1E10
 void reputation_remove(int64_t pc_obj, int reputation)
 {
-    Packet105 pkt;
     int cnt;
     int index;
     int next_rep;
@@ -354,6 +354,8 @@ void reputation_remove(int64_t pc_obj, int reputation)
     }
 
     if (!multiplayer_is_locked()) {
+        PacketChangeReputation pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
@@ -361,7 +363,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
         pkt.type = 105;
         pkt.pc_oid = sub_407EF0(pc_obj);
         pkt.reputation = reputation;
-        pkt.field_24 = 0;
+        pkt.action = CHANGE_REPUTATION_ACTION_REMOVE;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
