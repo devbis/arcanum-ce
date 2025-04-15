@@ -489,7 +489,7 @@ void reputation_copy_greeting(int64_t pc_obj, int64_t npc_obj, int reputation, c
 }
 
 // 0x4C21E0
-bool sub_4C21E0(int64_t pc_obj, int faction)
+bool reputation_check_faction(int64_t pc_obj, int faction)
 {
     int cnt;
     int rep_idx;

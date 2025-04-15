@@ -185,7 +185,7 @@ bool critter_faction_same(int64_t obj1, int64_t obj2)
             return false;
         }
 
-        return sub_4C21E0(obj1, faction);
+        return reputation_check_faction(obj1, faction);
     }
 
     if (obj_type2 == OBJ_TYPE_PC) {
@@ -198,7 +198,7 @@ bool critter_faction_same(int64_t obj1, int64_t obj2)
             return false;
         }
 
-        return sub_4C21E0(obj2, faction);
+        return reputation_check_faction(obj2, faction);
     }
 
     v1 = critter_pc_leader_get(obj1);
