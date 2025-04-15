@@ -384,7 +384,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
     for (; index < cnt - 1; index++) {
         // TODO: Does not look right.
         next_rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, 2 * index);
-        next_ts = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, 2 * index);
+        next_ts = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, 2 * index);
         obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, next_rep);
         obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, next_ts);
     }
