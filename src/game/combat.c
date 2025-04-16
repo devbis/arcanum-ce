@@ -2371,7 +2371,7 @@ void sub_4B58C0(CombatContext* combat)
         }
     }
 
-    sub_4B80E0(combat->target_obj);
+    combat_recalc_reaction(combat->target_obj);
 }
 
 // 0x4B5E90
@@ -3787,7 +3787,7 @@ void sub_4B7EB0()
 
     node = stru_5FC180.head;
     while (node != NULL) {
-        sub_4B80E0(node->obj);
+        combat_recalc_reaction(node->obj);
         node = node->next;
     }
 
@@ -3862,7 +3862,7 @@ int sub_4B80D0()
 }
 
 // 0x4B80E0
-void sub_4B80E0(int64_t obj)
+void combat_recalc_reaction(int64_t obj)
 {
     // 0x5B5818
     static unsigned int dword_5B5818[7] = {
@@ -3881,23 +3881,25 @@ void sub_4B80E0(int64_t obj)
     unsigned int flags;
     AnimFxNode node;
 
-    if (combat_turn_based_active) {
-        pc_obj = player_get_local_pc_obj();
-        reaction_level = reaction_get(obj, pc_obj);
-        reaction_type = reaction_translate(reaction_level);
+    if (!combat_turn_based_active) {
+        return;
+    }
 
-        flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
-        flags &= ~(OCF2_REACTION_0 | OCF2_REACTION_1 | OCF2_REACTION_2 | OCF2_REACTION_3 | OCF2_REACTION_4 | OCF2_REACTION_5 | OCF2_REACTION_6);
-        flags |= dword_5B5818[reaction_type];
-        obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
+    pc_obj = player_get_local_pc_obj();
+    reaction_level = reaction_get(obj, pc_obj);
+    reaction_type = reaction_translate(reaction_level);
 
-        if (critter_is_dead(obj) || sub_4B7DC0(obj)) {
-            animfx_remove(&stru_5FC1F8, obj, 0, -1);
-        } else {
-            sub_4CCD20(&stru_5FC1F8, &node, obj, -1, 0);
-            if (!sub_4CCDD0(&node)) {
-                animfx_add(&node);
-            }
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+    flags &= ~(OCF2_REACTION_0 | OCF2_REACTION_1 | OCF2_REACTION_2 | OCF2_REACTION_3 | OCF2_REACTION_4 | OCF2_REACTION_5 | OCF2_REACTION_6);
+    flags |= dword_5B5818[reaction_type];
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
+
+    if (critter_is_dead(obj) || sub_4B7DC0(obj)) {
+        animfx_remove(&stru_5FC1F8, obj, 0, -1);
+    } else {
+        sub_4CCD20(&stru_5FC1F8, &node, obj, -1, 0);
+        if (!sub_4CCDD0(&node)) {
+            animfx_add(&node);
         }
     }
 }

@@ -303,7 +303,7 @@ void sub_4C0F50(int64_t a1, int64_t a2)
         }
     }
 
-    sub_4B80E0(a1);
+    combat_recalc_reaction(a1);
 }
 
 // 0x4C0FC0
@@ -530,7 +530,7 @@ void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index)
     mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index, level);
     mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index, datetime_current_second());
     sub_460240(npc_obj);
-    sub_4B80E0(npc_obj);
+    combat_recalc_reaction(npc_obj);
 }
 
 // 0x4C1500

@@ -533,7 +533,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
     combat_critter_deactivate_combat_mode(victim_obj);
     obj_field_int32_set(victim_obj, OBJ_F_CRITTER_DEATH_TIME, datetime_current_second());
     sub_459740(victim_obj);
-    sub_4B80E0(victim_obj);
+    combat_recalc_reaction(victim_obj);
 
     if (obj_field_int32_get(victim_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         critter_npc_combat_focus_wipe_schedule(victim_obj);

@@ -4294,7 +4294,7 @@ void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj)
         && !ai_shitlist_has(npc_obj, shit_obj)) {
         idx = obj_arrayfield_length_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX);
         obj_arrayfield_obj_set(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, idx, shit_obj);
-        sub_4B80E0(npc_obj);
+        combat_recalc_reaction(npc_obj);
     }
 }
 
