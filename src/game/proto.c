@@ -16007,7 +16007,7 @@ void sub_49B010(int64_t obj, int description)
         break;
     }
 
-    exp = sub_45F0B0(obj);
+    exp = critter_xp_worth(obj);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
     object_hp_damage_set(obj, 0);
@@ -16094,7 +16094,7 @@ void sub_49B340(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, description);
         sub_49B5A0(stream, obj, type);
 
-        exp = sub_45F0B0(obj);
+        exp = critter_xp_worth(obj);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
         object_hp_damage_set(obj, 0);

@@ -1526,7 +1526,7 @@ bool critter_check_stat(int64_t obj, int stat, int mod)
 }
 
 // 0x45F0B0
-int sub_45F0B0(int64_t obj)
+int critter_xp_worth(int64_t obj)
 {
     MesFileEntry mes_file_entry;
 

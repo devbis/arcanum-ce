@@ -84,7 +84,7 @@ void critter_set_concealed(int64_t obj, bool concealed);
 tig_art_id_t sub_45EFA0(tig_art_id_t art_id);
 bool sub_45EFF0(int64_t a, int64_t b);
 bool critter_check_stat(int64_t obj, int stat, int mod);
-int sub_45F0B0(int64_t obj);
+int critter_xp_worth(int64_t obj);
 void critter_give_xp(int64_t obj, int a2);
 bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
