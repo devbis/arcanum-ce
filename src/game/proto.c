@@ -16118,7 +16118,7 @@ void sub_49B340(int64_t obj, int description)
 
         if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & 0x1) != 0) {
             art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-            art_id = sub_45EFA0(art_id);
+            art_id = critter_conceal_aid(art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         }

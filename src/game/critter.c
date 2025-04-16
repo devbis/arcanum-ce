@@ -1449,7 +1449,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (concealed) {
-        new_art_id = sub_45EFA0(art_id);
+        new_art_id = critter_conceal_aid(art_id);
         if (new_art_id == art_id) {
             return;
         }
@@ -1479,7 +1479,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
 }
 
 // 0x45EFA0
-tig_art_id_t sub_45EFA0(tig_art_id_t art_id)
+tig_art_id_t critter_conceal_aid(tig_art_id_t art_id)
 {
     tig_art_id_t new_art_id;
     TigArtAnimData art_anim_data;
