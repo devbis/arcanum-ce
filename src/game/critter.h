@@ -82,7 +82,7 @@ bool critter_npc_combat_focus_wipe_schedule(int64_t obj);
 bool critter_is_concealed(int64_t obj);
 void critter_set_concealed(int64_t obj, bool concealed);
 tig_art_id_t critter_conceal_aid(tig_art_id_t art_id);
-bool sub_45EFF0(int64_t a, int64_t b);
+bool critter_is_facing_to(int64_t a, int64_t b);
 bool critter_check_stat(int64_t obj, int stat, int mod);
 int critter_xp_worth(int64_t obj);
 void critter_give_xp(int64_t obj, int a2);

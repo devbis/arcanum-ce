@@ -4062,7 +4062,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         return 1000;
     }
 
-    if (!sub_45EFF0(source_obj, target_obj)) {
+    if (!critter_is_facing_to(source_obj, target_obj)) {
         return 1000;
     }
 

@@ -1494,21 +1494,21 @@ tig_art_id_t critter_conceal_aid(tig_art_id_t art_id)
 }
 
 // 0x45EFF0
-bool sub_45EFF0(int64_t a, int64_t b)
+bool critter_is_facing_to(int64_t a, int64_t b)
 {
-    int v1;
-    int v2;
-    int v3;
+    int rot;
+    int facing;
+    int delta;
 
-    v1 = object_rot(a, b);
-    v2 = tig_art_id_rotation_get(obj_field_int32_get(a, OBJ_F_CURRENT_AID));
-    v3 = (v1 - v2 + 8) % 8;
+    rot = object_rot(a, b);
+    facing = tig_art_id_rotation_get(obj_field_int32_get(a, OBJ_F_CURRENT_AID));
+    delta = (rot - facing + 8) % 8;
 
-    return v3 == 0
-        || v3 == 1
-        || v3 == 7
-        || v3 == 2
-        || v3 == 6;
+    return delta == 0
+        || delta == 1
+        || delta == 7
+        || delta == 2
+        || delta == 6;
 }
 
 // 0x45F060
@@ -1939,7 +1939,7 @@ bool critter_can_backstab(int64_t obj, int64_t tgt)
         return false;
     }
 
-    if (sub_45EFF0(tgt, obj)) {
+    if (critter_is_facing_to(tgt, obj)) {
         return false;
     }
 
