@@ -1726,7 +1726,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             return false;
         }
 
-        sub_45F920();
+        critter_encumbrance_recalc_feedback_disable();
         item_remove(qword_6810E0);
         new_inventory_location = item_inventory_location_get(old_item_obj);
         item_remove(old_item_obj);
@@ -1745,7 +1745,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             item_insert(old_item_obj, v2, new_inventory_location);
             sub_575930();
         }
-        sub_45F910();
+        critter_encumbrance_recalc_feedback_enable();
 
         return false;
     }
@@ -1921,7 +1921,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                                     if ((inven_ui_mode != INVEN_UI_MODE_BARTER
                                             && inven_ui_mode != INVEN_UI_MODE_STEAL)
                                         || qword_681450 == parent_obj) {
-                                        sub_45F920();
+                                        critter_encumbrance_recalc_feedback_disable();
                                         item_remove(qword_6810E0);
                                         int old_inventory_location = item_inventory_location_get(old_item_obj);
                                         item_remove(old_item_obj);
@@ -1941,7 +1941,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                                             item_insert(old_item_obj, parent_obj, old_inventory_location);
                                             sub_575930();
                                         }
-                                        sub_45F910();
+                                        critter_encumbrance_recalc_feedback_enable();
                                     } else {
                                         sub_575770();
                                     }
@@ -3769,7 +3769,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
                 }
             }
 
-            sub_45F920();
+            critter_encumbrance_recalc_feedback_disable();
 
             item_remove(item_obj);
 
@@ -3778,7 +3778,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             } else {
                 item_insert(item_obj, target_obj, new_inventory_location);
             }
-            sub_45F910();
+            critter_encumbrance_recalc_feedback_enable();
         } else {
             if (item_parent(item_obj, &parent_obj)) {
                 sub_4673F0(item_obj, reason);

@@ -67,7 +67,7 @@ static mes_file_handle_t xp_mes_file;
 static char** social_class_names;
 
 // 0x5E8638
-static int dword_5E8638;
+static int critter_encumbrance_recalc_feedback_cnt;
 
 // 0x5E863C
 static bool critter_editor;
@@ -105,7 +105,7 @@ bool critter_init(GameInitInfo* init_info)
         social_class_names[index] = mes_file_entry.str;
     }
 
-    dword_5E8638 = 1;
+    critter_encumbrance_recalc_feedback_cnt = 1;
 
     return true;
 }
@@ -1876,7 +1876,7 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
 
     sub_436FA0(obj);
 
-    if (dword_5E8638 > 0 && player_is_local_pc_obj(obj)) {
+    if (critter_encumbrance_recalc_feedback_cnt > 0 && player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 11 + encumbrance_level;
         mes_get_msg(critter_mes_file, &mes_file_entry);
 
@@ -1891,15 +1891,15 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
 }
 
 // 0x45F910
-void sub_45F910()
+void critter_encumbrance_recalc_feedback_enable()
 {
-    dword_5E8638++;
+    critter_encumbrance_recalc_feedback_cnt++;
 }
 
 // 0x45F920
-void sub_45F920()
+void critter_encumbrance_recalc_feedback_disable()
 {
-    dword_5E8638--;
+    critter_encumbrance_recalc_feedback_cnt--;
 }
 
 // 0x45F930
