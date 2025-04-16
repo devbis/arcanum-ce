@@ -1661,11 +1661,11 @@ bool sub_4150D0(DialogState* a1, char* a2)
             break;
         case DIALOG_COND_ME:
             if (value == 0) {
-                if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+                if (reaction_met_before(a1->npc_obj, a1->pc_obj)) {
                     return false;
                 }
             } else if (value == 1) {
-                if (!sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+                if (!reaction_met_before(a1->npc_obj, a1->pc_obj)) {
                     return false;
                 }
             }
@@ -3653,7 +3653,7 @@ void sub_419260(DialogState* a1, const char* str)
             }
 
             reaction_level = reaction_translate(reaction_get(a1->npc_obj, a1->pc_obj));
-            if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+            if (reaction_met_before(a1->npc_obj, a1->pc_obj)) {
                 switch (reaction_level) {
                 case REACTION_LOVE:
                     dialog_copy_npc_class_specific_msg(a1->reply, a1, 11000);
