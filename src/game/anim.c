@@ -5545,7 +5545,7 @@ bool sub_426F10(AnimRunInfo* run_info)
         return false;
     }
 
-    return sub_45D730(obj);
+    return critter_is_prone(obj);
 }
 
 // 0x426F60

@@ -406,7 +406,7 @@ int critter_fatigue_current(int64_t obj)
 }
 
 // 0x45D730
-bool sub_45D730(int64_t obj)
+bool critter_is_prone(int64_t obj)
 {
     tig_art_id_t aid;
 

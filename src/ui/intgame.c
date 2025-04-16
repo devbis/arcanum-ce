@@ -2684,7 +2684,7 @@ void sub_54DE50(TigMessage* msg)
                     if ((spell_flags & OSF_STONED) == 0
                         && (critter_flags & (OCF_PARALYZED | OCF_STUNNED)) == 0
                         && critter_is_active(pc_obj)
-                        && !sub_45D730(pc_obj)) {
+                        && !critter_is_prone(pc_obj)) {
                         if (combat_critter_is_combat_mode_active(pc_obj)) {
                             if (sub_44E830(pc_obj, 2, NULL)
                                 || !sub_423300(pc_obj, 0)) {

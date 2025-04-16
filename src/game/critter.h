@@ -50,7 +50,7 @@ int critter_fatigue_damage_get(int64_t obj);
 int critter_fatigue_damage_set(int64_t obj, int value);
 int critter_fatigue_max(int64_t obj);
 int critter_fatigue_current(int64_t obj);
-bool sub_45D730(int64_t obj);
+bool critter_is_prone(int64_t obj);
 bool critter_is_active(int64_t obj);
 bool critter_is_unconscious(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
