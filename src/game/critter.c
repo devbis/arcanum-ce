@@ -1512,7 +1512,7 @@ bool sub_45EFF0(int64_t a, int64_t b)
 }
 
 // 0x45F060
-bool sub_45F060(int64_t obj, int stat, int mod)
+bool critter_check_stat(int64_t obj, int stat, int mod)
 {
     int value;
     int lower;

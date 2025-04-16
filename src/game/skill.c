@@ -1235,7 +1235,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                 }
             } else {
                 if (is_critical
-                    || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0))) {
+                    || (training == TRAINING_NONE && critter_check_stat(target_obj, STAT_PERCEPTION, 0))) {
                     object_script_execute(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
                     if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
@@ -1295,7 +1295,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             } else {
                 if (training < TRAINING_MASTER
                     && (is_critical
-                        || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0)))) {
+                        || (training == TRAINING_NONE && critter_check_stat(target_obj, STAT_PERCEPTION, 0)))) {
                     object_script_execute(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
                     if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC

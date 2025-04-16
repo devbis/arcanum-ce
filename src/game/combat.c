@@ -2492,13 +2492,13 @@ void sub_4B5F40(CombatContext* combat)
             }
 
             if (random_between(1, 100) <= difficulty
-                && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
+                && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, -5)) {
                 combat->dam_flags |= CDF_STUN;
 
                 if (target_obj_type != OBJ_TYPE_PC
                     && (critter_flags & OCF_FATIGUE_IMMUNE) == 0
                     && random_between(1, 100) < difficulty
-                    && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
+                    && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, -5)) {
                     combat->dam_flags |= CDF_KNOCKOUT;
                 }
             }
@@ -2508,7 +2508,7 @@ void sub_4B5F40(CombatContext* combat)
                 if (critter_crit_hit_chart != 4) {
                     if (critter_crit_hit_chart != 5 && combat->hit_loc == HIT_LOC_ARM) {
                         if (random_between(1, 100) <= chance + 1
-                            && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
+                            && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, -5)) {
                             combat->dam_flags |= CDF_CRIPPLE_ARM;
                         }
                         break;
@@ -2516,7 +2516,7 @@ void sub_4B5F40(CombatContext* combat)
 
                     if (combat->hit_loc == HIT_LOC_LEG) {
                         if (random_between(1, 100) <= chance + 1
-                            && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
+                            && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, -5)) {
                             combat->dam_flags |= CDF_CRIPPLE_LEG;
                         }
                         break;
@@ -2534,7 +2534,7 @@ void sub_4B5F40(CombatContext* combat)
 
                     if (!npc_attacks_pc
                         && random_between(1, 100) <= chance + (helmet_obj == OBJ_HANDLE_NULL ? 1 : 0)
-                        && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, 0)) {
+                        && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, 0)) {
                         combat->dam_flags |= CDF_BLIND;
                         break;
                     }
