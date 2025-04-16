@@ -348,7 +348,7 @@ int sub_468600(ObjectType object_type)
 }
 
 // 0x468610
-bool sub_468610(int description)
+bool proto_is_valid(int description)
 {
     ObjectType object_type;
 

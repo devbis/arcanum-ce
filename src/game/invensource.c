@@ -258,7 +258,7 @@ bool sub_4BF7B0(MesFileEntry* mes_file_entry, char* str)
             named_set->set.max_coins = basic_prototype;
             is_first = false;
         } else {
-            if (!sub_468610(basic_prototype)) {
+            if (!proto_is_valid(basic_prototype)) {
                 sprintf(invensource_error,
                     "Error: Invalid prototype in [%s]: set %d, entry %d, basic prototype %d\n",
                     off_5B64A8,
@@ -342,7 +342,7 @@ bool sub_4BFAA0(MesFileEntry* mes_file_entry, char* str)
         }
 
         basic_prototype = atoi(tok);
-        if (!sub_468610(basic_prototype)) {
+        if (!proto_is_valid(basic_prototype)) {
             sprintf(invensource_error,
               "Error: Invalid prototype in [%s]: set %d, entry %d, basic prototype %d\n",
               off_5B64AC,
