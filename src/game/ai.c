@@ -99,7 +99,7 @@ static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
-static void sub_4AAA60(int64_t obj, AiParams* params);
+static void ai_copy_params(int64_t obj, AiParams* params);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AABE0(int64_t a1, int danger_type, int64_t a3, int* a4);
 static bool sub_4AAF50(Ai* ai);
@@ -455,7 +455,7 @@ bool sub_4A8940(Ai* ai)
     v1 = true;
 
     if (combat_critter_is_combat_mode_active(ai->obj)) {
-        sub_4AAA60(ai->obj, &ai_params);
+        ai_copy_params(ai->obj, &ai_params);
         if (random_between(1, 100) > ai_params.field_38) {
             v1 = false;
         }
@@ -1001,7 +1001,7 @@ void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned in
                 if (source_obj_type == OBJ_TYPE_NPC) {
                     sub_4AF8C0(source_obj, target_obj);
                 } else if (source_obj_type == OBJ_TYPE_PC) {
-                    sub_4AAA60(target_obj, &ai_params);
+                    ai_copy_params(target_obj, &ai_params);
                     if (leader_obj == source_obj) {
                         if ((flags & 0x01) == 0) {
                             reaction_adj(target_obj, source_obj, ai_params.field_24);
@@ -1574,7 +1574,7 @@ bool sub_4AAA30(TimeEvent* timeevent)
 }
 
 // 0x4AAA60
-void sub_4AAA60(int64_t obj, AiParams* params)
+void ai_copy_params(int64_t obj, AiParams* params)
 {
     int index;
 
@@ -1716,7 +1716,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
 
             if (obj_field_int32_get(target_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 v1 = sub_4C0CE0(source_obj, target_obj);
-                sub_4AAA60(source_obj, &ai_params);
+                ai_copy_params(source_obj, &ai_params);
                 if (v1 > ai_params.field_28) {
                     reaction_adj(source_obj, target_obj, ai_params.field_28 - v1);
                 }
@@ -1784,7 +1784,7 @@ bool sub_4AB030(int64_t a1, int64_t a2)
         return true;
     }
 
-    sub_4AAA60(a1, &params);
+    ai_copy_params(a1, &params);
 
     return object_dist(a1, a2) > params.field_10;
 }
@@ -1881,7 +1881,7 @@ bool sub_4AB2F0(int64_t a1, int64_t a2)
         return false;
     }
 
-    sub_4AAA60(a1, &ai_params);
+    ai_copy_params(a1, &ai_params);
 
     if (ai_object_hp_ratio(a2) < ai_params.field_C) {
         return false;
@@ -2204,7 +2204,7 @@ bool sub_4ABC70(Ai* ai)
         mt_ai_action_list_destroy(&ai_action_list);
     }
 
-    sub_4AAA60(ai->obj, &ai_params);
+    ai_copy_params(ai->obj, &ai_params);
 
     if (ai_params.field_34 < random_between(1, 100)) {
         mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_DEFENSIVE);
@@ -2244,7 +2244,7 @@ int sub_4ABE20(Ai* ai)
         return 0;
     }
 
-    sub_4AAA60(ai->obj, &ai_params);
+    ai_copy_params(ai->obj, &ai_params);
 
     return ai_params.field_3C > 1 ? 50 : 25;
 }
@@ -2496,7 +2496,7 @@ void ai_action_perform_combat(Ai* ai)
     unsigned int npc_flags;
     int64_t distance;
 
-    sub_4AAA60(ai->obj, &params);
+    ai_copy_params(ai->obj, &params);
     npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
     distance = object_dist(ai->obj, ai->danger_source);
     if (params.field_3C > 1 && distance < params.field_3C && random_between(1, 20) == 1) {
@@ -2517,7 +2517,7 @@ void ai_action_perform_baking_off(Ai* ai)
     PathCreateInfo path_create_info;
     int8_t rotations[100];
 
-    sub_4AAA60(ai->obj, &ai_params);
+    ai_copy_params(ai->obj, &ai_params);
 
     npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
     if ((npc_flags & ONF_BACKING_OFF) != 0) {
@@ -3222,7 +3222,7 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
         return AI_FOLLOW_OK;
     }
 
-    sub_4AAA60(npc_obj, &params);
+    ai_copy_params(npc_obj, &params);
 
     if (reaction_get(npc_obj, pc_obj) <= params.field_14) {
         return AI_FOLLOW_DISLIKE;
@@ -3289,7 +3289,7 @@ int ai_check_leader(int64_t npc_obj, int64_t pc_obj)
         return AI_FOLLOW_OK;
     }
 
-    sub_4AAA60(npc_obj, &params);
+    ai_copy_params(npc_obj, &params);
 
     if ((critter_flags2 & OCF2_CHECK_REACTION_BAD) != 0
         && reaction_get(npc_obj, pc_obj) <= params.field_14 + 20) {
@@ -3341,7 +3341,7 @@ int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3)
 
     if (a3 != OBJ_HANDLE_NULL) {
         if (stat_level_get(a1, STAT_ALIGNMENT) > 0) {
-            sub_4AAA60(a1, &params);
+            ai_copy_params(a1, &params);
             if (stat_level_get(a2, STAT_ALIGNMENT) >= params.field_30) {
                 return 1;
             }
@@ -3513,7 +3513,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
                         }
                     }
 
-                    sub_4AAA60(a1, &ai_params);
+                    ai_copy_params(a1, &ai_params);
 
                     if (obj_type == OBJ_TYPE_PC
                         && sub_4C0CE0(a1, a2) <= ai_params.field_28) {
@@ -3784,7 +3784,7 @@ bool ai_critter_can_open_portals(int64_t obj)
     case OBJ_TYPE_PC:
         return true;
     case OBJ_TYPE_NPC:
-        sub_4AAA60(obj, &params);
+        ai_copy_params(obj, &params);
         return params.field_40;
     }
 
@@ -3976,7 +3976,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
             if (object_script_execute(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
                     reaction_adj(node->obj, pc_obj, -20);
-                    sub_4AAA60(node->obj, &ai_params);
+                    ai_copy_params(node->obj, &ai_params);
                     if (reaction_get(node->obj, pc_obj) <= ai_params.field_28) {
                         ai_attack(critter_obj, node->obj, loudness, 0);
                     }
