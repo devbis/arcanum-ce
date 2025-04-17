@@ -265,7 +265,7 @@ static AnimID stru_5A1908 = { -1, -1, 0 };
 // 0x5A59D0
 static AnimGoalNode anim_goal_node_animate = {
     6,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -292,7 +292,7 @@ static AnimGoalNode anim_goal_node_animate = {
 // 0x5A5BD0
 static AnimGoalNode anim_goal_node_animate_loop = {
     4,
-    1,
+    PRIORITY_1,
     0,
     1,
     1,
@@ -319,7 +319,7 @@ static AnimGoalNode anim_goal_node_animate_loop = {
 // 0x5A5DD0
 static AnimGoalNode anim_goal_node_animate_fidget = {
     5,
-    1,
+    PRIORITY_1,
     0,
     0,
     0,
@@ -346,7 +346,7 @@ static AnimGoalNode anim_goal_node_animate_fidget = {
 // 0x5A5FD0
 static AnimGoalNode anim_goal_node_move_to_tile = {
     7,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -373,7 +373,7 @@ static AnimGoalNode anim_goal_node_move_to_tile = {
 // 0x5A61D0
 static AnimGoalNode anim_goal_node_run_to_tile = {
     8,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -400,7 +400,7 @@ static AnimGoalNode anim_goal_node_run_to_tile = {
 // 0x5A63D0
 static AnimGoalNode anim_goal_node_attempt_move = {
     12,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -427,7 +427,7 @@ static AnimGoalNode anim_goal_node_attempt_move = {
 // 0x5A65D0
 static AnimGoalNode anim_goal_node_move_to_pause = {
     3,
-    2,
+    PRIORITY_2,
     0,
     1,
     0,
@@ -454,7 +454,7 @@ static AnimGoalNode anim_goal_node_move_to_pause = {
 // 0x5A67D0
 static AnimGoalNode anim_goal_node_move_near_tile = {
     7,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -481,7 +481,7 @@ static AnimGoalNode anim_goal_node_move_near_tile = {
 // 0x5A69D0
 static AnimGoalNode anim_goal_node_move_near_obj = {
     6,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -508,7 +508,7 @@ static AnimGoalNode anim_goal_node_move_near_obj = {
 // 0x5A6BD0
 static AnimGoalNode anim_goal_node_move_straight = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -535,7 +535,7 @@ static AnimGoalNode anim_goal_node_move_straight = {
 // 0x5A6DD0
 static AnimGoalNode anim_goal_node_attempt_move_straight = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -562,7 +562,7 @@ static AnimGoalNode anim_goal_node_attempt_move_straight = {
 // 0x5A6FD0
 static AnimGoalNode anim_goal_node_open_door = {
     5,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -589,7 +589,7 @@ static AnimGoalNode anim_goal_node_open_door = {
 // 0x5A71D0
 static AnimGoalNode anim_goal_node_attempt_open_door = {
     8,
-    3,
+    PRIORITY_3,
     1,
     1,
     0,
@@ -616,7 +616,7 @@ static AnimGoalNode anim_goal_node_attempt_open_door = {
 // 0x5A73D0
 static AnimGoalNode anim_goal_node_jump_window = {
     11,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -643,7 +643,7 @@ static AnimGoalNode anim_goal_node_jump_window = {
 // 0x5A75D0
 static AnimGoalNode anim_goal_node_pickup_item = {
     10,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -670,7 +670,7 @@ static AnimGoalNode anim_goal_node_pickup_item = {
 // 0x5A77D0
 static AnimGoalNode anim_goal_node_attempt_pickup = {
     2,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -697,7 +697,7 @@ static AnimGoalNode anim_goal_node_attempt_pickup = {
 // 0x5A79D0
 static AnimGoalNode anim_goal_node_pickpocket = {
     1,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -724,7 +724,7 @@ static AnimGoalNode anim_goal_node_pickpocket = {
 // 0x5A7BD0
 static AnimGoalNode anim_goal_node_attack = {
     8,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -751,7 +751,7 @@ static AnimGoalNode anim_goal_node_attack = {
 // 0x5A7DD0
 static AnimGoalNode anim_goal_node_attempt_attack = {
     13,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -778,7 +778,7 @@ static AnimGoalNode anim_goal_node_attempt_attack = {
 // 0x5A7FD0
 static AnimGoalNode anim_goal_node_kill = {
     7,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -805,7 +805,7 @@ static AnimGoalNode anim_goal_node_kill = {
 // 0x5A81D0
 static AnimGoalNode anim_goal_node_talk = {
     6,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -832,7 +832,7 @@ static AnimGoalNode anim_goal_node_talk = {
 // 0x5A83D0
 static AnimGoalNode anim_goal_node_chase = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -859,7 +859,7 @@ static AnimGoalNode anim_goal_node_chase = {
 // 0x5A85D0
 static AnimGoalNode anim_goal_node_follow = {
     5,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -886,7 +886,7 @@ static AnimGoalNode anim_goal_node_follow = {
 // 0x5A87D0
 static AnimGoalNode anim_goal_node_flee = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -913,7 +913,7 @@ static AnimGoalNode anim_goal_node_flee = {
 // 0x5A89D0
 static AnimGoalNode anim_goal_node_throw_spell = {
     10,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -940,7 +940,7 @@ static AnimGoalNode anim_goal_node_throw_spell = {
 // 0x5A8BD0
 static AnimGoalNode anim_goal_node_attempt_spell = {
     12,
-    4,
+    PRIORITY_4,
     0,
     0,
     0,
@@ -967,7 +967,7 @@ static AnimGoalNode anim_goal_node_attempt_spell = {
 // 0x5A8DD0
 static AnimGoalNode anim_goal_node_shoot_spell = {
     9,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -994,7 +994,7 @@ static AnimGoalNode anim_goal_node_shoot_spell = {
 // 0x5A8FD0
 static AnimGoalNode anim_goal_node_hit_by_spell = {
     4,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -1021,7 +1021,7 @@ static AnimGoalNode anim_goal_node_hit_by_spell = {
 // 0x5A91D0
 static AnimGoalNode anim_goal_node_hit_by_weapon = {
     6,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -1048,7 +1048,7 @@ static AnimGoalNode anim_goal_node_hit_by_weapon = {
 // 0x5A93D0
 static AnimGoalNode anim_goal_node_dying = {
     9,
-    5,
+    PRIORITY_5,
     0,
     1,
     0,
@@ -1075,7 +1075,7 @@ static AnimGoalNode anim_goal_node_dying = {
 // 0x5A95D0
 static AnimGoalNode anim_goal_node_destroy_obj = {
     1,
-    5,
+    PRIORITY_5,
     0,
     0,
     0,
@@ -1102,7 +1102,7 @@ static AnimGoalNode anim_goal_node_destroy_obj = {
 // 0x5A97D0
 static AnimGoalNode anim_goal_node_use_skill_on = {
     7,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1129,7 +1129,7 @@ static AnimGoalNode anim_goal_node_use_skill_on = {
 // 0x5A99D0
 static AnimGoalNode anim_goal_node_attempt_use_skill_on = {
     9,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1156,7 +1156,7 @@ static AnimGoalNode anim_goal_node_attempt_use_skill_on = {
 // 0x5A9BD0
 static AnimGoalNode anim_goal_node_skill_conceal = {
     6,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1183,7 +1183,7 @@ static AnimGoalNode anim_goal_node_skill_conceal = {
 // 0x5A9DD0
 static AnimGoalNode anim_goal_node_projectile = {
     7,
-    5,
+    PRIORITY_5,
     0,
     0,
     0,
@@ -1210,7 +1210,7 @@ static AnimGoalNode anim_goal_node_projectile = {
 // 0x5A9FD0
 static AnimGoalNode anim_goal_node_throw_item = {
     9,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1237,7 +1237,7 @@ static AnimGoalNode anim_goal_node_throw_item = {
 // 0x5AA1D0
 static AnimGoalNode anim_goal_node_use_object = {
     6,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1264,7 +1264,7 @@ static AnimGoalNode anim_goal_node_use_object = {
 // 0x5AA3D0
 static AnimGoalNode anim_goal_node_use_item_on_object = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1291,7 +1291,7 @@ static AnimGoalNode anim_goal_node_use_item_on_object = {
 // 0x5AA5D0
 static AnimGoalNode anim_goal_node_use_item_on_object_with_skill = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1318,7 +1318,7 @@ static AnimGoalNode anim_goal_node_use_item_on_object_with_skill = {
 // 0x5AA7D0
 static AnimGoalNode anim_goal_node_use_item_on_tile = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1345,7 +1345,7 @@ static AnimGoalNode anim_goal_node_use_item_on_tile = {
 // 0x5AA9D0
 static AnimGoalNode anim_goal_node_use_item_on_tile_with_skill = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1372,7 +1372,7 @@ static AnimGoalNode anim_goal_node_use_item_on_tile_with_skill = {
 // 0x5AABD0
 static AnimGoalNode anim_goal_node_knockback = {
     4,
-    5,
+    PRIORITY_5,
     0,
     0,
     0,
@@ -1399,7 +1399,7 @@ static AnimGoalNode anim_goal_node_knockback = {
 // 0x5AADD0
 static AnimGoalNode anim_goal_node_floating = {
     4,
-    5,
+    PRIORITY_5,
     1,
     1,
     1,
@@ -1426,7 +1426,7 @@ static AnimGoalNode anim_goal_node_floating = {
 // 0x5AAFD0
 static AnimGoalNode anim_goal_node_eye_candy = {
     4,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1453,7 +1453,7 @@ static AnimGoalNode anim_goal_node_eye_candy = {
 // 0x5AB1D0
 static AnimGoalNode anim_goal_node_eye_candy_reverse = {
     4,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1480,7 +1480,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse = {
 // 0x5AB3D0
 static AnimGoalNode anim_goal_node_eye_candy_callback = {
     6,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1507,7 +1507,7 @@ static AnimGoalNode anim_goal_node_eye_candy_callback = {
 // 0x5AB5D0
 static AnimGoalNode anim_goal_node_eye_candy_reverse_callback = {
     6,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1534,7 +1534,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_callback = {
 // 0x5AB7D0
 static AnimGoalNode anim_goal_node_close_door = {
     2,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -1561,7 +1561,7 @@ static AnimGoalNode anim_goal_node_close_door = {
 // 0x5AB9D0
 static AnimGoalNode anim_goal_node_attempt_close_door = {
     4,
-    3,
+    PRIORITY_3,
     1,
     0,
     0,
@@ -1588,7 +1588,7 @@ static AnimGoalNode anim_goal_node_attempt_close_door = {
 // 0x5ABBD0
 static AnimGoalNode anim_goal_node_animate_reverse = {
     4,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -1615,7 +1615,7 @@ static AnimGoalNode anim_goal_node_animate_reverse = {
 // 0x5ABDD0
 static AnimGoalNode anim_goal_node_move_away_from_obj = {
     7,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -1642,7 +1642,7 @@ static AnimGoalNode anim_goal_node_move_away_from_obj = {
 // 0x5ABFD0
 static AnimGoalNode anim_goal_node_rotate = {
     1,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -1669,7 +1669,7 @@ static AnimGoalNode anim_goal_node_rotate = {
 // 0x5AC1D0
 static AnimGoalNode anim_goal_node_unconceal = {
     5,
-    4,
+    PRIORITY_4,
     0,
     0,
     0,
@@ -1696,7 +1696,7 @@ static AnimGoalNode anim_goal_node_unconceal = {
 // 0x5AC3D0
 static AnimGoalNode anim_goal_node_run_near_tile = {
     8,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -1723,7 +1723,7 @@ static AnimGoalNode anim_goal_node_run_near_tile = {
 // 0x5AC5D0
 static AnimGoalNode anim_goal_node_run_near_obj = {
     7,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -1750,7 +1750,7 @@ static AnimGoalNode anim_goal_node_run_near_obj = {
 // 0x5AC7D0
 static AnimGoalNode anim_goal_node_animate_stunned = {
     7,
-    1,
+    PRIORITY_1,
     0,
     1,
     0,
@@ -1777,7 +1777,7 @@ static AnimGoalNode anim_goal_node_animate_stunned = {
 // 0x5AC9D0
 static AnimGoalNode anim_goal_node_eye_candy_end_callback = {
     5,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1804,7 +1804,7 @@ static AnimGoalNode anim_goal_node_eye_candy_end_callback = {
 // 0x5ACBD0
 static AnimGoalNode anim_goal_node_eye_candy_reverse_end_callback = {
     5,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -1831,7 +1831,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_end_callback = {
 // 0x5ACDD0
 static AnimGoalNode anim_goal_node_animate_kneel_magic_hands = {
     6,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1858,7 +1858,7 @@ static AnimGoalNode anim_goal_node_animate_kneel_magic_hands = {
 // 0x5ACFD0
 static AnimGoalNode anim_goal_node_attempt_move_near = {
     12,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -1885,7 +1885,7 @@ static AnimGoalNode anim_goal_node_attempt_move_near = {
 // 0x5AD1D0
 static AnimGoalNode anim_goal_node_knock_down = {
     4,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -1912,7 +1912,7 @@ static AnimGoalNode anim_goal_node_knock_down = {
 // 0x5AD3D0
 static AnimGoalNode anim_goal_node_anim_get_up = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1939,7 +1939,7 @@ static AnimGoalNode anim_goal_node_anim_get_up = {
 // 0x5AD5D0
 static AnimGoalNode anim_goal_node_attempt_move_straight_knockback = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1966,7 +1966,7 @@ static AnimGoalNode anim_goal_node_attempt_move_straight_knockback = {
 // 0x5AD7D0
 static AnimGoalNode anim_goal_node_wander = {
     1,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -1993,7 +1993,7 @@ static AnimGoalNode anim_goal_node_wander = {
 // 0x5AD9D0
 static AnimGoalNode anim_goal_node_wander_seek_darkness = {
     1,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2020,7 +2020,7 @@ static AnimGoalNode anim_goal_node_wander_seek_darkness = {
 // 0x5ADBD0
 static AnimGoalNode anim_goal_node_use_picklock_skill_on = {
     7,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2047,7 +2047,7 @@ static AnimGoalNode anim_goal_node_use_picklock_skill_on = {
 // 0x5ADDD0
 static AnimGoalNode anim_goal_node_please_move = {
     8,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -2074,7 +2074,7 @@ static AnimGoalNode anim_goal_node_please_move = {
 // 0x5ADFD0
 static AnimGoalNode anim_goal_node_attempt_spread_out = {
     5,
-    2,
+    PRIORITY_2,
     1,
     0,
     0,
@@ -2101,7 +2101,7 @@ static AnimGoalNode anim_goal_node_attempt_spread_out = {
 // 0x5AE1D0
 static AnimGoalNode anim_goal_node_animate_door_open = {
     4,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -2128,7 +2128,7 @@ static AnimGoalNode anim_goal_node_animate_door_open = {
 // 0x5AE3D0
 static AnimGoalNode anim_goal_node_animate_door_closed = {
     3,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -2155,7 +2155,7 @@ static AnimGoalNode anim_goal_node_animate_door_closed = {
 // 0x5AE5D0
 static AnimGoalNode anim_goal_node_pend_closing_door = {
     1,
-    3,
+    PRIORITY_3,
     0,
     1,
     0,
@@ -2182,7 +2182,7 @@ static AnimGoalNode anim_goal_node_pend_closing_door = {
 // 0x5AE7D0
 static AnimGoalNode anim_goal_node_throw_spell_friendly = {
     9,
-    3,
+    PRIORITY_3,
     1,
     0,
     0,
@@ -2209,7 +2209,7 @@ static AnimGoalNode anim_goal_node_throw_spell_friendly = {
 // 0x5AE9D0
 static AnimGoalNode anim_goal_node_attempt_spell_friendly = {
     12,
-    4,
+    PRIORITY_4,
     1,
     0,
     0,
@@ -2236,7 +2236,7 @@ static AnimGoalNode anim_goal_node_attempt_spell_friendly = {
 // 0x5AEBD0
 static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
     5,
-    5,
+    PRIORITY_5,
     1,
     1,
     1,
@@ -2263,7 +2263,7 @@ static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
 // 0x5AEDD0
 static AnimGoalNode anim_goal_node_eye_candy_reverse_fire_dmg = {
     5,
-    5,
+    PRIORITY_5,
     1,
     1,
     1,
@@ -2290,7 +2290,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_fire_dmg = {
 // 0x5AEFD0
 static AnimGoalNode anim_goal_node_animate_loop_fire_dmg = {
     5,
-    1,
+    PRIORITY_1,
     0,
     1,
     1,
@@ -2317,7 +2317,7 @@ static AnimGoalNode anim_goal_node_animate_loop_fire_dmg = {
 // 0x5AF1D0
 static AnimGoalNode anim_goal_node_attempt_move_straight_spell = {
     3,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2344,7 +2344,7 @@ static AnimGoalNode anim_goal_node_attempt_move_straight_spell = {
 // 0x5AF3D0
 static AnimGoalNode anim_goal_node_move_near_obj_combat = {
     8,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -2371,7 +2371,7 @@ static AnimGoalNode anim_goal_node_move_near_obj_combat = {
 // 0x5AF5D0
 static AnimGoalNode anim_goal_node_attempt_move_near_combat = {
     12,
-    2,
+    PRIORITY_2,
     0,
     0,
     0,
@@ -2398,7 +2398,7 @@ static AnimGoalNode anim_goal_node_attempt_move_near_combat = {
 // 0x5AF7D0
 static AnimGoalNode anim_goal_node_use_container = {
     6,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2425,7 +2425,7 @@ static AnimGoalNode anim_goal_node_use_container = {
 // 0x5AF9D0
 static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim = {
     10,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2452,7 +2452,7 @@ static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim = {
 // 0x5AFBD0
 static AnimGoalNode anim_goal_node_attempt_spell_w_cast_anim = {
     14,
-    4,
+    PRIORITY_4,
     0,
     0,
     0,
@@ -2479,7 +2479,7 @@ static AnimGoalNode anim_goal_node_attempt_spell_w_cast_anim = {
 // 0x5AFDD0
 static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim_secondary = {
     5,
-    5,
+    PRIORITY_5,
     1,
     1,
     0,
@@ -2506,7 +2506,7 @@ static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim_secondary = {
 // 0x5AFFD0
 static AnimGoalNode anim_goal_node_back_off_from = {
     4,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
@@ -2533,7 +2533,7 @@ static AnimGoalNode anim_goal_node_back_off_from = {
 // 0x5B01D0
 static AnimGoalNode anim_goal_node_attempt_use_pickpocket_skill_on = {
     9,
-    3,
+    PRIORITY_3,
     0,
     0,
     0,
