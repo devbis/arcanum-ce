@@ -139,7 +139,7 @@ static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int ai_check_leader(int64_t npc_obj, int64_t pc_obj);
-static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
+static int ai_check_upset_attacking(int64_t source_obj, int64_t target_obj, int64_t leader_obj);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int ai_check_protect(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
@@ -1117,7 +1117,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
             return;
         }
 
-        rc = sub_4ADCC0(source_obj, target_obj, a2);
+        rc = ai_check_upset_attacking(source_obj, target_obj, a2);
         if (rc != 0) {
             if (a4
                 && !combat_critter_is_combat_mode_active(target_obj)
@@ -2023,7 +2023,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                             || (critter_social_class_get(critter_obj) == SOCIAL_CLASS_GUARD
                                 && critter_is_monstrous(candidate_obj)
                                 && critter_leader_get(candidate_obj) == OBJ_HANDLE_NULL)) {
-                            if (!sub_4ADCC0(critter_obj, candidate_obj, leader_obj)) {
+                            if (ai_check_upset_attacking(critter_obj, candidate_obj, leader_obj) == AI_UPSET_ATTACKING_NONE) {
                                 concealed = critter_is_concealed(candidate_obj);
                                 if (!sub_4AF470(critter_obj, candidate_obj, !concealed)
                                     || !sub_4AF260(critter_obj, candidate_obj)) {
@@ -3314,49 +3314,49 @@ int ai_check_leader(int64_t npc_obj, int64_t pc_obj)
 }
 
 // 0x4ADCC0
-int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3)
+int ai_check_upset_attacking(int64_t source_obj, int64_t target_obj, int64_t leader_obj)
 {
     int64_t mind_controlled_by_obj;
     AiParams params;
 
-    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
-        if (sub_459040(a1, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
-            if (mind_controlled_by_obj == a1) {
-                return 0;
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        if (sub_459040(source_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
+            if (mind_controlled_by_obj == leader_obj) {
+                return AI_UPSET_ATTACKING_NONE;
             }
         } else {
-            if (critter_pc_leader_get(a1) != OBJ_HANDLE_NULL) {
-                return 0;
+            if (critter_pc_leader_get(source_obj) != OBJ_HANDLE_NULL) {
+                return AI_UPSET_ATTACKING_NONE;
             }
         }
     }
 
-    if (!obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))) {
-        return 0;
+    if (!obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
+        return AI_UPSET_ATTACKING_NONE;
     }
 
-    if (critter_leader_get(a2) == a3) {
-        return 4;
+    if (critter_leader_get(target_obj) == leader_obj) {
+        return AI_UPSET_ATTACKING_PARTY;
     }
 
-    if (a3 != OBJ_HANDLE_NULL) {
-        if (stat_level_get(a1, STAT_ALIGNMENT) > 0) {
-            ai_copy_params(a1, &params);
-            if (stat_level_get(a2, STAT_ALIGNMENT) >= params.field_30) {
-                return 1;
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        if (stat_level_get(source_obj, STAT_ALIGNMENT) > 0) {
+            ai_copy_params(source_obj, &params);
+            if (stat_level_get(target_obj, STAT_ALIGNMENT) >= params.field_30) {
+                return AI_UPSET_ATTACKING_GOOD;
             }
         }
     }
 
-    if (critter_origin_same(a1, a2)) {
-        return 2;
+    if (critter_origin_same(source_obj, target_obj)) {
+        return AI_UPSET_ATTACKING_ORIGIN;
     }
 
-    if (critter_faction_same(a1, a2)) {
-        return 3;
+    if (critter_faction_same(source_obj, target_obj)) {
+        return AI_UPSET_ATTACKING_FACTION;
     }
 
-    return 0;
+    return AI_UPSET_ATTACKING_NONE;
 }
 
 // 0x4ADE00
@@ -3541,7 +3541,7 @@ int ai_check_kos(int64_t source_obj, int64_t target_obj)
                             || (critter_social_class_get(source_obj) == SOCIAL_CLASS_GUARD
                                 && critter_is_monstrous(target_obj)
                                 && critter_leader_get(target_obj) == OBJ_HANDLE_NULL))
-                        && !sub_4ADCC0(source_obj, target_obj, critter_leader_get(source_obj))) {
+                        && ai_check_upset_attacking(source_obj, target_obj, critter_leader_get(source_obj)) == AI_UPSET_ATTACKING_NONE) {
                         return AI_KOS_GUARD;
                     }
                 }

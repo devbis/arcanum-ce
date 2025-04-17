@@ -1042,19 +1042,19 @@ void dialog_copy_npc_upset_attacking_msg(int64_t npc_obj, int64_t pc_obj, int re
         dialog_state_init(npc_obj, pc_obj, &state);
 
         switch (reason) {
-        case 1:
+        case AI_UPSET_ATTACKING_GOOD:
             start = 4900;
             end = 4999;
             break;
-        case 2:
+        case AI_UPSET_ATTACKING_ORIGIN:
             start = 5000;
             end = 5099;
             break;
-        case 3:
+        case AI_UPSET_ATTACKING_FACTION:
             start = 5100;
             end = 5199;
             break;
-        case 4:
+        case AI_UPSET_ATTACKING_PARTY:
             start = 4800;
             end = 4899;
             break;

@@ -70,6 +70,14 @@ typedef enum AiProtect {
     AI_PROTECT_SELF,
 } AiProtect;
 
+typedef enum AiUpsetAttacking {
+    AI_UPSET_ATTACKING_NONE,
+    AI_UPSET_ATTACKING_GOOD,
+    AI_UPSET_ATTACKING_ORIGIN,
+    AI_UPSET_ATTACKING_FACTION,
+    AI_UPSET_ATTACKING_PARTY,
+} AiUpsetAttacking;
+
 typedef enum AiAttemptOpenPortal {
     AI_ATTEMPT_OPEN_PORTAL_OK,
     AI_ATTEMPT_OPEN_PORTAL_LOCKED,
