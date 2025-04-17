@@ -563,7 +563,7 @@ void main_loop()
                                 sub_550770(-1, mouse_state_str);
                                 break;
                             case DIK_U:
-                                sprintf(story_state_str, "Current Story State: %d", sub_445090());
+                                sprintf(story_state_str, "Current Story State: %d", script_story_state_get());
                                 sub_550770(-1, story_state_str);
                                 break;
                             case DIK_LBRACKET:

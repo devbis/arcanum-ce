@@ -3398,7 +3398,7 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
                         datetime_format_time(&(stru_64B898.datetime), str);
                         sub_542EA0(str, &stru_5C4700, font);
 
-                        story_state_desc = sub_4450F0(stru_64B898.field_35C);
+                        story_state_desc = script_story_state_info(stru_64B898.story_state);
                         if (story_state_desc != NULL && *story_state_desc != '\0') {
                             mmUITextWriteCenteredToArray(story_state_desc, stru_5C4740, 4, font);
                         }
@@ -4091,7 +4091,7 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
                     datetime_format_time(&(stru_64B898.datetime), str);
                     sub_542EA0(str, &stru_5C4700, font);
 
-                    story_state_desc = sub_4450F0(stru_64B898.field_35C);
+                    story_state_desc = script_story_state_info(stru_64B898.story_state);
                     if (story_state_desc != NULL && *story_state_desc != '\0') {
                         mmUITextWriteCenteredToArray(story_state_desc, stru_5C4740, 4, font);
                     }

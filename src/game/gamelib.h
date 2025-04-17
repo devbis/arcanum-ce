@@ -40,7 +40,7 @@ typedef struct GameSaveInfo {
     /* 0350 */ int field_350;
     /* 0354 */ int field_354;
     /* 0358 */ int field_358;
-    /* 035C */ int field_35C;
+    /* 035C */ int story_state;
 } GameSaveInfo;
 
 static_assert(sizeof(GameSaveInfo) == 0x360, "wrong size");

@@ -1747,11 +1747,11 @@ bool sub_4150D0(DialogState* a1, char* a2)
             break;
         case DIALOG_COND_SS:
             if (value < 0) {
-                if (sub_445090() > -value) {
+                if (script_story_state_get() > -value) {
                     return false;
                 }
             } else {
-                if (sub_445090() < value) {
+                if (script_story_state_get() < value) {
                     return false;
                 }
             }
@@ -2104,7 +2104,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             critter_disband(a1->npc_obj, true);
             break;
         case DIALOG_ACTION_SS:
-            sub_4450A0(value);
+            script_story_state_set(value);
             break;
         case DIALOG_ACTION_SC:
             critter_spread_out_disable(a1->npc_obj);
@@ -3096,7 +3096,7 @@ void dialog_copy_pc_class_specific_msg(char* buffer, DialogState* state, int num
 // 0x418460
 void dialog_copy_pc_story_msg(char* buffer, DialogState* state)
 {
-    int story_state = sub_445090();
+    int story_state = script_story_state_get();
     dialog_copy_pc_generic_msg(buffer, state, story_state + 1700, story_state + 1700);
 }
 
@@ -4075,7 +4075,7 @@ void dialog_copy_npc_story_msg(char* buffer, DialogState* state)
     int gd;
     MesFileEntry mes_file_entry;
 
-    story_state = sub_445090();
+    story_state = script_story_state_get();
     if (dialog_copy_npc_override_msg(buffer, state, story_state + 10000)) {
         return;
     }

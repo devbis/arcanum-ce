@@ -1480,7 +1480,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
     save_info->pc_portrait = portrait_get(pc_obj);
     save_info->pc_level = stat_level_get(pc_obj, STAT_LEVEL);
     save_info->pc_location = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-    save_info->field_35C = sub_445090();
+    save_info->story_state = script_story_state_get();
     strcpy(save_info->description, description);
     save_info->datetime = sub_45A7C0();
 
@@ -1539,7 +1539,7 @@ bool gamelib_saveinfo_save(GameSaveInfo* save_info)
             if (tig_file_fwrite(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
-            if (tig_file_fwrite(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->story_state), sizeof(save_info->story_state), 1, stream) != 1) break;
 
             size = strlen(save_info->description);
             if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
@@ -1590,7 +1590,7 @@ bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
         if (tig_file_fread(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
         if (tig_file_fread(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
         if (tig_file_fread(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
-        if (tig_file_fread(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->story_state), sizeof(save_info->story_state), 1, stream) != 1) break;
 
         if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
         if (size != 0 && tig_file_fread(save_info->description, size, 1, stream) != 1) break;

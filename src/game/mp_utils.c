@@ -1290,21 +1290,21 @@ void sub_4EFC30(int64_t pc_obj, const char* name, const char* rule)
 }
 
 // 0x4EFCD0
-void sub_4EFCD0(Packet124* pkt)
+void sub_4EFCD0(PacketScriptFunc* pkt)
 {
     if (!tig_net_is_host()) {
         multiplayer_lock();
         switch (pkt->subtype) {
-        case 0:
-            sub_4450A0(pkt->field_8);
+        case SCRIPT_FUNC_SET_STORY_STATE:
+            script_story_state_set(pkt->story_state);
             break;
-        case 1:
-            script_gl_var_set(pkt->field_8, pkt->field_C);
+        case SCRIPT_FUNC_SET_GLOBAL_VAR:
+            script_gl_var_set(pkt->index, pkt->value);
             break;
-        case 2:
-            script_gl_flag_set(pkt->field_8, pkt->field_C);
+        case SCRIPT_FUNC_SET_GLOBAL_FLAG:
+            script_gl_flag_set(pkt->index, pkt->value);
             break;
-        case 3:
+        case SCRIPT_FUNC_END_GAME:
             ui_end_game();
             break;
         }

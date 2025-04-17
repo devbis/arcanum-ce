@@ -117,7 +117,7 @@ int dword_5A5700[3] = {
 static int* script_gl_vars;
 
 // 0x5E2FA4
-static int dword_5E2FA4;
+static int script_story_state;
 
 // 0x5E2FA8
 static int* script_gl_flags;
@@ -165,7 +165,7 @@ bool script_init(GameInitInfo* init_info)
 
     script_start_dialog_func = NULL;
     script_float_line_func = NULL;
-    dword_5E2FA4 = 0;
+    script_story_state = 0;
 
     for (index = 0; index < MAX_GL_VARS; index++) {
         script_gl_vars[index] = 0;
@@ -203,7 +203,7 @@ void script_reset()
         cache_remove(index);
     }
 
-    dword_5E2FA4 = 0;
+    script_story_state = 0;
 
     for (index = 0; index < MAX_GL_VARS; index++) {
         script_gl_vars[index] = 0;
@@ -223,7 +223,7 @@ void script_exit()
         cache_remove(index);
     }
 
-    dword_5E2FA4 = 0;
+    script_story_state = 0;
     FREE(script_cache_entries);
     FREE(script_gl_vars);
     FREE(script_gl_flags);
@@ -255,7 +255,7 @@ bool script_load(GameLoadInfo* load_info)
 {
     if (tig_file_fread(script_gl_vars, sizeof(int) * MAX_GL_VARS, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(script_gl_flags, sizeof(int) * MAX_GL_FLAGS, 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_5E2FA4, sizeof(int), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&script_story_state, sizeof(int), 1, load_info->stream) != 1) return false;
 
     return true;
 }
@@ -265,7 +265,7 @@ bool script_save(TigFile* stream)
 {
     if (tig_file_fwrite(script_gl_vars, sizeof(int) * MAX_GL_VARS, 1, stream) != 1) return false;
     if (tig_file_fwrite(script_gl_flags, sizeof(int) * MAX_GL_FLAGS, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_5E2FA4, sizeof(int), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&script_story_state, sizeof(int), 1, stream) != 1) return false;
 
     return true;
 }
@@ -410,17 +410,17 @@ int script_gl_var_get(int index)
 // 0x444C90
 void script_gl_var_set(int index, int value)
 {
-    Packet124 pkt;
-
     if (!multiplayer_is_locked()) {
+        PacketScriptFunc pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 124;
-        pkt.subtype = 1;
-        pkt.field_8 = index;
-        pkt.field_C = value;
+        pkt.subtype = SCRIPT_FUNC_SET_GLOBAL_VAR;
+        pkt.index = index;
+        pkt.value = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -436,17 +436,17 @@ int script_gl_flag_get(int index)
 // 0x444D20
 void script_gl_flag_set(int index, int value)
 {
-    Packet124 pkt;
-
     if (!multiplayer_is_locked()) {
+        PacketScriptFunc pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 124;
-        pkt.subtype = 2;
-        pkt.field_8 = index;
-        pkt.field_C = value;
+        pkt.subtype = SCRIPT_FUNC_SET_GLOBAL_FLAG;
+        pkt.index = index;
+        pkt.value = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -552,38 +552,38 @@ void script_local_counter_set(int64_t obj, int index, int counter, int value)
 }
 
 // 0x445090
-int sub_445090()
+int script_story_state_get()
 {
-    return dword_5E2FA4;
+    return script_story_state;
 }
 
 // 0x4450A0
-void sub_4450A0(int value)
+void script_story_state_set(int value)
 {
-    Packet124 pkt;
-
     if (!multiplayer_is_locked()) {
+        PacketScriptFunc pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 124;
-        pkt.subtype = 0;
-        pkt.field_8 = value;
+        pkt.subtype = SCRIPT_FUNC_SET_STORY_STATE;
+        pkt.story_state = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (value > dword_5E2FA4) {
-        dword_5E2FA4 = value;
+    if (value > script_story_state) {
+        script_story_state = value;
     }
 }
 
 // 0x4450F0
-char* sub_4450F0(int story_state_num)
+char* script_story_state_info(int story_state_num)
 {
     MesFileEntry mes_file_entry;
 
-    if (script_story_state_mes_file == -1) {
+    if (script_story_state_mes_file == MES_FILE_HANDLE_INVALID) {
         return "";
     }
 
@@ -1905,13 +1905,13 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_GET_STORY_STATE: {
-        int story_state = sub_445090();
+        int story_state = script_story_state_get();
         script_set_value(action->op_type[0], action->op_value[0], state, story_state);
         return NEXT;
     }
     case SAT_SET_STORY_STATE: {
         int story_state = script_get_value(action->op_type[0], action->op_value[0], state);
-        sub_4450A0(story_state);
+        script_story_state_set(story_state);
         return NEXT;
     }
     case SAT_TELEPORT: {
@@ -2774,9 +2774,9 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         ui_end_game();
         if (tig_net_is_active()
             && tig_net_is_host()) {
-            Packet124 pkt;
+            PacketScriptFunc pkt;
             pkt.type = 124;
-            pkt.subtype = 3;
+            pkt.subtype = SCRIPT_FUNC_END_GAME;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
         return NEXT;
