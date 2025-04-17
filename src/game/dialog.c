@@ -2119,7 +2119,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             v43 = sub_4167C0(pch);
             rc = ai_check_follow(a1->npc_obj, a1->pc_obj, value);
             if (rc == AI_FOLLOW_OK) {
-                sub_4AA8C0(a1->npc_obj, value);
+                ai_npc_unwait(a1->npc_obj, value);
                 a1->field_17EC = v43;
                 a1->field_17E8 = 0;
                 sub_414E60(a1, false);

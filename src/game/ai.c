@@ -1251,7 +1251,7 @@ void sub_4AA0D0(int64_t obj)
 void sub_4AA1B0(int64_t a1, int64_t a2)
 {
     ai_stop_fleeing(a1);
-    sub_4AA8C0(a1, true);
+    ai_npc_unwait(a1, true);
 
     if (a2 != OBJ_HANDLE_NULL
         && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
@@ -1497,30 +1497,45 @@ void ai_npc_wait(int64_t obj)
 }
 
 // 0x4AA8C0
-void sub_4AA8C0(int64_t obj, bool force)
+void ai_npc_unwait(int64_t obj, bool force)
 {
     int64_t leader_obj;
     unsigned int flags;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-        && (!tig_net_is_active()
-            || tig_net_is_host())) {
-        leader_obj = critter_leader_get(obj);
-        if (leader_obj != OBJ_HANDLE_NULL
-            && (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
-            && (force || ai_check_follow(obj, leader_obj, false) == AI_FOLLOW_OK)) {
-            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-            flags &= ~ONF_AI_WAIT_HERE;
-            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
 
-            critter_leader_set(obj, OBJ_HANDLE_NULL);
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
+        return;
+    }
 
-            qword_5F8490 = obj;
-            timeevent_clear_one_ex(TIMEEVENT_TYPE_NPC_WAIT_HERE, sub_4AAA30);
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
 
-            critter_follow(obj, leader_obj, force);
+    if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) == 0) {
+        return;
+    }
+
+    if (!force) {
+        if (ai_check_follow(obj, leader_obj, false) != AI_FOLLOW_OK) {
+            return;
         }
     }
+
+    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    flags &= ~ONF_AI_WAIT_HERE;
+    obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+
+    critter_leader_set(obj, OBJ_HANDLE_NULL);
+
+    qword_5F8490 = obj;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_NPC_WAIT_HERE, sub_4AAA30);
+
+    critter_follow(obj, leader_obj, force);
 }
 
 // 0x4AA990

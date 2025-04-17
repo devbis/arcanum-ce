@@ -754,7 +754,7 @@ bool critter_disband(int64_t obj, bool force)
                 return false;
             }
         }
-        sub_4AA8C0(obj, force);
+        ai_npc_unwait(obj, force);
         sub_45E040(obj);
     }
 
@@ -829,7 +829,7 @@ bool sub_45E180(int64_t obj)
         sub_4BA1E0(obj);
         return true;
     case OBJ_TYPE_NPC:
-        sub_4AA8C0(obj, true);
+        ai_npc_unwait(obj, true);
         sub_45E040(obj);
         return true;
     default:
