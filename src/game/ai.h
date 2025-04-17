@@ -62,6 +62,14 @@ typedef enum AiKos {
     AI_KOS_DECOY,
 } AiKos;
 
+typedef enum AiProtect {
+    AI_PROTECT_NO,
+    AI_PROTECT_FACTION,
+    AI_PROTECT_ORIGIN,
+    AI_PROTECT_GROUP,
+    AI_PROTECT_SELF,
+} AiProtect;
+
 typedef enum AiAttemptOpenPortal {
     AI_ATTEMPT_OPEN_PORTAL_OK,
     AI_ATTEMPT_OPEN_PORTAL_LOCKED,

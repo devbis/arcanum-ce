@@ -141,7 +141,7 @@ static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int ai_check_leader(int64_t npc_obj, int64_t pc_obj);
 static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
-static int sub_4AE3A0(int64_t a1, int64_t a2);
+static int ai_check_protect(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
 static bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir);
@@ -1205,11 +1205,11 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
             ai_wake_up(a1);
         }
 
-        if (sub_4AE3A0(a1, a3)) {
+        if (ai_check_protect(a1, a3) != AI_PROTECT_NO) {
             if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a2);
             }
-        } else if (sub_4AE3A0(a1, a2)) {
+        } else if (ai_check_protect(a1, a2) != AI_PROTECT_NO) {
             if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a3);
             }
@@ -2019,7 +2019,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                         && (candidate_danger_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS
                             || candidate_danger_type == AI_DANGER_SOURCE_TYPE_FLEE
                             || candidate_danger_type == AI_DANGER_SOURCE_TYPE_SURRENDER)) {
-                        if (sub_4AE3A0(critter_obj, handles[idx])
+                        if (ai_check_protect(critter_obj, handles[idx]) != AI_PROTECT_NO
                             || (critter_social_class_get(critter_obj) == SOCIAL_CLASS_GUARD
                                 && critter_is_monstrous(candidate_obj)
                                 && critter_leader_get(candidate_obj) == OBJ_HANDLE_NULL)) {
@@ -2592,7 +2592,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
-            && sub_4AE3A0(ai->obj, node->obj)) {
+            && ai_check_protect(ai->obj, node->obj) != AI_PROTECT_NO) {
             break;
         }
         node = node->next;
@@ -3537,7 +3537,7 @@ int ai_check_kos(int64_t source_obj, int64_t target_obj)
 
                     if (danger_source_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS
                         && danger_source_obj != OBJ_HANDLE_NULL
-                        && (sub_4AE3A0(source_obj, danger_source_obj) != 0
+                        && (ai_check_protect(source_obj, danger_source_obj) != AI_PROTECT_NO
                             || (critter_social_class_get(source_obj) == SOCIAL_CLASS_GUARD
                                 && critter_is_monstrous(target_obj)
                                 && critter_leader_get(target_obj) == OBJ_HANDLE_NULL))
@@ -3553,31 +3553,31 @@ int ai_check_kos(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4AE3A0
-int sub_4AE3A0(int64_t a1, int64_t a2)
+int ai_check_protect(int64_t source_obj, int64_t target_obj)
 {
     int64_t leader_obj;
 
-    if (a1 == a2) {
-        return 4;
+    if (source_obj == target_obj) {
+        return AI_PROTECT_SELF;
     }
 
-    leader_obj = critter_leader_get(a1);
-    if (leader_obj != OBJ_HANDLE_NULL && leader_obj == a2) {
-        return 3;
+    leader_obj = critter_leader_get(source_obj);
+    if (leader_obj != OBJ_HANDLE_NULL && leader_obj == target_obj) {
+        return AI_PROTECT_GROUP;
     }
 
-    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
-        if (critter_faction_same(a1, a2)) {
-            return 1;
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
+        if (critter_faction_same(source_obj, target_obj)) {
+            return AI_PROTECT_FACTION;
         }
 
-        if (critter_social_class_get(a1) == SOCIAL_CLASS_GUARD
-            && critter_origin_same(a1, a2)) {
-            return 2;
+        if (critter_social_class_get(source_obj) == SOCIAL_CLASS_GUARD
+            && critter_origin_same(source_obj, target_obj)) {
+            return AI_PROTECT_ORIGIN;
         }
     }
 
-    return 0;
+    return AI_PROTECT_NO;
 }
 
 // 0x4AE450
@@ -3590,7 +3590,7 @@ int64_t sub_4AE450(int64_t a1, int64_t a2)
         && obj_field_obj_get(a2, OBJ_F_NPC_COMBAT_FOCUS, &combat_focus_obj)
         && combat_focus_obj != OBJ_HANDLE_NULL
         && sub_4AB990(a1, combat_focus_obj)
-        && sub_4AE3A0(a1, a2)) {
+        && ai_check_protect(a1, a2) != AI_PROTECT_NO) {
         return combat_focus_obj;
     }
 
