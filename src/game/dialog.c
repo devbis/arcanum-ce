@@ -2107,10 +2107,10 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             script_story_state_set(value);
             break;
         case DIALOG_ACTION_SC:
-            critter_spread_out_disable(a1->npc_obj);
+            critter_stay_close(a1->npc_obj);
             break;
         case DIALOG_ACTION_SO:
-            critter_spread_out_enable(a1->npc_obj);
+            critter_spread_out(a1->npc_obj);
             break;
         case DIALOG_ACTION_UW: {
             int v43;

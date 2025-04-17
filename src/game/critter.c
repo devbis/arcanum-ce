@@ -1736,7 +1736,7 @@ bool critter_can_jump_window(int64_t obj)
 }
 
 // 0x45F5C0
-void critter_spread_out_disable(int64_t npc_obj)
+void critter_stay_close(int64_t npc_obj)
 {
     unsigned int npc_flags;
 
@@ -1748,7 +1748,7 @@ void critter_spread_out_disable(int64_t npc_obj)
 }
 
 // 0x45F600
-void critter_spread_out_enable(int64_t npc_obj)
+void critter_spread_out(int64_t npc_obj)
 {
     unsigned int npc_flags;
 
