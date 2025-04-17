@@ -91,7 +91,7 @@ static bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3);
 static bool sub_4A8E70(Ai* ai);
 static bool sub_4A8F90(int64_t obj, unsigned int flags);
 static void sub_4A92D0(Ai* ai);
-static void sub_4A94C0(int64_t obj, int64_t tgt);
+static void sub_4A94C0(int64_t source_obj, int64_t target_obj);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
 static void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6);
 static void sub_4A9E10(int64_t a1, int64_t a2, int loudness);
@@ -846,12 +846,12 @@ void sub_4A92D0(Ai* ai)
 }
 
 // 0x4A94C0
-void sub_4A94C0(int64_t obj, int64_t tgt)
+void sub_4A94C0(int64_t source_obj, int64_t target_obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && obj != tgt) {
-        sub_4A9650(obj, tgt, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
-        obj_field_handle_set(tgt, OBJ_F_NPC_COMBAT_FOCUS, obj);
-        obj_field_handle_set(tgt, OBJ_F_NPC_WHO_HIT_ME_LAST, obj);
+    if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && source_obj != target_obj) {
+        ai_attack(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
+        obj_field_handle_set(target_obj, OBJ_F_NPC_COMBAT_FOCUS, source_obj);
+        obj_field_handle_set(target_obj, OBJ_F_NPC_WHO_HIT_ME_LAST, source_obj);
     }
 }
 
@@ -893,7 +893,7 @@ void sub_4A9560(AiRedirect* ai_redirect)
 }
 
 // 0x4A9650
-void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags)
+void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags)
 {
     int target_obj_type;
     int source_obj_type;
@@ -1241,7 +1241,7 @@ void sub_4AA0D0(int64_t obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && critter_pc_leader_get(node->obj) != obj
             && (sub_4AF260(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
-            sub_4A9650(obj, node->obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
+            ai_attack(obj, node->obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
         }
         node = node->next;
     }
@@ -3963,7 +3963,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                     reaction_adj(node->obj, pc_obj, -20);
                     sub_4AAA60(node->obj, &ai_params);
                     if (reaction_get(node->obj, pc_obj) <= ai_params.field_28) {
-                        sub_4A9650(critter_obj, node->obj, loudness, 0);
+                        ai_attack(critter_obj, node->obj, loudness, 0);
                     }
                     if (critter_is_active(node->obj)) {
                         if (dword_5F8488 != NULL && critter_is_active(node->obj)) {
@@ -3972,7 +3972,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                         }
                     }
                 } else {
-                    sub_4A9650(critter_obj, node->obj, loudness, 0);
+                    ai_attack(critter_obj, node->obj, loudness, 0);
                 }
             }
         }

@@ -7828,7 +7828,7 @@ bool sub_42A720(AnimRunInfo* run_info)
 
         if ((v1 == OBJ_HANDLE_NULL || v1 != node->obj)
             && critter_pc_leader_get(node->obj) != v1) {
-            sub_4A9650(v1, node->obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+            ai_attack(v1, node->obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
 
             if (combat_turn_based_is_active()
                 && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != sub_4B80D0()) {

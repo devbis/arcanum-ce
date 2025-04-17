@@ -530,9 +530,9 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
         && combat->target_obj != OBJ_HANDLE_NULL) {
         int loudness = combat_weapon_loudness(combat->weapon_obj);
         if ((combat->flags & 0x800) != 0) {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0x01);
+            ai_attack(combat->attacker_obj, combat->target_obj, loudness, 0x01);
         } else {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0);
+            ai_attack(combat->attacker_obj, combat->target_obj, loudness, 0);
         }
     }
 }
@@ -850,9 +850,9 @@ int sub_4B3170(CombatContext* combat)
     if (is_melee && combat->target_obj != OBJ_HANDLE_NULL) {
         int loudness = combat_weapon_loudness(combat->weapon_obj);
         if ((combat->flags & 0x800) != 0) {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 1);
+            ai_attack(combat->attacker_obj, combat->target_obj, loudness, 1);
         } else {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0);
+            ai_attack(combat->attacker_obj, combat->target_obj, loudness, 0);
         }
     }
 

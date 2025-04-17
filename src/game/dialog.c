@@ -1863,7 +1863,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
     ObjectList followers;
     ObjectNode* node;
     bool v57 = true;
-    bool v59 = false;
+    bool attack = false;
     char code[3];
 
     if (a2 == NULL || a2[0] == '\0') {
@@ -1961,7 +1961,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             v57 = false;
             break;
         case DIALOG_ACTION_CO:
-            v59 = true;
+            attack = true;
             break;
         case DIALOG_ACTION_GV:
             script_gl_var_set(value, sub_4167C0(pch));
@@ -2231,8 +2231,8 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
         }
     }
 
-    if (v59) {
-        sub_4A9650(a1->pc_obj, a1->npc_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+    if (attack) {
+        ai_attack(a1->pc_obj, a1->npc_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
     }
 
     return v57;

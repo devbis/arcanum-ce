@@ -85,7 +85,7 @@ void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
 void ai_process(int64_t obj);
 void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3);
 void sub_4A9560(AiRedirect* redirect);
-void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags);
+void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags);
 void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj);
 void sub_4AA0D0(int64_t obj);
 void sub_4AA1B0(int64_t a1, int64_t a2);
