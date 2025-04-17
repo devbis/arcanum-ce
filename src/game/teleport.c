@@ -213,7 +213,7 @@ bool teleport_process(TeleportData* teleport_data)
         node = objects.head;
         while (node != NULL) {
             if (critter_is_unconscious(node->obj)) {
-                sub_4AA7A0(node->obj);
+                ai_npc_wait(node->obj);
             }
             node = node->next;
         }

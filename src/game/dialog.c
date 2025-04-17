@@ -2098,7 +2098,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             break;
         }
         case DIALOG_ACTION_WA:
-            sub_4AA7A0(a1->npc_obj);
+            ai_npc_wait(a1->npc_obj);
             break;
         case DIALOG_ACTION_LV:
             critter_disband(a1->npc_obj, true);

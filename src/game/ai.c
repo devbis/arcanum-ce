@@ -1453,7 +1453,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
 }
 
 // 0x4AA7A0
-void sub_4AA7A0(int64_t obj)
+void ai_npc_wait(int64_t obj)
 {
     int wait;
     int64_t leader_obj;

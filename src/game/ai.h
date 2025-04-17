@@ -92,7 +92,7 @@ void sub_4AA1B0(int64_t a1, int64_t a2);
 void sub_4AA300(int64_t a1, int64_t a2);
 void ai_stop_attacking(int64_t obj);
 void sub_4AA580(int64_t obj);
-void sub_4AA7A0(int64_t obj);
+void ai_npc_wait(int64_t obj);
 void sub_4AA8C0(int64_t obj, bool force);
 bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent);
 bool ai_is_fighting(int64_t obj);
