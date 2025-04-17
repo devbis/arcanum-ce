@@ -399,7 +399,7 @@ static AnimGoalNode anim_goal_node_run_to_tile = {
 
 // 0x5A63D0
 static AnimGoalNode anim_goal_node_attempt_move = {
-    0xC,
+    12,
     2,
     0,
     0,
@@ -615,7 +615,7 @@ static AnimGoalNode anim_goal_node_attempt_open_door = {
 
 // 0x5A73D0
 static AnimGoalNode anim_goal_node_jump_window = {
-    0xB,
+    11,
     3,
     0,
     0,
@@ -642,7 +642,7 @@ static AnimGoalNode anim_goal_node_jump_window = {
 
 // 0x5A75D0
 static AnimGoalNode anim_goal_node_pickup_item = {
-    0xA,
+    10,
     3,
     0,
     0,
@@ -750,7 +750,7 @@ static AnimGoalNode anim_goal_node_attack = {
 
 // 0x5A7DD0
 static AnimGoalNode anim_goal_node_attempt_attack = {
-    0xD,
+    13,
     3,
     0,
     0,
@@ -912,7 +912,7 @@ static AnimGoalNode anim_goal_node_flee = {
 
 // 0x5A89D0
 static AnimGoalNode anim_goal_node_throw_spell = {
-    0xA,
+    10,
     3,
     0,
     0,
@@ -939,7 +939,7 @@ static AnimGoalNode anim_goal_node_throw_spell = {
 
 // 0x5A8BD0
 static AnimGoalNode anim_goal_node_attempt_spell = {
-    0xC,
+    12,
     4,
     0,
     0,
@@ -1857,7 +1857,7 @@ static AnimGoalNode anim_goal_node_animate_kneel_magic_hands = {
 
 // 0x5ACFD0
 static AnimGoalNode anim_goal_node_attempt_move_near = {
-    0xC,
+    12,
     2,
     0,
     0,
@@ -2208,7 +2208,7 @@ static AnimGoalNode anim_goal_node_throw_spell_friendly = {
 
 // 0x5AE9D0
 static AnimGoalNode anim_goal_node_attempt_spell_friendly = {
-    0xC,
+    12,
     4,
     1,
     0,
@@ -2370,7 +2370,7 @@ static AnimGoalNode anim_goal_node_move_near_obj_combat = {
 
 // 0x5AF5D0
 static AnimGoalNode anim_goal_node_attempt_move_near_combat = {
-    0xC,
+    12,
     2,
     0,
     0,
@@ -2424,7 +2424,7 @@ static AnimGoalNode anim_goal_node_use_container = {
 
 // 0x5AF9D0
 static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim = {
-    0xA,
+    10,
     3,
     0,
     0,
@@ -2451,7 +2451,7 @@ static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim = {
 
 // 0x5AFBD0
 static AnimGoalNode anim_goal_node_attempt_spell_w_cast_anim = {
-    0xE,
+    14,
     4,
     0,
     0,
