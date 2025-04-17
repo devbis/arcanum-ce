@@ -128,7 +128,7 @@ static bool ai_waypoints_process(int64_t obj, bool a2);
 static bool ai_is_day();
 static bool ai_standpoints_process(int64_t obj, bool a2);
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
-static void sub_4AD0B0(int64_t npc_obj);
+static void ai_wake_up(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static bool sub_4AD420(int64_t obj);
@@ -919,7 +919,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
         }
 
         if (critter_is_sleeping(target_obj)) {
-            sub_4AD0B0(target_obj);
+            ai_wake_up(target_obj);
         }
     }
 
@@ -1202,7 +1202,7 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
 
     if (a1 != a3 && a1 != a2 && leader_obj != a2 && leader_obj != a3) {
         if (critter_is_sleeping(a1)) {
-            sub_4AD0B0(a1);
+            ai_wake_up(a1);
         }
 
         if (sub_4AE3A0(a1, a3)) {
@@ -2634,7 +2634,7 @@ bool ai_waypoints_process(int64_t obj, bool a2)
     }
 
     if (is_sleeping) {
-        sub_4AD0B0(obj);
+        ai_wake_up(obj);
         return true;
     }
 
@@ -2752,7 +2752,7 @@ bool ai_standpoints_process(int64_t obj, bool a2)
     }
 
     if (is_sleeping) {
-        sub_4AD0B0(obj);
+        ai_wake_up(obj);
         return true;
     }
 
@@ -2796,7 +2796,7 @@ bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr)
 }
 
 // 0x4AD0B0
-void sub_4AD0B0(int64_t npc_obj)
+void ai_wake_up(int64_t npc_obj)
 {
     int64_t loc;
     int64_t bed_obj;
