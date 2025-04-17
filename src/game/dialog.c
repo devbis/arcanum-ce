@@ -481,7 +481,7 @@ bool sub_412FD0(DialogState* state)
 
     sub_4C1020(state->npc_obj, state->pc_obj);
 
-    if (critter_is_dead(state->npc_obj) || sub_4AE120(state->npc_obj, state->pc_obj) == 0) {
+    if (critter_is_dead(state->npc_obj) || ai_check_kos(state->npc_obj, state->pc_obj) == AI_KOS_NO) {
         if (player_is_local_pc_obj(state->pc_obj)) {
             pc_loc = obj_field_int64_get(state->pc_obj, OBJ_F_LOCATION);
             npc_loc = obj_field_int64_get(state->npc_obj, OBJ_F_LOCATION);
@@ -537,7 +537,7 @@ void sub_413130(DialogState* state, int index)
         return;
     }
 
-    if (critter_is_dead(state->npc_obj) || sub_4AE120(state->npc_obj, state->pc_obj) == 0) {
+    if (critter_is_dead(state->npc_obj) || ai_check_kos(state->npc_obj, state->pc_obj) == AI_KOS_NO) {
         sub_414810(v1, v2, v3, index, state);
     } else {
         dialog_copy_npc_race_specific_msg(state->reply, state, 1000);

@@ -147,7 +147,7 @@ static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
 static bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir);
 static int sub_4AF240(int value);
 static int sub_4AF640(int64_t source_obj, int64_t target_obj);
-static bool sub_4AF800(int64_t obj, int64_t a2);
+static bool ai_check_decoy(int64_t source_obj, int64_t target_obj);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
 static void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj);
 static void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj);
@@ -1831,11 +1831,11 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
         return a3;
     }
 
-    if (sub_4AF800(a1, a2)) {
+    if (ai_check_decoy(a1, a2)) {
         return a2;
     }
 
-    if (sub_4AF800(a1, a3)) {
+    if (ai_check_decoy(a1, a3)) {
         return a3;
     }
 
@@ -1970,7 +1970,7 @@ int64_t sub_4AB460(int64_t critter_obj)
         leader_obj = critter_leader_get(critter_obj);
         if (cnt > 1) {
             for (idx = 0; idx < cnt; idx++) {
-                if (sub_4AF800(critter_obj, handles[idx])) {
+                if (ai_check_decoy(critter_obj, handles[idx])) {
                     ranges[idx] = 0;
                 } else {
                     ranges[idx] = object_dist(critter_obj, handles[idx]);
@@ -2008,7 +2008,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                     v1 = handles[idx];
                 }
 
-                if (sub_4AE120(critter_obj, handles[idx])) {
+                if (ai_check_kos(critter_obj, handles[idx]) != AI_KOS_NO) {
                     danger_source_obj = handles[idx];
                     break;
                 }
@@ -3478,7 +3478,7 @@ void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 }
 
 // 0x4AE120
-int sub_4AE120(int64_t a1, int64_t a2)
+int ai_check_kos(int64_t source_obj, int64_t target_obj)
 {
     int64_t pc_leader_obj;
     int obj_type;
@@ -3488,65 +3488,68 @@ int sub_4AE120(int64_t a1, int64_t a2)
     unsigned int critter_flags;
     AiParams ai_params;
 
-    if (sub_4AB990(a1, a2)) {
-        pc_leader_obj = critter_pc_leader_get(a1);
-        obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    if (sub_4AB990(source_obj, target_obj)) {
+        pc_leader_obj = critter_pc_leader_get(source_obj);
+        obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
 
-        if (object_script_execute(a2, a1, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
-            ai_danger_source(a1, &danger_source_type, &danger_source_obj);
+        if (object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
+            ai_danger_source(source_obj, &danger_source_type, &danger_source_obj);
 
-            if (danger_source_type != AI_DANGER_SOURCE_TYPE_SURRENDER || danger_source_obj != a2) {
+            if (danger_source_type != AI_DANGER_SOURCE_TYPE_SURRENDER || danger_source_obj != target_obj) {
                 if (pc_leader_obj == OBJ_HANDLE_NULL) {
-                    npc_flags = obj_field_int32_get(a1, OBJ_F_NPC_FLAGS);
+                    npc_flags = obj_field_int32_get(source_obj, OBJ_F_NPC_FLAGS);
                     if ((npc_flags & ONF_KOS) != 0) {
-                        critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
-                        if (((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_ENSHROUDED) != 0
-                                && (critter_flags & OCF_UNDEAD) != 0)
-                            || ((obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL_ENSHROUD) != 0
-                                && (critter_flags & OCF_ANIMAL) != 0)) {
-                            return 0;
+                        critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
+                        if ((obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_ENSHROUDED) != 0
+                                && (critter_flags & OCF_UNDEAD) != 0) {
+                            return AI_KOS_NO;
+                        }
+
+                        if ((obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL_ENSHROUD) != 0
+                                && (critter_flags & OCF_ANIMAL) != 0) {
+                            return AI_KOS_NO;
                         }
 
                         if ((npc_flags & ONF_KOS_OVERRIDE) == 0
-                            && !critter_faction_same(a1, a2)) {
-                            return 1;
+                            && !critter_faction_same(source_obj, target_obj)) {
+                            return AI_KOS_FACTION;
                         }
                     }
 
-                    ai_copy_params(a1, &ai_params);
+                    ai_copy_params(source_obj, &ai_params);
 
                     if (obj_type == OBJ_TYPE_PC
-                        && sub_4C0CE0(a1, a2) <= ai_params.field_28) {
-                        return 2;
+                        && sub_4C0CE0(source_obj, target_obj) <= ai_params.field_28) {
+                        return AI_KOS_REACTION;
                     }
 
-                    if (abs(stat_level_get(a1, STAT_ALIGNMENT) - stat_level_get(a2, STAT_ALIGNMENT)) >= ai_params.field_2C) {
-                        return 3;
+                    if (abs(stat_level_get(source_obj, STAT_ALIGNMENT) - stat_level_get(target_obj, STAT_ALIGNMENT)) >= ai_params.field_2C) {
+                        return AI_KOS_ALIGNMENT;
                     }
 
-                    if (sub_4AF800(a1, a2)) {
-                        return 5;
+                    if (ai_check_decoy(source_obj, target_obj)) {
+                        return AI_KOS_DECOY;
                     }
                 }
 
                 if (obj_type == OBJ_TYPE_NPC) {
-                    ai_danger_source(a2, &danger_source_type, &danger_source_obj);
+                    ai_danger_source(target_obj, &danger_source_type, &danger_source_obj);
 
                     if (danger_source_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS
                         && danger_source_obj != OBJ_HANDLE_NULL
-                        && (sub_4AE3A0(a1, danger_source_obj) != 0
-                            || (critter_social_class_get(a1) == SOCIAL_CLASS_GUARD
-                                && critter_is_monstrous(a2)
-                                && critter_leader_get(a2) == OBJ_HANDLE_NULL))
-                        && !sub_4ADCC0(a1, a2, critter_leader_get(a1))) {
-                        return 4;
+                        && (sub_4AE3A0(source_obj, danger_source_obj) != 0
+                            || (critter_social_class_get(source_obj) == SOCIAL_CLASS_GUARD
+                                && critter_is_monstrous(target_obj)
+                                && critter_leader_get(target_obj) == OBJ_HANDLE_NULL))
+                        && !sub_4ADCC0(source_obj, target_obj, critter_leader_get(source_obj))) {
+                        return AI_KOS_GUARD;
                     }
                 }
             }
         }
     }
 
-    return 0;
+    return AI_KOS_NO;
 }
 
 // 0x4AE3A0
@@ -4247,11 +4250,11 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4AF800
-bool sub_4AF800(int64_t obj, int64_t a2)
+bool ai_check_decoy(int64_t source_obj, int64_t target_obj)
 {
-    return !critter_is_dead(a2)
-        && stat_level_get(obj, STAT_INTELLIGENCE) < 5
-        && obj_field_int32_get(a2, OBJ_F_NAME) == CLOCKWORK_DECOY;
+    return !critter_is_dead(target_obj)
+        && stat_level_get(source_obj, STAT_INTELLIGENCE) < 5
+        && obj_field_int32_get(target_obj, OBJ_F_NAME) == CLOCKWORK_DECOY;
 }
 
 // 0x4AF860

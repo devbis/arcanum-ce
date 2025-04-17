@@ -53,6 +53,15 @@ typedef enum AiFollow {
     AI_FOLLOW_LOW_LEVEL,
 } AiFollow;
 
+typedef enum AiKos {
+    AI_KOS_NO,
+    AI_KOS_FACTION,
+    AI_KOS_REACTION,
+    AI_KOS_ALIGNMENT,
+    AI_KOS_GUARD,
+    AI_KOS_DECOY,
+} AiKos;
+
 typedef enum AiAttemptOpenPortal {
     AI_ATTEMPT_OPEN_PORTAL_OK,
     AI_ATTEMPT_OPEN_PORTAL_LOCKED,
@@ -108,7 +117,7 @@ void sub_4AD790(int64_t obj, int a2);
 int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr);
 void ai_switch_weapon(int64_t obj);
 void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
-int sub_4AE120(int64_t a1, int64_t a2);
+int ai_check_kos(int64_t source_obj, int64_t target_obj);
 void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
 int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
 void sub_4AE9E0(int64_t a1, bool a2);
