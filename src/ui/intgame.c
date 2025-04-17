@@ -2686,7 +2686,7 @@ void sub_54DE50(TigMessage* msg)
                         && critter_is_active(pc_obj)
                         && !critter_is_prone(pc_obj)) {
                         if (combat_critter_is_combat_mode_active(pc_obj)) {
-                            if (sub_44E830(pc_obj, 2, NULL)
+                            if (anim_is_current_goal_type(pc_obj, AG_ANIM_FIDGET, NULL)
                                 || !sub_423300(pc_obj, 0)) {
                                 sub_54EBF0();
                             }
@@ -2712,7 +2712,7 @@ void sub_54DE50(TigMessage* msg)
                                 rot = location_rot(pc_loc, loc);
                                 if (!sub_423300(pc_obj, 0)) {
                                     anim_goal_rotate(pc_obj, rot);
-                                } else if (sub_44E830(pc_obj, 2, 0)) {
+                                } else if (anim_is_current_goal_type(pc_obj, AG_ANIM_FIDGET, NULL)) {
                                     object_set_current_aid(pc_obj, tig_art_id_rotation_set(aid, rot));
                                 }
                             }
@@ -3444,7 +3444,7 @@ void sub_54ED30(S4F2810* a1)
         // 0x54F68E
         if (combat_turn_based_is_active()) {
             AnimID fidget_anim_id;
-            if (sub_44E830(pc_obj, AG_ANIM_FIDGET, &fidget_anim_id)
+            if (anim_is_current_goal_type(pc_obj, AG_ANIM_FIDGET, &fidget_anim_id)
                 && sub_421D60(&anim_id, &fidget_anim_id)
                 && num_goal_subslots_in_use(&anim_id) < 4) {
                 if (is_anim_forever(&anim_id)) {

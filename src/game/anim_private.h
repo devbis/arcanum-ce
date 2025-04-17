@@ -284,7 +284,7 @@ bool anim_find_next_of_type(int64_t obj, int type, AnimID* anim_id);
 bool sub_44E6F0(int64_t obj, AnimGoalData* goal_data);
 bool sub_44E4D0(int64_t a1, int a2, int a3);
 bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id);
-bool sub_44E830(int64_t obj, int goal_type, AnimID* anim_id);
+bool anim_is_current_goal_type(int64_t obj, int goal_type, AnimID* anim_id);
 bool sub_44E8C0(int64_t obj, AnimID* anim_id);
 bool sub_44E940(int64_t a1, AnimID* anim_id, int64_t a2);
 bool sub_44EB40(int64_t obj, int64_t from, int64_t to);

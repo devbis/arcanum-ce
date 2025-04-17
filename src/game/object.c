@@ -5382,8 +5382,8 @@ int64_t get_fire_at_location(int64_t loc)
     node = objects.head;
     while (node != NULL) {
         obj = node->obj;
-        if (sub_44E830(obj, AG_EYE_CANDY_FIRE_DMG, NULL)
-            || sub_44E830(obj, AG_ANIMATE_LOOP_FIRE_DMG, NULL)) {
+        if (anim_is_current_goal_type(obj, AG_EYE_CANDY_FIRE_DMG, NULL)
+            || anim_is_current_goal_type(obj, AG_ANIMATE_LOOP_FIRE_DMG, NULL)) {
             break;
         }
         node = node->next;

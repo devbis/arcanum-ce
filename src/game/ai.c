@@ -376,7 +376,7 @@ bool sub_4A8570(Ai* ai)
     }
 
     if ((critter_flags & OCF_STUNNED) != 0) {
-        if (!sub_44E830(ai->obj, AG_ANIMATE_STUNNED, NULL)) {
+        if (!anim_is_current_goal_type(ai->obj, AG_ANIMATE_STUNNED, NULL)) {
             critter_flags &= ~OCF_STUNNED;
             obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
             return false;
@@ -1075,7 +1075,7 @@ void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj)
 
     if (!sub_423300(attacker_obj, NULL) || sub_423470(attacker_obj)) {
         if (combat_auto_attack_get(attacker_obj)) {
-            if (!sub_44E830(attacker_obj, AG_ATTEMPT_ATTACK, NULL)) {
+            if (!anim_is_current_goal_type(attacker_obj, AG_ATTEMPT_ATTACK, NULL)) {
                 anim_goal_attack(attacker_obj, target_obj);
             }
         }

@@ -1193,7 +1193,7 @@ bool sub_4B3D90(int64_t obj)
         return true;
     }
 
-    if (sub_44E830(obj, AG_ATTEMPT_ATTACK, NULL)) {
+    if (anim_is_current_goal_type(obj, AG_ATTEMPT_ATTACK, NULL)) {
         return false;
     }
 
@@ -3844,7 +3844,7 @@ bool sub_4B8040(int64_t obj)
         return false;
     }
 
-    if (sub_44E830(obj, 18, 0)) {
+    if (anim_is_current_goal_type(obj, AG_ATTACK, NULL)) {
         return false;
     }
 

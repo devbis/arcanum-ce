@@ -4526,7 +4526,7 @@ void sub_455C30(MagicTechSerializedData* a1)
             magictech_id_free_lock(run_info->id);
         }
 
-        if (sub_44E830(run_info->parent_obj.obj, AG_THROW_SPELL, &anim_id)) {
+        if (anim_is_current_goal_type(run_info->parent_obj.obj, AG_THROW_SPELL, &anim_id)) {
             if (num_goal_subslots_in_use(&anim_id) < 4
                 && !combat_turn_based_is_active()
                 && sub_44D500(&goal_data, run_info->parent_obj.obj, anim)) {
@@ -6747,11 +6747,11 @@ bool sub_45A580(int64_t a1, int64_t a2)
         return true;
     }
 
-    if (sub_44E830(a2, AG_ATTEMPT_ATTACK, NULL)) {
+    if (anim_is_current_goal_type(a2, AG_ATTEMPT_ATTACK, NULL)) {
         return true;
     }
 
-    if (sub_44E830(a2, AG_ATTEMPT_SPELL, NULL)) {
+    if (anim_is_current_goal_type(a2, AG_ATTEMPT_SPELL, NULL)) {
         return true;
     }
 

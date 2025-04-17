@@ -3540,7 +3540,7 @@ bool sub_423470(int64_t obj)
 // 0x4234F0
 bool sub_4234F0(int64_t obj)
 {
-    return sub_44E830(obj, 2, NULL);
+    return anim_is_current_goal_type(obj, AG_ANIM_FIDGET, NULL);
 }
 
 // 0x423530
@@ -5593,7 +5593,7 @@ bool sub_427000(int64_t obj)
     if (combat_turn_based_is_active()
         && combat_turn_based_whos_turn_get() == obj
         && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_STUNNED) != 0
-        && sub_44E830(obj, AG_ANIMATE_STUNNED, &anim_id)
+        && anim_is_current_goal_type(obj, AG_ANIMATE_STUNNED, &anim_id)
         && anim_id_to_run_info(&anim_id, &run_info)) {
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data -= 3;
         if (run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data <= 0) {
@@ -13360,7 +13360,7 @@ bool sub_433640(int64_t obj, int64_t loc)
         && !tig_net_is_host()) {
         Packet4 pkt;
 
-        if (!sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)) {
+        if (!anim_is_current_goal_type(obj, AG_RUN_TO_TILE, &anim_id)) {
             return false;
         }
 
@@ -13391,7 +13391,7 @@ bool sub_433640(int64_t obj, int64_t loc)
         return sub_433C80(obj, loc);
     }
 
-    if (!sub_44E830(obj, AG_MOVE_TO_TILE, &stru_5A1908)) {
+    if (!anim_is_current_goal_type(obj, AG_MOVE_TO_TILE, &stru_5A1908)) {
         sub_44D500(&goal_data, obj, AG_MOVE_TO_TILE);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
         if (!sub_424070(obj, 3, false, false)) {
@@ -13470,7 +13470,7 @@ bool sub_433A00(int64_t obj, int64_t loc, bool a3)
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
-        if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
+        if (anim_is_current_goal_type(obj, AG_RUN_TO_TILE, &anim_id)
             && anim_id_to_run_info(&anim_id, &run_info)
             && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
             return false;
@@ -13497,7 +13497,7 @@ bool sub_433A00(int64_t obj, int64_t loc, bool a3)
         return sub_434030(obj, loc);
     }
 
-    if (sub_44E830(obj, AG_MOVE_TO_TILE, &stru_5A1908) || a3) {
+    if (anim_is_current_goal_type(obj, AG_MOVE_TO_TILE, &stru_5A1908) || a3) {
         run_info = &(anim_run_info[stru_5A1908.slot_num]);
         if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == loc) {
             return true;
@@ -13534,7 +13534,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
-        if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
+        if (anim_is_current_goal_type(obj, AG_RUN_TO_TILE, &anim_id)
             && anim_id_to_run_info(&anim_id, &run_info)
             && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
             return false;
@@ -13556,7 +13556,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
         return false;
     }
 
-    if (!sub_44E830(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+    if (!anim_is_current_goal_type(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
         sub_44D500(&goal_data, obj, AG_RUN_TO_TILE);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
 
@@ -13648,7 +13648,7 @@ bool sub_434030(int64_t obj, int64_t loc)
         return false;
     }
 
-    if (!sub_44E830(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+    if (!anim_is_current_goal_type(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
         sub_44D500(&goal_data, obj, AG_RUN_TO_TILE);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
 
@@ -13684,7 +13684,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
         return false;
     }
 
-    if (!sub_44E830(source_obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+    if (!anim_is_current_goal_type(source_obj, AG_RUN_TO_TILE, &stru_5A1908)) {
         if (sub_44D4E0(&goal_data, source_obj, AG_MOVE_NEAR_TILE)) {
             goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
             goal_data.params[AGDATA_RANGE_DATA].data = range;
@@ -13755,7 +13755,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
         return false;
     }
 
-    if (!sub_44E830(source_obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+    if (!anim_is_current_goal_type(source_obj, AG_RUN_TO_TILE, &stru_5A1908)) {
         if (sub_44D4E0(&goal_data, source_obj, AG_RUN_NEAR_TILE)) {
             goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
             goal_data.params[AGDATA_RANGE_DATA].data = range;
@@ -14481,7 +14481,7 @@ bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3)
         return false;
     }
 
-    if (!sub_44E830(proj_obj, AG_PROJECTILE, &anim_id)) {
+    if (!anim_is_current_goal_type(proj_obj, AG_PROJECTILE, &anim_id)) {
         return false;
     }
 
