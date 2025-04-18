@@ -331,7 +331,7 @@ void magictech_save_nodes_to_map(const char* map);
 void magictech_load_nodes_from_map(const char* map);
 void magictech_get_msg(MesFileEntry *mes_file_entry);
 char* magictech_spell_name(int num);
-void sub_44FE20();
+void magictech_cheat_mode_on();
 int magictech_get_range(int magictech);
 int sub_4502B0(int magictech);
 int sub_4502E0(int a1);

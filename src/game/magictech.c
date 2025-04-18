@@ -687,7 +687,7 @@ static mes_file_handle_t magictech_mes_file;
 static char** magictech_component_names;
 
 // 0x5E75FC
-static bool dword_5E75FC;
+static bool magictech_cheat_mode;
 
 // 0x5E7600
 static int dword_5E7600;
@@ -810,7 +810,7 @@ bool magictech_init(GameInitInfo* init_info)
 // 0x44F150
 void magictech_reset()
 {
-    dword_5E75FC = false;
+    magictech_cheat_mode = false;
 }
 
 // 0x44F160
@@ -1287,9 +1287,9 @@ char* magictech_spell_name(int num)
 }
 
 // 0x44FE20
-void sub_44FE20()
+void magictech_cheat_mode_on()
 {
-    dword_5E75FC = true;
+    magictech_cheat_mode = true;
 }
 
 // 0x44FE30
@@ -1707,7 +1707,7 @@ bool sub_4507D0(int64_t obj, int magictech)
         }
     }
 
-    if (dword_5E75FC) {
+    if (magictech_cheat_mode) {
         cost = 1;
     }
 
@@ -1731,7 +1731,8 @@ bool magictech_can_charge_spell_fatigue(int64_t obj, int magictech)
     }
 
     cost = magictech_spells[magictech].cost;
-    if (dword_5E75FC) {
+
+    if (magictech_cheat_mode) {
         cost = 1;
     }
 
@@ -1766,7 +1767,7 @@ bool sub_450940(int mt_id)
         cost = magictech_get_maintenance(mt_id)->cost;
     }
 
-    if (dword_5E75FC) {
+    if (magictech_cheat_mode) {
         cost = 1;
     }
 

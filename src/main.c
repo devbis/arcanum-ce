@@ -450,7 +450,8 @@ void main_loop()
                                 spell_add(pc_obj, index, true);
                             }
 
-                            sub_44FE20();
+                            magictech_cheat_mode_on();
+
                             critter_fatigue_damage_set(pc_obj, 0);
                             sub_551160();
                             intgame_draw_bar(INTGAME_BAR_HEALTH);
