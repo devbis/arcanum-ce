@@ -547,7 +547,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
     } else {
         if (hp_ratio < 90) {
             item_obj = sub_4C91F0(ai->obj, BASIC_SKILL_HEAL);
-            if (!sub_4AE570(ai->obj, obj, item_obj, BASIC_SKILL_HEAL)) {
+            if (ai_check_use_skill(ai->obj, obj, item_obj, BASIC_SKILL_HEAL) == AI_USE_SKILL_OK) {
                 ai->danger_source = obj;
                 ai->item_obj = item_obj;
                 ai->field_14 = 3;
@@ -3615,52 +3615,52 @@ void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags
 }
 
 // 0x4AE570
-int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
+int ai_check_use_skill(int64_t source_obj, int64_t target_obj, int64_t item_obj, int skill)
 {
     switch (skill) {
     case SKILL_HEAL:
-        if (a3 == OBJ_HANDLE_NULL
-            || obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
-            || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & 0x8) == 0) {
-            return 1;
+        if (item_obj == OBJ_HANDLE_NULL
+            || obj_field_int32_get(item_obj, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
+            || (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) == 0) {
+            return AI_USE_SKILL_BAD_SOURCE;
         }
 
-        if (a2 == OBJ_HANDLE_NULL
-            || !obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))
-            || (obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & (OCF_UNDEAD | OCF_MECHANICAL)) != 0) {
-            return 2;
+        if (target_obj == OBJ_HANDLE_NULL
+            || !obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
+            || (obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS) & (OCF_UNDEAD | OCF_MECHANICAL)) != 0) {
+            return AI_USE_SKILL_BAD_TARGET;
         }
 
-        return 0;
+        return AI_USE_SKILL_OK;
     case SKILL_REPAIR:
-        if (a2 == OBJ_HANDLE_NULL
-            || !obj_type_is_item(obj_field_int32_get(a2, OBJ_F_TYPE))) {
-            return 2;
+        if (target_obj == OBJ_HANDLE_NULL
+            || !obj_type_is_item(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
+            return AI_USE_SKILL_BAD_TARGET;
         }
 
-        return 0;
+        return AI_USE_SKILL_OK;
     case SKILL_DISARM_TRAPS:
-        if (a3 != OBJ_HANDLE_NULL) {
-            if (obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
-                || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) == 0) {
-                return 1;
+        if (item_obj != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(item_obj, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
+                || (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) == 0) {
+                return AI_USE_SKILL_BAD_SOURCE;
             }
         } else {
-            if (a1 == OBJ_HANDLE_NULL
-                || critter_pc_leader_get(a1) == OBJ_HANDLE_NULL) {
-                return 1;
+            if (source_obj == OBJ_HANDLE_NULL
+                || critter_pc_leader_get(source_obj) == OBJ_HANDLE_NULL) {
+                return AI_USE_SKILL_BAD_SOURCE;
             }
         }
 
-        if (a2 == OBJ_HANDLE_NULL
-            || !object_is_lockable(a2)) {
-            return 2;
+        if (target_obj == OBJ_HANDLE_NULL
+            || !object_is_lockable(target_obj)) {
+            return AI_USE_SKILL_BAD_TARGET;
         }
 
-        return 0;
+        return AI_USE_SKILL_OK;
     }
 
-    return 0;
+    return AI_USE_SKILL_OK;
 }
 
 // 0x4AE720

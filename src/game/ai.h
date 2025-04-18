@@ -107,6 +107,12 @@ typedef enum AiNpcWitnessPcCritical {
     AI_NPC_WITNESS_PC_CRITICAL_MISS,
 } AiNpcWitnessPcCritical;
 
+typedef enum AiUseSkill {
+    AI_USE_SKILL_OK,
+    AI_USE_SKILL_BAD_SOURCE,
+    AI_USE_SKILL_BAD_TARGET,
+} AiUseSkill;
+
 bool ai_init(GameInitInfo* init_info);
 void ai_exit();
 bool ai_mod_load();
@@ -140,7 +146,7 @@ void ai_switch_weapon(int64_t obj);
 void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 int ai_check_kos(int64_t source_obj, int64_t target_obj);
 void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
-int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
+int ai_check_use_skill(int64_t source_obj, int64_t target_obj, int64_t item_obj, int skill);
 void ai_npc_witness_pc_critical(int64_t pc_obj, int type);
 void ai_npc_near_death(int64_t npc_obj, int64_t pc_obj);
 bool ai_critter_can_open_portals(int64_t obj);

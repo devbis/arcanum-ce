@@ -2478,7 +2478,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "u:", 2) == 0) {
         v4 = atoi(entry.str + 2);
-        if (sub_4AE570(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4)) {
+        if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4) != AI_USE_SKILL_OK) {
             return false;
         }
 
@@ -3733,7 +3733,7 @@ void sub_419830(int a1, int a2, DialogState* a3)
     switch (a1) {
     case 0:
         item_obj = sub_4C91F0(a3->npc_obj, SKILL_HEAL);
-        if (sub_4AE570(a3->npc_obj, a3->pc_obj, item_obj, SKILL_HEAL) == 0) {
+        if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, item_obj, SKILL_HEAL) == AI_USE_SKILL_OK) {
             sub_419A00(0, SKILL_HEAL, a2, a3);
             v3 = 1;
         }
