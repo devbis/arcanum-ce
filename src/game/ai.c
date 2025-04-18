@@ -123,7 +123,7 @@ static void ai_action_perform_fleeing(Ai* ai);
 static void ai_action_perform_surrender(Ai* ai);
 static void ai_action_perform_combat(Ai* ai);
 static void ai_action_perform_baking_off(Ai* ai);
-static bool sub_4AC910(Ai* ai, int64_t a2);
+static bool ai_use_grenade(Ai* ai, int64_t a2);
 static bool ai_waypoints_process(int64_t obj, bool a2);
 static bool ai_is_day();
 static bool ai_standpoints_process(int64_t obj, bool a2);
@@ -1708,7 +1708,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
     if (danger_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS) {
         if ((obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_TARGET_LOCK) == 0) {
             if ((npc_flags & ONF_FIGHTING) == 0) {
-                npc_flags |= ONF_FIGHTING | ONF_CHECK_WIELD | ONF_40000000;
+                npc_flags |= ONF_FIGHTING | ONF_CHECK_WIELD | ONF_CHECK_GRENADE;
                 obj_field_int32_set(source_obj, OBJ_F_NPC_FLAGS, npc_flags);
                 object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_ENTER_COMBAT, 0);
 
@@ -2496,7 +2496,7 @@ void ai_action_perform_surrender(Ai* ai)
 void ai_action_perform_combat(Ai* ai)
 {
     AiParams params;
-    unsigned int npc_flags;
+    ObjectNpcFlags npc_flags;
     int64_t distance;
 
     ai_copy_params(ai->obj, &params);
@@ -2504,9 +2504,9 @@ void ai_action_perform_combat(Ai* ai)
     distance = object_dist(ai->obj, ai->danger_source);
     if (params.field_3C > 1 && distance < params.field_3C && random_between(1, 20) == 1) {
         npc_flags |= ONF_BACKING_OFF;
-        npc_flags |= 0x40000000;
+        npc_flags |= ONF_CHECK_GRENADE;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
-    } else if (!sub_4AC910(ai, distance)) {
+    } else if (!ai_use_grenade(ai, distance)) {
         anim_goal_attack_ex(ai->obj, ai->danger_source, ai->field_30);
     }
 }
@@ -2549,49 +2549,49 @@ void ai_action_perform_baking_off(Ai* ai)
 }
 
 // 0x4AC910
-bool sub_4AC910(Ai* ai, int64_t a2)
+bool ai_use_grenade(Ai* ai, int64_t distance)
 {
-    unsigned int flags;
-    int64_t item_obj;
-    int v1;
+    ObjectNpcFlags npc_flags;
+    int64_t grenade_obj;
+    int radius;
     int64_t loc;
-    int64_t v2;
+    int64_t block_obj;
     ObjectList objects;
     ObjectNode* node;
 
-    flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
-    if ((flags & 0x40000000) == 0) {
+    npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_CHECK_GRENADE) == 0) {
         return false;
     }
 
-    if ((flags & 0x10000000) == 0) {
+    if ((npc_flags & ONF_BACKING_OFF) != 0) {
         return false;
     }
 
-    flags &= ~0x40000000;
-    obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, flags);
+    npc_flags &= ~ONF_CHECK_GRENADE;
+    obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
     if (basic_skill_get_base(ai->obj, BASIC_SKILL_THROWING) == 0) {
         return false;
     }
 
-    item_obj = item_find_first_generic(ai->obj, 0x10);
-    if (item_obj == OBJ_HANDLE_NULL) {
+    grenade_obj = item_find_first_generic(ai->obj, OGF_IS_GRENADE);
+    if (grenade_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    v1 = sub_466230(item_obj);
-    if (a2 <= v1) {
+    radius = sub_466230(grenade_obj);
+    if (distance <= radius) {
         return false;
     }
 
     loc = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
-    sub_4ADE00(ai->obj, loc, &v2);
-    if (v2 != 0) {
+    sub_4ADE00(ai->obj, loc, &block_obj);
+    if (block_obj != 0) {
         return false;
     }
 
-    ai_objects_in_radius(ai->danger_source, v1, &objects, OBJ_TM_NPC);
+    ai_objects_in_radius(ai->danger_source, radius, &objects, OBJ_TM_NPC);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
@@ -2607,7 +2607,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
     }
 
     loc = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
-    anim_goal_throw_item(ai->obj, item_obj, loc);
+    anim_goal_throw_item(ai->obj, grenade_obj, loc);
 
     return true;
 }

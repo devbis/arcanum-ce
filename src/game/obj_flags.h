@@ -261,6 +261,7 @@ typedef uint32_t ObjectGenericFlags;
 #define OGF_IS_LOCKPICK                0x0002u
 #define OGF_IS_TRAP_DEVICE             0x0004u
 #define OGF_IS_HEALING_ITEM            0x0008u
+#define OGF_IS_GRENADE                 0x0010u
 // clang-format on
 
 typedef uint32_t ObjectCritterFlags;
@@ -388,7 +389,7 @@ typedef uint32_t ObjectNpcFlags;
 #define ONF_LOOK_FOR_AMMO     0x08000000u
 #define ONF_BACKING_OFF       0x10000000u
 #define ONF_NO_ATTACK         0x20000000u
-#define ONF_40000000          0x40000000u
+#define ONF_CHECK_GRENADE     0x40000000u
 // clang-format on
 
 typedef uint32_t ObjectTrapFlags;
