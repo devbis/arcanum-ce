@@ -113,6 +113,13 @@ typedef enum AiUseSkill {
     AI_USE_SKILL_BAD_TARGET,
 } AiUseSkill;
 
+typedef enum AiActionType {
+    AI_ACTION_TYPE_UNKNOWN,
+    AI_ACTION_TYPE_CAST_SPELL,
+    AI_ACTION_TYPE_USE_ITEM,
+    AI_ACTION_TYPE_USE_SKILL,
+} AiActionType;
+
 bool ai_init(GameInitInfo* init_info);
 void ai_exit();
 bool ai_mod_load();

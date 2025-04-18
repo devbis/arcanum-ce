@@ -64,7 +64,7 @@ typedef struct Ai {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t danger_source;
     /* 0010 */ int danger_type;
-    /* 0014 */ int field_14;
+    /* 0014 */ int action_type;
     /* 0018 */ int spell;
     /* 001C */ int skill;
     /* 0020 */ int64_t item_obj;
@@ -427,7 +427,7 @@ void sub_4A88D0(Ai* ai, int64_t obj)
     ai->obj = obj;
     ai->danger_source = OBJ_HANDLE_NULL;
     ai->danger_type = AI_DANGER_SOURCE_TYPE_NONE;
-    ai->field_14 = 0;
+    ai->action_type = AI_ACTION_TYPE_UNKNOWN;
     ai->spell = 10000;
     ai->skill = -1;
     ai->item_obj = OBJ_HANDLE_NULL;
@@ -549,7 +549,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
             if (ai_check_use_skill(ai->obj, obj, item_obj, BASIC_SKILL_HEAL) == AI_USE_SKILL_OK) {
                 ai->danger_source = obj;
                 ai->item_obj = item_obj;
-                ai->field_14 = 3;
+                ai->action_type = AI_ACTION_TYPE_USE_SKILL;
                 ai->skill = BASIC_SKILL_HEAL;
                 return true;
             }
@@ -2174,7 +2174,7 @@ void sub_4ABC20(Ai* ai)
     if ((obj_field_int32_get(ai->obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0
         || (obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NIGH_INVULNERABLE) != 0
         || !sub_4ABC70(ai)) {
-        ai->field_14 = 0;
+        ai->action_type = AI_ACTION_TYPE_UNKNOWN;
     }
 }
 
@@ -2312,12 +2312,12 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
             && !sub_4AE720(ai->obj, entry->item_obj, obj, entry->spell)) {
             if (entry->item_obj != OBJ_HANDLE_NULL
                 && sub_4CC160(entry->item_obj)) {
-                ai->field_14 = 2;
+                ai->action_type = AI_ACTION_TYPE_USE_ITEM;
                 ai->spell = entry->spell;
                 ai->item_obj = entry->item_obj;
                 ai->danger_source = obj;
             } else {
-                ai->field_14 = 1;
+                ai->action_type = AI_ACTION_TYPE_CAST_SPELL;
                 ai->spell = entry->spell;
                 ai->danger_source = obj;
                 ai->item_obj = entry->item_obj;
@@ -2338,14 +2338,14 @@ void ai_action_perform(Ai* ai)
             return;
         }
 
-        switch (ai->field_14) {
-        case 1:
+        switch (ai->action_type) {
+        case AI_ACTION_TYPE_CAST_SPELL:
             ai_action_perform_cast(ai);
             break;
-        case 2:
+        case AI_ACTION_TYPE_USE_ITEM:
             ai_action_perform_item(ai);
             break;
-        case 3:
+        case AI_ACTION_TYPE_USE_SKILL:
             ai_action_perform_skill(ai);
             break;
         default:
