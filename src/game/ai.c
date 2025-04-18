@@ -151,7 +151,7 @@ static bool ai_check_decoy(int64_t source_obj, int64_t target_obj);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
 static void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj);
 static void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj);
-static int64_t sub_4AFA90(int64_t obj);
+static int64_t ai_shitlist_get(int64_t obj);
 
 #define concealed_to_loudness(concealed) ((concealed) ? LOUDNESS_SILENT : LOUDNESS_NORMAL)
 
@@ -818,7 +818,7 @@ void sub_4A92D0(Ai* ai)
             break;
         }
 
-        ai->danger_source = sub_4AFA90(ai->obj);
+        ai->danger_source = ai_shitlist_get(ai->obj);
         if (ai->danger_source != OBJ_HANDLE_NULL) {
             sub_4ABC20(ai);
             ai->danger_type = sub_4AABE0(ai->obj,
@@ -4352,7 +4352,7 @@ void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj)
 }
 
 // 0x4AFA90
-int64_t sub_4AFA90(int64_t obj)
+int64_t ai_shitlist_get(int64_t obj)
 {
     int cnt;
     int start;
