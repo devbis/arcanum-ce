@@ -685,7 +685,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
     }
 
     radius = sub_4AF240(stat_level_get(obj, STAT_PERCEPTION) - 5);
-    sub_4AE4E0(obj, radius, &objects, flags);
+    ai_objects_in_radius(obj, radius, &objects, flags);
     node = objects.head;
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_ITEM_FLAGS) & (OIF_NO_DISPLAY | OIF_NO_NPC_PICKUP)) == 0
@@ -750,7 +750,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
         item_type = -1;
     }
 
-    sub_4AE4E0(obj, radius, &objects, OBJ_TM_CONTAINER);
+    ai_objects_in_radius(obj, radius, &objects, OBJ_TM_CONTAINER);
     node = objects.head;
     while (node != NULL) {
         if (sub_49B290(node->obj) == 3023) {
@@ -1171,7 +1171,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int loudness)
     radius = dword_5B50C0[loudness];
     dist = (int)object_dist(a2, a1);
     if (dist < 2 * dword_5B50C0[LOUDNESS_LOUD]) {
-        sub_4AE4E0(a2, radius, &objects, OBJ_TM_NPC);
+        ai_objects_in_radius(a2, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
             sub_4A9F10(node->obj, a2, a1, loudness);
@@ -1180,7 +1180,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int loudness)
         object_list_destroy(&objects);
     }
     if (dist > 1) {
-        sub_4AE4E0(a1, radius, &objects, OBJ_TM_NPC);
+        ai_objects_in_radius(a1, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
             sub_4A9F10(node->obj, a2, a1, loudness);
@@ -1235,7 +1235,7 @@ void sub_4AA0D0(int64_t obj)
     ObjectList npcs;
     ObjectNode* node;
 
-    sub_4AE4E0(obj, 10, &npcs, OBJ_TM_NPC);
+    ai_objects_in_radius(obj, 10, &npcs, OBJ_TM_NPC);
 
     node = npcs.head;
     while (node != NULL) {
@@ -1264,7 +1264,7 @@ void sub_4AA1B0(int64_t a1, int64_t a2)
         int64_t danger_obj;
         unsigned int flags;
 
-        sub_4AE4E0(a2, 3, &objects, OBJ_TM_NPC);
+        ai_objects_in_radius(a2, 3, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
@@ -1959,7 +1959,7 @@ int64_t sub_4AB460(int64_t critter_obj)
     radius = sub_4AF240(stat_level_get(critter_obj, STAT_PERCEPTION));
 
     cnt = 0;
-    sub_4AE4E0(critter_obj, radius, &objects, OBJ_TM_CRITTER);
+    ai_objects_in_radius(critter_obj, radius, &objects, OBJ_TM_CRITTER);
     node = objects.head;
     while (node != NULL) {
         if (cnt >= 50) {
@@ -2591,7 +2591,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
         return false;
     }
 
-    sub_4AE4E0(ai->danger_source, v1, &objects, OBJ_TM_NPC);
+    ai_objects_in_radius(ai->danger_source, v1, &objects, OBJ_TM_NPC);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
@@ -3601,7 +3601,7 @@ int64_t sub_4AE450(int64_t a1, int64_t a2)
 }
 
 // 0x4AE4E0
-void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags)
+void ai_objects_in_radius(int64_t obj, int radius, ObjectList* objects, unsigned int flags)
 {
     int64_t loc;
     LocRect loc_rect;
@@ -3980,7 +3980,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
         return;
     }
 
-    sub_4AE4E0(target_obj, 10, &objects, OBJ_TM_NPC);
+    ai_objects_in_radius(target_obj, 10, &objects, OBJ_TM_NPC);
     node = objects.head;
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_NAME) == notify_npc

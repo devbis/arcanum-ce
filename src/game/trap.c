@@ -654,7 +654,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
     critters.head = NULL;
 
     if (radius > 0) {
-        sub_4AE4E0(invocation->attachee_obj, radius, &critters, OBJ_TM_PC | OBJ_TM_NPC);
+        ai_objects_in_radius(invocation->attachee_obj, radius, &critters, OBJ_TM_PC | OBJ_TM_NPC);
     }
 
     if (invocation->script->num >= TRAP_SCRIPT_FIRST && invocation->script->num < TRAP_SCRIPT_COUNT) {
