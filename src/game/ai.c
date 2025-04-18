@@ -3765,13 +3765,13 @@ void sub_4AE9E0(int64_t a1, bool a2)
 }
 
 // 0x4AEAB0
-void sub_4AEAB0(int64_t a1, int64_t a2)
+void ai_npc_near_death(int64_t npc_obj, int64_t pc_obj)
 {
     char str[1000];
     int speech_id;
 
-    dialog_copy_npc_near_death_msg(a1, a2, str, &speech_id);
-    ai_float_line_func(a1, a2, str, speech_id);
+    dialog_copy_npc_near_death_msg(npc_obj, pc_obj, str, &speech_id);
+    ai_float_line_func(npc_obj, pc_obj, str, speech_id);
 }
 
 // 0x4AEB10

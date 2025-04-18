@@ -1838,7 +1838,7 @@ void sub_4B4390(CombatContext* combat)
             if (leader_obj != OBJ_HANDLE_NULL
                 && hp_ratio_before >= 20
                 && ai_object_hp_ratio(combat->target_obj) < 20) {
-                sub_4AEAB0(combat->target_obj, leader_obj);
+                ai_npc_near_death(combat->target_obj, leader_obj);
             }
         }
 

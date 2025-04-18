@@ -137,7 +137,7 @@ int ai_check_kos(int64_t source_obj, int64_t target_obj);
 void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
 int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
 void sub_4AE9E0(int64_t a1, bool a2);
-void sub_4AEAB0(int64_t a1, int64_t a2);
+void ai_npc_near_death(int64_t npc_obj, int64_t pc_obj);
 bool ai_critter_can_open_portals(int64_t obj);
 int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir);
 int ai_attempt_open_container(int64_t obj, int64_t container_obj);
