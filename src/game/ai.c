@@ -66,7 +66,7 @@ typedef struct Ai {
     /* 0010 */ int danger_type;
     /* 0014 */ int field_14;
     /* 0018 */ int spell;
-    /* 001C */ int field_1C;
+    /* 001C */ int skill;
     /* 0020 */ int64_t item_obj;
     /* 0028 */ int64_t leader_obj;
     /* 0030 */ int sound_id;
@@ -429,7 +429,7 @@ void sub_4A88D0(Ai* ai, int64_t obj)
     ai->danger_type = AI_DANGER_SOURCE_TYPE_NONE;
     ai->field_14 = 0;
     ai->spell = 10000;
-    ai->field_1C = -1;
+    ai->skill = -1;
     ai->item_obj = OBJ_HANDLE_NULL;
     ai->leader_obj = critter_leader_get(obj);
     ai_danger_source(obj, &(ai->danger_type), &(ai->danger_source));
@@ -550,7 +550,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
                 ai->danger_source = obj;
                 ai->item_obj = item_obj;
                 ai->field_14 = 3;
-                ai->field_1C = 10;
+                ai->skill = BASIC_SKILL_HEAL;
                 return true;
             }
         }
@@ -2411,7 +2411,7 @@ void ai_action_perform_skill(Ai* ai)
     anim_goal_use_skill_on(ai->obj,
         ai->danger_source,
         ai->item_obj,
-        ai->field_1C,
+        ai->skill,
         0);
 }
 
