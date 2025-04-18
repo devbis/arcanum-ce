@@ -3739,7 +3739,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
 }
 
 // 0x4AE9E0
-void sub_4AE9E0(int64_t a1, bool a2)
+void ai_npc_witness_pc_critical(int64_t pc_obj, int type)
 {
     int cnt;
     int rnd;
@@ -3747,21 +3747,31 @@ void sub_4AE9E0(int64_t a1, bool a2)
     char str[1000];
     int speech_id;
 
-    if ((!tig_net_is_active()
-            || tig_net_is_host())
-        && random_between(1, 2) != 1) {
-        if (ai_float_line_func != NULL) {
-            cnt = critter_num_followers(a1, false);
-            if (cnt != 0) {
-                rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
-                follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
-                if (critter_is_active(follower_obj)) {
-                    dialog_copy_npc_witness_pc_critical_msg(follower_obj, a1, a2, str, &speech_id);
-                    ai_float_line_func(follower_obj, a1, str, speech_id);
-                }
-            }
-        }
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
     }
+
+    if (random_between(1, 2) == 1) {
+        return;
+    }
+
+    if (ai_float_line_func == NULL) {
+        return;
+    }
+
+    cnt = critter_num_followers(pc_obj, false);
+    if (cnt == 0) {
+        return;
+    }
+
+    rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
+    follower_obj = obj_arrayfield_handle_get(pc_obj, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
+    if (!critter_is_active(follower_obj)) {
+        return;
+    }
+
+    dialog_copy_npc_witness_pc_critical_msg(follower_obj, pc_obj, type, str, &speech_id);
+    ai_float_line_func(follower_obj, pc_obj, str, speech_id);
 }
 
 // 0x4AEAB0

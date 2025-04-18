@@ -102,6 +102,11 @@ typedef struct AiRedirect {
     /* 0014 */ unsigned int critter_flags;
 } AiRedirect;
 
+typedef enum AiNpcWitnessPcCritical {
+    AI_NPC_WITNESS_PC_CRITICAL_HIT,
+    AI_NPC_WITNESS_PC_CRITICAL_MISS,
+} AiNpcWitnessPcCritical;
+
 bool ai_init(GameInitInfo* init_info);
 void ai_exit();
 bool ai_mod_load();
@@ -136,7 +141,7 @@ void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 int ai_check_kos(int64_t source_obj, int64_t target_obj);
 void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
 int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
-void sub_4AE9E0(int64_t a1, bool a2);
+void ai_npc_witness_pc_critical(int64_t pc_obj, int type);
 void ai_npc_near_death(int64_t npc_obj, int64_t pc_obj);
 bool ai_critter_can_open_portals(int64_t obj);
 int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir);

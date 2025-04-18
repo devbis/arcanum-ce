@@ -885,11 +885,11 @@ void dialog_copy_npc_witness_pc_critical_msg(int64_t npc_obj, int64_t pc_obj, in
         dialog_state_init(npc_obj, pc_obj, &state);
 
         switch (type) {
-        case 0:
+        case AI_NPC_WITNESS_PC_CRITICAL_HIT:
             start = 2400;
             end = 2499;
             break;
-        case 1:
+        case AI_NPC_WITNESS_PC_CRITICAL_MISS:
             start = 2500;
             end = 2599;
             break;

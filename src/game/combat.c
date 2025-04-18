@@ -2920,11 +2920,11 @@ void sub_4B6B90(CombatContext* combat)
 
     if (combat->target_obj == combat->field_28) {
         if ((combat->flags & CF_CRITICAL) != 0) {
-            sub_4AE9E0(combat->attacker_obj, false);
+            ai_npc_witness_pc_critical(combat->attacker_obj, AI_NPC_WITNESS_PC_CRITICAL_HIT);
         }
     } else {
         if ((combat->flags & 0x08) != 0) {
-            sub_4AE9E0(combat->attacker_obj, true);
+            ai_npc_witness_pc_critical(combat->attacker_obj, AI_NPC_WITNESS_PC_CRITICAL_MISS);
         }
     }
 }
