@@ -155,7 +155,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj);
 int ai_can_hear(int64_t a1, int64_t a2, int loudness);
 void ai_npc_fighting_toggle();
 bool ai_shitlist_has(int64_t npc_obj, int64_t shit_obj);
-int sub_4AFBB0(int64_t obj);
+int ai_max_dialog_distance(int64_t obj);
 void ai_target_lock(int64_t obj, int64_t tgt);
 void ai_target_unlock(int64_t obj);
 

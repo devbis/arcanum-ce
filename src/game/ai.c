@@ -4396,7 +4396,7 @@ bool ai_shitlist_has(int64_t npc_obj, int64_t shit_obj)
 }
 
 // 0x4AFBB0
-int sub_4AFBB0(int64_t obj)
+int ai_max_dialog_distance(int64_t obj)
 {
     return player_is_pc_obj(obj) ? 5 : 10;
 }

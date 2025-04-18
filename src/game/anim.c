@@ -8048,7 +8048,6 @@ bool sub_42AE10(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t target_obj;
-    int v1;
     int64_t source_loc;
     int64_t target_loc;
 
@@ -8070,10 +8069,9 @@ bool sub_42AE10(AnimRunInfo* run_info)
         return false;
     }
 
-    v1 = sub_4AFBB0(source_obj);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    return location_dist(source_loc, target_loc) < v1;
+    return location_dist(source_loc, target_loc) < ai_max_dialog_distance(source_obj);
 }
 
 // 0x42AF00
