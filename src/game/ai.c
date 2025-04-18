@@ -153,6 +153,8 @@ static void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj);
 static void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj);
 static int64_t sub_4AFA90(int64_t obj);
 
+#define concealed_to_loudness(concealed) ((concealed) ? LOUDNESS_SILENT : LOUDNESS_NORMAL)
+
 // 0x5B5088
 static DateTime stru_5B5088[6] = {
     { 0, 0 },
@@ -164,7 +166,7 @@ static DateTime stru_5B5088[6] = {
 };
 
 // 0x5B50C0
-static int dword_5B50C0[COMBAT_WEAPON_LOUDNESS_COUNT] = {
+static int dword_5B50C0[LOUDNESS_COUNT] = {
     2,
     8,
     15,
@@ -849,7 +851,7 @@ void sub_4A92D0(Ai* ai)
 void sub_4A94C0(int64_t source_obj, int64_t target_obj)
 {
     if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && source_obj != target_obj) {
-        ai_attack(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
+        ai_attack(source_obj, target_obj, LOUDNESS_SILENT, 0);
         obj_field_handle_set(target_obj, OBJ_F_NPC_COMBAT_FOCUS, source_obj);
         obj_field_handle_set(target_obj, OBJ_F_NPC_WHO_HIT_ME_LAST, source_obj);
     }
@@ -1168,7 +1170,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int loudness)
 
     radius = dword_5B50C0[loudness];
     dist = (int)object_dist(a2, a1);
-    if (dist < 2 * dword_5B50C0[COMBAT_WEAPON_LOUDNESS_LOUD]) {
+    if (dist < 2 * dword_5B50C0[LOUDNESS_LOUD]) {
         sub_4AE4E0(a2, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
@@ -1206,18 +1208,18 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
         }
 
         if (ai_check_protect(a1, a3) != AI_PROTECT_NO) {
-            if (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
+            if (ai_can_see(a1, a3) == 0 || ai_can_hear(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a2);
             }
         } else if (ai_check_protect(a1, a2) != AI_PROTECT_NO) {
-            if (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
+            if (ai_can_see(a1, a3) == 0 || ai_can_hear(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a3);
             }
         } else if (critter_social_class_get(a1) != SOCIAL_CLASS_GUARD
             && (obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0) {
             ai_danger_source(a1, &danger_type, NULL);
             if (danger_type == AI_DANGER_SOURCE_TYPE_NONE
-                && (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0)) {
+                && (ai_can_see(a1, a3) == 0 || ai_can_hear(a1, a3, loudness) == 0)) {
                     sub_4AABE0(a1,
                         AI_DANGER_SOURCE_TYPE_FLEE,
                         a2,
@@ -1240,8 +1242,9 @@ void sub_4AA0D0(int64_t obj)
         if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && critter_pc_leader_get(node->obj) != obj
-            && (ai_can_see(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
-            ai_attack(obj, node->obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
+            && (ai_can_see(node->obj, obj) == 0
+                || ai_can_hear(node->obj, obj, LOUDNESS_SILENT) == 0)) {
+            ai_attack(obj, node->obj, LOUDNESS_SILENT, 0);
         }
         node = node->next;
     }
@@ -2000,7 +2003,7 @@ int64_t sub_4AB460(int64_t critter_obj)
 
         for (idx = 0; idx < cnt; idx++) {
             concealed = critter_is_concealed(handles[idx]);
-            if (!sub_4AF470(critter_obj, handles[idx], !concealed)
+            if (ai_can_hear(critter_obj, handles[idx], concealed_to_loudness(concealed)) == 0
                 || ai_can_see(critter_obj, handles[idx]) == 0) {
                 obj_type = obj_field_int32_get(handles[idx], OBJ_F_TYPE);
                 if (obj_type == OBJ_TYPE_PC
@@ -2025,7 +2028,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                                 && critter_leader_get(candidate_obj) == OBJ_HANDLE_NULL)) {
                             if (ai_check_upset_attacking(critter_obj, candidate_obj, leader_obj) == AI_UPSET_ATTACKING_NONE) {
                                 concealed = critter_is_concealed(candidate_obj);
-                                if (!sub_4AF470(critter_obj, candidate_obj, !concealed)
+                                if (ai_can_hear(critter_obj, candidate_obj, concealed_to_loudness(concealed)) == 0
                                     || ai_can_see(critter_obj, candidate_obj) == 0) {
                                     danger_source_obj = candidate_obj;
                                     break;
@@ -2039,7 +2042,7 @@ int64_t sub_4AB460(int64_t critter_obj)
             candidate_obj = sub_4AE450(critter_obj, handles[idx]);
             if (candidate_obj != OBJ_HANDLE_NULL) {
                 concealed = critter_is_concealed(candidate_obj);
-                if (!sub_4AF470(critter_obj, candidate_obj, !concealed)
+                if (ai_can_hear(critter_obj, candidate_obj, concealed_to_loudness(concealed)) == 0
                     || ai_can_see(critter_obj, candidate_obj) == 0) {
                     danger_source_obj = candidate_obj;
                     break;
@@ -3985,7 +3988,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
             && !critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && (ai_can_see(node->obj, critter_obj) == 0
-                || !sub_4AF470(node->obj, critter_obj, loudness))) {
+                || ai_can_hear(node->obj, critter_obj, loudness) == 0)) {
             if (object_script_execute(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
                     reaction_adj(node->obj, pc_obj, -20);
@@ -4139,41 +4142,41 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4AF470
-int sub_4AF470(int64_t a1, int64_t a2, int loudness)
+int ai_can_hear(int64_t source_obj, int64_t target_obj, int loudness)
 {
     unsigned int critter_flags;
     int64_t dist;
     int perception;
-    SkillInvocation skill_invocation;
-    int v2;
+    int hear_dist;
 
-    critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
+    critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_STUNNED) != 0) {
         return 1000;
     }
 
-    if (critter_is_unconscious(a1)) {
+    if (critter_is_unconscious(source_obj)) {
         return 1000;
     }
 
-    dist = object_dist(a1, a2);
+    dist = object_dist(source_obj, target_obj);
     if (dist > 1000) {
         return 1000;
     }
 
-    perception = stat_level_get(a1, STAT_PERCEPTION);
+    perception = stat_level_get(source_obj, STAT_PERCEPTION);
     if ((critter_flags & OCF_SLEEPING) != 0) {
         perception /= 2;
     }
 
-    if ((obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OCF_MOVING_SILENTLY) != 0) {
+    if ((obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS) & OCF_MOVING_SILENTLY) != 0) {
+        SkillInvocation skill_invocation;
         int prowling;
         int diff;
 
-        prowling = sub_4C62E0(a2, BASIC_SKILL_PROWLING, a1);
+        prowling = sub_4C62E0(target_obj, BASIC_SKILL_PROWLING, source_obj);
         skill_invocation_init(&skill_invocation);
-        sub_4440E0(a2, &(skill_invocation.source));
-        sub_4440E0(a1, &(skill_invocation.target));
+        sub_4440E0(target_obj, &(skill_invocation.source));
+        sub_4440E0(source_obj, &(skill_invocation.target));
         skill_invocation.flags |= 0x2000;
         skill_invocation.skill = BASIC_SKILL_PROWLING;
 
@@ -4187,9 +4190,9 @@ int sub_4AF470(int64_t a1, int64_t a2, int loudness)
         perception += perception * diff / -100;
     }
 
-    v2 = (dword_5B50C0[loudness] - dword_5B50C0[COMBAT_WEAPON_LOUDNESS_SILENT] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(a1, a2);
-    if ((int)dist > v2) {
-        return (int)dist - v2;
+    hear_dist = (dword_5B50C0[loudness] - dword_5B50C0[LOUDNESS_SILENT] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(source_obj, target_obj);
+    if ((int)dist > hear_dist) {
+        return (int)dist - hear_dist;
     }
 
     return 0;

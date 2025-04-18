@@ -6302,23 +6302,23 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
             mes_file_entry.num = 37; // "Prowling state"
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-            int v4;
-            int v3 = ai_can_see(critter_obj, pc_obj);
-            if (v3 != 0) {
-                v4 = sub_4AF470(critter_obj, pc_obj, 0);
-                if (v4 >= v3) {
-                    v4 = v3;
+            int awareness_dist;
+            int see_extra_dist = ai_can_see(critter_obj, pc_obj);
+            if (see_extra_dist != 0) {
+                awareness_dist = ai_can_hear(critter_obj, pc_obj, LOUDNESS_SILENT);
+                if (awareness_dist >= see_extra_dist) {
+                    awareness_dist = see_extra_dist;
                 }
             } else {
-                v4 = 0;
+                awareness_dist = 0;
             }
 
-            if (critter_is_sleeping(critter_obj) && v4 == 0) {
-                v4 = 1;
+            if (critter_is_sleeping(critter_obj) && awareness_dist == 0) {
+                awareness_dist = 1;
             }
 
             MesFileEntry suffix;
-            switch (v3) {
+            switch (awareness_dist) {
             case 0:
                 suffix.num = 42; // "Aware!!!"
                 break;

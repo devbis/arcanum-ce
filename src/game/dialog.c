@@ -2232,7 +2232,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
     }
 
     if (attack) {
-        ai_attack(a1->pc_obj, a1->npc_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+        ai_attack(a1->pc_obj, a1->npc_obj, LOUDNESS_NORMAL, 0);
     }
 
     return v57;

@@ -381,7 +381,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
         && critter_can_backstab(attacker_obj, target_obj)) {
         combat->flags |= 0x4000;
         if (ai_can_see(target_obj, attacker_obj) != 0
-            && sub_4AF470(target_obj, attacker_obj, 0) != 0) {
+            && ai_can_hear(target_obj, attacker_obj, LOUDNESS_SILENT) != 0) {
             combat->flags |= 0x8000;
         }
     }
@@ -544,14 +544,14 @@ int combat_weapon_loudness(int64_t weapon_obj)
         && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
         unsigned int weapon_flags = obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS);
         if ((weapon_flags & OWF_LOUD) != 0) {
-            return COMBAT_WEAPON_LOUDNESS_LOUD;
+            return LOUDNESS_LOUD;
         }
         if ((weapon_flags & OWF_SILENT) != 0) {
-            return COMBAT_WEAPON_LOUDNESS_SILENT;
+            return LOUDNESS_SILENT;
         }
     }
 
-    return COMBAT_WEAPON_LOUDNESS_NORMAL;
+    return LOUDNESS_NORMAL;
 }
 
 // 0x4B2870

@@ -1240,7 +1240,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                     if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
                             || critter_leader_get(target_obj) != source_obj) {
-                            ai_attack(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+                            ai_attack(source_obj, target_obj, LOUDNESS_NORMAL, 0);
                         }
                     }
                 }
@@ -1300,7 +1300,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                     if (object_script_execute(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
                         if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
                             || critter_leader_get(target_obj) != source_obj) {
-                            ai_attack(source_obj, target_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+                            ai_attack(source_obj, target_obj, LOUDNESS_NORMAL, 0);
                         }
                     }
                 }
@@ -1755,7 +1755,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         } else if (basic_skill != BASIC_SKILL_PROWLING
             && !combat_critter_is_combat_mode_active(target_obj)
             && ai_can_see(target_obj, source_obj) != 0
-            && sub_4AF470(target_obj, source_obj, 1)) {
+            && ai_can_hear(target_obj, source_obj, 1) != 0) {
             difficulty -= 30;
         }
     }

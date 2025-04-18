@@ -3570,7 +3570,7 @@ void sub_453F20(int64_t a1, int64_t a2)
 
         if (dword_5E75F0->field_E8.obj != OBJ_HANDLE_NULL
             && a1 != dword_5E75F0->field_E8.obj) {
-            ai_attack(dword_5E75F0->field_E8.obj, a2, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
+            ai_attack(dword_5E75F0->field_E8.obj, a2, LOUDNESS_NORMAL, 0);
         }
     }
 }
