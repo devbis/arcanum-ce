@@ -69,8 +69,7 @@ typedef struct Ai {
     /* 001C */ int field_1C;
     /* 0020 */ int64_t item_obj;
     /* 0028 */ int64_t leader_obj;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
+    /* 0030 */ int sound_id;
 } Ai;
 
 static_assert(sizeof(Ai) == 0x38, "wrong size");
@@ -101,7 +100,7 @@ static void sub_4AA620(int64_t a1, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_copy_params(int64_t obj, AiParams* params);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
-static int sub_4AABE0(int64_t a1, int danger_type, int64_t a3, int* a4);
+static int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sound_id_ptr);
 static bool sub_4AAF50(Ai* ai);
 static bool sub_4AB030(int64_t a1, int64_t a2);
 static int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
@@ -434,7 +433,7 @@ void sub_4A88D0(Ai* ai, int64_t obj)
     ai->item_obj = OBJ_HANDLE_NULL;
     ai->leader_obj = critter_leader_get(obj);
     ai_danger_source(obj, &(ai->danger_type), &(ai->danger_source));
-    ai->field_30 = -1;
+    ai->sound_id = -1;
 }
 
 // 0x4A8940
@@ -792,7 +791,7 @@ void sub_4A92D0(Ai* ai)
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
                 ai->danger_source,
-                &(ai->field_30));
+                &(ai->sound_id));
         }
         break;
     case 1:
@@ -803,7 +802,7 @@ void sub_4A92D0(Ai* ai)
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
                 ai->danger_source,
-                &(ai->field_30));
+                &(ai->sound_id));
             break;
         }
 
@@ -814,7 +813,7 @@ void sub_4A92D0(Ai* ai)
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
                 ai->danger_source,
-                &(ai->field_30));
+                &(ai->sound_id));
             break;
         }
 
@@ -824,14 +823,14 @@ void sub_4A92D0(Ai* ai)
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
                 ai->danger_source,
-                &(ai->field_30));
+                &(ai->sound_id));
             break;
         }
 
         ai->danger_type = sub_4AABE0(ai->obj,
             AI_DANGER_SOURCE_TYPE_NONE,
                 OBJ_HANDLE_NULL,
-                &(ai->field_30));
+                &(ai->sound_id));
         break;
     case 2:
         sub_4AAF50(ai);
@@ -841,7 +840,7 @@ void sub_4A92D0(Ai* ai)
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_NONE,
                 OBJ_HANDLE_NULL,
-                &(ai->field_30));
+                &(ai->sound_id));
         }
         break;
     }
@@ -1625,7 +1624,7 @@ void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr)
 }
 
 // 0x4AABE0
-int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
+int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sound_id_ptr)
 {
     unsigned int critter_flags;
     int64_t leader_obj;
@@ -1712,8 +1711,8 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
                 obj_field_int32_set(source_obj, OBJ_F_NPC_FLAGS, npc_flags);
                 object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_ENTER_COMBAT, 0);
 
-                if (a4 != NULL) {
-                    *a4 = sub_4F0ED0(source_obj, 5);
+                if (sound_id_ptr != NULL) {
+                    *sound_id_ptr = sub_4F0ED0(source_obj, 5);
                 }
             }
 
@@ -2507,7 +2506,7 @@ void ai_action_perform_combat(Ai* ai)
         npc_flags |= ONF_CHECK_GRENADE;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
     } else if (!ai_use_grenade(ai, distance)) {
-        anim_goal_attack_ex(ai->obj, ai->danger_source, ai->field_30);
+        anim_goal_attack_ex(ai->obj, ai->danger_source, ai->sound_id);
     }
 }
 
