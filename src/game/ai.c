@@ -1206,18 +1206,18 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
         }
 
         if (ai_check_protect(a1, a3) != AI_PROTECT_NO) {
-            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
+            if (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a2);
             }
         } else if (ai_check_protect(a1, a2) != AI_PROTECT_NO) {
-            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
+            if (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a3);
             }
         } else if (critter_social_class_get(a1) != SOCIAL_CLASS_GUARD
             && (obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0) {
             ai_danger_source(a1, &danger_type, NULL);
             if (danger_type == AI_DANGER_SOURCE_TYPE_NONE
-                && (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0)) {
+                && (ai_can_see(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0)) {
                     sub_4AABE0(a1,
                         AI_DANGER_SOURCE_TYPE_FLEE,
                         a2,
@@ -1240,7 +1240,7 @@ void sub_4AA0D0(int64_t obj)
         if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && critter_pc_leader_get(node->obj) != obj
-            && (sub_4AF260(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
+            && (ai_can_see(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
             ai_attack(obj, node->obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
         }
         node = node->next;
@@ -2001,7 +2001,7 @@ int64_t sub_4AB460(int64_t critter_obj)
         for (idx = 0; idx < cnt; idx++) {
             concealed = critter_is_concealed(handles[idx]);
             if (!sub_4AF470(critter_obj, handles[idx], !concealed)
-                || !sub_4AF260(critter_obj, handles[idx])) {
+                || ai_can_see(critter_obj, handles[idx]) == 0) {
                 obj_type = obj_field_int32_get(handles[idx], OBJ_F_TYPE);
                 if (obj_type == OBJ_TYPE_PC
                     && critter_is_concealed(handles[idx])) {
@@ -2026,7 +2026,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                             if (ai_check_upset_attacking(critter_obj, candidate_obj, leader_obj) == AI_UPSET_ATTACKING_NONE) {
                                 concealed = critter_is_concealed(candidate_obj);
                                 if (!sub_4AF470(critter_obj, candidate_obj, !concealed)
-                                    || !sub_4AF260(critter_obj, candidate_obj)) {
+                                    || ai_can_see(critter_obj, candidate_obj) == 0) {
                                     danger_source_obj = candidate_obj;
                                     break;
                                 }
@@ -2040,7 +2040,7 @@ int64_t sub_4AB460(int64_t critter_obj)
             if (candidate_obj != OBJ_HANDLE_NULL) {
                 concealed = critter_is_concealed(candidate_obj);
                 if (!sub_4AF470(critter_obj, candidate_obj, !concealed)
-                    || !sub_4AF260(critter_obj, candidate_obj)) {
+                    || ai_can_see(critter_obj, candidate_obj) == 0) {
                     danger_source_obj = candidate_obj;
                     break;
                 }
@@ -2144,7 +2144,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
     if (obj_type_is_critter(target_obj_type)
         && critter_is_concealed(target_obj)
         && basic_skill_get_training(target_obj, BASIC_SKILL_PROWLING) >= TRAINING_MASTER
-        && sub_4AF260(source_obj, target_obj) != 0) {
+        && ai_can_see(source_obj, target_obj) != 0) {
         return false;
     }
 
@@ -3984,7 +3984,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                 || critter_social_class_get(node->obj) == SOCIAL_CLASS_GUARD)
             && !critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
-            && (!sub_4AF260(node->obj, critter_obj)
+            && (ai_can_see(node->obj, critter_obj) == 0
                 || !sub_4AF470(node->obj, critter_obj, loudness))) {
             if (object_script_execute(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
@@ -4066,12 +4066,11 @@ int sub_4AF240(int value)
 }
 
 // 0x4AF260
-int sub_4AF260(int64_t source_obj, int64_t target_obj)
+int ai_can_see(int64_t source_obj, int64_t target_obj)
 {
     int perception;
-    SkillInvocation skill_invocation;
     int64_t dist;
-    int v3;
+    int extra_dist;
     int64_t target_loc;
     int64_t block_obj;
 
@@ -4097,6 +4096,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
     perception = stat_level_get(source_obj, STAT_PERCEPTION);
 
     if (critter_is_concealed(target_obj)) {
+        SkillInvocation skill_invocation;
         int prowling;
         int diff;
 
@@ -4124,18 +4124,18 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         return 1000;
     }
 
-    v3 = (int)dist - perception;
-    if (v3 < 0) {
-        v3 = 0;
+    extra_dist = (int)dist - perception;
+    if (extra_dist < 0) {
+        extra_dist = 0;
     }
 
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     sub_4ADE00(source_obj, target_loc, &block_obj);
     if (block_obj != OBJ_HANDLE_NULL) {
-        v3++;
+        extra_dist++;
     }
 
-    return v3;
+    return extra_dist;
 }
 
 // 0x4AF470

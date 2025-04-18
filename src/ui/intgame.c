@@ -6303,7 +6303,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
             int v4;
-            int v3 = sub_4AF260(critter_obj, pc_obj);
+            int v3 = ai_can_see(critter_obj, pc_obj);
             if (v3 != 0) {
                 v4 = sub_4AF470(critter_obj, pc_obj, 0);
                 if (v4 >= v3) {

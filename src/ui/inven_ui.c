@@ -543,7 +543,7 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
         art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_rotation_set(art_id, rot);
         object_set_current_aid(pc_obj, art_id);
-        if (sub_4AF260(pc_obj, target_obj) != 0) {
+        if (ai_can_see(pc_obj, target_obj) != 0) {
             return false;
         }
     }

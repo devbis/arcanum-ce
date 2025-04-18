@@ -1754,7 +1754,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
             difficulty -= 50;
         } else if (basic_skill != BASIC_SKILL_PROWLING
             && !combat_critter_is_combat_mode_active(target_obj)
-            && sub_4AF260(target_obj, source_obj)
+            && ai_can_see(target_obj, source_obj) != 0
             && sub_4AF470(target_obj, source_obj, 1)) {
             difficulty -= 30;
         }

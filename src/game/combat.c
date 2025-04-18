@@ -380,7 +380,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
         && combat->skill == BASIC_SKILL_MELEE
         && critter_can_backstab(attacker_obj, target_obj)) {
         combat->flags |= 0x4000;
-        if (sub_4AF260(target_obj, attacker_obj) != 0
+        if (ai_can_see(target_obj, attacker_obj) != 0
             && sub_4AF470(target_obj, attacker_obj, 0) != 0) {
             combat->flags |= 0x8000;
         }
