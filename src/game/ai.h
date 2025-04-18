@@ -96,8 +96,8 @@ typedef enum AiAttemptOpenContainer {
 } AiAttemptOpenContainer;
 
 typedef struct AiRedirect {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int64_t field_8;
+    /* 0000 */ int64_t source_obj;
+    /* 0008 */ int64_t target_obj;
     /* 0010 */ int min_iq;
     /* 0014 */ unsigned int critter_flags;
 } AiRedirect;
@@ -119,8 +119,8 @@ bool ai_mod_load();
 void ai_mod_unload();
 void ai_set_callbacks(Func5F848C* a1, AiFloatLineFunc* float_line_func);
 void ai_process(int64_t obj);
-void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3);
-void sub_4A9560(AiRedirect* redirect);
+void ai_redirect_init(AiRedirect* ai_redirect, int64_t source_obj, int64_t target_obj);
+void ai_redirect_perform(AiRedirect* ai_redirect);
 void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags);
 void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj);
 void sub_4AA0D0(int64_t obj);

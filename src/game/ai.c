@@ -858,36 +858,36 @@ void sub_4A94C0(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4A9530
-void sub_4A9530(AiRedirect* ai_redirect, int64_t a2, int64_t a3)
+void ai_redirect_init(AiRedirect* ai_redirect, int64_t source_obj, int64_t target_obj)
 {
-    ai_redirect->field_0 = a2;
-    ai_redirect->field_8 = a3;
+    ai_redirect->source_obj = source_obj;
+    ai_redirect->target_obj = target_obj;
     ai_redirect->min_iq = -1;
     ai_redirect->critter_flags = 0;
 }
 
 // 0x4A9560
-void sub_4A9560(AiRedirect* ai_redirect)
+void ai_redirect_perform(AiRedirect* ai_redirect)
 {
     ObjectList objects;
     ObjectNode* node;
 
-    if (ai_redirect->field_0 == OBJ_HANDLE_NULL
-        || ai_redirect->field_8 == OBJ_HANDLE_NULL) {
+    if (ai_redirect->source_obj == OBJ_HANDLE_NULL
+        || ai_redirect->target_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    object_list_vicinity(ai_redirect->field_8, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+    object_list_vicinity(ai_redirect->target_obj, OBJ_TM_PC | OBJ_TM_NPC, &objects);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
-            && node->obj != ai_redirect->field_0
-            && node->obj != ai_redirect->field_8
+            && node->obj != ai_redirect->source_obj
+            && node->obj != ai_redirect->target_obj
             && (ai_redirect->min_iq <= 0
                 || stat_level_get(ai_redirect->min_iq, STAT_INTELLIGENCE) <= ai_redirect->min_iq)
             && (ai_redirect->critter_flags == 0
                 || (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & ai_redirect->critter_flags) != 0)) {
-            sub_4A94C0(ai_redirect->field_0, node->obj);
+            sub_4A94C0(ai_redirect->source_obj, node->obj);
         }
         node = node->next;
     }

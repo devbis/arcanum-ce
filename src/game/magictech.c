@@ -2151,10 +2151,10 @@ void MTComponentAIRedirect_ProcFunc()
 {
     AiRedirect ai_redirect;
 
-    sub_4A9530(&ai_redirect, stru_5E6D28.field_20, stru_5E6D28.field_20);
+    ai_redirect_init(&ai_redirect, stru_5E6D28.field_20, stru_5E6D28.field_20);
     ai_redirect.critter_flags = dword_5E761C->data.ai_redirect.critter_flags;
     ai_redirect.min_iq = dword_5E761C->data.ai_redirect.min_iq;
-    sub_4A9560(&ai_redirect);
+    ai_redirect_perform(&ai_redirect);
 }
 
 // 0x451740
