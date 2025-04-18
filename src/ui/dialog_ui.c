@@ -87,7 +87,7 @@ bool dialog_ui_init(GameInitInfo* init_info)
     }
 
     script_set_callbacks(dialog_ui_start_dialog, dialog_ui_float_line);
-    sub_4A84D0(sub_5678D0, dialog_ui_float_line);
+    ai_set_callbacks(sub_5678D0, dialog_ui_float_line);
     broadcast_set_float_line_func(dialog_ui_float_line);
     dialog_ui_speech_handle = TIG_SOUND_HANDLE_INVALID;
 

@@ -5,7 +5,7 @@
 #include "game/timeevent.h"
 #include "game/object.h"
 
-typedef void(Func5F8488)(int64_t, int64_t, const char*, int);
+typedef void(AiFloatLineFunc)(int64_t npc_obj, int64_t pc_obj, const char* str, int speech_id);
 typedef void(Func5F848C)(int64_t, int);
 
 typedef enum AiDangerSourceType {
@@ -106,7 +106,7 @@ bool ai_init(GameInitInfo* init_info);
 void ai_exit();
 bool ai_mod_load();
 void ai_mod_unload();
-void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
+void ai_set_callbacks(Func5F848C* a1, AiFloatLineFunc* float_line_func);
 void ai_process(int64_t obj);
 void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3);
 void sub_4A9560(AiRedirect* redirect);

@@ -179,7 +179,7 @@ static bool dword_5B50CC = true;
 static AiParams dword_5F5CB0[150];
 
 // 0x5F8488
-static Func5F8488* dword_5F8488;
+static AiFloatLineFunc* ai_float_line_func;
 
 // 0x5F848C
 static Func5F848C* dword_5F848C;
@@ -206,7 +206,7 @@ bool ai_init(GameInitInfo* init_info)
     (void)init_info;
 
     dword_5F848C = NULL;
-    dword_5F8488 = NULL;
+    ai_float_line_func = NULL;
 
     if (!mes_load("rules\\ai_params.mes", &mes_file)) {
         return false;
@@ -283,10 +283,10 @@ void ai_mod_unload()
 }
 
 // 0x4A84D0
-void sub_4A84D0(Func5F848C* a1, Func5F8488* a2)
+void ai_set_callbacks(Func5F848C* a1, AiFloatLineFunc* float_line_func)
 {
     dword_5F848C = a1;
-    dword_5F8488 = a2;
+    ai_float_line_func = float_line_func;
 }
 
 // 0x4A84F0
@@ -903,7 +903,7 @@ void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned in
     AiParams ai_params;
     int rc;
     char str[1000];
-    int v2;
+    int speech_id;
     int v3;
 
     if (source_obj == OBJ_HANDLE_NULL
@@ -1015,17 +1015,17 @@ void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned in
                             obj_field_int32_set(target_obj, OBJ_F_NPC_FLAGS, npc_flags);
 
                             if (critter_is_active(target_obj)) {
-                                if (dword_5F8488 != NULL) {
-                                    dialog_copy_npc_wont_follow_msg(target_obj, source_obj, rc, str, &v2);
-                                    dword_5F8488(target_obj, source_obj, str, v2);
+                                if (ai_float_line_func != NULL) {
+                                    dialog_copy_npc_wont_follow_msg(target_obj, source_obj, rc, str, &speech_id);
+                                    ai_float_line_func(target_obj, source_obj, str, speech_id);
                                 }
                             }
                         } else {
                             if (random_between(1, 3) == 1
                                 && critter_is_active(target_obj)) {
-                                if (dword_5F8488 != NULL) {
-                                    dialog_copy_npc_accidental_attack_msg(target_obj, source_obj, str, &v2);
-                                    dword_5F8488(target_obj, source_obj, str, v2);
+                                if (ai_float_line_func != NULL) {
+                                    dialog_copy_npc_accidental_attack_msg(target_obj, source_obj, str, &speech_id);
+                                    ai_float_line_func(target_obj, source_obj, str, speech_id);
                                 }
                             }
                         }
@@ -1105,7 +1105,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
     int target_obj_type;
     int rc;
     char str[1000];
-    int v1;
+    int speech_id;
 
     if (a2 == target_obj) {
         return;
@@ -1122,10 +1122,10 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
             if (a4
                 && !combat_critter_is_combat_mode_active(target_obj)
                 && !a5
-                && dword_5F8488 != NULL) {
+                && ai_float_line_func != NULL) {
                 if (critter_is_active(source_obj)) {
-                    dialog_copy_npc_upset_attacking_msg(source_obj, a2, rc, str, &v1);
-                    dword_5F8488(source_obj, a2, str, v1);
+                    dialog_copy_npc_upset_attacking_msg(source_obj, a2, rc, str, &speech_id);
+                    ai_float_line_func(source_obj, a2, str, speech_id);
                 }
 
                 reaction_adj(source_obj, a2, -5);
@@ -1411,7 +1411,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
     int danger_type;
     int64_t danger_source_obj;
     char str[1000];
-    int v1;
+    int speech_id;
 
     if (critter_is_dead(a1)) {
         return;
@@ -1441,8 +1441,8 @@ void sub_4AA620(int64_t a1, int64_t a2)
             sub_4AB2A0(a1, a2);
         } else {
             if (critter_is_active(a1)) {
-                dialog_copy_npc_fleeing_msg(a1, a2, str, &v1);
-                dword_5F8488(a1, a2, str, v1);
+                dialog_copy_npc_fleeing_msg(a1, a2, str, &speech_id);
+                ai_float_line_func(a1, a2, str, speech_id);
             }
             anim_goal_flee(a1, a2);
         }
@@ -1630,7 +1630,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
     int v1;
     AiParams ai_params;
     char str[1000];
-    int v2;
+    int speech_id;
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
@@ -1677,11 +1677,11 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
 
     if (danger_type == AI_DANGER_SOURCE_TYPE_FLEE
         || danger_type == AI_DANGER_SOURCE_TYPE_SURRENDER) {
-        if (dword_5F8488 != NULL
+        if (ai_float_line_func != NULL
             && (critter_flags & (OCF_FLEEING | OCF_SURRENDERED)) == 0) {
             if (critter_is_active(source_obj)) {
-                dialog_copy_npc_fleeing_msg(source_obj, target_obj, str, &v2);
-                dword_5F8488(source_obj, target_obj, str, v2);
+                dialog_copy_npc_fleeing_msg(source_obj, target_obj, str, &speech_id);
+                ai_float_line_func(source_obj, target_obj, str, speech_id);
             }
         }
 
@@ -2419,7 +2419,7 @@ void ai_action_perform_non_combat(Ai* ai)
     unsigned int npc_flags;
     int rc;
     char str[1000];
-    int v3;
+    int speech_id;
 
     combat_critter_deactivate_combat_mode(ai->obj);
 
@@ -2438,9 +2438,9 @@ void ai_action_perform_non_combat(Ai* ai)
                 npc_flags |= ONF_JILTED;
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-                if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                    dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &v3);
-                    dword_5F8488(ai->obj, ai->leader_obj, str, v3);
+                if (ai_float_line_func != NULL && critter_is_active(ai->obj)) {
+                    dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &speech_id);
+                    ai_float_line_func(ai->obj, ai->leader_obj, str, speech_id);
                 }
             } else if ((npc_flags & ONF_CHECK_LEADER) != 0) {
                 npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
@@ -2449,9 +2449,9 @@ void ai_action_perform_non_combat(Ai* ai)
 
                 rc = ai_check_leader(ai->obj, ai->leader_obj);
                 if (rc != AI_FOLLOW_OK) {
-                    if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                        dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &v3);
-                        dword_5F8488(ai->obj, ai->leader_obj, str, v3);
+                    if (ai_float_line_func != NULL && critter_is_active(ai->obj)) {
+                        dialog_copy_npc_warning_follow_msg(ai->obj, ai->leader_obj, rc, str, &speech_id);
+                        ai_float_line_func(ai->obj, ai->leader_obj, str, speech_id);
                     }
                 }
             }
@@ -3745,19 +3745,19 @@ void sub_4AE9E0(int64_t a1, bool a2)
     int rnd;
     int64_t follower_obj;
     char str[1000];
-    int v1;
+    int speech_id;
 
     if ((!tig_net_is_active()
             || tig_net_is_host())
         && random_between(1, 2) != 1) {
-        if (dword_5F8488 != NULL) {
+        if (ai_float_line_func != NULL) {
             cnt = sub_45E3F0(a1, false);
             if (cnt != 0) {
                 rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
                 follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
                 if (critter_is_active(follower_obj)) {
-                    dialog_copy_npc_witness_pc_critical_msg(follower_obj, a1, a2, str, &v1);
-                    dword_5F8488(follower_obj, a1, str, v1);
+                    dialog_copy_npc_witness_pc_critical_msg(follower_obj, a1, a2, str, &speech_id);
+                    ai_float_line_func(follower_obj, a1, str, speech_id);
                 }
             }
         }
@@ -3768,10 +3768,10 @@ void sub_4AE9E0(int64_t a1, bool a2)
 void sub_4AEAB0(int64_t a1, int64_t a2)
 {
     char str[1000];
-    int v1;
+    int speech_id;
 
-    dialog_copy_npc_near_death_msg(a1, a2, str, &v1);
-    dword_5F8488(a1, a2, str, v1);
+    dialog_copy_npc_near_death_msg(a1, a2, str, &speech_id);
+    ai_float_line_func(a1, a2, str, speech_id);
 }
 
 // 0x4AEB10
@@ -3926,7 +3926,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
     ObjectNode* node;
     AiParams ai_params;
     char str[1000];
-    int v2;
+    int speech_id;
 
     if (critter_obj == OBJ_HANDLE_NULL) {
         return;
@@ -3984,9 +3984,9 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                         ai_attack(critter_obj, node->obj, loudness, 0);
                     }
                     if (critter_is_active(node->obj)) {
-                        if (dword_5F8488 != NULL && critter_is_active(node->obj)) {
-                            dialog_copy_npc_warning_msg(node->obj, critter_obj, str, &v2);
-                            dword_5F8488(node->obj, critter_obj, str, v2);
+                        if (ai_float_line_func != NULL && critter_is_active(node->obj)) {
+                            dialog_copy_npc_warning_msg(node->obj, critter_obj, str, &speech_id);
+                            ai_float_line_func(node->obj, critter_obj, str, speech_id);
                         }
                     }
                 } else {
