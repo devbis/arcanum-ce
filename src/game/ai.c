@@ -106,7 +106,7 @@ static bool sub_4AAF50(Ai* ai);
 static bool sub_4AB030(int64_t a1, int64_t a2);
 static int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AB2A0(int64_t a1, int64_t a2);
-static bool sub_4AB2F0(int64_t a1, int64_t a2);
+static bool ai_should_flee(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AB460(int64_t a1);
 static bool sub_4AB990(int64_t a1, int64_t a2);
 static void sub_4ABC20(Ai* ai);
@@ -1860,7 +1860,7 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
 // 0x4AB2A0
 void sub_4AB2A0(int64_t a1, int64_t a2)
 {
-    if (sub_4AB2F0(a1, a2)) {
+    if (ai_should_flee(a1, a2)) {
         sub_4AABE0(a1, AI_DANGER_SOURCE_TYPE_FLEE, a2, 0);
     } else {
         sub_4AABE0(a1, AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS, a2, 0);
@@ -1868,40 +1868,40 @@ void sub_4AB2A0(int64_t a1, int64_t a2)
 }
 
 // 0x4AB2F0
-bool sub_4AB2F0(int64_t a1, int64_t a2)
+bool ai_should_flee(int64_t source_obj, int64_t target_obj)
 {
     AiParams ai_params;
-    int v1;
-    int v2;
-    int v3;
-    int v4;
+    int target_party_cnt;
+    int target_party_lvl;
+    int source_party_cnt;
+    int source_party_lvl;
 
-    if ((obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) != 0) {
+    if ((obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) != 0) {
         return false;
     }
 
-    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
         return false;
     }
 
-    ai_copy_params(a1, &ai_params);
+    ai_copy_params(source_obj, &ai_params);
 
-    if (ai_object_hp_ratio(a2) < ai_params.field_C) {
+    if (ai_object_hp_ratio(target_obj) < ai_params.field_C) {
         return false;
     }
 
-    if (ai_object_hp_ratio(a1) <= ai_params.field_0) {
+    if (ai_object_hp_ratio(source_obj) <= ai_params.field_0) {
         return true;
     }
 
-    sub_4AE020(a2, &v1, &v2);
-    sub_4AE020(a1, &v3, &v4);
+    sub_4AE020(target_obj, &target_party_cnt, &target_party_lvl);
+    sub_4AE020(source_obj, &source_party_cnt, &source_party_lvl);
 
-    if (v1 - v3 >= ai_params.field_4) {
+    if (target_party_cnt - source_party_cnt >= ai_params.field_4) {
         return true;
     }
 
-    if (v2 - v4 >= ai_params.field_8) {
+    if (target_party_lvl - source_party_lvl >= ai_params.field_8) {
         return true;
     }
 
