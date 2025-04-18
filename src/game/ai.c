@@ -173,7 +173,7 @@ static int dword_5B50C0[LOUDNESS_COUNT] = {
 };
 
 // 0x5B50CC
-static bool dword_5B50CC = true;
+static bool ai_npc_fighting_enabled = true;
 
 // NOTE: Original code likely defined it as `int[150][17]`.
 //
@@ -1661,7 +1661,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
             && stat_atmax(leader_obj, STAT_CHARISMA)) {
             danger_type = AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS;
 
-            if (!dword_5B50CC
+            if (!ai_npc_fighting_enabled
                 || (obj_field_int32_get(source_obj, OBJ_F_NPC_FLAGS) & ONF_NO_ATTACK) != 0) {
                 danger_type = AI_DANGER_SOURCE_TYPE_NONE;
             }
@@ -1672,7 +1672,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
     }
 
     if (danger_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS) {
-        if (!dword_5B50CC
+        if (!ai_npc_fighting_enabled
             || (obj_field_int32_get(source_obj, OBJ_F_NPC_FLAGS) & ONF_NO_ATTACK) != 0) {
             danger_type = AI_DANGER_SOURCE_TYPE_NONE;
         }
@@ -2186,7 +2186,7 @@ bool sub_4ABC70(Ai* ai)
     S4ABF10 v3;
     AiParams ai_params;
 
-    if (!dword_5B50CC) {
+    if (!ai_npc_fighting_enabled) {
         return false;
     }
 
@@ -4271,14 +4271,14 @@ bool ai_check_decoy(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4AF860
-void sub_4AF860()
+void ai_npc_fighting_toggle()
 {
     UiMessage ui_message;
 
-    dword_5B50CC = !dword_5B50CC;
+    ai_npc_fighting_enabled = !ai_npc_fighting_enabled;
 
     ui_message.type = UI_MSG_TYPE_EXCLAMATION;
-    if (dword_5B50CC) {
+    if (ai_npc_fighting_enabled) {
         ui_message.str = "NPC fighting is ON";
     } else {
         ui_message.str = "NPC fighting is OFF";

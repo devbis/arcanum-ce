@@ -484,7 +484,7 @@ void main_loop()
                                 charedit_refresh();
                                 break;
                             case DIK_P:
-                                sub_4AF860();
+                                ai_npc_fighting_toggle();
                                 break;
                             }
                         }
