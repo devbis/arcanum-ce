@@ -66,7 +66,7 @@ bool critter_disband(int64_t obj, bool force);
 bool sub_45E180(int64_t obj);
 void sub_45E1E0(int64_t obj);
 bool sub_45E2E0(int64_t a1, int64_t a2);
-int sub_45E3F0(int64_t obj, bool exclude_forced_followers);
+int critter_num_followers(int64_t obj, bool exclude_forced_followers);
 int64_t critter_follower_prev(int64_t critter_obj);
 int64_t critter_follower_next(int64_t critter_obj);
 bool critter_fatigue_timeevent_process(TimeEvent* timeevent);

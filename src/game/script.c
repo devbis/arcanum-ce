@@ -1021,7 +1021,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         for (index = 0; index < cnt; index++) {
             if (critter_is_pc(objs[index])) {
                 max_followers = stat_level_get(objs[index], STAT_MAX_FOLLOWERS);
-                if (max_followers == 0 || sub_45E3F0(objs[index], true) >= max_followers) {
+                if (max_followers == 0 || critter_num_followers(objs[index], true) >= max_followers) {
                     matched++;
                 }
             } else {

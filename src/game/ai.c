@@ -2191,7 +2191,7 @@ bool sub_4ABC70(Ai* ai)
         return false;
     }
 
-    if (sub_45E3F0(ai->obj, false) == 0) {
+    if (critter_num_followers(ai->obj, false) == 0) {
         mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_SUMMON);
         v3.flags = 0x1;
         v3.entries = ai_action_list.actions[AI_ACTION_SUMMON].entries;
@@ -3249,7 +3249,7 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
         if (pc_max_followers == 0) {
             return AI_FOLLOW_NOT_ALLOWED;
         }
-        if (sub_45E3F0(pc_obj, true) >= pc_max_followers) {
+        if (critter_num_followers(pc_obj, true) >= pc_max_followers) {
             return AI_FOLLOW_LIMIT_REACHED;
         }
     }
@@ -3751,7 +3751,7 @@ void sub_4AE9E0(int64_t a1, bool a2)
             || tig_net_is_host())
         && random_between(1, 2) != 1) {
         if (ai_float_line_func != NULL) {
-            cnt = sub_45E3F0(a1, false);
+            cnt = critter_num_followers(a1, false);
             if (cnt != 0) {
                 rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
                 follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);

@@ -921,7 +921,7 @@ bool sub_45E2E0(int64_t a1, int64_t a2)
 }
 
 // 0x45E3F0
-int sub_45E3F0(int64_t obj, bool exclude_forced_followers)
+int critter_num_followers(int64_t obj, bool exclude_forced_followers)
 {
     int cnt;
     int all_followers_cnt;
