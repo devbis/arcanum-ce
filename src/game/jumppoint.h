@@ -4,13 +4,10 @@
 #include "game/context.h"
 
 typedef struct JumpPoint {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t location;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0000 */ unsigned int flags;
+    /* 0008 */ int64_t loc;
+    /* 0010 */ int dst_map;
+    /* 0018 */ int64_t dst_loc;
 } JumpPoint;
 
 // See 0x4E3800.
@@ -26,6 +23,10 @@ void jumppoint_close();
 bool jumppoint_flush();
 void jumppoint_update_view(ViewOptions* view_options);
 void jumppoint_draw(GameDrawInfo* draw_info);
-bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint);
+bool jumppoint_get(int64_t loc, JumpPoint* jumppoint);
+bool jumppoint_add(JumpPoint* jumppoint, bool update);
+bool jumppoint_remove(int64_t loc);
+bool jumppoint_move(int64_t from, int64_t to);
+bool jumppoint_is_empty();
 
 #endif /* ARCANUM_GAME_JUMPPOINT_H_ */

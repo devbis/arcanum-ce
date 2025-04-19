@@ -4,6 +4,7 @@
 
 #include "game/location.h"
 
+static void jumppoint_invalidate(int jumppoint);
 static void jumppoint_get_rect(int jumppoint, TigRect* rect);
 static bool jumppoint_read_all(TigFile* stream);
 static bool jumppoint_write_all(TigFile* stream);
@@ -240,12 +241,12 @@ void jumppoint_draw(GameDrawInfo* draw_info)
 }
 
 // 0x4E3450
-bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint)
+bool jumppoint_get(int64_t loc, JumpPoint* jumppoint)
 {
     int index;
 
     for (index = 0; index < jumppoints_count; index++) {
-        if (jumppoints[index].location == location) {
+        if (jumppoints[index].loc == loc) {
             if (jumppoint != NULL) {
                 *jumppoint = jumppoints[index];
             }
@@ -256,8 +257,104 @@ bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint)
     return false;
 }
 
+// 0x4E34B0
+bool jumppoint_add(JumpPoint* jumppoint, bool update)
+{
+    int index;
+
+    for (index = 0; index < jumppoints_count; index++) {
+        if (jumppoints[index].loc == jumppoint->loc) {
+            if (!update) {
+                return false;
+            }
+            break;
+        }
+    }
+
+    if (index == jumppoints_count) {
+        jumppoints_count++;
+        jumppoints = (JumpPoint*)REALLOC(jumppoints, sizeof(*jumppoints) * jumppoints_count);
+    }
+
+    jumppoints[index] = *jumppoint;
+
+    jumppoint_invalidate(index);
+
+    jumppoint_modified = true;
+
+    return true;
+}
+
+// 0x4E3540
+bool jumppoint_remove(int64_t loc)
+{
+    int index;
+
+    for (index = 0; index < jumppoints_count; index++) {
+        if (jumppoints[index].loc == loc) {
+            break;
+        }
+    }
+
+    if (index >= jumppoints_count) {
+        return false;
+    }
+
+    jumppoint_invalidate(index);
+
+    memcpy(&(jumppoints[index]),
+        &(jumppoints[index + 1]),
+        sizeof(*jumppoints) * (jumppoints_count - index + 1));
+
+    jumppoints_count--;
+    jumppoints = (JumpPoint*)REALLOC(jumppoints, sizeof(*jumppoints) * jumppoints_count);
+
+    jumppoint_modified = true;
+
+    return true;
+}
+
+// 0x4E35E0
+bool jumppoint_move(int64_t from, int64_t to)
+{
+    int index;
+    int found = -1;
+
+    if (from == to) {
+        return false;
+    }
+
+    for (index = 0; index < jumppoints_count; index++) {
+        if (jumppoints[index].loc == from) {
+            found = index;
+        } else if (jumppoints[index].loc == to) {
+            return false;
+        }
+    }
+
+    if (found == -1) {
+        return false;
+    }
+
+    jumppoint_invalidate(found);
+
+    jumppoints[found].dst_loc = to;
+
+    jumppoint_invalidate(found);
+
+    jumppoint_modified = true;
+
+    return true;
+}
+
+// 0x4E3690
+bool jumppoint_is_empty()
+{
+    return jumppoints_count == 0;
+}
+
 // 0x4E36A0
-void sub_4E36A0(int jumppoint)
+void jumppoint_invalidate(int jumppoint)
 {
     TigRect rect;
 
@@ -272,7 +369,7 @@ void jumppoint_get_rect(int jumppoint, TigRect* rect)
     int64_t y;
     TigArtFrameData art_frame_data;
 
-    location_xy(jumppoints[jumppoint].location, &x, &y);
+    location_xy(jumppoints[jumppoint].loc, &x, &y);
     if (x >= INT_MIN && x < INT_MAX
         && y >= INT_MIN && y < INT_MAX) {
         if (jumppoint_view_options.type == 1) {

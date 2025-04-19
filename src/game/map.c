@@ -996,13 +996,13 @@ void sub_4101D0(int64_t location, int64_t a2)
     TeleportData teleport_data;
 
     if (dword_5D1220 < 9) {
-        if (jumppoint_find_by_location(location, &jumppoint)) {
+        if (jumppoint_get(location, &jumppoint)) {
             dword_5D1220++;
 
             teleport_data.flags = 0;
             teleport_data.obj = a2;
-            teleport_data.loc = jumppoint.field_18;
-            teleport_data.map = jumppoint.field_10;
+            teleport_data.loc = jumppoint.dst_loc;
+            teleport_data.map = jumppoint.dst_map;
             teleport_do(&teleport_data);
 
             dword_5D1220--;
