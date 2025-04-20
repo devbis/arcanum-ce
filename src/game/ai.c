@@ -2304,7 +2304,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
         }
 
         if (entry->spell == -1) {
-            sub_462CC0(ai->obj, entry->item_obj, obj);
+            item_use(ai->obj, entry->item_obj, obj);
             return true;
         }
 

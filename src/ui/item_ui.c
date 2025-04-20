@@ -223,7 +223,7 @@ void sub_571CB0(S4F2810* a1)
             || ((item_flags & OIF_IS_MAGICAL) != 0
                 && range != -1
                 && (item_flags & OIF_NO_RANGED_USE) == 0)) {
-            sub_462CC0(pc_obj, item_obj, a1->obj);
+            item_use(pc_obj, item_obj, a1->obj);
             sub_571C80();
             return;
         }

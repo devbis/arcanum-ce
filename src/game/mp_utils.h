@@ -969,14 +969,14 @@ typedef struct PacketTextRemove {
 
 static_assert(sizeof(PacketTextRemove) == 0x28, "wrong size");
 
-typedef struct Packet117 {
+typedef struct PacketItemUse {
     /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ ObjectID field_38;
-} Packet117;
+    /* 0008 */ ObjectID source_oid;
+    /* 0020 */ ObjectID item_oid;
+    /* 0038 */ ObjectID target_oid;
+} PacketItemUse;
 
-static_assert(sizeof(Packet117) == 0x50, "wrong size");
+static_assert(sizeof(PacketItemUse) == 0x50, "wrong size");
 
 typedef struct Packet118 {
     /* 0000 */ int type;
@@ -1211,7 +1211,7 @@ void sub_4EF190(tig_art_id_t art_id);
 void sub_4EF1E0(int64_t a1, int64_t obj);
 void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
-void sub_4EF6F0(int64_t a1, int64_t a2, int64_t a3);
+void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
 void sub_4EF830(int64_t a1, int64_t a2);
 bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr);
 void sub_4EFAE0(int64_t obj, int a2);

@@ -1393,7 +1393,7 @@ int sub_462C30(int64_t a1, int64_t a2)
 }
 
 // 0x462CC0
-void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
+void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 {
     int64_t parent_obj;
     int item_type;
@@ -1403,10 +1403,9 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    if (tig_net_is_active()
-        && !tig_net_is_host()) {
+    if (tig_net_is_active() && !tig_net_is_host()) {
         if (player_is_local_pc_obj(source_obj)) {
-            sub_4EF6F0(source_obj, item_obj, target_obj);
+            mp_item_use(source_obj, item_obj, target_obj);
         }
         return;
     }

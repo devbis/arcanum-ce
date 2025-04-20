@@ -3636,9 +3636,9 @@ void sub_54FCF0(Hotkey* hotkey)
                     break;
                 }
             } else if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
-                sub_462CC0(pc_obj, v2, pc_obj);
+                item_use(pc_obj, v2, pc_obj);
             } else {
-                sub_462CC0(pc_obj, v2, OBJ_HANDLE_NULL);
+                item_use(pc_obj, v2, OBJ_HANDLE_NULL);
             }
         }
         break;
