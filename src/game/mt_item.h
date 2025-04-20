@@ -59,6 +59,6 @@ void mt_item_notify_parent_dmgs_obj(int64_t obj, int64_t weapon_obj, int64_t tar
 void sub_4CBF70(int64_t a1, int64_t a2);
 void mt_item_notify_unwear(int64_t item_obj, int64_t parent_obj);
 void mt_item_notify_drop(int64_t item_obj, int64_t parent_obj);
-bool sub_4CC160(int64_t item_obj);
+bool mt_item_valid_ai_action(int64_t item_obj);
 
 #endif /* ARCANUM_GAME_MT_ITEM_H_ */

@@ -462,7 +462,7 @@ void mt_item_notify_drop(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x4CC160
-bool sub_4CC160(int64_t item_obj)
+bool mt_item_valid_ai_action(int64_t item_obj)
 {
     int spl;
 

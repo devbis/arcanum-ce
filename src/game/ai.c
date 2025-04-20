@@ -2311,7 +2311,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
         if (!sub_459380(obj, entry->spell)
             && !sub_4AE720(ai->obj, entry->item_obj, obj, entry->spell)) {
             if (entry->item_obj != OBJ_HANDLE_NULL
-                && sub_4CC160(entry->item_obj)) {
+                && mt_item_valid_ai_action(entry->item_obj)) {
                 ai->action_type = AI_ACTION_TYPE_USE_ITEM;
                 ai->spell = entry->spell;
                 ai->item_obj = entry->item_obj;
