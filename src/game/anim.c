@@ -11272,7 +11272,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
             if (qword_5DE6D8 != OBJ_HANDLE_NULL) {
                 art_id = obj_field_int32_get(qword_5DE6D8, OBJ_F_CURRENT_AID);
                 art_id = tig_art_id_frame_set(art_id, 0);
-                if (sub_459380(qword_5DE6D8, 172)) {
+                if (magictech_is_under_influence_of(qword_5DE6D8, 172)) {
                     art_id = tig_art_id_anim_set(art_id, 23);
                     v1 = true;
                 }

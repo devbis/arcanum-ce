@@ -6178,17 +6178,17 @@ bool sub_459290(int64_t obj, int spell, int* index_ptr)
 }
 
 // 0x459380
-bool sub_459380(int64_t obj, int magictech)
+bool magictech_is_under_influence_of(int64_t obj, int magictech)
 {
-    int v1;
+    int mt_id;
     MagicTechRunInfo* run_info;
 
-    if (magictech_find_first(obj, &v1)) {
+    if (magictech_find_first(obj, &mt_id)) {
         do {
-            if (magictech_id_to_run_info(v1, &run_info) && run_info->spell == magictech) {
+            if (magictech_id_to_run_info(mt_id, &run_info) && run_info->spell == magictech) {
                 return true;
             }
-        } while (magictech_find_next(obj, &v1));
+        } while (magictech_find_next(obj, &mt_id));
     }
 
     return false;

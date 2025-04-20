@@ -1234,7 +1234,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         spl = script_get_value(condition->op_type[1], condition->op_value[1], state);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (sub_459380(objs[index], spl)) {
+            if (magictech_is_under_influence_of(objs[index], spl)) {
                 matched++;
             }
         }

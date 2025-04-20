@@ -2308,7 +2308,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
             return true;
         }
 
-        if (!sub_459380(obj, entry->spell)
+        if (!magictech_is_under_influence_of(obj, entry->spell)
             && !sub_4AE720(ai->obj, entry->item_obj, obj, entry->spell)) {
             if (entry->item_obj != OBJ_HANDLE_NULL
                 && mt_item_valid_ai_action(entry->item_obj)) {
@@ -3145,7 +3145,7 @@ int ai_can_speak(int64_t npc_obj, int64_t pc_obj, bool a3)
             return AI_SPEAK_SLEEP_UNCONSCIOUS;
         }
 
-        if (sub_459380(npc_obj, SPELL_CREATE_UNDEAD)) {
+        if (magictech_is_under_influence_of(npc_obj, SPELL_CREATE_UNDEAD)) {
             return AI_SPEAK_CANNOT;
         }
 
