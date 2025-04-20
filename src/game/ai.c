@@ -76,7 +76,7 @@ static_assert(sizeof(Ai) == 0x38, "wrong size");
 
 typedef struct S4ABF10 {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ AiActionListEntry* entries;
+    /* 0004 */ MagicTechAiActionListEntry* entries;
     /* 0008 */ int cnt;
     /* 0010 */ int64_t obj;
 } S4ABF10;
@@ -501,7 +501,7 @@ bool sub_4A8940(Ai* ai)
 bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 {
     S4ABF10 v1;
-    AiActionList ai_action_list;
+    MagicTechAi magictech_ai;
     int hp_ratio;
     int64_t item_obj;
 
@@ -510,16 +510,16 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
     }
 
     if (critter_is_dead(obj)) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_RESURRECT);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_RESURRECT);
         v1.flags = 0x8;
-        v1.entries = ai_action_list.actions[AI_ACTION_RESURRECT].entries;
-        v1.cnt = ai_action_list.actions[AI_ACTION_RESURRECT].cnt;
+        v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_RESURRECT].entries;
+        v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_RESURRECT].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         } else {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return false;
         }
     }
@@ -531,17 +531,17 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 
     if (ai->danger_type != AI_DANGER_SOURCE_TYPE_NONE) {
         if (ai_critter_fatigue_ratio(ai->obj) < 20) {
-            mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_FATIGUE_RECOVER);
+            mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_FATIGUE_RECOVER);
             v1.flags = 0x8;
-            v1.entries = ai_action_list.actions[AI_ACTION_FATIGUE_RECOVER].entries;
-            v1.cnt = ai_action_list.actions[AI_ACTION_FATIGUE_RECOVER].cnt;
+            v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_FATIGUE_RECOVER].entries;
+            v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_FATIGUE_RECOVER].cnt;
             v1.obj = obj;
             if (sub_4ABF10(ai, &v1)) {
-                mt_ai_action_list_destroy(&ai_action_list);
+                mt_ai_destroy(&magictech_ai);
                 return true;
             }
 
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
         }
     } else {
         if (hp_ratio < 90) {
@@ -557,61 +557,61 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
     }
 
     if (hp_ratio < 40) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_HEAVY);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_HEAL_HEAVY);
         v1.flags = 0x8;
-        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_HEAVY].entries;
-        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_HEAVY].cnt;
+        v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_HEAVY].entries;
+        v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_HEAVY].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
     if (hp_ratio < 55) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_MEDIUM);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_HEAL_MEDIUM);
         v1.flags = 0x8;
-        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_MEDIUM].entries;
-        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_MEDIUM].cnt;
+        v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_MEDIUM].entries;
+        v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_MEDIUM].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
     if (stat_level_get(obj, STAT_POISON_LEVEL) > 0) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_CURE_POISON);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_CURE_POISON);
         v1.flags = 0x8;
-        v1.entries = ai_action_list.actions[AI_ACTION_CURE_POISON].entries;
-        v1.cnt = ai_action_list.actions[AI_ACTION_CURE_POISON].cnt;
+        v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_CURE_POISON].entries;
+        v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_CURE_POISON].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
     if (hp_ratio < 70
         || (ai->danger_type == AI_DANGER_SOURCE_TYPE_NONE
                 && hp_ratio < 90)) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_LIGHT);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_HEAL_LIGHT);
         v1.flags = 0x8;
-        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_LIGHT].entries;
-        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_LIGHT].cnt;
+        v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_LIGHT].entries;
+        v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_LIGHT].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
     return false;
@@ -1753,7 +1753,7 @@ bool sub_4AAF50(Ai* ai)
 {
     unsigned int critter_flags;
     S4ABF10 v1;
-    AiActionList ai_action_list;
+    MagicTechAi magictech_ai;
 
     critter_flags = obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_SPELL_FLEE) != 0) {
@@ -1761,18 +1761,18 @@ bool sub_4AAF50(Ai* ai)
         return false;
     }
 
-    mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_FLEE);
+    mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_FLEE);
     v1.flags = 0x1;
-    v1.entries = ai_action_list.actions[AI_ACTION_FLEE].entries;
-    v1.cnt = ai_action_list.actions[AI_ACTION_FLEE].cnt;
+    v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_FLEE].entries;
+    v1.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_FLEE].cnt;
     if (!sub_4ABF10(ai, &v1)) {
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
         return false;
     }
 
     critter_flags |= OCF_SPELL_FLEE;
     obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-    mt_ai_action_list_destroy(&ai_action_list);
+    mt_ai_destroy(&magictech_ai);
 
     return true;
 }
@@ -2181,7 +2181,7 @@ void sub_4ABC20(Ai* ai)
 // 0x4ABC70
 bool sub_4ABC70(Ai* ai)
 {
-    AiActionList ai_action_list;
+    MagicTechAi magictech_ai;
     S4ABF10 v3;
     AiParams ai_params;
 
@@ -2194,43 +2194,43 @@ bool sub_4ABC70(Ai* ai)
     }
 
     if (critter_num_followers(ai->obj, false) == 0) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_SUMMON);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_SUMMON);
         v3.flags = 0x1;
-        v3.entries = ai_action_list.actions[AI_ACTION_SUMMON].entries;
-        v3.cnt = ai_action_list.actions[AI_ACTION_SUMMON].cnt;
+        v3.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_SUMMON].entries;
+        v3.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_SUMMON].cnt;
         if (sub_4ABF10(ai, &v3)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
     ai_copy_params(ai->obj, &ai_params);
 
     if (ai_params.field_34 < random_between(1, 100)) {
-        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_DEFENSIVE);
+        mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_DEFENSIVE);
         v3.flags = 0x4;
-        v3.entries = ai_action_list.actions[AI_ACTION_DEFENSIVE].entries;
-        v3.cnt = ai_action_list.actions[AI_ACTION_DEFENSIVE].cnt;
+        v3.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_DEFENSIVE].entries;
+        v3.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_DEFENSIVE].cnt;
         if (sub_4ABF10(ai, &v3)) {
-            mt_ai_action_list_destroy(&ai_action_list);
+            mt_ai_destroy(&magictech_ai);
             return true;
         }
 
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
     }
 
-    mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_OFFENSIVE);
+    mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_OFFENSIVE);
     v3.flags = 0x2;
-    v3.entries = ai_action_list.actions[AI_ACTION_OFFENSIVE].entries;
-    v3.cnt = ai_action_list.actions[AI_ACTION_OFFENSIVE].cnt;
+    v3.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_OFFENSIVE].entries;
+    v3.cnt = magictech_ai.actions[MAGICTECH_AI_ACTION_OFFENSIVE].cnt;
     if (sub_4ABF10(ai, &v3)) {
-        mt_ai_action_list_destroy(&ai_action_list);
+        mt_ai_destroy(&magictech_ai);
         return true;
     }
 
-    mt_ai_action_list_destroy(&ai_action_list);
+    mt_ai_destroy(&magictech_ai);
     return false;
 }
 
@@ -2277,7 +2277,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
     int64_t obj;
     int base;
     int idx;
-    AiActionListEntry* entry;
+    MagicTechAiActionListEntry* entry;
 
     if (a2->cnt <= 0) {
         return false;
