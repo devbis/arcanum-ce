@@ -134,8 +134,8 @@ static void sub_457B20(MagicTechInfo* info, char* str);
 static void sub_457D00(MagicTechInfo* info, char* str);
 static void magictech_build_ai_info(MagicTechInfo* info, char* str);
 static void magictech_build_effect_info(MagicTechInfo* info, char* str);
-static bool sub_458CF0(int64_t a1, int* a2);
-static bool sub_458D90(int64_t a1, int* a2);
+static bool magictech_find_first(int64_t obj, int* mt_id_ptr);
+static bool magictech_find_next(int64_t obj, int* mt_id_ptr);
 static bool sub_459290(int64_t obj, int spell, int* index_ptr);
 static void sub_459490(int mt_id);
 static bool sub_4594D0(TimeEvent* timeevent);
@@ -3978,14 +3978,14 @@ int sub_455100(int64_t obj, int fld, unsigned int a3, bool a4)
         }
     }
 
-    if (sub_458CF0(obj, &mt_id)) {
+    if (magictech_find_first(obj, &mt_id)) {
         do {
             if (magictech_id_to_run_info(mt_id, &run_info)
                 && fld == OBJ_F_SPELL_FLAGS
                 && (magictech_spells[run_info->spell].field_114 & a3) != 0) {
                 cnt++;
             }
-        } while (sub_458D90(obj, &mt_id));
+        } while (magictech_find_next(obj, &mt_id));
     }
 
     return cnt;
@@ -5929,7 +5929,7 @@ int sub_458CA0(int mt_id)
 }
 
 // 0x458CF0
-bool sub_458CF0(int64_t obj, int* index_ptr)
+bool magictech_find_first(int64_t obj, int* mt_id_ptr)
 {
     int idx;
     MagicTechObjectNode* node;
@@ -5941,8 +5941,8 @@ bool sub_458CF0(int64_t obj, int* index_ptr)
     for (idx = 0; idx < 512; idx++) {
         if ((magictech_run_info[idx].field_13C & 0x1) != 0) {
             if (magictech_run_info[idx].target_obj.obj == obj) {
-                if (index_ptr != NULL) {
-                    *index_ptr = idx;
+                if (mt_id_ptr != NULL) {
+                    *mt_id_ptr = idx;
                 }
                 return true;
             }
@@ -5950,8 +5950,8 @@ bool sub_458CF0(int64_t obj, int* index_ptr)
             node = magictech_run_info[idx].summoned_obj;
             while (node != NULL) {
                 if (node->obj == obj) {
-                    if (index_ptr != NULL) {
-                        *index_ptr = idx;
+                    if (mt_id_ptr != NULL) {
+                        *mt_id_ptr = idx;
                     }
                     return true;
                 }
@@ -5961,8 +5961,8 @@ bool sub_458CF0(int64_t obj, int* index_ptr)
             node = magictech_run_info[idx].objlist;
             while (node != NULL) {
                 if (node->obj == obj) {
-                    if (index_ptr != NULL) {
-                        *index_ptr = idx;
+                    if (mt_id_ptr != NULL) {
+                        *mt_id_ptr = idx;
                     }
                     return true;
                 }
@@ -5975,7 +5975,7 @@ bool sub_458CF0(int64_t obj, int* index_ptr)
 }
 
 // 0x458D90
-bool sub_458D90(int64_t obj, int* index_ptr)
+bool magictech_find_next(int64_t obj, int* mt_id_ptr)
 {
     int idx;
     MagicTechObjectNode* node;
@@ -5984,11 +5984,11 @@ bool sub_458D90(int64_t obj, int* index_ptr)
         return false;
     }
 
-    for (idx = *index_ptr + 1; idx < 512; idx++) {
+    for (idx = *mt_id_ptr + 1; idx < 512; idx++) {
         if ((magictech_run_info[idx].field_13C & 0x1) != 0) {
             if (magictech_run_info[idx].target_obj.obj == obj) {
-                if (index_ptr != NULL) {
-                    *index_ptr = idx;
+                if (mt_id_ptr != NULL) {
+                    *mt_id_ptr = idx;
                 }
                 return true;
             }
@@ -5996,8 +5996,8 @@ bool sub_458D90(int64_t obj, int* index_ptr)
             node = magictech_run_info[idx].summoned_obj;
             while (node != NULL) {
                 if (node->obj == obj) {
-                    if (index_ptr != NULL) {
-                        *index_ptr = idx;
+                    if (mt_id_ptr != NULL) {
+                        *mt_id_ptr = idx;
                     }
                     return true;
                 }
@@ -6007,8 +6007,8 @@ bool sub_458D90(int64_t obj, int* index_ptr)
             node = magictech_run_info[idx].objlist;
             while (node != NULL) {
                 if (node->obj == obj) {
-                    if (index_ptr != NULL) {
-                        *index_ptr = idx;
+                    if (mt_id_ptr != NULL) {
+                        *mt_id_ptr = idx;
                     }
                     return true;
                 }
@@ -6183,12 +6183,12 @@ bool sub_459380(int64_t obj, int magictech)
     int v1;
     MagicTechRunInfo* run_info;
 
-    if (sub_458CF0(obj, &v1)) {
+    if (magictech_find_first(obj, &v1)) {
         do {
             if (magictech_id_to_run_info(v1, &run_info) && run_info->spell == magictech) {
                 return true;
             }
-        } while (sub_458D90(obj, &v1));
+        } while (magictech_find_next(obj, &v1));
     }
 
     return false;
