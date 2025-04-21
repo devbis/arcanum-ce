@@ -39,7 +39,7 @@ bool sector_init(GameInitInfo* init_info);
 void sector_reset();
 void sector_exit();
 void sector_resize(GameResizeInfo* resize_info);
-void sub_4CF320();
+void sector_map_close();
 void sector_update_view(ViewOptions* view_options);
 void sub_4CF360(SectorLockFunc* func);
 void sub_4CF370();

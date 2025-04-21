@@ -290,7 +290,7 @@ void sector_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4CF320
-void sub_4CF320()
+void sector_map_close()
 {
     sub_4D0B40();
     if (!gamelib_in_load()) {

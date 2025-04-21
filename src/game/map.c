@@ -120,13 +120,13 @@ static MapModule map_modules[] = {
     { "Object_Node", object_node_init, NULL, NULL, NULL, object_node_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Obj", obj_init, NULL, NULL, NULL, obj_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Proto", proto_init, NULL, NULL, NULL, proto_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-    { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, sub_43AA40, NULL, NULL, NULL, object_close, object_resize },
-    { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, terrain_new, terrain_close, NULL },
-    { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sub_4CF320, sector_resize },
-    { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_close, tb_resize },
+    { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, sub_43AA40, NULL, NULL, NULL, object_map_close, object_resize },
+    { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, terrain_map_new, terrain_map_close, NULL },
+    { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sector_map_close, sector_resize },
+    { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_map_close, tb_resize },
     { "TF", tf_init, tf_reset, NULL, NULL, tf_exit, tf_ping, tf_update_view, NULL, NULL, NULL, tf_map_close, tf_resize },
     { "Wall", wall_init, NULL, NULL, NULL, wall_exit, NULL, wall_update_view, NULL, NULL, NULL, NULL, wall_resize },
-    { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, jumppoint_new, jumppoint_close, jumppoint_resize },
+    { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, jumppoint_map_new, jumppoint_map_close, jumppoint_resize },
 };
 
 static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, "wrong size");
@@ -700,7 +700,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
         new_map_info.base_terrain_type = map_properties.base_terrain_type;
         new_map_info.width = map_properties.width >> 6;
         new_map_info.height = map_properties.height >> 6;
-        terrain_new(&new_map_info);
+        terrain_map_new(&new_map_info);
 
         if (!terrain_open(map_name, map_folder)) {
             tig_debug_println("Error: terrain_open failed even after creating a new terrain");
@@ -719,7 +719,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
         new_map_info.base_terrain_type = map_properties.base_terrain_type;
         new_map_info.width = map_properties.width >> 6;
         new_map_info.height = map_properties.height >> 6;
-        jumppoint_new(&new_map_info);
+        jumppoint_map_new(&new_map_info);
 
         if (!jumppoint_open(map_name, map_folder)) {
             tig_debug_println("Error: jumppoint_open failed even after creating a new file");

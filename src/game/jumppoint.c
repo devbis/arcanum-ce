@@ -68,13 +68,13 @@ bool jumppoint_init(GameInitInfo* init_info)
 // 0x4E3020
 void jumppoint_reset()
 {
-    jumppoint_close();
+    jumppoint_map_close();
 }
 
 // 0x4E3030
 void jumppoint_exit()
 {
-    jumppoint_close();
+    jumppoint_map_close();
     jumppoint_initialized = false;
 }
 
@@ -85,9 +85,9 @@ void jumppoint_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4E3050
-bool jumppoint_new(MapNewInfo* new_map_info)
+bool jumppoint_map_new(MapNewInfo* new_map_info)
 {
-    jumppoint_close();
+    jumppoint_map_close();
 
     sprintf(byte_603560, "%s\\map.jmp", new_map_info->name);
     sprintf(byte_603450, "%s\\map.jmp", new_map_info->folder);
@@ -102,7 +102,7 @@ bool jumppoint_open(const char* a1, const char* a2)
 {
     TigFile* stream;
 
-    jumppoint_close();
+    jumppoint_map_close();
 
     sprintf(byte_603560, "%s\\map.jmp", a1);
     sprintf(byte_603450, "%s\\map.jmp", a2);
@@ -128,7 +128,7 @@ bool jumppoint_open(const char* a1, const char* a2)
 }
 
 // 0x4E3140
-void jumppoint_close()
+void jumppoint_map_close()
 {
     if (jumppoints != NULL) {
         FREE(jumppoints);
@@ -408,7 +408,7 @@ bool jumppoint_read_all(TigFile* stream)
         jumppoints = (JumpPoint*)MALLOC(sizeof(*jumppoints) * jumppoints_count);
         for (index = 0; index < jumppoints_count; index++) {
             if (tig_file_fread(&(jumppoints[index]), sizeof(*jumppoints), 1, stream) != 1) {
-                jumppoint_close();
+                jumppoint_map_close();
                 return false;
             }
         }

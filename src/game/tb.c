@@ -313,7 +313,7 @@ void tb_update_view(ViewOptions* view_options)
  *
  * 0x4D5E80
  */
-void tb_close()
+void tb_map_close()
 {
     tb_clear();
 }

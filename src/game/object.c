@@ -467,7 +467,7 @@ void sub_43AA40(ViewOptions* view_options)
 }
 
 // 0x43AA60
-void object_close()
+void object_map_close()
 {
     object_reset();
 }

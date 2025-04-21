@@ -162,11 +162,11 @@ void terrain_exit()
 }
 
 // 0x4E7B90
-bool terrain_new(MapNewInfo* new_map_info)
+bool terrain_map_new(MapNewInfo* new_map_info)
 {
     int index;
 
-    terrain_close();
+    terrain_map_close();
 
     terrain_header.version = 1.2f;
     terrain_header.flags = 0;
@@ -199,7 +199,7 @@ bool terrain_open(const char* a1, const char* a2)
     TigFile* stream;
     bool v1 = false;
 
-    terrain_close();
+    terrain_map_close();
 
     sprintf(byte_6038E4, "%s\\terrain.tdf", a1);
 
@@ -270,7 +270,7 @@ bool terrain_open(const char* a1, const char* a2)
 }
 
 // 0x4E7E80
-void terrain_close()
+void terrain_map_close()
 {
     int index;
 
@@ -303,7 +303,7 @@ void sub_4E7EF0()
     sprintf(path1, "%s%s", drive, dir);
     _splitpath(byte_6037C8, drive, dir, NULL, NULL);
     sprintf(path2, "%s%s", drive, dir);
-    terrain_close();
+    terrain_map_close();
     terrain_open(path1, path2);
 }
 

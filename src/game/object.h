@@ -90,7 +90,7 @@ void object_reset();
 void object_exit();
 void object_ping(tig_timestamp_t timestamp);
 void sub_43AA40(ViewOptions* view_options);
-void object_close();
+void object_map_close();
 bool sub_43AA70(int obj_type);
 void sub_43AA80(int obj_type);
 void object_draw(GameDrawInfo* draw_info);
