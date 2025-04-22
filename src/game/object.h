@@ -98,7 +98,7 @@ void sub_43C270(int64_t obj);
 int64_t sub_43C570();
 void sub_43C690(GameDrawInfo* draw_info);
 void object_invalidate_rect(TigRect* rect);
-void sub_43CB70();
+void object_flush();
 bool object_create(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
 bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
 bool sub_43CC30(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);

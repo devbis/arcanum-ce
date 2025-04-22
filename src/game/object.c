@@ -145,7 +145,7 @@ int dword_5E2E68;
 int dword_5E2E6C;
 
 // 0x5E2E70
-static TigRectListNode* dword_5E2E70;
+static TigRectListNode* object_dirty_rects_head;
 
 // 0x5E2E74
 static S5E2E74* dword_5E2E74;
@@ -324,10 +324,10 @@ void object_reset()
     TigRectListNode* next;
     int index;
 
-    while (dword_5E2E70 != NULL) {
-        next = dword_5E2E70->next;
-        tig_rect_node_destroy(dword_5E2E70);
-        dword_5E2E70 = next;
+    while (object_dirty_rects_head != NULL) {
+        next = object_dirty_rects_head->next;
+        tig_rect_node_destroy(object_dirty_rects_head);
+        object_dirty_rects_head = next;
     }
 
     for (index = 0; index < 18; index++) {
@@ -408,9 +408,9 @@ void object_ping(tig_timestamp_t timestamp)
     bounds.width = object_iso_content_rect.width * 2;
     bounds.height = object_iso_content_rect.height * 2;
 
-    while (dword_5E2E70 != NULL) {
-        next = dword_5E2E70->next;
-        if (tig_rect_intersection(&(dword_5E2E70->rect), &bounds, &rect) == TIG_OK
+    while (object_dirty_rects_head != NULL) {
+        next = object_dirty_rects_head->next;
+        if (tig_rect_intersection(&(object_dirty_rects_head->rect), &bounds, &rect) == TIG_OK
             && sub_4B9130(&rect, &loc_rect)
             && sub_4D0090(&loc_rect, &v1)) {
             for (col = 0; col < v1.height; col++) {
@@ -453,8 +453,8 @@ void object_ping(tig_timestamp_t timestamp)
                 }
             }
         }
-        tig_rect_node_destroy(dword_5E2E70);
-        dword_5E2E70 = next;
+        tig_rect_node_destroy(object_dirty_rects_head);
+        object_dirty_rects_head = next;
     }
 
     object_dirty = false;
@@ -1171,25 +1171,25 @@ void object_invalidate_rect(TigRect* rect)
         rect = &object_iso_content_rect;
     }
 
-    if (dword_5E2E70 != NULL) {
-        sub_52D480(&dword_5E2E70, rect);
+    if (object_dirty_rects_head != NULL) {
+        sub_52D480(&object_dirty_rects_head, rect);
     } else {
-        dword_5E2E70 = tig_rect_node_create();
-        dword_5E2E70->rect = *rect;
+        object_dirty_rects_head = tig_rect_node_create();
+        object_dirty_rects_head->rect = *rect;
     }
 
     object_dirty = true;
 }
 
 // 0x43CB70
-void sub_43CB70()
+void object_flush()
 {
     TigRectListNode* next;
 
-    while (dword_5E2E70 != NULL) {
-        next = dword_5E2E70->next;
-        tig_rect_node_destroy(dword_5E2E70);
-        dword_5E2E70 = next;
+    while (object_dirty_rects_head != NULL) {
+        next = object_dirty_rects_head->next;
+        tig_rect_node_destroy(object_dirty_rects_head);
+        object_dirty_rects_head = next;
     }
 }
 

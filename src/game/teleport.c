@@ -223,7 +223,7 @@ bool teleport_process(TeleportData* teleport_data)
     schedule_teleport_obj_recursively(teleport_data->obj, teleport_data->loc);
 
     if (teleport_is_teleporting_pc) {
-        sub_43CB70();
+        object_flush();
         wallcheck_flush();
     }
 
