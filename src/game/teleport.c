@@ -230,7 +230,7 @@ bool teleport_process(TeleportData* teleport_data)
     if (teleport_data->map != map && player_is_pc_obj(teleport_data->obj)) {
         sub_459F50();
         sub_437980();
-        sub_45C720(teleport_data->map);
+        timeevent_notify_pc_teleported(teleport_data->map);
     }
 
     if (!sub_4D39A0(teleport_data)) {

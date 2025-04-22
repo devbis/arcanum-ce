@@ -1748,7 +1748,7 @@ void timeevent_load_nodes_from_map(const char* name)
 }
 
 // 0x45C720
-void sub_45C720(int map)
+void timeevent_notify_pc_teleported(int map)
 {
     char* name;
     char path[TIG_MAX_PATH];

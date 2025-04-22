@@ -170,7 +170,7 @@ bool timeevent_inc_milliseconds(unsigned int milliseconds);
 bool timeevent_inc_datetime(DateTime* datetime);
 void timeevent_sync(DateTime* game_time, DateTime* anim_time);
 void sub_45C580();
-void sub_45C720(int map);
+void timeevent_notify_pc_teleported(int map);
 void timeevent_debug_lists();
 
 #endif /* ARCANUM_GAME_TIMEEVENT_H_ */
