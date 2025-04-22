@@ -139,7 +139,7 @@ int item_find_free_inv_loc_for_insertion(int64_t item_obj, int64_t parent_obj);
 int item_check_insert(int64_t item_obj, int64_t parent_obj, int* inventory_location_ptr);
 void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location);
 void sub_466D60(int64_t obj);
-int sub_466DA0(int64_t obj);
+int item_check_remove(int64_t obj);
 void item_remove(int64_t item_obj);
 void sub_466E50(int64_t obj, int64_t loc);
 void item_arrange_inventory(int64_t parent_obj, bool vertical);

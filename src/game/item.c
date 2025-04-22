@@ -745,7 +745,7 @@ bool item_drop_ex(int64_t item_obj, int distance)
         return false;
     }
 
-    reason = sub_466DA0(item_obj);
+    reason = item_check_remove(item_obj);
     obj_type = obj_field_int32_get(parent_obj, OBJ_F_TYPE);
 
     if (reason != ITEM_CANNOT_OK) {
@@ -2604,12 +2604,12 @@ bool item_wield_set(int64_t item_obj, int inventory_location)
             return false;
         }
 
-        if (sub_466DA0(item_obj) != ITEM_CANNOT_OK) {
+        if (item_check_remove(item_obj) != ITEM_CANNOT_OK) {
             return false;
         }
 
         if (cur_item_obj != OBJ_HANDLE_NULL) {
-            if (sub_466DA0(cur_item_obj) != ITEM_CANNOT_OK) {
+            if (item_check_remove(cur_item_obj) != ITEM_CANNOT_OK) {
                 return false;
             }
 
@@ -2660,7 +2660,7 @@ bool sub_464C80(int64_t item_obj)
 
     inventory_location = item_inventory_location_get(item_obj);
     if (IS_WEAR_INV_LOC(inventory_location)) {
-        if (sub_466DA0(item_obj) != ITEM_CANNOT_OK) {
+        if (item_check_remove(item_obj) != ITEM_CANNOT_OK) {
             return false;
         }
 
@@ -3968,17 +3968,20 @@ void sub_466D60(int64_t obj)
 }
 
 // 0x466DA0
-int sub_466DA0(int64_t obj)
+int item_check_remove(int64_t obj)
 {
+    int inventory_location;
+
     if ((obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_NO_DROP) != 0) {
         return ITEM_CANNOT_NOT_DROPPABLE;
     }
 
-    if (!IS_WEAR_INV_LOC(item_inventory_location_get(obj))) {
-        return ITEM_CANNOT_OK;
+    inventory_location = item_inventory_location_get(obj);
+    if (IS_WEAR_INV_LOC(inventory_location)) {
+        return sub_465010(obj);
     }
 
-    return sub_465010(obj);
+    return ITEM_CANNOT_OK;
 }
 
 // 0x466E00

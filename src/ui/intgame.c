@@ -3394,7 +3394,7 @@ void sub_54ED30(S4F2810* a1)
         if (weapon_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
             && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
-            && !sub_466DA0(weapon_obj)) {
+            && !item_check_remove(weapon_obj)) {
             int64_t throwable_instance_obj = item_find_first_matching_prototype(pc_obj, weapon_obj);
             if (throwable_instance_obj == OBJ_HANDLE_NULL) {
                 throwable_instance_obj = weapon_obj;

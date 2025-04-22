@@ -1710,8 +1710,8 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             return false;
         }
 
-        err = sub_466DA0(old_item_obj);
-        if (err != 0) {
+        err = item_check_remove(old_item_obj);
+        if (err != ITEM_CANNOT_OK) {
             if (v2 == inven_ui_pc_obj) {
                 sub_4673F0(v2, err);
             }
@@ -1916,7 +1916,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                         if (old_item_obj != OBJ_HANDLE_NULL
                             && old_item_obj != qword_6810E0) {
                             if (parent_obj == inven_ui_pc_obj) {
-                                int unwield_reason = sub_466DA0(old_item_obj);
+                                int unwield_reason = item_check_remove(old_item_obj);
                                 if (unwield_reason == ITEM_CANNOT_OK) {
                                     if ((inven_ui_mode != INVEN_UI_MODE_BARTER
                                             && inven_ui_mode != INVEN_UI_MODE_STEAL)
@@ -3747,7 +3747,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
     sub_4A51C0(player_get_local_pc_obj(), item_obj);
 
     if (target_obj == qword_681450) {
-        reason = sub_466DA0(item_obj);
+        reason = item_check_remove(item_obj);
         if (reason == 0) {
             if (!item_parent(item_obj, &parent_obj)) {
                 return;
@@ -4036,7 +4036,7 @@ bool sub_578EA0(Packet81* pkt)
         } else {
             if ((flags & 0x04) != 0) {
                 if (!tig_net_is_active() || tig_net_is_host()) {
-                    if (sub_466DA0(v2) == ITEM_CANNOT_OK) {
+                    if (item_check_remove(v2) == ITEM_CANNOT_OK) {
                         item_remove(v2);
                     } else {
                         error = true;

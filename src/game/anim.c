@@ -13998,7 +13998,7 @@ bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id)
     if (weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
-        && !sub_466DA0(weapon_obj)) {
+        && item_check_remove(weapon_obj) == ITEM_CANNOT_OK) {
         item_remove(weapon_obj);
 
         return anim_goal_throw_item(attacker_obj, weapon_obj, obj_field_int64_get(target_obj, OBJ_F_LOCATION));
