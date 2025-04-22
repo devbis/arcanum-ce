@@ -79,7 +79,7 @@ static bool sub_45BAF0(TimeEvent* timeevent);
 static bool sub_45BB40(TimeEventNode* node);
 static void timeevent_save_nodes_to_map(const char* name);
 static int sub_45C500(TimeEventNode* node);
-static void timeevent_load_nodes_to_map(const char* name);
+static void timeevent_load_nodes_from_map(const char* name);
 static void timeevent_break_nodes_to_map(const char* name);
 static bool debug_timeevent_process(TimeEvent* timeevent);
 static void timeevent_debug_node(TimeEventNode* timeevent, int node);
@@ -1693,14 +1693,14 @@ void sub_45C580()
     }
 
     if (map_get_name(sub_40FF40(), &name)) {
-        timeevent_load_nodes_to_map(name);
+        timeevent_load_nodes_from_map(name);
         anim_load_nodes_from_map(name);
         magictech_load_nodes_from_map(name);
     }
 }
 
 // 0x45C610
-void timeevent_load_nodes_to_map(const char* name)
+void timeevent_load_nodes_from_map(const char* name)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
@@ -1722,7 +1722,8 @@ void timeevent_load_nodes_to_map(const char* name)
 
     count = 0;
     if (tig_file_fread(&count, sizeof(count), 1, stream) != 1) {
-        tig_debug_printf("TimeEvent: timeevent_load_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+        // FIX: Typo.
+        tig_debug_printf("TimeEvent: timeevent_load_nodes_from_map: ERROR: Reading Header to data file for map!\n");
         tig_file_fclose(stream);
         return;
     }
