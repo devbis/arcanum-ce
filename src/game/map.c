@@ -94,7 +94,7 @@ static bool map_save_objects();
 static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
-static bool map_load_mobile(const char* a1, const char* a2);
+static bool map_load_mobile(const char* base_path, const char* save_path);
 static bool map_load_dynamic(const char* name);
 static void map_disable_objects();
 static void map_obfuscate_name(char* str);
@@ -153,10 +153,10 @@ static int dword_5D11D8;
 static bool dword_5D11F0;
 
 // 0x5D11F4
-static char* map_folder;
+static char* map_save_path;
 
 // 0x5D11F8
-static char* map_name;
+static char* map_base_path;
 
 // 0x5D11FC
 static int dword_5D11FC;
@@ -189,8 +189,8 @@ bool map_init(GameInitInfo* init_info)
         return true;
     }
 
-    map_name = (char*)calloc(TIG_MAX_PATH, sizeof(*map_name));
-    map_folder = (char*)calloc(TIG_MAX_PATH, sizeof(*map_folder));
+    map_base_path = (char*)calloc(TIG_MAX_PATH, sizeof(*map_base_path));
+    map_save_path = (char*)calloc(TIG_MAX_PATH, sizeof(*map_save_path));
     map_list_info = (MapListInfo*)calloc(MAP_LIST_CAPACITY, sizeof(*map_list_info));
 
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
@@ -204,8 +204,8 @@ bool map_init(GameInitInfo* init_info)
                     }
                 }
 
-                free(map_name);
-                free(map_folder);
+                free(map_base_path);
+                free(map_save_path);
                 free(map_list_info);
 
                 return false;
@@ -324,8 +324,8 @@ void map_exit()
         }
     }
 
-    free(map_name);
-    free(map_folder);
+    free(map_base_path);
+    free(map_save_path);
     free(map_list_info);
 
     dword_5D11F0 = false;
@@ -364,7 +364,7 @@ bool map_save(TigFile* stream)
     tig_debug_printf("map_save: saving map names...");
     tig_timer_now(&start);
 
-    if (tig_file_fputs(map_name, stream) == -1) {
+    if (tig_file_fputs(map_base_path, stream) == -1) {
         tig_debug_printf("map_save(): error writing map name.\n");
         return false;
     }
@@ -374,7 +374,7 @@ bool map_save(TigFile* stream)
         return false;
     }
 
-    if (tig_file_fputs(map_folder, stream) == -1) {
+    if (tig_file_fputs(map_save_path, stream) == -1) {
         tig_debug_printf("map_save(): error writing map save folder.\n");
         return false;
     }
@@ -437,26 +437,26 @@ bool map_load(GameLoadInfo* load_info)
     tig_debug_printf("map_load: retrieving map names...");
     tig_timer_now(&start);
 
-    char name[TIG_MAX_PATH];
-    if (tig_file_fgets(name, sizeof(name), load_info->stream) == NULL) {
+    char base_path[TIG_MAX_PATH];
+    if (tig_file_fgets(base_path, sizeof(base_path), load_info->stream) == NULL) {
         map_close();
         return false;
     }
 
-    const size_t name_length = strlen(name);
-    if (name[name_length - 1] == '\n') {
-        name[name_length - 1] = '\0';
+    const size_t name_length = strlen(base_path);
+    if (base_path[name_length - 1] == '\n') {
+        base_path[name_length - 1] = '\0';
     }
 
-    char folder[TIG_MAX_PATH];
-    if (tig_file_fgets(folder, sizeof(folder), load_info->stream) == NULL) {
+    char save_path[TIG_MAX_PATH];
+    if (tig_file_fgets(save_path, sizeof(save_path), load_info->stream) == NULL) {
         map_close();
         return false;
     }
 
-    const size_t folder_length = strlen(folder);
-    if (folder[folder_length - 1] == '\n') {
-        folder[folder_length - 1] = '\0';
+    const size_t folder_length = strlen(save_path);
+    if (save_path[folder_length - 1] == '\n') {
+        save_path[folder_length - 1] = '\0';
     }
 
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
@@ -496,7 +496,7 @@ bool map_load(GameLoadInfo* load_info)
 
     tig_debug_printf("map_load: opening map...");
     tig_timer_now(&start);
-    bool success = map_open(name, folder, 1);
+    bool success = map_open(base_path, save_path, 1);
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
 
     tig_debug_printf("map_load: Load Complete.  Total time: %d ms.\n", tig_timer_elapsed(load_start));
@@ -530,13 +530,13 @@ bool map_new(MapNewInfo* new_map_info)
 
     map_close();
 
-    if (!tig_file_is_directory(new_map_info->name)) {
-        if (!tig_file_mkdir(new_map_info->name)) {
+    if (!tig_file_is_directory(new_map_info->base_path)) {
+        if (!tig_file_mkdir(new_map_info->base_path)) {
             return false;
         }
     }
 
-    if (!sub_52E040(new_map_info->name)) {
+    if (!sub_52E040(new_map_info->base_path)) {
         return false;
     }
 
@@ -550,7 +550,7 @@ bool map_new(MapNewInfo* new_map_info)
         }
     }
 
-    sprintf(path, "%s\\map.prp", new_map_info->name);
+    sprintf(path, "%s\\map.prp", new_map_info->base_path);
 
     stream = tig_file_fopen(path, "wb");
     if (stream == NULL) {
@@ -569,11 +569,11 @@ bool map_new(MapNewInfo* new_map_info)
 
     tig_file_fclose(stream);
 
-    return map_open(new_map_info->name, new_map_info->folder, false);
+    return map_open(new_map_info->base_path, new_map_info->save_path, false);
 }
 
 // 0x40F4E0
-bool map_open(const char* a1, const char* a2, bool a3)
+bool map_open(const char* base_path, const char* save_path, bool a3)
 {
     tig_timestamp_t start_timestamp;
     tig_timestamp_t timestamp;
@@ -597,19 +597,19 @@ bool map_open(const char* a1, const char* a2, bool a3)
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
-    if (!tig_file_is_directory(a1)) {
-        tig_debug_printf("Error opening map %s: folder does not exist\n", a1);
+    if (!tig_file_is_directory(base_path)) {
+        tig_debug_printf("Error opening map %s: folder does not exist\n", base_path);
         return false;
     }
 
-    tig_file_mkdir(a2);
+    tig_file_mkdir(save_path);
     if (!a3) {
-        sub_52E040(a2);
+        sub_52E040(save_path);
     }
 
     tig_debug_printf("map_open: reading properties file...");
     tig_timer_now(&timestamp);
-    sprintf(path, "%s\\map.prp", a1);
+    sprintf(path, "%s\\map.prp", base_path);
     stream = tig_file_fopen(path, "rb");
     if (stream == NULL) {
         tig_debug_printf("Error opening map properties file %s\n", path);
@@ -625,7 +625,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
     tig_debug_printf("map_open: reading start location...");
-    sprintf(path, "%s\\startloc.txt", a1);
+    sprintf(path, "%s\\startloc.txt", base_path);
     if (tig_file_exists(path, NULL)) {
         int64_t x;
         int64_t y;
@@ -659,7 +659,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: loading mobile objects...");
     tig_timer_now(&timestamp);
-    if (!map_load_mobile(a1, a2)) {
+    if (!map_load_mobile(base_path, save_path)) {
         tig_debug_println("Error reading mobile objects");
         map_close();
         return false;
@@ -670,7 +670,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("map_open: loading mobile dynamic objects...");
     tig_timer_now(&timestamp);
     if (!map_editor) {
-        if (!map_load_dynamic(a2)) {
+        if (!map_load_dynamic(save_path)) {
             tig_debug_println("Error reading dynamic mobile objects\n");
                 map_close();
                 return false;
@@ -685,24 +685,25 @@ bool map_open(const char* a1, const char* a2, bool a3)
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
-    strcpy(map_name, a1);
-    strcpy(map_folder, a2);
-    tig_file_mkdir(map_folder);
+    strcpy(map_base_path, base_path);
+    strcpy(map_save_path, save_path);
+
+    tig_file_mkdir(map_save_path);
     if (!a3) {
-        sub_52E040(map_folder);
+        sub_52E040(map_save_path);
     }
 
     tig_debug_printf("map_open: loading terrain...");
     tig_timer_now(&timestamp);
-    if (!terrain_open(map_name, map_folder)) {
-        new_map_info.name = map_name;
-        new_map_info.folder = map_name; // FIXME: Using name as folder.
+    if (!terrain_open(map_base_path, map_save_path)) {
+        new_map_info.base_path = map_base_path;
+        new_map_info.save_path = map_base_path; // FIXME: Using base path as save path.
         new_map_info.base_terrain_type = map_properties.base_terrain_type;
         new_map_info.width = map_properties.width >> 6;
         new_map_info.height = map_properties.height >> 6;
         terrain_map_new(&new_map_info);
 
-        if (!terrain_open(map_name, map_folder)) {
+        if (!terrain_open(map_base_path, map_save_path)) {
             tig_debug_println("Error: terrain_open failed even after creating a new terrain");
             map_close();
             return false;
@@ -713,15 +714,15 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: loading jump points...");
     tig_timer_now(&timestamp);
-    if (!jumppoint_open(map_name, map_folder)) {
-        new_map_info.name = map_name;
-        new_map_info.folder = map_folder;
+    if (!jumppoint_open(map_base_path, map_save_path)) {
+        new_map_info.base_path = map_base_path;
+        new_map_info.save_path = map_save_path;
         new_map_info.base_terrain_type = map_properties.base_terrain_type;
         new_map_info.width = map_properties.width >> 6;
         new_map_info.height = map_properties.height >> 6;
         jumppoint_map_new(&new_map_info);
 
-        if (!jumppoint_open(map_name, map_folder)) {
+        if (!jumppoint_open(map_base_path, map_save_path)) {
             tig_debug_println("Error: jumppoint_open failed even after creating a new file");
             map_close();
             return false;
@@ -732,7 +733,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: sector blocking...");
     tig_timer_now(&timestamp);
-    if (!sector_block_load(map_name, map_folder)) {
+    if (!sector_block_load(map_base_path, map_save_path)) {
         sector_block_init();
     }
     duration = tig_timer_elapsed(timestamp);
@@ -742,11 +743,11 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_timer_now(&timestamp);
     location_limits_set(map_properties.width, map_properties.height);
     sector_limits_set(map_properties.width >> 6, map_properties.height >> 6);
-    sector_map_name_set(a1, a2);
+    sector_map_name_set(base_path, save_path);
     location_origin_set(sub_4B9810());
     dword_5D1210 = 0;
-    pch = strrchr(a1, '\\');
-    map = map_list_info_find(pch != NULL ? pch + 1 : a1);
+    pch = strrchr(base_path, '\\');
+    map = map_list_info_find(pch != NULL ? pch + 1 : base_path);
     if (map != -1) {
         dword_5D1210 = map + 1;
     }
@@ -755,7 +756,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: parsing extension file...");
     tig_timer_now(&timestamp);
-    sub_4115D0(a1);
+    sub_4115D0(base_path);
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
@@ -788,8 +789,8 @@ bool map_open(const char* a1, const char* a2, bool a3)
 bool map_open_in_game(int map, bool a2, bool a3)
 {
     MapListInfo* info;
-    char path1[TIG_MAX_PATH];
-    char path2[TIG_MAX_PATH];
+    char base_path[TIG_MAX_PATH];
+    char save_path[TIG_MAX_PATH];
 
     if (!dword_5D11F0) {
         return false;
@@ -810,13 +811,13 @@ bool map_open_in_game(int map, bool a2, bool a3)
         // FIXME: Execution continues after quit.
     }
 
-    sprintf(path1, "maps\\%s", info->name);
-    sprintf(path2, "%s\\maps\\%s", "Save\\Current", info->name);
+    sprintf(base_path, "maps\\%s", info->name);
+    sprintf(save_path, "%s\\maps\\%s", "Save\\Current", info->name);
 
-    tig_debug_printf("Loading Map: %s\n", path1);
+    tig_debug_printf("Loading Map: %s\n", base_path);
     gsound_stop_all(0);
 
-    if (!map_open(path1, path2, 1)) {
+    if (!map_open(base_path, save_path, 1)) {
         return false;
     }
 
@@ -972,7 +973,7 @@ void map_flush(unsigned int flags)
     townmap_flush();
 
     if (map_editor) {
-        sprintf(path, "%s\\startloc.txt", map_folder);
+        sprintf(path, "%s\\startloc.txt", map_save_path);
         if (qword_5D11E0 != 0) {
             stream = tig_file_fopen(path, "wt");
             if (stream != NULL) {
@@ -1028,11 +1029,11 @@ void sub_410280(int64_t* location)
 void sub_4102C0(char** name, char** folder)
 {
     if (name != NULL) {
-        *name = map_name;
+        *name = map_base_path;
     }
 
     if (folder != NULL) {
-        *folder = map_folder;
+        *folder = map_save_path;
     }
 }
 
@@ -1175,7 +1176,7 @@ bool map_save_objects()
             if (!sub_43D990(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
                 && obj_is_modified(obj)) {
-                if (!objf_solitary_write(obj, map_folder, ".mob")) {
+                if (!objf_solitary_write(obj, map_save_path, ".mob")) {
                     return false;
                 }
             }
@@ -1198,7 +1199,7 @@ bool map_save_difs()
     int iter;
     ObjectID oid;
 
-    sprintf(path1, "%s\\mobile.md", map_folder);
+    sprintf(path1, "%s\\mobile.md", map_save_path);
     stream1 = tig_file_fopen(path1, "wb");
     if (stream1 == NULL) {
         tig_debug_printf("Error opening file %s for writing...\n", path1);
@@ -1206,7 +1207,7 @@ bool map_save_difs()
         return false;
     }
 
-    sprintf(path2, "%s\\mobile.des", map_folder);
+    sprintf(path2, "%s\\mobile.des", map_save_path);
     stream2 = tig_file_fopen(path2, "ab");
     if (stream2 == NULL) {
         tig_file_fclose(stream1);
@@ -1280,7 +1281,7 @@ bool map_save_dynamic()
     int iter;
     unsigned int flags;
 
-    sprintf(path, "%s\\mobile.mdy", map_folder);
+    sprintf(path, "%s\\mobile.mdy", map_save_path);
     stream = tig_file_fopen(path, "wb");
     if (stream == NULL) {
         tig_debug_printf("Error opening mobile dynamic objects file %s to write.\n", path);
@@ -1341,7 +1342,7 @@ void map_load_postprocess()
 }
 
 // 0x410D10
-bool map_load_mobile(const char* a1, const char* a2)
+bool map_load_mobile(const char* base_path, const char* save_path)
 {
     char path[TIG_MAX_PATH];
     char path2[TIG_MAX_PATH];
@@ -1355,14 +1356,14 @@ bool map_load_mobile(const char* a1, const char* a2)
     GUID guid;
 
     if (map_editor) {
-        sprintf(path, "%s\\*.mob", a1);
+        sprintf(path, "%s\\*.mob", base_path);
         tig_file_list_create(&file_list, path);
         for (idx = 0; idx < file_list.count; idx++) {
-            sprintf(path, "%s\\%s", a2, file_list.entries[idx].path);
+            sprintf(path, "%s\\%s", save_path, file_list.entries[idx].path);
             if (!tig_file_exists(path, NULL)) {
                 strcpy(&(path[strlen(path) - 4]), ".del");
                 if (!tig_file_exists(path, NULL)) {
-                    sprintf(path, "%s\\%s", a1, file_list.entries[idx].path);
+                    sprintf(path, "%s\\%s", base_path, file_list.entries[idx].path);
                     if (!objf_solitary_read(&obj, path)) {
                         tig_file_list_destroy(&file_list);
                         tig_debug_printf("Error reading object %s\n", path);
@@ -1373,10 +1374,10 @@ bool map_load_mobile(const char* a1, const char* a2)
         }
         tig_file_list_destroy(&file_list);
 
-        sprintf(path, "%s\\*.mob", a2);
+        sprintf(path, "%s\\*.mob", save_path);
         tig_file_list_create(&file_list, path);
         for (idx = 0; idx < file_list.count; idx++) {
-            sprintf(path, "%s\\%s", a2, file_list.entries[idx].path);
+            sprintf(path, "%s\\%s", save_path, file_list.entries[idx].path);
             if (!objf_solitary_read(&obj, path)) {
                 tig_file_list_destroy(&file_list);
                 tig_debug_printf("Error reading object %s\n", path);
@@ -1385,10 +1386,10 @@ bool map_load_mobile(const char* a1, const char* a2)
         }
     }
 
-    strcpy(path2, a1);
+    strcpy(path2, base_path);
     map_obfuscate_name(&(path2[5]));
 
-    strcpy(path3, a2);
+    strcpy(path3, save_path);
     strcat(path3, "\\");
     fname = &(path3[strlen(path3)]);
 

@@ -53,7 +53,7 @@ bool sector_in_dir(int64_t sec, int dir, int64_t* new_sec_ptr);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 SectorListNode* sector_list_create(LocRect* loc_rect);
 void sector_list_destroy(SectorListNode* node);
-bool sector_map_name_set(const char* base_map_name, const char* current_map_name);
+bool sector_map_name_set(const char* base_path, const char* save_path);
 bool sector_exists(uint64_t id);
 bool sub_4D04E0(int64_t id);
 bool sector_lock(int64_t id, Sector** sector_ptr);

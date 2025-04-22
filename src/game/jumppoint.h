@@ -18,7 +18,7 @@ void jumppoint_reset();
 void jumppoint_exit();
 void jumppoint_resize(GameResizeInfo* resize_info);
 bool jumppoint_map_new(MapNewInfo* new_map_info);
-bool jumppoint_open(const char* a1, const char* a2);
+bool jumppoint_open(const char* base_path, const char* save_path);
 void jumppoint_map_close();
 bool jumppoint_flush();
 void jumppoint_update_view(ViewOptions* view_options);

@@ -92,8 +92,8 @@ typedef struct GameDrawInfo {
 static_assert(sizeof(GameDrawInfo) == 0x14, "wrong size");
 
 typedef struct MapNewInfo {
-    /* 0000 */ const char* name;
-    /* 0004 */ const char* folder;
+    /* 0000 */ const char* base_path;
+    /* 0004 */ const char* save_path;
     /* 0008 */ int base_terrain_type;
     /* 0010 */ int64_t width;
     /* 0018 */ int64_t height;

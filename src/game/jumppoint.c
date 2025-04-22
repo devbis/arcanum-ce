@@ -10,7 +10,7 @@ static bool jumppoint_read_all(TigFile* stream);
 static bool jumppoint_write_all(TigFile* stream);
 
 // 0x603450
-static char byte_603450[TIG_MAX_PATH];
+static char jumppoint_save_path[TIG_MAX_PATH];
 
 static JumpPoint* jumppoints;
 
@@ -21,7 +21,7 @@ static tig_art_id_t jumppoint_td_art_id;
 static IsoInvalidateRectFunc* jumppoint_iso_invalidate_rect;
 
 // 0x603560
-static char byte_603560[TIG_MAX_PATH];
+static char jumppoint_base_path[TIG_MAX_PATH];
 
 // 0x603668
 static ViewOptions jumppoint_view_options;
@@ -89,8 +89,8 @@ bool jumppoint_map_new(MapNewInfo* new_map_info)
 {
     jumppoint_map_close();
 
-    sprintf(byte_603560, "%s\\map.jmp", new_map_info->name);
-    sprintf(byte_603450, "%s\\map.jmp", new_map_info->folder);
+    sprintf(jumppoint_base_path, "%s\\map.jmp", new_map_info->base_path);
+    sprintf(jumppoint_save_path, "%s\\map.jmp", new_map_info->save_path);
 
     jumppoint_modified = true;
 
@@ -98,20 +98,20 @@ bool jumppoint_map_new(MapNewInfo* new_map_info)
 }
 
 // 0x4E30A0
-bool jumppoint_open(const char* a1, const char* a2)
+bool jumppoint_open(const char* base_path, const char* save_path)
 {
     TigFile* stream;
 
     jumppoint_map_close();
 
-    sprintf(byte_603560, "%s\\map.jmp", a1);
-    sprintf(byte_603450, "%s\\map.jmp", a2);
+    sprintf(jumppoint_base_path, "%s\\map.jmp", base_path);
+    sprintf(jumppoint_save_path, "%s\\map.jmp", save_path);
 
-    stream = tig_file_fopen(byte_603450, "rb");
+    stream = tig_file_fopen(jumppoint_save_path, "rb");
     if (stream == NULL) {
-        stream = tig_file_fopen(byte_603560, "rb");
+        stream = tig_file_fopen(jumppoint_base_path, "rb");
         if (stream == NULL) {
-            tig_debug_printf("Jumppoint file doesn't exist [%s]\n", byte_603450);
+            tig_debug_printf("Jumppoint file doesn't exist [%s]\n", jumppoint_save_path);
             return false;
         }
     }
@@ -150,7 +150,7 @@ bool jumppoint_flush()
     TigFile* stream;
 
     if (jumppoint_modified) {
-        stream = tig_file_fopen(byte_603450, "wb");
+        stream = tig_file_fopen(jumppoint_save_path, "wb");
         if (stream == NULL) {
             return false;
         }

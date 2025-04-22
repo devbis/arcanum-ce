@@ -86,7 +86,7 @@ static int64_t* sector_blocked_sectors;
 static bool sector_blocked_sectors_changed;
 
 // 0x60179C
-static char* sector_base_map_name;
+static char* sector_base_path;
 
 // 0x6017A0
 static int64_t sector_limit_x;
@@ -143,7 +143,7 @@ static int* sector_cache_indexes;
 static int sector_iso_window_handle;
 
 // 0x6017FC
-static char* sector_current_map_name;
+static char* sector_save_path;
 
 // 0x601800
 static ViewOptions sector_view_options;
@@ -201,8 +201,8 @@ bool sector_init(GameInitInfo* init_info)
         sector_save_func = sector_save_game;
     }
 
-    sector_base_map_name = (char*)CALLOC(TIG_MAX_PATH, sizeof(*sector_base_map_name));
-    sector_current_map_name = (char*)CALLOC(TIG_MAX_PATH, sizeof(*sector_current_map_name));
+    sector_base_path = (char*)CALLOC(TIG_MAX_PATH, sizeof(*sector_base_path));
+    sector_save_path = (char*)CALLOC(TIG_MAX_PATH, sizeof(*sector_save_path));
 
     dword_6017E8 = (int64_t*)CALLOC(151, sizeof(*dword_6017E8));
     dword_6017EC = (int64_t*)CALLOC(151, sizeof(*dword_6017EC));
@@ -276,8 +276,8 @@ void sector_exit()
     dword_601784 = 0;
     FREE(sector_cache_indexes);
     FREE(sector_cache_entries);
-    FREE(sector_base_map_name);
-    FREE(sector_current_map_name);
+    FREE(sector_base_path);
+    FREE(sector_save_path);
     FREE(dword_6017E8);
     FREE(dword_6017EC);
     sub_4D2EA0();
@@ -806,10 +806,10 @@ void sector_list_destroy(SectorListNode* node)
 }
 
 // 0x4D0440
-bool sector_map_name_set(const char* base_map_name, const char* current_map_name)
+bool sector_map_name_set(const char* base_path, const char* save_path)
 {
-    strcpy(sector_base_map_name, base_map_name);
-    strcpy(sector_current_map_name, current_map_name);
+    strcpy(sector_base_path, base_path);
+    strcpy(sector_save_path, save_path);
 
     sub_4D2D70();
 
@@ -820,7 +820,7 @@ bool sector_map_name_set(const char* base_map_name, const char* current_map_name
 bool sector_exists(uint64_t id)
 {
     char path[TIG_MAX_PATH];
-    sprintf(path, "%s\\%" PRIu64 ".sec", sector_base_map_name, id);
+    sprintf(path, "%s\\%" PRIu64 ".sec", sector_base_path, id);
     return tig_file_exists(path, NULL);
 }
 
@@ -1308,13 +1308,13 @@ bool sector_load_editor(int64_t id, Sector* sector)
     int placeholder;
 
     if (sub_4D0DE0(id)) {
-        strcpy(path, sector_current_map_name);
+        strcpy(path, sector_save_path);
         strcat(path, "\\");
         _ui64toa(id, &path[strlen(path)], 10);
         strcat(path, ".sec");
 
         if (!tig_file_exists(path, NULL)) {
-            strcpy(path, sector_base_map_name);
+            strcpy(path, sector_base_path);
             strcat(path, "\\");
             _ui64toa(id, &path[strlen(path)], 10);
             strcat(path, ".sec");
@@ -1453,7 +1453,7 @@ bool sector_load_game(int64_t id, Sector* sector)
     int placeholder;
 
     if (sub_4D0DE0(id)) {
-        strcpy(sec_path, sector_base_map_name);
+        strcpy(sec_path, sector_base_path);
         strcat(sec_path, "\\");
         _ui64toa(id, &sec_path[strlen(sec_path)], 10);
         strcat(sec_path, ".sec");
@@ -1489,7 +1489,7 @@ bool sector_load_game(int64_t id, Sector* sector)
             tig_debug_printf("Error opening sector file %s\n", sec_path);
         }
 
-        strcpy(dif_path, sector_current_map_name);
+        strcpy(dif_path, sector_save_path);
         strcat(dif_path, "\\");
         _ui64toa(id, &dif_path[strlen(dif_path)], 10);
         strcat(dif_path, ".dif");
@@ -1765,7 +1765,7 @@ bool sector_save_editor(Sector* sector)
         return true;
     }
 
-    strcpy(path, sector_current_map_name);
+    strcpy(path, sector_save_path);
     strcat(path, "\\");
     _ui64toa(sector->id, &(path[strlen(path)]), 10);
 
@@ -1958,8 +1958,8 @@ bool sector_save_game(Sector* sector)
         return true;
     }
 
-    strcpy(path, sector_current_map_name);
-    strcat(sector_current_map_name, "\\");
+    strcpy(path, sector_save_path);
+    strcat(sector_save_path, "\\");
     _ui64toa(sector->id, &(path[strlen(path)]), 10);
     strcat(path, ".dif");
 
@@ -2146,7 +2146,7 @@ void sub_4D2D70()
     TigFile* stream;
 
     dword_601824 = false;
-    sprintf(buffer, "%s\\134217730001.sec", sector_base_map_name);
+    sprintf(buffer, "%s\\134217730001.sec", sector_base_path);
 
     if (!tig_file_exists(buffer, NULL)) {
         return;
@@ -2276,7 +2276,7 @@ bool sector_block_save_internal()
 
     if (sector_blocked_sectors_changed) {
         if (sector_blocked_sectors_cnt != 0) {
-            sprintf(path, "%s\\map.sbf", sector_current_map_name);
+            sprintf(path, "%s\\map.sbf", sector_save_path);
 
             stream = tig_file_fopen(path, "wb");
             if (stream == NULL) {
@@ -2295,7 +2295,7 @@ bool sector_block_save_internal()
 
             tig_file_fclose(stream);
         } else {
-            sprintf(path, "%s\\null.sbf", sector_current_map_name);
+            sprintf(path, "%s\\null.sbf", sector_save_path);
 
             stream = tig_file_fopen(path, "wb");
             if (stream == NULL) {

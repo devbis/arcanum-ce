@@ -80,7 +80,7 @@ static int dword_5B99E8[] = {
 static int dword_603748[TERRAIN_TYPE_MAX];
 
 // 0x6037C8
-static char byte_6037C8[TIG_MAX_PATH];
+static char terrain_save_path[TIG_MAX_PATH];
 
 // 0x6038CC
 static int dword_6038CC;
@@ -92,7 +92,7 @@ static int16_t* dword_6038D0[4];
 static bool terrain_editor;
 
 // 0x6038E4
-static char byte_6038E4[TIG_MAX_PATH];
+static char terrain_base_path[TIG_MAX_PATH];
 
 // 0x6039E8
 static int* dword_6039E8;
@@ -181,10 +181,10 @@ bool terrain_map_new(MapNewInfo* new_map_info)
         dword_6039EC[index] = sub_4E8D60(new_map_info->base_terrain_type, new_map_info->base_terrain_type, 15);
     }
 
-    sprintf(byte_6038E4, "%s\\terrain.tdf", new_map_info->name);
+    sprintf(terrain_base_path, "%s\\terrain.tdf", new_map_info->base_path);
 
     if (terrain_editor) {
-        sprintf(byte_6037C8, "%s\\terrain.tdf", new_map_info->name);
+        sprintf(terrain_save_path, "%s\\terrain.tdf", new_map_info->base_path);
     }
 
     terrain_modified = true;
@@ -194,24 +194,24 @@ bool terrain_map_new(MapNewInfo* new_map_info)
 
 
 // 0x4E7CB0
-bool terrain_open(const char* a1, const char* a2)
+bool terrain_open(const char* base_path, const char* save_path)
 {
     TigFile* stream;
     bool v1 = false;
 
     terrain_map_close();
 
-    sprintf(byte_6038E4, "%s\\terrain.tdf", a1);
+    sprintf(terrain_base_path, "%s\\terrain.tdf", base_path);
 
     if (terrain_editor) {
-        sprintf(byte_6037C8, "%s\\terrain.tdf", a2);
+        sprintf(terrain_save_path, "%s\\terrain.tdf", save_path);
     }
 
-    stream = tig_file_fopen(byte_6037C8, "rb");
+    stream = tig_file_fopen(terrain_save_path, "rb");
     if (stream == NULL) {
-        stream = tig_file_fopen(byte_6038E4, "rb");
+        stream = tig_file_fopen(terrain_base_path, "rb");
         if (stream == NULL) {
-            tig_debug_printf("Terrain file doesn't exist [%s]\n", byte_6038E4);
+            tig_debug_printf("Terrain file doesn't exist [%s]\n", terrain_base_path);
             return false;
         }
     }
@@ -286,8 +286,8 @@ void terrain_map_close()
     }
 
     memset(&terrain_header, 0, sizeof(terrain_header));
-    byte_6038E4[0] = '\0';
-    byte_6037C8[0] = '\0';
+    terrain_base_path[0] = '\0';
+    terrain_save_path[0] = '\0';
     terrain_modified = false;
 }
 
@@ -299,9 +299,9 @@ void sub_4E7EF0()
     char path1[TIG_MAX_PATH];
     char path2[TIG_MAX_PATH];
 
-    _splitpath(byte_6038E4, drive, dir, NULL, NULL);
+    _splitpath(terrain_base_path, drive, dir, NULL, NULL);
     sprintf(path1, "%s%s", drive, dir);
-    _splitpath(byte_6037C8, drive, dir, NULL, NULL);
+    _splitpath(terrain_save_path, drive, dir, NULL, NULL);
     sprintf(path2, "%s%s", drive, dir);
     terrain_map_close();
     terrain_open(path1, path2);
@@ -342,7 +342,7 @@ bool sub_4E7F90()
 
     vb_to_bmp_info.flags = 0;
     vb_to_bmp_info.video_buffer = vb;
-    _splitpath(byte_6038E4, drive, dir, fname, NULL);
+    _splitpath(terrain_base_path, drive, dir, fname, NULL);
     // NOTE: Original is slightly different and looks wrong.
     _makepath(vb_to_bmp_info.path, drive, dir, fname, "bmp");
     vb_to_bmp_info.rect = NULL;
@@ -440,7 +440,7 @@ bool terrain_flush()
     }
 
     if (terrain_modified) {
-        stream = tig_file_fopen(byte_6037C8, "wb");
+        stream = tig_file_fopen(terrain_save_path, "wb");
         if (stream == NULL) {
             return false;
         }
