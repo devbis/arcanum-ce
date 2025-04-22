@@ -1681,7 +1681,7 @@ int object_get_resistance(int64_t obj, int resistance_type, bool a2)
                     || obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) <= 0
                     || item_is_identified(item_obj)) {
                     adj = obj_arrayfield_int32_get(item_obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, resistance_type);
-                    value += sub_461590(item_obj, obj, adj);
+                    value += item_adjust_magic(item_obj, obj, adj);
                 }
             }
         }

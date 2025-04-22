@@ -394,7 +394,7 @@ int item_weight(int64_t item_obj, int64_t owner_obj)
 
     if (owner_obj != OBJ_HANDLE_NULL) {
         weight_adj = obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ);
-        weight += sub_461590(item_obj, owner_obj, weight_adj);
+        weight += item_adjust_magic(item_obj, owner_obj, weight_adj);
     }
 
     if (sub_462410(item_obj, &quantity_fld) != -1) {
@@ -497,19 +497,24 @@ int item_effective_power_ratio(int64_t item_obj, int64_t owner_obj)
 }
 
 // 0x461590
-int sub_461590(int64_t item_id, int64_t owner_id, int a3)
+int item_adjust_magic(int64_t item_obj, int64_t owner_obj, int value)
 {
     int complexity;
 
-    complexity = item_magic_tech_complexity(item_id);
+    complexity = item_magic_tech_complexity(item_obj);
     if (complexity > 0) {
-        // FIXME: Calculating complexity twice.
-        return a3 * item_effective_power(item_id, owner_id) / item_magic_tech_complexity(item_id);
+        // The item is magickal, so the magic effect value directly depends on
+        // how effectively the owner can utilize its magical properties.
+        return value * item_effective_power(item_obj, owner_obj) / complexity;
     } else if (complexity < 0) {
-        // FIXME: Calculating complexity twice.
-        return a3 - a3 * item_effective_power(item_id, owner_id) / item_magic_tech_complexity(item_id);
+        // Item is technological, so the magic effect value is reduced based on
+        // how effectively the owner can use its technological properties. If
+        // the owner is 100% effective with the item, the magic effect is
+        // reduced to 0.
+        return value - value * item_effective_power(item_obj, owner_obj) / complexity;
     } else {
-        return a3;
+        // The item is neutral, no adjustment is made to the value.
+        return value;
     }
 }
 
@@ -3242,7 +3247,7 @@ int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3)
         || item_is_identified(item_obj)) {
         magic_ac_adj = obj_field_int32_get(item_obj, OBJ_F_ARMOR_MAGIC_AC_ADJ);
         if (owner_obj != OBJ_HANDLE_NULL) {
-            magic_ac_adj = sub_461590(item_obj, owner_obj, magic_ac_adj);
+            magic_ac_adj = item_adjust_magic(item_obj, owner_obj, magic_ac_adj);
         }
         ac_adj += magic_ac_adj;
     }
@@ -3296,7 +3301,7 @@ int item_weapon_magic_speed(int64_t item_obj, int64_t owner_obj)
     speed_adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_SPEED_ADJ);
 
     if (owner_obj != OBJ_HANDLE_NULL) {
-        speed_adj = sub_461590(item_obj, owner_obj, speed_adj);
+        speed_adj = item_adjust_magic(item_obj, owner_obj, speed_adj);
         skill = item_weapon_skill(item_obj);
         if (IS_TECH_SKILL(skill)) {
             training = tech_skill_get_training(owner_obj, GET_TECH_SKILL(skill));
@@ -3357,7 +3362,7 @@ int item_weapon_range(int64_t item_id, int64_t critter_id)
     }
 
     magic_range_adj = obj_field_int32_get(item_id, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
-    return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + sub_461590(item_id, critter_id, magic_range_adj);
+    return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + item_adjust_magic(item_id, critter_id, magic_range_adj);
 }
 
 // 0x465E90
@@ -3378,7 +3383,7 @@ int item_weapon_min_strength(int64_t item_obj, int64_t critter_obj)
 
     adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_MIN_STRENGTH_ADJ);
     if (critter_obj != OBJ_HANDLE_NULL) {
-        adj = sub_461590(item_obj, critter_obj, adj);
+        adj = item_adjust_magic(item_obj, critter_obj, adj);
     }
 
     min_strength = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MIN_STRENGTH) + adj;
@@ -3485,7 +3490,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
     if (weapon_obj != OBJ_HANDLE_NULL && !a5) {
         if (obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
             int adj = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, damage_type);
-            adj = sub_461590(weapon_obj, critter_obj, adj);
+            adj = item_adjust_magic(weapon_obj, critter_obj, adj);
             min_dam += adj;
             max_dam += adj;
         }

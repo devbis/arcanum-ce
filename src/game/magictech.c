@@ -1577,7 +1577,7 @@ bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
     if (charges_from_cells) {
         if (obj_type_is_item(obj_type)) {
             parent_obj = obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
-            cost = 2 * cost - sub_461590(obj, parent_obj, cost);
+            cost = 2 * cost - item_adjust_magic(obj, parent_obj, cost);
         } else {
             parent_obj = obj;
         }

@@ -1612,7 +1612,7 @@ bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocatio
     if (skill_invocation->item.obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(skill_invocation->item.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (skill_invocation->flags & 0x10000) == 0) {
-        chance += sub_461590(skill_invocation->item.obj,
+        chance += item_adjust_magic(skill_invocation->item.obj,
             skill_invocation->source.obj,
             obj_field_int32_get(skill_invocation->item.obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE));
     }
@@ -1649,7 +1649,7 @@ bool skill_invocation_check_crit_miss(int roll, int effectiveness, SkillInvocati
 
         if (obj_field_int32_get(skill_invocation->item.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
             && (skill_invocation->flags & 0x10000) == 0) {
-            chance += sub_461590(skill_invocation->item.obj,
+            chance += item_adjust_magic(skill_invocation->item.obj,
                 skill_invocation->source.obj,
                 obj_field_int32_get(skill_invocation->item.obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE));
         }
@@ -1720,8 +1720,9 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
         int to_hit = obj_field_int32_get(item_obj, OBJ_F_WEAPON_BONUS_TO_HIT);
         if ((skill_invocation->flags & 0x10000) == 0) {
-            int adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ);
-            to_hit += sub_461590(item_obj, source_obj, adj);
+            to_hit += item_adjust_magic(item_obj,
+                source_obj,
+                obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ));
         }
 
         difficulty -= to_hit;
@@ -1932,7 +1933,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
                 if (inv_item_obj != OBJ_HANDLE_NULL
                     && obj_field_int32_get(inv_item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
                     int penalty = obj_field_int32_get(inv_item_obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ);
-                    penalty += sub_461590(inv_item_obj,
+                    penalty += item_adjust_magic(inv_item_obj,
                         source_obj,
                         obj_field_int32_get(inv_item_obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ));
                     if (training >= TRAINING_APPRENTICE) {

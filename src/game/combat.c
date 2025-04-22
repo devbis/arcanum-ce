@@ -2451,7 +2451,7 @@ void sub_4B5F40(CombatContext* combat)
         && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
         crit_hit_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_HIT_CHART);
         if ((combat->flags & 0x20000) == 0) {
-            chance = sub_461590(combat->weapon_obj,
+            chance = item_adjust_magic(combat->weapon_obj,
                 combat->attacker_obj,
                 obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT));
         }
@@ -2597,7 +2597,7 @@ void sub_4B6410(CombatContext* combat)
         if (obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
             crit_miss_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_MISS_CHART);
             if ((combat->flags & 0x20000) == 0) {
-                chance = sub_461590(combat->weapon_obj,
+                chance = item_adjust_magic(combat->weapon_obj,
                     combat->attacker_obj,
                     obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT));
             } else {
