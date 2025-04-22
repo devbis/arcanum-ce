@@ -71,8 +71,8 @@ static bool sub_45B8A0(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
 static bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
 static TimeEventNode* timeevent_node_create();
 static void timeevent_node_destroy(TimeEventNode* node);
-static bool sub_45B610(TimeEventNode *timeevent);
-static bool sub_45B620(TimeEventNode* node, bool force);
+static bool timeevent_recover_handles(TimeEventNode *timeevent);
+static bool timeevent_recover_handles_internal(TimeEventNode* node, bool force);
 static void sub_45B750();
 static bool sub_45B7A0(TimeEventNode* node);
 static bool sub_45BAF0(TimeEvent* timeevent);
@@ -861,7 +861,7 @@ void timeevent_ping(tig_timestamp_t timestamp)
 
             info = &(stru_5B2188[node->te.type]);
 
-            if (sub_45B610(node)) {
+            if (timeevent_recover_handles(node)) {
                 // Save current node for debug purposes. In case infinite loop
                 // is detected (see below), this is the offending node which
                 // either creates too many timeevents or spams one timeevent for
@@ -918,13 +918,13 @@ void timeevent_node_destroy(TimeEventNode* node)
 }
 
 // 0x45B610
-bool sub_45B610(TimeEventNode *timeevent)
+bool timeevent_recover_handles(TimeEventNode *timeevent)
 {
-    return sub_45B620(timeevent, false);
+    return timeevent_recover_handles_internal(timeevent, false);
 }
 
 // 0x45B620
-bool sub_45B620(TimeEventNode* node, bool force)
+bool timeevent_recover_handles_internal(TimeEventNode* node, bool force)
 {
     int index;
     TimeEventTypeInfo* info;
@@ -1681,13 +1681,13 @@ void sub_45C580()
     for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
         node = timeevent_lists[time_type];
         while (node != NULL) {
-            sub_45B620(node, true);
+            timeevent_recover_handles_internal(node, true);
             node = node->next;
         }
 
         node = timeevent_new_lists[time_type];
         while (node != NULL) {
-            sub_45B620(node, true);
+            timeevent_recover_handles_internal(node, true);
             node = node->next;
         }
     }
