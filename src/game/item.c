@@ -683,8 +683,8 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
 
     if (inventory_location != -1) {
         if (!v1) {
-            sub_466260(critter_obj, slots);
-            if (sub_466390(item_obj, critter_obj, inventory_location, slots)) {
+            item_inventory_slots_get(critter_obj, slots);
+            if (item_inventory_slots_has_room_for(item_obj, critter_obj, inventory_location, slots)) {
                 item_insert(item_obj, critter_obj, inventory_location);
             } else {
                 item_insert(item_obj, critter_obj, new_inventory_location);
@@ -834,8 +834,8 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
 
     if (inventory_location != -1) {
         if (!v1) {
-            sub_466260(critter_obj, slots);
-            if (sub_466390(item_obj, critter_obj, inventory_location, slots)) {
+            item_inventory_slots_get(critter_obj, slots);
+            if (item_inventory_slots_has_room_for(item_obj, critter_obj, inventory_location, slots)) {
                 item_insert(item_obj, critter_obj, inventory_location);
             } else {
                 item_insert(item_obj, critter_obj, new_inventory_location);
@@ -3537,7 +3537,7 @@ int sub_466230(int64_t obj)
 }
 
 // 0x466260
-void sub_466260(int64_t obj, int* a2)
+void item_inventory_slots_get(int64_t obj, int* slots)
 {
     int inventory_num_fld;
     int inventory_list_fld;
@@ -3561,18 +3561,18 @@ void sub_466260(int64_t obj, int* a2)
         capacity = 120;
     }
 
-    memset(a2, 0, sizeof(*a2) * capacity);
+    memset(slots, 0, sizeof(*slots) * capacity);
 
     cnt = obj_field_int32_get(obj, inventory_num_fld);
     for (idx = 0; idx < cnt; idx++) {
         item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
         inventory_location = item_inventory_location_get(item_obj);
-        sub_466310(item_obj, inventory_location, a2, idx + 1);
+        item_inventory_slots_set(item_obj, inventory_location, slots, idx + 1);
     }
 }
 
 // 0x466310
-void sub_466310(int64_t item_obj, int inventory_location, int* slots, int idx)
+void item_inventory_slots_set(int64_t item_obj, int inventory_location, int* slots, int value)
 {
     int x;
     int y;
@@ -3593,13 +3593,13 @@ void sub_466310(int64_t item_obj, int inventory_location, int* slots, int idx)
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            slots[y * 10 + x] = idx;
+            slots[y * 10 + x] = value;
         }
     }
 }
 
 // 0x466390
-bool sub_466390(int64_t item_obj, int64_t obj, int inventory_location, int* a4)
+bool item_inventory_slots_has_room_for(int64_t item_obj, int64_t parent_obj, int inventory_location, int* slots)
 {
     int num_rows;
     int x;
@@ -3616,10 +3616,10 @@ bool sub_466390(int64_t item_obj, int64_t obj, int inventory_location, int* a4)
         return false;
     }
 
-    num_rows = obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER ? 96 : 12;
+    num_rows = obj_field_int32_get(parent_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER ? 96 : 12;
 
     if (sub_462410(item_obj, NULL) != -1) {
-        existing_item_obj = item_find_first_matching_prototype(obj, item_obj);
+        existing_item_obj = item_find_first_matching_prototype(parent_obj, item_obj);
         if (existing_item_obj != OBJ_HANDLE_NULL
             && existing_item_obj != item_obj) {
             return true;
@@ -3636,11 +3636,11 @@ bool sub_466390(int64_t item_obj, int64_t obj, int inventory_location, int* a4)
         return false;
     }
 
-    a4 += inventory_location;
+    slots += inventory_location;
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            if (a4[y * 10 + x] != 0) {
+            if (slots[y * 10 + x] != 0) {
                 return false;
             }
         }
@@ -3654,7 +3654,7 @@ int sub_4664C0(int64_t item_obj, int64_t parent_obj)
 {
     int slots[960];
 
-    sub_466260(parent_obj, slots);
+    item_inventory_slots_get(parent_obj, slots);
     return find_free_inv_loc_horizontal(item_obj, parent_obj, slots);
 }
 
@@ -4151,7 +4151,7 @@ void item_arrange_inventory(int64_t parent_obj, bool vertical)
             return;
         }
 
-        sub_466310(items[idx], inventory_locations[idx], slots, 1);
+        item_inventory_slots_set(items[idx], inventory_locations[idx], slots, 1);
     }
 
     for (idx = 0; idx < cnt; idx++) {
