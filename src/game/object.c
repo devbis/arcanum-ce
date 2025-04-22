@@ -36,20 +36,20 @@
 #include "game/wall.h"
 #include "game/wallcheck.h"
 
-typedef struct S5E2E74 {
+typedef struct ObjectBlitInfo {
     /* 0000 */ TigArtBlitInfo blit_info;
     /* 002C */ int order;
     /* 0030 */ int rect_index;
-} S5E2E74;
+} ObjectBlitInfo;
 
-static_assert(sizeof(S5E2E74) == 0x34, "wrong size");
+static_assert(sizeof(ObjectBlitInfo) == 0x34, "wrong size");
 
-typedef struct S5E2F8C {
+typedef struct ObjectBlitRectInfo {
     /* 0000 */ TigRect src_rect;
     /* 0010 */ TigRect dst_rect;
-} S5E2F8C;
+} ObjectBlitRectInfo;
 
-static_assert(sizeof(S5E2F8C) == 0x20, "wrong size");
+static_assert(sizeof(ObjectBlitRectInfo) == 0x20, "wrong size");
 
 typedef struct ObjectRenderColors {
     int colors[160];
@@ -109,10 +109,10 @@ static void sub_443010(ObjectRenderColors* colors);
 static void sub_443030();
 static void sub_443070();
 static void object_toggle_flat(int64_t obj, bool a2);
-static void sub_443170(int64_t obj, TigArtBlitInfo* blit_info);
-static int sub_443440(TigArtBlitInfo* blit_info, int order);
-static void sub_443560();
-static int sub_443600(const void* va, const void* vb);
+static void object_setup_blit(int64_t obj, TigArtBlitInfo* blit_info);
+static void object_enqueue_blit(TigArtBlitInfo* blit_info, int order);
+static void object_flush_pending_blits();
+static int object_compare_blits(const void* va, const void* vb);
 static void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect);
 static void sub_4437C0(int64_t obj);
 static bool sub_443880(TigRect* rect, tig_art_id_t art_id);
@@ -148,7 +148,7 @@ int dword_5E2E6C;
 static TigRectListNode* object_dirty_rects_head;
 
 // 0x5E2E74
-static S5E2E74* dword_5E2E74;
+static ObjectBlitInfo* object_pending_blits;
 
 // 0x5E2E78
 static tig_color_t object_reaction_colors[REACTION_COUNT];
@@ -166,7 +166,7 @@ tig_art_id_t object_hover_underlay_art_id;
 tig_color_t object_hover_color;
 
 // 0x5E2EB0
-static int dword_5E2EB0;
+static int object_blit_queue_size;
 
 // 0x5E2EB4
 static IsoInvalidateRectFunc* object_iso_invalidate_rect;
@@ -196,7 +196,7 @@ static bool dword_5E2ED4[18];
 static int object_bpp;
 
 // 0x5E2F20
-static int dword_5E2F20;
+static int object_blit_queue_capacity;
 
 // 0x5E2F24
 static tig_window_handle_t object_iso_window_handle;
@@ -229,7 +229,7 @@ Ryan stru_5E2F60;
 static unsigned int dword_5E2F88;
 
 // 0x5E2F8C
-static S5E2F8C* dword_5E2F8C;
+static ObjectBlitRectInfo* object_pending_rects;
 
 // 0x5E2F90
 int64_t object_hover_obj;
@@ -338,9 +338,9 @@ void object_reset()
 // 0x43A690
 void object_exit()
 {
-    if (dword_5E2E74 != NULL) {
-        FREE(dword_5E2E74);
-        FREE(dword_5E2F8C);
+    if (object_pending_blits != NULL) {
+        FREE(object_pending_blits);
+        FREE(object_pending_rects);
     }
 
     object_reset();
@@ -646,7 +646,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                                     art_blit_info.art_id = art_id;
                                                                     art_blit_info.src_rect = &src_rect;
                                                                     art_blit_info.dst_rect = &dst_rect;
-                                                                    sub_443440(&art_blit_info, underlay_order++);
+                                                                    object_enqueue_blit(&art_blit_info, underlay_order++);
                                                                 }
                                                                 rect_node = rect_node->next;
                                                             }
@@ -704,7 +704,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                                             order = overlay_order++;
                                                                         }
 
-                                                                        sub_443440(&art_blit_info, order);
+                                                                        object_enqueue_blit(&art_blit_info, order);
                                                                     }
                                                                     rect_node = rect_node->next;
                                                                 }
@@ -767,7 +767,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                                             src_rect.height *= 2;
                                                                         }
 
-                                                                        sub_443440(&art_blit_info, shadow_order++);
+                                                                        object_enqueue_blit(&art_blit_info, shadow_order++);
                                                                     }
                                                                     rect_node = rect_node->next;
                                                                 }
@@ -792,7 +792,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                         while (rect_node != NULL) {
                                                             if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                 if (!art_blit_info_initialized) {
-                                                                    sub_443170(obj_node->obj, &art_blit_info);
+                                                                    object_setup_blit(obj_node->obj, &art_blit_info);
 
                                                                     art_blit_info.flags &= ~0x19E80;
                                                                     art_blit_info.flags |= TIG_ART_BLT_BLEND_ALPHA_CONST;
@@ -828,7 +828,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                                     src_rect.height *= 2;
                                                                 }
 
-                                                                sub_443440(&art_blit_info, order);
+                                                                object_enqueue_blit(&art_blit_info, order);
                                                             }
                                                             rect_node = rect_node->next;
                                                         }
@@ -846,7 +846,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                         while (rect_node != NULL) {
                                                             if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                                                                 if (!art_blit_info_initialized) {
-                                                                    sub_443170(obj_node->obj, &art_blit_info);
+                                                                    object_setup_blit(obj_node->obj, &art_blit_info);
                                                                     art_blit_info.src_rect = &src_rect;
                                                                     art_blit_info.dst_rect = &dst_rect;
 
@@ -879,7 +879,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                                     src_rect.height *= 2;
                                                                 }
 
-                                                                sub_443440(&art_blit_info, order);
+                                                                object_enqueue_blit(&art_blit_info, order);
                                                             }
                                                             rect_node = rect_node->next;
                                                         }
@@ -911,7 +911,7 @@ void object_draw(GameDrawInfo* draw_info)
     }
 
     sub_43C5C0(draw_info);
-    sub_443560();
+    object_flush_pending_blits();
 }
 
 // 0x43C270
@@ -1008,7 +1008,7 @@ void sub_43C5C0(GameDrawInfo* draw_info)
                     src_rect.y = dst_rect.y - rect.y;
                     src_rect.width = dst_rect.width;
                     src_rect.height = dst_rect.height;
-                    sub_443440(&art_blit_info, 99999999);
+                    object_enqueue_blit(&art_blit_info, 99999999);
                 }
                 node = node->next;
             }
@@ -1048,7 +1048,7 @@ void sub_43C690(GameDrawInfo* draw_info)
                     src_rect.x = dst_rect.x - rect.x;
                     src_rect.width = dst_rect.width;
                     src_rect.height = dst_rect.height;
-                    sub_443440(&art_blit_info, INT_MAX);
+                    object_enqueue_blit(&art_blit_info, INT_MAX);
                 }
                 rect_node = rect_node->next;
             }
@@ -1087,7 +1087,7 @@ void sub_43C690(GameDrawInfo* draw_info)
             while (rect_node != NULL) {
                 if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                     if (!blit_info_initialized) {
-                        sub_443170(object_hover_obj, &art_blit_info);
+                        object_setup_blit(object_hover_obj, &art_blit_info);
 
                         art_blit_info.flags &= ~0x3DF80;
                         art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_ADD;
@@ -1115,7 +1115,7 @@ void sub_43C690(GameDrawInfo* draw_info)
                         src_rect.height *= 2;
                     }
 
-                    sub_443440(&art_blit_info, INT_MAX);
+                    object_enqueue_blit(&art_blit_info, INT_MAX);
                 }
                 rect_node = rect_node->next;
             }
@@ -1128,7 +1128,7 @@ void sub_43C690(GameDrawInfo* draw_info)
         while (rect_node != NULL) {
             if (tig_rect_intersection(&obj_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                 if (!blit_info_initialized) {
-                    sub_443170(object_hover_obj, &art_blit_info);
+                    object_setup_blit(object_hover_obj, &art_blit_info);
 
                     art_blit_info.flags &= ~0x3DF80;
                     art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_ADD;
@@ -1156,7 +1156,7 @@ void sub_43C690(GameDrawInfo* draw_info)
                     src_rect.height *= 2;
                 }
 
-                sub_443440(&art_blit_info, INT_MAX);
+                object_enqueue_blit(&art_blit_info, INT_MAX);
             }
 
             rect_node = rect_node->next;
@@ -4761,7 +4761,7 @@ void object_toggle_flat(int64_t obj, bool flat)
 }
 
 // 0x443170
-void sub_443170(int64_t obj, TigArtBlitInfo* blit_info)
+void object_setup_blit(int64_t obj, TigArtBlitInfo* blit_info)
 {
     unsigned int render_flags;
     unsigned int obj_flags;
@@ -4858,46 +4858,52 @@ void sub_443170(int64_t obj, TigArtBlitInfo* blit_info)
 }
 
 // 0x443440
-int sub_443440(TigArtBlitInfo* blit_info, int order)
+void object_enqueue_blit(TigArtBlitInfo* blit_info, int order)
 {
     blit_info->flags |= TIG_ART_BLT_SCRATCH_VALID;
     blit_info->scratch_video_buffer = gamelib_scratch_video_buffer;
-    if (dword_5E2EB0 >= dword_5E2F20) {
-        dword_5E2F20 += 128;
-        dword_5E2E74 = (S5E2E74 *)REALLOC(dword_5E2E74, sizeof(*dword_5E2E74) * dword_5E2F20);
-        dword_5E2F8C = (S5E2F8C *)REALLOC(dword_5E2F8C, sizeof(*dword_5E2F8C) * dword_5E2F20);
+
+    if (object_blit_queue_size >= object_blit_queue_capacity) {
+        object_blit_queue_capacity += 128;
+        object_pending_blits = (ObjectBlitInfo *)REALLOC(object_pending_blits, sizeof(*object_pending_blits) * object_blit_queue_capacity);
+        object_pending_rects = (ObjectBlitRectInfo *)REALLOC(object_pending_rects, sizeof(*object_pending_rects) * object_blit_queue_capacity);
     }
-    dword_5E2E74[dword_5E2EB0].order = order;
-    dword_5E2E74[dword_5E2EB0].blit_info = *blit_info;
-    dword_5E2E74[dword_5E2EB0].rect_index = dword_5E2EB0;
-    dword_5E2F8C[dword_5E2EB0].src_rect = *blit_info->src_rect;
-    dword_5E2F8C[dword_5E2EB0].dst_rect = *blit_info->dst_rect;
-    return ++dword_5E2EB0;
+
+    object_pending_blits[object_blit_queue_size].order = order;
+    object_pending_blits[object_blit_queue_size].blit_info = *blit_info;
+    object_pending_blits[object_blit_queue_size].rect_index = object_blit_queue_size;
+
+    object_pending_rects[object_blit_queue_size].src_rect = *blit_info->src_rect;
+    object_pending_rects[object_blit_queue_size].dst_rect = *blit_info->dst_rect;
+
+    ++object_blit_queue_size;
 }
 
 // 0x443560
-void sub_443560()
+void object_flush_pending_blits()
 {
     int index;
 
-    if (dword_5E2EB0 != 0) {
-        qsort(dword_5E2E74, dword_5E2EB0, sizeof(*dword_5E2E74), sub_443600);
-
-        for (index = 0; index < dword_5E2EB0; index++) {
-            dword_5E2E74[index].blit_info.src_rect = &dword_5E2F8C[dword_5E2E74[index].rect_index].src_rect;
-            dword_5E2E74[index].blit_info.dst_rect = &dword_5E2F8C[dword_5E2E74[index].rect_index].dst_rect;
-            tig_window_blit_art(object_iso_window_handle, &(dword_5E2E74[index].blit_info));
-        }
-
-        dword_5E2EB0 = 0;
+    if (object_blit_queue_size == 0) {
+        return;
     }
+
+    qsort(object_pending_blits, object_blit_queue_size, sizeof(*object_pending_blits), object_compare_blits);
+
+    for (index = 0; index < object_blit_queue_size; index++) {
+        object_pending_blits[index].blit_info.src_rect = &(object_pending_rects[object_pending_blits[index].rect_index].src_rect);
+        object_pending_blits[index].blit_info.dst_rect = &(object_pending_rects[object_pending_blits[index].rect_index].dst_rect);
+        tig_window_blit_art(object_iso_window_handle, &(object_pending_blits[index].blit_info));
+    }
+
+    object_blit_queue_size = 0;
 }
 
 // 0x443600
-int sub_443600(const void* va, const void* vb)
+int object_compare_blits(const void* va, const void* vb)
 {
-    const S5E2E74* a = (const S5E2E74*)va;
-    const S5E2E74* b = (const S5E2E74*)vb;
+    const ObjectBlitInfo* a = (const ObjectBlitInfo*)va;
+    const ObjectBlitInfo* b = (const ObjectBlitInfo*)vb;
 
     if (b->order > a->order) {
         return -1;
