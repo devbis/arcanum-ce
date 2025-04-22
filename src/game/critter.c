@@ -1160,7 +1160,7 @@ bool sub_45E820(int64_t obj, int a2, int a3)
     qword_5E8648 = obj;
     dword_5B304C = a2;
 
-    if (sub_45C140(TIMEEVENT_TYPE_FATIGUE, sub_45E8D0)) {
+    if (timeevent_any(TIMEEVENT_TYPE_FATIGUE, sub_45E8D0)) {
         return true;
     }
 
@@ -1283,7 +1283,7 @@ bool sub_45EAB0(int64_t obj)
 
     qword_5E8648 = obj;
 
-    if (sub_45C140(TIMEEVENT_TYPE_RESTING, sub_45EA80)) {
+    if (timeevent_any(TIMEEVENT_TYPE_RESTING, sub_45EA80)) {
         return true;
     }
 

@@ -1485,7 +1485,7 @@ bool sub_45C0E0(int list)
 }
 
 // 0x45C140
-bool sub_45C140(int list, TimeEventEnumerateFunc* callback)
+bool timeevent_any(int list, TimeEventEnumerateFunc* callback)
 {
     TimeEventNode* node;
 

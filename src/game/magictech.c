@@ -3691,7 +3691,7 @@ bool sub_4548D0(TimeEvent* timeevent, DateTime* a2, DateTime* a3)
     bool v1;
 
     dword_5B0BA0 = timeevent->params[0].integer_value;
-    v1 = sub_45C140(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
+    v1 = timeevent_any(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
     dword_5B0BA0 = -1;
 
     if (v1) {
@@ -6282,7 +6282,7 @@ bool sub_459590(int64_t obj, int a2, bool a3)
     qword_5E7610 = obj;
     dword_5E760C = sub_45A7F0();
 
-    if (a3 && sub_45C140(TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM, sub_459640)) {
+    if (a3 && timeevent_any(TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM, sub_459640)) {
         return true;
     }
 

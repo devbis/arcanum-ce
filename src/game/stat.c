@@ -952,7 +952,7 @@ bool sub_4B1350(int64_t obj, int value, bool a3)
     timeevent.params[1].object_value = obj;
     timeevent.params[2].integer_value = sub_45A7F0();
 
-    if (!sub_45C140(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
+    if (!timeevent_any(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
         sub_45A950(&datetime, 15000);
         if (!sub_45B800(&timeevent, &datetime)) {
             return false;
@@ -961,7 +961,7 @@ bool sub_4B1350(int64_t obj, int value, bool a3)
 
     if (a3) {
         dword_5B53F4 = 1;
-        if (!sub_45C140(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
+        if (!timeevent_any(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
             sub_45A950(&datetime, 120000);
 
             timeevent.params[0].integer_value = 1;

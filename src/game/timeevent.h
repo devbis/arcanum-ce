@@ -165,7 +165,7 @@ bool timeevent_clear_one_typed(int list);
 bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback);
 bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback);
 bool sub_45C0E0(int list);
-bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
+bool timeevent_any(int list, TimeEventEnumerateFunc* callback);
 bool timeevent_inc_milliseconds(unsigned int milliseconds);
 bool timeevent_inc_datetime(DateTime* datetime);
 void timeevent_sync(DateTime* game_time, DateTime* anim_time);
