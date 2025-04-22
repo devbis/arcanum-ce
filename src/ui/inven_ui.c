@@ -976,7 +976,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
             && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             dword_681510 = 88;
-            sub_468190();
+            item_decay_process_disable();
         }
 
         sub_466260(qword_6813A8, dword_681518);
@@ -1110,7 +1110,7 @@ void inven_ui_destroy()
                 gsound_play_sfx(sound_id, 1);
             }
         }
-        sub_468180();
+        item_decay_process_enable();
         sub_4ED6C0(qword_6813A8);
     }
 

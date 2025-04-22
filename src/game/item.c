@@ -75,8 +75,8 @@ static bool item_force_remove_success(void* userinfo);
 static bool item_force_remove_failure(void* userinfo);
 static bool sub_467E70();
 static void sub_467E80(int64_t a1, int64_t a2);
-static bool sub_468110(int64_t obj);
-static bool sub_468150(TimeEvent* timeevent);
+static bool item_cancel_decay(int64_t obj);
+static bool item_decay_timeevent_check(TimeEvent* timeevent);
 
 // 0x5B32A0
 static int dword_5B32A0[TIG_ART_AMMO_TYPE_COUNT] = {
@@ -143,7 +143,7 @@ static bool item_editor;
 static bool dword_5E87E8;
 
 // 0x5E87F0
-static int64_t qword_5E87F0;
+static int64_t item_decay_test_obj;
 
 // 0x5E87F8
 static char** item_armor_coverage_type_names;
@@ -152,7 +152,7 @@ static char** item_armor_coverage_type_names;
 static mes_file_handle_t item_mes_file;
 
 // 0x5E8800
-static int dword_5E8800;
+static int item_decay_process_cnt;
 
 // 0x5E8808
 static TigRect item_iso_content_rect;
@@ -202,7 +202,7 @@ bool item_init(GameInitInfo* init_info)
 
     dword_5E87E8 = 0;
     dword_5E8820 = 0;
-    dword_5E8800 = 1;
+    item_decay_process_cnt = 1;
 
     return true;
 }
@@ -700,7 +700,7 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
         item_insert(item_obj, critter_obj, new_inventory_location);
     }
 
-    sub_468110(item_obj);
+    item_cancel_decay(item_obj);
 
     return true;
 }
@@ -851,8 +851,8 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
         item_insert(item_obj, critter_obj, new_inventory_location);
     }
 
-    sub_468110(item_obj);
-    sub_468090(item_obj, 172800000);
+    item_cancel_decay(item_obj);
+    item_decay(item_obj, 172800000);
 
     return true;
 }
@@ -4012,7 +4012,7 @@ void sub_466E50(int64_t obj, int64_t loc)
         sub_4415C0(obj, loc);
     }
 
-    sub_468090(obj, 172800000);
+    item_decay(obj, 172800000);
 }
 
 // 0x466EF0
@@ -4489,7 +4489,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     mt_item_notify_drop(item_obj, parent_obj);
 
     if (parent_type == OBJ_TYPE_CONTAINER) {
-        if (!item_editor && dword_5E8800 > 0) {
+        if (!item_editor && item_decay_process_cnt > 0) {
             sub_463540(parent_obj);
         }
     } else {
@@ -4656,12 +4656,12 @@ bool item_decay_timeevent_process(TimeEvent* timeevent)
     int64_t obj;
 
     obj = timeevent->params[0].object_value;
-    if (dword_5E8800 > 0) {
+    if (item_decay_process_cnt > 0) {
         if (item_can_decay(obj)) {
             object_destroy(obj);
         }
     } else {
-        sub_468090(obj, 60000);
+        item_decay(obj, 60000);
     }
 
     return true;
@@ -4689,7 +4689,7 @@ bool item_can_decay(int64_t obj)
 }
 
 // 0x468090
-bool sub_468090(int64_t obj, int ms)
+bool item_decay(int64_t obj, int ms)
 {
     TimeEvent timeevent;
     DateTime datetime;
@@ -4698,8 +4698,8 @@ bool sub_468090(int64_t obj, int ms)
         return false;
     }
 
-    qword_5E87F0 = obj;
-    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, sub_468150);
+    item_decay_test_obj = obj;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, item_decay_timeevent_check);
 
     timeevent.type = TIMEEVENT_TYPE_ITEM_DECAY;
     timeevent.params[0].object_value = obj;
@@ -4709,38 +4709,38 @@ bool sub_468090(int64_t obj, int ms)
 }
 
 // 0x468110
-bool sub_468110(int64_t obj)
+bool item_cancel_decay(int64_t obj)
 {
     if (item_can_decay(obj)) {
         return false;
     }
 
-    qword_5E87F0 = obj;
-    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, sub_468150);
+    item_decay_test_obj = obj;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, item_decay_timeevent_check);
 
     return true;
 }
 
 // 0x468150
-bool sub_468150(TimeEvent* timeevent)
+bool item_decay_timeevent_check(TimeEvent* timeevent)
 {
-    return timeevent != NULL && timeevent->params[0].object_value == qword_5E87F0;
+    return timeevent != NULL && timeevent->params[0].object_value == item_decay_test_obj;
 }
 
 // 0x468180
-void sub_468180()
+void item_decay_process_enable()
 {
-    dword_5E8800++;
+    item_decay_process_cnt++;
 }
 
 // 0x468190
-void sub_468190()
+void item_decay_process_disable()
 {
-    dword_5E8800--;
+    item_decay_process_cnt--;
 }
 
 // 0x4681A0
-int sub_4681A0()
+int item_decay_process_is_enabled()
 {
-    return dword_5E8800;
+    return item_decay_process_cnt;
 }

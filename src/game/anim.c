@@ -7922,7 +7922,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
         return false;
     }
 
-    if (!sub_4681A0()) {
+    if (!item_decay_process_is_enabled()) {
         return false;
     }
 
@@ -14366,7 +14366,7 @@ bool anim_goal_pickup_item(int64_t obj, int64_t item_obj)
     }
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-        && !sub_4681A0()) {
+        && !item_decay_process_is_enabled()) {
         return false;
     }
 
