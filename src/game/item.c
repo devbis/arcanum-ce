@@ -663,7 +663,7 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
         v1 = true;
     }
 
-    rc = sub_466510(item_obj, critter_obj, &new_inventory_location);
+    rc = item_check_insert(item_obj, critter_obj, &new_inventory_location);
     if (rc != ITEM_CANNOT_OK
         && (rc != ITEM_CANNOT_NO_ROOM
             || existing_item_obj != OBJ_HANDLE_NULL
@@ -814,7 +814,7 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
         v1 = true;
     }
 
-    rc = sub_466510(item_obj, critter_obj, &new_inventory_location);
+    rc = item_check_insert(item_obj, critter_obj, &new_inventory_location);
     if (rc != ITEM_CANNOT_OK
         && (rc != ITEM_CANNOT_NO_ROOM
             || existing_item_obj != OBJ_HANDLE_NULL
@@ -2617,7 +2617,7 @@ bool item_wield_set(int64_t item_obj, int inventory_location)
             item_remove(item_obj);
             item_remove(cur_item_obj);
 
-            if (sub_466510(cur_item_obj, owner_obj, &v1) != ITEM_CANNOT_OK) {
+            if (item_check_insert(cur_item_obj, owner_obj, &v1) != ITEM_CANNOT_OK) {
                 item_insert(item_obj, owner_obj, saved_inventory_location);
                 item_insert(cur_item_obj, owner_obj, inventory_location);
                 return false;
@@ -2665,7 +2665,7 @@ bool sub_464C80(int64_t item_obj)
         }
 
         item_parent(item_obj, &owner_obj);
-        if (sub_466510(item_obj, owner_obj, &v1) != ITEM_CANNOT_OK) {
+        if (item_check_insert(item_obj, owner_obj, &v1) != ITEM_CANNOT_OK) {
             return false;
         }
 
@@ -3659,7 +3659,7 @@ int item_find_free_inv_loc_for_insertion(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x466510
-bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_ptr)
+int item_check_insert(int64_t item_obj, int64_t parent_obj, int* inventory_location_ptr)
 {
     int inventory_location;
 

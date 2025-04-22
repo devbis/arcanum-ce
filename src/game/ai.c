@@ -689,7 +689,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_ITEM_FLAGS) & (OIF_NO_DISPLAY | OIF_NO_NPC_PICKUP)) == 0
             && !sub_461F60(node->obj)
-            && !sub_466510(node->obj, obj, NULL)) {
+            && item_check_insert(node->obj, obj, NULL) == ITEM_CANNOT_OK) {
             dist = object_dist(obj, node->obj);
             if (nearest_obj == OBJ_HANDLE_NULL
                 || nearest_dist < dist) {
@@ -760,7 +760,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
                 && (obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_OFF) == 0
                 && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & (OIF_NO_DISPLAY | OIF_NO_NPC_PICKUP)) == 0
                 && !sub_461F60(item_obj)
-                && !sub_466510(item_obj, obj, NULL)
+                && item_check_insert(item_obj, obj, NULL) == ITEM_CANNOT_OK
                 && anim_goal_pickup_item(obj, item_obj)) {
                 found = true;
                 break;
