@@ -3650,7 +3650,7 @@ bool item_inventory_slots_has_room_for(int64_t item_obj, int64_t parent_obj, int
 }
 
 // 0x4664C0
-int sub_4664C0(int64_t item_obj, int64_t parent_obj)
+int item_find_free_inv_loc_for_insertion(int64_t item_obj, int64_t parent_obj)
 {
     int slots[960];
 
@@ -3685,7 +3685,7 @@ bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_pt
         inventory_location = 0;
     } else {
         if (inventory_location == -1) {
-            inventory_location = sub_4664C0(item_obj, parent_obj);
+            inventory_location = item_find_free_inv_loc_for_insertion(item_obj, parent_obj);
             if (inventory_location == -1) {
                 return ITEM_CANNOT_NO_ROOM;
             }
@@ -4028,7 +4028,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     node = objects.head;
     while (node != NULL) {
         if (sub_49B290(node->obj) == 3023) {
-            inventory_location = sub_4664C0(obj, node->obj);
+            inventory_location = item_find_free_inv_loc_for_insertion(obj, node->obj);
             if (inventory_location != -1) {
                 item_insert(obj, node->obj, inventory_location);
                 object_list_destroy(&objects);
@@ -4062,7 +4062,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     object_list_destroy(&objects);
 
     if (new_container_obj != OBJ_HANDLE_NULL) {
-        inventory_location = sub_4664C0(obj, new_container_obj);
+        inventory_location = item_find_free_inv_loc_for_insertion(obj, new_container_obj);
         if (inventory_location != -1) {
             item_insert(obj, new_container_obj, inventory_location);
             return true;

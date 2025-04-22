@@ -134,7 +134,7 @@ int sub_466230(int64_t obj);
 void item_inventory_slots_get(int64_t obj, int* slots);
 void item_inventory_slots_set(int64_t item_obj, int inventory_location, int* slots, int value);
 bool item_inventory_slots_has_room_for(int64_t item_obj, int64_t parent_obj, int inventory_location, int* slots);
-int sub_4664C0(int64_t item_obj, int64_t parent_obj);
+int item_find_free_inv_loc_for_insertion(int64_t item_obj, int64_t parent_obj);
 bool sub_466510(int64_t a1, int64_t a2, int* a3);
 void item_insert(int64_t a1, int64_t a2, int a3);
 void sub_466D60(int64_t obj);

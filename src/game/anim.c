@@ -8327,7 +8327,7 @@ bool sub_42B440(AnimRunInfo* run_info)
             if (item_obj != OBJ_HANDLE_NULL) {
                 if (!tig_net_is_active()
                     || tig_net_is_host()) {
-                    inventory_location = sub_4664C0(item_obj, obj);
+                    inventory_location = item_find_free_inv_loc_for_insertion(item_obj, obj);
                     if (inventory_location != -1) {
                         item_insert(item_obj, obj, inventory_location);
                     } else {
