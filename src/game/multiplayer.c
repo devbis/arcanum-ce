@@ -2903,7 +2903,7 @@ void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     race = stat_level_get(obj, STAT_RACE);
-    wearable_armor_size = sub_465C90(race);
+    wearable_armor_size = item_armor_size(race);
 
     switch (wearable_armor_size) {
     case OARF_SIZE_SMALL:
@@ -3004,7 +3004,7 @@ bool sub_4A5EE0(int64_t obj)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     race = stat_level_get(obj, STAT_RACE);
-    wearable_armor_size = sub_465C90(race);
+    wearable_armor_size = item_armor_size(race);
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
         degree = tech_degree_get(obj, tech);

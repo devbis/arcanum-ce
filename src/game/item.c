@@ -95,18 +95,18 @@ static int dword_5B32B0[TIG_ART_AMMO_TYPE_COUNT] = {
 };
 
 // 0x5B32C0
-int dword_5B32C0[RACE_COUNT] = {
-    2,
-    1,
-    2,
-    2,
-    1,
-    1,
-    2,
-    4,
-    2,
-    4,
-    2,
+static unsigned int item_race_to_armor_size_tbl[RACE_COUNT] = {
+    /*     RACE_HUMAN */ OARF_SIZE_MEDIUM,
+    /*     RACE_DWARF */ OARF_SIZE_SMALL,
+    /*       RACE_ELF */ OARF_SIZE_MEDIUM,
+    /*  RACE_HALF_ELF */ OARF_SIZE_MEDIUM,
+    /*     RACE_GNOME */ OARF_SIZE_SMALL,
+    /*  RACE_HALFLING */ OARF_SIZE_SMALL,
+    /*  RACE_HALF_ORC */ OARF_SIZE_MEDIUM,
+    /* RACE_HALF_OGRE */ OARF_SIZE_LARGE,
+    /*  RACE_DARK_ELF */ OARF_SIZE_MEDIUM,
+    /*      RACE_OGRE */ OARF_SIZE_LARGE,
+    /*       RACE_ORC */ OARF_SIZE_MEDIUM,
 };
 
 // 0x5B32EC
@@ -249,14 +249,14 @@ void sub_460FF0(int64_t critter_obj)
         race = stat_level_get(critter_obj, STAT_RACE);
         gender = stat_level_get(critter_obj, STAT_GENDER);
         if (gender == GENDER_FEMALE) {
-            switch (sub_465C90(race)) {
-            case 1:
+            switch (item_armor_size(race)) {
+            case OARF_SIZE_SMALL:
                 proto_obj = sub_4685A0(8134);
                 break;
-            case 2:
+            case OARF_SIZE_MEDIUM:
                 proto_obj = sub_4685A0(8133);
                 break;
-            case 4:
+            case OARF_SIZE_LARGE:
                 proto_obj = sub_4685A0(8135);
                 break;
             default:
@@ -264,14 +264,14 @@ void sub_460FF0(int64_t critter_obj)
                 assert(0);
             }
         } else {
-            switch (sub_465C90(race)) {
-            case 1:
+            switch (item_armor_size(race)) {
+            case OARF_SIZE_SMALL:
                 proto_obj = sub_4685A0(8065);
                 break;
-            case 2:
+            case OARF_SIZE_MEDIUM:
                 proto_obj = sub_4685A0(8049);
                 break;
-            case 4:
+            case OARF_SIZE_LARGE:
                 proto_obj = sub_4685A0(8069);
                 break;
             default:
@@ -286,17 +286,18 @@ void sub_460FF0(int64_t critter_obj)
             if (sub_464D20(new_item_obj, 1006, critter_obj)) {
                 object_destroy(new_item_obj);
 
-                switch (sub_465C90(race)) {
-                case 1:
+                switch (item_armor_size(race)) {
+                case OARF_SIZE_SMALL:
                     proto_obj = sub_4685A0(8118);
                     break;
-                case 2:
+                case OARF_SIZE_MEDIUM:
                     proto_obj = sub_4685A0(8110);
                     break;
-                case 4:
+                case OARF_SIZE_LARGE:
                     proto_obj = sub_4685A0(8126);
                     break;
                 default:
+                    // Should be unreachable.
                     assert(0);
                 }
 
@@ -2723,7 +2724,7 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
         break;
     case ITEM_INV_LOC_ARMOR:
         armor_flags = obj_field_int32_get(item_obj, OBJ_F_ARMOR_FLAGS);
-        if ((sub_465C90(stat_level_get(critter_obj, STAT_RACE)) & armor_flags) == 0) {
+        if ((item_armor_size(stat_level_get(critter_obj, STAT_RACE)) & armor_flags) == 0) {
             return ITEM_CANNOT_WRONG_WEARABLE_SIZE;
         }
         if ((armor_flags & OARF_MALE_ONLY) != 0) {
@@ -3244,9 +3245,9 @@ int item_armor_coverage(int64_t obj)
 }
 
 // 0x465C90
-int sub_465C90(int race)
+unsigned int item_armor_size(int race)
 {
-    return dword_5B32C0[race];
+    return item_race_to_armor_size_tbl[race];
 }
 
 // 0x465CA0

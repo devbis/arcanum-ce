@@ -123,7 +123,7 @@ bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type
 int64_t item_ammo_create(int quantity, int ammo_type, int64_t obj);
 int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3);
 int item_armor_coverage(int64_t obj);
-int sub_465C90(int race);
+unsigned int item_armor_size(int race);
 int item_weapon_ammo_type(int64_t item_id);
 int item_weapon_magic_speed(int64_t item_obj, int64_t owner_obj);
 int item_weapon_skill(int64_t obj);
