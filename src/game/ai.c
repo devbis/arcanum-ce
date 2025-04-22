@@ -2579,7 +2579,7 @@ bool ai_use_grenade(Ai* ai, int64_t distance)
         return false;
     }
 
-    radius = sub_466230(grenade_obj);
+    radius = item_weapon_aoe_radius(grenade_obj);
     if (distance <= radius) {
         return false;
     }

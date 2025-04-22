@@ -3527,7 +3527,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
 }
 
 // 0x466230
-int sub_466230(int64_t obj)
+int item_weapon_aoe_radius(int64_t obj)
 {
     if (obj_field_int32_get(obj, OBJ_F_ITEM_SPELL_1) != 10000) {
         return 0;
