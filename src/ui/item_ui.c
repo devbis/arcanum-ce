@@ -170,7 +170,7 @@ void sub_571CB0(S4F2810* a1)
         }
         skill_invocation.skill = SKILL_PICK_LOCKS;
         skill_invocation.item.obj = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
-        sub_4C9050(&skill_invocation);
+        skill_pick_best_follower(&skill_invocation);
 
         if (pc_obj == skill_invocation.source.obj) {
             item_obj = qword_6810D8;

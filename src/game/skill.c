@@ -2054,13 +2054,13 @@ void set_follower_skills(bool enabled)
 }
 
 // 0x4C9050
-void sub_4C9050(SkillInvocation* skill_invocation)
+void skill_pick_best_follower(SkillInvocation* skill_invocation)
 {
-    int skill_level;
     ObjectList objects;
     ObjectNode* node;
-    int v1;
-    int64_t v2;
+    int efficiency;
+    int best_efficiency;
+    int64_t best_follower_obj;
 
     if (obj_field_int32_get(skill_invocation->source.obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
@@ -2071,39 +2071,43 @@ void sub_4C9050(SkillInvocation* skill_invocation)
     }
 
     if (IS_TECH_SKILL(skill_invocation->skill)) {
-        skill_level = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-        v2 = skill_invocation->source.obj;
-        object_list_all_followers(v2, &objects);
+        best_efficiency = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        best_follower_obj = skill_invocation->source.obj;
+        object_list_all_followers(best_follower_obj, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));
-            v1 = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-            if (v1 > skill_level) {
-                skill_level = v1;
-                v2 = node->obj;
+            efficiency = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+            if (efficiency > best_efficiency) {
+                best_efficiency = efficiency;
+                best_follower_obj = node->obj;
             }
             node = node->next;
         }
-        // FIXME: Probably leaks `objects`?
+
+        // FIX: Original code leaks `objects`.
+        object_list_destroy(&objects);
     } else {
-        skill_level = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-        v2 = skill_invocation->source.obj;
-        object_list_all_followers(v2, &objects);
+        best_efficiency = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        best_follower_obj = skill_invocation->source.obj;
+        object_list_all_followers(best_follower_obj, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));
-            v1 = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-            if (v1 > skill_level) {
-                skill_level = v1;
-                v2 = node->obj;
+            efficiency = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+            if (efficiency > best_efficiency) {
+                best_efficiency = efficiency;
+                best_follower_obj = node->obj;
             }
 
             node = node->next;
         }
-        // FIXME: Probably leaks `objects`?
+
+        // FIX: Original code leaks `objects`.
+        object_list_destroy(&objects);
     }
 
-    sub_4440E0(v2, &(skill_invocation->source));
+    sub_4440E0(best_follower_obj, &(skill_invocation->source));
 }
 
 // 0x4C91F0

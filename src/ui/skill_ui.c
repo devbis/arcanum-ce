@@ -351,7 +351,7 @@ void sub_57A620(SkillInvocation* skill_invocation)
 
     if (!tig_kb_is_key_pressed(DIK_LCONTROL) && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
         obj = skill_invocation->source.obj;
-        sub_4C9050(skill_invocation);
+        skill_pick_best_follower(skill_invocation);
         if (obj != skill_invocation->source.obj) {
             dialog_copy_npc_let_me_handle_msg(skill_invocation->source.obj, obj, str);
             dialog_ui_float_line(skill_invocation->source.obj, obj, str, 0);
