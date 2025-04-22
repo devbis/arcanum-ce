@@ -66,7 +66,7 @@ static void sub_466BD0(int64_t key_ring_obj);
 static bool item_insert_success(void* userinfo);
 static bool item_insert_failure(void* userinfo);
 static bool sub_466EF0(int64_t obj, int64_t loc);
-static char* item_cannot_msg(int reason);
+static char* item_error_str(int reason);
 static int find_free_inv_loc_horizontal(int64_t item_obj, int64_t parent_obj, int* slots);
 static int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots);
 static void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location);
@@ -670,10 +670,10 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
             || !v1)) {
         switch (obj_field_int32_get(critter_obj, OBJ_F_TYPE)) {
         case OBJ_TYPE_PC:
-            sub_4673F0(critter_obj, rc);
+            item_error_msg(critter_obj, rc);
             break;
         case OBJ_TYPE_NPC:
-            tf_add(critter_obj, TF_TYPE_WHITE, item_cannot_msg(rc));
+            tf_add(critter_obj, TF_TYPE_WHITE, item_error_str(rc));
             break;
         }
         return false;
@@ -750,7 +750,7 @@ bool item_drop_ex(int64_t item_obj, int distance)
 
     if (reason != ITEM_CANNOT_OK) {
         if (obj_type == OBJ_TYPE_PC) {
-            sub_4673F0(parent_obj, reason);
+            item_error_msg(parent_obj, reason);
         }
         return false;
     }
@@ -820,11 +820,11 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
             || existing_item_obj != OBJ_HANDLE_NULL
             || !v1)) {
         if (obj_field_int32_get(parent_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            sub_4673F0(parent_obj, rc);
+            item_error_msg(parent_obj, rc);
         }
 
         if (obj_field_int32_get(critter_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            sub_4673F0(critter_obj, rc);
+            item_error_msg(critter_obj, rc);
         }
 
         return false;
@@ -1455,7 +1455,7 @@ void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         int min_intelligence = spell_min_intelligence(spell);
         if (min_intelligence > stat_level_get(source_obj, STAT_INTELLIGENCE)) {
             if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                sub_4673F0(source_obj, ITEM_CANNOT_DUMB);
+                item_error_msg(source_obj, ITEM_CANNOT_DUMB);
             }
             return;
         }
@@ -4162,7 +4162,7 @@ void item_arrange_inventory(int64_t parent_obj, bool vertical)
 }
 
 // 0x4673B0
-char* item_cannot_msg(int reason)
+char* item_error_str(int reason)
 {
     MesFileEntry mes_file_entry;
 
@@ -4177,19 +4177,23 @@ char* item_cannot_msg(int reason)
 }
 
 // 0x4673F0
-void sub_4673F0(int64_t obj, int reason)
+void item_error_msg(int64_t obj, int reason)
 {
     UiMessage ui_message;
     char* str;
 
-    if (player_is_local_pc_obj(obj)) {
-        str = item_cannot_msg(reason);
-        if (str != NULL) {
-            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
-            ui_message.str = str;
-            sub_460630(&ui_message);
-        }
+    if (!player_is_local_pc_obj(obj)) {
+        return;
     }
+
+    str = item_error_str(reason);
+    if (str == NULL) {
+        return;
+    }
+
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+    ui_message.str = str;
+    sub_460630(&ui_message);
 }
 
 // 0x467440

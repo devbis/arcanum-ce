@@ -686,7 +686,7 @@ void sub_4EE5E0(Packet100* pkt)
     case 11:
         sub_4F0690(pkt->d.x.field_8, &v1);
         if (player_is_local_pc_obj(v1)) {
-            sub_4673F0(v1, pkt->d.x.field_20);
+            item_error_msg(v1, pkt->d.x.field_20);
         }
         // FIXME: Fallthrough?
     case 12:

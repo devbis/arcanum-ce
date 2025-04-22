@@ -3680,7 +3680,7 @@ void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
     if (item_obj != OBJ_HANDLE_NULL) {
         v1 = sub_464D20(hotkey->item_obj.obj, inventory_location, critter_obj);
         if (v1 != 0 && v1 != 4) {
-            sub_4673F0(critter_obj, v1);
+            item_error_msg(critter_obj, v1);
             return;
         }
 
@@ -3691,7 +3691,7 @@ void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
 
     v1 = sub_464D20(hotkey->item_obj.obj, inventory_location, critter_obj);
     if (v1 != 0) {
-        sub_4673F0(critter_obj, v1);
+        item_error_msg(critter_obj, v1);
         if (item_obj != OBJ_HANDLE_NULL) {
             item_wield_set(item_obj, inventory_location);
         }
@@ -3699,7 +3699,7 @@ void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
     }
 
     if (!item_wield_set(hotkey->item_obj.obj, inventory_location)) {
-        sub_4673F0(critter_obj, 0);
+        item_error_msg(critter_obj, 0);
         if (item_obj != OBJ_HANDLE_NULL) {
             item_wield_set(item_obj, inventory_location);
         }

@@ -143,7 +143,7 @@ int item_check_remove(int64_t obj);
 void item_remove(int64_t item_obj);
 void sub_466E50(int64_t obj, int64_t loc);
 void item_arrange_inventory(int64_t parent_obj, bool vertical);
-void sub_4673F0(int64_t obj, int reason);
+void item_error_msg(int64_t obj, int reason);
 void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4);
 void sub_467520(int64_t obj);
 bool item_decay_timeevent_process(TimeEvent* timeevent);
