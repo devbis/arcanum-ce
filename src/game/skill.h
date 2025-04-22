@@ -176,6 +176,6 @@ void skill_perform_repair_service(int64_t item_obj, int64_t npc_obj, int64_t pc_
 bool get_follower_skills(int64_t obj);
 void set_follower_skills(bool enabled);
 void sub_4C9050(SkillInvocation* skill_invocation);
-int64_t sub_4C91F0(int64_t obj, int skill);
+int64_t skill_supplementary_item(int64_t obj, int skill);
 
 #endif /* ARCANUM_GAME_SKILL_H_ */

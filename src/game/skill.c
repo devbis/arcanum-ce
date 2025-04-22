@@ -2107,7 +2107,7 @@ void sub_4C9050(SkillInvocation* skill_invocation)
 }
 
 // 0x4C91F0
-int64_t sub_4C91F0(int64_t obj, int skill)
+int64_t skill_supplementary_item(int64_t obj, int skill)
 {
     int64_t item_obj = OBJ_HANDLE_NULL;
     int64_t substitute_inventory_obj;

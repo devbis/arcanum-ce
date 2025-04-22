@@ -545,7 +545,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
         }
     } else {
         if (hp_ratio < 90) {
-            item_obj = sub_4C91F0(ai->obj, BASIC_SKILL_HEAL);
+            item_obj = skill_supplementary_item(ai->obj, BASIC_SKILL_HEAL);
             if (ai_check_use_skill(ai->obj, obj, item_obj, BASIC_SKILL_HEAL) == AI_USE_SKILL_OK) {
                 ai->danger_source = obj;
                 ai->item_obj = item_obj;

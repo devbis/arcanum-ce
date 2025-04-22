@@ -2478,7 +2478,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "u:", 2) == 0) {
         v4 = atoi(entry.str + 2);
-        if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4) != AI_USE_SKILL_OK) {
+        if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, skill_supplementary_item(a3->npc_obj, v4), v4) != AI_USE_SKILL_OK) {
             return false;
         }
 
@@ -3732,7 +3732,7 @@ void sub_419830(int a1, int a2, DialogState* a3)
     v3 = 0;
     switch (a1) {
     case 0:
-        item_obj = sub_4C91F0(a3->npc_obj, SKILL_HEAL);
+        item_obj = skill_supplementary_item(a3->npc_obj, SKILL_HEAL);
         if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, item_obj, SKILL_HEAL) == AI_USE_SKILL_OK) {
             sub_419A00(0, SKILL_HEAL, a2, a3);
             v3 = 1;
@@ -3861,7 +3861,7 @@ void sub_419CB0(int a1, int a2, int a3, DialogState* a4)
         flags = 0x2000;
     }
 
-    item_obj = sub_4C91F0(a4->npc_obj, a1);
+    item_obj = skill_supplementary_item(a4->npc_obj, a1);
     anim_goal_use_skill_on(a4->npc_obj, a4->pc_obj, item_obj, a1, flags);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
     a4->num_options = 1;
