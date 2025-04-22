@@ -18,6 +18,7 @@
 #define FIRST_WEAR_INV_LOC ITEM_INV_LOC_HELMET
 #define LAST_WEAR_INV_LOC ITEM_INV_LOC_BOOTS
 #define IS_WEAR_INV_LOC(x) ((x) >= FIRST_WEAR_INV_LOC && (x) <= LAST_WEAR_INV_LOC)
+#define IS_HOTKEY_INV_LOC(x) ((x) >= 2000 && (x) <= 2009)
 
 typedef enum ItemCannot {
     ITEM_CANNOT_OK,

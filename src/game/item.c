@@ -1372,7 +1372,7 @@ int64_t sub_462A30(int64_t obj, int64_t a2)
         if (item_obj != a2
             && obj_field_handle_get(item_obj, OBJ_F_PROTOTYPE_HANDLE) == prototype_obj) {
             inventory_location = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_LOCATION);
-            if (inventory_location >= 2000 && inventory_location <= 2009) {
+            if (IS_HOTKEY_INV_LOC(inventory_location)) {
                 return item_obj;
             }
         }
@@ -3583,7 +3583,7 @@ void item_inventory_slots_set(int64_t item_obj, int inventory_location, int* slo
         return;
     }
 
-    if (inventory_location >= 2000 && inventory_location <= 2009) {
+    if (IS_HOTKEY_INV_LOC(inventory_location)) {
         return;
     }
 
@@ -3612,7 +3612,7 @@ bool item_inventory_slots_has_room_for(int64_t item_obj, int64_t parent_obj, int
         return false;
     }
 
-    if (inventory_location >= 2000 && inventory_location <= 2009) {
+    if (IS_HOTKEY_INV_LOC(inventory_location)) {
         return false;
     }
 
@@ -3813,7 +3813,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     if (player_is_local_pc_obj(parent_obj)) {
         ui_toggle_primary_button(UI_PRIMARY_BUTTON_INVENTORY, true);
 
-        if (inventory_location >= 2000 && inventory_location <= 2009) {
+        if (IS_HOTKEY_INV_LOC(inventory_location)) {
             sub_460590(item_obj, inventory_location);
         }
 
@@ -4110,8 +4110,7 @@ void item_arrange_inventory(int64_t parent_obj, bool vertical)
     for (idx = 0; idx < cnt; idx++) {
         inventory_location = item_inventory_location_get(items[idx]);
         if (IS_WEAR_INV_LOC(inventory_location)
-            || (inventory_location >= 2000
-                && inventory_location <= 2009)) {
+            || IS_HOTKEY_INV_LOC(inventory_location)) {
             item_obj = items[cnt - 1];
             items[cnt - 1] = items[idx];
             items[idx] = item_obj;
@@ -4226,7 +4225,7 @@ void sub_467520(int64_t obj)
         for (index = cnt - 1; index >= 0; index--) {
             item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
             inventory_location = item_inventory_location_get(item_obj);
-            if (inventory_location >= 2000 && inventory_location <= 2009) {
+            if (IS_HOTKEY_INV_LOC(inventory_location)) {
                 item_drop(item_obj);
                 item_transfer(item_obj, obj);
             }
@@ -4474,7 +4473,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
         sub_467CB0(item_obj, parent_obj, inventory_location);
-    } else if (inventory_location >= 2000 && inventory_location <= 2009) {
+    } else if (IS_HOTKEY_INV_LOC(inventory_location)) {
         if (is_pc) {
             sub_460540(inventory_location - 2000);
         }
