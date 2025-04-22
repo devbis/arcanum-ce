@@ -172,7 +172,7 @@ void skill_invocation_init(SkillInvocation* skill_invocation);
 bool sub_4C7120(SkillInvocation* skill_invocation);
 bool skill_invocation_run(SkillInvocation* skill_invocation);
 int sub_4C8430(SkillInvocation* skill_invocation);
-void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4);
+void skill_perform_repair_service(int64_t item_obj, int64_t npc_obj, int64_t pc_obj, int cost);
 bool get_follower_skills(int64_t obj);
 void set_follower_skills(bool enabled);
 void sub_4C9050(SkillInvocation* skill_invocation);

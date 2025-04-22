@@ -1819,7 +1819,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
             sub_578760(v1);
             if (dword_681440 > 0
                 && item_gold_get(inven_ui_pc_obj) >= dword_681440) {
-                sub_4C8E60(v1, qword_682C78, inven_ui_pc_obj, dword_681440);
+                skill_perform_repair_service(v1, qword_682C78, inven_ui_pc_obj, dword_681440);
             } else {
                 dialog_copy_npc_not_enough_money_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             }

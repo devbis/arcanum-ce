@@ -1989,29 +1989,32 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 }
 
 // 0x4C8E60
-void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
+void skill_perform_repair_service(int64_t item_obj, int64_t npc_obj, int64_t pc_obj, int cost)
 {
     SkillInvocation skill_invocation;
-    Packet126 pkt;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()) {
-        skill_invocation_init(&skill_invocation);
-        skill_invocation.flags |= 0x1000;
-        skill_invocation.skill = SKILL_REPAIR;
-        sub_4440E0(a2, &(skill_invocation.source));
-        sub_4440E0(a1, &(skill_invocation.target));
-        skill_invocation_run(&skill_invocation);
-        item_gold_transfer(a3, a2, a4, OBJ_HANDLE_NULL);
-        sub_4EE3A0(a3, a1);
-    } else {
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        PacketPerformRepairService pkt;
+
         pkt.type = 126;
-        sub_4F0640(a1, &(pkt.field_8));
-        sub_4F0640(a2, &(pkt.field_20));
-        sub_4F0640(a3, &(pkt.field_38));
-        pkt.field_50 = a4;
+        sub_4F0640(item_obj, &(pkt.item_oid));
+        sub_4F0640(npc_obj, &(pkt.npc_oid));
+        sub_4F0640(pc_obj, &(pkt.pc_oid));
+        pkt.cost = cost;
         tig_net_send_app_all(&pkt, sizeof(pkt));
+        return;
     }
+
+    skill_invocation_init(&skill_invocation);
+    skill_invocation.flags |= 0x1000;
+    skill_invocation.skill = SKILL_REPAIR;
+    sub_4440E0(npc_obj, &(skill_invocation.source));
+    sub_4440E0(item_obj, &(skill_invocation.target));
+    skill_invocation_run(&skill_invocation);
+
+    item_gold_transfer(pc_obj, npc_obj, cost, OBJ_HANDLE_NULL);
+
+    sub_4EE3A0(pc_obj, item_obj);
 }
 
 // 0x4C8FA0
