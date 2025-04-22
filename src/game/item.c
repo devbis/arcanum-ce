@@ -433,43 +433,51 @@ int item_total_weight(int64_t obj)
 }
 
 // 0x4614A0
-int sub_4614A0(int64_t item_id, int64_t owner_id)
+int item_effective_power(int64_t item_obj, int64_t parent_obj)
 {
     int complexity;
-    int owner_type;
-    int adjusted_complexity;
+    int effective_power;
 
-    complexity = item_magic_tech_complexity(item_id);
+    complexity = item_magic_tech_complexity(item_obj);
 
-    owner_type = obj_field_int32_get(owner_id, OBJ_F_TYPE);
-    if (owner_type != OBJ_TYPE_PC && owner_type != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(parent_obj, OBJ_F_TYPE))) {
         return complexity;
     }
 
-    adjusted_complexity = (complexity + stat_level_get(owner_id, STAT_MAGICK_TECH_APTITUDE)) / 2;
+    effective_power = (complexity + stat_level_get(parent_obj, STAT_MAGICK_TECH_APTITUDE)) / 2;
     if (complexity < 0) {
-        if (adjusted_complexity > 0) {
+        // Item is technological, check if the owner is too much magician to use
+        // this item.
+        if (effective_power > 0) {
             return 0;
-        } else if (adjusted_complexity < complexity) {
+        }
+
+        // Clamp effective technical power (both numbers are negative).
+        if (effective_power < complexity) {
             return complexity;
         } else {
-            return adjusted_complexity;
+            return effective_power;
         }
     } else {
-        if (adjusted_complexity < 0) {
+        // Item is magickal, check if the owner is too much technician to use
+        // this item.
+        if (effective_power < 0) {
             return 0;
-        } else if (adjusted_complexity > complexity) {
+        }
+
+        // Clamp effective magical power (both numbers are positive).
+        if (effective_power > complexity) {
             return complexity;
         } else {
-            return adjusted_complexity;
+            return effective_power;
         }
     }
 }
 
 // 0x461520
-int item_magic_tech_complexity(int64_t item_id)
+int item_magic_tech_complexity(int64_t item_obj)
 {
-    return obj_field_int32_get(item_id, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+    return obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
 }
 
 // 0x461540
@@ -479,7 +487,7 @@ int sub_461540(int64_t item_id, int64_t owner_id)
 
     complexity = item_magic_tech_complexity(item_id);
     if (complexity != 0) {
-        return 100 * sub_4614A0(item_id, owner_id) / complexity;
+        return 100 * item_effective_power(item_id, owner_id) / complexity;
     } else {
         return 100;
     }
@@ -493,10 +501,10 @@ int sub_461590(int64_t item_id, int64_t owner_id, int a3)
     complexity = item_magic_tech_complexity(item_id);
     if (complexity > 0) {
         // FIXME: Calculating complexity twice.
-        return a3 * sub_4614A0(item_id, owner_id) / item_magic_tech_complexity(item_id);
+        return a3 * item_effective_power(item_id, owner_id) / item_magic_tech_complexity(item_id);
     } else if (complexity < 0) {
         // FIXME: Calculating complexity twice.
-        return a3 - a3 * sub_4614A0(item_id, owner_id) / item_magic_tech_complexity(item_id);
+        return a3 - a3 * item_effective_power(item_id, owner_id) / item_magic_tech_complexity(item_id);
     } else {
         return a3;
     }

@@ -4726,7 +4726,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         if (a1->source_obj.obj != OBJ_HANDLE_NULL
             && source_aptitude < 0
             && a1->parent_obj.obj != a1->source_obj.obj
-            && sub_4614A0(a1->source_obj.obj, a1->parent_obj.obj) <= 0) {
+            && item_effective_power(a1->source_obj.obj, a1->parent_obj.obj) <= 0) {
             sub_45A520(a1->parent_obj.obj, a1->target_obj.obj);
             return false;
         }
@@ -4787,7 +4787,7 @@ bool sub_456A10(int64_t a1, int64_t a2, int64_t a3)
         return true;
     }
 
-    if (sub_4614A0(a3, a1) > 0) {
+    if (item_effective_power(a3, a1) > 0) {
         return true;
     }
 

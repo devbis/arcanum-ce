@@ -6978,7 +6978,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
             || obj_type == OBJ_TYPE_ARMOR
             || obj_type == OBJ_TYPE_SCROLL)) {
         if (complexity > 0) {
-            value = sub_4614A0(item_obj, pc_obj);
+            value = item_effective_power(item_obj, pc_obj);
 
             mes_file_entry.num = 2; // "Magic power available"
             mes_get_msg(intgame_mes_file, &mes_file_entry);
