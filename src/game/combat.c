@@ -798,6 +798,7 @@ int sub_4B3170(CombatContext* combat)
 {
     bool was_in_bed = false;
     int sound_id;
+    int aptitude_crit_failure_chance;
 
     if (combat->target_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
@@ -856,12 +857,13 @@ int sub_4B3170(CombatContext* combat)
         }
     }
 
-    int v2 = 0;
     if (combat->weapon_obj != OBJ_HANDLE_NULL && combat->skill != SKILL_THROWING) {
-        v2 = sub_461700(combat->weapon_obj, combat->attacker_obj);
+        aptitude_crit_failure_chance = item_aptitude_crit_failure_chance(combat->weapon_obj, combat->attacker_obj);
+    } else {
+        aptitude_crit_failure_chance = 0;
     }
 
-    if (random_between(1, 100) <= v2) {
+    if (random_between(1, 100) <= aptitude_crit_failure_chance) {
         combat->flags |= CF_CRITICAL;
     } else if ((combat->flags & 0x100) != 0) {
         combat->flags |= CF_HIT;

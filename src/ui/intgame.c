@@ -6990,7 +6990,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
                 dword_64C498,
                 MSG_TEXT_HALIGN_LEFT);
         } else if (complexity < 0) {
-            value = sub_461700(item_obj, pc_obj);
+            value = item_aptitude_crit_failure_chance(item_obj, pc_obj);
 
             mes_file_entry.num = 3; // "Aptitude adj to chance of critical failure"
             mes_get_msg(intgame_mes_file, &mes_file_entry);

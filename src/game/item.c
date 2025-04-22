@@ -559,26 +559,36 @@ int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3)
 }
 
 // 0x461700
-int sub_461700(int64_t item_obj, int64_t owner_obj)
+int item_aptitude_crit_failure_chance(int64_t item_obj, int64_t owner_obj)
 {
     int complexity;
     int aptitude;
 
     complexity = item_magic_tech_complexity(item_obj);
+
+    // This penalty only applies to technological items (complexity < 0).
     if (complexity >= 0) {
         return 0;
     }
 
+    // Make sure the owner is a critter. Otherwise there is no enough context
+    // for proper calculations.
     if (!obj_type_is_critter(obj_field_int32_get(owner_obj, OBJ_F_TYPE))) {
         return 0;
     }
 
     aptitude = stat_level_get(owner_obj, STAT_MAGICK_TECH_APTITUDE);
+
+    // Check if the owner gravitates towards technology (or at least neutral),
+    // in this case there is no penalty.
     if (aptitude <= 0) {
         return 0;
     }
 
-    return complexity * aptitude / -100;
+    // Calculate the penalty based the owner's profiency in magick: the better
+    // the magician, the higher the chance of a critical failure (up to the
+    // techinical complexity of the item itself).
+    return -complexity * aptitude / 100;
 }
 
 // 0x461780
