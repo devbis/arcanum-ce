@@ -5192,7 +5192,7 @@ void sub_545E80(TigRect* rect)
     (void)rect;
 
     pc_obj = player_get_local_pc_obj();
-    sub_460FF0(pc_obj);
+    item_generate_inventory(pc_obj);
     if (!sub_40FF50(2)) {
         sub_5412D0();
         return;

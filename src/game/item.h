@@ -45,7 +45,7 @@ typedef enum ItemCannot {
 bool item_init(GameInitInfo* init_info);
 void item_exit();
 void item_resize(GameResizeInfo *resize_info);
-void sub_460FF0(int64_t critter_obj);
+void item_generate_inventory(int64_t critter_obj);
 bool item_parent(int64_t item_obj, int64_t* parent_obj_ptr);
 bool item_is_item(int64_t obj);
 int item_inventory_location_get(int64_t obj);

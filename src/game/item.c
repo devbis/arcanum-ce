@@ -222,7 +222,7 @@ void item_resize(GameResizeInfo *resize_info)
 }
 
 // 0x460FF0
-void sub_460FF0(int64_t critter_obj)
+void item_generate_inventory(int64_t critter_obj)
 {
     int64_t loc;
     int cnt;
@@ -231,7 +231,6 @@ void sub_460FF0(int64_t critter_obj)
     int race;
     int gender;
     int64_t proto_obj;
-    int64_t new_item_obj;
 
     loc = obj_field_int64_get(critter_obj, OBJ_F_LOCATION);
     sub_463B30(critter_obj, false);
@@ -240,7 +239,7 @@ void sub_460FF0(int64_t critter_obj)
     cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
     for (idx = 0; idx < cnt; idx++) {
         item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, idx);
-        if (item_location_get(item_obj) == 1006) {
+        if (item_location_get(item_obj) == ITEM_INV_LOC_ARMOR) {
             break;
         }
     }
@@ -251,12 +250,15 @@ void sub_460FF0(int64_t critter_obj)
         if (gender == GENDER_FEMALE) {
             switch (item_armor_size(race)) {
             case OARF_SIZE_SMALL:
+                // "Small Ladies City Dweller Clothes"
                 proto_obj = sub_4685A0(8134);
                 break;
             case OARF_SIZE_MEDIUM:
+                // "Plain Dress"
                 proto_obj = sub_4685A0(8133);
                 break;
             case OARF_SIZE_LARGE:
+                // "Small Ladies City Dweller Clothes""
                 proto_obj = sub_4685A0(8135);
                 break;
             default:
@@ -266,12 +268,15 @@ void sub_460FF0(int64_t critter_obj)
         } else {
             switch (item_armor_size(race)) {
             case OARF_SIZE_SMALL:
+                // "Small Nice Suit"
                 proto_obj = sub_4685A0(8065);
                 break;
             case OARF_SIZE_MEDIUM:
+                // "Nice Suit"
                 proto_obj = sub_4685A0(8049);
                 break;
             case OARF_SIZE_LARGE:
+                // "Large Nice Suit"
                 proto_obj = sub_4685A0(8069);
                 break;
             default:
@@ -280,20 +285,23 @@ void sub_460FF0(int64_t critter_obj)
             }
         }
 
-        if (object_create(proto_obj, loc, &new_item_obj)) {
-            item_transfer(new_item_obj, critter_obj);
+        if (object_create(proto_obj, loc, &item_obj)) {
+            item_transfer(item_obj, critter_obj);
 
-            if (sub_464D20(new_item_obj, 1006, critter_obj)) {
-                object_destroy(new_item_obj);
+            if (sub_464D20(item_obj, ITEM_INV_LOC_ARMOR, critter_obj)) {
+                object_destroy(item_obj);
 
                 switch (item_armor_size(race)) {
                 case OARF_SIZE_SMALL:
+                    // "Small Jacket"
                     proto_obj = sub_4685A0(8118);
                     break;
                 case OARF_SIZE_MEDIUM:
+                    // "Jacket"
                     proto_obj = sub_4685A0(8110);
                     break;
                 case OARF_SIZE_LARGE:
+                    // "Rags"
                     proto_obj = sub_4685A0(8126);
                     break;
                 default:
@@ -301,24 +309,26 @@ void sub_460FF0(int64_t critter_obj)
                     assert(0);
                 }
 
-                if (object_create(proto_obj, loc, &new_item_obj)) {
-                    item_transfer(new_item_obj, critter_obj);
+                if (object_create(proto_obj, loc, &item_obj)) {
+                    item_transfer(item_obj, critter_obj);
                 }
             }
         }
     }
 
     if (tech_skill_get_base(critter_obj, TECH_SKILL_PICK_LOCKS) > 0) {
+        // "Crude Lockpicks"
         proto_obj = sub_4685A0(15178);
-        if (object_create(proto_obj, loc, &new_item_obj)) {
-            item_transfer(new_item_obj, critter_obj);
+        if (object_create(proto_obj, loc, &item_obj)) {
+            item_transfer(item_obj, critter_obj);
         }
     }
 
     if (basic_skill_get_base(critter_obj, BASIC_SKILL_HEAL) > 0) {
+        // "Bandages"
         proto_obj = sub_4685A0(15179);
-        if (object_create(proto_obj, loc, &new_item_obj)) {
-            item_transfer(new_item_obj, critter_obj);
+        if (object_create(proto_obj, loc, &item_obj)) {
+            item_transfer(item_obj, critter_obj);
         }
     }
 }
