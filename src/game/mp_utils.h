@@ -1061,15 +1061,15 @@ typedef struct PacketScriptFunc {
 
 static_assert(sizeof(PacketScriptFunc) == 0x10, "wrong size");
 
-typedef struct Packet125 {
+typedef struct PacketPerformIdentifyService {
     /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ ObjectID field_38;
-    /* 0050 */ int field_50;
-} Packet125;
+    /* 0008 */ ObjectID item_oid;
+    /* 0020 */ ObjectID npc_oid;
+    /* 0038 */ ObjectID pc_oid;
+    /* 0050 */ int cost;
+} PacketPerformIdentifyService;
 
-static_assert(sizeof(Packet125) == 0x58, "wrong size");
+static_assert(sizeof(PacketPerformIdentifyService) == 0x58, "wrong size");
 
 typedef struct Packet126 {
     /* 0000 */ int type;

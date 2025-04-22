@@ -4197,26 +4197,29 @@ void item_error_msg(int64_t obj, int reason)
 }
 
 // 0x467440
-void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4)
+void item_perform_identify_service(int64_t item_obj, int64_t npc_obj, int64_t pc_obj, int cost)
 {
     unsigned int flags;
-    Packet125 pkt;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()) {
-        flags = obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS);
-        flags |= OIF_IDENTIFIED;
-        obj_field_int32_set(a1, OBJ_F_ITEM_FLAGS, flags);
-        item_gold_transfer(a3, a2, a4, OBJ_HANDLE_NULL);
-        sub_4EE3A0(a3, a1);
-    } else {
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        PacketPerformIdentifyService pkt;
+
         pkt.type = 125;
-        sub_4F0640(a1, &(pkt.field_8));
-        sub_4F0640(a2, &(pkt.field_20));
-        sub_4F0640(a3, &(pkt.field_38));
-        pkt.field_50 = a4;
+        sub_4F0640(item_obj, &(pkt.item_oid));
+        sub_4F0640(npc_obj, &(pkt.npc_oid));
+        sub_4F0640(pc_obj, &(pkt.pc_oid));
+        pkt.cost = cost;
         tig_net_send_app_all(&pkt, sizeof(pkt));
+        return;
     }
+
+    flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+    flags |= OIF_IDENTIFIED;
+    obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
+
+    item_gold_transfer(pc_obj, npc_obj, cost, OBJ_HANDLE_NULL);
+
+    sub_4EE3A0(pc_obj, item_obj);
 }
 
 // 0x467520
