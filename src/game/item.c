@@ -67,8 +67,8 @@ static bool item_insert_success(void* userinfo);
 static bool item_insert_failure(void* userinfo);
 static bool sub_466EF0(int64_t obj, int64_t loc);
 static char* item_cannot_msg(int reason);
-static int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots);
-static int sub_4676A0(int64_t item_obj, int64_t parent_obj, int* slots);
+static int find_free_inv_loc_horizontal(int64_t item_obj, int64_t parent_obj, int* slots);
+static int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots);
 static void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static bool item_force_remove_success(void* userinfo);
@@ -3572,7 +3572,7 @@ void sub_466260(int64_t obj, int* a2)
 }
 
 // 0x466310
-void sub_466310(int64_t item_obj, int inventory_location, int* a3, int idx)
+void sub_466310(int64_t item_obj, int inventory_location, int* slots, int idx)
 {
     int x;
     int y;
@@ -3589,11 +3589,11 @@ void sub_466310(int64_t item_obj, int inventory_location, int* a3, int idx)
 
     item_inv_icon_size(item_obj, &width, &height);
 
-    a3 += inventory_location;
+    slots += inventory_location;
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            a3[y * 10 + x] = idx;
+            slots[y * 10 + x] = idx;
         }
     }
 }
@@ -3655,7 +3655,7 @@ int sub_4664C0(int64_t item_obj, int64_t parent_obj)
     int slots[960];
 
     sub_466260(parent_obj, slots);
-    return sub_4675A0(item_obj, parent_obj, slots);
+    return find_free_inv_loc_horizontal(item_obj, parent_obj, slots);
 }
 
 // 0x466510
@@ -4073,7 +4073,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
 }
 
 // 0x4670A0
-void sub_4670A0(int64_t parent_obj, int a2)
+void item_arrange_inventory(int64_t parent_obj, bool vertical)
 {
     int inventory_num_fld;
     int inventory_list_fld;
@@ -4085,9 +4085,8 @@ void sub_4670A0(int64_t parent_obj, int a2)
     int inventory_locations[960];
     int inventory_location;
 
-    if (tig_net_is_active()
-        && !tig_net_is_host()) {
-        sub_4EDE80(parent_obj, a2);
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        mp_item_arrange_inventory(parent_obj, vertical);
         return;
     }
 
@@ -4145,9 +4144,9 @@ void sub_4670A0(int64_t parent_obj, int a2)
     memset(slots, 0, sizeof(slots));
 
     for (idx = 0; idx < cnt; idx++) {
-        inventory_locations[idx] = a2
-            ? sub_4676A0(items[idx], parent_obj, slots)
-            : sub_4675A0(items[idx], parent_obj, slots);
+        inventory_locations[idx] = vertical
+            ? find_free_inv_loc_vertical(items[idx], parent_obj, slots)
+            : find_free_inv_loc_horizontal(items[idx], parent_obj, slots);
         if (inventory_locations[idx] == -1) {
             return;
         }
@@ -4236,7 +4235,7 @@ void sub_467520(int64_t obj)
 }
 
 // 0x4675A0
-int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots)
+int find_free_inv_loc_horizontal(int64_t item_obj, int64_t parent_obj, int* slots)
 {
     int width;
     int height;
@@ -4286,7 +4285,7 @@ int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots)
 }
 
 // 0x4676A0
-int sub_4676A0(int64_t item_obj, int64_t parent_obj, int* slots)
+int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots)
 {
     int width;
     int height;

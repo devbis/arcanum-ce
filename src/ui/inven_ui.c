@@ -313,7 +313,7 @@ static tig_button_handle_t inven_ui_total_defence_image_btn;
 static tig_button_handle_t inven_ui_inventory_btn;
 
 // 0x6814F0
-static int dword_6814F0;
+static bool inven_ui_arrange_vertical;
 
 // 0x6814F8
 static int64_t inven_ui_pc_obj;
@@ -1024,7 +1024,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         && qword_6813A8 != OBJ_HANDLE_NULL
         && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_PC
         && sub_4A5460(qword_6813A8) <= 1) {
-        sub_4670A0(qword_6813A8, 0);
+        item_arrange_inventory(qword_6813A8, false);
         sub_466260(qword_6813A8, dword_681518);
     }
 
@@ -1077,7 +1077,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         sub_550750(&ui_message);
     }
 
-    dword_6814F0 = 0;
+    inven_ui_arrange_vertical = false;
     inven_ui_created = true;
 
     return true;
@@ -1322,13 +1322,13 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 static inline bool inven_ui_message_filter_handle_button_released(TigMessage* msg)
 {
     if (msg->data.button.button_handle == inven_ui_arrange_items_btn) {
-        sub_4670A0(inven_ui_pc_obj, dword_6814F0);
+        item_arrange_inventory(inven_ui_pc_obj, inven_ui_arrange_vertical);
         sub_466260(inven_ui_pc_obj, dword_68111C);
         if (dword_6810FC) {
-            sub_4670A0(qword_6813A8, dword_6814F0);
+            item_arrange_inventory(qword_6813A8, inven_ui_arrange_vertical);
             sub_466260(qword_6813A8, dword_681518);
         }
-        dword_6814F0 = 1 - dword_6814F0;
+        inven_ui_arrange_vertical = !inven_ui_arrange_vertical;
         redraw_inven(false);
         return true;
     }

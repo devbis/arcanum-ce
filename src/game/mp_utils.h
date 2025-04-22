@@ -784,13 +784,13 @@ typedef struct Packet95 {
 
 static_assert(sizeof(Packet95) == 0x20, "wrong size");
 
-typedef struct Packet96 {
+typedef struct PacketArrangeInventory {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet96;
+    /* 0020 */ bool vertical;
+} PacketArrangeInventory;
 
-static_assert(sizeof(Packet96) == 0x28, "wrong size");
+static_assert(sizeof(PacketArrangeInventory) == 0x28, "wrong size");
 
 typedef struct Packet97 {
     /* 0000 */ int type;
@@ -1188,7 +1188,8 @@ void sub_4EDC00(int64_t a1, int64_t a2, int a3);
 void sub_4EDC70(int64_t a1, int64_t a2, int a3);
 void sub_4EDCE0(int64_t obj, tig_art_id_t art_id);
 void sub_4EDDE0(int64_t obj);
-void sub_4EDE80(int64_t obj, int a2);
+void mp_item_arrange_inventory(int64_t obj, bool vertical);
+void mp_handle_item_arrange_inventory(PacketArrangeInventory* pkt);
 void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7);
 void sub_4EE060(int64_t a1, int64_t a2);
 void sub_4EE0F0(int a1, int64_t a2, int64_t a3);
