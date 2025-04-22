@@ -53,7 +53,7 @@ int item_weight(int64_t item_obj, int64_t owner_obj);
 int item_total_weight(int64_t obj);
 int item_effective_power(int64_t item_obj, int64_t parent_obj);
 int item_magic_tech_complexity(int64_t item_obj);
-int sub_461540(int64_t item_id, int64_t owner_id);
+int item_effective_power_ratio(int64_t item_obj, int64_t owner_obj);
 int sub_461590(int64_t item_id, int64_t owner_id, int a3);
 int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3);
 int sub_461700(int64_t item_obj, int64_t owner_obj);

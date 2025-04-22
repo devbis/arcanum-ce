@@ -481,16 +481,19 @@ int item_magic_tech_complexity(int64_t item_obj)
 }
 
 // 0x461540
-int sub_461540(int64_t item_id, int64_t owner_id)
+int item_effective_power_ratio(int64_t item_obj, int64_t owner_obj)
 {
     int complexity;
 
-    complexity = item_magic_tech_complexity(item_id);
-    if (complexity != 0) {
-        return 100 * item_effective_power(item_id, owner_id) / complexity;
-    } else {
+    complexity = item_magic_tech_complexity(item_obj);
+
+    // Check if item is neutral.
+    if (complexity == 0) {
         return 100;
     }
+
+    // Calculate effective power ratio.
+    return 100 * item_effective_power(item_obj, owner_obj) / complexity;
 }
 
 // 0x461590
@@ -4581,7 +4584,7 @@ void sub_467E80(int64_t a1, int64_t a2)
     unsigned int light_flags;
     unsigned int light_size;
     unsigned int critter_flags;
-    int v1;
+    int effectiveness;
     tig_art_id_t aid;
     tig_color_t color;
 
@@ -4593,12 +4596,12 @@ void sub_467E80(int64_t a1, int64_t a2)
             if (item_obj != OBJ_HANDLE_NULL) {
                 light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
                 if (light_size != 0) {
-                    v1 = sub_461540(item_obj, a2);
-                    if (v1 <= 25) {
+                    effectiveness = item_effective_power_ratio(item_obj, a2);
+                    if (effectiveness <= 25) {
                         light_size >>= 3;
-                    } else if (v1 <= 50) {
+                    } else if (effectiveness <= 50) {
                         light_size >>= 2;
-                    } else if (v1 <= 75) {
+                    } else if (effectiveness <= 75) {
                         light_size >>= 1;
                     }
                     light_flags |= light_size & OIF_LIGHT_ANY;
