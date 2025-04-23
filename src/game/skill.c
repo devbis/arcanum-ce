@@ -514,11 +514,11 @@ char* basic_skill_description(int bs)
 }
 
 // 0x4C62D0
-int sub_4C62D0(int a1, int a2, int a3)
+int basic_skill_money(int bs, int skill_level, int training)
 {
-    (void)a1;
+    (void)bs;
 
-    return (a3 + 1) * (a2 + 2);
+    return (training + 1) * (skill_level + 2);
 }
 
 // 0x4C62E0
@@ -871,11 +871,11 @@ char* training_name(int training)
 }
 
 // 0x4C69E0
-int sub_4C69E0(int a1, int a2, int a3)
+int tech_skill_money(int ts, int skill_level, int training)
 {
-    (void)a1;
+    (void)ts;
 
-    return (a3 + 1) * (a2 + 2);
+    return (training + 1) * (skill_level + 2);
 }
 
 // 0x4C69F0

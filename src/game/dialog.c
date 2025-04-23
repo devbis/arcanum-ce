@@ -3816,7 +3816,7 @@ void sub_419B50(int a1, int a2, DialogState* a3)
     int v2;
     int skill_level;
     int training;
-    int v3;
+    int amt;
 
     sub_417590(a2, &v1, &v2);
     if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
@@ -3825,13 +3825,13 @@ void sub_419B50(int a1, int a2, DialogState* a3)
         if (IS_TECH_SKILL(a1)) {
             skill_level = tech_skill_level(a3->npc_obj, GET_TECH_SKILL(a1));
             training = tech_skill_training_get(a3->npc_obj, GET_TECH_SKILL(a1));
-            v3 = sub_4C69E0(GET_TECH_SKILL(a1), skill_level, training);
+            amt = tech_skill_money(GET_TECH_SKILL(a1), skill_level, training);
         } else {
             skill_level = basic_skill_level(a3->npc_obj, GET_BASIC_SKILL(a1));
             training = basic_skill_training_get(a3->npc_obj, GET_BASIC_SKILL(a1));
-            v3 = sub_4C62D0(GET_BASIC_SKILL(a1), skill_level, training);
+            amt = basic_skill_money(GET_BASIC_SKILL(a1), skill_level, training);
         }
-        sub_418A40(v3, 16, a1, v1, v2, a3);
+        sub_418A40(amt, 16, a1, v1, v2, a3);
     }
 }
 
