@@ -3663,7 +3663,7 @@ void sub_578330(int64_t a1, int64_t a2)
             dialog_copy_npc_sell_msg(qword_682C78, inven_ui_pc_obj, byte_682804);
             sprintf(&(byte_68241C[pos]), byte_682804, dword_681440);
 
-            if (basic_skill_get_training(inven_ui_pc_obj, BASIC_SKILL_HAGGLE) >= TRAINING_APPRENTICE) {
+            if (basic_skill_training_get(inven_ui_pc_obj, BASIC_SKILL_HAGGLE) >= TRAINING_APPRENTICE) {
                 int worth;
                 int discount;
 
@@ -3707,7 +3707,7 @@ void sub_578760(int64_t obj)
     hp_max = object_hp_max(obj);
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_item_id_destroyed_get(art_id) != 0) {
-        if (tech_skill_get_training(qword_682C78, TECH_SKILL_REPAIR) != TRAINING_MASTER) {
+        if (tech_skill_training_get(qword_682C78, TECH_SKILL_REPAIR) != TRAINING_MASTER) {
             dialog_copy_npc_wont_repair_broken_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
             redraw_inven(false);
             return;
@@ -4214,7 +4214,7 @@ bool sub_579840(int64_t obj, bool a2)
         return false;
     }
 
-    if (basic_skill_get_base(qword_682C78, BASIC_SKILL_GAMBLING) == 0) {
+    if (basic_skill_points_get(qword_682C78, BASIC_SKILL_GAMBLING) == 0) {
         if (!a2) {
             dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 9, byte_68241C);
         }
@@ -4237,7 +4237,7 @@ bool sub_579840(int64_t obj, bool a2)
         return false;
     }
 
-    training = basic_skill_get_training(qword_682C78, BASIC_SKILL_GAMBLING);
+    training = basic_skill_training_get(qword_682C78, BASIC_SKILL_GAMBLING);
     if (IS_WEAR_INV_LOC(item_inventory_location_get(obj))) {
         if (training < TRAINING_EXPERT) {
             if (!a2) {

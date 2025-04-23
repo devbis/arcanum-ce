@@ -23,7 +23,7 @@
 #define FIRST_BASIC_SKILL_DESC_ID (FIRST_TRAINING_NAME_ID + TRAINING_COUNT)
 #define FIRST_TECH_SKILL_DESC_ID (FIRST_BASIC_SKILL_DESC_ID + BASIC_SKILL_COUNT)
 
-static int sub_4C5F70(int value);
+static int max_skill_for_stat_level(int stat_level);
 static int sub_4C6560();
 static bool skill_invocation_check_crit_hit(int a1, int a2, SkillInvocation* skill_invocation);
 static bool skill_invocation_check_crit_miss(int a1, int a2, SkillInvocation* skill_invocation);
@@ -54,11 +54,11 @@ static int tech_skill_stats[TECH_SKILL_COUNT] = {
 };
 
 // 0x5B6F44
-static int dword_5B6F44[TECH_SKILL_COUNT] = {
-    0,
-    1,
-    9,
-    18,
+static int skill_level_training_tbl[TRAINING_COUNT] = {
+    /*       TRAINING_NONE */ 0,
+    /* TRAINING_APPRENTICE */ 1,
+    /*     TRAINING_EXPERT */ 9,
+    /*     TRAINING_MASTER */ 18,
 };
 
 // 0x5B6F48
@@ -88,7 +88,7 @@ static unsigned int skill_flags[SKILL_COUNT] = {
 };
 
 // 0x5B6FA4
-static int dword_5B6FA4[20] = {
+static int max_skill_level_tbl[20] = {
     3,
     3,
     3,
@@ -334,114 +334,108 @@ void skill_set_defaults(int64_t obj)
 }
 
 // 0x4C5E50
-int sub_4C5E50(int64_t obj, int skill)
+int basic_skill_base(int64_t obj, int bs)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= BASIC_SKILL_COUNT) {
+        || !IS_BASIC_SKILL_VALID(bs)) {
         return 0;
     }
 
-    return 4 * basic_skill_get_base(obj, skill);
+    return 4 * basic_skill_points_get(obj, bs);
 }
 
 // 0x4C5EB0
-int basic_skill_level(int64_t obj, int skill)
+int basic_skill_level(int64_t obj, int bs)
 {
-    int v1;
     int skill_level;
     int key_stat_level;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= BASIC_SKILL_COUNT) {
+        || !IS_BASIC_SKILL_VALID(bs)) {
         return 0;
     }
 
-    if (skill == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
-        v1 = 20;
+    if (bs == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
+        skill_level = 20;
     } else {
-        v1 = sub_4C5E50(obj, skill);
+        skill_level = basic_skill_base(obj, bs);
     }
 
-    skill_level = effect_adjust_basic_skill_level(obj, skill, v1);
+    skill_level = effect_adjust_basic_skill_level(obj, bs, skill_level);
     if (skill_level < 0) {
         skill_level = 0;
     } else if (skill_level > 20) {
         skill_level = 20;
     }
 
-    key_stat_level = stat_level_get(obj, basic_skill_get_stat(skill));
-    if (skill_level > sub_4C5F70(key_stat_level)) {
-        skill_level = sub_4C5F70(key_stat_level);
+    key_stat_level = stat_level_get(obj, basic_skill_stat(bs));
+    if (skill_level > max_skill_for_stat_level(key_stat_level)) {
+        skill_level = max_skill_for_stat_level(key_stat_level);
     }
 
     return skill_level;
 }
 
 // 0x4C5F70
-int sub_4C5F70(int value)
+int max_skill_for_stat_level(int stat_level)
 {
-    if (value < 1) {
-        value = 1;
-    } else if (value > 20) {
-        value = 20;
+    if (stat_level < 1) {
+        stat_level = 1;
+    } else if (stat_level > 20) {
+        stat_level = 20;
     }
 
-    return dword_5B6FA4[value];
+    return max_skill_level_tbl[stat_level];
 }
 
 // 0x4C5FA0
-int basic_skill_get_base(int64_t obj, int skill)
+int basic_skill_points_get(int64_t obj, int bs)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= BASIC_SKILL_COUNT) {
+        || !IS_BASIC_SKILL_VALID(bs)) {
         return 0;
     }
 
-    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) & 63;
+    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, bs) & 63;
 }
 
 // 0x4C6000
-int basic_skill_set_base(int64_t obj, int skill, int value)
+int basic_skill_points_set(int64_t obj, int bs, int value)
 {
     int key_stat_level;
     int current_value;
 
     if (value < 0
         || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= BASIC_SKILL_COUNT) {
+        || !IS_BASIC_SKILL_VALID(bs)) {
         return 0;
     }
 
-    key_stat_level = stat_level_get(obj, basic_skill_get_stat(skill));
-    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
+    key_stat_level = stat_level_get(obj, basic_skill_stat(bs));
+    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, bs);
 
-    if (4 * value > sub_4C5F70(key_stat_level)) {
+    if (4 * value > max_skill_for_stat_level(key_stat_level)) {
         return current_value & 63;
     }
 
-    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, value | (current_value & ~63));
+    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, bs, value | (current_value & ~63));
 
     return value;
 }
 
 // 0x4C60C0
-int basic_skill_get_training(int64_t obj, int skill)
+int basic_skill_training_get(int64_t obj, int bs)
 {
     int melee;
     int level;
     int index;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= BASIC_SKILL_COUNT) {
+        || !IS_BASIC_SKILL_VALID(bs)) {
         return 0;
     }
 
-    if (skill == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
+    if (bs == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
         melee = basic_skill_level(obj, BASIC_SKILL_MELEE);
         level = stat_level_get(obj, STAT_LEVEL);
 
@@ -458,29 +452,22 @@ int basic_skill_get_training(int64_t obj, int skill)
         return index;
     }
 
-    return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) >> 6) & 3;
+    return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, bs) >> 6) & 3;
 }
 
 // 0x4C6170
-int basic_skill_set_training(int64_t obj, int skill, int training)
+int basic_skill_training_set(int64_t obj, int bs, int training)
 {
     int skill_value;
     int current_training;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || !IS_BASIC_SKILL_VALID(bs)
+        || !IS_TRAINING_VALID(training)) {
         return 0;
     }
 
-    if (skill < 0 || skill >= BASIC_SKILL_COUNT) {
-        return 0;
-    }
-
-    if (training < 0 || training >= TRAINING_COUNT) {
-        return 0;
-    }
-
-    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
+    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, bs);
     current_training = (skill_value >> 6) & 3;
     if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
@@ -491,7 +478,7 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
 
         pkt.type = 56;
         sub_4440E0(obj, &(pkt.field_8));
-        pkt.skill = skill;
+        pkt.skill = bs;
         pkt.training = training;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -500,13 +487,13 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
         return current_training;
     }
 
-    if (basic_skill_level(obj, skill) < dword_5B6F44[skill]) {
+    if (basic_skill_level(obj, bs) < training_min_skill_level_required(training)) {
         return current_training;
     }
 
     obj_arrayfield_int32_set(obj,
         OBJ_F_CRITTER_BASIC_SKILL_IDX,
-        skill,
+        bs,
         (skill_value & ~(3 << 6)) | (training << 6));
 
     background_educate_followers(obj);
@@ -515,15 +502,15 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
 }
 
 // 0x4C62B0
-char* basic_skill_get_name(int skill)
+char* basic_skill_name(int bs)
 {
-    return basic_skill_names[skill];
+    return basic_skill_names[bs];
 }
 
 // 0x4C62C0
-char* basic_skill_get_description(int skill)
+char* basic_skill_description(int bs)
 {
-    return basic_skill_descriptions[skill];
+    return basic_skill_descriptions[bs];
 }
 
 // 0x4C62D0
@@ -643,37 +630,37 @@ int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
 }
 
 // 0x4C64B0
-int sub_4C64B0(int64_t obj, int skill)
+int basic_skill_cost_inc(int64_t obj, int bs)
 {
     (void)obj;
-    (void)skill;
+    (void)bs;
 
     return 1;
 }
 
 // 0x4C64C0
-int sub_4C64C0(int64_t obj, int skill)
+int basic_skill_cost_dec(int64_t obj, int bs)
 {
     (void)obj;
-    (void)skill;
+    (void)bs;
 
     return 1;
 }
 
 // 0x4C64D0
-int basic_skill_get_stat(int skill)
+int basic_skill_stat(int bs)
 {
-    return basic_skill_stats[skill];
+    return basic_skill_stats[bs];
 }
 
 // 0x4C64E0
-int sub_4C64E0(int a1)
+int basic_skill_min_stat_level_required(int skill_level)
 {
-    int value;
+    int stat_level;
 
-    for (value = 0; value < 20; value++) {
-        if (sub_4C5F70(value + 1) >= a1) {
-            return value + 1;
+    for (stat_level = 0; stat_level < 20; stat_level++) {
+        if (max_skill_for_stat_level(stat_level + 1) >= skill_level) {
+            return stat_level + 1;
         }
     }
 
@@ -697,7 +684,7 @@ int sub_4C6520(int64_t obj)
     gambling = basic_skill_level(obj, BASIC_SKILL_GAMBLING);
     amount = dword_5B7090[gambling];
 
-    if (basic_skill_get_training(obj, BASIC_SKILL_GAMBLING) >= TRAINING_APPRENTICE) {
+    if (basic_skill_training_get(obj, BASIC_SKILL_GAMBLING) >= TRAINING_APPRENTICE) {
         amount *= 2;
     }
 
@@ -716,60 +703,56 @@ int sub_4C6560()
 }
 
 // 0x4C6580
-int sub_4C6580(int64_t obj, int skill)
+int tech_skill_base(int64_t obj, int ts)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= TECH_SKILL_COUNT) {
+        || !IS_TECH_SKILL_VALID(ts)) {
         return 0;
     }
 
-    return 4 * tech_skill_get_base(obj, skill);
+    return 4 * tech_skill_points_get(obj, ts);
 }
 
 // 0x4C65E0
-int tech_skill_level(int64_t obj, int skill)
+int tech_skill_level(int64_t obj, int ts)
 {
-    int v1;
     int skill_level;
     int key_stat_level;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= TECH_SKILL_COUNT) {
+        || !IS_TECH_SKILL_VALID(ts)) {
         return 0;
     }
 
-    v1 = sub_4C6580(obj, skill);
-    skill_level = effect_adjust_tech_skill_level(obj, skill, v1);
+    skill_level = tech_skill_base(obj, ts);
+    skill_level = effect_adjust_tech_skill_level(obj, ts, skill_level);
     if (skill_level < 0) {
         skill_level = 0;
     } else if (skill_level > 20) {
         skill_level = 20;
     }
 
-    key_stat_level = stat_level_get(obj, tech_skill_get_stat(skill));
-    if (skill_level > sub_4C5F70(key_stat_level)) {
-        skill_level = sub_4C5F70(key_stat_level);
+    key_stat_level = stat_level_get(obj, tech_skill_stat(ts));
+    if (skill_level > max_skill_for_stat_level(key_stat_level)) {
+        skill_level = max_skill_for_stat_level(key_stat_level);
     }
 
     return skill_level;
 }
 
 // 0x4C6680
-int tech_skill_get_base(int64_t obj, int skill)
+int tech_skill_points_get(int64_t obj, int ts)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= TECH_SKILL_COUNT) {
+        || !IS_TECH_SKILL_VALID(ts)) {
         return 0;
     }
 
-    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill) & 63;
+    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, ts) & 63;
 }
 
 // 0x4C66E0
-int tech_skill_set_base(int64_t obj, int skill, int value)
+int tech_skill_points_set(int64_t obj, int ts, int value)
 {
     int key_stat_level;
     int current_value;
@@ -785,22 +768,19 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
         return 0;
     }
 
-    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || !IS_TECH_SKILL_VALID(ts)) {
         return 0;
     }
 
-    if (skill < 0 || skill >= TECH_SKILL_COUNT) {
-        return 0;
-    }
+    key_stat_level = stat_level_get(obj, tech_skill_stat(ts));
+    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, ts);
 
-    key_stat_level = stat_level_get(obj, tech_skill_get_stat(skill));
-    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
-
-    if (4 * value > sub_4C5F70(key_stat_level)) {
+    if (4 * value > max_skill_for_stat_level(key_stat_level)) {
         return current_value & 63;
     }
 
-    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, value | (current_value & ~63));
+    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, ts, value | (current_value & ~63));
 
     tech_points = stat_base_get(obj, STAT_TECH_POINTS);
     tech_points += value - (current_value & 63);
@@ -810,37 +790,29 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
 }
 
 // 0x4C67F0
-int tech_skill_get_training(int64_t obj, int skill)
+int tech_skill_training_get(int64_t obj, int ts)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        || skill < 0
-        || skill >= TECH_SKILL_COUNT) {
+        || !IS_TECH_SKILL_VALID(ts)) {
         return TRAINING_NONE;
     }
 
-    return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill) >> 6) & 3;
+    return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, ts) >> 6) & 3;
 }
 
 // 0x4C6850
-int tech_skill_set_training(int64_t obj, int skill, int training)
+int tech_skill_training_set(int64_t obj, int ts, int training)
 {
     int skill_value;
     int current_training;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || !IS_TECH_SKILL_VALID(ts)
+        || !IS_TRAINING_VALID(training)) {
         return 0;
     }
 
-    if (skill < 0 || skill >= TECH_SKILL_COUNT) {
-        return 0;
-    }
-
-    if (training < 0 || training >= TRAINING_COUNT) {
-        return 0;
-    }
-
-    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
+    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, ts);
     current_training = (skill_value >> 6) & 3;
     if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
@@ -851,7 +823,7 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
 
         pkt.type = 56;
         sub_4440E0(obj, &(pkt.field_8));
-        pkt.skill = BASIC_SKILL_COUNT + skill;
+        pkt.skill = BASIC_SKILL_COUNT + ts;
         pkt.training = training;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -860,13 +832,13 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
         return current_training;
     }
 
-    if (tech_skill_level(obj, skill) < dword_5B6F44[skill]) {
+    if (tech_skill_level(obj, ts) < training_min_skill_level_required(training)) {
         return current_training;
     }
 
     obj_arrayfield_int32_set(obj,
         OBJ_F_CRITTER_TECH_SKILL_IDX,
-        skill,
+        ts,
         (skill_value & ~(3 << 6)) | (training << 6));
 
     background_educate_followers(obj);
@@ -875,25 +847,25 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
 }
 
 // 0x4C69A0
-char* tech_skill_get_name(int skill)
+char* tech_skill_name(int ts)
 {
-    return tech_skill_names[skill];
+    return tech_skill_names[ts];
 }
 
 // 0x4C69B0
-char* tech_skill_get_description(int skill)
+char* tech_skill_description(int ts)
 {
-    return tech_skill_descriptions[skill];
+    return tech_skill_descriptions[ts];
 }
 
 // 0x4C69C0
-int sub_4C69C0(int skill)
+int training_min_skill_level_required(int training)
 {
-    return dword_5B6F44[skill];
+    return skill_level_training_tbl[training];
 }
 
 // 0x4C69D0
-char* training_get_name(int training)
+char* training_name(int training)
 {
     return training_names[training];
 }
@@ -970,37 +942,37 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
 }
 
 // 0x4C6AF0
-int sub_4C6AF0(int64_t obj, int skill)
+int tech_skill_cost_inc(int64_t obj, int ts)
 {
     (void)obj;
-    (void)skill;
+    (void)ts;
 
     return 1;
 }
 
 // 0x4C6B00
-int sub_4C6B00(int64_t obj, int skill)
+int tech_skill_cost_dec(int64_t obj, int ts)
 {
     (void)obj;
-    (void)skill;
+    (void)ts;
 
     return 1;
 }
 
 // 0x4C6B10
-int tech_skill_get_stat(int skill)
+int tech_skill_stat(int ts)
 {
-    return tech_skill_stats[skill];
+    return tech_skill_stats[ts];
 }
 
 // 0x4C6B20
-int sub_4C6B20(int a1)
+int tech_skill_min_stat_level_required(int skill_level)
 {
-    int value;
+    int stat_level;
 
-    for (value = 0; value < 20; value++) {
-        if (sub_4C5F70(value + 1) >= a1) {
-            return value + 1;
+    for (stat_level = 0; stat_level < 20; stat_level++) {
+        if (max_skill_for_stat_level(stat_level + 1) >= skill_level) {
+            return stat_level + 1;
         }
     }
 
@@ -1014,7 +986,7 @@ bool skill_check_stat(int64_t obj, int stat, int value)
 
     for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
         if (basic_skill_stats[skill] == stat) {
-            if (sub_4C5E50(obj, skill) > sub_4C5F70(value)) {
+            if (basic_skill_base(obj, skill) > max_skill_for_stat_level(value)) {
                 return false;
             }
         }
@@ -1022,7 +994,7 @@ bool skill_check_stat(int64_t obj, int stat, int value)
 
     for (skill = 0; skill < TECH_SKILL_COUNT; skill++) {
         if (tech_skill_stats[skill] == stat) {
-            if (sub_4C6580(obj, skill) > sub_4C5F70(value)) {
+            if (tech_skill_base(obj, skill) > max_skill_for_stat_level(value)) {
                 return false;
             }
         }
@@ -1107,12 +1079,12 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         basic_skill = -1;
         tech_skill = GET_TECH_SKILL(skill);
         effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
-        training = tech_skill_get_training(source_obj, tech_skill);
+        training = tech_skill_training_get(source_obj, tech_skill);
     } else {
         basic_skill = GET_BASIC_SKILL(skill);
         tech_skill = -1;
         effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
-        training = basic_skill_get_training(source_obj, basic_skill);
+        training = basic_skill_training_get(source_obj, basic_skill);
     }
 
     difficulty = skill_invocation->modifier + sub_4C8430(skill_invocation);
@@ -1621,7 +1593,7 @@ bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocatio
         chance += 2 * basic_skill_level(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB);
         chance -= stat_level_get(skill_invocation->target.obj, STAT_LEVEL);
 
-        if (basic_skill_get_training(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
+        if (basic_skill_training_get(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
             chance += 20;
         }
     }
@@ -1703,12 +1675,12 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         basic_skill = -1;
         tech_skill = GET_TECH_SKILL(skill);
         effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
-        training = tech_skill_get_training(source_obj, tech_skill);
+        training = tech_skill_training_get(source_obj, tech_skill);
     } else {
         basic_skill = GET_BASIC_SKILL(skill);
         tech_skill = -1;
         effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
-        training = basic_skill_get_training(source_obj, basic_skill);
+        training = basic_skill_training_get(source_obj, basic_skill);
     }
 
     difficulty = skill_invocation->modifier;
@@ -1772,7 +1744,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         }
 
         if ((skill_invocation->flags & 0x8000) == 0
-            || basic_skill_get_training(source_obj, BASIC_SKILL_BACKSTAB) == TRAINING_NONE) {
+            || basic_skill_training_get(source_obj, BASIC_SKILL_BACKSTAB) == TRAINING_NONE) {
             difficulty += effectiveness * (object_get_ac(target_obj, false) / 2) / 100;
         }
     }

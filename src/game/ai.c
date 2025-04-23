@@ -1480,7 +1480,7 @@ void ai_npc_wait(int64_t obj)
     leader_obj = critter_leader_get(obj);
     if (stat_atmax(leader_obj, STAT_CHARISMA)
         && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
-        if (basic_skill_get_training(leader_obj, BASIC_SKILL_PERSUATION) != TRAINING_NONE) {
+        if (basic_skill_training_get(leader_obj, BASIC_SKILL_PERSUATION) != TRAINING_NONE) {
             wait++;
         }
 
@@ -2145,7 +2145,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
 
     if (obj_type_is_critter(target_obj_type)
         && critter_is_concealed(target_obj)
-        && basic_skill_get_training(target_obj, BASIC_SKILL_PROWLING) >= TRAINING_MASTER
+        && basic_skill_training_get(target_obj, BASIC_SKILL_PROWLING) >= TRAINING_MASTER
         && ai_can_see(source_obj, target_obj) != 0) {
         return false;
     }
@@ -2570,7 +2570,7 @@ bool ai_use_grenade(Ai* ai, int64_t distance)
     npc_flags &= ~ONF_CHECK_GRENADE;
     obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-    if (basic_skill_get_base(ai->obj, BASIC_SKILL_THROWING) == 0) {
+    if (basic_skill_points_get(ai->obj, BASIC_SKILL_THROWING) == 0) {
         return false;
     }
 
@@ -3209,7 +3209,7 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
         }
     }
 
-    if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
+    if (basic_skill_training_get(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
         return AI_FOLLOW_OK;
     }
 
@@ -3283,7 +3283,7 @@ int ai_check_leader(int64_t npc_obj, int64_t pc_obj)
         }
     }
 
-    if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
+    if (basic_skill_training_get(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
         return AI_FOLLOW_OK;
     }
 

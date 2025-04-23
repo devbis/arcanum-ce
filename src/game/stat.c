@@ -318,7 +318,7 @@ int stat_level_get(int64_t obj, int stat)
 
         break;
     case STAT_MAX_FOLLOWERS:
-        if (basic_skill_get_training(obj, BASIC_SKILL_PERSUATION) >= TRAINING_EXPERT) {
+        if (basic_skill_training_get(obj, BASIC_SKILL_PERSUATION) >= TRAINING_EXPERT) {
             value += 1;
         }
         break;

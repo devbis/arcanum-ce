@@ -520,7 +520,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
 
     if (*is_success_ptr) {
         if (*is_critical_ptr
-            && tech_skill_get_training(pc_obj, TECH_SKILL_DISARM_TRAPS) >= TRAINING_EXPERT
+            && tech_skill_training_get(pc_obj, TECH_SKILL_DISARM_TRAPS) >= TRAINING_EXPERT
             && get_disarm_item_name(trap_obj, &disarm_item_name)) {
             prototype_handle = sub_4685A0(disarm_item_name);
             loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);

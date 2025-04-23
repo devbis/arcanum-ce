@@ -5561,23 +5561,23 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
         intgame_message_window_write_text(window_handle,
             IS_TECH_SKILL(ui_message->field_8)
-                ? tech_skill_get_name(GET_TECH_SKILL(ui_message->field_8))
-                : basic_skill_get_name(GET_BASIC_SKILL(ui_message->field_8)),
+                ? tech_skill_name(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_name(GET_BASIC_SKILL(ui_message->field_8)),
             &stru_5C70C8,
             dword_739F88,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
             IS_TECH_SKILL(ui_message->field_8)
-                ? tech_skill_get_description(GET_TECH_SKILL(ui_message->field_8))
-                : basic_skill_get_description(GET_BASIC_SKILL(ui_message->field_8)),
+                ? tech_skill_description(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_description(GET_BASIC_SKILL(ui_message->field_8)),
             &stru_5C7138,
             dword_64C498,
             MSG_TEXT_HALIGN_LEFT);
 
         if (ui_message->field_C != 0) {
             mes_file_entry1.num = 28 + (IS_TECH_SKILL(ui_message->field_8)
-                ? tech_skill_get_stat(GET_TECH_SKILL(ui_message->field_8))
-                : basic_skill_get_stat(GET_BASIC_SKILL(ui_message->field_8)));
+                ? tech_skill_stat(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_stat(GET_BASIC_SKILL(ui_message->field_8)));
             mes_get_msg(intgame_mes_file, &mes_file_entry1);
             sprintf(str, "%s: %d", mes_file_entry1.str, ui_message->field_C);
             intgame_message_window_write_text(window_handle,

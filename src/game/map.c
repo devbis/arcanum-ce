@@ -1841,13 +1841,13 @@ void map_apply_obj_patch(int64_t obj, char* str)
 
                     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
                         if (strcmpi(value, off_5B6FF4[index]) == 0) {
-                            basic_skill_set_training(obj, index, training);
+                            basic_skill_training_set(obj, index, training);
                         }
                     }
 
                     for (index = 0; index < TECH_SKILL_COUNT; index++) {
                         if (strcmpi(value, off_5B7024[index]) == 0) {
-                            tech_skill_set_training(obj, index, training);
+                            tech_skill_training_set(obj, index, training);
                         }
                     }
                 }

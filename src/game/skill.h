@@ -21,6 +21,8 @@ typedef enum BasicSkill {
     BASIC_SKILL_COUNT,
 } BasicSkill;
 
+#define IS_BASIC_SKILL_VALID(bs) ((bs) >= 0 && (bs) < BASIC_SKILL_COUNT)
+
 typedef enum TechSkill {
     TECH_SKILL_REPAIR,
     TECH_SKILL_FIREARMS,
@@ -28,6 +30,8 @@ typedef enum TechSkill {
     TECH_SKILL_DISARM_TRAPS,
     TECH_SKILL_COUNT,
 } TechSkill;
+
+#define IS_TECH_SKILL_VALID(ts) ((ts) >= 0 && (ts) < TECH_SKILL_COUNT)
 
 typedef enum Skill {
     SKILL_BOW,
@@ -60,6 +64,8 @@ typedef enum Training {
     TRAINING_MASTER,
     TRAINING_COUNT,
 } Training;
+
+#define IS_TRAINING_VALID(tr) ((tr) >= 0 && (tr) < TRAINING_COUNT)
 
 typedef bool(SkillCallbacksF0)(int64_t, int, int, bool);
 typedef bool(SkillCallbacksF4)(int64_t, int64_t, int64_t, bool);
@@ -130,39 +136,39 @@ void skill_exit();
 bool skill_load(GameLoadInfo* load_info);
 bool skill_save(TigFile* stream);
 void skill_set_defaults(int64_t obj);
-int sub_4C5E50(int64_t obj, int skill);
-int basic_skill_level(int64_t obj, int skill);
-int basic_skill_get_base(int64_t obj, int skill);
-int basic_skill_set_base(int64_t obj, int skill, int value);
-int basic_skill_get_training(int64_t obj, int skill);
-int basic_skill_set_training(int64_t obj, int skill, int training);
-char* basic_skill_get_name(int skill);
-char* basic_skill_get_description(int skill);
+int basic_skill_base(int64_t obj, int bs);
+int basic_skill_level(int64_t obj, int bs);
+int basic_skill_points_get(int64_t obj, int bs);
+int basic_skill_points_set(int64_t obj, int bs, int value);
+int basic_skill_training_get(int64_t obj, int bs);
+int basic_skill_training_set(int64_t obj, int bs, int training);
+char* basic_skill_name(int bs);
+char* basic_skill_description(int bs);
 int sub_4C62D0(int a1, int a2, int a3);
 int sub_4C62E0(int64_t obj, int skill, int64_t other_obj);
 int sub_4C6410(int64_t obj, int skill, int64_t other_obj);
-int sub_4C64B0(int64_t obj, int skill);
-int sub_4C64C0(int64_t obj, int skill);
-int basic_skill_get_stat(int skill);
-int sub_4C64E0(int a1);
+int basic_skill_cost_inc(int64_t obj, int bs);
+int basic_skill_cost_dec(int64_t obj, int bs);
+int basic_skill_stat(int bs);
+int basic_skill_min_stat_level_required(int skill_level);
 int sub_4C6510(int64_t obj);
 int sub_4C6520(int64_t obj);
-int sub_4C6580(int64_t obj, int skill);
-int tech_skill_level(int64_t obj, int skill);
-int tech_skill_get_base(int64_t obj, int skill);
-int tech_skill_set_base(int64_t obj, int skill, int value);
-int tech_skill_get_training(int64_t obj, int skill);
-int tech_skill_set_training(int64_t obj, int skill, int training);
-char* tech_skill_get_name(int skill);
-char* tech_skill_get_description(int skill);
-int sub_4C69C0(int skill);
-char* training_get_name(int training);
+int tech_skill_base(int64_t obj, int ts);
+int tech_skill_level(int64_t obj, int ts);
+int tech_skill_points_get(int64_t obj, int ts);
+int tech_skill_points_set(int64_t obj, int ts, int value);
+int tech_skill_training_get(int64_t obj, int ts);
+int tech_skill_training_set(int64_t obj, int ts, int training);
+char* tech_skill_name(int ts);
+char* tech_skill_description(int ts);
+int training_min_skill_level_required(int training);
+char* training_name(int training);
 int sub_4C69E0(int a1, int a2, int a3);
 int sub_4C69F0(int64_t obj, int skill, int64_t other_obj);
-int sub_4C6AF0(int64_t obj, int skill);
-int sub_4C6B00(int64_t obj, int skill);
-int tech_skill_get_stat(int skill);
-int sub_4C6B20(int a1);
+int tech_skill_cost_inc(int64_t obj, int ts);
+int tech_skill_cost_dec(int64_t obj, int ts);
+int tech_skill_stat(int ts);
+int tech_skill_min_stat_level_required(int skill_level);
 bool skill_check_stat(int64_t obj, int stat, int value);
 bool sub_4C6F90(int64_t obj, int skill, int64_t target_obj, unsigned int flags);
 bool sub_4C6FD0(int64_t obj, int64_t target_obj, int64_t item_obj);

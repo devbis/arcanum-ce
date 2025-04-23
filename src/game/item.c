@@ -316,7 +316,7 @@ void item_generate_inventory(int64_t critter_obj)
         }
     }
 
-    if (tech_skill_get_base(critter_obj, TECH_SKILL_PICK_LOCKS) > 0) {
+    if (tech_skill_points_get(critter_obj, TECH_SKILL_PICK_LOCKS) > 0) {
         // "Crude Lockpicks"
         proto_obj = sub_4685A0(15178);
         if (object_create(proto_obj, loc, &item_obj)) {
@@ -324,7 +324,7 @@ void item_generate_inventory(int64_t critter_obj)
         }
     }
 
-    if (basic_skill_get_base(critter_obj, BASIC_SKILL_HEAL) > 0) {
+    if (basic_skill_points_get(critter_obj, BASIC_SKILL_HEAL) > 0) {
         // "Bandages"
         proto_obj = sub_4685A0(15179);
         if (object_create(proto_obj, loc, &item_obj)) {
@@ -961,7 +961,7 @@ bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_
         return false;
     }
 
-    if (basic_skill_get_training(seller_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_EXPERT) {
+    if (basic_skill_training_get(seller_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_EXPERT) {
         if (!object_script_execute(item_obj, buyer_npc_obj, seller_pc_obj, SAP_BUY_OBJECT, 0)) {
             return false;
         }
@@ -985,7 +985,7 @@ bool item_check_buy(int64_t item_obj, int64_t seller_npc_obj, int64_t buyer_pc_o
 {
     (void)seller_npc_obj;
 
-    if (basic_skill_get_training(buyer_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_MASTER) {
+    if (basic_skill_training_get(buyer_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_MASTER) {
         if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0) {
             return false;
         }
@@ -1005,7 +1005,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
     int weight;
 
     distance = 50 * stat_level_get(critter_obj, STAT_STRENGTH);
-    if (basic_skill_get_training(critter_obj, BASIC_SKILL_THROWING) >= TRAINING_EXPERT) {
+    if (basic_skill_training_get(critter_obj, BASIC_SKILL_THROWING) >= TRAINING_EXPERT) {
         distance += distance / 2;
     }
 
@@ -3314,9 +3314,9 @@ int item_weapon_magic_speed(int64_t item_obj, int64_t owner_obj)
         speed_adj = item_adjust_magic(item_obj, owner_obj, speed_adj);
         skill = item_weapon_skill(item_obj);
         if (IS_TECH_SKILL(skill)) {
-            training = tech_skill_get_training(owner_obj, GET_TECH_SKILL(skill));
+            training = tech_skill_training_get(owner_obj, GET_TECH_SKILL(skill));
         } else {
-            training = basic_skill_get_training(owner_obj, GET_BASIC_SKILL(skill));
+            training = basic_skill_training_get(owner_obj, GET_BASIC_SKILL(skill));
         }
         if (training >= TRAINING_APPRENTICE) {
             speed_adj += 5;

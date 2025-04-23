@@ -766,19 +766,19 @@ int sub_4A76B0(int64_t obj, int skill, int value)
 
     current_value = basic_skill_level(obj, skill);
     while (current_value < value) {
-        cost = sub_4C64B0(obj, skill);
+        cost = basic_skill_cost_inc(obj, skill);
         unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
-        new_value = basic_skill_get_base(obj, skill) + cost;
-        if (basic_skill_set_base(obj, skill, new_value) == new_value) {
+        new_value = basic_skill_points_get(obj, skill) + cost;
+        if (basic_skill_points_set(obj, skill, new_value) == new_value) {
             stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value = basic_skill_level(obj, skill);
-            sub_4A7B90(basic_skill_get_name(skill), new_value);
+            sub_4A7B90(basic_skill_name(skill), new_value);
         } else {
-            stat = basic_skill_get_stat(skill);
+            stat = basic_skill_stat(skill);
 
             rc = sub_4A75E0(obj, stat, stat_base_get(obj, stat) + 1);
             if (rc != 0) {
@@ -801,19 +801,19 @@ int sub_4A77A0(int64_t obj, int skill, int score)
 
     level = tech_skill_level(obj, skill);
     while (level < score) {
-        cost = sub_4C6AF0(obj, skill);
+        cost = tech_skill_cost_inc(obj, skill);
         unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
-        new_level = tech_skill_get_base(obj, skill) + cost;
-        if (tech_skill_set_base(obj, skill, new_level) == new_level) {
+        new_level = tech_skill_points_get(obj, skill) + cost;
+        if (tech_skill_points_set(obj, skill, new_level) == new_level) {
             stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             level = tech_skill_level(obj, skill);
-            sub_4A7B90(tech_skill_get_name(skill), new_level);
+            sub_4A7B90(tech_skill_name(skill), new_level);
         } else {
-            stat = tech_skill_get_stat(skill);
+            stat = tech_skill_stat(skill);
             if (sub_4A75E0(obj, stat, stat_base_get(obj, stat) + 1)) {
                 return 1;
             }

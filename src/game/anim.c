@@ -4893,7 +4893,7 @@ bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
         }
 
         if (critter_is_concealed(path_create_info->obj)
-            && basic_skill_get_training(path_create_info->obj, BASIC_SKILL_PROWLING) <= 0) {
+            && basic_skill_training_get(path_create_info->obj, BASIC_SKILL_PROWLING) <= 0) {
             path_create_info->flags |= PATH_FLAG_0x0200;
         }
 
@@ -5205,7 +5205,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
     }
 
     if (critter_is_concealed(obj)
-        && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) <= 0) {
+        && basic_skill_training_get(obj, BASIC_SKILL_PROWLING) <= 0) {
         flags |= PATH_FLAG_0x0200;
     }
 
@@ -10553,7 +10553,7 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
     art_id = *art_id_ptr;
     concealed = critter_is_concealed(obj);
 
-    if (concealed && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) < TRAINING_EXPERT) {
+    if (concealed && basic_skill_training_get(obj, BASIC_SKILL_PROWLING) < TRAINING_EXPERT) {
         *art_id_ptr = tig_art_id_anim_set(art_id, 3);
         return;
     }
@@ -10562,7 +10562,7 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
     if (run_info->current_goal <= 0
         || !a4
         || (concealed
-            && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) < TRAINING_MASTER)) {
+            && basic_skill_training_get(obj, BASIC_SKILL_PROWLING) < TRAINING_MASTER)) {
         *art_id_ptr = art_id;
         return;
     }
@@ -14779,7 +14779,7 @@ bool sub_436220(int64_t obj, int64_t target_obj, int64_t item_obj)
     }
 
     v1 = 10 * art_anim_data.fps / frame + 1;
-    if (tech_skill_get_training(obj, TECH_SKILL_PICK_LOCKS) >= TRAINING_APPRENTICE) {
+    if (tech_skill_training_get(obj, TECH_SKILL_PICK_LOCKS) >= TRAINING_APPRENTICE) {
         v1 /= 2;
     }
 

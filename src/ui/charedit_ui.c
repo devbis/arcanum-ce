@@ -1126,11 +1126,11 @@ bool charedit_open(int64_t obj, ChareditMode mode)
             }
 
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-                dword_64C7B8[index] = basic_skill_get_base(charedit_obj, index);
+                dword_64C7B8[index] = basic_skill_points_get(charedit_obj, index);
             }
 
             for (index = 0; index < TECH_SKILL_COUNT; index++) {
-                dword_64C82C[index] = tech_skill_get_base(charedit_obj, index);
+                dword_64C82C[index] = tech_skill_points_get(charedit_obj, index);
             }
         } else {
             pkt.type = 127;
@@ -1647,9 +1647,9 @@ void sub_55AE70(int a1)
         ui_message.type = UI_MSG_TYPE_SKILL;
         ui_message.field_8 = a1 - 1000;
         if (IS_TECH_SKILL(ui_message.field_8)) {
-            ui_message.field_C = sub_4C6B20(sub_4C6580(charedit_obj, GET_TECH_SKILL(ui_message.field_8)) + 4);
+            ui_message.field_C = tech_skill_min_stat_level_required(tech_skill_base(charedit_obj, GET_TECH_SKILL(ui_message.field_8)) + 4);
         } else {
-            ui_message.field_C = sub_4C64E0(sub_4C5E50(charedit_obj, GET_BASIC_SKILL(ui_message.field_8)) + 4);
+            ui_message.field_C = basic_skill_min_stat_level_required(basic_skill_base(charedit_obj, GET_BASIC_SKILL(ui_message.field_8)) + 4);
         }
         sub_550750(&ui_message);
     } else if (a1 >= 2000 && a1 < 2999) {
@@ -2169,10 +2169,10 @@ void sub_55BD10(int group)
 
     for (index = 0; index < 4; index++) {
         if (dword_64E020 < 3) {
-            training = basic_skill_get_training(charedit_obj,
+            training = basic_skill_training_get(charedit_obj,
                 stru_5C82F0[4 * dword_64E020 + index].value);
         } else {
-            training = tech_skill_get_training(charedit_obj,
+            training = tech_skill_training_get(charedit_obj,
                 stru_5C82F0[4 * dword_64E020 + index].value);
         }
 
@@ -2230,12 +2230,12 @@ void charedit_refresh_skills_win()
         if (dword_64E020 < 3) {
             skill_level = basic_skill_level(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
-            sub_4C64B0(charedit_obj,
+            basic_skill_cost_inc(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
         } else {
             skill_level = tech_skill_level(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
-            sub_4C6AF0(charedit_obj,
+            tech_skill_cost_inc(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
         }
 
@@ -3020,7 +3020,7 @@ bool sub_55D3A0(TigMessage* msg)
                         return true;
                     }
 
-                    if (basic_skill_get_base(charedit_obj, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
+                    if (basic_skill_points_get(charedit_obj, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
                         charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
                         sub_550750(&charedit_error_msg);
                     } else {
@@ -3109,7 +3109,7 @@ bool sub_55D6F0(TigMessage* msg)
                     if (!tig_net_is_active()
                         || tig_net_is_host()
                         || multiplayer_is_locked()) {
-                        if (tech_skill_get_base(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
+                        if (tech_skill_points_get(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
                             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
                             sub_550750(&charedit_error_msg);
                         } else {
@@ -3544,15 +3544,15 @@ bool sub_55E110()
     charedit_minimum_level_str = mes_file_entry.str;
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-        stru_5C82F0[index].str = basic_skill_get_name(index);
+        stru_5C82F0[index].str = basic_skill_name(index);
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-        stru_5C82F0[BASIC_SKILL_COUNT + index].str = tech_skill_get_name(index);
+        stru_5C82F0[BASIC_SKILL_COUNT + index].str = tech_skill_name(index);
     }
 
     for (index = 0; index < TRAINING_COUNT; index++) {
-        dword_64CA74[index] = training_get_name(index);
+        dword_64CA74[index] = training_name(index);
     }
 
     for (index = 0; index < 4; index++) {
@@ -4024,11 +4024,11 @@ void mp_charedit_cache_traits(int player)
     }
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-        charedit_player_basic_skills_tbl[player][index] = basic_skill_get_base(obj, index);
+        charedit_player_basic_skills_tbl[player][index] = basic_skill_points_get(obj, index);
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-        charedit_player_tech_skills_tbl[player][index] = tech_skill_get_base(obj, index);
+        charedit_player_tech_skills_tbl[player][index] = tech_skill_points_get(obj, index);
     }
 }
 
@@ -4167,7 +4167,7 @@ void mp_charedit_trait_dec(int player, int trait, int param)
         stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
         break;
     case MP_CHAREDIT_TRAIT_BASIC_SKILL:
-        if (basic_skill_get_base(obj, GET_BASIC_SKILL(param)) == charedit_player_basic_skills_tbl[player][param]) {
+        if (basic_skill_points_get(obj, GET_BASIC_SKILL(param)) == charedit_player_basic_skills_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;
@@ -4175,7 +4175,7 @@ void mp_charedit_trait_dec(int player, int trait, int param)
         skill_ui_dec_skill(obj, param);
         break;
     case MP_CHAREDIT_TRAIT_TECH_SKILL:
-        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == charedit_player_tech_skills_tbl[player][param]) {
+        if (tech_skill_points_get(obj, GET_TECH_SKILL(param)) == charedit_player_tech_skills_tbl[player][param]) {
             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
             sub_4EDA60(&charedit_error_msg, player, 0);
             return;

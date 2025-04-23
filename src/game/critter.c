@@ -1935,7 +1935,7 @@ bool critter_can_backstab(int64_t obj, int64_t tgt)
     int64_t weapon_obj;
     int weapon_type;
 
-    if (basic_skill_get_training(obj, BASIC_SKILL_BACKSTAB) == 0) {
+    if (basic_skill_training_get(obj, BASIC_SKILL_BACKSTAB) == 0) {
         return false;
     }
 
@@ -1953,7 +1953,7 @@ bool critter_can_backstab(int64_t obj, int64_t tgt)
         return true;
     }
 
-    if (basic_skill_get_training(obj, BASIC_SKILL_BACKSTAB) >= TRAINING_EXPERT
+    if (basic_skill_training_get(obj, BASIC_SKILL_BACKSTAB) >= TRAINING_EXPERT
         && (weapon_type == TIG_ART_WEAPON_TYPE_SWORD
             || weapon_type == TIG_ART_WEAPON_TYPE_AXE
             || weapon_type == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD)) {

@@ -961,7 +961,7 @@ int sub_4B3170(CombatContext* combat)
                     combat->flags &= ~(CF_HIT | CF_CRITICAL);
 
                     if ((skill_invocation.flags & 0x10) != 0) {
-                        int training = basic_skill_get_training(combat->target_obj, BASIC_SKILL_DODGE);
+                        int training = basic_skill_training_get(combat->target_obj, BASIC_SKILL_DODGE);
                         if (random_between(1, 100) <= dword_5B57A8[training]) {
                             combat->flags |= CF_CRITICAL;
                         }
@@ -1117,7 +1117,7 @@ void sub_4B39B0(CombatContext* combat)
 
         num_arrows = 1;
         if (combat->skill == BASIC_SKILL_BOW
-            && basic_skill_get_training(combat->attacker_obj, BASIC_SKILL_BOW) >= TRAINING_EXPERT) {
+            && basic_skill_training_get(combat->attacker_obj, BASIC_SKILL_BOW) >= TRAINING_EXPERT) {
             num_arrows = 2;
         }
 

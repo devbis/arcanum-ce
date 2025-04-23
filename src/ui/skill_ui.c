@@ -692,9 +692,9 @@ void skill_ui_adjust_skill(int64_t obj, int skill, int action)
 void skill_ui_set_training(int64_t obj, int skill, int training)
 {
     if (IS_TECH_SKILL(skill)) {
-        basic_skill_set_training(obj, GET_TECH_SKILL(skill), training);
+        basic_skill_training_set(obj, GET_TECH_SKILL(skill), training);
     } else {
-        tech_skill_set_training(obj, GET_BASIC_SKILL(skill), training);
+        tech_skill_training_set(obj, GET_BASIC_SKILL(skill), training);
     }
 }
 
@@ -710,9 +710,9 @@ void skill_ui_inc_skill(int64_t obj, int skill)
     is_pc = player_is_local_pc_obj(obj);
     if (IS_TECH_SKILL(skill)) {
         skill = GET_TECH_SKILL(skill);
-        base = tech_skill_get_base(obj, skill);
+        base = tech_skill_points_get(obj, skill);
         level = tech_skill_level(obj, skill);
-        cost = sub_4C6AF0(obj, skill);
+        cost = tech_skill_cost_inc(obj, skill);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
@@ -721,14 +721,14 @@ void skill_ui_inc_skill(int64_t obj, int skill)
             return;
         }
 
-        if (tech_skill_set_base(obj, skill, base + cost) != base + cost) {
+        if (tech_skill_points_set(obj, skill, base + cost) != base + cost) {
             if (level == 20) {
                 if (is_pc && charedit_is_created()) {
                     charedit_error_skill_at_max();
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    charedit_error_not_enough_stat(tech_skill_get_stat(skill));
+                    charedit_error_not_enough_stat(tech_skill_stat(skill));
                 }
             }
             return;
@@ -741,9 +741,9 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         }
     } else {
         skill = GET_BASIC_SKILL(skill);
-        base = basic_skill_get_base(obj, skill);
+        base = basic_skill_points_get(obj, skill);
         level = basic_skill_level(obj, skill);
-        cost = sub_4C64B0(obj, skill);
+        cost = basic_skill_cost_inc(obj, skill);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
@@ -752,14 +752,14 @@ void skill_ui_inc_skill(int64_t obj, int skill)
             return;
         }
 
-        if (basic_skill_set_base(obj, skill, base + cost) != base + cost) {
+        if (basic_skill_points_set(obj, skill, base + cost) != base + cost) {
             if (level == 20) {
                 if (is_pc && charedit_is_created()) {
                     charedit_error_skill_at_max();
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    charedit_error_not_enough_stat(basic_skill_get_stat(skill));
+                    charedit_error_not_enough_stat(basic_skill_stat(skill));
                 }
             }
             return;
@@ -785,13 +785,13 @@ void skill_ui_dec_skill(int64_t obj, int skill)
     is_pc = player_is_local_pc_obj(obj);
     if (IS_TECH_SKILL(skill)) {
         skill = GET_TECH_SKILL(skill);
-        base = tech_skill_get_base(obj, skill);
+        base = tech_skill_points_get(obj, skill);
         level = tech_skill_level(obj, skill); // FIXME: Unused.
-        cost = sub_4C6B00(obj, skill);
+        cost = tech_skill_cost_dec(obj, skill);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
-        if (tech_skill_set_base(obj, skill, base - cost) != base - cost) {
-            if (tech_skill_get_base(obj, skill) != 0) {
+        if (tech_skill_points_set(obj, skill, base - cost) != base - cost) {
+            if (tech_skill_points_get(obj, skill) != 0) {
                 if (is_pc && charedit_is_created()) {
                     charedit_error_skill_at_min();
                 }
@@ -810,15 +810,15 @@ void skill_ui_dec_skill(int64_t obj, int skill)
         }
     } else {
         skill = GET_BASIC_SKILL(skill);
-        base = basic_skill_get_base(obj, skill);
+        base = basic_skill_points_get(obj, skill);
         level = basic_skill_level(obj, skill);
-        cost = sub_4C64C0(obj, skill);
+        cost = basic_skill_cost_dec(obj, skill);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
         // NOTE: This code is different from tech skills code path above.
         while (level == basic_skill_level(obj, skill)) {
-            if (basic_skill_set_base(obj, skill, base - cost) != base - cost) {
-                if (basic_skill_get_base(obj, skill) != 0) {
+            if (basic_skill_points_set(obj, skill, base - cost) != base - cost) {
+                if (basic_skill_points_get(obj, skill) != 0) {
                     // FIXME: No check for pc/charedit.
                     charedit_error_skill_at_min();
                 } else {

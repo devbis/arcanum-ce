@@ -306,13 +306,13 @@ void background_educate_followers(int64_t obj)
     object_list_followers(obj, &followers);
 
     for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
-        educator_training = basic_skill_get_training(obj, skill);
+        educator_training = basic_skill_training_get(obj, skill);
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
-                follower_training = basic_skill_get_training(node->obj, skill) + 1;
+                follower_training = basic_skill_training_get(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
-                    basic_skill_set_training(node->obj, skill, follower_training);
+                    basic_skill_training_set(node->obj, skill, follower_training);
                     follower_training++;
                 }
                 node = node->next;
@@ -321,13 +321,13 @@ void background_educate_followers(int64_t obj)
     }
 
     for (skill = 0; skill < TECH_SKILL_COUNT; skill++) {
-        educator_training = tech_skill_get_training(obj, skill);
+        educator_training = tech_skill_training_get(obj, skill);
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
-                follower_training = tech_skill_get_training(node->obj, skill) + 1;
+                follower_training = tech_skill_training_get(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
-                    tech_skill_set_training(node->obj, skill, follower_training);
+                    tech_skill_training_set(node->obj, skill, follower_training);
                     follower_training++;
                 }
                 node = node->next;

@@ -1566,21 +1566,21 @@ bool sub_4150D0(DialogState* a1, char* a2)
             training = sub_4167C0(pch);
             if (IS_TECH_SKILL(value)) {
                 if (training < 0) {
-                    if (tech_skill_get_training(a1->pc_obj, GET_TECH_SKILL(value)) > -training) {
+                    if (tech_skill_training_get(a1->pc_obj, GET_TECH_SKILL(value)) > -training) {
                         return false;
                     }
                 } else {
-                    if (tech_skill_get_training(a1->pc_obj, GET_TECH_SKILL(value)) < training) {
+                    if (tech_skill_training_get(a1->pc_obj, GET_TECH_SKILL(value)) < training) {
                         return false;
                     }
                 }
             } else {
                 if (training < 0) {
-                    if (basic_skill_get_training(a1->pc_obj, GET_BASIC_SKILL(value)) > -training) {
+                    if (basic_skill_training_get(a1->pc_obj, GET_BASIC_SKILL(value)) > -training) {
                         return false;
                     }
                 } else {
-                    if (basic_skill_get_training(a1->pc_obj, GET_BASIC_SKILL(value)) < training) {
+                    if (basic_skill_training_get(a1->pc_obj, GET_BASIC_SKILL(value)) < training) {
                         return false;
                     }
                 }
@@ -2062,9 +2062,9 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 
             training = sub_4167C0(pch);
             if (IS_TECH_SKILL(value)) {
-                tech_skill_set_training(a1->pc_obj, GET_TECH_SKILL(value), training);
+                tech_skill_training_set(a1->pc_obj, GET_TECH_SKILL(value), training);
             } else {
-                basic_skill_set_training(a1->pc_obj, GET_BASIC_SKILL(value), training);
+                basic_skill_training_set(a1->pc_obj, GET_BASIC_SKILL(value), training);
             }
             break;
         }
@@ -2199,7 +2199,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
                 training = basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value));
             }
 
-            if (level < sub_4C69C0(TECH_SKILL_PICK_LOCKS)) {
+            if (level < training_min_skill_level_required(TRAINING_EXPERT)) {
                 dialog_copy_npc_wont_follow_msg(a1->npc_obj, a1->pc_obj, 34, a1->reply, &(a1->speech_id));
                 dialog_copy_npc_generic_msg(a1->reply, a1, 6200, 6299);
                 a1->num_options = 1;
@@ -3360,9 +3360,9 @@ void sub_418CA0(int* a1, int a2, int a3, DialogState* a4)
 
     for (index = 0; index < a2; index++) {
         if (IS_TECH_SKILL(a1[index])) {
-            strcpy(a4->options[index], tech_skill_get_name(GET_TECH_SKILL(a1[index])));
+            strcpy(a4->options[index], tech_skill_name(GET_TECH_SKILL(a1[index])));
         } else {
-            strcpy(a4->options[index], tech_skill_get_name(GET_BASIC_SKILL(a1[index])));
+            strcpy(a4->options[index], tech_skill_name(GET_BASIC_SKILL(a1[index])));
         }
 
         a4->field_17F0[index] = 6;
@@ -3382,30 +3382,30 @@ void sub_418DE0(int a1, DialogState* a2)
 
     v1 = a2->num_options - 1;
     if (IS_TECH_SKILL(a1)) {
-        if (tech_skill_get_training(a2->pc_obj, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
+        if (tech_skill_training_get(a2->pc_obj, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
             sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        if (tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
+        if (tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
             sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_NONE);
+        tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_NONE);
         sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
     } else {
-        if (basic_skill_get_training(a2->pc_obj, GET_BASIC_SKILL(a1)) != TRAINING_NONE) {
+        if (basic_skill_training_get(a2->pc_obj, GET_BASIC_SKILL(a1)) != TRAINING_NONE) {
             sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        if (basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
+        if (basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
             sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_NONE);
+        basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_NONE);
         sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
     }
 }
@@ -3414,9 +3414,9 @@ void sub_418DE0(int a1, DialogState* a2)
 void sub_418F30(int a1, DialogState* a2)
 {
     if (IS_TECH_SKILL(a1)) {
-        tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
+        tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
     } else {
-        basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
+        basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
     }
 
     dialog_copy_npc_class_specific_msg(a2->reply, a2, 6000);
@@ -3786,9 +3786,9 @@ void sub_419A00(int a1, int a2, int a3, DialogState* a4)
     const char* name;
 
     if (IS_TECH_SKILL(a2)) {
-        name = tech_skill_get_name(GET_TECH_SKILL(a2));
+        name = tech_skill_name(GET_TECH_SKILL(a2));
     } else {
-        name = basic_skill_get_name(GET_BASIC_SKILL(a2));
+        name = basic_skill_name(GET_BASIC_SKILL(a2));
     }
 
     sprintf(a4->options[a1], buffer, name);
@@ -3824,11 +3824,11 @@ void sub_419B50(int a1, int a2, DialogState* a3)
     } else {
         if (IS_TECH_SKILL(a1)) {
             skill_level = tech_skill_level(a3->npc_obj, GET_TECH_SKILL(a1));
-            training = tech_skill_get_training(a3->npc_obj, GET_TECH_SKILL(a1));
+            training = tech_skill_training_get(a3->npc_obj, GET_TECH_SKILL(a1));
             v3 = sub_4C69E0(GET_TECH_SKILL(a1), skill_level, training);
         } else {
             skill_level = basic_skill_level(a3->npc_obj, GET_BASIC_SKILL(a1));
-            training = basic_skill_get_training(a3->npc_obj, GET_BASIC_SKILL(a1));
+            training = basic_skill_training_get(a3->npc_obj, GET_BASIC_SKILL(a1));
             v3 = sub_4C62D0(GET_BASIC_SKILL(a1), skill_level, training);
         }
         sub_418A40(v3, 16, a1, v1, v2, a3);
