@@ -141,7 +141,7 @@ static ObjectList stru_5FC180;
 static bool combat_editor;
 
 // 0x5FC1F8
-static AnimFxList stru_5FC1F8;
+static AnimFxList combat_eye_candies;
 
 // NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
 // compatibility.
@@ -210,13 +210,13 @@ bool combat_init(GameInitInfo* init_info)
     }
 
     if (!combat_editor) {
-        if (!animfx_list_init(&stru_5FC1F8)) {
+        if (!animfx_list_init(&combat_eye_candies)) {
             return false;
         }
 
-        stru_5FC1F8.path = "Rules\\CombatEyeCandy.mes";
-        stru_5FC1F8.field_18 = 1;
-        if (!animfx_list_load(&stru_5FC1F8)) {
+        combat_eye_candies.path = "Rules\\CombatEyeCandy.mes";
+        combat_eye_candies.capacity = 1;
+        if (!animfx_list_load(&combat_eye_candies)) {
             return false;
         }
     }
@@ -239,7 +239,7 @@ void combat_exit()
     mes_unload(combat_mes_file);
     combat_turn_based_end();
     if (!combat_editor) {
-        animfx_list_exit(&stru_5FC1F8);
+        animfx_list_exit(&combat_eye_candies);
     }
 }
 
@@ -3266,7 +3266,7 @@ void combat_turn_based_end()
         if (!in_combat_reset) {
             node = stru_5FC180.head;
             while (node != NULL) {
-                animfx_remove(&stru_5FC1F8, node->obj, 0, -1);
+                animfx_remove(&combat_eye_candies, node->obj, 0, -1);
                 node = node->next;
             }
         }
@@ -3897,9 +3897,9 @@ void combat_recalc_reaction(int64_t obj)
     obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
 
     if (critter_is_dead(obj) || sub_4B7DC0(obj)) {
-        animfx_remove(&stru_5FC1F8, obj, 0, -1);
+        animfx_remove(&combat_eye_candies, obj, 0, -1);
     } else {
-        sub_4CCD20(&stru_5FC1F8, &node, obj, -1, 0);
+        sub_4CCD20(&combat_eye_candies, &node, obj, -1, 0);
         if (!sub_4CCDD0(&node)) {
             animfx_add(&node);
         }

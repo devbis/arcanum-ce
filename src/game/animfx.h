@@ -36,14 +36,14 @@ typedef enum AnimFxListFlags {
 typedef struct AnimFxList {
     /* 0000 */ const char* path;
     /* 0004 */ unsigned int flags;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int* field_24;
+    /* 0008 */ int initial;
+    /* 000C */ int num_fields;
+    /* 0010 */ int step;
+    /* 0014 */ int num_effects;
+    /* 0018 */ int capacity;
+    /* 001C */ int size;
+    /* 0020 */ int num_sound_effects;
+    /* 0024 */ int* sound_effects;
     /* 0028 */ AnimFxListEntry* entries;
 } AnimFxList;
 

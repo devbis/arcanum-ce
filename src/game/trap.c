@@ -84,7 +84,7 @@ static int dword_5B5F80[8] = {
 static mes_file_handle_t trap_mes_file;
 
 // 0x5FC460
-static AnimFxList stru_5FC460;
+static AnimFxList trap_eye_candies;
 
 // 0x5FC48C
 static TrapListNode* dword_5FC48C;
@@ -94,20 +94,20 @@ bool trap_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    if (!animfx_list_init(&stru_5FC460)) {
+    if (!animfx_list_init(&trap_eye_candies)) {
         return false;
     }
 
-    stru_5FC460.path = "Rules\\TrapEyeCandy.mes";
-    stru_5FC460.field_18 = 24;
-    stru_5FC460.field_C = 3;
-    stru_5FC460.field_10 = 10;
-    if (!animfx_list_load(&stru_5FC460)) {
+    trap_eye_candies.path = "Rules\\TrapEyeCandy.mes";
+    trap_eye_candies.capacity = 24;
+    trap_eye_candies.num_fields = 3;
+    trap_eye_candies.step = 10;
+    if (!animfx_list_load(&trap_eye_candies)) {
         return false;
     }
 
     if (!mes_load("mes\\trap.mes", &trap_mes_file)) {
-        animfx_list_exit(&stru_5FC460);
+        animfx_list_exit(&trap_eye_candies);
         return false;
     }
 
@@ -121,7 +121,7 @@ void trap_exit()
 {
     TrapListNode* node;
 
-    animfx_list_exit(&stru_5FC460);
+    animfx_list_exit(&trap_eye_candies);
     mes_unload(trap_mes_file);
 
     while (dword_5FC48C != NULL) {
@@ -299,7 +299,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
         } else {
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
-                sub_4CCD20(&stru_5FC460, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
+                sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
                 animfx.field_1C = 1;
                 animfx_add(&animfx);
             }
@@ -332,7 +332,7 @@ void sub_4BC220(int64_t trap_obj)
         } else {
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
-                animfx_remove(&stru_5FC460, trap_obj, 3 * scr.num - 90000 - 2, -1);
+                animfx_remove(&trap_eye_candies, trap_obj, 3 * scr.num - 90000 - 2, -1);
             }
             scr.num = 0;
             obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
@@ -662,10 +662,10 @@ bool sub_4BCB70(ScriptInvocation* invocation)
 
         // TODO: Looks unreachable, check.
         if (3 * invocation->script->num != 89999) {
-            sub_4CCD20(&stru_5FC460, &animfx, invocation->triggerer_obj, -1, v1);
+            sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1);
             animfx.field_1C = 1;
             animfx_add(&animfx);
-            animfx_remove(&stru_5FC460, invocation->attachee_obj, v1 + 2, -1);
+            animfx_remove(&trap_eye_candies, invocation->attachee_obj, v1 + 2, -1);
         }
     } else {
         v1 = -1;
@@ -676,7 +676,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
         while (node != NULL) {
             trigger_trap(node->obj, invocation);
             if (v1 != -1) {
-                sub_4CCD20(&stru_5FC460, &animfx, node->obj, -1, v1 + 1);
+                sub_4CCD20(&trap_eye_candies, &animfx, node->obj, -1, v1 + 1);
                 animfx.field_1C = 1;
                 animfx_add(&animfx);
             }
@@ -693,7 +693,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
         if (invocation->triggerer_obj != OBJ_HANDLE_NULL) {
             trigger_trap(invocation->triggerer_obj, invocation);
             if (v1 != -1) {
-                sub_4CCD20(&stru_5FC460, &animfx, invocation->triggerer_obj, -1, v1 + 1);
+                sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1 + 1);
                 animfx.field_1C = 1;
                 animfx_add(&animfx);
             }

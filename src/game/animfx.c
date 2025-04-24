@@ -214,7 +214,7 @@ bool sub_4CCDD0(AnimFxNode* node)
         return false;
     }
 
-    if (node->field_18 >= dword_601738->field_14) {
+    if (node->field_18 >= dword_601738->num_effects) {
         tig_debug_printf("AnimFX: animfx_id_get: Warning: AnimFXID Out of Range: %d.\n", node->field_18);
         return false;
     }
@@ -318,7 +318,7 @@ bool animfx_add(AnimFxNode* node)
         return false;
     }
 
-    if (node->field_18 >= dword_601738->field_14) {
+    if (node->field_18 >= dword_601738->num_effects) {
         tig_debug_printf("AnimFX: animfx_id_get: Warning: (Weapon?) AnimFXID Out of Range: %d.\n", node->field_18);
         return false;
     }
@@ -648,11 +648,11 @@ bool animfx_add(AnimFxNode* node)
 
                 if (entry->sound != -1) {
                     if ((node->flags & ANIMFX_PLAY_REVERSE) != 0
-                        && dword_601738->field_20 > 0) {
+                        && dword_601738->num_sound_effects > 0) {
                         int sound_id;
                         char path[TIG_MAX_PATH];
 
-                        sound_id = 8 - node->sound_id % dword_601738->field_10 + node->sound_id;
+                        sound_id = 8 - node->sound_id % dword_601738->step + node->sound_id;
                         if (gsound_resolve_path(sound_id, path) == TIG_OK) {
                             node->sound_id = sound_id;
                         }
@@ -799,7 +799,7 @@ void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
 
     dword_601738 = list;
 
-    if (index >= list->field_14) {
+    if (index >= list->num_effects) {
         tig_debug_printf("AnimFX: animfx_id_get: Warning: Weapon AnimFXID Out of Range: %d.\n", index);
         return;
     }
@@ -908,15 +908,15 @@ bool animfx_list_init(AnimFxList* list)
 
     list->path = NULL;
     list->flags = 0;
-    list->field_8 = 0;
-    list->field_C = 1;
-    list->field_10 = 1;
-    list->field_14 = 0;
-    list->field_18 = 0;
-    list->field_1C = 0;
+    list->initial = 0;
+    list->num_fields = 1;
+    list->step = 1;
+    list->num_effects = 0;
+    list->capacity = 0;
+    list->size = 0;
     list->entries = NULL;
-    list->field_20 = 0;
-    list->field_24 = 0;
+    list->num_sound_effects = 0;
+    list->sound_effects = 0;
 
     return true;
 }
@@ -940,9 +940,9 @@ bool animfx_list_load(AnimFxList* list)
 
     sub_4CDCD0(list);
 
-    if (list->field_18 > 0) {
-        list->entries = (AnimFxListEntry*)MALLOC(sizeof(AnimFxListEntry) * list->field_18);
-        list->field_1C = list->field_18;
+    if (list->capacity > 0) {
+        list->entries = (AnimFxListEntry*)MALLOC(sizeof(AnimFxListEntry) * list->capacity);
+        list->size = list->capacity;
     }
 
     success = false;
@@ -1009,14 +1009,14 @@ void sub_4CDCD0(AnimFxList* list)
     int count = 0;
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = list->field_8;
+    mes_file_entry.num = list->initial;
 
     while (mes_search(dword_601734, &mes_file_entry)) {
-        mes_file_entry.num += list->field_10;
-        count += list->field_C;
+        mes_file_entry.num += list->step;
+        count += list->num_fields;
     }
 
-    list->field_18 = count;
+    list->capacity = count;
 }
 
 // 0x4CDD30
@@ -1025,26 +1025,26 @@ bool animfx_list_load_internal(AnimFxList* list)
     MesFileEntry mes_file_entry;
     int index;
 
-    if (list->field_14 != 0) {
+    if (list->num_effects != 0) {
         return false;
     }
 
-    mes_file_entry.num = list->field_8;
+    mes_file_entry.num = list->initial;
 
-    while (list->field_14 < list->field_1C) {
-        for (index = 0; index < list->field_C; index++) {
-            sub_4CE2A0(list->field_14);
+    while (list->num_effects < list->size) {
+        for (index = 0; index < list->num_fields; index++) {
+            sub_4CE2A0(list->num_effects);
 
             if (mes_search(dword_601734, &mes_file_entry)) {
                 mes_get_msg(dword_601734, &mes_file_entry);
-                animfx_build_eye_candy_effect(list->field_14, mes_file_entry.str);
+                animfx_build_eye_candy_effect(list->num_effects, mes_file_entry.str);
             }
 
             mes_file_entry.num++;
-            list->field_14++;
+            list->num_effects++;
         }
 
-        mes_file_entry.num += list->field_10 - list->field_C;
+        mes_file_entry.num += list->step - list->num_fields;
     }
 
     return true;
@@ -1107,12 +1107,12 @@ void animfx_build_eye_candy_effect(int index, char* str)
         } else {
             entry->sound = -1;
 
-            if (dword_601738->field_20 > 0) {
-                int base_index = index % dword_601738->field_C;
+            if (dword_601738->num_sound_effects > 0) {
+                int base_index = index % dword_601738->num_fields;
                 if (base_index != 0) {
                     int base_sound = dword_601738->entries[index - base_index].sound;
                     if (base_sound != -1) {
-                        entry->sound = dword_601738->field_24[base_index] + base_sound;
+                        entry->sound = dword_601738->sound_effects[base_index] + base_sound;
 
                         char path[TIG_MAX_PATH];
                         if (gsound_resolve_path(entry->sound, path) != TIG_OK) {
@@ -1238,8 +1238,8 @@ void sub_4CE2A0(int index)
 {
     AnimFxListEntry* entry;
 
-    if (index >= dword_601738->field_1C) {
-        dword_601738->field_1C = index;
+    if (index >= dword_601738->size) {
+        dword_601738->size = index;
         dword_601738->entries = (AnimFxListEntry*)REALLOC(dword_601738->entries, sizeof(AnimFxListEntry) * index);
     }
 
@@ -1257,7 +1257,7 @@ bool animfx_id_get(AnimFxList* list, int index, AnimFxListEntry** entry)
     dword_601738 = list;
 
     if (entry != NULL) {
-        if (index < list->field_14) {
+        if (index < list->num_effects) {
             *entry = &(list->entries[index]);
             return true;
         }

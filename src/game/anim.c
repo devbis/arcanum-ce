@@ -2652,7 +2652,7 @@ AnimGoalNode* anim_goal_nodes[] = {
 static int dword_5DE608;
 
 // 0x5DE610
-static AnimFxList stru_5DE610;
+static AnimFxList weapon_eye_candies;
 
 // 0x5DE640
 static int dword_5DE640;
@@ -2673,7 +2673,7 @@ static int dword_5DE660;
 static int dword_5DE668;
 
 // 0x5DE670
-static AnimFxList stru_5DE670;
+static AnimFxList anim_eye_candies;
 
 // 0x5DE69C
 static int dword_5DE69C;
@@ -2723,26 +2723,26 @@ bool anim_init(GameInitInfo* init_info)
     anim_editor = init_info->editor;
 
     if (!anim_editor) {
-        if (!animfx_list_init(&stru_5DE670)) {
+        if (!animfx_list_init(&anim_eye_candies)) {
             return false;
         }
 
-        stru_5DE670.path = "Rules\\AnimEyeCandy.mes";
-        stru_5DE670.field_18 = 11;
-        if (!animfx_list_load(&stru_5DE670)) {
+        anim_eye_candies.path = "Rules\\AnimEyeCandy.mes";
+        anim_eye_candies.capacity = 11;
+        if (!animfx_list_load(&anim_eye_candies)) {
             return false;
         }
 
-        if (!animfx_list_init(&stru_5DE610)) {
+        if (!animfx_list_init(&weapon_eye_candies)) {
             return false;
         }
 
-        stru_5DE610.path = "Rules\\WeaponEyeCandy.mes";
-        stru_5DE610.field_18 = 750;
-        stru_5DE610.field_8 = 1;
-        stru_5DE610.field_C = 5;
-        stru_5DE610.field_10 = 10;
-        if (!animfx_list_load(&stru_5DE610)) {
+        weapon_eye_candies.path = "Rules\\WeaponEyeCandy.mes";
+        weapon_eye_candies.capacity = 750;
+        weapon_eye_candies.initial = 1;
+        weapon_eye_candies.num_fields = 5;
+        weapon_eye_candies.step = 10;
+        if (!animfx_list_load(&weapon_eye_candies)) {
             return false;
         }
     }
@@ -2758,8 +2758,8 @@ bool anim_init(GameInitInfo* init_info)
 void anim_exit()
 {
     if (!anim_editor) {
-        animfx_list_exit(&stru_5DE610);
-        animfx_list_exit(&stru_5DE670);
+        animfx_list_exit(&weapon_eye_candies);
+        animfx_list_exit(&anim_eye_candies);
     }
 }
 
@@ -13164,7 +13164,7 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
         }
     }
 
-    sub_4CCD20(&stru_5DE670, &fx, obj, -1, v1);
+    sub_4CCD20(&anim_eye_candies, &fx, obj, -1, v1);
     fx.field_1C = 1;
     fx.field_20 = 3;
     animfx_add(&fx);
@@ -14455,7 +14455,7 @@ bool anim_goal_projectile(int64_t source_obj, int64_t missile_obj, tig_art_id_t 
 
     if (weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
-        && animfx_id_get(&stru_5DE610, 5 * sub_49B290(weapon_obj) - 30143, &v1)) {
+        && animfx_id_get(&weapon_eye_candies, 5 * sub_49B290(weapon_obj) - 30143, &v1)) {
         projectile_speed = v1->projectile_speed;
     } else {
         projectile_speed = 0;
@@ -15357,7 +15357,7 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     v1 =  5 * (sub_49B290(weapon_obj) - 6029);
-    sub_4CCD20(&stru_5DE610, &node, a3, -1, v1 + which);
+    sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + which);
     node.rotation = tig_art_id_rotation_get(art_id);
     node.field_1C = 1;
     node.field_20 = 2;
@@ -15366,7 +15366,7 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
     }
 
     if (which == 3) {
-        sub_4CCD20(&stru_5DE610, &node, a3, -1, v1 + 5);
+        sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + 5);
         node.field_1C = 1;
         node.field_20 = 0;
         node.flags |= ANIMFX_PLAY_STACK;

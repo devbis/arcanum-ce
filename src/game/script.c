@@ -126,7 +126,7 @@ static int* script_gl_flags;
 static IsoInvalidateRectFunc* script_iso_invalidate_rect;
 
 // 0x5E2FB0
-static AnimFxList stru_5E2FB0;
+static AnimFxList script_eye_candies;
 
 // 0x5E2FDC
 static bool script_editor;
@@ -179,14 +179,14 @@ bool script_init(GameInitInfo* init_info)
     script_iso_window_redraw = init_info->redraw_func;
 
     if (!script_editor) {
-        if (!animfx_list_init(&stru_5E2FB0)) {
+        if (!animfx_list_init(&script_eye_candies)) {
             return false;
         }
 
-        stru_5E2FB0.path = "Rules\\ScriptEyeCandy.mes";
-        stru_5E2FB0.field_18 = 10;
+        script_eye_candies.path = "Rules\\ScriptEyeCandy.mes";
+        script_eye_candies.capacity = 10;
 
-        if (!animfx_list_load(&stru_5E2FB0)) {
+        if (!animfx_list_load(&script_eye_candies)) {
             return false;
         }
     }
@@ -229,7 +229,7 @@ void script_exit()
     FREE(script_gl_flags);
 
     if (!script_editor) {
-        animfx_list_exit(&stru_5E2FB0);
+        animfx_list_exit(&script_eye_candies);
     }
 }
 
@@ -3592,7 +3592,7 @@ void sub_44C7A0(int64_t obj, int a2)
 {
     AnimFxNode fx;
 
-    sub_4CCD20(&stru_5E2FB0, &fx, obj, -1, a2);
+    sub_4CCD20(&script_eye_candies, &fx, obj, -1, a2);
     fx.rotation = tig_art_id_rotation_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
     fx.field_1C = 1;
     animfx_add(&fx);
@@ -3601,7 +3601,7 @@ void sub_44C7A0(int64_t obj, int a2)
 // 0x44C800
 void sub_44C800(int64_t obj, int a2)
 {
-    animfx_remove(&stru_5E2FB0, obj, a2, -1);
+    animfx_remove(&script_eye_candies, obj, a2, -1);
 }
 
 // 0x44C820
