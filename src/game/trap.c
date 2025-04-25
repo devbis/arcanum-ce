@@ -300,7 +300,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
                 sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
-                animfx.field_1C = 1;
+                animfx.animate = true;
                 animfx_add(&animfx);
             }
         }
@@ -663,7 +663,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
         // TODO: Looks unreachable, check.
         if (3 * invocation->script->num != 89999) {
             sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1);
-            animfx.field_1C = 1;
+            animfx.animate = true;
             animfx_add(&animfx);
             animfx_remove(&trap_eye_candies, invocation->attachee_obj, v1 + 2, -1);
         }
@@ -677,7 +677,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
             trigger_trap(node->obj, invocation);
             if (v1 != -1) {
                 sub_4CCD20(&trap_eye_candies, &animfx, node->obj, -1, v1 + 1);
-                animfx.field_1C = 1;
+                animfx.animate = true;
                 animfx_add(&animfx);
             }
 
@@ -694,7 +694,7 @@ bool sub_4BCB70(ScriptInvocation* invocation)
             trigger_trap(invocation->triggerer_obj, invocation);
             if (v1 != -1) {
                 sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1 + 1);
-                animfx.field_1C = 1;
+                animfx.animate = true;
                 animfx_add(&animfx);
             }
 

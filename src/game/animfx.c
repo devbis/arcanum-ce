@@ -164,15 +164,15 @@ void animfx_exit()
 }
 
 // 0x4CCD20
-void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5)
+void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int mt_id, int fx_id)
 {
     node->list = list;
     node->obj = obj;
-    node->field_18 = a5;
-    node->field_10 = OBJ_HANDLE_NULL;
-    node->field_28 = a4;
-    node->field_1C = 0;
-    node->field_20 = -1;
+    node->fx_id = fx_id;
+    node->parent_obj = OBJ_HANDLE_NULL;
+    node->mt_id = mt_id;
+    node->animate = false;
+    node->max_simultaneous_effects = -1;
     node->art_id_ptr = NULL;
     node->light_art_id_ptr = NULL;
     node->light_color_ptr = NULL;
@@ -188,9 +188,9 @@ void sub_4CCD80(AnimFxNode* node)
     tig_art_id_t art_id;
 
     dword_601738 = node->list;
-    art_id = dword_601738->entries[node->field_18].eye_candy_art_id;
+    art_id = dword_601738->entries[node->fx_id].eye_candy_art_id;
     sub_502290(art_id);
-    if ((dword_601738->entries[node->field_18].flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
+    if ((dword_601738->entries[node->fx_id].flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
         art_id = tig_art_eye_candy_id_type_set(art_id, 1);
         sub_502290(art_id);
     }
@@ -214,18 +214,18 @@ bool sub_4CCDD0(AnimFxNode* node)
         return false;
     }
 
-    if (node->field_18 >= dword_601738->num_effects) {
-        tig_debug_printf("AnimFX: animfx_id_get: Warning: AnimFXID Out of Range: %d.\n", node->field_18);
+    if (node->fx_id >= dword_601738->num_effects) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: AnimFXID Out of Range: %d.\n", node->fx_id);
         return false;
     }
 
-    entry = &(dword_601738->entries[node->field_18]);
+    entry = &(dword_601738->entries[node->fx_id]);
     if (entry->eye_candy_art_id == TIG_ART_ID_INVALID) {
         return false;
     }
 
     if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0
-        && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
+        && sub_424560(node->obj, entry->eye_candy_art_id, node->mt_id)) {
         return false;
     }
 
@@ -318,19 +318,19 @@ bool animfx_add(AnimFxNode* node)
         return false;
     }
 
-    if (node->field_18 >= dword_601738->num_effects) {
-        tig_debug_printf("AnimFX: animfx_id_get: Warning: (Weapon?) AnimFXID Out of Range: %d.\n", node->field_18);
+    if (node->fx_id >= dword_601738->num_effects) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: (Weapon?) AnimFXID Out of Range: %d.\n", node->fx_id);
         return false;
     }
 
-    entry = &(dword_601738->entries[node->field_18]);
+    entry = &(dword_601738->entries[node->fx_id]);
 
     if (entry->eye_candy_art_id != TIG_ART_ID_INVALID) {
         int index;
         tig_art_id_t art_id;
 
         if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0
-            && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
+            && sub_424560(node->obj, entry->eye_candy_art_id, node->mt_id)) {
             return false;
         }
 
@@ -392,10 +392,10 @@ bool animfx_add(AnimFxNode* node)
                     break;
                 }
 
-                if (node->field_20 > 0
+                if (node->max_simultaneous_effects > 0
                     && tig_art_num_get(art_id) == eye_candy_art_num) {
                     found++;
-                    if (found > node->field_20) {
+                    if (found > node->max_simultaneous_effects) {
                         return false;
                     }
                 }
@@ -415,7 +415,7 @@ bool animfx_add(AnimFxNode* node)
                     eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, node->scale);
                 }
 
-                if (!node->field_1C) {
+                if (!node->animate) {
                     object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, index, eye_candy_art_id);
                 }
 
@@ -432,11 +432,11 @@ bool animfx_add(AnimFxNode* node)
                     break;
                 }
 
-                if (node->field_20 > 0
+                if (node->max_simultaneous_effects > 0
                     && tig_art_num_get(art_id) == eye_candy_art_num) {
                     found++;
-                    if (found > node->field_20) {
-                        if (!node->field_1C) {
+                    if (found > node->max_simultaneous_effects) {
+                        if (!node->animate) {
                             if (overlay_fore_index != -1) {
                                 object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
@@ -447,7 +447,7 @@ bool animfx_add(AnimFxNode* node)
             }
 
             if (index >= 7) {
-                if (!node->field_1C) {
+                if (!node->animate) {
                     if (overlay_fore_index != -1) {
                         object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
@@ -467,7 +467,7 @@ bool animfx_add(AnimFxNode* node)
                 }
             }
 
-            if (!node->field_1C) {
+            if (!node->animate) {
                 object_overlay_set(node->obj, OBJ_F_OVERLAY_BACK, index, eye_candy_art_id);
             }
 
@@ -483,11 +483,11 @@ bool animfx_add(AnimFxNode* node)
                     break;
                 }
 
-                if (node->field_20 > 0
+                if (node->max_simultaneous_effects > 0
                     && tig_art_num_get(art_id) == eye_candy_art_num) {
                     found++;
-                    if (found > node->field_20) {
-                        if (!node->field_1C) {
+                    if (found > node->max_simultaneous_effects) {
+                        if (!node->animate) {
                             if (overlay_fore_index != -1) {
                                 object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
@@ -502,7 +502,7 @@ bool animfx_add(AnimFxNode* node)
             }
 
             if (index >= 4) {
-                if (!node->field_1C) {
+                if (!node->animate) {
                     if (overlay_fore_index != -1) {
                         object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
@@ -525,7 +525,7 @@ bool animfx_add(AnimFxNode* node)
                 }
             }
 
-            if (!node->field_1C) {
+            if (!node->animate) {
                 object_overlay_set(node->obj, OBJ_F_UNDERLAY, index, eye_candy_art_id);
             }
 
@@ -542,11 +542,11 @@ bool animfx_add(AnimFxNode* node)
                     break;
                 }
 
-                if (node->field_20 > 0
+                if (node->max_simultaneous_effects > 0
                     && tig_art_num_get(art_id) == eye_candy_art_num) {
                     found++;
-                    if (found > node->field_20) {
-                        if (!node->field_1C) {
+                    if (found > node->max_simultaneous_effects) {
+                        if (!node->animate) {
                             if (overlay_fore_index != -1) {
                                 object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                             }
@@ -561,7 +561,7 @@ bool animfx_add(AnimFxNode* node)
             }
 
             if (index >= 4) {
-                if (!node->field_1C) {
+                if (!node->animate) {
                     if (overlay_fore_index != -1) {
                         object_overlay_set(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
                     }
@@ -575,7 +575,7 @@ bool animfx_add(AnimFxNode* node)
 
             if (tig_art_exists(entry->light_art_id) == TIG_OK) {
                 overlay_light_index = index;
-                if (!node->field_1C) {
+                if (!node->animate) {
                     object_set_overlay_light(node->obj, index, 0x20, entry->light_art_id, entry->light_color);
                 }
             }
@@ -584,7 +584,7 @@ bool animfx_add(AnimFxNode* node)
         node->sound_id = entry->sound;
 
         if ((entry->flags & ANIMFX_LIST_ENTRY_ANIMATES) != 0
-            && node->field_1C
+            && node->animate
             && overlay_fore_index != -1) {
             int goal_type;
             AnimGoalData goal_data;
@@ -624,13 +624,13 @@ bool animfx_add(AnimFxNode* node)
                 if ((node->flags & ANIMFX_PLAY_NO_ID) != 0) {
                     goal_data.params[AGDATA_SPELL_DATA].data = -1;
                 } else {
-                    goal_data.params[AGDATA_SPELL_DATA].data = node->field_28;
+                    goal_data.params[AGDATA_SPELL_DATA].data = node->mt_id;
                 }
 
                 goal_data.params[AGDATA_SCRATCH_VAL2].data = overlay_back_index;
                 goal_data.params[AGDATA_SCRATCH_VAL1].data = overlay_fore_index;
                 goal_data.params[AGDATA_SCRATCH_VAL3].data = overlay_light_index;
-                goal_data.params[AGDATA_SCRATCH_VAL4].data = node->field_18;
+                goal_data.params[AGDATA_SCRATCH_VAL4].data = node->fx_id;
                 goal_data.params[AGDATA_SKILL_DATA].data = animfx_list_find(dword_601738);
                 goal_data.params[AGDATA_SCRATCH_VAL5].data = entry->light_art_id;
                 goal_data.params[AGDATA_RANGE_DATA].data = entry->light_color;
@@ -644,7 +644,7 @@ bool animfx_add(AnimFxNode* node)
                     goal_data.params[AGDATA_FLAGS_DATA].data |= 0x4000;
                 }
 
-                goal_data.params[AGDATA_PARENT_OBJ].obj = node->field_10;
+                goal_data.params[AGDATA_PARENT_OBJ].obj = node->parent_obj;
 
                 if (entry->sound != -1) {
                     if ((node->flags & ANIMFX_PLAY_REVERSE) != 0
@@ -733,7 +733,7 @@ bool sub_4CD7A0(AnimFxNode* node)
     }
 
     dword_601738 = node->list;
-    entry = &(dword_601738->entries[node->field_18]);
+    entry = &(dword_601738->entries[node->fx_id]);
 
     if (*node->art_id_ptr != TIG_ART_ID_INVALID) {
         if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
@@ -791,7 +791,7 @@ bool sub_4CD7A0(AnimFxNode* node)
 }
 
 // 0x4CD940
-void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
+void animfx_remove(AnimFxList* list, int64_t obj, int fx_id, int mt_id)
 {
     if (obj == OBJ_HANDLE_NULL) {
         return;
@@ -799,20 +799,20 @@ void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
 
     dword_601738 = list;
 
-    if (index >= list->num_effects) {
-        tig_debug_printf("AnimFX: animfx_id_get: Warning: Weapon AnimFXID Out of Range: %d.\n", index);
+    if (fx_id >= list->num_effects) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: Weapon AnimFXID Out of Range: %d.\n", fx_id);
         return;
     }
 
-    if (list->entries[index].eye_candy_art_id == TIG_ART_ID_INVALID) {
+    if (list->entries[fx_id].eye_candy_art_id == TIG_ART_ID_INVALID) {
         tig_debug_printf("AnimFX: animfx_remove: Note: Attempting to remove EMPTY Art!\n");
         return;
     }
 
-    if ((list->entries[index].flags & ANIMFX_LIST_ENTRY_ANIMATES) != 0) {
-        sub_4243E0(obj, list->entries[index].eye_candy_art_id, a4);
+    if ((list->entries[fx_id].flags & ANIMFX_LIST_ENTRY_ANIMATES) != 0) {
+        sub_4243E0(obj, list->entries[fx_id].eye_candy_art_id, mt_id);
     } else {
-        sub_4CD9C0(&(list->entries[index]), obj);
+        sub_4CD9C0(&(list->entries[fx_id]), obj);
     }
 }
 

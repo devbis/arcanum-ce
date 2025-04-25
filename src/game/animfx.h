@@ -66,14 +66,13 @@ typedef uint32_t AnimFxNodeFlags;
 
 typedef struct AnimFxNode {
     /* 0000 */ AnimFxList* list;
-    /* 0004 */ int field_4;
     /* 0008 */ int64_t obj;
-    /* 0010 */ int64_t field_10;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
+    /* 0010 */ int64_t parent_obj;
+    /* 0018 */ int fx_id;
+    /* 001C */ bool animate;
+    /* 0020 */ int max_simultaneous_effects;
     /* 0024 */ AnimFxNodeFlags flags;
-    /* 0028 */ int field_28;
+    /* 0028 */ int mt_id;
     /* 002C */ tig_art_id_t* art_id_ptr;
     /* 0030 */ tig_art_id_t* light_art_id_ptr;
     /* 0034 */ tig_color_t* light_color_ptr;
@@ -92,12 +91,12 @@ extern unsigned int animfx_play_flags_lookup_tbl_values[ANIMFX_PLAY_COUNT];
 
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
-void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5);
+void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int mt_id, int fx_id);
 void sub_4CCD80(AnimFxNode* node);
 bool sub_4CCDD0(AnimFxNode* node);
 bool animfx_add(AnimFxNode* node);
 bool sub_4CD7A0(AnimFxNode* node);
-void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4);
+void animfx_remove(AnimFxList* list, int64_t obj, int fx_id, int mt_id);
 bool animfx_list_init(AnimFxList* list);
 bool animfx_list_load(AnimFxList* list);
 int animfx_list_find(AnimFxList* list);

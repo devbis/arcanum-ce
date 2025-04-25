@@ -2510,9 +2510,9 @@ void MTComponentEyeCandy_ProcFunc()
             node.rotation = tig_art_id_rotation_get(obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_CURRENT_AID));
         }
 
-        node.field_1C = 1;
+        node.animate = true;
         node.flags = dword_5E761C->data.eye_candy.flags;
-        node.field_10 = dword_5E75F0->parent_obj.obj;
+        node.parent_obj = dword_5E75F0->parent_obj.obj;
 
         if ((dword_5E75F0->field_13C & 0x40) == 0) {
             if (animfx_add(&node)) {
@@ -4940,7 +4940,7 @@ void sub_456E00(int mt_id)
             run_info->parent_obj.obj,
             run_info->id,
             6 * run_info->spell + 4);
-        node.field_1C = 1;
+        node.animate = true;
         animfx_add(&node);
     }
 }
@@ -4951,7 +4951,7 @@ void sub_456E60(int64_t obj, int a2)
     AnimFxNode node;
 
     sub_4CCD20(&spell_eye_candies, &node, obj, -1, a2 % 10 + 6 * (a2 / 10));
-    node.field_1C = 1;
+    node.animate = true;
     animfx_add(&node);
 }
 
@@ -6482,7 +6482,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
                 obj,
                 magictech_run_info[magictech].id,
                 6 * magictech_run_info[magictech].spell + 5);
-            node.field_1C = 1;
+            node.animate = true;
             animfx_add(&node);
         } else {
             tig_debug_printf("MagicTech: magictech_anim_play_hit_fx: Failed to match spell from flags!\n");
@@ -6496,12 +6496,12 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
                 obj,
                 magictech_run_info[magictech].id,
                 6 * magictech_run_info[magictech].spell + 5);
-            node.field_1C = 1;
+            node.animate = true;
             animfx_add(&node);
         } else {
             tig_debug_printf("MagicTech: magictech_anim_play_hit_fx: Failed to match spell from flags!\n");
             sub_4CCD20(&spell_eye_candies, &node, obj, -1, 1097);
-            node.field_1C = 1;
+            node.animate = true;
             animfx_add(&node);
         }
     }
@@ -6517,7 +6517,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
 
     if (sub_49B290(obj) == 27369 && !combat->field_5C) {
         sub_4CCD20(&spell_eye_candies, &node, obj, -1, 1259);
-        node.field_1C = 1;
+        node.animate = true;
         animfx_add(&node);
     }
 }

@@ -3594,7 +3594,7 @@ void sub_44C7A0(int64_t obj, int a2)
 
     sub_4CCD20(&script_eye_candies, &fx, obj, -1, a2);
     fx.rotation = tig_art_id_rotation_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
-    fx.field_1C = 1;
+    fx.animate = true;
     animfx_add(&fx);
 }
 

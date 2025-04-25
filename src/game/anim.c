@@ -4092,7 +4092,7 @@ bool anim_goal_interrupt_all_for_tb_combat()
 }
 
 // 0x4243E0
-bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3)
+bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int mt_id)
 {
     AnimID prev_anim_id;
     AnimID cur_anim_id;
@@ -4126,7 +4126,7 @@ bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3)
                 run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
             }
 
-            if (run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data == a3
+            if (run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data == mt_id
                 && tig_art_num_get(run_info->cur_stack_data->params[AGDATA_ANIM_ID].data) == num
                 && sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST)) {
                 break;
@@ -4140,7 +4140,7 @@ bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3)
 }
 
 // 0x424560
-bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int a3)
+bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int mt_id)
 {
     AnimID prev_anim_id;
     AnimID cur_anim_id;
@@ -4169,7 +4169,7 @@ bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int a3)
             run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
         }
 
-        if (run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data == a3
+        if (run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data == mt_id
             && tig_art_num_get(run_info->cur_stack_data->params[AGDATA_ANIM_ID].data) == num) {
             return true;
         }
@@ -13165,8 +13165,8 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
     }
 
     sub_4CCD20(&anim_eye_candies, &fx, obj, -1, v1);
-    fx.field_1C = 1;
-    fx.field_20 = 3;
+    fx.animate = true;
+    fx.max_simultaneous_effects = 3;
     animfx_add(&fx);
 
     magictech_anim_play_hit_fx(obj, combat);
@@ -15359,16 +15359,16 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
     v1 =  5 * (sub_49B290(weapon_obj) - 6029);
     sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + which);
     node.rotation = tig_art_id_rotation_get(art_id);
-    node.field_1C = 1;
-    node.field_20 = 2;
+    node.animate = true;
+    node.max_simultaneous_effects = 2;
     if (!animfx_add(&node)) {
         return false;
     }
 
     if (which == 3) {
         sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + 5);
-        node.field_1C = 1;
-        node.field_20 = 0;
+        node.animate = true;
+        node.max_simultaneous_effects = 0;
         node.flags |= ANIMFX_PLAY_STACK;
         animfx_add(&node);
     }
