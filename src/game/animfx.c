@@ -197,7 +197,7 @@ void sub_4CCD80(AnimFxNode* node)
 }
 
 // 0x4CCDD0
-bool sub_4CCDD0(AnimFxNode* node)
+bool animfx_has(AnimFxNode* node)
 {
     AnimFxListEntry* entry;
     unsigned int num;

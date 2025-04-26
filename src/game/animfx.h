@@ -90,7 +90,7 @@ bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
 void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int mt_id, int fx_id);
 void sub_4CCD80(AnimFxNode* node);
-bool sub_4CCDD0(AnimFxNode* node);
+bool animfx_has(AnimFxNode* node);
 bool animfx_add(AnimFxNode* node);
 bool sub_4CD7A0(AnimFxNode* node);
 void animfx_remove(AnimFxList* list, int64_t obj, int fx_id, int mt_id);

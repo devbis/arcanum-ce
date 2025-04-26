@@ -3900,7 +3900,7 @@ void combat_recalc_reaction(int64_t obj)
         animfx_remove(&combat_eye_candies, obj, 0, -1);
     } else {
         sub_4CCD20(&combat_eye_candies, &node, obj, -1, 0);
-        if (!sub_4CCDD0(&node)) {
+        if (!animfx_has(&node)) {
             animfx_add(&node);
         }
     }
