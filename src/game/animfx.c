@@ -183,7 +183,7 @@ void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int mt_id, int 
 }
 
 // 0x4CCD80
-void sub_4CCD80(AnimFxNode* node)
+void animfx_preload_art(AnimFxNode* node)
 {
     tig_art_id_t art_id;
 

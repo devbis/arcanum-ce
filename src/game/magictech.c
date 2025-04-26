@@ -4888,7 +4888,7 @@ void sub_456CD0(MagicTechRunInfo* run_info)
             run_info->parent_obj.obj,
             run_info->id,
             6 * run_info->spell + index);
-        sub_4CCD80(&node);
+        animfx_preload_art(&node);
     }
 }
 

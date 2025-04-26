@@ -89,7 +89,7 @@ extern unsigned int animfx_play_flags_lookup_tbl_values[ANIMFX_PLAY_COUNT];
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
 void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int mt_id, int fx_id);
-void sub_4CCD80(AnimFxNode* node);
+void animfx_preload_art(AnimFxNode* node);
 bool animfx_has(AnimFxNode* node);
 bool animfx_add(AnimFxNode* node);
 bool sub_4CD7A0(AnimFxNode* node);
