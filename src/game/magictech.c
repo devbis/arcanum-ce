@@ -122,7 +122,7 @@ static void sub_455960(MagicTechRunInfo* run_info);
 static void sub_4559E0(MagicTechRunInfo* run_info);
 static void sub_455C30(MagicTechSerializedData* a1);
 static bool sub_456430(int64_t a1, int64_t a2, MagicTechInfo* magictech);
-static void sub_456CD0(MagicTechRunInfo* run_info);
+static void magictech_preload_art(MagicTechRunInfo* run_info);
 static void sub_457030(int mt_id, int action);
 static bool sub_4570E0(TimeEvent* timeevent);
 static void sub_457270(int mt_id);
@@ -4496,7 +4496,7 @@ void sub_455C30(MagicTechSerializedData* a1)
         tig_art_id_rotation_set(art_id, rot);
     }
 
-    sub_456CD0(run_info);
+    magictech_preload_art(run_info);
 
     if (run_info->parent_obj.obj != OBJ_HANDLE_NULL) {
         int anim;
@@ -4877,7 +4877,7 @@ bool sub_456BC0(MagicTechSerializedData* a1)
 }
 
 // 0x456CD0
-void sub_456CD0(MagicTechRunInfo* run_info)
+void magictech_preload_art(MagicTechRunInfo* run_info)
 {
     int index;
     AnimFxNode node;
