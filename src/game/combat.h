@@ -70,6 +70,7 @@ typedef enum HitLocation {
 #define CDF_DROP_WEAPON         0x00002000
 #define CDF_DAMAGE_WEAPON       0x00004000
 #define CDF_DESTROY_WEAPON      0x00008000
+#define CDF_EXPLODE_WEAPON      0x00010000
 #define CDF_LOST_AMMO           0x00020000
 #define CDF_DESTROY_AMMO        0x00040000
 #define CDF_DROP_HELMET         0x00080000

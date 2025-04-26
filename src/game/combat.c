@@ -1750,7 +1750,7 @@ void sub_4B4390(CombatContext* combat)
         int64_t weapon_obj = combat_critter_weapon(combat->target_obj);
         if (weapon_obj != OBJ_HANDLE_NULL) {
             if ((obj_field_int32_get(weapon_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
-                dam_flags &= ~0x1C000;
+                dam_flags &= ~(CDF_EXPLODE_WEAPON | CDF_DESTROY_WEAPON | CDF_DAMAGE_WEAPON);
             }
 
             if ((dam_flags & CDF_DAMAGE_WEAPON) != 0) {
@@ -1771,7 +1771,7 @@ void sub_4B4390(CombatContext* combat)
                 }
             }
 
-            if ((dam_flags & 0x10000) != 0) {
+            if ((dam_flags & CDF_EXPLODE_WEAPON) != 0) {
                 dam_flags |= CDF_DESTROY_WEAPON;
                 script_play_explosion_fx(combat->target_obj);
             }
@@ -2634,7 +2634,7 @@ void sub_4B6410(CombatContext* combat)
                 || crit_miss_chart == 7
                 || crit_miss_chart == 8)
             && random_between(1, 100) <= chance + 1) {
-            combat->dam_flags |= 0x10000;
+            combat->dam_flags |= CDF_EXPLODE_WEAPON;
         }
 
         if (item_weapon_ammo_type(combat->weapon_obj) != 10000) {
