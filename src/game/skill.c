@@ -67,24 +67,37 @@ static int dword_5B6F48[3] = { 1, 9, 18 };
 // 0x5B6F58
 static int dword_5B6F58[3] = { 10, 20, 30 };
 
+#define SKILL_CHECK_HIT_LOC 0x0001u
+#define SKILL_CHECK_DISTANCE 0x0002u
+#define SKILL_CHECK_LIGHT 0x0004u
+#define SKILL_CHECK_AWARENESS 0x0008u
+#define SKILL_VS_TARGET_PERCEPTION 0x0010u
+#define SKILL_VS_TARGET_INTELLIGENCE 0x0020u
+#define SKILL_VS_TARGET_SKILL 0x0040u
+#define SKILL_USE_EYES 0x0080u
+#define SKILL_USE_ARMS 0x0100u
+#define SKILL_USE_LEGS 0x0200u
+#define SKILL_COMBAT 0x0400u
+#define SKILL_CLAMP_AT_95 0x0800u
+
 // 0x5B6F64
 static unsigned int skill_flags[SKILL_COUNT] = {
-    0x58F,
-    0xE80,
-    0x58D,
-    0x58F,
-    0x880,
-    0x998,
-    0x298,
-    0x884,
-    0x8C0,
-    0x800,
-    0x980,
-    0x820,
-    0x980,
-    0x58F,
-    0x984,
-    0x984,
+    /*          SKILL_BOW */ SKILL_COMBAT | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_AWARENESS | SKILL_CHECK_LIGHT | SKILL_CHECK_DISTANCE | SKILL_CHECK_HIT_LOC,
+    /*        SKILL_DODGE */ SKILL_CLAMP_AT_95 | SKILL_COMBAT | SKILL_USE_LEGS | SKILL_USE_EYES,
+    /*        SKILL_MELEE */ SKILL_COMBAT | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_AWARENESS | SKILL_CHECK_LIGHT | SKILL_CHECK_HIT_LOC,
+    /*     SKILL_THROWING */ SKILL_COMBAT | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_AWARENESS | SKILL_CHECK_LIGHT | SKILL_CHECK_DISTANCE | SKILL_CHECK_HIT_LOC,
+    /*     SKILL_BACKSTAB */ SKILL_CLAMP_AT_95 | SKILL_USE_EYES,
+    /*  SKILL_PICK_POCKET */ SKILL_CLAMP_AT_95 | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_VS_TARGET_PERCEPTION | SKILL_CHECK_AWARENESS,
+    /*     SKILL_PROWLING */ SKILL_USE_LEGS | SKILL_USE_EYES | SKILL_VS_TARGET_PERCEPTION | SKILL_CHECK_AWARENESS,
+    /*    SKILL_SPOT_TRAP */ SKILL_CLAMP_AT_95 | SKILL_USE_EYES | SKILL_CHECK_LIGHT,
+    /*     SKILL_GAMBLING */ SKILL_CLAMP_AT_95 | SKILL_USE_EYES | SKILL_VS_TARGET_SKILL,
+    /*       SKILL_HAGGLE */ SKILL_CLAMP_AT_95,
+    /*         SKILL_HEAL */ SKILL_CLAMP_AT_95 | SKILL_USE_ARMS | SKILL_USE_EYES,
+    /*   SKILL_PERSUATION */ SKILL_CLAMP_AT_95 | SKILL_VS_TARGET_INTELLIGENCE,
+    /*       SKILL_REPAIR */ SKILL_CLAMP_AT_95 | SKILL_USE_ARMS | SKILL_USE_EYES,
+    /*     SKILL_FIREARMS */ SKILL_COMBAT | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_AWARENESS | SKILL_CHECK_LIGHT | SKILL_CHECK_DISTANCE | SKILL_CHECK_HIT_LOC,
+    /*   SKILL_PICK_LOCKS */ SKILL_CLAMP_AT_95 | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_LIGHT,
+    /* SKILL_DISARM_TRAPS */ SKILL_CLAMP_AT_95 | SKILL_USE_ARMS | SKILL_USE_EYES | SKILL_CHECK_LIGHT,
 };
 
 // 0x5B6FA4
@@ -528,7 +541,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
     int level;
     int game_difficulty;
 
-    if ((skill_flags[skill] & 0x70) != 0) {
+    if ((skill_flags[skill] & (SKILL_VS_TARGET_SKILL | SKILL_VS_TARGET_INTELLIGENCE | SKILL_VS_TARGET_PERCEPTION)) != 0) {
         value = sub_4C6410(obj, skill, other_obj);
     } else {
         level = basic_skill_level(obj, skill);
@@ -583,7 +596,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
         }
     }
 
-    if ((skill_flags[skill] & 0x800) != 0) {
+    if ((skill_flags[skill] & SKILL_CLAMP_AT_95) != 0) {
         if (value > 95) {
             value = 95;
         }
@@ -609,9 +622,9 @@ int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
 
     skill_level = basic_skill_level(obj, skill);
 
-    if ((skill_flags[skill] & 0x10) != 0) {
+    if ((skill_flags[skill] & SKILL_VS_TARGET_PERCEPTION) != 0) {
         difficulty = stat_level_get(other_obj, STAT_PERCEPTION);
-    } else if ((skill_flags[skill] & 0x20) != 0) {
+    } else if ((skill_flags[skill] & SKILL_VS_TARGET_INTELLIGENCE) != 0) {
         difficulty = stat_level_get(other_obj, STAT_INTELLIGENCE);
     } else {
         difficulty = basic_skill_level(other_obj, skill);
@@ -928,7 +941,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
         }
     }
 
-    if ((skill_flags[skill + BASIC_SKILL_COUNT] & 0x800) != 0) {
+    if ((skill_flags[skill + BASIC_SKILL_COUNT] & SKILL_CLAMP_AT_95) != 0) {
         if (value > 95) {
             value = 95;
         }
@@ -1574,7 +1587,7 @@ bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocatio
     int v1;
     int chance;
 
-    v1 = (skill_flags[skill_invocation->skill] & 0x400) != 0 ? 20 : 2;
+    v1 = (skill_flags[skill_invocation->skill] & SKILL_COMBAT) != 0 ? 20 : 2;
     chance = effectiveness / v1;
 
     if ((skill_invocation->flags & 0x8) != 0) {
@@ -1609,7 +1622,7 @@ bool skill_invocation_check_crit_miss(int roll, int effectiveness, SkillInvocati
     int v1;
     int chance;
 
-    v1 = (skill_flags[skill_invocation->skill] & 0x400) != 0 ? 7 : 2;
+    v1 = (skill_flags[skill_invocation->skill] & SKILL_COMBAT) != 0 ? 7 : 2;
     chance = (100 - effectiveness) / v1;
 
     if (skill_invocation->item.obj != OBJ_HANDLE_NULL) {
@@ -1711,7 +1724,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         target_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     }
 
-    if ((skill_flags[skill] & 0x08) != 0
+    if ((skill_flags[skill] & SKILL_CHECK_AWARENESS) != 0
         && target_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(target_type)) {
         unsigned int critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
@@ -1733,7 +1746,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         }
     }
 
-    if ((skill_flags[skill] & 0x01) != 0 && target_obj != OBJ_HANDLE_NULL) {
+    if ((skill_flags[skill] & SKILL_CHECK_HIT_LOC) != 0 && target_obj != OBJ_HANDLE_NULL) {
         if ((skill_invocation->flags & 0x08) != 0) {
             int v1 = sub_4B5F30(skill_invocation->hit_loc);
             if (tech_skill == TECH_SKILL_FIREARMS
@@ -1749,7 +1762,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         }
     }
 
-    if ((skill_flags[skill] & 0x02) != 0) {
+    if ((skill_flags[skill] & SKILL_CHECK_DISTANCE) != 0) {
         int64_t dist = location_dist(skill_invocation->target_loc, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
         if (dist > INT_MAX) {
             return 1000000;
@@ -1794,7 +1807,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
     unsigned int critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_UNDEAD) == 0
-        && ((skill_flags[skill] & 0x04) != 0 || (skill_invocation->flags & 0x4000) != 0)) {
+        && ((skill_flags[skill] & SKILL_CHECK_LIGHT) != 0 || (skill_invocation->flags & 0x4000) != 0)) {
         bool v3 = true;
         if ((basic_skill == BASIC_SKILL_MELEE
             || tech_skill == TECH_SKILL_PICK_LOCKS) && training >= TRAINING_EXPERT) {
@@ -1843,13 +1856,13 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         }
     }
 
-    if ((skill_flags[skill] & 0x80) != 0
+    if ((skill_flags[skill] & SKILL_USE_EYES) != 0
         && (critter_flags & OCF_BLINDED) != 0) {
         difficulty += 30;
         skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
     }
 
-    if ((skill_flags[skill] & 0x100) != 0) {
+    if ((skill_flags[skill] & SKILL_USE_ARMS) != 0) {
         if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
             difficulty += 50;
             skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
@@ -1859,7 +1872,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         }
     }
 
-    if ((skill_flags[skill] & 0x200) != 0) {
+    if ((skill_flags[skill] & SKILL_USE_LEGS) != 0) {
         if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             difficulty += 30;
             skill_invocation->flags |= SKILL_INVOCATION_PENALTY_INJURY;
