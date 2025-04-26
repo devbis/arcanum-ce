@@ -23,6 +23,7 @@
 #define FIRST_BASIC_SKILL_DESC_ID (FIRST_TRAINING_NAME_ID + TRAINING_COUNT)
 #define FIRST_TECH_SKILL_DESC_ID (FIRST_BASIC_SKILL_DESC_ID + BASIC_SKILL_COUNT)
 
+static int basic_skill_vs(int64_t obj, int skill, int64_t other_obj);
 static int max_skill_for_stat_level(int stat_level);
 static int sub_4C6560();
 static bool skill_invocation_check_crit_hit(int a1, int a2, SkillInvocation* skill_invocation);
@@ -535,17 +536,17 @@ int basic_skill_money(int bs, int skill_level, int training)
 }
 
 // 0x4C62E0
-int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
+int basic_skill_effectiveness(int64_t obj, int bs, int64_t target_obj)
 {
     int value;
     int level;
     int game_difficulty;
 
-    if ((skill_flags[skill] & (SKILL_VS_TARGET_SKILL | SKILL_VS_TARGET_INTELLIGENCE | SKILL_VS_TARGET_PERCEPTION)) != 0) {
-        value = sub_4C6410(obj, skill, other_obj);
+    if ((skill_flags[bs] & (SKILL_VS_TARGET_SKILL | SKILL_VS_TARGET_INTELLIGENCE | SKILL_VS_TARGET_PERCEPTION)) != 0) {
+        value = basic_skill_vs(obj, bs, target_obj);
     } else {
-        level = basic_skill_level(obj, skill);
-        switch (skill) {
+        level = basic_skill_level(obj, bs);
+        switch (bs) {
         case BASIC_SKILL_BOW:
             value = 5 * level + 25;
             break;
@@ -596,7 +597,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
         }
     }
 
-    if ((skill_flags[skill] & SKILL_CLAMP_AT_95) != 0) {
+    if ((skill_flags[bs] & SKILL_CLAMP_AT_95) != 0) {
         if (value > 95) {
             value = 95;
         }
@@ -610,7 +611,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
 }
 
 // 0x4C6410
-int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
+int basic_skill_vs(int64_t obj, int skill, int64_t other_obj)
 {
     int skill_level;
     int difficulty;
@@ -892,21 +893,21 @@ int tech_skill_money(int ts, int skill_level, int training)
 }
 
 // 0x4C69F0
-int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
+int tech_skill_effectiveness(int64_t obj, int ts, int64_t target_obj)
 {
     int value;
     int level;
     int game_difficulty;
 
-    level = tech_skill_level(obj, skill);
-    switch (skill) {
+    level = tech_skill_level(obj, ts);
+    switch (ts) {
     case TECH_SKILL_REPAIR:
-    value = 4 * level;
+        value = 4 * level;
         break;
     case TECH_SKILL_FIREARMS:
         value = 5 * level + 25;
-        if (other_obj != OBJ_HANDLE_NULL
-            && (obj_field_int32_get(other_obj, OBJ_F_SPELL_FLAGS) & OSF_MAGNETIC_INVERSION) != 0) {
+        if (target_obj != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_MAGNETIC_INVERSION) != 0) {
             value -= 20;
         }
         break;
@@ -941,7 +942,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
         }
     }
 
-    if ((skill_flags[skill + BASIC_SKILL_COUNT] & SKILL_CLAMP_AT_95) != 0) {
+    if ((skill_flags[ts + BASIC_SKILL_COUNT] & SKILL_CLAMP_AT_95) != 0) {
         if (value > 95) {
             value = 95;
         }
@@ -1091,12 +1092,12 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
     if (IS_TECH_SKILL(skill)) {
         basic_skill = -1;
         tech_skill = GET_TECH_SKILL(skill);
-        effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
+        effectiveness = tech_skill_effectiveness(source_obj, tech_skill, target_obj);
         training = tech_skill_training_get(source_obj, tech_skill);
     } else {
         basic_skill = GET_BASIC_SKILL(skill);
         tech_skill = -1;
-        effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
+        effectiveness = basic_skill_effectiveness(source_obj, basic_skill, target_obj);
         training = basic_skill_training_get(source_obj, basic_skill);
     }
 
@@ -1687,12 +1688,12 @@ int sub_4C8430(SkillInvocation* skill_invocation)
     if (IS_TECH_SKILL(skill)) {
         basic_skill = -1;
         tech_skill = GET_TECH_SKILL(skill);
-        effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
+        effectiveness = tech_skill_effectiveness(source_obj, tech_skill, target_obj);
         training = tech_skill_training_get(source_obj, tech_skill);
     } else {
         basic_skill = GET_BASIC_SKILL(skill);
         tech_skill = -1;
-        effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
+        effectiveness = basic_skill_effectiveness(source_obj, basic_skill, target_obj);
         training = basic_skill_training_get(source_obj, basic_skill);
     }
 
@@ -2043,8 +2044,8 @@ void skill_pick_best_follower(SkillInvocation* skill_invocation)
 {
     ObjectList objects;
     ObjectNode* node;
-    int efficiency;
-    int best_efficiency;
+    int effectiveness;
+    int best_effectiveness;
     int64_t best_follower_obj;
 
     if (obj_field_int32_get(skill_invocation->source.obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
@@ -2056,15 +2057,15 @@ void skill_pick_best_follower(SkillInvocation* skill_invocation)
     }
 
     if (IS_TECH_SKILL(skill_invocation->skill)) {
-        best_efficiency = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        best_effectiveness = tech_skill_effectiveness(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
         best_follower_obj = skill_invocation->source.obj;
         object_list_all_followers(best_follower_obj, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));
-            efficiency = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-            if (efficiency > best_efficiency) {
-                best_efficiency = efficiency;
+            effectiveness = tech_skill_effectiveness(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+            if (effectiveness > best_effectiveness) {
+                best_effectiveness = effectiveness;
                 best_follower_obj = node->obj;
             }
             node = node->next;
@@ -2073,15 +2074,15 @@ void skill_pick_best_follower(SkillInvocation* skill_invocation)
         // FIX: Original code leaks `objects`.
         object_list_destroy(&objects);
     } else {
-        best_efficiency = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        best_effectiveness = basic_skill_effectiveness(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
         best_follower_obj = skill_invocation->source.obj;
         object_list_all_followers(best_follower_obj, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));
-            efficiency = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
-            if (efficiency > best_efficiency) {
-                best_efficiency = efficiency;
+            effectiveness = basic_skill_effectiveness(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+            if (effectiveness > best_effectiveness) {
+                best_effectiveness = effectiveness;
                 best_follower_obj = node->obj;
             }
 

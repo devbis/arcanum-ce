@@ -6536,7 +6536,7 @@ void sub_554830(int64_t a1, int64_t a2)
     tig_window_handle_t window_handle;
     int64_t weapon_obj;
     int skill;
-    int v1;
+    int effectiveness;
     SkillInvocation skill_invocation;
     int v3;
     TigRect rect;
@@ -6555,9 +6555,9 @@ void sub_554830(int64_t a1, int64_t a2)
     weapon_obj = item_wield_get(a1, ITEM_INV_LOC_WEAPON);
     skill = item_weapon_skill(weapon_obj);
     if (IS_TECH_SKILL(skill)) {
-        v1 = sub_4C69F0(a1, GET_TECH_SKILL(skill), a2);
+        effectiveness = tech_skill_effectiveness(a1, GET_TECH_SKILL(skill), a2);
     } else {
-        v1 = sub_4C62E0(a1, GET_BASIC_SKILL(skill), a2);
+        effectiveness = basic_skill_effectiveness(a1, GET_BASIC_SKILL(skill), a2);
     }
 
     skill_invocation_init(&skill_invocation);
@@ -6566,7 +6566,7 @@ void sub_554830(int64_t a1, int64_t a2)
     sub_4440E0(weapon_obj, &(skill_invocation.item));
     skill_invocation.skill = skill;
 
-    v1 -= sub_4C8430(&skill_invocation);
+    effectiveness -= sub_4C8430(&skill_invocation);
 
     if (weapon_obj != OBJ_HANDLE_NULL
         && skill != SKILL_THROWING) {
@@ -6575,12 +6575,12 @@ void sub_554830(int64_t a1, int64_t a2)
             if (v3 > 20) {
                 skill_invocation.flags |= SKILL_INVOCATION_MAGIC_TECH_PENALTY;
             }
-            v1 -= v1 * v3 / 100;
+            effectiveness -= effectiveness * v3 / 100;
         }
     }
 
-    if (v1 < 0 || (skill_invocation.flags & (SKILL_INVOCATION_BLOCKED_SHOT | SKILL_INVOCATION_PENALTY_RANGE)) != 0) {
-        v1 = 0;
+    if (effectiveness < 0 || (skill_invocation.flags & (SKILL_INVOCATION_BLOCKED_SHOT | SKILL_INVOCATION_PENALTY_RANGE)) != 0) {
+        effectiveness = 0;
     }
 
     if ((skill_invocation.flags & SKILL_INVOCATION_PENALTY_MASK) != 0) {
@@ -6589,7 +6589,7 @@ void sub_554830(int64_t a1, int64_t a2)
         rect.width = 64;
         rect.height = 64;
 
-        sprintf(str, "%d%%", v1);
+        sprintf(str, "%d%%", effectiveness);
         intgame_message_window_write_text(window_handle,
             str,
             &rect,
@@ -6625,7 +6625,7 @@ void sub_554830(int64_t a1, int64_t a2)
             dword_64C498,
             MSG_TEXT_HALIGN_CENTER);
 
-        sprintf(str, "%d%%", v1);
+        sprintf(str, "%d%%", effectiveness);
         rect.y += 18;
         intgame_message_window_write_text(window_handle,
             str,
@@ -7440,7 +7440,7 @@ void sub_556220(int64_t obj)
     char str[MAX_STRING];
     int64_t weapon_obj;
     int skill;
-    int base_to_hit;
+    int effectiveness;
     int min_dam;
     int max_dam;
 
@@ -7470,12 +7470,12 @@ void sub_556220(int64_t obj)
     mes_get_msg(intgame_mes_file, &mes_file_entry);
 
     if (IS_TECH_SKILL(skill)) {
-        base_to_hit = sub_4C69F0(obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
+        effectiveness = tech_skill_effectiveness(obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
     } else {
-        base_to_hit = sub_4C62E0(obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
+        effectiveness = basic_skill_effectiveness(obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
     }
 
-    sprintf(str, "%s: %d%%", mes_file_entry.str, base_to_hit);
+    sprintf(str, "%s: %d%%", mes_file_entry.str, effectiveness);
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70D8,

@@ -911,7 +911,7 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
             worth = worth * (3 * (100 - mult) / 8 + 100) / 100;
         }
 
-        haggle = sub_4C62E0(seller_obj, BASIC_SKILL_HAGGLE, item_obj);
+        haggle = basic_skill_effectiveness(seller_obj, BASIC_SKILL_HAGGLE, item_obj);
         cost = worth * (haggle / 2 + 50) / 100;
         hp_current = object_hp_current(item_obj);
         hp_max = object_hp_max(item_obj);
@@ -935,7 +935,7 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
         }
 
         mult = obj_field_int32_get(seller_obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
-        haggle = sub_4C62E0(buyer_obj, BASIC_SKILL_HAGGLE, item_obj);
+        haggle = basic_skill_effectiveness(buyer_obj, BASIC_SKILL_HAGGLE, item_obj);
         cost = sub_4C1150(seller_obj, buyer_obj, worth + worth * mult * (100 - haggle) / 10000);
 
         if (cost <= worth) {
@@ -2399,7 +2399,7 @@ int item_total_attack(int64_t critter_obj)
 {
     int64_t weapon_obj;
     int skill;
-    int v1;
+    int effectiveness;
     int v2;
     int v3;
     int damage_type;
@@ -2409,12 +2409,12 @@ int item_total_attack(int64_t critter_obj)
     weapon_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
     skill = item_weapon_skill(weapon_obj);
     if (IS_TECH_SKILL(skill)) {
-        v1 = sub_4C69F0(critter_obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
+        effectiveness = tech_skill_effectiveness(critter_obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
     } else {
-        v1 = sub_4C62E0(critter_obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
+        effectiveness = basic_skill_effectiveness(critter_obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
     }
 
-    v3 = v1 * dword_5B32EC;
+    v3 = effectiveness * dword_5B32EC;
     v2 = dword_5B32EC;
 
     for (damage_type = 0; damage_type < 5; damage_type++) {
@@ -2924,7 +2924,7 @@ void item_wield_best(int64_t critter_obj, int inventory_location, int64_t target
                     if (IS_TECH_SKILL(skill)) {
                         int tech_skill = GET_TECH_SKILL(skill);
                         if (tech_skill_level(critter_obj, tech_skill) != 0) {
-                            effectiveness = sub_4C69F0(critter_obj, tech_skill, target_obj);
+                            effectiveness = tech_skill_effectiveness(critter_obj, tech_skill, target_obj);
                         } else {
                             effectiveness = -1;
                         }
@@ -2932,7 +2932,7 @@ void item_wield_best(int64_t critter_obj, int inventory_location, int64_t target
                         int basic_skill = GET_BASIC_SKILL(skill);
                         if (skill == BASIC_SKILL_MELEE
                             || basic_skill_level(critter_obj, skill) != 0) {
-                            effectiveness = sub_4C62E0(critter_obj, basic_skill, target_obj);
+                            effectiveness = basic_skill_effectiveness(critter_obj, basic_skill, target_obj);
                         } else {
                             effectiveness = -1;
                         }

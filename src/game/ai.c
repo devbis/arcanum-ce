@@ -4102,7 +4102,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
         int prowling;
         int diff;
 
-        prowling = sub_4C62E0(target_obj, BASIC_SKILL_PROWLING, source_obj);
+        prowling = basic_skill_effectiveness(target_obj, BASIC_SKILL_PROWLING, source_obj);
         skill_invocation_init(&skill_invocation);
         sub_4440E0(target_obj, &(skill_invocation.source));
         sub_4440E0(source_obj, &(skill_invocation.target));
@@ -4172,7 +4172,7 @@ int ai_can_hear(int64_t source_obj, int64_t target_obj, int loudness)
         int prowling;
         int diff;
 
-        prowling = sub_4C62E0(target_obj, BASIC_SKILL_PROWLING, source_obj);
+        prowling = basic_skill_effectiveness(target_obj, BASIC_SKILL_PROWLING, source_obj);
         skill_invocation_init(&skill_invocation);
         sub_4440E0(target_obj, &(skill_invocation.source));
         sub_4440E0(source_obj, &(skill_invocation.target));
