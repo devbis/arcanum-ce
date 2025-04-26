@@ -334,7 +334,7 @@ bool animfx_add(AnimFxNode* node)
             return false;
         }
 
-        if ((node->flags & ANIMFX_PLAY_CHECK_ALREADY) != 0) {
+        if ((entry->flags & ANIMFX_LIST_ENTRY_CAN_AUTOSCALE) != 0) {
             if ((obj_type_is_critter(obj_field_int32_get(node->obj, OBJ_F_TYPE)))) {
                 art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
                 switch (tig_art_type(art_id)) {
