@@ -117,7 +117,7 @@ void combat_critter_activate_combat_mode(int64_t obj);
 void sub_4B4320(int64_t obj);
 void sub_4B4390(CombatContext* combat);
 void sub_4B5810(CombatContext* combat);
-void sub_4B58C0(CombatContext* combat);
+void combat_heal(CombatContext* combat);
 int sub_4B5F30(int hit_loc);
 int sub_4B6A00(int64_t loc1, int64_t loc2);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);

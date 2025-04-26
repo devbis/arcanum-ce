@@ -2221,7 +2221,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int value = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
             combat.dam[DAMAGE_TYPE_NORMAL] = value;
-            sub_4B58C0(&combat);
+            combat_heal(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;

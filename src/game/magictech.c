@@ -2565,7 +2565,7 @@ void MTComponentHeal_ProcFunc()
             }
         }
 
-        sub_4B58C0(&combat);
+        combat_heal(&combat);
     }
 }
 

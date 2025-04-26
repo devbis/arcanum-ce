@@ -172,18 +172,17 @@ typedef struct Packet20 {
 
 static_assert(sizeof(Packet20) == 0xE8, "wrong size");
 
-typedef struct Packet21 {
+typedef struct PacketCombatHeal {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
     /* 0008 */ CombatContext combat;
-    /* 0070 */ ObjectID field_70;
-    /* 0088 */ ObjectID field_88;
-    /* 00A0 */ ObjectID field_A0;
+    /* 0070 */ ObjectID attacker_oid;
+    /* 0088 */ ObjectID weapon_oid;
+    /* 00A0 */ ObjectID target_oid;
     /* 00B8 */ ObjectID field_B8;
     /* 00D0 */ ObjectID field_D0;
-} Packet21;
+} PacketCombatHeal;
 
-static_assert(sizeof(Packet21) == 0xE8, "wrong size");
+static_assert(sizeof(PacketCombatHeal) == 0xE8, "wrong size");
 
 typedef struct Packet22 {
     /* 0000 */ int type;

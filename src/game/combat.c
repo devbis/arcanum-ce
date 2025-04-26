@@ -2171,9 +2171,8 @@ void sub_4B5810(CombatContext* combat)
 }
 
 // 0x4B58C0
-void sub_4B58C0(CombatContext* combat)
+void combat_heal(CombatContext* combat)
 {
-    Packet21 pkt;
     int type;
     int index;
     unsigned int critter_flags;
@@ -2182,14 +2181,16 @@ void sub_4B58C0(CombatContext* combat)
     tig_art_id_t art_id;
 
     if (!multiplayer_is_locked()) {
+        PacketCombatHeal pkt;
+
         if (!tig_net_is_host()) {
             return;
         }
 
         pkt.type = 21;
-        sub_4F0640(combat->attacker_obj, &(pkt.field_70));
-        sub_4F0640(combat->weapon_obj, &(pkt.field_88));
-        sub_4F0640(combat->target_obj, &(pkt.field_A0));
+        sub_4F0640(combat->attacker_obj, &(pkt.attacker_oid));
+        sub_4F0640(combat->weapon_obj, &(pkt.weapon_oid));
+        sub_4F0640(combat->target_obj, &(pkt.target_oid));
         sub_4F0640(combat->field_28, &(pkt.field_B8));
         sub_4F0640(combat->field_30, &(pkt.field_D0));
         pkt.combat = *combat;

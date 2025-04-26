@@ -1341,7 +1341,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                 combat.dam[DAMAGE_TYPE_NORMAL] = random_between(1, heal);
             }
 
-            sub_4B58C0(&combat);
+            combat_heal(&combat);
         } else {
             if (is_critical && training >= TRAINING_EXPERT) {
                 is_critical = false;
