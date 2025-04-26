@@ -2810,7 +2810,7 @@ bool sub_421CE0(AnimID* anim_id, AnimRunInfo* run_info)
 }
 
 // 0x421D60
-bool sub_421D60(AnimID* a, AnimID* b)
+bool anim_id_is_equal(AnimID* a, AnimID* b)
 {
     ASSERT(a != NULL); // pAnimID1 != NULL
     ASSERT(b != NULL); // pAnimID2 != NULL
@@ -4112,7 +4112,7 @@ bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int mt_id)
     num = tig_art_num_get(eye_candy_id);
 
     do {
-        if (sub_421D60(&prev_anim_id, &cur_anim_id)) {
+        if (anim_id_is_equal(&prev_anim_id, &cur_anim_id)) {
             break;
         }
 
@@ -4160,7 +4160,7 @@ bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int mt_id)
     num = tig_art_num_get(eye_candy_id);
 
     do {
-        if (sub_421D60(&prev_anim_id, &cur_anim_id)) {
+        if (anim_id_is_equal(&prev_anim_id, &cur_anim_id)) {
             break;
         }
 

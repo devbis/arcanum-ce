@@ -3445,7 +3445,7 @@ void sub_54ED30(S4F2810* a1)
         if (combat_turn_based_is_active()) {
             AnimID fidget_anim_id;
             if (anim_is_current_goal_type(pc_obj, AG_ANIM_FIDGET, &fidget_anim_id)
-                && sub_421D60(&anim_id, &fidget_anim_id)
+                && anim_id_is_equal(&anim_id, &fidget_anim_id)
                 && num_goal_subslots_in_use(&anim_id) < 4) {
                 if (is_anim_forever(&anim_id)) {
                     if (sub_424070(pc_obj, 3, false, false)) {
