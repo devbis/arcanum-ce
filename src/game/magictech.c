@@ -4879,15 +4879,15 @@ bool sub_456BC0(MagicTechSerializedData* a1)
 // 0x456CD0
 void magictech_preload_art(MagicTechRunInfo* run_info)
 {
-    int index;
+    int type;
     AnimFxNode node;
 
-    for (index = 0; index < 6; index++) {
+    for (type = 0; type < MAGICTECH_EYE_CANDY_TYPE_COUNT; type++) {
         sub_4CCD20(&spell_eye_candies,
             &node,
             run_info->parent_obj.obj,
             run_info->id,
-            6 * run_info->spell + index);
+            6 * run_info->spell + type);
         animfx_preload_art(&node);
     }
 }
@@ -4939,7 +4939,7 @@ void sub_456E00(int mt_id)
             &node,
             run_info->parent_obj.obj,
             run_info->id,
-            6 * run_info->spell + 4);
+            6 * run_info->spell + MAGICTECH_EYE_CANDY_TYPE_SECONDARY_CASTING);
         node.animate = true;
         animfx_add(&node);
     }
@@ -5882,7 +5882,7 @@ tig_art_id_t sub_458B70(int mt_id)
     int rotation;
 
     if (magictech_id_to_run_info(mt_id, &run_info)
-        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + 1, &v2)
+        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + MAGICTECH_EYE_CANDY_TYPE_PROJECTILE, &v2)
         && run_info->parent_obj.obj != OBJ_HANDLE_NULL) {
         eye_candy_art_id = v2->eye_candy_art_id;
         if (eye_candy_art_id != TIG_ART_ID_INVALID) {
@@ -5899,17 +5899,17 @@ tig_art_id_t sub_458B70(int mt_id)
 void sub_458C00(int spell, int64_t obj)
 {
     MagicTechRunInfo* run_info;
-    AnimFxListEntry* v2;
+    AnimFxListEntry* fx_info;
 
     if (obj == OBJ_HANDLE_NULL
         && magictech_id_to_run_info(spell, &run_info)
-        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + 1, &v2)) {
-        if (tig_art_exists(v2->light_art_id) == TIG_OK) {
-            object_set_light(obj, 0x20, v2->light_art_id, v2->light_color);
+        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + MAGICTECH_EYE_CANDY_TYPE_PROJECTILE, &fx_info)) {
+        if (tig_art_exists(fx_info->light_art_id) == TIG_OK) {
+            object_set_light(obj, 0x20, fx_info->light_art_id, fx_info->light_color);
         }
 
-        if (v2->sound != -1) {
-            gsound_play_sfx_on_obj(v2->sound, 1, obj);
+        if (fx_info->sound != -1) {
+            gsound_play_sfx_on_obj(fx_info->sound, 1, obj);
         }
     }
 }
@@ -5918,11 +5918,11 @@ void sub_458C00(int spell, int64_t obj)
 int sub_458CA0(int mt_id)
 {
     MagicTechRunInfo* run_info;
-    AnimFxListEntry* v2;
+    AnimFxListEntry* fx_info;
 
     if (magictech_id_to_run_info(mt_id, &run_info)
-        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + 1, &v2)) {
-        return v2->projectile_speed;
+        && animfx_id_get(&spell_eye_candies, run_info->spell * 6 + MAGICTECH_EYE_CANDY_TYPE_PROJECTILE, &fx_info)) {
+        return fx_info->projectile_speed;
     } else {
         return 0;
     }
@@ -6481,7 +6481,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
                 &node,
                 obj,
                 magictech_run_info[magictech].id,
-                6 * magictech_run_info[magictech].spell + 5);
+                6 * magictech_run_info[magictech].spell + MAGICTECH_EYE_CANDY_TYPE_DAMAGE);
             node.animate = true;
             animfx_add(&node);
         } else {
@@ -6495,7 +6495,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
                 &node,
                 obj,
                 magictech_run_info[magictech].id,
-                6 * magictech_run_info[magictech].spell + 5);
+                6 * magictech_run_info[magictech].spell + MAGICTECH_EYE_CANDY_TYPE_DAMAGE);
             node.animate = true;
             animfx_add(&node);
         } else {
@@ -6708,9 +6708,9 @@ void sub_45A480(MagicTechRunInfo* run_info)
 }
 
 // 0x45A4F0
-void sub_45A4F0(int64_t a1, int a2, int a3)
+void sub_45A4F0(int64_t obj, int fx_id, int mt_id)
 {
-    animfx_remove(&spell_eye_candies, a1, a2, a3);
+    animfx_remove(&spell_eye_candies, obj, fx_id, mt_id);
 }
 
 // 0x45A520

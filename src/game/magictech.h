@@ -22,6 +22,16 @@ typedef enum MagicTechAction {
     MAGICTECH_ACTION_COUNT,
 } MagicTechAction;
 
+typedef enum MagicTechEyeCandyType {
+    MAGICTECH_EYE_CANDY_TYPE_CASTING,
+    MAGICTECH_EYE_CANDY_TYPE_PROJECTILE,
+    MAGICTECH_EYE_CANDY_TYPE_DESTINATION,
+    MAGICTECH_EYE_CANDY_TYPE_SECONDARY_DESTINATION,
+    MAGICTECH_EYE_CANDY_TYPE_SECONDARY_CASTING,
+    MAGICTECH_EYE_CANDY_TYPE_DAMAGE,
+    MAGICTECH_EYE_CANDY_TYPE_COUNT,
+} MagicTechEyeCandyType;
+
 typedef enum MagicTechComponent {
     MTC_NOOP,
     MTC_AGOAL,
@@ -403,7 +413,7 @@ bool magictech_is_tech(int magictech);
 bool sub_459FF0(int mt_id);
 bool sub_45A030(int magictech);
 int magictech_get_aptitude_adj(int64_t sector_id);
-void sub_45A4F0(int64_t a1, int a2, int a3);
+void sub_45A4F0(int64_t obj, int fx_id, int mt_id);
 void sub_45A520(int64_t a1, int64_t a2);
 void sub_45A540(int64_t a1);
 bool sub_45A580(int64_t a1, int64_t a2);
