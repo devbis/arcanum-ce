@@ -457,6 +457,9 @@ bool animfx_add(AnimFxNode* node)
 
             eye_candy_art_id = base_eye_candy_art_id;
             if (tig_art_exists(eye_candy_art_id) == TIG_OK) {
+                // FIXME: Setting eye candy type after checking existence of
+                // base aid. Foreground overlay and underlay perform existence
+                // check after type is set.
                 eye_candy_art_id = tig_art_eye_candy_id_type_set(eye_candy_art_id, 1);
                 if (node->scale == 4) {
                     if ((entry->flags & ANIMFX_LIST_ENTRY_CAN_AUTOSCALE) != 0) {
