@@ -7835,10 +7835,10 @@ bool sub_42A720(AnimRunInfo* run_info)
                 v2 = true;
                 combat.dam[DAMAGE_TYPE_NORMAL] *= 2;
                 combat.dam[DAMAGE_TYPE_FIRE] *= 2;
-                sub_4B4390(&combat);
+                combat_dmg(&combat);
             }
         } else {
-            sub_4B4390(&combat);
+            combat_dmg(&combat);
         }
 
         node = node->next;
@@ -11038,7 +11038,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
                 combat.dam[DAMAGE_TYPE_NORMAL] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
                 combat.dam[DAMAGE_TYPE_FATIGUE] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
                 combat.field_30 = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
-                sub_4B4390(&combat);
+                combat_dmg(&combat);
 
                 if ((run_info->flags & 0x1) != 0) {
                     run_info->flags &= ~0x10;

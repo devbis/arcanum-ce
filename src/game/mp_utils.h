@@ -160,17 +160,17 @@ typedef struct PacketCombatModeSet {
 
 static_assert(sizeof(PacketCombatModeSet) == 0x28, "wrong size");
 
-typedef struct Packet20 {
+typedef struct PacketCombatDmg {
     /* 0000 */ int type;
     /* 0008 */ CombatContext combat;
-    /* 0070 */ ObjectID field_70;
-    /* 0088 */ ObjectID field_88;
-    /* 00A0 */ ObjectID field_A0;
+    /* 0070 */ ObjectID attacker_oid;
+    /* 0088 */ ObjectID weapon_oid;
+    /* 00A0 */ ObjectID target_oid;
     /* 00B8 */ ObjectID field_B8;
     /* 00D0 */ ObjectID field_D0;
-} Packet20;
+} PacketCombatDmg;
 
-static_assert(sizeof(Packet20) == 0xE8, "wrong size");
+static_assert(sizeof(PacketCombatDmg) == 0xE8, "wrong size");
 
 typedef struct PacketCombatHeal {
     /* 0000 */ int type;

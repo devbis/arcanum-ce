@@ -2107,7 +2107,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         for (int idx = 0; idx < cnt; idx++) {
             sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
             combat.dam[type] = damage;
-            sub_4B4390(&combat);
+            combat_dmg(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;
@@ -2828,7 +2828,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
             sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
             combat.dam[type] = damage;
             combat.dam_flags |= CDF_IGNORE_RESISTANCE;
-            sub_4B4390(&combat);
+            combat_dmg(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;

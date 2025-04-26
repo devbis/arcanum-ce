@@ -488,7 +488,7 @@ void critter_kill(int64_t obj)
 
     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
     combat.dam_flags |= CDF_DEATH;
-    sub_4B4390(&combat);
+    combat_dmg(&combat);
 
     object_hp_damage_set(obj, 32000);
 

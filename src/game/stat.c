@@ -886,7 +886,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
                 }
                 combat.dam[DAMAGE_TYPE_NORMAL] = damage;
                 combat.flags |= 0x80;
-                sub_4B4390(&combat);
+                combat_dmg(&combat);
             }
 
             if ((combat.dam_flags & 0x200000) != 0) {

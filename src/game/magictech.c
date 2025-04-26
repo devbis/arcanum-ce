@@ -2262,10 +2262,10 @@ void MTComponentDamage_ProcFunc()
                     resisted = 1;
                 }
                 combat.dam[dword_5E761C->data.damage.damage_type] -= resisted;
-                sub_4B4390(&combat);
+                combat_dmg(&combat);
             }
         } else {
-            sub_4B4390(&combat);
+            combat_dmg(&combat);
         }
     } else if (dword_5E761C->data.damage.damage_type == DAMAGE_TYPE_COUNT) {
         sub_4B5810(&combat);
@@ -3873,7 +3873,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 if (tile_is_blocking(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
                     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
                     combat.dam_flags |= CDF_FULL;
-                    sub_4B4390(&combat);
+                    combat_dmg(&combat);
 
                     // FIXME: Meaningless.
                     obj_field_int32_get(combat.target_obj, OBJ_F_FLAGS);

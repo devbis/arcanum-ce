@@ -761,7 +761,7 @@ void sub_4B2F60(CombatContext* combat)
         }
 
         sub_4B6680(combat);
-        sub_4B4390(combat);
+        combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
@@ -1026,7 +1026,7 @@ void sub_4B3770(CombatContext* combat)
         }
 
         sub_4B6680(combat);
-        sub_4B4390(combat);
+        combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
@@ -1043,7 +1043,7 @@ void sub_4B3770(CombatContext* combat)
             && (obj_field_int32_get(combat->target_obj, OBJ_F_SPELL_FLAGS) & OSF_BODY_OF_FIRE) != 0) {
             sub_4B2210(combat->target_obj, combat->attacker_obj, &body_of_fire);
             body_of_fire.dam[DAMAGE_TYPE_FIRE] = 5;
-            sub_4B4390(&body_of_fire);
+            combat_dmg(&body_of_fire);
         }
     } else {
         sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 5);
@@ -1410,7 +1410,7 @@ void sub_4B4320(int64_t obj)
 }
 
 // 0x4B4390
-void sub_4B4390(CombatContext* combat)
+void combat_dmg(CombatContext* combat)
 {
     int obj_type;
     unsigned int dam_flags;
@@ -1987,12 +1987,12 @@ void sub_4B4390(CombatContext* combat)
     }
 
     if (!multiplayer_is_locked() && tig_net_is_host()) {
-        Packet20 pkt;
+        PacketCombatDmg pkt;
 
         pkt.type = 20;
-        sub_4F0640(combat->attacker_obj, &(pkt.field_70));
-        sub_4F0640(combat->weapon_obj, &(pkt.field_88));
-        sub_4F0640(combat->target_obj, &(pkt.field_A0));
+        sub_4F0640(combat->attacker_obj, &(pkt.attacker_oid));
+        sub_4F0640(combat->weapon_obj, &(pkt.weapon_oid));
+        sub_4F0640(combat->target_obj, &(pkt.target_oid));
         sub_4F0640(combat->field_28, &(pkt.field_B8));
         sub_4F0640(combat->field_30, &(pkt.field_D0));
         pkt.combat = *combat;
@@ -2161,13 +2161,13 @@ void sub_4B5810(CombatContext* combat)
             item_obj = item_wield_get(obj, 1000 + index);
             if (item_obj != OBJ_HANDLE_NULL) {
                 combat->target_obj = item_obj;
-                sub_4B4390(combat);
+                combat_dmg(combat);
             }
         }
     }
     combat->target_obj = obj;
     combat->dam[DAMAGE_TYPE_NORMAL] /= 3;
-    sub_4B4390(combat);
+    combat_dmg(combat);
 }
 
 // 0x4B58C0
@@ -3658,7 +3658,7 @@ bool sub_4B7CD0(int64_t obj, int action_points)
         sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
         combat.flags |= 0x80;
         combat.dam[DAMAGE_TYPE_FATIGUE] = 2;
-        sub_4B4390(&combat);
+        combat_dmg(&combat);
 
         combat_action_points = 0;
         combat_callbacks.field_C(0);

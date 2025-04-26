@@ -115,7 +115,7 @@ bool sub_4B3D90(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 void sub_4B4320(int64_t obj);
-void sub_4B4390(CombatContext* combat);
+void combat_dmg(CombatContext* combat);
 void sub_4B5810(CombatContext* combat);
 void combat_heal(CombatContext* combat);
 int sub_4B5F30(int hit_loc);
