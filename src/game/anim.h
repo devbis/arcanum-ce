@@ -18,6 +18,15 @@
 
 #define ANIM_ID_STR_SIZE 36
 
+typedef enum AnimWeaponEyeCandyType {
+    ANIM_WEAPON_EYE_CANDY_TYPE_POWER_GATHER,
+    ANIM_WEAPON_EYE_CANDY_TYPE_FIRE,
+    ANIM_WEAPON_EYE_CANDY_TYPE_PROJECTILE,
+    ANIM_WEAPON_EYE_CANDY_TYPE_HIT,
+    ANIM_WEAPON_EYE_CANDY_TYPE_SECONDARY_HIT,
+    ANIM_WEAPON_EYE_CANDY_TYPE_COUNT,
+} AnimWeaponEyeCandyType;
+
 extern AnimGoalNode* anim_goal_nodes[];
 
 bool anim_init(GameInitInfo* init_info);
@@ -111,7 +120,7 @@ void sub_436FA0(int64_t obj);
 bool sub_4372B0(int64_t a1, int64_t a2);
 int num_goal_subslots_in_use(AnimID* anim_id);
 bool is_anim_forever(AnimID* anim_id);
-bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which);
+bool anim_play_weapon_fx(CombatContext* combat, int64_t source_obj, int64_t target_obj, AnimWeaponEyeCandyType which);
 void sub_437980();
 bool sub_437CF0(int a1, int a2, int a3);
 

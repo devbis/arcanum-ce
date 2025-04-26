@@ -3,9 +3,6 @@
 
 #include "game/context.h"
 
-#define ANIM_WEAPON_EYE_CANDY_POWER_GATHER 0
-#define ANIMFX_WEAPON_TYPE_COUNT 5
-
 typedef enum AnimFxListEntryFlags {
     ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY = 0x01,
     ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY = 0x02,

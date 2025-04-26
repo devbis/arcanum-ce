@@ -12856,7 +12856,7 @@ bool sub_432700(AnimRunInfo* run_info)
     }
 
     mt_item_notify_parent_attacks_obj(source_obj, target_obj);
-    sub_4377C0(NULL, source_obj, source_obj, 0);
+    anim_play_weapon_fx(NULL, source_obj, source_obj, ANIM_WEAPON_EYE_CANDY_TYPE_POWER_GATHER);
 
     if (art_anim_data.action_frame < 1) {
         run_info->flags |= 0x04;
@@ -15317,22 +15317,22 @@ void mp_anim_modify()
 }
 
 // 0x4377C0
-bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
+bool anim_play_weapon_fx(CombatContext* combat, int64_t source_obj, int64_t target_obj, AnimWeaponEyeCandyType which)
 {
     int obj_type;
     int64_t weapon_obj;
     AnimFxNode node;
     tig_art_id_t art_id;
-    int v1;
+    int fx_id;
 
-    ASSERT(which >= ANIM_WEAPON_EYE_CANDY_POWER_GATHER); // 17560, "whichIdx >= ANIM_WEAPON_EYE_CANDY_POWER_GATHER"
-    ASSERT(which < ANIMFX_WEAPON_TYPE_COUNT); // 17561, "whichIdx < ANIMFX_WEAPON_TYPE_COUNT"
+    ASSERT(which >= ANIM_WEAPON_EYE_CANDY_TYPE_POWER_GATHER); // 17560, "whichIdx >= ANIM_WEAPON_EYE_CANDY_POWER_GATHER"
+    ASSERT(which < ANIM_WEAPON_EYE_CANDY_TYPE_COUNT); // 17561, "whichIdx < ANIMFX_WEAPON_TYPE_COUNT"
 
-    if (obj == OBJ_HANDLE_NULL) {
+    if (source_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    obj_type = obj_field_int32_get(source_obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
         if (combat != NULL
             && (combat->flags & 0x40000) != 0) {
@@ -15343,10 +15343,10 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
 
             weapon_obj = combat->weapon_obj;
         } else {
-            weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
+            weapon_obj = item_wield_get(source_obj, ITEM_INV_LOC_WEAPON);
         }
     } else if (obj_type == OBJ_TYPE_WEAPON) {
-        weapon_obj = obj;
+        weapon_obj = source_obj;
     } else {
         return false;
     }
@@ -15355,9 +15355,9 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
         return false;
     }
 
-    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    v1 =  5 * (sub_49B290(weapon_obj) - 6029);
-    sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + which);
+    art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
+    fx_id = 5 * (sub_49B290(weapon_obj) - 6029);
+    sub_4CCD20(&weapon_eye_candies, &node, target_obj, -1, fx_id + which);
     node.rotation = tig_art_id_rotation_get(art_id);
     node.animate = true;
     node.max_simultaneous_effects = 2;
@@ -15365,8 +15365,10 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
         return false;
     }
 
-    if (which == 3) {
-        sub_4CCD20(&weapon_eye_candies, &node, a3, -1, v1 + 5);
+    if (which == ANIM_WEAPON_EYE_CANDY_TYPE_HIT) {
+        // TODO: Check if there is a bug in fx id type, probably should be
+        // 4 (secondary hit).
+        sub_4CCD20(&weapon_eye_candies, &node, target_obj, -1, fx_id + 5);
         node.animate = true;
         node.max_simultaneous_effects = 0;
         node.flags |= ANIMFX_PLAY_STACK;

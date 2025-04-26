@@ -995,7 +995,7 @@ int sub_4B3170(CombatContext* combat)
         sub_4B3770(combat);
     }
 
-    sub_4377C0(combat, combat->attacker_obj, combat->attacker_obj, 1);
+    anim_play_weapon_fx(combat, combat->attacker_obj, combat->attacker_obj, ANIM_WEAPON_EYE_CANDY_TYPE_FIRE);
 
     if (is_melee) {
         sub_4B6B90(combat);
@@ -2830,7 +2830,7 @@ int sub_4B6930(CombatContext* combat)
             }
         }
 
-        if (!sub_4377C0(combat, combat->weapon_obj, combat->target_obj, 3)) {
+        if (!anim_play_weapon_fx(combat, combat->weapon_obj, combat->target_obj, ANIM_WEAPON_EYE_CANDY_TYPE_HIT)) {
             if (max_dam > 0) {
                 if ((combat->flags & 0x80) == 0) {
                     sub_433020(combat->target_obj, v1, 0, combat);
