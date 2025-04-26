@@ -13173,7 +13173,7 @@ void anim_play_blood_splotch_fx(int64_t obj, int blood_splotch_type, int damage_
 }
 
 // 0x433170
-void sub_433170(int64_t obj)
+void anim_lag_icon_add(int64_t obj)
 {
     tig_art_id_t art_id;
     int idx;
@@ -13196,13 +13196,13 @@ void sub_433170(int64_t obj)
     for (idx = 0; idx < 7; idx++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_FORE, idx) == TIG_ART_ID_INVALID) {
             object_overlay_set(obj, OBJ_F_OVERLAY_FORE, idx, art_id);
-            return;
+            break;
         }
     }
 }
 
 // 0x433220
-void sub_433220(int64_t obj)
+void anim_lag_icon_remove(int64_t obj)
 {
     int idx;
     tig_art_id_t art_id;

@@ -507,19 +507,19 @@ typedef struct Packet67 {
 
 static_assert(sizeof(Packet67) == 0x08, "wrong size");
 
-typedef struct Packet68 {
+typedef struct PacketNotifyPlayerLagging {
     /* 0000 */ int type;
     /* 0008 */ FollowerInfo field_8;
-} Packet68;
+} PacketNotifyPlayerLagging;
 
-static_assert(sizeof(Packet68) == 0x38, "wrong size");
+static_assert(sizeof(PacketNotifyPlayerLagging) == 0x38, "wrong size");
 
-typedef struct Packet69 {
+typedef struct PacketNotifyPlayerRecovered {
     /* 0000 */ int type;
     /* 0008 */ FollowerInfo field_8;
-} Packet69;
+} PacketNotifyPlayerRecovered;
 
-static_assert(sizeof(Packet69) == 0x38, "wrong size");
+static_assert(sizeof(PacketNotifyPlayerRecovered) == 0x38, "wrong size");
 
 typedef struct Packet70 {
     /* 0000 */ int type;

@@ -218,8 +218,8 @@ static bool multiplayer_validate_message(void* msg);
 static void sub_4A2040(int a1);
 static bool multiplayer_handle_network_event(int type, int client_id, void* data, int size);
 static void sub_4A2A30();
-static void sub_4A2A40(int64_t obj);
-static void sub_4A2A90(int64_t obj);
+static void multiplayer_notify_player_lagging(int64_t obj);
+static void multiplayer_notify_player_recovered(int64_t obj);
 static void sub_4A2AE0(int player);
 static void sub_4A2CD0(S5F0DFC* a1);
 static void sub_4A2E90();
@@ -1062,34 +1062,38 @@ void sub_4A2A30()
 }
 
 // 0x4A2A40
-void sub_4A2A40(int64_t obj)
+void multiplayer_notify_player_lagging(int64_t obj)
 {
-    Packet68 pkt;
+    PacketNotifyPlayerLagging pkt;
 
-    if (obj != OBJ_HANDLE_NULL) {
-        sub_433170(obj);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
 
-        if (tig_net_is_host()) {
-            pkt.type = 68;
-            sub_4440E0(obj, &(pkt.field_8));
-            tig_net_send_app_all(&pkt, sizeof(pkt));
-        }
+    anim_lag_icon_add(obj);
+
+    if (tig_net_is_host()) {
+        pkt.type = 68;
+        sub_4440E0(obj, &(pkt.field_8));
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4A2A90
-void sub_4A2A90(int64_t obj)
+void multiplayer_notify_player_recovered(int64_t obj)
 {
-    Packet69 pkt;
+    PacketNotifyPlayerRecovered pkt;
 
-    if (obj != OBJ_HANDLE_NULL) {
-        sub_433220(obj);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
 
-        if (tig_net_is_host()) {
-            pkt.type = 69;
-            sub_4440E0(obj, &(pkt.field_8));
-            tig_net_send_app_all(&pkt, sizeof(pkt));
-        }
+    anim_lag_icon_remove(obj);
+
+    if (tig_net_is_host()) {
+        pkt.type = 69;
+        sub_4440E0(obj, &(pkt.field_8));
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
