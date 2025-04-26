@@ -174,7 +174,7 @@ bool sub_4C6FD0(int64_t obj, int64_t target_obj, int64_t item_obj);
 bool sub_4C7010(int64_t obj, int64_t target_obj, int64_t item_obj);
 bool sub_4C7050(int64_t obj, int a2, int64_t target_obj);
 void skill_invocation_init(SkillInvocation* skill_invocation);
-bool sub_4C7120(SkillInvocation* skill_invocation);
+bool skill_invocation_recover(SkillInvocation* skill_invocation);
 bool skill_invocation_run(SkillInvocation* skill_invocation);
 int sub_4C8430(SkillInvocation* skill_invocation);
 void skill_perform_repair_service(int64_t item_obj, int64_t npc_obj, int64_t pc_obj, int cost);

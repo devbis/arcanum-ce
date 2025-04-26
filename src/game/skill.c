@@ -1054,7 +1054,7 @@ void skill_invocation_init(SkillInvocation* skill_invocation)
 }
 
 // 0x4C7120
-bool sub_4C7120(SkillInvocation* skill_invocation)
+bool skill_invocation_recover(SkillInvocation* skill_invocation)
 {
     return sub_444130(&(skill_invocation->source))
         && sub_444130(&(skill_invocation->target))
