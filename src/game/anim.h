@@ -18,6 +18,21 @@
 
 #define ANIM_ID_STR_SIZE 36
 
+typedef enum AnimEyeCandy {
+    ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_POISON_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_ELECTRICAL_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_FIRE_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_FATIGUE_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_CRITICAL_SPLOTCH,
+    ANIM_EYE_CANDY_UNDEAD_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_STONED_BLOOD_SPLOTCH,
+    ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X2,
+    ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X3,
+    ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X4,
+    ANIM_EYE_CANDY_COUNT,
+} AnimEyeCandy;
+
 typedef enum AnimWeaponEyeCandyType {
     ANIM_WEAPON_EYE_CANDY_TYPE_POWER_GATHER,
     ANIM_WEAPON_EYE_CANDY_TYPE_FIRE,
@@ -26,6 +41,16 @@ typedef enum AnimWeaponEyeCandyType {
     ANIM_WEAPON_EYE_CANDY_TYPE_SECONDARY_HIT,
     ANIM_WEAPON_EYE_CANDY_TYPE_COUNT,
 } AnimWeaponEyeCandyType;
+
+typedef enum BloodSplotchType {
+    BLOOD_SPLOTCH_TYPE_NONE,
+    BLOOD_SPLOTCH_TYPE_NORMAL,
+    BLOOD_SPLOTCH_TYPE_POISON,
+    BLOOD_SPLOTCH_TYPE_ELECTRICAL,
+    BLOOD_SPLOTCH_TYPE_FIRE,
+    BLOOD_SPLOTCH_TYPE_FATIGUE,
+    BLOOD_SPLOTCH_TYPE_CRITICAL,
+} BloodSplotchType;
 
 extern AnimGoalNode* anim_goal_nodes[];
 
@@ -70,7 +95,7 @@ bool get_always_run(int64_t obj);
 void set_always_run(bool value);
 bool anim_goal_animate(int64_t obj, int anim);
 void sub_432D90(int64_t obj);
-void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat);
+void anim_play_blood_splotch_fx(int64_t obj, int blood_splotch_type, int damage_type, CombatContext* combat);
 void sub_433170(int64_t obj);
 void sub_433220(int64_t obj);
 bool anim_goal_rotate(int64_t obj, int rot);

@@ -13101,20 +13101,20 @@ void sub_432D90(int64_t obj)
 }
 
 // 0x433020
-void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
+void anim_play_blood_splotch_fx(int64_t obj, int blood_splotch_type, int damage_type, CombatContext* combat)
 {
-    int v1;
+    int fx_id;
     unsigned int critter_flags;
     unsigned int spell_flags;
     AnimFxNode fx;
 
-    (void)a3;
+    (void)damage_type;
 
     if (obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    if (a2 == 0) {
+    if (blood_splotch_type == BLOOD_SPLOTCH_TYPE_NONE) {
         return;
     }
 
@@ -13135,8 +13135,8 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
         return;
     }
 
-    v1 = a2 - 1;
-    if (v1 == 0) {
+    fx_id = blood_splotch_type - 1;
+    if (fx_id == ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH) {
         // FIXME: Useless.
         obj_field_int32_get(player_get_local_pc_obj(), OBJ_F_PC_FLAGS);
 
@@ -13145,26 +13145,26 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
 
         if (violence_filter == 0 && (spell_flags & OSF_STONED) == 0) {
             if ((critter_flags & OCF_UNDEAD) != 0) {
-                v1 = 6;
+                fx_id = ANIM_EYE_CANDY_UNDEAD_BLOOD_SPLOTCH;
             } else if ((critter_flags & OCF_MECHANICAL) != 0) {
-                v1 = 7;
+                fx_id = ANIM_EYE_CANDY_STONED_BLOOD_SPLOTCH;
             }
         } else {
-            v1 = 7;
+            fx_id = ANIM_EYE_CANDY_STONED_BLOOD_SPLOTCH;
         }
     }
 
-    if (combat->field_5C > 5 && v1 == 0) {
+    if (combat->field_5C > 5 && fx_id == ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH) {
         if (combat->field_5C < 10) {
-            v1 = 8;
+            fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X2;
         } else if (combat->field_5C < 15) {
-            v1 = 9;
+            fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X3;
         } else {
-            v1 = 10;
+            fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X4;
         }
     }
 
-    sub_4CCD20(&anim_eye_candies, &fx, obj, -1, v1);
+    sub_4CCD20(&anim_eye_candies, &fx, obj, -1, fx_id);
     fx.animate = true;
     fx.max_simultaneous_effects = 3;
     animfx_add(&fx);

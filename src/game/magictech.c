@@ -2275,7 +2275,7 @@ void MTComponentDamage_ProcFunc()
 
     if ((dword_5E75D0 & (OF_DESTROYED | OF_OFF)) == 0
         && (combat.dam_flags & 0x200000) != 0) {
-        sub_433020(combat.target_obj, 1, dword_5E761C->data.damage.damage_type, &combat);
+        anim_play_blood_splotch_fx(combat.target_obj, BLOOD_SPLOTCH_TYPE_NORMAL, dword_5E761C->data.damage.damage_type, &combat);
     }
 }
 

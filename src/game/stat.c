@@ -890,7 +890,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
             }
 
             if ((combat.dam_flags & 0x200000) != 0) {
-                sub_433020(combat.target_obj, 2, 1, &combat);
+                anim_play_blood_splotch_fx(combat.target_obj, BLOOD_SPLOTCH_TYPE_POISON, DAMAGE_TYPE_POISON, &combat);
             }
 
             sub_4B1350(obj, poison, 0);

@@ -2804,36 +2804,36 @@ void sub_4B6860(CombatContext* combat)
 // 0x4B6930
 int sub_4B6930(CombatContext* combat)
 {
-    int v1 = 0;
-    int max_dam = 0;
-    int max_dam_index = 0;
-    int index;
+    int blood_splotch_type = BLOOD_SPLOTCH_TYPE_NONE;
+    int max_damage = 0;
+    int max_damage_type = 0;
+    int damage_type;
 
     if (combat->target_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(combat->target_obj, OBJ_F_TYPE))
         && (combat->flags & CF_HIT) != 0) {
         if ((combat->flags & CF_CRITICAL) != 0) {
-            v1 = 6;
+            blood_splotch_type = 6;
         } else {
-            for (index = 0; index < 4; index++) {
-                if (combat->dam[index] > max_dam) {
-                    max_dam = combat->dam[index];
-                    max_dam_index = index;
+            for (damage_type = 0; damage_type < 4; damage_type++) {
+                if (combat->dam[damage_type] > max_damage) {
+                    max_damage = combat->dam[damage_type];
+                    max_damage_type = damage_type;
                 }
             }
 
-            v1 = max_dam_index + 1;
+            blood_splotch_type = max_damage_type + 1;
 
             // FIXME: Unreachable.
-            if (max_dam_index == -1) {
-                return v1;
+            if (max_damage_type == -1) {
+                return blood_splotch_type;
             }
         }
 
         if (!anim_play_weapon_fx(combat, combat->weapon_obj, combat->target_obj, ANIM_WEAPON_EYE_CANDY_TYPE_HIT)) {
-            if (max_dam > 0) {
+            if (max_damage > 0) {
                 if ((combat->flags & 0x80) == 0) {
-                    sub_433020(combat->target_obj, v1, 0, combat);
+                    anim_play_blood_splotch_fx(combat->target_obj, blood_splotch_type, DAMAGE_TYPE_NORMAL, combat);
                 }
             } else {
                 magictech_anim_play_hit_fx(combat->target_obj, combat);
@@ -2841,7 +2841,7 @@ int sub_4B6930(CombatContext* combat)
         }
     }
 
-    return v1;
+    return blood_splotch_type;
 }
 
 // 0x4B6A00
