@@ -123,7 +123,7 @@ char* spell_get_description(int spell);
 int spell_cost(int spell);
 int spell_cast_cost(int spell, int64_t obj);
 int spell_maintain_cost(int spell, int64_t obj, int* period_ptr);
-int sub_4B1740(int spell);
+int spell_money(int spell);
 int spell_min_intelligence(int spell);
 int spell_min_willpower(int spell);
 int spell_min_level(int spell);

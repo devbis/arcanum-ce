@@ -359,7 +359,7 @@ int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
 }
 
 // 0x4B1740
-int sub_4B1740(int spell)
+int spell_money(int spell)
 {
     (void)spell;
 

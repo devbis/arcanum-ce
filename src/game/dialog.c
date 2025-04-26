@@ -3845,7 +3845,7 @@ void sub_419C30(int a1, int a2, DialogState* a3)
     if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
         sub_419D50(a1, v1, v2, a3);
     } else {
-        sub_418A40(sub_4B1740(a1), 17, a1, v1, v2, a3);
+        sub_418A40(spell_money(a1), 17, a1, v1, v2, a3);
     }
 }
 
