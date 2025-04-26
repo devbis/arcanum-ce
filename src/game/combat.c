@@ -1773,7 +1773,7 @@ void sub_4B4390(CombatContext* combat)
 
             if ((dam_flags & 0x10000) != 0) {
                 dam_flags |= CDF_DESTROY_WEAPON;
-                sub_44C820(combat->target_obj);
+                script_play_explosion_fx(combat->target_obj);
             }
 
             if ((dam_flags & CDF_DESTROY_WEAPON) != 0) {

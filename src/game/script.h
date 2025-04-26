@@ -375,7 +375,7 @@ char* script_story_state_info(int story_state_num);
 bool script_timeevent_process(TimeEvent* timeevent);
 int sub_44BCC0(Script* scr);
 bool sub_44C310(Script* scr, unsigned int* flags_ptr);
-void sub_44C820(int64_t obj);
+void script_play_explosion_fx(int64_t obj);
 
 static inline bool sfo_is_any(uint8_t type) {
     return type == SFO_ANY_FOLLOWER

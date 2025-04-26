@@ -100,8 +100,8 @@ static void cache_remove(int cache_entry_id);
 static int cache_find(int script_id);
 static int sub_44C710(TigFile* stream, ScriptHeader* hdr);
 static bool sub_44C730(TigFile* stream, ScriptFile* script_file);
-static void sub_44C7A0(int64_t obj, int a2);
-static void sub_44C800(int64_t obj, int a2);
+static void script_fx_play(int64_t obj, int fx_id);
+static void script_fx_stop(int64_t obj, int fx_id);
 
 // 0x5A56FC
 static mes_file_handle_t script_story_state_mes_file = MES_FILE_HANDLE_INVALID;
@@ -2666,7 +2666,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_PLAY_SCRIPT_EYE_CANDY: {
         int num = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_44C7A0(obj, num);
+        script_fx_play(obj, num);
         return NEXT;
     }
     case SAT_ACTION_CAST_UNRESISTABLE_SPELL: {
@@ -2699,7 +2699,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_STOP_SCRIPT_EYE_CANDY: {
         int num = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_44C800(obj, num);
+        script_fx_stop(obj, num);
         return NEXT;
     }
     case SAT_REMOVE_SCRIPT_CALL: {
@@ -3588,24 +3588,24 @@ bool sub_44C730(TigFile* stream, ScriptFile* script_file)
 }
 
 // 0x44C7A0
-void sub_44C7A0(int64_t obj, int a2)
+void script_fx_play(int64_t obj, int fx_id)
 {
     AnimFxNode fx;
 
-    sub_4CCD20(&script_eye_candies, &fx, obj, -1, a2);
+    sub_4CCD20(&script_eye_candies, &fx, obj, -1, fx_id);
     fx.rotation = tig_art_id_rotation_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
     fx.animate = true;
     animfx_add(&fx);
 }
 
 // 0x44C800
-void sub_44C800(int64_t obj, int a2)
+void script_fx_stop(int64_t obj, int fx_id)
 {
-    animfx_remove(&script_eye_candies, obj, a2, -1);
+    animfx_remove(&script_eye_candies, obj, fx_id, -1);
 }
 
 // 0x44C820
-void sub_44C820(int64_t obj)
+void script_play_explosion_fx(int64_t obj)
 {
-    sub_44C7A0(obj, 55);
+    script_fx_play(obj, 55);
 }
