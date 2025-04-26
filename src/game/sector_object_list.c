@@ -711,7 +711,7 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
         invocation.attachee_obj = OBJ_HANDLE_NULL;
         invocation.extra_obj = OBJ_HANDLE_NULL;
         invocation.line = 0;
-        sub_4449B0(&invocation);
+        script_execute(&invocation);
 
         if (prev_scr.hdr.flags != scr.hdr.flags
             || prev_scr.hdr.counters != scr.hdr.counters) {

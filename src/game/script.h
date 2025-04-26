@@ -356,7 +356,7 @@ void script_mod_unload();
 bool script_load(GameLoadInfo* load_info);
 bool script_save(TigFile* stream);
 void script_set_callbacks(ScriptStartDialogFunc* start_dialog_func, ScriptFloatLineFunc* float_line_func);
-bool sub_4449B0(ScriptInvocation* invocation);
+bool script_execute(ScriptInvocation* invocation);
 int script_gl_var_get(int index);
 void script_gl_var_set(int index, int value);
 int script_gl_flag_get(int index);

@@ -3977,7 +3977,7 @@ bool object_script_execute(int64_t triggerer_obj, int64_t attachee_obj, int64_t 
     invocation.extra_obj = extra_obj;
     invocation.attachment_point = attachment_point;
     invocation.line = line;
-    rc = sub_4449B0(&invocation);
+    rc = script_execute(&invocation);
 
     if (scr.num != 0 || obj_field_int32_get(attachee_obj, OBJ_F_TYPE) != OBJ_TYPE_TRAP) {
         if (scr_before.num != scr.num

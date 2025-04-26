@@ -263,7 +263,7 @@ void tile_script_exec(int64_t loc, int64_t triggerer_obj)
     invocation.line = 0;
     invocation.attachment_point = SAP_USE;
     invocation.triggerer_obj = triggerer_obj;
-    sub_4449B0(&invocation);
+    script_execute(&invocation);
 
     if (invocation.script->num != scr.num
         || invocation.script->hdr.flags != scr.hdr.flags

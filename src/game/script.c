@@ -278,7 +278,7 @@ void script_set_callbacks(ScriptStartDialogFunc* start_dialog_func, ScriptFloatL
 }
 
 // 0x4449B0
-bool sub_4449B0(ScriptInvocation* invocation)
+bool script_execute(ScriptInvocation* invocation)
 {
     unsigned int flags;
     int attachee_type;
@@ -612,7 +612,7 @@ bool script_timeevent_process(TimeEvent* timeevent)
     invocation.attachment_point = SAP_USE;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = timeevent->params[1].integer_value;
-    sub_4449B0(&invocation);
+    script_execute(&invocation);
 
     return true;
 }
@@ -2915,7 +2915,7 @@ void sub_44B030(ScriptAction* action, ScriptState* state)
             invocation.extra_obj = OBJ_HANDLE_NULL;
             invocation.triggerer_obj = triggerer_objs[triggerer_idx];
             invocation.attachee_obj = attachee_objs[attachee_idx];
-            sub_4449B0(&invocation);
+            script_execute(&invocation);
         }
     }
 

@@ -613,7 +613,7 @@ void sub_4BCB00(int64_t a1, int64_t a2)
     invocation.attachment_point = SAP_USE;
     invocation.attachee_obj = a2;
     invocation.script = &scr;
-    sub_4449B0(&invocation);
+    script_execute(&invocation);
 }
 
 // 0x4BCB70

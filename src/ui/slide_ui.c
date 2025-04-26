@@ -116,7 +116,7 @@ void slide_ui_prepare(int type)
     invocation.attachee_obj = OBJ_HANDLE_NULL;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = 0;
-    sub_4449B0(&invocation);
+    script_execute(&invocation);
 }
 
 // 0x569770
