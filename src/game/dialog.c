@@ -3803,7 +3803,7 @@ void sub_419AC0(int a1, int a2, int a3, DialogState* a4)
     char buffer[1000];
 
     dialog_copy_pc_generic_msg(buffer, a4, 1000, 1099);
-    sprintf(a4->options[a1], buffer, spell_get_name(a2));
+    sprintf(a4->options[a1], buffer, spell_name(a2));
     a4->field_17F0[a1] = 15;
     a4->field_1804[a1] = a2;
     a4->field_1818[a1] = a3;

@@ -16376,7 +16376,7 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
         return true;
     case PROTO_F_SPELL:
         for (spl = 0; spl < SPELL_COUNT; spl++) {
-            name = spell_get_name(spl);
+            name = spell_name(spl);
             pos = strlen(name);
             if (strnicmp(str, name, pos) == 0) {
                 *a3 = spl;
@@ -16541,7 +16541,7 @@ void sub_49C060(int64_t obj, TigFile* stream, int type)
         for (spl = 0; spl < num_spl; spl++) {
             tig_file_fprintf(stream, "%s: %s\n",
                 off_5B38C8[PROTO_F_SPELL],
-                spell_get_name(college * 5 + spl));
+                spell_name(college * 5 + spl));
         }
     }
 

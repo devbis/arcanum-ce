@@ -167,7 +167,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
             hotkey = &(stru_683518[index]);
             sub_557B20(index)->art_num = hotkey->type == 2 || hotkey->type != 3
                 ? sub_579F70(hotkey->data)
-                : spell_get_icon(hotkey->data);
+                : spell_icon(hotkey->data);
             intgame_button_create_ex(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
         }
     }
@@ -452,7 +452,7 @@ bool intgame_load_hotkey(Hotkey* hotkey, TigFile* stream)
             return false;
         }
 
-        hotkey->info.art_num = spell_get_icon(hotkey->data);
+        hotkey->info.art_num = spell_icon(hotkey->data);
         tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
         hotkey->count = -1;
 
@@ -474,7 +474,7 @@ bool intgame_load_hotkey(Hotkey* hotkey, TigFile* stream)
             return false;
         }
 
-        hotkey->info.art_num = spell_get_icon(hotkey->data);
+        hotkey->info.art_num = spell_icon(hotkey->data);
         tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
         hotkey->count = -1;
 
@@ -728,13 +728,13 @@ bool sub_57E5D0()
         case HOTKEY_SPELL:
             stru_683950.type = hotkey->type;
             stru_683950.data = hotkey->data;
-            tig_art_interface_id_create(spell_get_icon(stru_683950.data), 0, 0, 0, &art_id);
+            tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
             break;
         case HOTKEY_ITEM_SPELL:
             stru_683950.type = hotkey->type;
             stru_683950.item_obj = hotkey->item_obj;
             stru_683950.data = hotkey->data;
-            tig_art_interface_id_create(spell_get_icon(stru_683950.data), 0, 0, 0, &art_id);
+            tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
             break;
         default:
             // Should be unreachable.
@@ -777,7 +777,7 @@ bool sub_57E5D0()
             stru_683950.type = HOTKEY_ITEM_SPELL;
             sub_4440E0(sub_557B00(), &(stru_683950.item_obj));
             stru_683950.data = spl;
-            stru_683950.info.art_num = spell_get_icon(spl);
+            stru_683950.info.art_num = spell_icon(spl);
             tig_art_interface_id_create(stru_683950.info.art_num, 0, 0, 0, &art_id);
             intgame_hotkey_mouse_load(art_id, true);
             dword_6839B0 = true;
@@ -926,13 +926,13 @@ bool sub_57E8D0(int a1)
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
         case HOTKEY_SPELL:
             hotkey->data = stru_683950.data;
-            hotkey->info.art_num = spell_get_icon(stru_683950.data);
+            hotkey->info.art_num = spell_icon(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
             break;
         case HOTKEY_ITEM_SPELL:
             hotkey->item_obj = stru_683950.item_obj;
             hotkey->data = stru_683950.data;
-            hotkey->info.art_num = spell_get_icon(stru_683950.data);
+            hotkey->info.art_num = spell_icon(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
             break;
         }
@@ -1083,7 +1083,7 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
             && stru_683518[0].data == data) {
             return;
         }
-        tig_art_interface_id_create(spell_get_icon(data), 0, 0, 0, &new_art_id);
+        tig_art_interface_id_create(spell_icon(data), 0, 0, 0, &new_art_id);
         break;
     case HOTKEY_ITEM_SPELL:
         if (stru_683518[0].type == HOTKEY_ITEM_SPELL
@@ -1091,7 +1091,7 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
             && stru_683518[0].item_obj.obj == item_obj) {
             return;
         }
-        tig_art_interface_id_create(spell_get_icon(data), 0, 0, 0, &new_art_id);
+        tig_art_interface_id_create(spell_icon(data), 0, 0, 0, &new_art_id);
         break;
     default:
         return;

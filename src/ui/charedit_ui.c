@@ -2589,7 +2589,7 @@ void sub_55CA70(int a1, int a2)
     TigPaletteModifyInfo palette_modify_info;
     TigPalette tmp_palette;
 
-    art_num = spell_get_icon(a1 + 5 * dword_64E024);
+    art_num = spell_icon(a1 + 5 * dword_64E024);
     if (art_num != -1) {
         tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
         tig_art_frame_data(art_id, &art_frame_data);
@@ -2696,7 +2696,7 @@ void charedit_refresh_spells_win()
 
     for (index = 0; index < 5; index++) {
         spells[index] = index + 5 * dword_64E024;
-        charedit_spell_title_labels[index].str = spell_get_name(spells[index]);
+        charedit_spell_title_labels[index].str = spell_name(spells[index]);
     }
 
     if (v1 > cnt) {

@@ -13,10 +13,8 @@
 #define FIRST_COLLEGE_DESCRIPTION_ID 8000
 #define FIRST_COLLEGE_MASTERY_DESCRIPTION_ID 9000
 
-#define FIVE 5
-
 typedef struct SpellInfo {
-    /* 0000 */ char* field_0;
+    /* 0000 */ char* name;
     /* 0004 */ char* description;
     /* 0008 */ int field_8;
     /* 000C */ int field_C;
@@ -67,7 +65,7 @@ typedef struct SpellInfo {
 static_assert(sizeof(SpellInfo) == 0xB8, "wrong size");
 
 // 0x5B5770
-static int spell_minimum_levels[FIVE] = {
+static int spell_minimum_levels[MAX_SPELL_LEVEL] = {
     1,
     1,
     5,
@@ -79,128 +77,128 @@ static int spell_minimum_levels[FIVE] = {
 //
 // 0x5B55B0
 static int spell_college_small_icons[COLLEGE_COUNT] = {
-    /*         CONVEYANCE*/ 11,
-    /*         DIVINATION*/ 44,
-    /*                AIR*/ 38,
-    /*              EARTH*/ 92,
-    /*               FIRE*/ 50,
-    /*              WATER*/ 86,
-    /*              FORCE*/ 56,
-    /*             MENTAL*/ 98,
-    /*               META*/ 62,
-    /*              MORPH*/ 68,
-    /*             NATURE*/ 74,
-    /*  NECROMANTIC_BLACK*/ 104,
-    /*  NECROMANTIC_WHITE*/ 110,
-    /*           PHANTASM*/ 80,
-    /*          SUMMONING*/ 116,
-    /*           TEMPORAL*/ 122,
+    /*         COLLEGE_CONVEYANCE */ 11,
+    /*         COLLEGE_DIVINATION */ 44,
+    /*                COLLEGE_AIR */ 38,
+    /*              COLLEGE_EARTH */ 92,
+    /*               COLLEGE_FIRE */ 50,
+    /*              COLLEGE_WATER */ 86,
+    /*              COLLEGE_FORCE */ 56,
+    /*             COLLEGE_MENTAL */ 98,
+    /*               COLLEGE_META */ 62,
+    /*              COLLEGE_MORPH */ 68,
+    /*             COLLEGE_NATURE */ 74,
+    /*  COLLEGE_NECROMANTIC_BLACK */ 104,
+    /*  COLLEGE_NECROMANTIC_WHITE */ 110,
+    /*           COLLEGE_PHANTASM */ 80,
+    /*          COLLEGE_SUMMONING */ 116,
+    /*           COLLEGE_TEMPORAL */ 122,
 };
 
 // Large square-shaped spell college icon (64x64).
 //
 // 0x5B55F0
 static int spell_college_large_icons[COLLEGE_COUNT] = {
-    /*         CONVEYANCE*/ 446,
-    /*         DIVINATION*/ 447,
-    /*                AIR*/ 448,
-    /*              EARTH*/ 449,
-    /*               FIRE*/ 450,
-    /*              WATER*/ 451,
-    /*              FORCE*/ 452,
-    /*             MENTAL*/ 453,
-    /*               META*/ 454,
-    /*              MORPH*/ 455,
-    /*             NATURE*/ 456,
-    /*  NECROMANTIC_BLACK*/ 457,
-    /*  NECROMANTIC_WHITE*/ 458,
-    /*           PHANTASM*/ 459,
-    /*          SUMMONING*/ 460,
-    /*           TEMPORAL*/ 461,
+    /*         COLLEGE_CONVEYANCE */ 446,
+    /*         COLLEGE_DIVINATION */ 447,
+    /*                COLLEGE_AIR */ 448,
+    /*              COLLEGE_EARTH */ 449,
+    /*               COLLEGE_FIRE */ 450,
+    /*              COLLEGE_WATER */ 451,
+    /*              COLLEGE_FORCE */ 452,
+    /*             COLLEGE_MENTAL */ 453,
+    /*               COLLEGE_META */ 454,
+    /*              COLLEGE_MORPH */ 455,
+    /*             COLLEGE_NATURE */ 456,
+    /*  COLLEGE_NECROMANTIC_BLACK */ 457,
+    /*  COLLEGE_NECROMANTIC_WHITE */ 458,
+    /*           COLLEGE_PHANTASM */ 459,
+    /*          COLLEGE_SUMMONING */ 460,
+    /*           COLLEGE_TEMPORAL */ 461,
 };
 
 // 0x5B5630
 static int spell_icons[SPELL_COUNT] = {
-    12,
-    13,
-    14,
-    15,
-    16,
-    45,
-    46,
-    47,
-    48,
-    49,
-    39,
-    40,
-    41,
-    42,
-    43,
-    93,
-    94,
-    95,
-    96,
-    97,
-    51,
-    52,
-    53,
-    54,
-    55,
-    87,
-    88,
-    89,
-    90,
-    91,
-    57,
-    58,
-    59,
-    60,
-    61,
-    99,
-    100,
-    101,
-    102,
-    103,
-    63,
-    64,
-    65,
-    66,
-    67,
-    69,
-    70,
-    71,
-    72,
-    73,
-    75,
-    76,
-    77,
-    78,
-    79,
-    105,
-    106,
-    107,
-    108,
-    109,
-    111,
-    112,
-    113,
-    114,
-    115,
-    81,
-    82,
-    83,
-    84,
-    85,
-    117,
-    118,
-    119,
-    120,
-    121,
-    123,
-    124,
-    125,
-    126,
-    127,
+    /*                  SPELL_DISARM */ 12,
+    /*       SPELL_UNLOCKING_CANTRIP */ 13,
+    /*            SPELL_UNSEEN_FORCE */ 14,
+    /*      SPELL_SPATIAL_DISTORTION */ 15,
+    /*           SPELL_TELEPORTATION */ 16,
+    /*         SPELL_SENSE_ALIGNMENT */ 45,
+    /*            SPELL_SEE_CONTENTS */ 46,
+    /*               SPELL_READ_AURA */ 47,
+    /*            SPELL_SENSE_HIDDEN */ 48,
+    /*           SPELL_DIVINE_MAGICK */ 49,
+    /*         SPELL_VITALITY_OF_AIR */ 39,
+    /*          SPELL_POISON_VAPOURS */ 40,
+    /*              SPELL_CALL_WINDS */ 41,
+    /*             SPELL_BODY_OF_AIR */ 42,
+    /*      SPELL_CALL_AIR_ELEMENTAL */ 43,
+    /*       SPELL_STRENGTH_OF_EARTH */ 93,
+    /*             SPELL_STONE_THROW */ 94,
+    /*           SPELL_WALL_OF_STONE */ 95,
+    /*           SPELL_BODY_OF_STONE */ 96,
+    /*    SPELL_CALL_EARTH_ELEMENTAL */ 97,
+    /*         SPELL_AGILITY_OF_FIRE */ 51,
+    /*            SPELL_WALL_OF_FIRE */ 52,
+    /*               SPELL_FIREFLASH */ 53,
+    /*            SPELL_BODY_OF_FIRE */ 54,
+    /*     SPELL_CALL_FIRE_ELEMENTAL */ 55,
+    /*         SPELL_PURITY_OF_WATER */ 87,
+    /*                SPELL_CALL_FOG */ 88,
+    /*           SPELL_SQUALL_OF_ICE */ 89,
+    /*           SPELL_BODY_OF_WATER */ 90,
+    /*    SPELL_CALL_WATER_ELEMENTAL */ 91,
+    /*    SPELL_SHIELD_OF_PROTECTION */ 57,
+    /*                    SPELL_JOLT */ 58,
+    /*           SPELL_WALL_OF_FORCE */ 59,
+    /*       SPELL_BOLT_OF_LIGHTNING */ 60,
+    /*            SPELL_DISINTEGRATE */ 61,
+    /*                   SPELL_CHARM */ 99,
+    /*                    SPELL_STUN */ 100,
+    /*              SPELL_DRAIN_WILL */ 101,
+    /*               SPELL_NIGHTMARE */ 102,
+    /*           SPELL_DOMINATE_WILL */ 103,
+    /*           SPELL_RESIST_MAGICK */ 63,
+    /*         SPELL_DISPERSE_MAGICK */ 64,
+    /*          SPELL_DWEOMER_SHIELD */ 65,
+    /*         SPELL_BONDS_OF_MAGICK */ 66,
+    /*       SPELL_REFLECTION_SHIELD */ 67,
+    /*          SPELL_HARDENED_HANDS */ 69,
+    /*                  SPELL_WEAKEN */ 70,
+    /*                  SPELL_SHRINK */ 71,
+    /*          SPELL_FLESH_TO_STONE */ 72,
+    /*               SPELL_POLYMORPH */ 73,
+    /*             SPELL_CHARM_BEAST */ 75,
+    /*                SPELL_ENTANGLE */ 76,
+    /*           SPELL_CONTROL_BEAST */ 77,
+    /*           SPELL_SUCCOUR_BEAST */ 78,
+    /*              SPELL_REGENERATE */ 79,
+    /*                    SPELL_HARM */ 105,
+    /*          SPELL_CONJURE_SPIRIT */ 106,
+    /*           SPELL_SUMMON_UNDEAD */ 107,
+    /*           SPELL_CREATE_UNDEAD */ 108,
+    /*             SPELL_QUENCH_LIFE */ 109,
+    /*           SPELL_MINOR_HEALING */ 111,
+    /*             SPELL_HALT_POISON */ 112,
+    /*           SPELL_MAJOR_HEALING */ 113,
+    /*               SPELL_SANCTUARY */ 114,
+    /*               SPELL_RESURRECT */ 115,
+    /*              SPELL_ILLUMINATE */ 81,
+    /*                   SPELL_FLASH */ 82,
+    /*              SPELL_BLUR_SIGHT */ 83,
+    /*        SPELL_PHANTASMAL_FIEND */ 84,
+    /*            SPELL_INVISIBILITY */ 85,
+    /*       SPELL_PLAGUE_OF_INSECTS */ 117,
+    /*         SPELL_ORCISH_CHAMPION */ 118,
+    /*           SPELL_GUARDIAN_OGRE */ 119,
+    /*                SPELL_HELLGATE */ 120,
+    /*                SPELL_FAMILIAR */ 121,
+    /*                SPELL_MAGELOCK */ 123,
+    /*            SPELL_CONGEAL_TIME */ 124,
+    /*                  SPELL_HASTEN */ 125,
+    /*                  SPELL_STASIS */ 126,
+    /*            SPELL_TEMPUS_FUGIT */ 127,
 };
 
 // 0x5F8730
@@ -267,11 +265,11 @@ void spell_set_defaults(int64_t obj)
         obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
     }
 
-    obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
+    obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, SPELL_MASTERY_IDX, -1);
 }
 
 // 0x4B1570
-int spell_get_icon(int spell)
+int spell_icon(int spell)
 {
     if (spell >= 0 && spell < SPELL_COUNT) {
         return spell_icons[spell];
@@ -281,30 +279,36 @@ int spell_get_icon(int spell)
 }
 
 // 0x4B15A0
-size_t sub_4B15A0(int spell)
+size_t spell_name_length(int spell)
 {
     if (spell == 10000 || spell == -1) {
         return 0;
     } else {
-        return strlen(spells[spell].field_0);
+        return strlen(spells[spell].name);
     }
 }
 
 // 0x4B1600
-char* spell_get_name(int spell)
+char* spell_name(int spell)
 {
+    // 0x5B5784
+    static char empty[1] = "";
+
     if (spell == 10000 || spell == -1) {
-        return "";
+        return empty;
     } else {
         return magictech_spell_name(spell);
     }
 }
 
 // 0x4B1620
-char* spell_get_description(int spell)
+char* spell_description(int spell)
 {
+    // 0x5B5788
+    static char empty[1] = "";
+
     if (spell == 10000 || spell == -1) {
-        return "";
+        return empty;
     } else {
         return spells[spell].description;
     }
@@ -369,19 +373,19 @@ int spell_money(int spell)
 // 0x4B1750
 int spell_min_intelligence(int spell)
 {
-    return sub_4502E0(spell);
+    return magictech_min_intelligence(spell);
 }
 
 // 0x4B1760
 int spell_min_willpower(int spell)
 {
-    return magictech_get_iq(spell);
+    return magictech_min_willpower(spell);
 }
 
 // 0x4B1770
 int spell_min_level(int spell)
 {
-    return spell_minimum_levels[spell % FIVE];
+    return spell_minimum_levels[LEVEL_FROM_SPELL(spell)];
 }
 
 // 0x4B1790
@@ -397,11 +401,10 @@ bool spell_add(int64_t obj, int spell, bool force)
         PlayerBuySpellPacket pkt;
 
         if (!tig_net_is_host()) {
-
             pkt.type = 48;
             pkt.player = sub_4A2B10(obj);
             pkt.spell = spell;
-            pkt.field_C = force;
+            pkt.force = force;
             tig_net_send_app_all(&pkt, sizeof(pkt));
             return true;
         }
@@ -409,7 +412,7 @@ bool spell_add(int64_t obj, int spell, bool force)
         pkt.type = 49;
         pkt.player = sub_4A2B10(obj);
         pkt.spell = spell;
-        pkt.field_C = force;
+        pkt.force = force;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -488,13 +491,13 @@ bool spell_remove(int64_t obj, int spell)
 }
 
 // 0x4B1A40
-char* college_get_name(int college)
+char* spell_college_name(int college)
 {
     return college_names[college];
 }
 
 // 0x4B1A50
-char* college_get_description(int college)
+char* spell_college_description(int college)
 {
     if (spell_mastery_get(player_get_local_pc_obj()) == college) {
         return college_mastery_descriptions[college];
@@ -530,10 +533,10 @@ int spell_college_level_get(int64_t obj, int college)
 }
 
 // 0x4B1B00
-bool spell_college_is_known(int64_t obj, int a2)
+bool spell_college_is_known(int64_t obj, int college)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        return spell_college_level_get(obj, a2) > 0;
+        return spell_college_level_get(obj, college) > 0;
     } else {
         return false;
     }

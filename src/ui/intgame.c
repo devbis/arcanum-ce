@@ -3988,7 +3988,7 @@ void sub_5507E0(int spl)
     UiMessage ui_message;
 
     if (intgame_iso_window_type != 0) {
-        intgame_message_window_write_text_centered(spell_get_name(spl), &(stru_5C6D60[intgame_iso_window_type].rect));
+        intgame_message_window_write_text_centered(spell_name(spl), &(stru_5C6D60[intgame_iso_window_type].rect));
     } else {
         ui_message.type = UI_MSG_TYPE_SPELL;
         ui_message.field_8 = spl;
@@ -4005,7 +4005,7 @@ void sub_550860(int college)
     UiMessage ui_message;
 
     if (intgame_iso_window_type != 0) {
-        intgame_message_window_write_text_centered(college_get_name(college), &(stru_5C6D60[intgame_iso_window_type].rect));
+        intgame_message_window_write_text_centered(spell_college_name(college), &(stru_5C6D60[intgame_iso_window_type].rect));
     } else {
         ui_message.type = UI_MSG_TYPE_COLLEGE;
         ui_message.field_8 = college;
@@ -4163,7 +4163,7 @@ bool intgame_spells_init()
     for (clg = 0; clg < COLLEGE_COUNT; clg++) {
         for (lvl = 0; lvl < 5; lvl++) {
             spl = clg * 5 + lvl;
-            intgame_spell_buttons[spl].art_num = spell_get_icon(spl);
+            intgame_spell_buttons[spl].art_num = spell_icon(spl);
             if (intgame_spell_buttons[spl].art_num != -1
                 && !intgame_button_create(&(intgame_spell_buttons[spl]))) {
                 return false;
@@ -4220,7 +4220,7 @@ bool sub_550D20()
     int index;
 
     for (index = 0; index < 5; index++) {
-        stru_5C6C18[index].art_num = spell_get_icon(0);
+        stru_5C6C18[index].art_num = spell_icon(0);
         if (stru_5C6C18[index].art_num != -1) {
             if (!intgame_button_create(&(stru_5C6C18[index]))) {
                 return false;
@@ -4583,7 +4583,7 @@ void sub_551660()
             if (spl != -1
                 && !magictech_is_tech(spl)
                 && stru_5C6C18[index].art_num != -1) {
-                stru_5C6C18[index].art_num = spell_get_icon(spl);
+                stru_5C6C18[index].art_num = spell_icon(spl);
                 tig_art_interface_id_create(stru_5C6C18[index].art_num, 0, 0, 0, &art_id);
                 tig_button_set_art(stru_5C6C18[index].button_handle, art_id);
                 tig_button_show(stru_5C6C18[index].button_handle);
@@ -5590,7 +5590,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_SPELL: {
         intgame_message_window_draw_image(window_handle, spell_college_large_icon(ui_message->field_8 / 5));
         intgame_message_window_write_text(window_handle,
-            spell_get_name(ui_message->field_8),
+            spell_name(ui_message->field_8),
             &stru_5C70C8,
             dword_739F88,
             MSG_TEXT_HALIGN_LEFT);
@@ -5642,7 +5642,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_RIGHT);
 
         intgame_message_window_write_text(window_handle,
-            spell_get_description(ui_message->field_8),
+            spell_description(ui_message->field_8),
             &stru_5C7128,
             dword_64C498,
             MSG_TEXT_HALIGN_LEFT);
@@ -5651,12 +5651,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_COLLEGE:
         intgame_message_window_draw_image(window_handle, spell_college_large_icon(ui_message->field_8));
         intgame_message_window_write_text(window_handle,
-            college_get_name(ui_message->field_8),
+            spell_college_name(ui_message->field_8),
             &stru_5C70C8,
             dword_739F88,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
-            college_get_description(ui_message->field_8),
+            spell_college_description(ui_message->field_8),
             &stru_5C7138,
             dword_64C498,
             MSG_TEXT_HALIGN_LEFT);

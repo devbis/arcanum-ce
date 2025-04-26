@@ -416,7 +416,7 @@ typedef struct PlayerBuySpellPacket {
     /* 0000 */ int type;
     /* 0004 */ int player;
     /* 0008 */ int spell;
-    /* 000C */ bool field_C;
+    /* 000C */ bool force;
 } PlayerBuySpellPacket;
 
 static_assert(sizeof(PlayerBuySpellPacket) == 0x10, "wrong size");

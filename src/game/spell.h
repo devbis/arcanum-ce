@@ -116,10 +116,10 @@ static_assert(SPELL_COUNT == 80, "wrong size");
 bool spell_init(GameInitInfo* init_info);
 void spell_exit();
 void spell_set_defaults(int64_t obj);
-int spell_get_icon(int spell);
-size_t sub_4B15A0(int spell);
-char* spell_get_name(int spell);
-char* spell_get_description(int spell);
+int spell_icon(int spell);
+size_t spell_name_length(int spell);
+char* spell_name(int spell);
+char* spell_description(int spell);
 int spell_cost(int spell);
 int spell_cast_cost(int spell, int64_t obj);
 int spell_maintain_cost(int spell, int64_t obj, int* period_ptr);
@@ -130,8 +130,8 @@ int spell_min_level(int spell);
 bool spell_add(int64_t obj, int spell, bool force);
 bool spell_is_known(int64_t obj, int spell);
 bool spell_remove(int64_t obj, int spell);
-char* college_get_name(int college);
-char* college_get_description(int college);
+char* spell_college_name(int college);
+char* spell_college_description(int college);
 int spell_college_small_icon(int college);
 int spell_college_large_icon(int college);
 int spell_college_level_get(int64_t obj, int college);
@@ -143,7 +143,8 @@ bool spell_can_become_master_of_college(int64_t obj, int college);
 int spell_mastery_get(int64_t obj);
 void spell_mastery_set(int64_t obj, int college);
 
-#define COLLEGE_FROM_SPELL(spell) ((spell) / 5)
-#define LEVEL_FROM_SPELL(spell) ((spell) % 5)
+#define MAX_SPELL_LEVEL 5
+#define COLLEGE_FROM_SPELL(spell) ((spell) / MAX_SPELL_LEVEL)
+#define LEVEL_FROM_SPELL(spell) ((spell) % MAX_SPELL_LEVEL)
 
 #endif /* ARCANUM_GAME_SPELL_H_ */
