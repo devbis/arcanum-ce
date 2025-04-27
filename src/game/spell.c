@@ -599,7 +599,7 @@ bool spell_check_willpower(int64_t obj, int willpower)
 // 0x4B1C70
 bool spell_can_become_master_of_college(int64_t obj, int college)
 {
-    if (spell_mastery_get(obj) == -1) {
+    if (spell_mastery_get(obj) != -1) {
         return false;
     }
 
