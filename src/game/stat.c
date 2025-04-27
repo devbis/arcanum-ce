@@ -479,7 +479,7 @@ int stat_base_get(int64_t obj, int stat)
                 value /= 2;
             }
 
-            if (stat_atmax(obj, STAT_STRENGTH)) {
+            if (stat_is_extraordinary(obj, STAT_STRENGTH)) {
                 value *= 2;
             }
 
@@ -490,7 +490,7 @@ int stat_base_get(int64_t obj, int stat)
         case STAT_SPEED:
             value = stat_level_get(obj, STAT_DEXTERITY);
 
-            if (stat_atmax(obj, STAT_DEXTERITY)) {
+            if (stat_is_extraordinary(obj, STAT_DEXTERITY)) {
                 value += 5;
             }
 
@@ -503,7 +503,7 @@ int stat_base_get(int64_t obj, int stat)
             break;
         case STAT_REACTION_MODIFIER:
             value = stat_level_get(obj, STAT_BEAUTY);
-            if (stat_atmax(obj, STAT_BEAUTY)) {
+            if (stat_is_extraordinary(obj, STAT_BEAUTY)) {
                 value = 2 * (5 * value - 50);
             } else {
                 value = stat_reaction_tbl[value - 1];
@@ -617,7 +617,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         break;
     case STAT_POISON_LEVEL:
         // Maximized constitution grants poison immunity.
-        if (stat_atmax(obj, STAT_CONSTITUTION)) {
+        if (stat_is_extraordinary(obj, STAT_CONSTITUTION)) {
             value = 0;
         }
         break;
@@ -698,7 +698,7 @@ int stat_base_set(int64_t obj, int stat, int value)
 }
 
 // 0x4B0EE0
-bool stat_atmax(int64_t obj, int stat)
+bool stat_is_extraordinary(int64_t obj, int stat)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return false;

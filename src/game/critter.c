@@ -747,7 +747,7 @@ bool critter_disband(int64_t obj, bool force)
     leader_obj = critter_leader_get(obj);
     if (leader_obj != OBJ_HANDLE_NULL) {
         if (!force) {
-            if (stat_atmax(leader_obj, STAT_CHARISMA)) {
+            if (stat_is_extraordinary(leader_obj, STAT_CHARISMA)) {
                 return false;
             }
             if (sub_459040(obj, OSF_MIND_CONTROLLED, &v1)) {

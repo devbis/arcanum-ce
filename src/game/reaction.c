@@ -270,7 +270,7 @@ void reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
     }
 
     if (value < 0
-        && stat_atmax(pc_obj, STAT_CHARISMA)
+        && stat_is_extraordinary(pc_obj, STAT_CHARISMA)
         && critter_pc_leader_get(npc_obj) == pc_obj) {
         return;
     }

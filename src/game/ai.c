@@ -1478,7 +1478,7 @@ void ai_npc_wait(int64_t obj)
 
     wait = obj_field_int32_get(obj, OBJ_F_NPC_WAIT);
     leader_obj = critter_leader_get(obj);
-    if (stat_atmax(leader_obj, STAT_CHARISMA)
+    if (stat_is_extraordinary(leader_obj, STAT_CHARISMA)
         && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
         if (basic_skill_training_get(leader_obj, BASIC_SKILL_PERSUATION) != TRAINING_NONE) {
             wait++;
@@ -1657,7 +1657,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sou
         || danger_type == AI_DANGER_SOURCE_TYPE_SURRENDER) {
         leader_obj = critter_leader_get(source_obj);
         if (leader_obj != OBJ_HANDLE_NULL
-            && stat_atmax(leader_obj, STAT_CHARISMA)) {
+            && stat_is_extraordinary(leader_obj, STAT_CHARISMA)) {
             danger_type = AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS;
 
             if (!ai_npc_fighting_enabled
@@ -4086,7 +4086,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
 
     if (((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & OF_INVISIBLE) != 0
             || (obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0)
-        && !stat_atmax(source_obj, STAT_PERCEPTION)
+        && !stat_is_extraordinary(source_obj, STAT_PERCEPTION)
         && (obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_INVISIBLE) == 0) {
         return 1000;
     }

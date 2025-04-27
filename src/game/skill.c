@@ -581,7 +581,7 @@ int basic_skill_effectiveness(int64_t obj, int bs, int64_t target_obj)
         }
     }
 
-    if (stat_atmax(obj, STAT_INTELLIGENCE)) {
+    if (stat_is_extraordinary(obj, STAT_INTELLIGENCE)) {
         value += 10;
     }
 
@@ -926,7 +926,7 @@ int tech_skill_effectiveness(int64_t obj, int ts, int64_t target_obj)
         break;
     }
 
-    if (stat_atmax(obj, STAT_INTELLIGENCE)) {
+    if (stat_is_extraordinary(obj, STAT_INTELLIGENCE)) {
         value += 10;
     }
 

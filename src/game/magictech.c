@@ -3386,7 +3386,7 @@ bool sub_4537B0()
     }
 
     if (dword_5E7620->stat == STAT_WILLPOWER
-        && stat_atmax(stru_5E6D28.field_20, STAT_WILLPOWER)) {
+        && stat_is_extraordinary(stru_5E6D28.field_20, STAT_WILLPOWER)) {
         if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
             && dword_5E75F0->action != MAGICTECH_ACTION_END) {
             sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
@@ -3458,7 +3458,7 @@ int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell)
             if (info->resistance.stat != -1
                 && obj_type_is_critter(obj_type)) {
                 if (info->resistance.stat == STAT_WILLPOWER
-                    && stat_atmax(target_obj, STAT_WILLPOWER)) {
+                    && stat_is_extraordinary(target_obj, STAT_WILLPOWER)) {
                     return 100;
                 }
 
@@ -5842,7 +5842,7 @@ bool sub_458A80(unsigned int flags)
     }
 
     if (flags == OSF_DETECTING_INVISIBLE
-        && stat_atmax(pc_obj, STAT_PERCEPTION)) {
+        && stat_is_extraordinary(pc_obj, STAT_PERCEPTION)) {
         return true;
     }
 
@@ -6583,7 +6583,7 @@ bool sub_459C10(int64_t obj, int mt_id)
     if (info->resistance.stat != -1
         && obj_type_is_critter(dword_5E75AC)) {
         if (info->resistance.stat == STAT_WILLPOWER
-            && stat_atmax(obj, STAT_WILLPOWER)) {
+            && stat_is_extraordinary(obj, STAT_WILLPOWER)) {
             if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
                 && run_info->action != MAGICTECH_ACTION_END) {
                 sub_453F20(dword_5E75F0->parent_obj.obj, obj);

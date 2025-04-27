@@ -73,7 +73,7 @@ void stat_set_defaults(int64_t obj);
 int stat_level_get(int64_t obj, int stat);
 int stat_base_get(int64_t obj, int stat);
 int stat_base_set(int64_t obj, int stat, int value);
-bool stat_atmax(int64_t obj, int stat);
+bool stat_is_extraordinary(int64_t obj, int stat);
 int stat_cost(int value);
 const char* stat_name(int stat);
 const char* stat_short_name(int stat);
