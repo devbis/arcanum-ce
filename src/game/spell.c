@@ -13,58 +13,24 @@
 #define FIRST_COLLEGE_DESCRIPTION_ID 8000
 #define FIRST_COLLEGE_MASTERY_DESCRIPTION_ID 9000
 
+/**
+ * NOTE: This structure is mostly obsolete, likely in favor of expanding spells
+ * system into magictech. Only `description` still have meaning. All other
+ * fields are never set.
+ */
 typedef struct SpellInfo {
     /* 0000 */ char* name;
     /* 0004 */ char* description;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44;
-    /* 0048 */ int field_48;
-    /* 004C */ int field_4C;
-    /* 0050 */ int field_50;
-    /* 0054 */ int field_54;
-    /* 0058 */ int field_58;
-    /* 005C */ int field_5C;
-    /* 0060 */ int field_60;
-    /* 0064 */ int field_64;
-    /* 0068 */ int field_68;
-    /* 006C */ int field_6C;
-    /* 0070 */ int field_70;
-    /* 0074 */ int field_74;
-    /* 0078 */ int field_78;
-    /* 007C */ int field_7C;
-    /* 0080 */ int field_80;
-    /* 0084 */ int field_84;
-    /* 0088 */ int field_88;
-    /* 008C */ int field_8C;
-    /* 0090 */ int field_90;
-    /* 0094 */ int field_94;
-    /* 0098 */ int field_98;
-    /* 009C */ int field_9C;
-    /* 00A0 */ int field_A0;
-    /* 00A4 */ int field_A4;
-    /* 00A8 */ int field_A8;
-    /* 00AC */ int field_AC;
-    /* 00B0 */ int field_B0;
-    /* 00B4 */ int field_B4;
+    /* 0008 */ uint8_t dummy[176];
 } SpellInfo;
 
 static_assert(sizeof(SpellInfo) == 0xB8, "wrong size");
 
-// 0x5B5770
+/**
+ * Array defining the minimum character level required for each spell level.
+ *
+ * 0x5B5770
+ */
 static int spell_minimum_levels[MAX_SPELL_LEVEL] = {
     1,
     1,
@@ -73,9 +39,11 @@ static int spell_minimum_levels[MAX_SPELL_LEVEL] = {
     15,
 };
 
-// Small circle-shaped spell college icons (24x24).
-//
-// 0x5B55B0
+/**
+ * Small circle-shaped spell college icons (24x24).
+ *
+ * 0x5B55B0
+ */
 static int spell_college_small_icons[COLLEGE_COUNT] = {
     /*         COLLEGE_CONVEYANCE */ 11,
     /*         COLLEGE_DIVINATION */ 44,
@@ -95,9 +63,11 @@ static int spell_college_small_icons[COLLEGE_COUNT] = {
     /*           COLLEGE_TEMPORAL */ 122,
 };
 
-// Large square-shaped spell college icon (64x64).
-//
-// 0x5B55F0
+/**
+ * Large square-shaped spell college icon (64x64).
+ *
+ * 0x5B55F0
+ */
 static int spell_college_large_icons[COLLEGE_COUNT] = {
     /*         COLLEGE_CONVEYANCE */ 446,
     /*         COLLEGE_DIVINATION */ 447,
@@ -117,7 +87,11 @@ static int spell_college_large_icons[COLLEGE_COUNT] = {
     /*           COLLEGE_TEMPORAL */ 461,
 };
 
-// 0x5B5630
+/**
+ * Spell icons.
+ *
+ * 0x5B5630
+ */
 static int spell_icons[SPELL_COUNT] = {
     /*                  SPELL_DISARM */ 12,
     /*       SPELL_UNLOCKING_CANTRIP */ 13,
@@ -201,47 +175,75 @@ static int spell_icons[SPELL_COUNT] = {
     /*            SPELL_TEMPUS_FUGIT */ 127,
 };
 
-// 0x5F8730
-static IsoInvalidateRectFunc* dword_5F8730;
+/**
+ * Function pointer to invalidate a rectangle in the parent window.
+ *
+ * 0x5F8730
+ */
+static IsoInvalidateRectFunc* spell_iso_window_invalidate_rect;
 
-// 0x5F8734
+/**
+ * Array of spell college mastery descriptions.
+ *
+ * 0x5F8734
+ */
 static char* college_mastery_descriptions[COLLEGE_COUNT];
 
-// 0x5F8774
+/**
+ * Array of spell college names.
+ *
+ * 0x5F8774
+ */
 static char* college_names[COLLEGE_COUNT];
 
-// 0x5F87B4
+/**
+ * Array of spell college description.
+ *
+ * 0x5F87B4
+ */
 static char* college_descriptions[COLLEGE_COUNT];
 
-// 0x5F87F8
+/**
+ * Spell's data.
+ *
+ * 0x5F87F8
+ */
 static SpellInfo spells[SPELL_COUNT];
 
-// 0x4B1440
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4B1440
+ */
 bool spell_init(GameInitInfo* init_info)
 {
     MesFileEntry mes_file_entry;
     int index;
 
-    dword_5F8730 = init_info->invalidate_rect_func;
+    spell_iso_window_invalidate_rect = init_info->invalidate_rect_func;
 
+    // Load spell college names.
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_NAME_ID;
         magictech_get_msg(&mes_file_entry);
         college_names[index] = mes_file_entry.str;
     }
 
+    // Load spell descriptions.
     for (index = 0; index < SPELL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_SPELL_DESCRIPTION_ID;
         magictech_get_msg(&mes_file_entry);
         spells[index].description = mes_file_entry.str;
     }
 
+     // Load spell college descriptions.
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_DESCRIPTION_ID;
         magictech_get_msg(&mes_file_entry);
         college_descriptions[index] = mes_file_entry.str;
     }
 
+    // Load spell college mastery descriptions.
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_MASTERY_DESCRIPTION_ID;
         magictech_get_msg(&mes_file_entry);
@@ -251,24 +253,38 @@ bool spell_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4B1520
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4B1520
+ */
 void spell_exit()
 {
 }
 
-// 0x4B1530
+/**
+ * Resets known spells for a game object.
+ *
+ * 0x4B1530
+ */
 void spell_set_defaults(int64_t obj)
 {
     int college;
 
+    // Reset all college levels to 0.
     for (college = 0; college < COLLEGE_COUNT; college++) {
         obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
     }
 
+    // Reset college mastery.
     obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, SPELL_MASTERY_IDX, -1);
 }
 
-// 0x4B1570
+/**
+ * Retrieves the icon art num for a spell.
+ *
+ * 0x4B1570
+ */
 int spell_icon(int spell)
 {
     if (spell >= 0 && spell < SPELL_COUNT) {
@@ -278,7 +294,11 @@ int spell_icon(int spell)
     return magictech_is_magic(spell) ? 36 : 35;
 }
 
-// 0x4B15A0
+/**
+ * Calculates the length of a spell's name.
+ *
+ * 0x4B15A0
+ */
 size_t spell_name_length(int spell)
 {
     if (spell == 10000 || spell == -1) {
@@ -288,7 +308,11 @@ size_t spell_name_length(int spell)
     }
 }
 
-// 0x4B1600
+/**
+ * Retrieves the name of a spell.
+ *
+ * 0x4B1600
+ */
 char* spell_name(int spell)
 {
     // 0x5B5784
@@ -301,7 +325,11 @@ char* spell_name(int spell)
     }
 }
 
-// 0x4B1620
+/**
+ * Retrieves the description of a spell.
+ *
+ * 0x4B1620
+ */
 char* spell_description(int spell)
 {
     // 0x5B5788
@@ -314,7 +342,11 @@ char* spell_description(int spell)
     }
 }
 
-// 0x4B1650
+/**
+ * Retrieves the cost (in character points) of learning the specified spell.
+ *
+ * 0x4B1650
+ */
 int spell_cost(int spell)
 {
     (void)spell;
@@ -322,16 +354,23 @@ int spell_cost(int spell)
     return 1;
 }
 
-// 0x4B1660
+/**
+ * Retrieves the cost (in fatigue points) of casting the specified spell.
+ *
+ * 0x4B1660
+ */
 int spell_cast_cost(int spell, int64_t obj)
 {
     int cost;
 
     cost = magictech_get_cost(spell);
+
+    // Double cost for dwarves.
     if (stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
+    // Halve cost if critter has mastered the spell's college.
     if (spell_mastery_get(obj) == COLLEGE_FROM_SPELL(spell)) {
         cost /= 2;
     }
@@ -339,7 +378,11 @@ int spell_cast_cost(int spell, int64_t obj)
     return cost;
 }
 
-// 0x4B16C0
+/**
+ * Retrieves the cost (in fatigue points) for maintaining the specified spell.
+ *
+ * 0x4B16C0
+ */
 int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
 {
     MagicTechMaintenanceInfo* maintenance;
@@ -348,12 +391,16 @@ int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
     maintenance = magictech_get_maintenance(spell);
 
     cost = maintenance->cost;
+
+    // Double cost for dwarves.
     if (stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
     if (period_ptr != NULL) {
         *period_ptr = maintenance->period;
+
+        // Double duration if critter has mastered the spell's college.
         if (spell_mastery_get(obj) == COLLEGE_FROM_SPELL(spell)) {
             *period_ptr *= 2;
         }
@@ -362,7 +409,14 @@ int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
     return cost;
 }
 
-// 0x4B1740
+/**
+ * Retrieves the cost (in coins) of spell-as-a-service.
+ *
+ * Called during trade to determine cost of identifing items, and in dialogs
+ * to do magickal healing ("h:" opcode) or casting other spells ("z:" opcode).
+ *
+ * 0x4B1740
+ */
 int spell_money(int spell)
 {
     (void)spell;
@@ -370,25 +424,47 @@ int spell_money(int spell)
     return 100;
 }
 
-// 0x4B1750
+/**
+ * Retrieves the minimum intelligence required for a spell.
+ *
+ * 0x4B1750
+ */
 int spell_min_intelligence(int spell)
 {
     return magictech_min_intelligence(spell);
 }
 
-// 0x4B1760
+/**
+ * Retrieves the minimum willpower required for a spell.
+ *
+ * 0x4B1760
+ */
 int spell_min_willpower(int spell)
 {
     return magictech_min_willpower(spell);
 }
 
-// 0x4B1770
+/**
+ * Retrieves the minimum character level required for a spell.
+ *
+ * 0x4B1770
+ */
 int spell_min_level(int spell)
 {
     return spell_minimum_levels[LEVEL_FROM_SPELL(spell)];
 }
 
-// 0x4B1790
+/**
+ * Adds a spell to a critters's spellbook.
+ *
+ * In the normal circumstances this function checks that the critter knows
+ * previous spell in college, and have enough level, intelligence, and
+ * willpower. Use `force` to ignore these checks.
+ *
+ * Returns `true` if spell was successfully added, `false` otherwise.
+ *
+ * 0x4B1790
+ */
 bool spell_add(int64_t obj, int spell, bool force)
 {
     int college;
@@ -420,37 +496,50 @@ bool spell_add(int64_t obj, int spell, bool force)
     new_spell_level = LEVEL_FROM_SPELL(spell) + 1;
     spell_level = spell_college_level_get(obj, college);
 
+    // Validate requirements unless forced.
     if (!force) {
+        // Check if previous level is known.
         if (new_spell_level != spell_level + 1) {
             return false;
         }
 
+        // Check minimum critter level.
         if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
             return false;
         }
 
+        // Check minimum intelligence.
         if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
             return false;
         }
 
+        // Check minimum willpower.
         if (spell_min_willpower(spell) > stat_level_get(obj, STAT_WILLPOWER)) {
             return false;
         }
 
         cost = spell_cost(spell);
     } else  {
+        // Calculate cost based on level difference. Note that this assumes
+        // every spell level costs exactly 1 (without using `spell_cost`).
         cost = new_spell_level - spell_level;
+
+        // If the cost is negative we're trying to add a spell that's already
+        // known.
         if (cost < 0) {
             return true;
         }
     }
 
+    // Increase magick points.
     magic_points = stat_base_get(obj, STAT_MAGICK_POINTS);
     magic_points += cost;
     stat_base_set(obj, STAT_MAGICK_POINTS, magic_points);
 
+    // Set new college level.
     spell_college_level_set(obj, college, new_spell_level);
 
+    // Update UI.
     if (player_is_local_pc_obj(obj)) {
         sub_4601C0();
     }
@@ -458,7 +547,11 @@ bool spell_add(int64_t obj, int spell, bool force)
     return true;
 }
 
-// 0x4B1950
+/**
+ * Checks if a critter knows a spell.
+ *
+ * 0x4B1950
+ */
 bool spell_is_known(int64_t obj, int spell)
 {
     return obj != OBJ_HANDLE_NULL
@@ -466,37 +559,57 @@ bool spell_is_known(int64_t obj, int spell)
         && LEVEL_FROM_SPELL(spell) + 1 <= spell_college_level_get(obj, COLLEGE_FROM_SPELL(spell));
 }
 
-// 0x4B19B0
+/**
+ * Removes a spell from a critters's spellbook.
+ *
+ * This function only works if the spell to be removed is the last known in
+ * it's college. For example, if the critter knows "Unseen Force" (L3), it
+ * cannot be used to remove "Disarm" (L1), or "Unlocking Cantrip" (L2).
+ *
+ * Returns `true` if spell was successfully removed, `false` otherwise.
+ *
+ * 0x4B19B0
+ */
 bool spell_remove(int64_t obj, int spell)
 {
     int college;
     int spell_level;
-    int cost;
     int magic_points;
 
     college = COLLEGE_FROM_SPELL(spell);
     spell_level = LEVEL_FROM_SPELL(spell);
+
+    // Check if the spell is the highest known in its college.
     if (spell_college_level_get(obj, college) != spell_level + 1) {
         return false;
     }
 
-    cost = spell_cost(spell);
+    // Decrease magick points.
     magic_points = stat_base_get(obj, STAT_MAGICK_POINTS);
-    magic_points -= cost;
+    magic_points -= spell_cost(spell);
     stat_base_set(obj, STAT_MAGICK_POINTS, magic_points);
 
+    // Decrease college level.
     spell_college_level_set(obj, college, spell_level);
 
     return true;
 }
 
-// 0x4B1A40
+/**
+ * Retrieves the name of a spell college.
+ *
+ * 0x4B1A40
+ */
 char* spell_college_name(int college)
 {
     return college_names[college];
 }
 
-// 0x4B1A50
+/**
+ * Retrieves the description of a spell college.
+ *
+ * 0x4B1A50
+ */
 char* spell_college_description(int college)
 {
     if (spell_mastery_get(player_get_local_pc_obj()) == college) {
@@ -506,13 +619,21 @@ char* spell_college_description(int college)
     }
 }
 
-// 0x4B1A80
+/**
+ * Retrieves the small icon art num for a spell college.
+ *
+ * 0x4B1A80
+ */
 int spell_college_small_icon(int college)
 {
     return spell_college_small_icons[college];
 }
 
-// 0x4B1A90
+/**
+ * Retrieves the large icon art num for a spell college.
+ *
+ * 0x4B1A90
+ */
 int spell_college_large_icon(int college)
 {
     if (college >= 0 && college < COLLEGE_COUNT) {
@@ -522,7 +643,11 @@ int spell_college_large_icon(int college)
     }
 }
 
-// 0x4B1AB0
+/**
+ * Retrieves the level of a spell college known by the critter.
+ *
+ * 0x4B1AB0
+ */
 int spell_college_level_get(int64_t obj, int college)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
@@ -532,7 +657,11 @@ int spell_college_level_get(int64_t obj, int college)
     return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college);
 }
 
-// 0x4B1B00
+/**
+ * Checks if a critter knows at least one spell in the specified spell college.
+ *
+ * 0x4B1B00
+ */
 bool spell_college_is_known(int64_t obj, int college)
 {
     if (obj != OBJ_HANDLE_NULL) {
@@ -542,7 +671,13 @@ bool spell_college_is_known(int64_t obj, int college)
     }
 }
 
-// 0x4B1B30
+/**
+ * Sets the level of a spell college for a critter.
+ *
+ * Returns the new spell college level.
+ *
+ * 0x4B1B30
+ */
 int spell_college_level_set(int64_t obj, int college, int level)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
@@ -554,7 +689,17 @@ int spell_college_level_set(int64_t obj, int college, int level)
     return level;
 }
 
-// 0x4B1B90
+/**
+ * Checks if a critter's intelligence is sufficient for all known spells.
+ *
+ * This function is used to re-validate spell requirements when intelligence is
+ * about to decrease.
+ *
+ * Returns `true` if all known spells' intelligence requirements are met, `false`
+ * otherwise.
+ *
+ * 0x4B1B90
+ */
 bool spell_check_intelligence(int64_t obj, int intelligence)
 {
     int college;
@@ -565,7 +710,7 @@ bool spell_check_intelligence(int64_t obj, int intelligence)
     for (college = 0; college < COLLEGE_COUNT; college++) {
         cnt = spell_college_level_get(obj, college);
         for (level = 0; level < cnt; level++) {
-            spell = college * 5 + level;
+            spell = college * MAX_SPELL_LEVEL + level;
             if (spell_min_intelligence(spell) > intelligence) {
                 return false;
             }
@@ -575,7 +720,17 @@ bool spell_check_intelligence(int64_t obj, int intelligence)
     return true;
 }
 
-// 0x4B1C00
+/**
+ * Checks if a critter's willpower is sufficient for all known spells.
+ *
+ * This function is used to re-validate spell requirements when willpower is
+ * about to decrease.
+ *
+ * Returns `true` if all known spells' willpower requirements are met, `false`
+ * otherwise.
+ *
+ * 0x4B1C00
+ */
 bool spell_check_willpower(int64_t obj, int willpower)
 {
     int college;
@@ -586,7 +741,7 @@ bool spell_check_willpower(int64_t obj, int willpower)
     for (college = 0; college < COLLEGE_COUNT; college++) {
         cnt = spell_college_level_get(obj, college);
         for (level = 0; level < cnt; level++) {
-            spell = college * 5 + level;
+            spell = college * MAX_SPELL_LEVEL + level;
             if (spell_min_willpower(spell) > willpower) {
                 return false;
             }
@@ -596,23 +751,36 @@ bool spell_check_willpower(int64_t obj, int willpower)
     return true;
 }
 
-// 0x4B1C70
+/**
+ * Checks if a critter can master a college.
+ *
+ * 0x4B1C70
+ */
 bool spell_can_become_master_of_college(int64_t obj, int college)
 {
+    // Check if critter already has a mastery.
     if (spell_mastery_get(obj) != -1) {
         return false;
     }
 
-    if (spell_college_level_get(obj, college) < 5) {
+    // Check if critter knows the highest level in the specified college.
+    if (spell_college_level_get(obj, college) < MAX_SPELL_LEVEL) {
         return false;
     }
 
     return true;
 }
 
-// 0x4B1CB0
+/**
+ * Retrieves the mastered college for a critter.
+ *
+ * Returns `-1` if the critter does not have mastery.
+ *
+ * 0x4B1CB0
+ */
 int spell_mastery_get(int64_t obj)
 {
+    // Ensure obj is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return -1;
     }
@@ -620,13 +788,21 @@ int spell_mastery_get(int64_t obj)
     return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, SPELL_MASTERY_IDX);
 }
 
-// 0x4B1CF0
+/**
+ * Sets the mastered college for a critter.
+ *
+ * This function cannot be used to change mastery if it was already set.
+ *
+ * 0x4B1CF0
+ */
 void spell_mastery_set(int64_t obj, int college)
 {
+    // Ensure obj is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Validate eligibility for mastery.
     if (!spell_can_become_master_of_college(obj, college)) {
         return;
     }
