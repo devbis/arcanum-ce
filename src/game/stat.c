@@ -28,10 +28,19 @@
 #define STAT_IS_PRIMARY(stat) ((stat) >= 0 && (stat) <= STAT_CHARISMA)
 #define STAT_IS_DERIVED(stat) ((stat) >= STAT_CARRY_WEIGHT && (stat) <= STAT_MAGICK_TECH_APTITUDE)
 
-static bool sub_4B1310(TimeEvent* timeevent);
-static bool sub_4B1350(int64_t obj, int value, bool a3);
+typedef enum PoisonEventType {
+    POISON_EVENT_DAMAGE,
+    POISON_EVENT_RECOVERY,
+} PoisonEventType;
 
-// 0x5B5194
+static bool poison_timeevent_check(TimeEvent* timeevent);
+static bool poison_timeevent_schedule(int64_t obj, int poison, bool recovery);
+
+/**
+ * Minimum values for each stat.
+ *
+ * 0x5B5194
+ */
 static int stat_min_values[STAT_COUNT] = {
     /*             STAT_STRENGTH */ 1,
     /*            STAT_DEXTERITY */ 1,
@@ -63,7 +72,11 @@ static int stat_min_values[STAT_COUNT] = {
     /*                 STAT_RACE */ 0,
 };
 
-// 0x5B5204
+/**
+ * Maximum values for each stat.
+ *
+ * 0x5B5204
+ */
 static int stat_max_values[STAT_COUNT] = {
     /*             STAT_STRENGTH */ 20,
     /*            STAT_DEXTERITY */ 20,
@@ -95,7 +108,11 @@ static int stat_max_values[STAT_COUNT] = {
     /*                 STAT_RACE */ 11,
 };
 
-// 0x5B5274
+/**
+ * Default values for each stat.
+ *
+ * 0x5B5274
+ */
 static int stat_default_values[STAT_COUNT] = {
     /*             STAT_STRENGTH */ 8,
     /*            STAT_DEXTERITY */ 8,
@@ -127,7 +144,11 @@ static int stat_default_values[STAT_COUNT] = {
     /*                 STAT_RACE */ 0,
 };
 
-// 0x5B52E4
+/**
+ * Defines cost (in character points) of picking appropriate stat level.
+ *
+ * 0x5B52E4
+ */
 static int stat_cost_tbl[20] = {
     /*  0 */ 0,
     /*  1 */ 1,
@@ -151,7 +172,11 @@ static int stat_cost_tbl[20] = {
     /* 19 */ 1,
 };
 
-// 0x5B5334
+/**
+ * Map beauty stat value to reaction modifier.
+ *
+ * 0x5B5334
+ */
 static int stat_reaction_tbl[20] = {
     /*  0 */ -65,
     /*  1 */ -52,
@@ -175,7 +200,11 @@ static int stat_reaction_tbl[20] = {
     /* 19 */ 75,
 };
 
-// 0x5B5384
+/**
+ * Lookup keys for stat names.
+ *
+ * 0x5B5384
+ */
 const char* stat_lookup_keys_tbl[STAT_COUNT] = {
     /*             STAT_STRENGTH */ "stat_strength",
     /*            STAT_DEXTERITY */ "stat_dexterity",
@@ -208,7 +237,7 @@ const char* stat_lookup_keys_tbl[STAT_COUNT] = {
 };
 
 // 0x5B53F4
-static int dword_5B53F4 = -1;
+static int poison_test_event = -1;
 
 // 0x5F8644
 static mes_file_handle_t stat_msg_file;
@@ -226,9 +255,13 @@ static char* stat_names[STAT_COUNT];
 static char* stat_short_names[STAT_COUNT];
 
 // 0x5F8728
-static int64_t qword_5F8728;
+static int64_t poison_test_obj;
 
-// 0x4B0340
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4B0340
+ */
 bool stat_init(GameInitInfo* init_info)
 {
     MesFileEntry mes_file_entry;
@@ -236,28 +269,33 @@ bool stat_init(GameInitInfo* init_info)
 
     (void)init_info;
 
+    // Load the stat message file.
     if (!mes_load("mes\\stat.mes", &stat_msg_file)) {
         return false;
     }
 
+    // Load full stat names.
     for (index = 0; index < STAT_COUNT; index++) {
         mes_file_entry.num = index;
         mes_get_msg(stat_msg_file, &mes_file_entry);
         stat_names[index] = mes_file_entry.str;
     }
 
+    // Load short stat names.
     for (index = 0; index < STAT_COUNT; index++) {
         mes_file_entry.num = index + 500;
         mes_get_msg(stat_msg_file, &mes_file_entry);
         stat_short_names[index] = mes_file_entry.str;
     }
 
+    // Load gender names.
     for (index = 0; index < GENDER_COUNT; index++) {
         mes_file_entry.num = index + 28;
         mes_get_msg(stat_msg_file, &mes_file_entry);
         gender_names[index] = mes_file_entry.str;
     }
 
+    // Load race names.
     for (index = 0; index < RACE_COUNT; index++) {
         mes_file_entry.num = index + 30;
         mes_get_msg(stat_msg_file, &mes_file_entry);
@@ -267,13 +305,21 @@ bool stat_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4B0440
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4B0440
+ */
 void stat_exit()
 {
     mes_unload(stat_msg_file);
 }
 
-// 0x4B0450
+/**
+ * Set default stat values for a critter.
+ *
+ * 0x4B0450
+ */
 void stat_set_defaults(int64_t obj)
 {
     int stat;
@@ -283,7 +329,11 @@ void stat_set_defaults(int64_t obj)
     }
 }
 
-// 0x4B0490
+/**
+ * Retrieves the effective stat level for a critter.
+ *
+ * 0x4B0490
+ */
 int stat_level_get(int64_t obj, int stat)
 {
     int value;
@@ -292,19 +342,25 @@ int stat_level_get(int64_t obj, int stat)
     int min_value;
     int max_value;
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
+    // Ensure stat is valid.
     if (!STAT_IS_VALID(stat)) {
         return 0;
     }
 
+    // Obtain base value.
     value = stat_base_get(obj, stat);
 
     switch (stat) {
     case STAT_SPEED:
+        // Check if Tempus Fugit is active.
         if (sub_458A80(OSF_TEMPUS_FUGIT)) {
+            // Critters affected by Tempus Fugit (usually party members) gets
+            // +10 speed, while everyone else gets -10.
             if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
                 value += 10;
             } else {
@@ -312,12 +368,14 @@ int stat_level_get(int64_t obj, int stat)
             }
         }
 
+        // Penalty for crippled legs.
         if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             value -= 5;
         }
 
         break;
     case STAT_MAX_FOLLOWERS:
+        // Bonus follower for experts/masters of persuasion.
         if (basic_skill_training_get(obj, BASIC_SKILL_PERSUATION) >= TRAINING_EXPERT) {
             value += 1;
         }
@@ -326,7 +384,6 @@ int stat_level_get(int64_t obj, int stat)
     case STAT_DEXTERITY:
     case STAT_STRENGTH:
     case STAT_WILLPOWER:
-        // TODO: Many jumps, check.
         switch (background_get(obj)) {
         case BACKGROUND_AGORAPHOBIC:
             // Indoor:
@@ -393,6 +450,7 @@ int stat_level_get(int64_t obj, int stat)
             break;
         }
 
+        // Apply poison penalties to strength and dexterity.
         if (stat == STAT_STRENGTH || stat == STAT_DEXTERITY) {
             int poison_penalty = stat_level_get(obj, STAT_POISON_LEVEL) / 100;
             if (poison_penalty > 3) {
@@ -407,6 +465,10 @@ int stat_level_get(int64_t obj, int stat)
     case STAT_MAGICK_POINTS:
         switch (background_get(obj)) {
         case BACKGROUND_DAY_MAGE:
+            // 20% bonus to magickal aptitude during the day, and 20% penalty at
+            // night. Each stat is normally within 1-20 range (but upper bound
+            // can be modified by race, which is not taken into account), so 20%
+            // is 4 points.
             if (game_time_is_day()) {
                 value += 4;
             } else {
@@ -414,6 +476,8 @@ int stat_level_get(int64_t obj, int stat)
             }
             break;
         case BACKGROUND_NIGHT_MAGE:
+            // 20% bonus to magickal aptitude at night, and 20% penalty during
+            // the day.
             if (game_time_is_day()) {
                 value -= 4;
             } else {
@@ -421,6 +485,8 @@ int stat_level_get(int64_t obj, int stat)
             }
             break;
         case BACKGROUND_SKY_MAGE:
+            // 20% bonus to magickal aptitude in outdoor areas, and 20% penalty
+            // when indoors or underground.
             loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(loc);
             if (tig_art_tile_id_type_get(art_id) == TIG_ART_TILE_TYPE_INDOOR) {
@@ -430,6 +496,9 @@ int stat_level_get(int64_t obj, int stat)
             }
             break;
         case BACKGROUND_NATURE_MAGE:
+            // 20% bonus to magickal aptitude when standing on natural surface,
+            // and 20% penalty otherwise. The "naturalness" of the tile is set
+            // with flags in `tilename.mes`.
             loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(loc);
             if (!a_name_tile_is_natural(art_id)) {
@@ -442,7 +511,10 @@ int stat_level_get(int64_t obj, int stat)
         break;
     }
 
+    // Apply effects.
     value = effect_adjust_stat_level(obj, stat, value);
+
+    // Clamp the final value to min/max bounds.
     min_value = stat_level_min(obj, stat);
     max_value = stat_level_max(obj, stat);
 
@@ -455,20 +527,33 @@ int stat_level_get(int64_t obj, int stat)
     return value;
 }
 
-// 0x4B0740
+/**
+ * Retrieves the base stat value for a critter.
+ *
+ * The base value is either exact value as was stored with `stat_base_set`, or
+ * derived using formulas from primary stats' effective values.
+ *
+ * NOTE: In case of changing, care should be taken to avoid circular dependency
+ * (which will lead to stack overflow).
+ *
+ * 0x4B0740
+ */
 int stat_base_get(int64_t obj, int stat)
 {
     int value;
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
+    // Ensure stat is valid.
     if (!STAT_IS_VALID(stat)) {
         return 0;
     }
 
     if (STAT_IS_DERIVED(stat)) {
+        // Calculate derived stats.
         switch (stat) {
         case STAT_CARRY_WEIGHT:
             value = 500 * stat_level_get(obj, STAT_STRENGTH);
@@ -479,6 +564,7 @@ int stat_base_get(int64_t obj, int stat)
                 value /= 2;
             }
 
+            // Extraordinary strength doubles damage bonus.
             if (stat_is_extraordinary(obj, STAT_STRENGTH)) {
                 value *= 2;
             }
@@ -490,6 +576,7 @@ int stat_base_get(int64_t obj, int stat)
         case STAT_SPEED:
             value = stat_level_get(obj, STAT_DEXTERITY);
 
+            // Extraordinary dexterity grants +5 speed.
             if (stat_is_extraordinary(obj, STAT_DEXTERITY)) {
                 value += 5;
             }
@@ -504,8 +591,11 @@ int stat_base_get(int64_t obj, int stat)
         case STAT_REACTION_MODIFIER:
             value = stat_level_get(obj, STAT_BEAUTY);
             if (stat_is_extraordinary(obj, STAT_BEAUTY)) {
+                // Extraordinary beauty changes reaction modifier: beauty 20
+                // gives 100% + 10% for each point over 20.
                 value = 2 * (5 * value - 50);
             } else {
+                // Normal beauty - use lookup table ()
                 value = stat_reaction_tbl[value - 1];
             }
             break;
@@ -527,7 +617,11 @@ int stat_base_get(int64_t obj, int stat)
     return value;
 }
 
-// 0x4B0980
+/**
+ * Sets the base stat value for a critter.
+ *
+ * 0x4B0980
+ */
 int stat_base_set(int64_t obj, int stat, int value)
 {
     int obj_type;
@@ -584,11 +678,17 @@ int stat_base_set(int64_t obj, int stat, int value)
         value = max_value;
     }
 
+    // Obtain current base stat value.
     before = stat_base_get(obj, stat);
+
+    // Temporarily change the base value, obtain new effective level, and revert
+    // it back.
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, value);
     after = stat_level_get(obj, stat);
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, before);
 
+    // Check if reducing the stat would break skill, spell, or tech
+    // requirements.
     if (value < before) {
         if (!skill_check_stat(obj, stat, after)) {
             return before;
@@ -611,43 +711,56 @@ int stat_base_set(int64_t obj, int stat, int value)
         }
     }
 
+    // Handle stat-specific side effects.
     switch (stat) {
     case STAT_STRENGTH:
+        // Grab encumbrance level before change.
         encumbrance_level = critter_encumbrance_level_get(obj);
         break;
     case STAT_POISON_LEVEL:
-        // Maximized constitution grants poison immunity.
+        // Extraordinary constitution grants poison immunity.
         if (stat_is_extraordinary(obj, STAT_CONSTITUTION)) {
             value = 0;
         }
         break;
     case STAT_GENDER:
+        // Remove gender-specific effect.
         effect_remove_one_caused_by(obj, EFFECT_CAUSE_GENDER);
         break;
     case STAT_RACE:
+        // Remove race-specific effect.
         effect_remove_one_caused_by(obj, EFFECT_CAUSE_RACE);
         break;
     }
 
+    // Set the new base stat value.
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, value);
 
     switch (stat) {
     case STAT_STRENGTH:
+        // Recalculate encumbrance level.
         critter_encumbrance_level_recalc(obj, encumbrance_level);
         break;
     case STAT_INTELLIGENCE:
+        // Recalculate maintained spell slots.
         if (player_is_local_pc_obj(obj)) {
             sub_4604E0();
         }
         break;
     case STAT_SPEED:
+        // Recalculate animation speed.
         sub_436FA0(obj);
         break;
     case STAT_EXPERIENCE_POINTS:
+        // Recalculate critter level.
         sub_4A69C0(obj);
+
+        // Refresh expierence bars.
         ui_charedit_refresh();
         break;
     case STAT_ALIGNMENT:
+        // PC alignment have been changed, make followers recheck their attitude
+        // towards PC (and probably leave the party).
         if (before != value && obj_type == OBJ_TYPE_PC) {
             ObjectList followers;
             ObjectNode* node;
@@ -672,24 +785,34 @@ int stat_base_set(int64_t obj, int stat, int value)
             }
             object_list_destroy(&followers);
         }
+
+        // Update UI.
         sub_4601C0();
         break;
     case STAT_MAGICK_POINTS:
     case STAT_TECH_POINTS:
+        // Update UI.
         sub_4601C0();
         break;
     case STAT_POISON_LEVEL:
         if (value > 0) {
-            sub_4B1350(obj, value, true);
+            // Schedule poison events - both damage and recovery - if required.
+            poison_timeevent_schedule(obj, value, true);
         }
+
+        // Update health bar.
         sub_460240(obj);
         break;
     case STAT_GENDER:
         if (value == GENDER_FEMALE) {
+            // Add female effects:
+            // - Strength -1
+            // - Constitution +1
             effect_add(obj, 330, EFFECT_CAUSE_GENDER);
         }
         break;
     case STAT_RACE:
+        // Add racial effects.
         effect_add(obj, value + 64, EFFECT_CAUSE_RACE);
         break;
     }
@@ -697,17 +820,24 @@ int stat_base_set(int64_t obj, int stat, int value)
     return value;
 }
 
-// 0x4B0EE0
+/**
+ * Checks if a primary stat value is extraordinary (20 or higher).
+ *
+ * 0x4B0EE0
+ */
 bool stat_is_extraordinary(int64_t obj, int stat)
 {
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return false;
     }
 
+    // Ensure stat is valid.
     if (!STAT_IS_VALID(stat)) {
         return false;
     }
 
+    // Only primary stats can be considered extraordinary.
     if (!STAT_IS_PRIMARY(stat)) {
         return false;
     }
@@ -719,7 +849,11 @@ bool stat_is_extraordinary(int64_t obj, int stat)
     return true;
 }
 
-// 0x4B0F50
+/**
+ * Calculates the cost of increasing a stat to a given value.
+ *
+ * 0x4B0F50
+ */
 int stat_cost(int value)
 {
     if (value < 1) {
@@ -731,31 +865,51 @@ int stat_cost(int value)
     return stat_cost_tbl[value - 1];
 }
 
-// 0x4B0F80
+/**
+ * Retrieves the full name of a stat.
+ *
+ * 0x4B0F80
+ */
 const char* stat_name(int stat)
 {
     return stat_names[stat];
 }
 
-// 0x4B0F90
+/**
+ * Retrieves the short name of a stat.
+ *
+ * 0x4B0F90
+ */
 const char* stat_short_name(int stat)
 {
     return stat_short_names[stat];
 }
 
-// 0x4B0FA0
+/**
+ * Retrieves the name of a gender.
+ *
+ * 0x4B0FA0
+ */
 const char* gender_name(int gender)
 {
     return gender_names[gender];
 }
 
-// 0x4B0FB0
+/**
+ * Retrieves the name of a race.
+ *
+ * 0x4B0FB0
+ */
 const char* race_name(int race)
 {
     return race_names[race];
 }
 
-// 0x4B0FC0
+/**
+ * Retrieves the minimum value for a stat.
+ *
+ * 0x4B0FC0
+ */
 int stat_level_min(int64_t obj, int stat)
 {
     (void)obj;
@@ -763,7 +917,13 @@ int stat_level_min(int64_t obj, int stat)
     return stat_min_values[stat];
 }
 
-// 0x4B0FD0
+/**
+ * Retrieves the maximum value for a stat.
+ *
+ * The maximum value of some stats is adjusted for critter's race.
+ *
+ * 0x4B0FD0
+ */
 int stat_level_max(int64_t obj, int stat)
 {
     int race;
@@ -822,7 +982,12 @@ int stat_level_max(int64_t obj, int stat)
     return stat_max_values[stat];
 }
 
-// 0x4B10A0
+/**
+ * Attempts to set a stat to a target effective level by incrementing it's base
+ * value.
+ *
+ * 0x4B10A0
+ */
 bool stat_level_set(int64_t obj, int stat, int value)
 {
     int max_value;
@@ -856,7 +1021,11 @@ bool stat_level_set(int64_t obj, int stat, int value)
     return value <= stat_level_get(obj, stat);
 }
 
-// 0x4B1170
+/**
+ * Called when a poison timeevent occurs.
+ *
+ * 0x4B1170
+ */
 bool stat_poison_timeevent_process(TimeEvent* timeevent)
 {
     int type;
@@ -872,11 +1041,13 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
 
     poison = stat_base_get(obj, STAT_POISON_LEVEL);
     switch (type) {
-    case 0:
+    case POISON_EVENT_DAMAGE:
         if (poison > 0) {
             if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
+
+                // Determine damage based on poison severity.
                 if (poison >= 550) {
                     damage = 3;
                 } else if (poison >= 200) {
@@ -884,27 +1055,32 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
                 } else {
                     damage = 1;
                 }
+
                 combat.dam[DAMAGE_TYPE_NORMAL] = damage;
                 combat.flags |= 0x80;
                 combat_dmg(&combat);
             }
 
+            // Add blood splotch effect if applicable.
             if ((combat.dam_flags & 0x200000) != 0) {
                 anim_play_blood_splotch_fx(combat.target_obj, BLOOD_SPLOTCH_TYPE_POISON, DAMAGE_TYPE_POISON, &combat);
             }
 
-            sub_4B1350(obj, poison, 0);
+            // Schedule next poison event.
+            poison_timeevent_schedule(obj, poison, false);
 
+            // Update health bar.
             if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_460240(obj);
             }
         }
         break;
-    case 1:
+    case POISON_EVENT_RECOVERY:
         if (poison > 0) {
             if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                // Reduce poison level based on recovery stat.
                 poison -= stat_level_get(obj, STAT_POISON_RECOVERY);
                 if (poison < 0) {
                     poison = 0;
@@ -912,9 +1088,10 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
                 stat_base_set(obj, STAT_POISON_LEVEL, poison);
             }
 
+            // Schedule next recovery event if poison remains.
             if (poison > 0) {
                 next_timeevent.type = TIMEEVENT_TYPE_POISON;
-                next_timeevent.params[0].integer_value = 1;
+                next_timeevent.params[0].integer_value = POISON_EVENT_RECOVERY;
                 next_timeevent.params[1].object_value = obj;
                 next_timeevent.params[2].integer_value = sub_45A7F0();
                 sub_45A950(&datetime, 120000);
@@ -930,47 +1107,54 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4B1310
-bool sub_4B1310(TimeEvent* timeevent)
+bool poison_timeevent_check(TimeEvent* timeevent)
 {
-    return timeevent->params[1].object_value == qword_5F8728
-        && timeevent->params[0].integer_value == dword_5B53F4;
+    return timeevent->params[1].object_value == poison_test_obj
+        && timeevent->params[0].integer_value == poison_test_event;
 }
 
 // 0x4B1350
-bool sub_4B1350(int64_t obj, int value, bool a3)
+bool poison_timeevent_schedule(int64_t obj, int poison, bool recovery)
 {
     DateTime datetime;
     TimeEvent timeevent;
 
-    (void)value;
+    (void)poison;
 
-    qword_5F8728 = obj;
-    dword_5B53F4 = 0;
-
+    // Setup damage event.
     timeevent.type = TIMEEVENT_TYPE_POISON;
-    timeevent.params[0].integer_value = 0;
+    timeevent.params[0].integer_value = POISON_EVENT_DAMAGE;
     timeevent.params[1].object_value = obj;
     timeevent.params[2].integer_value = sub_45A7F0();
 
-    if (!timeevent_any(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
+    // Check if poison damage event is not already scheduled.
+    poison_test_obj = obj;
+    poison_test_event = POISON_EVENT_DAMAGE;
+    if (!timeevent_any(TIMEEVENT_TYPE_POISON, poison_timeevent_check)) {
+        // Schedule damage event in 15 seconds.
         sub_45A950(&datetime, 15000);
         if (!sub_45B800(&timeevent, &datetime)) {
             return false;
         }
     }
 
-    if (a3) {
-        dword_5B53F4 = 1;
-        if (!timeevent_any(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
-            sub_45A950(&datetime, 120000);
+    if (recovery) {
+        // Check is poison recovery event event is not already scheduled.
+        poison_test_obj = obj;
+        poison_test_event = POISON_EVENT_RECOVERY;
+        if (!timeevent_any(TIMEEVENT_TYPE_POISON, poison_timeevent_check)) {
+            // Set event type to recovery.
+            timeevent.params[0].integer_value = POISON_EVENT_RECOVERY;
 
-            timeevent.params[0].integer_value = 1;
+            // Schedule recovery event in 120 seconds.
+            sub_45A950(&datetime, 120000);
             if (!sub_45B800(&timeevent, &datetime)) {
                 return false;
             }
         }
     }
 
+    // Update health bar.
     sub_460240(obj);
 
     return true;
