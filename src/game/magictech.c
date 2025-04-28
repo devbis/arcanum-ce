@@ -6515,7 +6515,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
         }
     }
 
-    if (sub_49B290(obj) == 27369 && !combat->field_5C) {
+    if (sub_49B290(obj) == 27369 && !combat->total_dam) {
         sub_4CCD20(&spell_eye_candies, &node, obj, -1, 1259);
         node.animate = true;
         animfx_add(&node);

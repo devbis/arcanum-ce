@@ -91,7 +91,7 @@ typedef struct CombatContext {
     /* 0040 */ int hit_loc;
     /* 0044 */ int dam[DAMAGE_TYPE_COUNT];
     /* 0058 */ unsigned int dam_flags;
-    /* 005C */ int field_5C;
+    /* 005C */ int total_dam;
     /* 0060 */ int game_difficulty;
     /* 0064 */ int field_64;
 } CombatContext;

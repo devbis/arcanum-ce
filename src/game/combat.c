@@ -396,7 +396,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
     combat->field_30 = attacker_obj;
     combat->hit_loc = 0;
     combat->dam_flags = 0;
-    combat->field_5C = 0;
+    combat->total_dam = 0;
     combat->dam[DAMAGE_TYPE_NORMAL] = 0;
     combat->dam[DAMAGE_TYPE_POISON] = 0;
     combat->dam[DAMAGE_TYPE_ELECTRICAL] = 0;
@@ -1827,7 +1827,7 @@ void combat_dmg(CombatContext* combat)
         mes_get_msg(combat_mes_file, &mes_file_entry);
         sprintf(str, "%s %d", mes_file_entry.str, dam);
 
-        combat->field_5C = dam;
+        combat->total_dam = dam;
 
         int hp_dam = object_hp_damage_get(combat->target_obj) + dam;
         if (hp_dam < 0) {

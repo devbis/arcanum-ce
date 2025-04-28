@@ -13154,10 +13154,10 @@ void anim_play_blood_splotch_fx(int64_t obj, int blood_splotch_type, int damage_
         }
     }
 
-    if (combat->field_5C > 5 && fx_id == ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH) {
-        if (combat->field_5C < 10) {
+    if (combat->total_dam > 5 && fx_id == ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH) {
+        if (combat->total_dam < 10) {
             fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X2;
-        } else if (combat->field_5C < 15) {
+        } else if (combat->total_dam < 15) {
             fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X3;
         } else {
             fx_id = ANIM_EYE_CANDY_NORMAL_BLOOD_SPLOTCH_X4;
