@@ -2846,7 +2846,7 @@ int sub_4B6930(CombatContext* combat)
 }
 
 // 0x4B6A00
-int sub_4B6A00(int64_t loc1, int64_t loc2)
+int combat_projectile_rot(int64_t from_loc, int64_t to_loc)
 {
     int64_t x1;
     int64_t y1;
@@ -2855,12 +2855,12 @@ int sub_4B6A00(int64_t loc1, int64_t loc2)
     double v1;
     int extended_rotation;
 
-    if (loc1 == loc2) {
+    if (from_loc == to_loc) {
         return 0;
     }
 
-    location_xy(loc1, &x1, &y1);
-    location_xy(loc2, &x2, &y2);
+    location_xy(from_loc, &x1, &y1);
+    location_xy(to_loc, &x2, &y2);
 
     v1 = atan2((double)(y2 - y1), (double)(x2 - x1));
     if (v1 < 0.0) {
