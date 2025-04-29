@@ -2881,13 +2881,13 @@ int combat_projectile_rot(int64_t from_loc, int64_t to_loc)
 }
 
 // 0x4B6B10
-tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2)
+tig_art_id_t combat_projectile_art_id_rotation_set(tig_art_id_t aid, int projectile_rot)
 {
     if (tig_art_type(aid) == TIG_ART_TYPE_ITEM) {
-        aid = tig_art_id_rotation_set(aid, v2 / 4);
+        aid = tig_art_id_rotation_set(aid, projectile_rot / 4);
     } else {
-        aid = tig_art_num_set(aid, tig_art_num_get(aid) + v2 / 8);
-        aid = tig_art_id_rotation_set(aid, v2 % 8);
+        aid = tig_art_num_set(aid, tig_art_num_get(aid) + projectile_rot / 8);
+        aid = tig_art_id_rotation_set(aid, projectile_rot % 8);
     }
 
     return aid;

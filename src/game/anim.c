@@ -4317,7 +4317,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
 
             self_loc = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
             rotation = combat_projectile_rot(self_loc, target_loc);
-            art_id = sub_4B6B10(art_id, rotation);
+            art_id = combat_projectile_art_id_rotation_set(art_id, rotation);
 
             obj_field_int32_set(*obj_ptr, OBJ_F_AID, art_id);
             obj_field_int32_set(*obj_ptr, OBJ_F_CURRENT_AID, art_id);
@@ -4370,7 +4370,7 @@ bool sub_424BC0(AnimRunInfo* run_info)
     art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
     parent_loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
     rotation = combat_projectile_rot(parent_loc, target_loc);
-    sub_4B6B10(art_id, rotation);
+    combat_projectile_art_id_rotation_set(art_id, rotation);
 
     return true;
 }
@@ -14441,7 +14441,7 @@ bool anim_goal_projectile(int64_t source_obj, int64_t missile_obj, tig_art_id_t 
 
     loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
     rotation = combat_projectile_rot(loc, target_loc);
-    sub_4EDCE0(missile_obj, sub_4B6B10(missile_art_id, rotation));
+    sub_4EDCE0(missile_obj, combat_projectile_art_id_rotation_set(missile_art_id, rotation));
 
     // FIXME: Useless.
     tig_art_id_rotation_get(obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID));

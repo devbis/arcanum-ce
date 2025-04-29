@@ -121,7 +121,7 @@ void sub_4B5810(CombatContext* combat);
 void combat_heal(CombatContext* combat);
 int combat_hit_loc_penalty(int hit_loc);
 int combat_projectile_rot(int64_t from_loc, int64_t to_loc);
-tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
+tig_art_id_t combat_projectile_art_id_rotation_set(tig_art_id_t aid, int projectile_rot);
 bool combat_set_callbacks(CombatCallbacks* callbacks);
 bool combat_is_turn_based();
 bool sub_4B6C90(bool turn_based);
