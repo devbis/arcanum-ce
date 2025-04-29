@@ -1062,7 +1062,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
             }
 
             // Add blood splotch effect if applicable.
-            if ((combat.dam_flags & 0x200000) != 0) {
+            if ((combat.dam_flags & CDF_HAVE_DAMAGE) != 0) {
                 anim_play_blood_splotch_fx(combat.target_obj, BLOOD_SPLOTCH_TYPE_POISON, DAMAGE_TYPE_POISON, &combat);
             }
 

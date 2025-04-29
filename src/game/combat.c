@@ -1819,7 +1819,7 @@ void combat_dmg(CombatContext* combat)
         int hp_ratio_before;
 
         if (dam > 0) {
-            combat->dam_flags |= 0x200000;
+            combat->dam_flags |= CDF_HAVE_DAMAGE;
             hp_ratio_before = ai_object_hp_ratio(combat->target_obj);
         }
 
@@ -1948,7 +1948,7 @@ void combat_dmg(CombatContext* combat)
         if (dam < 0) {
             dam = 0;
         } else if (dam > 0) {
-            combat->dam_flags |= 0x200000;
+            combat->dam_flags |= CDF_HAVE_DAMAGE;
         }
 
         int hp_dam = object_hp_damage_get(combat->target_obj) + dam;
@@ -2050,7 +2050,7 @@ void sub_4B5580(CombatContext* combat)
         return;
     }
 
-    if ((combat->dam_flags & 0x200000) == 0) {
+    if ((combat->dam_flags & CDF_HAVE_DAMAGE) == 0) {
         return;
     }
 

@@ -75,6 +75,7 @@ typedef enum HitLocation {
 #define CDF_DESTROY_AMMO        0x00040000
 #define CDF_DROP_HELMET         0x00080000
 #define CDF_DAMAGE_ARMOR        0x00100000
+#define CDF_HAVE_DAMAGE         0x00200000
 #define CDF_SCALE               0x00800000
 #define CDF_IGNORE_RESISTANCE   0x01000000
 // clang-format on
