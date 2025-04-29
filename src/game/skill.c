@@ -1592,7 +1592,7 @@ bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocatio
     chance = effectiveness / v1;
 
     if ((skill_invocation->flags & 0x8) != 0) {
-        chance += sub_4B5F30(skill_invocation->hit_loc) / -5;
+        chance += combat_hit_loc_penalty(skill_invocation->hit_loc) / -5;
     }
 
     if (skill_invocation->item.obj != OBJ_HANDLE_NULL
@@ -1749,7 +1749,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
     if ((skill_flags[skill] & SKILL_CHECK_HIT_LOC) != 0 && target_obj != OBJ_HANDLE_NULL) {
         if ((skill_invocation->flags & 0x08) != 0) {
-            int v1 = sub_4B5F30(skill_invocation->hit_loc);
+            int v1 = combat_hit_loc_penalty(skill_invocation->hit_loc);
             if (tech_skill == TECH_SKILL_FIREARMS
                 && training >= TRAINING_EXPERT) {
                 v1 = 2 * v1 / 3;

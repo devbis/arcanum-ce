@@ -119,7 +119,7 @@ void sub_4B4320(int64_t obj);
 void combat_dmg(CombatContext* combat);
 void sub_4B5810(CombatContext* combat);
 void combat_heal(CombatContext* combat);
-int sub_4B5F30(int hit_loc);
+int combat_hit_loc_penalty(int hit_loc);
 int sub_4B6A00(int64_t loc1, int64_t loc2);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 bool combat_set_callbacks(CombatCallbacks* callbacks);

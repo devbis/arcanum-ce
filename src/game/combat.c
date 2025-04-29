@@ -80,11 +80,11 @@ static struct {
 };
 
 // 0x5B5798
-static int dword_5B5798[HIT_LOC_COUNT] = {
-    0,
-    -50,
-    -30,
-    -30,
+static int hit_loc_penalties[HIT_LOC_COUNT] = {
+    /* HIT_LOC_TORSO */ 0,
+    /*  HIT_LOC_HEAD */ -50,
+    /*   HIT_LOC_ARM */ -30,
+    /*   HIT_LOC_LEG */ -30,
 };
 
 // 0x5B57A8
@@ -2405,9 +2405,9 @@ void sub_4B5E90(int64_t loc)
 }
 
 // 0x4B5F30
-int sub_4B5F30(int hit_loc)
+int combat_hit_loc_penalty(int hit_loc)
 {
-    return dword_5B5798[hit_loc];
+    return hit_loc_penalties[hit_loc];
 }
 
 // 0x4B5F40
