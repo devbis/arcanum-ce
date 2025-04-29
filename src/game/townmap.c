@@ -282,17 +282,17 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 }
 
 // 0x4BE8F0
-bool sub_4BE8F0(int64_t loc)
+bool townmap_mark_visited(int64_t loc)
 {
     int64_t sector_id;
     Sector* sector;
     TownMapInfo tmi;
-    int64_t v1;
-    int64_t v2;
-    int64_t v3;
-    int64_t v4;
-    int64_t v5;
-    int64_t v6;
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+    int64_t x;
+    int64_t y;
 
     sector_id = sector_id_from_loc(loc);
 
@@ -310,16 +310,16 @@ bool sub_4BE8F0(int64_t loc)
     }
 
     if (townmap_info(sector->townmap_info, &tmi)) {
-        location_xy(tmi.loc, &v1, &v2);
-        location_xy(loc, &v3, &v4);
+        location_xy(tmi.loc, &x1, &y1);
+        location_xy(loc, &x2, &y2);
 
-        v5 = v3 + tmi.field_C / 2 - v1;
-        v6 = v4 + tmi.field_10 / 2 - v2;
+        x = x2 + tmi.field_C / 2 - x1;
+        y = y2 + tmi.field_10 / 2 - y1;
 
-        if (v5 >= 0 && v5 < tmi.field_C
-            && v6 >= 0 && v6 < tmi.field_10) {
+        if (x >= 0 && x < tmi.field_C
+            && y >= 0 && y < tmi.field_10) {
             sub_4BED90(sector->townmap_info,
-                (int)(tmi.width * v5 / tmi.field_C + tmi.width * (tmi.height * v6 / tmi.field_10)));
+                (int)(tmi.width * x / tmi.field_C + tmi.width * (tmi.height * y / tmi.field_10)));
         }
     }
 

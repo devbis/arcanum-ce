@@ -5344,7 +5344,7 @@ void sub_444270(int64_t obj, int a2)
 
     if (player_is_pc_obj(obj)) {
         if (player_is_local_pc_obj(obj)) {
-            sub_4BE8F0(loc);
+            townmap_mark_visited(loc);
             roof_recalc(loc);
             wallcheck_recalc(loc);
             scroll_set_center(loc);

@@ -30,7 +30,7 @@ const char* townmap_name(int map);
 bool townmap_info(int map, TownMapInfo* tmi);
 void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4);
 void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr);
-bool sub_4BE8F0(int64_t loc);
+bool townmap_mark_visited(int64_t loc);
 bool sub_4BEAB0(int map, int a2);
 bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_info);
 bool townmap_is_waitable(int map);
