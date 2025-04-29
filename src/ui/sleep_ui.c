@@ -162,7 +162,7 @@ void sleep_ui_open(int64_t bed_obj)
         sector_id = sector_id_from_loc(loc);
         townmap = townmap_get(sector_id);
         if (townmap != 0) {
-            if (!sub_4BECC0(townmap)) {
+            if (!townmap_is_waitable(townmap)) {
                 // You cannot wait here.
                 mes_file_entry.num = 20;
                 mes_get_msg(sleep_ui_mes_file, &mes_file_entry);

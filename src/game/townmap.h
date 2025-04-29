@@ -33,6 +33,6 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr);
 bool sub_4BE8F0(int64_t loc);
 bool sub_4BEAB0(int map, int a2);
 bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info);
-bool sub_4BECC0(int map);
+bool townmap_is_waitable(int map);
 
 #endif /* ARCANUM_GAME_TOWNMAP_H_ */

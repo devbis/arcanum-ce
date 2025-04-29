@@ -414,7 +414,7 @@ bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
 }
 
 // 0x4BECC0
-bool sub_4BECC0(int map)
+bool townmap_is_waitable(int map)
 {
     int index = 0;
 

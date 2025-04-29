@@ -4615,7 +4615,7 @@ void wmap_town_refresh_rect(TigRect* rect)
                 vb_src_rect.height = vb_dst_rect.height;
 
                 if (sub_562FA0(idx)) {
-                    if (sub_4BECC0(dword_66D874)) {
+                    if (townmap_is_waitable(dword_66D874)) {
                         vb_blit_info.flags = 0;
                         vb_blit_info.src_video_buffer = entry->video_buffer;
                         if (tig_video_buffer_blit(&vb_blit_info) != TIG_OK) {
