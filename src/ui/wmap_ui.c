@@ -4622,7 +4622,7 @@ void wmap_town_refresh_rect(TigRect* rect)
                             tig_debug_printf("WMapUI: TownMap Blit: ERROR: Blit FAILED!\n");
                             return;
                         }
-                    } else if (sub_4BEAF0(dword_66D874, idx, &vb_blit_info)) {
+                    } else if (townmap_tile_blit_info(dword_66D874, idx, &vb_blit_info)) {
                         vb_blit_info.flags = 0;
                         vb_blit_info.src_video_buffer = entry->video_buffer;
                         if (tig_video_buffer_blit(&vb_blit_info) != TIG_OK) {

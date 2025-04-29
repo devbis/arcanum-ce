@@ -346,7 +346,7 @@ bool sub_4BEAB0(int map, int a2)
 }
 
 // 0x4BEAF0
-bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
+bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
 {
     uint8_t available_flags[3][3] = {
         { 0x8, 0x8 | 0x4, 0x4 },
@@ -357,12 +357,12 @@ bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
     unsigned int flags;
     TownMapInfo tmi;
     tig_color_t color;
-    int v8;
-    int v9;
-    int v10;
-    int v16;
-    int v17;
-    int v18;
+    int base_col;
+    int base_row;
+    int row_offset;
+    int col_offset;
+    int row;
+    int col;
 
     vb_blit_info->flags = 0;
 
@@ -380,21 +380,21 @@ bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
 
     flags = 0;
 
-    v16 = index % tmi.width;
-    v18 = index / tmi.width;
+    base_col = index % tmi.width;
+    base_row = index / tmi.width;
 
-    for (v17 = 0; v17 < 3; v17++) {
-        v8 = v18 + v17 - 1;
-        v9 = 1 - v16;
-        v10 = v16 - 1;
-        do {
-            if (v10 >= 0 && v10 < tmi.width
-                && v8 >= 0 && v8 < tmi.height) {
-                if (sub_4BEDD0(map, v10 + tmi.width * v8)) {
-                    flags |= available_flags[v17][v9 + v10];
+    // TODO: Check.
+    for (row_offset = 0; row_offset < 3; row_offset++) {
+        row = base_row + row_offset - 1;
+        for (col_offset = 0; col_offset < 3; col_offset++) {
+            col = base_col + col_offset - 1;
+            if (col >= 0 && col < tmi.width
+                && row >= 0 && row < tmi.height) {
+                if (sub_4BEDD0(map, col + tmi.width * row)) {
+                    flags |= available_flags[row_offset][col_offset];
                 }
             }
-        } while (v9 + v10 < 3);
+        }
     }
 
     if (flags == 0) {
