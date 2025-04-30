@@ -949,7 +949,7 @@ void mp_spell_mastery_set(int64_t obj, int college)
 }
 
 // 0x4EF0F0
-void sub_4EF0F0(PacketSpellMasterySet* pkt)
+void mp_handle_spell_mastery_set(PacketSpellMasterySet* pkt)
 {
     spell_mastery_set(objp_perm_lookup(pkt->oid), pkt->college);
 }
