@@ -2609,7 +2609,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     }
     case SAT_UNFOG_TOWNMAP: {
         int map = script_get_value(action->op_type[0], action->op_value[0], state);
-        sub_4EF120(map, true);
+        mp_townmap_set_known(map, true);
         return NEXT;
     }
     case SAT_START_WRITTEN_UI: {

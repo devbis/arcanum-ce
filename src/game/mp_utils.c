@@ -955,24 +955,24 @@ void sub_4EF0F0(PacketSpellMasterySet* pkt)
 }
 
 // 0x4EF120
-void sub_4EF120(int map, int a2)
+void mp_townmap_set_known(int map, bool known)
 {
-    Packet110 pkt;
+    PacketTownmapSetKnown pkt;
 
-    sub_4BEAB0(map, a2);
+    townmap_set_known(map, known);
 
     if (tig_net_is_active()) {
         pkt.type = 110;
         pkt.map = map;
-        pkt.field_8 = a2;
+        pkt.known = known;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EF170
-void sub_4EF170(Packet110* pkt)
+void mp_handle_townmap_set_known(PacketTownmapSetKnown* pkt)
 {
-    sub_4BEAB0(pkt->map, pkt->field_8);
+    townmap_set_known(pkt->map, pkt->known);
 }
 
 // 0x4EF190

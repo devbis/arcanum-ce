@@ -11,7 +11,7 @@ typedef struct TownMapIndexEntry {
 } TownMapIndexEntry;
 
 static void sub_4BED00();
-static void sub_4BED30(int map, int a2);
+static void townmap_set_known_internal(int map, bool known);
 static void sub_4BED90(int map, int index);
 static bool sub_4BEDD0(int map, int index);
 static bool sub_4BEE60(int map);
@@ -326,7 +326,7 @@ bool townmap_mark_visited(int64_t loc)
 }
 
 // 0x4BEAB0
-bool sub_4BEAB0(int map, int a2)
+bool townmap_set_known(int map, bool known)
 {
     TownMapInfo tmi;
 
@@ -338,7 +338,7 @@ bool sub_4BEAB0(int map, int a2)
         return false;
     }
 
-    sub_4BED30(map, a2);
+    townmap_set_known_internal(map, known);
 
     return true;
 }
@@ -438,15 +438,18 @@ void sub_4BED00()
 }
 
 // 0x4BED30
-void sub_4BED30(int map, int a2)
+void townmap_set_known_internal(int map, bool known)
 {
+    int idx;
+    uint8_t value;
+
     if (sub_4BEE60(map)) {
-        if (a2 != 0) {
-            a2 = -1;
+        value = known ? 0xFF : 0;
+        for (idx = 0; idx < dword_5FC514; idx++) {
+            dword_5FC510[idx] = value;
         }
 
-        memset(dword_5FC510, -1, dword_5FC514);
-        dword_5FC50C = 1;
+        dword_5FC50C = true;
     }
 }
 
@@ -493,7 +496,7 @@ bool sub_4BEE60(int map)
 
     sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(dword_5FC518));
     if (!tig_file_exists(path, NULL)) {
-        sub_4BED30(map, 0);
+        townmap_set_known_internal(map, false);
         return true;
     }
 

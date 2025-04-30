@@ -935,13 +935,13 @@ typedef struct PacketSpellMasterySet {
 
 static_assert(sizeof(PacketSpellMasterySet) == 0x28, "wrong size");
 
-typedef struct Packet110 {
+typedef struct PacketTownmapSetKnown {
     /* 0000 */ int type;
     /* 0004 */ int map;
-    /* 0008 */ int field_8;
-} Packet110;
+    /* 0008 */ bool known;
+} PacketTownmapSetKnown;
 
-static_assert(sizeof(Packet110) == 0xC, "wrong size");
+static_assert(sizeof(PacketTownmapSetKnown) == 0xC, "wrong size");
 
 typedef struct Packet111 {
     /* 0000 */ int type;
@@ -1206,7 +1206,7 @@ void mp_container_open(int64_t obj);
 void mp_portal_toggle(int64_t obj);
 void mp_sector_block_set(int64_t sec, bool blocked);
 void mp_spell_mastery_set(int64_t obj, int college);
-void sub_4EF120(int map, int a2);
+void mp_townmap_set_known(int map, int a2);
 void sub_4EF190(tig_art_id_t art_id);
 void sub_4EF1E0(int64_t a1, int64_t obj);
 void mp_tf_remove(int64_t obj);

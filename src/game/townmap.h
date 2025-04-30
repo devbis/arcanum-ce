@@ -29,7 +29,7 @@ bool townmap_info(int map, TownMapInfo* tmi);
 void townmap_loc_to_coords(TownMapInfo* tmi, int64_t loc, int* x_ptr, int* y_ptr);
 void townmap_coords_to_loc(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr);
 bool townmap_mark_visited(int64_t loc);
-bool sub_4BEAB0(int map, int a2);
+bool townmap_set_known(int map, bool known);
 bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_info);
 bool townmap_is_waitable(int map);
 
