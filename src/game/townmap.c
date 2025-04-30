@@ -10,13 +10,13 @@ typedef struct TownMapIndexEntry {
     bool w;
 } TownMapIndexEntry;
 
-static void sub_4BED00();
+static void townmap_kstate_reset();
 static void townmap_set_known_internal(int map, bool known);
-static void sub_4BED90(int map, int index);
-static bool sub_4BEDD0(int map, int index);
-static bool sub_4BEE60(int map);
-static void sub_4BEF40(int map);
-static bool sub_4BEFB0();
+static void townmap_tile_known_set(int map, int index);
+static bool townmap_tile_known_get(int map, int index);
+static bool townmap_kstate_load(int map);
+static void townmap_kstate_init(int map);
+static bool townmap_kstate_flush();
 
 // 0x5B6450
 static mes_file_handle_t townmap_mes_file = MES_FILE_HANDLE_INVALID;
@@ -31,16 +31,16 @@ static TownMapInfo townmap_info_cache;
 static TownMapIndexEntry* townmap_entries;
 
 // 0x5FC50C
-static bool dword_5FC50C;
+static bool townmap_kstate_modified;
 
 // 0x5FC510
-static uint8_t* dword_5FC510;
+static uint8_t* townmap_kstate;
 
 // 0x5FC514
-static int dword_5FC514;
+static int townmap_kstate_size;
 
 // 0x5FC518
-static int dword_5FC518;
+static int townmap_kstate_map;
 
 // 0x5FC51C
 static int townmap_entries_cnt;
@@ -48,7 +48,7 @@ static int townmap_entries_cnt;
 // 0x4BE1B0
 void townmap_reset()
 {
-    sub_4BED00();
+    townmap_kstate_reset();
 }
 
 // 0x4BE1C0
@@ -102,7 +102,7 @@ bool townmap_mod_load()
 // 0x4BE310
 void townmap_mod_unload()
 {
-    sub_4BED00();
+    townmap_kstate_reset();
 
     if (townmap_entries != NULL) {
         FREE(townmap_entries);
@@ -122,8 +122,8 @@ void townmap_mod_unload()
 // 0x4BE370
 void townmap_flush()
 {
-    sub_4BEFB0();
-    sub_4BED00();
+    townmap_kstate_flush();
+    townmap_kstate_reset();
 }
 
 // 0x4BE380
@@ -316,7 +316,7 @@ bool townmap_mark_visited(int64_t loc)
 
         if (x >= 0 && x < tmi.width
             && y >= 0 && y < tmi.height) {
-            sub_4BED90(sector->townmap_info,
+            townmap_tile_known_set(sector->townmap_info,
                 (int)(tmi.num_hor_tiles * x / tmi.width + tmi.num_hor_tiles * (tmi.num_vert_tiles * y / tmi.height)));
         }
     }
@@ -372,7 +372,7 @@ bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_
         return false;
     }
 
-    if (sub_4BEDD0(map, index)) {
+    if (townmap_tile_known_get(map, index)) {
         return true;
     }
 
@@ -388,7 +388,7 @@ bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_
             col = base_col + col_offset - 1;
             if (col >= 0 && col < tmi.num_hor_tiles
                 && row >= 0 && row < tmi.num_vert_tiles) {
-                if (sub_4BEDD0(map, col + tmi.num_hor_tiles * row)) {
+                if (townmap_tile_known_get(map, col + tmi.num_hor_tiles * row)) {
                     flags |= available_flags[row_offset][col_offset];
                 }
             }
@@ -426,15 +426,15 @@ bool townmap_is_waitable(int map)
 }
 
 // 0x4BED00
-void sub_4BED00()
+void townmap_kstate_reset()
 {
-    if (dword_5FC510 != NULL) {
-        FREE(dword_5FC510);
-        dword_5FC510 = NULL;
+    if (townmap_kstate != NULL) {
+        FREE(townmap_kstate);
+        townmap_kstate = NULL;
     }
-    dword_5FC514 = 0;
-    dword_5FC50C = false;
-    dword_5FC518 = 0;
+    townmap_kstate_size = 0;
+    townmap_kstate_modified = false;
+    townmap_kstate_map = 0;
 }
 
 // 0x4BED30
@@ -443,58 +443,62 @@ void townmap_set_known_internal(int map, bool known)
     int idx;
     uint8_t value;
 
-    if (sub_4BEE60(map)) {
+    if (townmap_kstate_load(map)) {
         value = known ? 0xFF : 0;
-        for (idx = 0; idx < dword_5FC514; idx++) {
-            dword_5FC510[idx] = value;
+        for (idx = 0; idx < townmap_kstate_size; idx++) {
+            townmap_kstate[idx] = value;
         }
 
-        dword_5FC50C = true;
+        townmap_kstate_modified = true;
     }
 }
 
 // 0x4BED90
-void sub_4BED90(int map, int index)
+void townmap_tile_known_set(int map, int index)
 {
-    if (sub_4BEE60(map)) {
-        dword_5FC510[index / 8] |= 1 << (index & 7);
-        dword_5FC50C = true;
+    if (townmap_kstate_load(map)) {
+        townmap_kstate[index / 8] |= 1 << (index % 8);
+        townmap_kstate_modified = true;
     }
 }
 
 // 0x4BEDD0
-bool sub_4BEDD0(int map, int index)
+bool townmap_tile_known_get(int map, int index)
 {
     const char* name;
     char path[TIG_MAX_PATH];
 
-    if (!sub_4BEE60(map)) {
+    if (!townmap_kstate_load(map)) {
         return false;
     }
 
-    if ((dword_5FC510[index / 8] & (1 << (index & 7))) == 0) {
+    if ((townmap_kstate[index / 8] & (1 << (index % 8))) == 0) {
         return false;
     }
 
     name = townmap_name(map);
     sprintf(path, "townmap\\%s\\%s%06d.bmp", name, name, index);
-    return tig_file_exists(path, NULL);
+    if (!tig_file_exists(path, NULL)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4BEE60
-bool sub_4BEE60(int map)
+bool townmap_kstate_load(int map)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    if (dword_5FC518 == map) {
+    if (townmap_kstate_map == map) {
         return true;
     }
 
-    sub_4BEFB0();
-    sub_4BEF40(map);
+    townmap_kstate_flush();
+    townmap_kstate_init(map);
 
-    sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(dword_5FC518));
+    sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(townmap_kstate_map));
     if (!tig_file_exists(path, NULL)) {
         townmap_set_known_internal(map, false);
         return true;
@@ -505,7 +509,7 @@ bool sub_4BEE60(int map)
         return false;
     }
 
-    if (tig_file_fread(dword_5FC510, 1u, dword_5FC514, stream) != dword_5FC514) {
+    if (tig_file_fread(townmap_kstate, 1u, townmap_kstate_size, stream) != townmap_kstate_size) {
         tig_file_fclose(stream);
         return false;
     }
@@ -515,37 +519,37 @@ bool sub_4BEE60(int map)
 }
 
 // 0x4BEF40
-void sub_4BEF40(int map)
+void townmap_kstate_init(int map)
 {
     TownMapInfo tmi;
 
-    sub_4BED00();
+    townmap_kstate_reset();
 
     if (townmap_info(map, &tmi)) {
-        dword_5FC514 = tmi.num_hor_tiles * tmi.num_vert_tiles / 8;
-        if (tmi.num_hor_tiles * tmi.num_vert_tiles % 8 != 0) {
-            dword_5FC514++;
+        townmap_kstate_size = tmi.num_hor_tiles * tmi.num_vert_tiles / 8;
+        if ((tmi.num_hor_tiles * tmi.num_vert_tiles) % 8 != 0) {
+            townmap_kstate_size++;
         }
 
-        dword_5FC510 = (uint8_t*)MALLOC(dword_5FC514);
-        dword_5FC518 = map;
+        townmap_kstate = (uint8_t*)MALLOC(townmap_kstate_size);
+        townmap_kstate_map = map;
     }
 }
 
 // 0x4BEFB0
-bool sub_4BEFB0()
+bool townmap_kstate_flush()
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    if (dword_5FC50C) {
-        sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(dword_5FC518));
+    if (townmap_kstate_modified) {
+        sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(townmap_kstate_map));
         stream = tig_file_fopen(path, "wb");
         if (stream == NULL) {
             return false;
         }
 
-        if (tig_file_fwrite(dword_5FC510, 1, dword_5FC514, stream) != dword_5FC514) {
+        if (tig_file_fwrite(townmap_kstate, 1, townmap_kstate_size, stream) != townmap_kstate_size) {
             tig_file_fclose(stream);
             tig_file_remove(path);
             return false;
