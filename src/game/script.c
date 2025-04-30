@@ -2693,7 +2693,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     }
     case SAT_TOUCH_ART: {
         tig_art_id_t art_id = script_get_value(action->op_type[0], action->op_value[0], state);
-        sub_4EF190(art_id);
+        mp_art_touch(art_id);
         return NEXT;
     }
     case SAT_STOP_SCRIPT_EYE_CANDY: {

@@ -2207,7 +2207,7 @@ void sub_4D2ED0(Sector* sector)
             while (index + 1 < dword_6017D8 && dword_6017F0[index] == dword_6017F0[index + 1]) {
                 index++;
             }
-            sub_502290(dword_6017F0[index]);
+            tig_art_touch(dword_6017F0[index]);
             li_update();
         }
 

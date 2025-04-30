@@ -976,11 +976,11 @@ void mp_handle_townmap_set_known(PacketTownmapSetKnown* pkt)
 }
 
 // 0x4EF190
-void sub_4EF190(tig_art_id_t art_id)
+void mp_art_touch(tig_art_id_t art_id)
 {
     Packet111 pkt;
 
-    sub_502290(art_id);
+    tig_art_touch(art_id);
 
     if (tig_net_is_active()) {
         pkt.type = 111;
@@ -990,9 +990,9 @@ void sub_4EF190(tig_art_id_t art_id)
 }
 
 // 0x4EF1D0
-void sub_4EF1D0(Packet111* pkt)
+void mp_handle_art_touch(Packet111* pkt)
 {
-    sub_502290(pkt->art_id);
+    tig_art_touch(pkt->art_id);
 }
 
 // 0x4EF1E0

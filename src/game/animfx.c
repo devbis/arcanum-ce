@@ -189,10 +189,10 @@ void animfx_preload_art(AnimFxNode* node)
 
     dword_601738 = node->list;
     art_id = dword_601738->entries[node->fx_id].eye_candy_art_id;
-    sub_502290(art_id);
+    tig_art_touch(art_id);
     if ((dword_601738->entries[node->fx_id].flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
         art_id = tig_art_eye_candy_id_type_set(art_id, 1);
-        sub_502290(art_id);
+        tig_art_touch(art_id);
     }
 }
 
