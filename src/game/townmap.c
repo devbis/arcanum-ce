@@ -22,7 +22,7 @@ static bool sub_4BEFB0();
 static mes_file_handle_t townmap_mes_file = MES_FILE_HANDLE_INVALID;
 
 // 0x5FC4C8
-static TigRect stru_5FC4C8;
+static TigRect townmap_tile_bounds;
 
 // 0x5FC4D8
 static TownMapInfo townmap_info_cache;
@@ -226,10 +226,10 @@ bool townmap_info(int map, TownMapInfo* tmi)
 
     tig_file_fclose(stream);
 
-    stru_5FC4C8.x = 0;
-    stru_5FC4C8.y = 0;
-    stru_5FC4C8.width = (int)(tmi->width / tmi->num_hor_tiles * tmi->scale);
-    stru_5FC4C8.height = (int)(tmi->height / tmi->num_vert_tiles * tmi->scale);
+    townmap_tile_bounds.x = 0;
+    townmap_tile_bounds.y = 0;
+    townmap_tile_bounds.width = (int)(tmi->width / tmi->num_hor_tiles * tmi->scale);
+    townmap_tile_bounds.height = (int)(tmi->height / tmi->num_vert_tiles * tmi->scale);
 
     townmap_info_cache = *tmi;
 
@@ -404,7 +404,7 @@ bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_
     color = tig_color_make(255, 255, 255);
 
     vb_blit_info->flags = TIG_VIDEO_BUFFER_BLIT_BLEND_COLOR_LERP;
-    vb_blit_info->field_20 = &stru_5FC4C8;
+    vb_blit_info->field_20 = &townmap_tile_bounds;
     vb_blit_info->field_10 = (flags & 0x8) != 0 ? color : 0;
     vb_blit_info->field_14 = (flags & 0x4) != 0 ? color : 0;
     vb_blit_info->field_18 = (flags & 0x2) != 0 ? color : 0;
