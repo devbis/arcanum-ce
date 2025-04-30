@@ -2530,7 +2530,7 @@ bool wmap_load_townmap_info()
         return false;
     }
 
-    sub_4BE670(&stru_64E7F8,
+    townmap_loc_to_coords(&stru_64E7F8,
         obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION),
         &x,
         &y);
@@ -3530,7 +3530,7 @@ bool sub_5643E0(WmapCoords* coords)
             return false;
         }
 
-        sub_4BE780(&stru_64E7F8, coords->x, coords->y, &to);
+        townmap_coords_to_loc(&stru_64E7F8, coords->x, coords->y, &to);
 
         steps = sub_44EB40(player_get_local_pc_obj(), from, to);
         if (steps == 0) {
@@ -3774,7 +3774,7 @@ void wmap_ui_mark_townmap(int64_t obj)
         return;
     }
 
-    sub_4BE670(&stru_64E7F8, obj_loc, &(note.coords.x), &(note.coords.y));
+    townmap_loc_to_coords(&stru_64E7F8, obj_loc, &(note.coords.x), &(note.coords.y));
 
     if (sub_563E00(&(note.coords), NULL, 2)) {
         return;
@@ -4694,7 +4694,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     node = objects.head;
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
-        sub_4BE670(&stru_64E7F8, loc, &offset_x, &offset_y);
+        townmap_loc_to_coords(&stru_64E7F8, loc, &offset_x, &offset_y);
         offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
         offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
 
@@ -4726,7 +4726,7 @@ void wmap_town_refresh_rect(TigRect* rect)
         while (node != NULL) {
             if (!player_is_local_pc_obj(node->obj)) {
                 loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
-                sub_4BE670(&stru_64E7F8, loc, &offset_x, &offset_y);
+                townmap_loc_to_coords(&stru_64E7F8, loc, &offset_x, &offset_y);
                 offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
                 offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
 

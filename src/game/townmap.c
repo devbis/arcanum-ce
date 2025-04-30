@@ -237,47 +237,45 @@ bool townmap_info(int map, TownMapInfo* tmi)
 }
 
 // 0x4BE670
-void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
+void townmap_loc_to_coords(TownMapInfo* tmi, int64_t loc, int* x_ptr, int* y_ptr)
 {
-    int64_t x1;
-    int64_t y1;
-    int64_t x2;
-    int64_t y2;
-    int64_t v1;
-    int64_t v2;
+    int64_t center_x;
+    int64_t center_y;
+    int64_t x;
+    int64_t y;
 
-    *a3 = 0;
-    *a4 = 0;
+    *x_ptr = 0;
+    *y_ptr = 0;
 
-    location_xy(tmi->loc, &x1, &y1);
-    location_xy(loc, &x2, &y2);
+    location_xy(tmi->loc, &center_x, &center_y);
+    location_xy(loc, &x, &y);
 
-    v1 = x2 + tmi->width / 2 - x1;
-    v2 = y2 + tmi->height / 2 - y1;
+    x += tmi->width / 2 - center_x;
+    y += tmi->height / 2 - center_y;
 
-    if (v2 >= 0
-        && v2 < tmi->width) {
-        *a3 = (int)(v1 * tmi->scale);
-        *a4 = (int)(v2 * tmi->scale);
+    if (x >= 0 && x < tmi->width
+        && y >= 0 && y < tmi->height) {
+        *x_ptr = (int)(x * tmi->scale);
+        *y_ptr = (int)(y * tmi->scale);
     }
 }
 
 // 0x4BE780
-void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
+void townmap_coords_to_loc(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 {
-    int64_t v1;
-    int64_t v2;
-    int64_t v3;
-    int64_t v4;
+    int64_t offset_x;
+    int64_t offset_y;
+    int64_t center_x;
+    int64_t center_y;
     int64_t loc;
 
     *loc_ptr = 0;
 
-    v1 = (int)(x / tmi->scale) - tmi->width / 2;
-    v2 = (int)(y / tmi->scale) - tmi->height / 2;
+    offset_x = (int)(x / tmi->scale) - tmi->width / 2;
+    offset_y = (int)(y / tmi->scale) - tmi->height / 2;
 
-    location_xy(tmi->loc, &v3, &v4);
-    location_at(v1 + v3, v2 + v4, &loc);
+    location_xy(tmi->loc, &center_x, &center_y);
+    location_at(center_x + offset_x, center_y + offset_y, &loc);
     *loc_ptr = loc;
 }
 
