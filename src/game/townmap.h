@@ -7,14 +7,12 @@ typedef struct TownMapInfo {
     /* 0000 */ int version;
     /* 0004 */ int field_4;
     /* 0008 */ int map;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int width;
-    /* 0018 */ int height;
-    /* 001C */ int field_1C;
+    /* 000C */ int width;
+    /* 0010 */ int height;
+    /* 0014 */ int num_hor_tiles;
+    /* 0018 */ int num_vert_tiles;
     /* 0020 */ int64_t loc;
     /* 0028 */ float scale;
-    /* 002C */ int field_2C;
 } TownMapInfo;
 
 static_assert(sizeof(TownMapInfo) == 0x30, "wrong size");

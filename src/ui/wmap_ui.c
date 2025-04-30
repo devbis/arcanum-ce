@@ -2541,9 +2541,9 @@ bool wmap_load_townmap_info()
     v1->field_38 = 0;
 
     strcpy(v1->field_68, townmap_name(dword_66D874));
-    v1->num_hor_tiles = stru_64E7F8.width;
-    v1->num_vert_tiles = stru_64E7F8.height;
-    v1->num_tiles = stru_64E7F8.width * stru_64E7F8.height;
+    v1->num_hor_tiles = stru_64E7F8.num_hor_tiles;
+    v1->num_vert_tiles = stru_64E7F8.num_vert_tiles;
+    v1->num_tiles = stru_64E7F8.num_hor_tiles * stru_64E7F8.num_vert_tiles;
     v1->tiles = (WmapTile*)CALLOC(sizeof(*v1->tiles), v1->num_tiles);
 
     if (!wmTileArtLockMode(2, 0)) {

@@ -228,8 +228,8 @@ bool townmap_info(int map, TownMapInfo* tmi)
 
     stru_5FC4C8.x = 0;
     stru_5FC4C8.y = 0;
-    stru_5FC4C8.width = (int)(tmi->field_C / tmi->width * tmi->scale);
-    stru_5FC4C8.height = (int)(tmi->field_10 / tmi->height * tmi->scale);
+    stru_5FC4C8.width = (int)(tmi->width / tmi->num_hor_tiles * tmi->scale);
+    stru_5FC4C8.height = (int)(tmi->height / tmi->num_vert_tiles * tmi->scale);
 
     townmap_info_cache = *tmi;
 
@@ -252,11 +252,11 @@ void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
     location_xy(tmi->loc, &x1, &y1);
     location_xy(loc, &x2, &y2);
 
-    v1 = x2 + tmi->field_C / 2 - x1;
-    v2 = y2 + tmi->field_10 / 2 - y1;
+    v1 = x2 + tmi->width / 2 - x1;
+    v2 = y2 + tmi->height / 2 - y1;
 
     if (v2 >= 0
-        && v2 < tmi->field_C) {
+        && v2 < tmi->width) {
         *a3 = (int)(v1 * tmi->scale);
         *a4 = (int)(v2 * tmi->scale);
     }
@@ -273,8 +273,8 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 
     *loc_ptr = 0;
 
-    v1 = (int)(x / tmi->scale) - tmi->field_C / 2;
-    v2 = (int)(y / tmi->scale) - tmi->field_10 / 2;
+    v1 = (int)(x / tmi->scale) - tmi->width / 2;
+    v2 = (int)(y / tmi->scale) - tmi->height / 2;
 
     location_xy(tmi->loc, &v3, &v4);
     location_at(v1 + v3, v2 + v4, &loc);
@@ -313,13 +313,13 @@ bool townmap_mark_visited(int64_t loc)
         location_xy(tmi.loc, &x1, &y1);
         location_xy(loc, &x2, &y2);
 
-        x = x2 + tmi.field_C / 2 - x1;
-        y = y2 + tmi.field_10 / 2 - y1;
+        x = x2 + tmi.width / 2 - x1;
+        y = y2 + tmi.height / 2 - y1;
 
-        if (x >= 0 && x < tmi.field_C
-            && y >= 0 && y < tmi.field_10) {
+        if (x >= 0 && x < tmi.width
+            && y >= 0 && y < tmi.height) {
             sub_4BED90(sector->townmap_info,
-                (int)(tmi.width * x / tmi.field_C + tmi.width * (tmi.height * y / tmi.field_10)));
+                (int)(tmi.num_hor_tiles * x / tmi.width + tmi.num_hor_tiles * (tmi.num_vert_tiles * y / tmi.height)));
         }
     }
 
@@ -380,17 +380,17 @@ bool townmap_tile_blit_info(int map, int index, TigVideoBufferBlitInfo* vb_blit_
 
     flags = 0;
 
-    base_col = index % tmi.width;
-    base_row = index / tmi.width;
+    base_col = index % tmi.num_hor_tiles;
+    base_row = index / tmi.num_hor_tiles;
 
     // TODO: Check.
     for (row_offset = 0; row_offset < 3; row_offset++) {
         row = base_row + row_offset - 1;
         for (col_offset = 0; col_offset < 3; col_offset++) {
             col = base_col + col_offset - 1;
-            if (col >= 0 && col < tmi.width
-                && row >= 0 && row < tmi.height) {
-                if (sub_4BEDD0(map, col + tmi.width * row)) {
+            if (col >= 0 && col < tmi.num_hor_tiles
+                && row >= 0 && row < tmi.num_vert_tiles) {
+                if (sub_4BEDD0(map, col + tmi.num_hor_tiles * row)) {
                     flags |= available_flags[row_offset][col_offset];
                 }
             }
@@ -521,8 +521,8 @@ void sub_4BEF40(int map)
     sub_4BED00();
 
     if (townmap_info(map, &tmi)) {
-        dword_5FC514 = tmi.width * tmi.height / 8;
-        if (tmi.width * tmi.height % 8 != 0) {
+        dword_5FC514 = tmi.num_hor_tiles * tmi.num_vert_tiles / 8;
+        if (tmi.num_hor_tiles * tmi.num_vert_tiles % 8 != 0) {
             dword_5FC514++;
         }
 
