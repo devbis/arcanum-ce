@@ -5246,7 +5246,7 @@ void sub_545F60()
     }
 
     settings_set_value(&settings, "turn-based", 0);
-    sub_49CBD0();
+    multiplayer_start();
     sub_4A3D70(&dword_64C41C, &dword_64C420);
 }
 

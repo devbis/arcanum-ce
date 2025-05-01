@@ -44,7 +44,7 @@ void sub_569AF0()
 {
     if (!matchmaker_ui_created) {
         if (sub_551A80(17)) {
-            if (tig_net_is_active() || sub_49CBD0()) {
+            if (tig_net_is_active() || multiplayer_start()) {
                 sub_569B50();
             } else {
                 tig_debug_printf("MMUI: Could not start multiplayer.. aborting.\n");

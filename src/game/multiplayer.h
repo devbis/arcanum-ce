@@ -16,7 +16,7 @@ bool multiplayer_save(TigFile* stream);
 bool mutliplayer_load(GameLoadInfo* load_info);
 bool multiplayer_mod_load();
 void multiplayer_mod_unload();
-bool sub_49CBD0();
+bool multiplayer_start();
 bool sub_49CC20();
 void sub_49CC50();
 bool sub_49CC70(const char* a1, const char* a2);

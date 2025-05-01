@@ -626,7 +626,7 @@ void sub_49CB80(S5E8AD0* a1)
 }
 
 // 0x49CBD0
-bool sub_49CBD0()
+bool multiplayer_start()
 {
     multiplayer_lock_cnt = 0;
     if (tig_net_start_client() != TIG_OK) {
