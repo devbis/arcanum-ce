@@ -704,14 +704,14 @@ typedef struct Packet86 {
 
 static_assert(sizeof(Packet86) == 0x28, "wrong size");
 
-typedef struct Packet87 {
+typedef struct PacketReactionAdj {
     /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ int field_38;
-} Packet87;
+    /* 0008 */ ObjectID npc_oid;
+    /* 0020 */ ObjectID pc_oid;
+    /* 0038 */ int value;
+} PacketReactionAdj;
 
-static_assert(sizeof(Packet87) == 0x40, "wrong size");
+static_assert(sizeof(PacketReactionAdj) == 0x40, "wrong size");
 
 #define REPAIR_INVOCATION_HP_DAM 0x01u
 #define REPAIR_INVOCATION_FIX 0x02u
@@ -1199,7 +1199,7 @@ bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr);
 void sub_4ED9E0(int64_t obj);
 void sub_4EDA60(UiMessage* ui_message, int player, int a3);
 void sub_4EDB70(int64_t obj, int a3, const char* str);
-void sub_4EDC00(int64_t a1, int64_t a2, int a3);
+void mp_reaction_adj(int64_t npc_obj, int64_t pc_obj, int value);
 void mp_trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason);
 void sub_4EDCE0(int64_t obj, tig_art_id_t art_id);
 void sub_4EDDE0(int64_t obj);

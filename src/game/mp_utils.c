@@ -250,14 +250,14 @@ void sub_4EDB70(int64_t obj, int a3, const char* str)
 }
 
 // 0x4EDC00
-void sub_4EDC00(int64_t a1, int64_t a2, int a3)
+void mp_reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
 {
-    Packet87 pkt;
+    PacketReactionAdj pkt;
 
     pkt.type = 87;
-    pkt.field_8 = sub_407EF0(a1);
-    pkt.field_20 = sub_407EF0(a2);
-    pkt.field_38 = a3;
+    pkt.npc_oid = sub_407EF0(npc_obj);
+    pkt.pc_oid = sub_407EF0(pc_obj);
+    pkt.value = value;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 

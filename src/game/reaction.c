@@ -247,7 +247,7 @@ void reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
             return;
         }
 
-        sub_4EDC00(npc_obj, pc_obj, value);
+        mp_reaction_adj(npc_obj, pc_obj, value);
     }
 
     if (value == 0) {
