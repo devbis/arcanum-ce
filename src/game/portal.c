@@ -1,7 +1,67 @@
 #include "game/portal.h"
 
+#include "game/a_name.h"
+#include "game/gsound.h"
+#include "game/mp_utils.h"
 #include "game/obj.h"
 #include "game/object.h"
+#include "game/script.h"
+#include "game/wall.h"
+
+// 0x4F06E0
+void sub_4F06E0(int64_t a1, int64_t a2)
+{
+    tig_art_id_t art_id;
+    unsigned int flags;
+    int sound_id;
+
+    art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
+
+    // FIXME: Unused.
+    tig_art_portal_id_type_get(art_id);
+
+    art_id = sub_4EC830(art_id);
+    if (art_id != TIG_ART_ID_INVALID) {
+        flags = obj_field_int32_get(a1, OBJ_F_PORTAL_FLAGS);
+        flags |= OPF_BUSTED;
+        obj_field_int32_set(a1, OBJ_F_PORTAL_FLAGS, flags);
+        object_set_current_aid(a1, art_id);
+        sound_id = sub_4F1050(a1, 0);
+        object_script_execute(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
+        gsound_play_sfx_on_obj(sound_id, 1, a1);
+    } else {
+        object_destroy(a1);
+        sound_id = sub_4F1050(a1, 1);
+        gsound_play_sfx_on_obj(sound_id, 1, a1);
+    }
+}
+
+// 0x4F0790
+void sub_4F0790(int64_t obj, bool a2)
+{
+    int64_t loc;
+    ObjectList objects;
+    ObjectNode* node;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    object_list_location(loc, OBJ_TM_WALL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_4E18F0(node->obj, a2);
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    object_list_location(loc, OBJ_TM_PORTAL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_43CF70(node->obj);
+        sub_43CFF0(node->obj);
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+}
 
 // 0x4F08C0
 bool portal_is_open(int64_t obj)
