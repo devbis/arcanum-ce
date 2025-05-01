@@ -116,7 +116,7 @@ static int object_compare_blits(const void* va, const void* vb);
 static void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect);
 static void sub_4437C0(int64_t obj);
 static bool sub_443880(TigRect* rect, tig_art_id_t art_id);
-static bool sub_444150();
+static bool load_reaction_colors();
 static void sub_444270(int64_t obj, int a2);
 static void object_lighting_changed();
 
@@ -270,7 +270,7 @@ bool object_init(GameInitInfo* init_info)
         object_type_visibility[idx] = true;
     }
 
-    if (!sub_444150()) {
+    if (!load_reaction_colors()) {
         return false;
     }
 
@@ -5264,7 +5264,7 @@ bool sub_444130(FollowerInfo* a1)
 }
 
 // 0x444150
-bool sub_444150()
+bool load_reaction_colors()
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
