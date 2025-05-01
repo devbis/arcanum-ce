@@ -2870,42 +2870,48 @@ void object_eye_candy_aid_dec(int64_t obj, int fld, int index)
 }
 
 // 0x43FB80
-void sub_43FB80(int64_t obj, int index)
+void object_overlay_light_frame_set_first(int64_t obj, int index)
 {
     tig_art_id_t aid;
 
     aid = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
-    if (tig_art_id_frame_get(aid) != 0) {
-        aid = tig_art_id_frame_set(aid, 0);
-        obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
-        obj_field_int32_set(obj,
-            OBJ_F_RENDER_FLAGS,
-            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
-        sub_4D9590(obj, true);
+    if (tig_art_id_frame_get(aid) == 0) {
+        return;
     }
+
+    aid = tig_art_id_frame_set(aid, 0);
+    obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
+    sub_4D9590(obj, true);
 }
 
 // 0x43FBF0
-void sub_43FBF0(int64_t obj, int index)
+void object_overlay_light_frame_set_last(int64_t obj, int index)
 {
     tig_art_id_t aid;
     TigArtAnimData art_anim_data;
 
     aid = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
-    if (tig_art_anim_data(aid, &art_anim_data) == TIG_OK) {
-        if (tig_art_id_frame_get(aid) != art_anim_data.num_frames - 1) {
-            aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
-            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
-            obj_field_int32_set(obj,
-                OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
-            sub_4D9590(obj, true);
-        }
+    if (tig_art_anim_data(aid, &art_anim_data) != TIG_OK) {
+        return;
     }
+
+    if (tig_art_id_frame_get(aid) == art_anim_data.num_frames - 1) {
+        return;
+    }
+
+    aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
+    obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
+    sub_4D9590(obj, true);
 }
 
 // 0x43FC80
-void sub_43FC80(int64_t obj, int index)
+void object_overlay_light_frame_inc(int64_t obj, int index)
 {
     Light* light;
 
@@ -2916,7 +2922,7 @@ void sub_43FC80(int64_t obj, int index)
 }
 
 // 0x43FCB0
-void sub_43FCB0(int64_t obj, int index)
+void object_overlay_light_frame_dec(int64_t obj, int index)
 {
     Light* light;
 

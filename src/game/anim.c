@@ -11974,7 +11974,7 @@ bool sub_431340(AnimRunInfo* run_info)
     }
 
     if (overlay_light != -1) {
-        sub_43FC80(obj, overlay_light);
+        object_overlay_light_frame_inc(obj, overlay_light);
     }
 
     sub_431550(run_info, obj);
@@ -12121,7 +12121,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
         if (light_art_id != TIG_ART_ID_INVALID) {
             object_set_overlay_light(obj, overlay_light, 0x20, -1, range);
             object_set_overlay_light(obj, overlay_light, 0x20, light_art_id, range);
-            sub_43FB80(obj, overlay_light);
+            object_overlay_light_frame_set_first(obj, overlay_light);
         }
     }
 
@@ -12374,7 +12374,7 @@ bool sub_431C40(AnimRunInfo* run_info)
     }
 
     if (overlay_light != -1) {
-        sub_43FCB0(obj, overlay_light);
+        object_overlay_light_frame_dec(obj, overlay_light);
     }
 
     sub_431550(run_info, obj);
@@ -12501,7 +12501,7 @@ bool sub_431E50(AnimRunInfo* run_info)
 
         if (light_art_id != TIG_ART_ID_INVALID) {
             object_set_overlay_light(obj, overlay_light, 0x20, light_art_id, range);
-            sub_43FBF0(obj, overlay_light);
+            object_overlay_light_frame_set_last(obj, overlay_light);
         }
     }
 
@@ -12659,7 +12659,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
     }
 
     if (overlay_light != -1) {
-        sub_43FC80(obj, overlay_light);
+        object_overlay_light_frame_inc(obj, overlay_light);
     }
 
     sub_431550(run_info, obj);
@@ -12766,7 +12766,7 @@ bool sub_4324D0(AnimRunInfo* run_info)
     }
 
     if (overlay_light != -1) {
-        sub_43FCB0(obj, overlay_light);
+        object_overlay_light_frame_dec(obj, overlay_light);
     }
 
     sub_431550(run_info, obj);
