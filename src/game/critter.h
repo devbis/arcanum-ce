@@ -71,7 +71,7 @@ int64_t critter_follower_prev(int64_t critter_obj);
 int64_t critter_follower_next(int64_t critter_obj);
 bool critter_fatigue_timeevent_process(TimeEvent* timeevent);
 bool sub_45E820(int64_t obj, int a2, int a3);
-void sub_45E910(int64_t critter_obj, int hours);
+void critter_resting_heal(int64_t critter_obj, int hours);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);

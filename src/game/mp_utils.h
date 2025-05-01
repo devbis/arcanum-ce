@@ -279,13 +279,13 @@ typedef struct PacketCritterConcealSet {
 
 static_assert(sizeof(PacketCritterConcealSet) == 0x40, "wrong size");
 
-typedef struct Packet34 {
+typedef struct PacketCritterRestingHeal {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int hours;
-} Packet34;
+} PacketCritterRestingHeal;
 
-static_assert(sizeof(Packet34) == 0x28, "wrong size");
+static_assert(sizeof(PacketCritterRestingHeal) == 0x28, "wrong size");
 
 typedef struct PacketCritterFatigueDamageSet {
     /* 0000 */ int type;

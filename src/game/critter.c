@@ -1180,15 +1180,13 @@ bool sub_45E8D0(TimeEvent* timeevent)
 }
 
 // 0x45E910
-void sub_45E910(int64_t critter_obj, int hours)
+void critter_resting_heal(int64_t critter_obj, int hours)
 {
     int dam;
     int heal_rate;
 
-    if (tig_net_is_active()) {
-        if (!tig_net_is_host()) {
-            return;
-        }
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
     }
 
     if (critter_obj == OBJ_HANDLE_NULL) {
@@ -1219,7 +1217,7 @@ void sub_45E910(int64_t critter_obj, int hours)
     }
 
     if (tig_net_is_active()) {
-        Packet34 pkt;
+        PacketCritterRestingHeal pkt;
 
         pkt.type = 34;
         pkt.hours = hours;
@@ -1250,7 +1248,7 @@ bool critter_resting_timeevent_process(TimeEvent* timeevent)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
         && critter_pc_leader_get(obj) == OBJ_HANDLE_NULL) {
-        sub_45E910(obj, hours);
+        critter_resting_heal(obj, hours);
     }
 
     return true;

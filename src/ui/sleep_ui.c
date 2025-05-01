@@ -429,12 +429,12 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
     next_timeevent.type = TIMEEVENT_TYPE_SLEEPING;
     if (!dword_6834B0) {
         hours = dword_6834E8 ? 2 : 1;
-        sub_45E910(qword_6834A8, hours);
+        critter_resting_heal(qword_6834A8, hours);
 
         object_list_all_followers(qword_6834A8, &objects);
         node = objects.head;
         while (node != NULL) {
-            sub_45E910(node->obj, hours);
+            critter_resting_heal(node->obj, hours);
             node = node->next;
         }
         object_list_destroy(&objects);
