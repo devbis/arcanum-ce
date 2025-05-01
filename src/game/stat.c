@@ -753,7 +753,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         break;
     case STAT_EXPERIENCE_POINTS:
         // Recalculate critter level.
-        sub_4A69C0(obj);
+        level_recalc(obj);
 
         // Refresh expierence bars.
         ui_charedit_refresh();

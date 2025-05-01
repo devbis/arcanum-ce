@@ -299,7 +299,7 @@ int sub_4A6980(int old_level, int new_level)
 }
 
 // 0x4A69C0
-void sub_4A69C0(int64_t pc_obj)
+void level_recalc(int64_t pc_obj)
 {
     UiMessage ui_message;
     int old_level;
