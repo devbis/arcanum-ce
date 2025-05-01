@@ -435,7 +435,7 @@ void effect_add(int64_t obj, int effect, int cause)
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }
 
-    sub_436FA0(obj);
+    anim_speed_recalc(obj);
 }
 
 // 0x4EA100
@@ -472,7 +472,7 @@ void effect_remove_one_typed(int64_t obj, int effect)
         }
     }
 
-    sub_436FA0(obj);
+    anim_speed_recalc(obj);
 }
 
 // 0x4EA200

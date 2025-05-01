@@ -141,7 +141,7 @@ void sub_436C80();
 void sub_436CF0();
 void sub_436D20(unsigned int flags1, unsigned int flags2);
 void sub_436ED0(AnimID anim_id);
-void sub_436FA0(int64_t obj);
+void anim_speed_recalc(int64_t obj);
 bool sub_4372B0(int64_t a1, int64_t a2);
 int num_goal_subslots_in_use(AnimID* anim_id);
 bool is_anim_forever(AnimID* anim_id);

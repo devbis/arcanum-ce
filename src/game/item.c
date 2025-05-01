@@ -2631,7 +2631,7 @@ bool item_wield_set(int64_t item_obj, int inventory_location)
         item_insert(item_obj, owner_obj, inventory_location);
 
         if (inventory_location == 1003) {
-            sub_436FA0(item_obj);
+            anim_speed_recalc(item_obj);
         }
     }
 
@@ -3958,7 +3958,7 @@ void sub_466D60(int64_t obj)
         return;
     }
 
-    sub_436FA0(obj);
+    anim_speed_recalc(obj);
 
     if (player_is_local_pc_obj(obj)) {
         sub_4605D0();

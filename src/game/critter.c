@@ -729,7 +729,7 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
         }
         mp_obj_field_int32_set(follower_obj, OBJ_F_NPC_FLAGS, flags);
 
-        sub_436FA0(follower_obj);
+        anim_speed_recalc(follower_obj);
         mp_ui_follower_refresh();
         critter_set_concealed(follower_obj, critter_is_concealed(leader_obj));
 
@@ -808,7 +808,7 @@ void sub_45E040(int64_t obj)
     critter_leader_set(obj, OBJ_HANDLE_NULL);
 
     sub_424070(obj, 5, false, true);
-    sub_436FA0(obj);
+    anim_speed_recalc(obj);
 
     flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
     if ((flags & ONF_FORCED_FOLLOWER) != 0) {
@@ -1870,7 +1870,7 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
         effect_add(obj, 158, EFFECT_CAUSE_ITEM);
     }
 
-    sub_436FA0(obj);
+    anim_speed_recalc(obj);
 
     if (critter_encumbrance_recalc_feedback_cnt > 0 && player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 11 + encumbrance_level;

@@ -749,7 +749,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         break;
     case STAT_SPEED:
         // Recalculate animation speed.
-        sub_436FA0(obj);
+        anim_speed_recalc(obj);
         break;
     case STAT_EXPERIENCE_POINTS:
         // Recalculate critter level.

@@ -15224,7 +15224,7 @@ void notify_speed_recalc(AnimID* anim_id)
 }
 
 // 0x436FA0
-void sub_436FA0(int64_t obj)
+void anim_speed_recalc(int64_t obj)
 {
     AnimID anim_id;
 
