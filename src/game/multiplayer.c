@@ -419,7 +419,7 @@ void multiplayer_exit()
     int index;
 
     if (dword_5F0E00) {
-        sub_49CC20();
+        multiplayer_end();
     }
 
     while (dword_5F0DEC != NULL) {
@@ -455,7 +455,7 @@ void multiplayer_reset()
 
     if (!dword_5F0E10) {
         if (dword_5F0E00) {
-            sub_49CC20();
+            multiplayer_end();
         }
         dword_5F0E00 = false;
 
@@ -643,7 +643,7 @@ bool multiplayer_start()
 }
 
 // 0x49CC20
-bool sub_49CC20()
+bool multiplayer_end()
 {
     bool v1;
 

@@ -17,7 +17,7 @@ bool mutliplayer_load(GameLoadInfo* load_info);
 bool multiplayer_mod_load();
 void multiplayer_mod_unload();
 bool multiplayer_start();
-bool sub_49CC20();
+bool multiplayer_end();
 void sub_49CC50();
 bool sub_49CC70(const char* a1, const char* a2);
 bool multiplayer_timeevent_process(TimeEvent* timeevent);

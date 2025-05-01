@@ -4361,7 +4361,7 @@ void mainmenu_ui_create_single_player()
     mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
     if (tig_net_is_active()) {
-        sub_49CC20();
+        multiplayer_end();
         sub_5280F0();
     }
     sub_5576B0();
@@ -5242,7 +5242,7 @@ void sub_545F60()
             FREE(dword_64C41C);
             dword_64C420 = 0;
         }
-        sub_49CC20();
+        multiplayer_end();
     }
 
     settings_set_value(&settings, "turn-based", 0);
