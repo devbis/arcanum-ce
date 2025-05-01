@@ -6,6 +6,11 @@
 #include "game/matchmaker.h"
 #include "game/timeevent.h"
 
+#define MULTIPLAYER_ALWAYS_RUN 0x0100u
+#define MULTIPLAYER_AUTO_ATTACK 0x0200u
+#define MULTIPLAYER_AUTO_SWITCH_WEAPONS 0x0400u
+#define MULTIPLAYER_FOLLOWER_SKILLS 0x0800u
+
 typedef void(Func5F0E08)();
 typedef bool(Func5F0DF8)(tig_button_handle_t button_handle);
 
@@ -80,9 +85,9 @@ bool sub_4A51C0(int64_t pc_obj, int64_t item_obj);
 int sub_4A5460(int64_t a1);
 void multiplayer_ping(tig_timestamp_t timestamp);
 void sub_4A53B0(int64_t a1, int64_t a2);
-void sub_4A5510(int client_id, unsigned int flags);
-void sub_4A5570(int client_id, unsigned int flags);
-int sub_4A55D0(int player);
+void multiplayer_flags_set(int client_id, unsigned int flags);
+void multiplayer_flags_unset(int client_id, unsigned int flags);
+unsigned int multiplayer_flags_get(int client_id);
 int sub_4A55F0();
 void sub_4A5600(int a1);
 void sub_4A5610();

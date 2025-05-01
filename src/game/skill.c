@@ -2796,7 +2796,7 @@ bool get_follower_skills(int64_t obj)
             return false;
         }
 
-        return (sub_4A55D0(player) & 0x800) != 0;
+        return (multiplayer_flags_get(player) & MULTIPLAYER_FOLLOWER_SKILLS) != 0;
     }
 
     // In single-player mode simply retrieve the value from settings.
@@ -2824,9 +2824,9 @@ void set_follower_skills(bool enabled)
         }
 
         if (enabled) {
-            sub_4A5510(player, 0x800);
+            multiplayer_flags_set(player, MULTIPLAYER_FOLLOWER_SKILLS);
         } else {
-            sub_4A5570(player, 0x800);
+            multiplayer_flags_unset(player, MULTIPLAYER_FOLLOWER_SKILLS);
         }
     }
 }

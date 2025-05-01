@@ -828,13 +828,13 @@ typedef struct Packet97 {
 
 static_assert(sizeof(Packet97) == 0x38, "wrong size");
 
-typedef struct Packet98 {
+typedef struct PacketMultiplayerFlagsChange {
     /* 0000 */ int type;
     /* 0004 */ int client_id;
     /* 0008 */ unsigned int flags;
-} Packet98;
+} PacketMultiplayerFlagsChange;
 
-static_assert(sizeof(Packet98) == 0xC, "wrong size");
+static_assert(sizeof(PacketMultiplayerFlagsChange) == 0xC, "wrong size");
 
 // typedef struct Packet100 {
 //     /* 0000 */ int type;

@@ -3951,7 +3951,7 @@ bool combat_auto_attack_get(int64_t obj)
         return false;
     }
 
-    return (sub_4A55D0(player) & 0x200) != 0;
+    return (multiplayer_flags_get(player) & MULTIPLAYER_AUTO_ATTACK) != 0;
 }
 
 // 0x4B8280
@@ -3965,9 +3965,9 @@ void combat_auto_attack_set(bool value)
         player = sub_4A2B10(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
-                sub_4A5510(player, 0x200);
+                multiplayer_flags_set(player, MULTIPLAYER_AUTO_ATTACK);
             } else {
-                sub_4A5570(player, 0x200);
+                multiplayer_flags_unset(player, MULTIPLAYER_AUTO_ATTACK);
             }
         }
     }
@@ -4005,7 +4005,7 @@ bool combat_auto_switch_weapons_get(int64_t obj)
         return false;
     }
 
-    return (sub_4A55D0(player) & 0x400) != 0;
+    return (multiplayer_flags_get(player) & MULTIPLAYER_AUTO_SWITCH_WEAPONS) != 0;
 }
 
 // 0x4B8380
@@ -4019,9 +4019,9 @@ void combat_auto_switch_weapons_set(bool value)
         player = sub_4A2B10(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
-                sub_4A5510(player, 0x400);
+                multiplayer_flags_set(player, MULTIPLAYER_AUTO_SWITCH_WEAPONS);
             } else {
-                sub_4A5570(player, 0x400);
+                multiplayer_flags_unset(player, MULTIPLAYER_AUTO_SWITCH_WEAPONS);
             }
         }
     }

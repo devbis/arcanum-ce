@@ -11370,7 +11370,7 @@ bool get_always_run(int64_t obj)
     if (tig_net_is_active()) {
         client_id = sub_4A2B10(obj);
         if (client_id != -1) {
-            return (sub_4A55D0(client_id) & 0x100) != 0;
+            return (multiplayer_flags_get(client_id) & MULTIPLAYER_ALWAYS_RUN) != 0;
         }
         return false;
     }
@@ -11404,9 +11404,9 @@ void set_always_run(bool value)
         client_id = sub_4A2B10(player_get_local_pc_obj());
         if (client_id != -1) {
             if (value) {
-                sub_4A5510(client_id, 0x100);
+                multiplayer_flags_set(client_id, MULTIPLAYER_ALWAYS_RUN);
             } else {
-                sub_4A5570(client_id, 0x100);
+                multiplayer_flags_unset(client_id, MULTIPLAYER_ALWAYS_RUN);
             }
         }
     }

@@ -2652,33 +2652,35 @@ void sub_4A54E0()
 }
 
 // 0x4A5510
-void sub_4A5510(int client_id, unsigned int flags)
+void multiplayer_flags_set(int client_id, unsigned int flags)
 {
-    Packet98 pkt;
+    PacketMultiplayerFlagsChange pkt;
+
+    stru_5E8AD0[client_id].flags |= flags & 0xFF00;
 
     pkt.type = 98;
     pkt.client_id = client_id;
-    stru_5E8AD0[client_id].flags |= flags & 0xFF00;
     pkt.flags = stru_5E8AD0[client_id].flags & 0xFF00;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 
 // 0x4A5570
-void sub_4A5570(int client_id, unsigned int flags)
+void multiplayer_flags_unset(int client_id, unsigned int flags)
 {
-    Packet98 pkt;
+    PacketMultiplayerFlagsChange pkt;
+
+    stru_5E8AD0[client_id].flags &= ~(flags & 0xFF00);
 
     pkt.type = 98;
     pkt.client_id = client_id;
-    stru_5E8AD0[client_id].flags &= ~(flags & 0xFF00);
     pkt.flags = stru_5E8AD0[client_id].flags & 0xFF00;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 
 // 0x4A55D0
-int sub_4A55D0(int player)
+unsigned int multiplayer_flags_get(int client_id)
 {
-    return stru_5E8AD0[player].flags & 0xFF00;
+    return stru_5E8AD0[client_id].flags & 0xFF00;
 }
 
 // 0x4A55F0
