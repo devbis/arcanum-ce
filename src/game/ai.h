@@ -150,7 +150,7 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
 void sub_4AD790(int64_t obj, int a2);
 int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr);
 void ai_switch_weapon(int64_t obj);
-void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
+void ai_calc_party_size_and_level(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 int ai_check_kos(int64_t source_obj, int64_t target_obj);
 void ai_objects_in_radius(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
 int ai_check_use_skill(int64_t source_obj, int64_t target_obj, int64_t item_obj, int skill);

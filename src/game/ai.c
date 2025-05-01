@@ -139,7 +139,7 @@ static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int ai_check_leader(int64_t npc_obj, int64_t pc_obj);
 static int ai_check_upset_attacking(int64_t source_obj, int64_t target_obj, int64_t leader_obj);
-static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
+static void ai_calc_party_size_and_level_internal(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int ai_check_protect(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
@@ -1895,8 +1895,8 @@ bool ai_should_flee(int64_t source_obj, int64_t target_obj)
         return true;
     }
 
-    sub_4AE020(target_obj, &target_party_cnt, &target_party_lvl);
-    sub_4AE020(source_obj, &source_party_cnt, &source_party_lvl);
+    ai_calc_party_size_and_level(target_obj, &target_party_cnt, &target_party_lvl);
+    ai_calc_party_size_and_level(source_obj, &source_party_cnt, &source_party_lvl);
 
     if (target_party_cnt - source_party_cnt >= ai_params.field_4) {
         return true;
@@ -3442,18 +3442,18 @@ void ai_switch_weapon(int64_t obj)
 }
 
 // 0x4AE020
-void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr)
+void ai_calc_party_size_and_level(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 {
     int64_t leader_obj;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_4AE0A0(obj, cnt_ptr, lvl_ptr);
+        ai_calc_party_size_and_level_internal(obj, cnt_ptr, lvl_ptr);
         return;
     }
 
     leader_obj = critter_leader_get(obj);
     if (leader_obj != OBJ_HANDLE_NULL) {
-        sub_4AE0A0(leader_obj, cnt_ptr, lvl_ptr);
+        ai_calc_party_size_and_level_internal(leader_obj, cnt_ptr, lvl_ptr);
         return;
     }
 
@@ -3462,7 +3462,7 @@ void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 }
 
 // 0x4AE0A0
-void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
+void ai_calc_party_size_and_level_internal(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 {
     ObjectList objects;
     ObjectNode* node;
