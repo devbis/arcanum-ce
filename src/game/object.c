@@ -1238,9 +1238,9 @@ void object_destroy(int64_t obj)
     unsigned int flags;
 
     if (object_editor) {
-        char* folder;
-        sub_4102C0(NULL, &folder);
-        sub_43CEA0(obj, -1, folder);
+        char* save_path;
+        map_paths(NULL, &save_path);
+        sub_43CEA0(obj, -1, save_path);
         return;
     }
 

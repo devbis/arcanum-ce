@@ -1033,14 +1033,14 @@ void map_starting_loc_set(int64_t loc)
 }
 
 // 0x4102C0
-void sub_4102C0(char** name, char** folder)
+void map_paths(char** base_path_ptr, char** save_path_ptr)
 {
-    if (name != NULL) {
-        *name = map_base_path;
+    if (base_path_ptr != NULL) {
+        *base_path_ptr = map_base_path;
     }
 
-    if (folder != NULL) {
-        *folder = map_save_path;
+    if (save_path_ptr != NULL) {
+        *save_path_ptr = map_save_path;
     }
 }
 

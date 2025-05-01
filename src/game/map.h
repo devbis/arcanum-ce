@@ -37,7 +37,7 @@ void sub_4101D0(int64_t location, int64_t a2);
 bool map_is_valid();
 void map_starting_loc_get(int64_t* loc_ptr);
 void map_starting_loc_set(int64_t loc);
-void sub_4102C0(char** name, char** folder);
+void map_paths(char** base_path_ptr, char** save_path_ptr);
 bool sub_4102F0(const char* name);
 void map_clear_objects();
 void sub_4115D0(const char* name);
