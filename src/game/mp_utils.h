@@ -12,13 +12,12 @@
 #include "game/script.h"
 #include "game/ui.h"
 
-typedef struct Packet2 {
+typedef struct PacketGamePlayerList {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
     /* 0004 */ ObjectID oids[8];
-} Packet2;
+} PacketGamePlayerList;
 
-static_assert(sizeof(Packet2) == 0xC8, "wrong size");
+static_assert(sizeof(PacketGamePlayerList) == 0xC8, "wrong size");
 
 typedef struct PacketGameTime {
     /* 0000 */ int type;

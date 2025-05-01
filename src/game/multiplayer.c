@@ -213,7 +213,7 @@ static bool sub_49D570(TimeEvent* timeevent);
 static void multiplayer_handle_message(void* msg);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
-static void sub_4A1FC0();
+static void multiplayer_send_player_list();
 static bool multiplayer_validate_message(void* msg);
 static void sub_4A2040(int a1);
 static bool multiplayer_handle_network_event(int type, int client_id, void* data, int size);
@@ -1008,9 +1008,9 @@ bool sub_4A1F60(int player, int64_t* obj_ptr)
 }
 
 // 0x4A1FC0
-void sub_4A1FC0()
+void multiplayer_send_player_list()
 {
-    Packet2 pkt;
+    PacketGamePlayerList pkt;
     int cnt;
     int index;
 
