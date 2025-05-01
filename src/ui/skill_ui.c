@@ -473,7 +473,7 @@ bool skill_ui_steal_item(int64_t source_obj, int64_t target_obj, int64_t item_ob
     tf_add(source_obj, tf_type, mes_file_entry.str);
 
     if (tig_net_is_active()) {
-        sub_4EDB70(source_obj, tf_type, mes_file_entry.str);
+        mp_tf_add(source_obj, tf_type, mes_file_entry.str);
     }
 
     return true;
@@ -517,7 +517,7 @@ bool skill_ui_plant_item(int64_t source_obj, int64_t target_obj, int64_t item_ob
     tf_add(source_obj, tf_type, mes_file_entry.str);
 
     if (tig_net_is_active()) {
-        sub_4EDB70(source_obj, tf_type, mes_file_entry.str);
+        mp_tf_add(source_obj, tf_type, mes_file_entry.str);
     }
 
     return true;

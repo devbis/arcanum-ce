@@ -233,17 +233,17 @@ void sub_4EDA60(UiMessage* ui_message, int player, int a3)
 }
 
 // 0x4EDB70
-void sub_4EDB70(int64_t obj, int a3, const char* str)
+void mp_tf_add(int64_t obj, int tf_type, const char* str)
 {
-    Packet85* pkt;
+    PacketTextFloater* pkt;
     int extra_length;
 
     extra_length = (int)strlen(str) + 1;
-    pkt = (Packet85*)MALLOC(sizeof(*pkt) + extra_length);
+    pkt = (PacketTextFloater*)MALLOC(sizeof(*pkt) + extra_length);
     pkt->type = 85;
     pkt->extra_length = extra_length;
     pkt->oid = sub_407EF0(obj);
-    pkt->field_20 = a3;
+    pkt->tf_type = tf_type;
     strncpy((char*)(pkt + 1), str, extra_length);
     tig_net_send_app_all(pkt, sizeof(*pkt) + extra_length);
     FREE(pkt);
