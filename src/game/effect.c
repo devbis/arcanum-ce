@@ -583,7 +583,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 }
 
 // 0x4EA4A0
-int sub_4EA4A0(int64_t obj, int effect_id)
+int effect_count_effects_of_type(int64_t obj, int effect_id)
 {
     int effect_count = 0;
     int index;

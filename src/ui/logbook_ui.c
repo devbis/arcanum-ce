@@ -974,7 +974,7 @@ void sub_53FBB0()
                 }
             }
         }
-        cnt = sub_4EA4A0(logbook_ui_obj, EFFECT_SCARRING);
+        cnt = effect_count_effects_of_type(logbook_ui_obj, EFFECT_SCARRING);
         if (cnt > 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
                 if (stru_6429D8[index].milliseconds == LBI_SCARRED) {
