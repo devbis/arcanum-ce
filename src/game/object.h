@@ -134,7 +134,7 @@ void object_add_flags(int64_t obj, unsigned int flags);
 void object_remove_flags(int64_t obj, unsigned int flags);
 void sub_43F030(int64_t obj);
 void object_cycle_palette(int64_t obj);
-void sub_43F1C0(int64_t obj, int64_t triggerer_obj);
+void object_bust(int64_t obj, int64_t triggerer_obj);
 bool object_is_busted(int64_t obj);
 void sub_43F710(int64_t obj);
 void object_inc_current_aid(int64_t obj);

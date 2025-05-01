@@ -2529,7 +2529,7 @@ void sub_43F130(int64_t obj, int palette)
 }
 
 // 0x43F1C0
-void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
+void object_bust(int64_t obj, int64_t triggerer_obj)
 {
     ObjectList objects;
     DateTime datetime;

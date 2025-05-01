@@ -1727,7 +1727,7 @@ void combat_dmg(CombatContext* combat)
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->target_obj, tf_type, mes_file_entry.str);
                 } else {
-                    sub_43F1C0(armor_obj, combat->attacker_obj);
+                    object_bust(armor_obj, combat->attacker_obj);
 
                     mes_file_entry.num = 24; // "Armor broken"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1761,7 +1761,7 @@ void combat_dmg(CombatContext* combat)
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->target_obj, tf_type, mes_file_entry.str);
                 } else {
-                    sub_43F1C0(weapon_obj, combat->attacker_obj);
+                    object_bust(weapon_obj, combat->attacker_obj);
 
                     mes_file_entry.num = 23; // "Weapon broken"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1978,7 +1978,7 @@ void combat_dmg(CombatContext* combat)
                 trap_invoke(triggerer_obj, combat->target_obj);
             }
 
-            sub_43F1C0(combat->target_obj, combat->attacker_obj);
+            object_bust(combat->target_obj, combat->attacker_obj);
 
             if (combat->field_30 != OBJ_HANDLE_NULL) {
                 ai_notify_portal_container_guards(combat->field_30, combat->target_obj, false, LOUDNESS_LOUD);
@@ -2123,7 +2123,7 @@ void sub_4B5580(CombatContext* combat)
 
             mes_file_entry.num = 8; // "Weapon damaged"
             if (object_hp_current(combat->weapon_obj) <= 0) {
-                sub_43F1C0(combat->weapon_obj, combat->attacker_obj);
+                object_bust(combat->weapon_obj, combat->attacker_obj);
                 mes_file_entry.num = 23; // "Weapon broken"
                 pc_switch_weapon(combat->attacker_obj, combat->target_obj);
             }
