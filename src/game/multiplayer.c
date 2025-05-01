@@ -808,7 +808,7 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
     TimeEvent timeevent;
 
     player_create_info_init(player_create_info);
-    sub_410280(&loc);
+    map_starting_loc_get(&loc);
     player_create_info->loc = location_make(1, 1);
     mes_load("mes\\MultiPlayer.mes", &mes_file);
 

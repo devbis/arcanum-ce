@@ -135,13 +135,13 @@ static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, 
 static char off_59F3DC[] = "*** Deleted Map ***";
 
 // 0x5D11E0
-static int64_t qword_5D11E0;
+static int64_t map_starting_loc;
 
 // 0x5D11E8
 static bool dword_5D11E8;
 
 // 0x5D11EC
-static int dword_5D11EC;
+static bool dword_5D11EC;
 
 // 0x5D11D0
 static bool map_gender_check_enabled;
@@ -216,7 +216,7 @@ bool map_init(GameInitInfo* init_info)
     map_gender_check_enabled = 0;
     dword_5D11F0 = true;
     map_editor = init_info->editor;
-    dword_5D11EC = 0;
+    dword_5D11EC = false;
 
     return true;
 }
@@ -256,7 +256,7 @@ void map_reset()
             }
         }
 
-        dword_5D11EC = 0;
+        dword_5D11EC = false;
 
         tig_debug_printf("map_reset: Done.  Total time: %d ms.\n", tig_timer_elapsed(reset_start));
     }
@@ -650,7 +650,7 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
         }
         y = _atoi64(tmp);
 
-        qword_5D11E0 = x | y;
+        map_starting_loc = location_make(x, y);
 
         tig_file_fclose(stream);
     }
@@ -769,9 +769,9 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
     tig_debug_printf("map_open: map_gender_check()...");
     tig_timer_now(&timestamp);
     map_gender_check();
-    dword_5D11EC = 0;
+    dword_5D11EC = false;
     if (dword_5D1210 != 0 && dword_5D1214[MAP_TYPE_START_MAP] == dword_5D1210) {
-        dword_5D11EC = 1;
+        dword_5D11EC = true;
     }
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
@@ -821,11 +821,11 @@ bool map_open_in_game(int map, bool a2, bool a3)
         return false;
     }
 
-    qword_5D11E0 = info->x | (info->y << 32);
-    location_origin_set(qword_5D11E0);
+    map_starting_loc = info->x | (info->y << 32);
+    location_origin_set(map_starting_loc);
 
     if (a2) {
-        map_touch(qword_5D11E0);
+        map_touch(map_starting_loc);
     }
 
     sub_45C580();
@@ -974,13 +974,13 @@ void map_flush(unsigned int flags)
 
     if (map_editor) {
         sprintf(path, "%s\\startloc.txt", map_save_path);
-        if (qword_5D11E0 != 0) {
+        if (map_starting_loc != 0) {
             stream = tig_file_fopen(path, "wt");
             if (stream != NULL) {
                 tig_file_fprintf(stream,
                     "%I64d\n%I64d\n",
-                    LOCATION_GET_X(qword_5D11E0),
-                    LOCATION_GET_Y(qword_5D11E0));
+                    LOCATION_GET_X(map_starting_loc),
+                    LOCATION_GET_Y(map_starting_loc));
             } else {
                 tig_debug_printf("Error could not open map start location file for writing %s\n", path);
             }
@@ -1018,11 +1018,18 @@ bool map_is_valid()
 }
 
 // 0x410280
-void sub_410280(int64_t* location)
+void map_starting_loc_get(int64_t* loc_ptr)
 {
-    if (location != NULL) {
-        *location = qword_5D11E0;
+    if (loc_ptr != NULL) {
+        *loc_ptr = map_starting_loc;
     }
+}
+
+// 0x4102A0
+void map_starting_loc_set(int64_t loc)
+{
+    map_starting_loc = loc;
+    dword_5D11EC = true;
 }
 
 // 0x4102C0

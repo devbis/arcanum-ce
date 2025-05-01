@@ -2648,7 +2648,7 @@ void MTComponentMovement_ProcFunc()
                 if (tig_net_is_active()) {
                     TeleportData teleport_data;
 
-                    sub_410280(&loc);
+                    map_starting_loc_get(&loc);
 
                     teleport_data.loc = loc;
                     teleport_data.map = map_current_map();
