@@ -1611,7 +1611,7 @@ void critter_give_xp(int64_t obj, int xp_gain)
             xp = stat_base_get(obj, STAT_EXPERIENCE_POINTS);
             xp += effect_adjust_xp_gain(obj, xp_gain);
             stat_base_set(obj, STAT_EXPERIENCE_POINTS, xp);
-            sub_4EDDE0(OBJ_HANDLE_NULL);
+            sub_4EDDE0(obj);
         }
     }
 }
