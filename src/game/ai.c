@@ -4109,7 +4109,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
         skill_invocation.flags |= 0x4000;
         skill_invocation.skill = BASIC_SKILL_PROWLING;
 
-        diff = prowling - sub_4C8430(&skill_invocation);
+        diff = prowling - skill_invocation_difficulty(&skill_invocation);
         if (diff < 0) {
             diff = 0;
         } else if (diff > 100) {
@@ -4179,7 +4179,7 @@ int ai_can_hear(int64_t source_obj, int64_t target_obj, int loudness)
         skill_invocation.flags |= 0x2000;
         skill_invocation.skill = BASIC_SKILL_PROWLING;
 
-        diff = prowling - sub_4C8430(&skill_invocation);
+        diff = prowling - skill_invocation_difficulty(&skill_invocation);
         if (diff < 0) {
             diff = 0;
         } else if (diff > 100) {

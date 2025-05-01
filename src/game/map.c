@@ -1836,17 +1836,17 @@ void map_apply_obj_patch(int64_t obj, char* str)
 
             sub_411880(&str, value);
             for (training = 0; training < TRAINING_COUNT; training++) {
-                if (strcmpi(value, off_5B7034[training]) == 0) {
+                if (strcmpi(value, training_lookup_keys_tbl[training]) == 0) {
                     sub_411880(&str, value);
 
                     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-                        if (strcmpi(value, off_5B6FF4[index]) == 0) {
+                        if (strcmpi(value, basic_skill_lookup_keys_tbl[index]) == 0) {
                             basic_skill_training_set(obj, index, training);
                         }
                     }
 
                     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-                        if (strcmpi(value, off_5B7024[index]) == 0) {
+                        if (strcmpi(value, tech_skill_lookup_keys_tbl[index]) == 0) {
                             tech_skill_training_set(obj, index, training);
                         }
                     }

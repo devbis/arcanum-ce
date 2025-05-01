@@ -6566,7 +6566,7 @@ void sub_554830(int64_t a1, int64_t a2)
     sub_4440E0(weapon_obj, &(skill_invocation.item));
     skill_invocation.skill = skill;
 
-    effectiveness -= sub_4C8430(&skill_invocation);
+    effectiveness -= skill_invocation_difficulty(&skill_invocation);
 
     if (weapon_obj != OBJ_HANDLE_NULL
         && skill != SKILL_THROWING) {

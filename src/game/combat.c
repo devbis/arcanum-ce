@@ -913,15 +913,15 @@ int sub_4B3170(CombatContext* combat)
             skill_invocation.skill = combat->skill;
 
             if ((combat->flags & CF_AIM) != 0) {
-                skill_invocation.flags |= 0x08;
+                skill_invocation.flags |= SKILL_INVOCATION_AIM;
             }
 
             if ((combat->flags & 0x8000) != 0) {
-                skill_invocation.flags |= 0x8000;
+                skill_invocation.flags |= SKILL_INVOCATION_BACKSTAB;
             }
 
             if ((combat->flags & 0x20000) != 0) {
-                skill_invocation.flags |= 0x10000;
+                skill_invocation.flags |= SKILL_INVOCATION_NO_MAGIC_ADJ;
             }
 
             skill_invocation.modifier = 0;

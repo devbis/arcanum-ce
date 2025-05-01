@@ -25,15 +25,15 @@ static bool sub_57A5E0(int64_t obj);
 static void sub_57A620(SkillInvocation* skill_invocation);
 static void sub_57A6B0(SkillInvocation* skill_invocation);
 static bool sub_57A710(int64_t a1, int64_t a2);
-static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
-static bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success);
-static bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success);
-static bool sub_57A990(int64_t obj, int64_t a2, bool success);
-static bool skill_ui_trap(int64_t obj, int64_t a2, bool success);
-static bool sub_57AA90(int64_t obj, int64_t a2, bool success);
-static bool skill_ui_no_repair(int64_t obj, int64_t a2, bool a3);
-static bool skill_ui_lock_pick(int64_t obj, int64_t a2, bool success);
-static bool skill_ui_no_lock(int64_t obj);
+static bool sub_57A770(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_steal_item(int64_t source_obj, int64_t target_obj, int64_t item_obj, bool success);
+static bool skill_ui_plant_item(int64_t source_obj, int64_t target_obj, int64_t item_obj, bool success);
+static bool sub_57A990(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_disarm_trap(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_repair(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_no_repair(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_lock(int64_t source_obj, int64_t target_obj, bool success);
+static bool skill_ui_no_lock(int64_t source_obj);
 
 // 0x5CB220
 static int dword_5CB220[FOUR] = {
@@ -89,14 +89,14 @@ bool skill_ui_init(GameInitInfo* init_info)
     (void)init_info;
 
     callbacks.field_0 = sub_57A770;
-    callbacks.field_4 = sub_57A7F0;
-    callbacks.field_8 = sub_57A8C0;
+    callbacks.steal_item_func = skill_ui_steal_item;
+    callbacks.plant_item_output = skill_ui_plant_item;
     callbacks.field_C = sub_57A990;
-    callbacks.trap_output_func = skill_ui_trap;
-    callbacks.field_14 = sub_57AA90;
-    callbacks.lock_no_repair = skill_ui_no_repair;
-    callbacks.lock_pick_output_func = skill_ui_lock_pick;
-    callbacks.no_lock_output_func = skill_ui_no_lock;
+    callbacks.disarm_trap_func = skill_ui_disarm_trap;
+    callbacks.repair_func = skill_ui_repair;
+    callbacks.no_repair_func = skill_ui_no_repair;
+    callbacks.lock_func = skill_ui_lock;
+    callbacks.no_lock_func = skill_ui_no_lock;
     skill_set_callbacks(&callbacks);
 
     if (!mes_load("mes\\skill_ui.mes", &skill_ui_mes_file)) {
@@ -330,7 +330,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         return;
     default:
         if (!a1->is_loc) {
-            sub_4C6F90(obj, skill, a1->obj, 0);
+            skill_use(obj, skill, a1->obj, 0);
         }
         return;
     }
@@ -410,14 +410,13 @@ bool sub_57A710(int64_t pc_obj, int64_t target_obj)
 }
 
 // 0x57A770
-bool sub_57A770(int64_t obj, int a2, int a3, bool success)
+bool sub_57A770(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
-    (void)a2;
-    (void)a3;
+    (void)target_obj;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -433,21 +432,21 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57A7F0
-bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success)
+bool skill_ui_steal_item(int64_t source_obj, int64_t target_obj, int64_t item_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
     int client_id;
 
-    (void)a2;
-    (void)a3;
+    (void)target_obj;
+    (void)item_obj;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -462,19 +461,19 @@ bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success)
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
     ui_message.str = mes_file_entry.str;
 
-    if (player_is_local_pc_obj(obj)) {
+    if (player_is_local_pc_obj(source_obj)) {
         sub_550750(&ui_message);
     } else {
-        client_id = sub_4A2B10(obj);
+        client_id = sub_4A2B10(source_obj);
         if (client_id != -1) {
             sub_4EDA60(&ui_message, client_id, 0);
         }
     }
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     if (tig_net_is_active()) {
-        sub_4EDB70(obj, tf_type, mes_file_entry.str);
+        sub_4EDB70(source_obj, tf_type, mes_file_entry.str);
     }
 
     return true;
@@ -483,15 +482,15 @@ bool sub_57A7F0(int64_t obj, int64_t a2, int64_t a3, bool success)
 // NOTE: Exactly the same implementation as above.
 //
 // 0x57A8C0
-bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success)
+bool skill_ui_plant_item(int64_t source_obj, int64_t target_obj, int64_t item_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
     int client_id;
 
-    (void)a2;
-    (void)a3;
+    (void)target_obj;
+    (void)item_obj;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -506,32 +505,32 @@ bool sub_57A8C0(int64_t obj, int64_t a2, int64_t a3, bool success)
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
     ui_message.str = mes_file_entry.str;
 
-    if (player_is_local_pc_obj(obj)) {
+    if (player_is_local_pc_obj(source_obj)) {
         sub_550750(&ui_message);
     } else {
-        client_id = sub_4A2B10(obj);
+        client_id = sub_4A2B10(source_obj);
         if (client_id != -1) {
             sub_4EDA60(&ui_message, client_id, 0);
         }
     }
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     if (tig_net_is_active()) {
-        sub_4EDB70(obj, tf_type, mes_file_entry.str);
+        sub_4EDB70(source_obj, tf_type, mes_file_entry.str);
     }
 
     return true;
 }
 
 // 0x57A990
-bool sub_57A990(int64_t obj, int64_t a2, bool success)
+bool sub_57A990(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
-    (void)a2;
+    (void)target_obj;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -547,19 +546,19 @@ bool sub_57A990(int64_t obj, int64_t a2, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AA10
-bool skill_ui_trap(int64_t obj, int64_t a2, bool success)
+bool skill_ui_disarm_trap(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
-    (void)a2;
+    (void)target_obj;
 
     if (success) {
         mes_file_entry.num = 560; // "Trap successfully disarmed."
@@ -575,19 +574,19 @@ bool skill_ui_trap(int64_t obj, int64_t a2, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AA90
-bool sub_57AA90(int64_t obj, int64_t a2, bool success)
+bool skill_ui_repair(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
-    (void)a2;
+    (void)target_obj;
 
     if (success) {
         mes_file_entry.num = 500; // "You succeed."
@@ -603,18 +602,18 @@ bool sub_57AA90(int64_t obj, int64_t a2, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AB10
-bool skill_ui_no_repair(int64_t obj, int64_t a2, bool success)
+bool skill_ui_no_repair(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    (void)a2;
+    (void)target_obj;
     (void)success;
 
     mes_file_entry.num = 505; // "That is not in need of repair."
@@ -624,19 +623,19 @@ bool skill_ui_no_repair(int64_t obj, int64_t a2, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
+    tf_add(source_obj, TF_TYPE_RED, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AB70
-bool skill_ui_lock_pick(int64_t obj, int64_t a2, bool success)
+bool skill_ui_lock(int64_t source_obj, int64_t target_obj, bool success)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     int tf_type;
 
-    (void)a2;
+    (void)target_obj;
 
     if (success) {
         mes_file_entry.num = 550; // "Lock successfully picked."
@@ -652,13 +651,13 @@ bool skill_ui_lock_pick(int64_t obj, int64_t a2, bool success)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, tf_type, mes_file_entry.str);
+    tf_add(source_obj, tf_type, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57ABF0
-bool skill_ui_no_lock(int64_t obj)
+bool skill_ui_no_lock(int64_t source_obj)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -670,7 +669,7 @@ bool skill_ui_no_lock(int64_t obj)
     ui_message.str = mes_file_entry.str;
     sub_550750(&ui_message);
 
-    tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
+    tf_add(source_obj, TF_TYPE_RED, mes_file_entry.str);
 
     return true;
 }

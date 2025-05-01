@@ -711,27 +711,38 @@ typedef struct Packet87 {
 
 static_assert(sizeof(Packet87) == 0x40, "wrong size");
 
-typedef struct Packet88 {
+#define REPAIR_INVOCATION_HP_DAM 0x01u
+#define REPAIR_INVOCATION_FIX 0x02u
+#define REPAIR_INVOCATION_HP_ADJ 0x04u
+#define REPAIR_INVOCATION_NOTIFY_UI 0x08u
+#define REPAIR_INVOCATION_NO_REPAIR 0x10u
+
+typedef struct RepairInvocation {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
+    /* 0004 */ int flags;
+    /* 0008 */ int hp_dam;
+    /* 000C */ int hp_adj;
     /* 0010 */ ObjectID target_oid;
     /* 0028 */ ObjectID source_oid;
-    /* 0040 */ int field_40;
-} Packet88;
+    /* 0040 */ int success;
+} RepairInvocation;
 
-static_assert(sizeof(Packet88) == 0x48, "wrong size");
+static_assert(sizeof(RepairInvocation) == 0x48, "wrong size");
 
-typedef struct Packet89 {
+#define PICK_LOCK_INVOCATION_LOCK 0x01u
+#define PICK_LOCK_INVOCATION_JAM 0x02u
+#define PICK_LOCK_INVOCATION_UNLOCK 0x04u
+#define PICK_LOCK_INVOCATION_NOTIFY_UI 0x08u
+
+typedef struct PacketPickLockInvocation {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
+    /* 0004 */ unsigned int flags;
     /* 0008 */ ObjectID source_oid;
     /* 0020 */ ObjectID target_oid;
-    /* 0038 */ int field_38;
-} Packet89;
+    /* 0038 */ int success;
+} PacketPickLockInvocation;
 
-static_assert(sizeof(Packet89) == 0x40, "wrong size");
+static_assert(sizeof(PacketPickLockInvocation) == 0x40, "wrong size");
 
 typedef struct Packet90 {
     /* 0000 */ int type;
@@ -742,15 +753,18 @@ typedef struct Packet90 {
 
 static_assert(sizeof(Packet90) == 0x40, "wrong size");
 
-typedef struct Packet91 {
+#define DISARM_TRAP_INVOCATION_0x01 0x01u
+#define DISARM_TRAP_INVOCATION_DISARM 0x02u
+
+typedef struct PacketDisarmTrapInvocation {
     /* 0000 */ int type;
     /* 0008 */ ObjectID source_oid;
     /* 0020 */ ObjectID target_oid;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-} Packet91;
+    /* 0038 */ int success;
+    /* 003C */ unsigned int flags;
+} PacketDisarmTrapInvocation;
 
-static_assert(sizeof(Packet91) == 0x40, "wrong size");
+static_assert(sizeof(PacketDisarmTrapInvocation) == 0x40, "wrong size");
 
 typedef struct Packet92 {
     /* 0000 */ int type;

@@ -2248,7 +2248,7 @@ bool sub_575100(bool* a1)
     v1 = qword_6810E0;
     sub_575770();
 
-    if (sub_4C7010(inven_ui_pc_obj, qword_682C78, v1)) {
+    if (skill_plant_item(inven_ui_pc_obj, qword_682C78, v1)) {
         *a1 = true;
     }
 
@@ -2267,7 +2267,7 @@ bool sub_575180(bool* a1)
     v1 = qword_6810E0;
     sub_575770();
 
-    if (sub_4C6FD0(inven_ui_pc_obj, qword_682C78, v1)) {
+    if (skill_steal_item(inven_ui_pc_obj, qword_682C78, v1)) {
         *a1 = true;
     }
 
@@ -4222,7 +4222,7 @@ bool sub_579840(int64_t obj, bool a2)
     }
 
     v1 = item_cost(obj, qword_682C78, inven_ui_pc_obj, 0);
-    if (v1 > sub_4C6520(inven_ui_pc_obj)) {
+    if (v1 > skill_gambling_max_item_cost(inven_ui_pc_obj)) {
         if (!a2) {
             dialog_copy_npc_gamble_msg(qword_682C78, inven_ui_pc_obj, 3, byte_68241C);
         }
