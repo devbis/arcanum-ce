@@ -1664,7 +1664,7 @@ bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
 }
 
 // 0x404640
-void sub_404640(const char* patch_lvl)
+void gamelib_patch_lvl_set(const char* patch_lvl)
 {
     (void)patch_lvl;
 }

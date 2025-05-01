@@ -158,7 +158,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     pch = strstr(lpCmdLine, "-patchlvl");
     if (pch != NULL) {
-        sub_404640(pch + 9);
+        gamelib_patch_lvl_set(pch + 9);
     }
 
     init_info.width = 800;
