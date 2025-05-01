@@ -190,7 +190,7 @@ tig_art_id_t object_hover_overlay_art_id;
 static bool object_dirty;
 
 // 0x5E2ED4
-static bool dword_5E2ED4[18];
+static bool object_type_visibility[18];
 
 // 0x5E2F1C
 static int object_bpp;
@@ -267,7 +267,7 @@ bool object_init(GameInitInfo* init_info)
     qword_5E2E60 = window_data.rect.height / 20 / 2 + 2;
 
     for (idx = 0; idx < 18; idx++) {
-        dword_5E2ED4[idx] = true;
+        object_type_visibility[idx] = true;
     }
 
     if (!sub_444150()) {
@@ -331,7 +331,7 @@ void object_reset()
     }
 
     for (index = 0; index < 18; index++) {
-        dword_5E2ED4[index] = true;
+        object_type_visibility[index] = true;
     }
 }
 
@@ -473,15 +473,15 @@ void object_map_close()
 }
 
 // 0x43AA70
-bool sub_43AA70(int obj_type)
+bool object_type_is_enabled(int obj_type)
 {
-    return dword_5E2ED4[obj_type];
+    return object_type_visibility[obj_type];
 }
 
 // 0x43AA80
-void sub_43AA80(int obj_type)
+void object_type_toggle(int obj_type)
 {
-    dword_5E2ED4[obj_type] = !dword_5E2ED4[obj_type];
+    object_type_visibility[obj_type] = !object_type_visibility[obj_type];
 }
 
 // 0x43AAA0
@@ -583,7 +583,7 @@ void object_draw(GameDrawInfo* draw_info)
                             if (!sub_43A030(loc, true)) {
                                 while (obj_node != NULL) {
                                     obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
-                                    if (dword_5E2ED4[obj_type]) {
+                                    if (object_type_visibility[obj_type]) {
                                         obj_flags = obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS);
                                         if ((dword_5E2F88 & obj_flags) == 0) {
                                             if (obj_type != OBJ_TYPE_WALL
@@ -1837,7 +1837,7 @@ bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
                     for (v60 = v3->field_44[col]; v60 >= 0; v60--) {
                         for (obj_node = obj_node = sectors[col]->objects.heads[indexes[col]]; obj_node != NULL; obj_node = obj_node->next) {
                             obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
-                            if (!dword_5E2ED4[obj_type]) {
+                            if (!object_type_visibility[obj_type]) {
                                 continue;
                             }
 
