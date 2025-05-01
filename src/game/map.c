@@ -96,6 +96,7 @@ static bool map_save_dynamic();
 static void map_load_postprocess();
 static bool map_load_mobile(const char* base_path, const char* save_path);
 static bool map_load_dynamic(const char* name);
+static void map_load_extension(const char* base_path);
 static void map_disable_objects();
 static void map_obfuscate_name(char* str);
 static bool sub_411880(char** str, char* token);
@@ -756,7 +757,7 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
 
     tig_debug_printf("map_open: parsing extension file...");
     tig_timer_now(&timestamp);
-    sub_4115D0(base_path);
+    map_load_extension(base_path);
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
@@ -1579,43 +1580,46 @@ void map_clear_objects()
 }
 
 // 0x4115D0
-void sub_4115D0(const char* name)
+void map_load_extension(const char* base_path)
 {
-    char path[TIG_MAX_PATH];
-    strcpy(path, name);
-    strcat(path, "\\mapinfo.txt");
+    char tmp[TIG_MAX_PATH];
+    char key[64];
+    char* str;
+    TigFile* stream;
+    int light_scheme;
+    int music_scheme_idx;
+    int ambient_scheme_idx;
 
-    TigFile* stream = tig_file_fopen(path, "rt");
-    if (stream != NULL) {
-        char key[64];
-        while (tig_file_fgets(path, sizeof(path), stream) != NULL) {
-            char* str = path;
+    strcpy(tmp, base_path);
+    strcat(tmp, "\\mapinfo.txt");
 
-            tig_str_parse_set_separator(':');
-            tig_str_parse_str_value(&str, key);
+    stream = tig_file_fopen(tmp, "rt");
+    if (stream == NULL) {
+        return;
+    }
 
-            if (_strcmpi(key, "LightScheme") == 0) {
-                int light_scheme;
+    while (tig_file_fgets(tmp, sizeof(tmp), stream) != NULL) {
+        str = tmp;
 
-                tig_str_parse_value(&str, &light_scheme);
-                light_scheme_set_map_default(light_scheme);
-                light_scheme_set(LIGHT_SCHEME_MAP_DEFAULT, light_scheme_get_hour());
-            } else if (_strcmpi(key, "SoundScheme") == 0) {
-                int music_scheme_idx;
-                int ambient_scheme_idx;
+        tig_str_parse_set_separator(':');
+        tig_str_parse_str_value(&str, key);
 
-                tig_str_parse_set_separator(',');
-                tig_str_parse_value(&str, &music_scheme_idx);
-                tig_str_parse_value(&str, &ambient_scheme_idx);
+        if (_strcmpi(key, "LightScheme") == 0) {
+            tig_str_parse_value(&str, &light_scheme);
+            light_scheme_set_map_default(light_scheme);
+            light_scheme_set(LIGHT_SCHEME_MAP_DEFAULT, light_scheme_get_hour());
+        } else if (_strcmpi(key, "SoundScheme") == 0) {
+            tig_str_parse_set_separator(',');
+            tig_str_parse_value(&str, &music_scheme_idx);
+            tig_str_parse_value(&str, &ambient_scheme_idx);
 
-                if (!map_editor) {
-                    gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
-                }
+            if (!map_editor) {
+                gsound_play_scheme(music_scheme_idx, ambient_scheme_idx);
             }
         }
-
-        tig_file_fclose(stream);
     }
+
+    tig_file_fclose(stream);
 }
 
 // 0x411750

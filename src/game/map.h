@@ -40,7 +40,6 @@ void map_starting_loc_set(int64_t loc);
 void map_paths(char** base_path_ptr, char** save_path_ptr);
 bool sub_4102F0(const char* name);
 void map_clear_objects();
-void sub_4115D0(const char* name);
 void map_enable_gender_check();
 void map_gender_check();
 bool map_list_info_load();
