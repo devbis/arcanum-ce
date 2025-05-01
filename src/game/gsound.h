@@ -19,7 +19,7 @@ tig_sound_handle_t gsound_play_sfx_at_loc(int id, int loops, int64_t location);
 tig_sound_handle_t gsound_play_sfx_on_obj(int id, int loops, int64_t obj);
 TigSoundPositionalSize gsound_size(int64_t obj);
 int gsound_range(int64_t obj);
-void gsound_play_scheme(int gsound_play_scheme, int ambient_scheme_idx);
+void gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx);
 void gsound_stop_all(int fade_duration);
 tig_sound_handle_t gsound_play_voice(const char* path, int fade_duration);
 tig_sound_handle_t gsound_play_music_once(const char* path, int fade_duration);
