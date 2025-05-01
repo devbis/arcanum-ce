@@ -1367,7 +1367,7 @@ int64_t objp_perm_lookup(ObjectID oid)
         return OBJ_HANDLE_NULL;
     }
 
-    if (sub_40FF40() != oid.d.p.map) {
+    if (map_current_map() != oid.d.p.map) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -2120,7 +2120,7 @@ void objid_id_perm_by_load_order(ObjectID* oid, int64_t obj)
     if (object_is_static(obj)) {
         oid->d.p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         oid->d.p.temp_id = obj_field_int32_get(obj, OBJ_F_TEMP_ID);
-        oid->d.p.map = sub_40FF40();
+        oid->d.p.map = map_current_map();
         oid->type = OID_TYPE_P;
     } else {
         tig_debug_println("Error: Resident object passed to objid_id_perm_by_load_order");

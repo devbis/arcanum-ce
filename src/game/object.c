@@ -5087,7 +5087,7 @@ bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
     } else if (*obj_ptr != OBJ_HANDLE_NULL) {
         oid = sub_407EF0(*obj_ptr);
         loc = obj_field_int64_get(*obj_ptr, OBJ_F_LOCATION);
-        map = sub_40FF40();
+        map = map_current_map();
     } else {
         oid.type = OID_TYPE_NULL;
         loc = 0;
@@ -5177,7 +5177,7 @@ void sub_443EB0(int64_t obj, Ryan* a2)
             } else {
                 a2->location = 0;
             }
-            a2->map = sub_40FF40();
+            a2->map = map_current_map();
         }
     } else {
         a2->objid.type = OID_TYPE_NULL;
@@ -5197,7 +5197,7 @@ bool sub_443F80(int64_t* obj_ptr, Ryan* a2)
     }
 
     if (a2->location != 0) {
-        if (a2->map != sub_40FF40()) {
+        if (a2->map != map_current_map()) {
             *obj_ptr = OBJ_HANDLE_NULL;
             return false;
         }

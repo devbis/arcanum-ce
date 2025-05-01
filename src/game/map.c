@@ -881,7 +881,7 @@ bool map_get_name(int map, char** name)
 }
 
 // 0x40FF40
-int sub_40FF40()
+int map_current_map()
 {
     return dword_5D1210;
 }

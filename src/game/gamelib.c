@@ -1476,7 +1476,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
     strcpy(save_info->pc_name, pc_name);
     FREE(pc_name);
 
-    save_info->field_340 = sub_40FF40();
+    save_info->field_340 = map_current_map();
     save_info->pc_portrait = portrait_get(pc_obj);
     save_info->pc_level = stat_level_get(pc_obj, STAT_LEVEL);
     save_info->pc_location = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);

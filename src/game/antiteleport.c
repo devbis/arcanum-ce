@@ -262,7 +262,7 @@ bool antiteleport_check_can_teleport(int64_t obj, int64_t extra_loc)
         return true;
     }
 
-    map = sub_40FF40();
+    map = map_current_map();
 
     for (index = 0; index < antiteleport_map_list.cnt; index++) {
         if (map == antiteleport_map_list.entries[index].map) {

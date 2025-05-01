@@ -887,8 +887,8 @@ bool multiplayer_timeevent_process(TimeEvent* timeevent)
         dword_5B4070 = -1;
 
         pkt.type = 64;
-        pkt.map = sub_40FF40();
-        map_get_name(sub_40FF40(), &map_name);
+        pkt.map = map_current_map();
+        map_get_name(map_current_map(), &map_name);
         strcpy(pkt.name, map_name);
         pkt.player = timeevent->params[1].integer_value;
         pkt.field_118 = 0;
@@ -1428,7 +1428,7 @@ void sub_4A33F0(int a1, int a2)
 
     sub_52A950();
 
-    map_get_name(sub_40FF40(), &map_name);
+    map_get_name(map_current_map(), &map_name);
     sprintf(path, "save\\current\\maps\\%s\\xferdata.mp", map_name);
 
     stream = tig_file_fopen(path, "wb");

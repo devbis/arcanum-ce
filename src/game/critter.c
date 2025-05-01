@@ -1792,7 +1792,7 @@ int critter_teleport_map_get(int64_t obj)
 
     map = obj_field_int32_get(obj, OBJ_F_CRITTER_TELEPORT_MAP);
     if (map == 0) {
-        map = sub_40FF40();
+        map = map_current_map();
         obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
     }
 

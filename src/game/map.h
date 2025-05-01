@@ -26,7 +26,7 @@ bool map_open_in_game(int map, bool a2, bool a3);
 void map_touch(int64_t loc);
 void sub_40FED0();
 bool map_get_name(int map, char** name);
-int sub_40FF40();
+int map_current_map();
 int sub_40FF50(int map_type);
 bool map_get_starting_location(int map, int64_t* x, int64_t* y);
 bool map_get_area(int map, int* area);

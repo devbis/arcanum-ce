@@ -2635,7 +2635,7 @@ bool ai_waypoints_process(int64_t obj, bool a2)
         return false;
     }
 
-    map = sub_40FF40();
+    map = map_current_map();
     next_map = critter_teleport_map_get(obj);
     if (next_map != map && !a2) {
         return false;
@@ -2722,7 +2722,7 @@ bool ai_standpoints_process(int64_t obj, bool a2)
     }
 
     next_map = critter_teleport_map_get(obj);
-    map = sub_40FF40();
+    map = map_current_map();
     if (next_map == map) {
         if (!a2) {
             hour = datetime_current_hour();

@@ -3058,7 +3058,7 @@ void mainmenu_ui_load_game_create()
         location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
-    if (sub_40FF50(2) == sub_40FF40()) {
+    if (sub_40FF50(2) == map_current_map()) {
         intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &pc_lens);
     } else {
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);

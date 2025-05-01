@@ -123,7 +123,7 @@ void player_create()
 
     qword_5D1150 = sub_468570(OBJ_TYPE_PC);
 
-    map = sub_40FF40();
+    map = map_current_map();
     if (map == 0
         || !map_get_starting_location(map, &x, &y)
         || (loc = LOCATION_MAKE(x, y)) == 0) {
@@ -277,7 +277,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
         (int)LOCATION_GET_X(loc),
         (int)LOCATION_GET_Y(loc));
     obj_field_int64_set(player_create_info->obj, OBJ_F_CRITTER_TELEPORT_DEST, loc);
-    obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
+    obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_TELEPORT_MAP, map_current_map());
 
     if ((player_create_info->flags & PLAYER_CREATE_INFO_NETWORK) == 0) {
         player_pc_obj = player_create_info->obj;

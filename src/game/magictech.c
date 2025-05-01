@@ -2651,7 +2651,7 @@ void MTComponentMovement_ProcFunc()
                     sub_410280(&loc);
 
                     teleport_data.loc = loc;
-                    teleport_data.map = sub_40FF40();
+                    teleport_data.map = map_current_map();
                     teleport_data.flags = TELEPORT_0x0020 | TELEPORT_0x0100;
                     teleport_data.obj = stru_5E6D28.field_20;
                     teleport_do(&teleport_data);
@@ -2689,7 +2689,7 @@ void sub_452650(int64_t obj)
     MesFileEntry mes_file_entry;
     TeleportData teleport_data;
 
-    cur_map = sub_40FF40();
+    cur_map = map_current_map();
     start_map = sub_40FF50(MAP_TYPE_START_MAP);
 
     if (cur_map == start_map) {
@@ -2707,7 +2707,7 @@ void sub_452650(int64_t obj)
             sector_flush(0);
 
             teleport_data.loc = loc;
-            teleport_data.map = sub_40FF40();
+            teleport_data.map = map_current_map();
             teleport_data.flags = TELEPORT_0x0100 | TELEPORT_0x0020;
             teleport_data.obj = obj;
             teleport_do(&teleport_data);
@@ -2988,7 +2988,7 @@ void MTComponentTrait64_ProcFunc()
     switch (dword_5E761C->data.trait64.field_44) {
     case 0:
         obj_field_int64_set(stru_5E6D28.field_20, dword_5E761C->data.trait64.field_40, stru_5E6D28.field_28);
-        obj_field_int32_set(stru_5E6D28.field_20, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
+        obj_field_int32_set(stru_5E6D28.field_20, OBJ_F_CRITTER_TELEPORT_MAP, map_current_map());
         break;
     case 1:
     case 2:

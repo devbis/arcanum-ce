@@ -1256,7 +1256,7 @@ void timeevent_clear_for_map_close()
     timeevent_clear_all_typed(TIMEEVENT_TYPE_TELEPORTED);
 
     if (teleport_is_teleporting()) {
-        if (map_get_name(sub_40FF40(), &name)) {
+        if (map_get_name(map_current_map(), &name)) {
             timeevent_save_nodes_to_map(name);
             anim_save_nodes_to_map(name);
             magictech_save_nodes_to_map(name);
@@ -1692,7 +1692,7 @@ void sub_45C580()
         }
     }
 
-    if (map_get_name(sub_40FF40(), &name)) {
+    if (map_get_name(map_current_map(), &name)) {
         timeevent_load_nodes_from_map(name);
         anim_load_nodes_from_map(name);
         magictech_load_nodes_from_map(name);

@@ -1253,7 +1253,7 @@ bool wmap_load_worldmap_info()
         tig_str_parse_value(&str, &dword_66D85C);
 
         mes_file_entry.num = 50;
-        if (map_get_worldmap(sub_40FF40(), &wmap) && wmap != -1) {
+        if (map_get_worldmap(map_current_map(), &wmap) && wmap != -1) {
             mes_file_entry.num += wmap;
         }
         mes_get_msg(dword_66D6FC, &mes_file_entry);
@@ -1351,7 +1351,7 @@ void sub_560EF0()
 {
     dword_66D880 = 0;
     dword_66D874 = townmap_get(sector_id_from_loc(obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION)));
-    if (sub_40FF40() == dword_66D87C) {
+    if (map_current_map() == dword_66D87C) {
         if (dword_66D874 == 0) {
             dword_66D880 = 1;
         }
@@ -1420,10 +1420,10 @@ bool wmap_ui_create()
         return true;
     }
 
-    if (sub_40FF40() != sub_40FF50(1)) {
+    if (map_current_map() != sub_40FF50(1)) {
         int area;
 
-        if (!map_get_area(sub_40FF40(), &area)) {
+        if (!map_get_area(map_current_map(), &area)) {
             tig_debug_printf("WMapUI: wmap_ui_create: ERROR: Failed to find matching WorldMap Position/area!\n");
             return false;
         }
@@ -1605,7 +1605,7 @@ bool sub_5614F0()
         return false;
     }
 
-    if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)) {
+    if (map_current_map() == sub_40FF50(MAP_TYPE_START_MAP)) {
         return false;
     }
 

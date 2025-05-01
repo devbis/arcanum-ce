@@ -503,7 +503,7 @@ int sub_4CB6A0(int64_t obj)
         return AREA_UNKNOWN;
     }
 
-    map = sub_40FF40();
+    map = map_current_map();
     if (!map_get_area(map, &area)) {
         return AREA_UNKNOWN;
     }

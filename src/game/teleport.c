@@ -190,7 +190,7 @@ bool teleport_process(TeleportData* teleport_data)
         }
     }
 
-    map = sub_40FF40();
+    map = map_current_map();
     if (teleport_data->map == -1) {
         teleport_data->map = map;
     }
@@ -389,7 +389,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    curr_map = sub_40FF40();
+    curr_map = map_current_map();
     if (curr_map != teleport_data->map) {
         if (!map_get_name(curr_map, &curr_map_name)) {
             return false;
