@@ -136,7 +136,7 @@ bool sub_4ED6C0(int64_t obj)
 }
 
 // 0x4ED720
-void sub_4ED720(int64_t obj, int damage)
+void mp_critter_fatigue_damage_set(int64_t obj, int damage)
 {
     PacketCritterFatigueDamageSet pkt;
 

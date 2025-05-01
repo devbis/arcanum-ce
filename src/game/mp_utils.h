@@ -1207,7 +1207,7 @@ static_assert(sizeof(Packet130) == 0x28, "wrong size");
 
 void sub_4ED510(AnimID anim_id, int64_t loc, AnimRunInfo* run_info);
 bool sub_4ED6C0(int64_t obj);
-void sub_4ED720(int64_t obj, int damage);
+void mp_critter_fatigue_damage_set(int64_t obj, int damage);
 bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4);
 bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr);
 void mp_object_destroy(int64_t obj);
