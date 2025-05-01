@@ -5670,7 +5670,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
         node = objects.head;
         while (node != NULL) {
             if (!trap_is_spotted(obj, node->obj)
-                && sub_4BBE40(obj, node->obj)) {
+                && trap_attempt_spot(obj, node->obj)) {
                 break;
             }
             node = node->next;

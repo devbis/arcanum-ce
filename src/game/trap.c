@@ -166,7 +166,7 @@ int trap_type_from_scr(Script* scr)
 }
 
 // 0x4BBE40
-bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
+bool trap_attempt_spot(int64_t pc_obj, int64_t trap_obj)
 {
     int type;
     Script scr;
@@ -298,7 +298,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
             object_flags_unset(trap_obj, OF_DONTDRAW);
         } else {
-            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
                 sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
                 animfx.animate = true;

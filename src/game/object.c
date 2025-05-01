@@ -3960,7 +3960,7 @@ bool object_script_execute(int64_t triggerer_obj, int64_t attachee_obj, int64_t 
 
     if (attachment_point == SAP_USE
         && !trap_is_spotted(triggerer_obj, attachee_obj)
-        && sub_4BBE40(triggerer_obj, attachee_obj)) {
+        && trap_attempt_spot(triggerer_obj, attachee_obj)) {
         return false;
     }
 
