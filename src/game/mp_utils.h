@@ -559,12 +559,12 @@ typedef struct PacketObjectDestroy {
 
 static_assert(sizeof(PacketObjectDestroy) == 0x20, "wrong size");
 
-typedef struct Packet73 {
+typedef struct PacketSummon {
     /* 0000 */ int type;
     /* 0008 */ MagicTechSummonInfo summon_info;
-} Packet73;
+} PacketSummon;
 
-static_assert(sizeof(Packet73) == 0xD8, "wrong size");
+static_assert(sizeof(PacketSummon) == 0xD8, "wrong size");
 
 typedef struct Packet74 {
     /* 0000 */ int type;

@@ -1857,7 +1857,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet73 pkt;
+            PacketSummon pkt;
 
             if (!object_create(proto_obj, summon_info->loc, &obj)) {
                 tig_debug_printf("magictech_effect_summon: Error: object create failed!\n");
