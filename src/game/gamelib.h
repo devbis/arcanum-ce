@@ -73,7 +73,7 @@ void gamelib_current_mode_name_set(const char* name);
 bool gamelib_save(const char* name, const char* description);
 bool gamelib_load(const char* name);
 bool gamelib_delete(const char* name);
-const char* sub_403850();
+const char* gamelib_last_save_name();
 bool gamelib_in_save();
 bool gamelib_in_load();
 void gamelib_set_extra_save_func(GameExtraSaveFunc* func);

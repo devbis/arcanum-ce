@@ -1222,7 +1222,7 @@ bool gamelib_delete(const char* name)
 }
 
 // 0x403850
-const char* sub_403850()
+const char* gamelib_last_save_name()
 {
     // 0x5D0D88
     static char byte_5D0D88[TIG_MAX_PATH];

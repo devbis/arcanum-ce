@@ -2998,7 +2998,7 @@ void mainmenu_ui_load_game_create()
     window->cnt = stru_64BBF8.count;
     if (window->selected_index == -1) {
         if (window->cnt > 0) {
-            const char* path = sub_403850();
+            const char* path = gamelib_last_save_name();
             unsigned int index;
 
             window->selected_index = 0;
@@ -3622,7 +3622,7 @@ bool sub_543220()
         return false;
     }
 
-    path = sub_403850();
+    path = gamelib_last_save_name();
     if (path[0] == '\0' || !gamelib_saveinfo_load(path, &stru_64B898)) {
         return false;
     }
@@ -4271,7 +4271,7 @@ void sub_544440()
     mainmenu_ui_create_window();
     dword_64C384 = false;
 
-    path = sub_403850();
+    path = gamelib_last_save_name();
     if (path[0] != '\0') {
         if (dword_64C444) {
             gamelib_saveinfo_exit(&stru_64B898);
