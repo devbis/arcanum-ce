@@ -617,7 +617,7 @@ void trap_invoke(int64_t triggerer_obj, int64_t attachee_obj)
 }
 
 // 0x4BCB70
-bool sub_4BCB70(ScriptInvocation* invocation)
+bool trap_script_execute(ScriptInvocation* invocation)
 {
     unsigned int flags;
     int radius;

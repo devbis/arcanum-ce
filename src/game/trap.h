@@ -26,7 +26,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
 bool trap_is_trap_device(int64_t obj);
 int64_t get_trap_at_location(int64_t loc);
 void trap_invoke(int64_t triggerer_obj, int64_t attachee_obj);
-bool sub_4BCB70(ScriptInvocation* invocation);
+bool trap_script_execute(ScriptInvocation* invocation);
 bool mp_load(GameLoadInfo* load_info);
 bool mp_save(TigFile* stream);
 void sub_4BD850(int64_t obj);

@@ -301,7 +301,7 @@ bool script_execute(ScriptInvocation* invocation)
         }
     }
 
-    if (sub_4BCB70(invocation)) {
+    if (trap_script_execute(invocation)) {
         return false;
     }
 
