@@ -2255,7 +2255,7 @@ bool sub_4A4C40(int64_t obj, int size, char* path)
 }
 
 // 0x4A4D60
-void sub_4A4D60(MatchmakerInitInfo* init_info)
+void multiplayer_mm_setup(MatchmakerInitInfo* init_info)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;

@@ -7013,7 +7013,7 @@ void sub_548FF0(int a1)
 // 0x549040
 bool sub_549040(int a1)
 {
-    MatchmakerInitInfo init_info;
+    MatchmakerInitInfo mm_init_info;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_dialog_info;
     TigWindowModalDialogChoice choice;
@@ -7031,9 +7031,9 @@ bool sub_549040(int a1)
         }
         return false;
     case 1:
-        sub_4A4D60(&init_info);
+        multiplayer_mm_setup(&mm_init_info);
         if (!multiplayer_mm_is_active()) {
-            if (!multiplayer_mm_init(&init_info)) {
+            if (!multiplayer_mm_init(&mm_init_info)) {
                 mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
                 mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 

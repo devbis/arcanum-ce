@@ -1958,7 +1958,7 @@ void sub_584150(TigRect* rect)
 // 0x5845E0
 bool sub_5845E0(int btn)
 {
-    MatchmakerInitInfo matchmaker_init_info;
+    MatchmakerInitInfo mm_init_info;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_dialog_info;
     TigWindowModalDialogChoice choice;
@@ -1967,9 +1967,9 @@ bool sub_5845E0(int btn)
     case 0:
         settings_set_str_value(&settings, "won_account", won_account);
         settings_set_str_value(&settings, "won_password", won_password);
-        sub_4A4D60(&matchmaker_init_info);
+        multiplayer_mm_setup(&mm_init_info);
         if (!multiplayer_mm_is_active()) {
-            if (!multiplayer_mm_init(&matchmaker_init_info)) {
+            if (!multiplayer_mm_init(&mm_init_info)) {
                 mes_file_entry.num = 2052;
                 mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
@@ -2027,7 +2027,7 @@ bool sub_5845E0(int btn)
 // 0x5847D0
 bool sub_5847D0(int btn)
 {
-    MatchmakerInitInfo matchmaker_init_info;
+    MatchmakerInitInfo mm_init_info;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_dialog_info;
     TigWindowModalDialogChoice choice;
@@ -2036,9 +2036,9 @@ bool sub_5847D0(int btn)
     case 0:
         settings_set_str_value(&settings, "won_account", won_account);
         settings_set_str_value(&settings, "won_password", won_password);
-        sub_4A4D60(&matchmaker_init_info);
+        multiplayer_mm_setup(&mm_init_info);
         if (!multiplayer_mm_is_active()) {
-            if (!multiplayer_mm_init(&matchmaker_init_info)) {
+            if (!multiplayer_mm_init(&mm_init_info)) {
                 mes_file_entry.num = 2052;
                 mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
