@@ -9,8 +9,8 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/proto.h"
@@ -222,7 +222,8 @@ bool trap_attempt_spot(int64_t pc_obj, int64_t trap_obj)
         }
     }
 
-    sub_4BC090(pc_obj, trap_obj, 0);
+    trap_mark_known(pc_obj, trap_obj, TRAP_KNOWN_SPOTTED);
+
     return true;
 }
 
@@ -258,7 +259,7 @@ bool trap_is_spotted(int64_t pc_obj, int64_t trap_obj)
 }
 
 // 0x4BC090
-void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
+void trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason)
 {
     int type;
     Script scr;
@@ -271,50 +272,51 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             return;
         }
 
-        sub_4EDC70(pc_obj, trap_obj, a3);
+        mp_trap_mark_known(pc_obj, trap_obj, reason);
     }
 
-    if (pc_obj != OBJ_HANDLE_NULL) {
-        sub_4BD1E0(pc_obj, trap_obj);
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
 
-        type = obj_field_int32_get(pc_obj, OBJ_F_TYPE);
-        switch (type) {
-        case OBJ_TYPE_PC:
-            if (!player_is_local_pc_obj(pc_obj)) {
-                return;
-            }
-            break;
-        case OBJ_TYPE_NPC:
-            if (critter_pc_leader_get(pc_obj) == OBJ_HANDLE_NULL) {
-                return;
-            }
-            break;
-        default:
+    sub_4BD1E0(pc_obj, trap_obj);
+
+    type = obj_field_int32_get(pc_obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_PC:
+        if (!player_is_local_pc_obj(pc_obj)) {
             return;
         }
-
-        object_flags_set(trap_obj, OF_TRAP_SPOTTED);
-
-        if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
-            object_flags_unset(trap_obj, OF_DONTDRAW);
-        } else {
-            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
-            if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
-                sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
-                animfx.animate = true;
-                animfx_add(&animfx);
-            }
+        break;
+    case OBJ_TYPE_NPC:
+        if (critter_pc_leader_get(pc_obj) == OBJ_HANDLE_NULL) {
+            return;
         }
+        break;
+    default:
+        return;
+    }
 
-        if (a3 == 0 && pc_obj == player_get_local_pc_obj()) {
-            // You have spotted a trap!
-            mes_file_entry.num = 0;
-            mes_get_msg(trap_mes_file, &mes_file_entry);
+    object_flags_set(trap_obj, OF_TRAP_SPOTTED);
 
-            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
-            ui_message.str = mes_file_entry.str;
-            sub_460630(&ui_message);
+    if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
+        object_flags_unset(trap_obj, OF_DONTDRAW);
+    } else {
+        obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+        if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
+            sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
+            animfx.animate = true;
+            animfx_add(&animfx);
         }
+    }
+
+    if (reason == TRAP_KNOWN_SPOTTED && pc_obj == player_get_local_pc_obj()) {
+        mes_file_entry.num = 0; // "You have spotted a trap!"
+        mes_get_msg(trap_mes_file, &mes_file_entry);
+
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
     }
 }
 
@@ -375,11 +377,11 @@ bool trap_use_on_obj(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
             return false;
         }
 
-        obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
-        obj_arrayfield_script_set(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+        obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+        obj_arrayfield_script_set(target_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
         object_destroy(item_obj);
         object_flags_set(target_obj, OF_TRAP_PC);
-        sub_4BC090(pc_obj, target_obj, 1);
+        trap_mark_known(pc_obj, target_obj, TRAP_KNOWN_PLACED);
 
         return true;
     }
@@ -423,7 +425,7 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         if (prototype_handle != OBJ_HANDLE_NULL) {
             if (object_create(prototype_handle, target_loc, &trap_obj)) {
                 object_flags_set(trap_obj, OF_TRAP_PC);
-                sub_4BC090(pc_obj, trap_obj, 1);
+                trap_mark_known(pc_obj, trap_obj, TRAP_KNOWN_PLACED);
             }
         }
 
@@ -455,9 +457,9 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         return false;
     }
 
-    obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
     object_flags_set(trap_obj, OF_TRAP_PC);
-    sub_4BC090(pc_obj, trap_obj, 1);
+    trap_mark_known(pc_obj, trap_obj, TRAP_KNOWN_PLACED);
     object_destroy(item_obj);
 
     return true;

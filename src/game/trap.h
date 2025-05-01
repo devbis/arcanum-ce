@@ -12,13 +12,18 @@ typedef enum TrapType {
     TRAP_TYPE_MAGICAL,
 } TrapType;
 
+typedef enum TrapKnownReason {
+    TRAP_KNOWN_SPOTTED,
+    TRAP_KNOWN_PLACED,
+} TrapKnownReason;
+
 bool trap_init(GameInitInfo* init_info);
 void trap_exit();
 bool trap_timeevent_process(TimeEvent* timeevent);
 int trap_type(int64_t obj);
 bool trap_attempt_spot(int64_t pc_obj, int64_t trap_obj);
 bool trap_is_spotted(int64_t pc_obj, int64_t trap_obj);
-void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3);
+void trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason);
 bool trap_use_on_obj(int64_t pc_obj, int64_t item_obj, int64_t target_obj);
 bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc);
 void trap_handle_disarm(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is_critical_ptr);

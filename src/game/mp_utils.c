@@ -252,7 +252,7 @@ void sub_4EDB70(int64_t obj, int a3, const char* str)
 // 0x4EDC00
 void sub_4EDC00(int64_t a1, int64_t a2, int a3)
 {
-    Packet90 pkt;
+    Packet87 pkt;
 
     pkt.type = 87;
     pkt.field_8 = sub_407EF0(a1);
@@ -262,14 +262,14 @@ void sub_4EDC00(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x4EDC70
-void sub_4EDC70(int64_t a1, int64_t a2, int a3)
+void mp_trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason)
 {
-    Packet90 pkt;
+    PacketTrapMarkKnown pkt;
 
     pkt.type = 90;
-    pkt.field_8 = sub_407EF0(a1);
-    pkt.field_20 = sub_407EF0(a2);
-    pkt.field_38 = a3;
+    pkt.pc_oid = sub_407EF0(pc_obj);
+    pkt.trap_oid = sub_407EF0(trap_obj);
+    pkt.reason = reason;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 

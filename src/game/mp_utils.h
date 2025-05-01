@@ -744,14 +744,14 @@ typedef struct PacketPickLockInvocation {
 
 static_assert(sizeof(PacketPickLockInvocation) == 0x40, "wrong size");
 
-typedef struct Packet90 {
+typedef struct PacketTrapMarkKnown {
     /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ int field_38;
-} Packet90;
+    /* 0008 */ ObjectID pc_oid;
+    /* 0020 */ ObjectID trap_oid;
+    /* 0038 */ int reason;
+} PacketTrapMarkKnown;
 
-static_assert(sizeof(Packet90) == 0x40, "wrong size");
+static_assert(sizeof(PacketTrapMarkKnown) == 0x40, "wrong size");
 
 #define DISARM_TRAP_INVOCATION_0x01 0x01u
 #define DISARM_TRAP_INVOCATION_DISARM 0x02u
@@ -1198,7 +1198,7 @@ void sub_4ED9E0(int64_t obj);
 void sub_4EDA60(UiMessage* ui_message, int player, int a3);
 void sub_4EDB70(int64_t obj, int a3, const char* str);
 void sub_4EDC00(int64_t a1, int64_t a2, int a3);
-void sub_4EDC70(int64_t a1, int64_t a2, int a3);
+void mp_trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason);
 void sub_4EDCE0(int64_t obj, tig_art_id_t art_id);
 void sub_4EDDE0(int64_t obj);
 void mp_item_arrange_inventory(int64_t obj, bool vertical);
