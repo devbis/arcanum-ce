@@ -150,7 +150,7 @@ int trap_type_from_scr(Script* scr)
         return TRAP_TYPE_INVALID;
     }
 
-    if (!sub_44C310(scr, &flags)) {
+    if (!script_flags(scr, &flags)) {
         return TRAP_TYPE_INVALID;
     }
 
@@ -633,7 +633,7 @@ bool trap_script_execute(ScriptInvocation* invocation)
         return false;
     }
 
-    sub_44C310(invocation->script, &flags);
+    script_flags(invocation->script, &flags);
 
     if ((flags & SF_RADIUS_FIVE) != 0) {
         radius = 4;

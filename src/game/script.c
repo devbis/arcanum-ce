@@ -308,7 +308,7 @@ bool script_execute(ScriptInvocation* invocation)
     iter = 0;
     run_default = false;
 
-    if (!sub_44C310(invocation->script, &flags)) {
+    if (!script_flags(invocation->script, &flags)) {
         return false;
     }
 
@@ -3382,7 +3382,7 @@ bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptCondition* en
 }
 
 // 0x44C310
-bool sub_44C310(Script* scr, unsigned int* flags_ptr)
+bool script_flags(Script* scr, unsigned int* flags_ptr)
 {
     ScriptFile* script_file;
 
