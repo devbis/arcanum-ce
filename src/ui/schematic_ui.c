@@ -1207,8 +1207,8 @@ void sub_56EA30(int a1, int a2, char* a3, char* a4)
     sub_56DBD0(tech_schematic_base_lineno(a1, a2), &schematic_info);
 
     obj = sub_4685A0(schematic_info.item1[0]);
-    sub_441B60(obj, obj, a3);
+    object_examine(obj, obj, a3);
 
     obj = sub_4685A0(schematic_info.item2[0]);
-    sub_441B60(obj, obj, a4);
+    object_examine(obj, obj, a4);
 }

@@ -2044,7 +2044,7 @@ void critter_debug_obj(int64_t obj)
         if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
             tig_debug_println("\n\n--------------------------------------");
             tig_debug_println("Critter Debug Obj:\n\n");
-            sub_441B60(obj, obj, name);
+            object_examine(obj, obj, name);
             tig_debug_printf("Name: %s\n", name);
             tig_debug_println("Stats:  Level (Base)");
 

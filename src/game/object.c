@@ -4023,19 +4023,19 @@ int object_rot(int64_t a, int64_t b)
 }
 
 // 0x441B60
-void sub_441B60(int64_t a1, int64_t a2, char* buffer)
+void object_examine(int64_t obj, int64_t pc_obj, char* buffer)
 {
     int type;
     const char* name;
 
     buffer[0] = '\0';
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
     // Special case for keys - key name is derived from key id and it is stored
     // in a separate file (gamekey.mes).
     if (type == OBJ_TYPE_KEY) {
-        name = description_get_key_name(obj_field_int32_get(a1, OBJ_F_KEY_KEY_ID));
+        name = description_get_key_name(obj_field_int32_get(obj, OBJ_F_KEY_KEY_ID));
         if (name != NULL) {
             strcpy(buffer, name);
         }
@@ -4046,7 +4046,7 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
     if (type == OBJ_TYPE_PC) {
         char* player_name;
 
-        obj_field_string_get(a1, OBJ_F_PC_PLAYER_NAME, &player_name);
+        obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &player_name);
         if (player_name != NULL) {
             strcpy(buffer, player_name);
             FREE(player_name);
@@ -4058,14 +4058,14 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
     // Special case for NPC - it's either description or unknown description
     // depending on who's asking.
     if (type == OBJ_TYPE_NPC) {
-        name = description_get_name(critter_description_get(a1, a2));
+        name = description_get_name(critter_description_get(obj, pc_obj));
         if (name != NULL) {
             strcpy(buffer, name);
         }
         return;
     }
 
-    name = description_get_name(obj_field_int32_get(a1, OBJ_F_DESCRIPTION));
+    name = description_get_name(obj_field_int32_get(obj, OBJ_F_DESCRIPTION));
     if (name != NULL) {
         strcpy(buffer, name);
     }

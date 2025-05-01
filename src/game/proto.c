@@ -16429,7 +16429,7 @@ void sub_49C060(int64_t obj, TigFile* stream, int type)
     int min_damage;
     int max_damage;
 
-    sub_441B60(obj, obj, description);
+    object_examine(obj, obj, description);
     tig_file_fprintf(stream, "%s: %d   // %s\n",
         off_5B38C8[PROTO_F_DESCRIPTION],
         obj_field_int32_get(obj, OBJ_F_DESCRIPTION),

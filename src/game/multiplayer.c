@@ -3179,7 +3179,7 @@ bool sub_4A6470(int64_t pc_obj)
 
     if (sub_460BC0()) {
         if (tig_file_exists(path, NULL)) {
-            sub_441B60(pc_obj, pc_obj, str);
+            object_examine(pc_obj, pc_obj, str);
             if (!sub_460BE0(str, oidstr)) {
                 return false;
             }

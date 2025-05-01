@@ -6224,7 +6224,7 @@ bool sub_546EE0(TigMessage* msg)
                         mes_file_entry.num = 2050;
                         mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
 
-                        sub_441B60(dword_64C41C[dword_5C3618], dword_64C41C[dword_5C3618], str);
+                        object_examine(dword_64C41C[dword_5C3618], dword_64C41C[dword_5C3618], str);
                         snprintf(path, sizeof(path), mes_file_entry.str, str);
 
                         modal_dialog_info.text = path;

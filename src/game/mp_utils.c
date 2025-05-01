@@ -164,7 +164,7 @@ bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
         return false;
     }
 
-    sub_441B60(obj, obj, str);
+    object_examine(obj, obj, str);
 
     // FIXME: Probably useless.
     objid_id_to_str(v1, sub_407EF0(obj));

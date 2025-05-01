@@ -2371,9 +2371,9 @@ void sub_416B00(char* dst, char* src, DialogState* a3)
         end = strchr(start + 1, '@');
         *end = '\0';
         if (strcmpi(start + 1, "pcname") == 0) {
-            sub_441B60(a3->pc_obj, OBJ_HANDLE_NULL, dst + strlen(dst));
+            object_examine(a3->pc_obj, OBJ_HANDLE_NULL, dst + strlen(dst));
         } else if (strcmpi(start + 1, "npcname") == 0) {
-            sub_441B60(a3->pc_obj, a3->npc_obj, dst + strlen(dst));
+            object_examine(a3->pc_obj, a3->npc_obj, dst + strlen(dst));
         }
 
         *start = '@';

@@ -5096,7 +5096,7 @@ void anim_create_path_max_length(int64_t a1, const char* msg, int value)
 {
     char str[MAX_STRING];
 
-    sub_441B60(a1, a1, str);
+    object_examine(a1, a1, str);
     tig_debug_printf("Anim: anim_create_path_max_length: Error: %s: %d!  [%s]\n", msg, value, str);
 }
 
@@ -11468,7 +11468,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
             int64_t y;
 
             distance = location_dist(run_info->path.field_E8, loc);
-            sub_441B60(obj, obj, str);
+            object_examine(obj, obj, str);
             tig_debug_printf("AGUpdateAnimMove: ERROR %s (%I64d tiles away @ %I64d, %I64d) are more than\n",
                 str,
                 distance,

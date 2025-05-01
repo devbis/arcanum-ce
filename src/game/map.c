@@ -1929,7 +1929,7 @@ void map_gender_check()
                     const int actual_gender = stat_base_get(obj, STAT_GENDER);
                     const int expected_gender = description % GENDER_COUNT;
                     if (actual_gender == GENDER_MALE && expected_gender == GENDER_FEMALE) {
-                        sub_441B60(obj, obj, name);
+                        object_examine(obj, obj, name);
 
                         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                         tig_debug_printf("Male character with female description: %s at location %I64d %I64d\n",
@@ -1937,7 +1937,7 @@ void map_gender_check()
                             location);
                     } else if (actual_gender == GENDER_FEMALE && expected_gender == GENDER_FEMALE) {
                         // FIXME: Wrong condition above.
-                        sub_441B60(obj, obj, name);
+                        object_examine(obj, obj, name);
 
                         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                         tig_debug_printf("Female character with male description: %s at location %I64d %I64d\n",
@@ -1951,7 +1951,7 @@ void map_gender_check()
                     const int actual_gender = stat_base_get(obj, STAT_GENDER);
                     const int expected_gender = unknown_description % GENDER_COUNT;
                     if (actual_gender == GENDER_MALE && expected_gender == GENDER_FEMALE) {
-                        sub_441B60(obj, obj, name);
+                        object_examine(obj, obj, name);
 
                         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                         tig_debug_printf("Male character with female unknown description: %s at location %I64d %I64d\n",
@@ -1959,7 +1959,7 @@ void map_gender_check()
                             location);
                     } else if (actual_gender == GENDER_FEMALE && expected_gender == GENDER_FEMALE) {
                         // FIXME: Wrong condition above.
-                        sub_441B60(obj, obj, name);
+                        object_examine(obj, obj, name);
 
                         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                         tig_debug_printf("Female character with male unknown description: %s at location %I64d %I64d\n",

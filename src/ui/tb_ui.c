@@ -288,7 +288,7 @@ bool sub_57CD60(int64_t a1, int64_t a2, char* buffer)
         return false;
     }
 
-    sub_441B60(a2, a1, buffer);
+    object_examine(a2, a1, buffer);
 
     return true;
 }

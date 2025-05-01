@@ -1975,7 +1975,7 @@ void timeevent_debug_node(TimeEventNode* node, int node_index)
         } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->te.type].flags) != 0) {
             if (sub_4E5470(node->te.params[index].object_value)) {
                 if (node->te.params[index].object_value != OBJ_HANDLE_NULL) {
-                    sub_441B60(node->te.params[index].object_value,
+                    object_examine(node->te.params[index].object_value,
                         node->te.params[index].object_value,
                         object_name);
                 } else {

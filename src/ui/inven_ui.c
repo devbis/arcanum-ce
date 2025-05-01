@@ -962,7 +962,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     dword_681510 = 5;
 
     if (qword_6813A8 != OBJ_HANDLE_NULL) {
-        sub_441B60(qword_682C78, inven_ui_pc_obj, byte_682C8C);
+        object_examine(qword_682C78, inven_ui_pc_obj, byte_682C8C);
         dword_681510 = 4;
         if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
             dword_681510 = 5;
@@ -3877,13 +3877,13 @@ void sub_578B80(int a1)
     pkt->field_68 = sub_529520();
 
     if (tig_net_is_active()) {
-        sub_441B60(objp_perm_lookup(pkt->field_10),
+        object_examine(objp_perm_lookup(pkt->field_10),
             objp_perm_lookup(pkt->field_10),
             byte_682BEC);
         objid_id_to_str(byte_6812FC, pkt->field_10);
 
         if (pkt->field_40.type != OID_TYPE_NULL) {
-            sub_441B60(objp_perm_lookup(pkt->field_40),
+            object_examine(objp_perm_lookup(pkt->field_40),
                 objp_perm_lookup(pkt->field_40),
                 byte_6813C0);
         } else {
@@ -3891,7 +3891,7 @@ void sub_578B80(int a1)
         }
 
         if (pkt->field_28.type != OID_TYPE_NULL) {
-            sub_441B60(objp_perm_lookup(pkt->field_28),
+            object_examine(objp_perm_lookup(pkt->field_28),
                 objp_perm_lookup(pkt->field_28),
                 byte_681468);
         } else {

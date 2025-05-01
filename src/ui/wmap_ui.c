@@ -3780,7 +3780,7 @@ void wmap_ui_mark_townmap(int64_t obj)
         return;
     }
 
-    sub_441B60(obj, OBJ_HANDLE_NULL, note.str);
+    object_examine(obj, OBJ_HANDLE_NULL, note.str);
     sub_563D50(&note);
     note.field_10 = 0;
     note.field_4 = 0x2;

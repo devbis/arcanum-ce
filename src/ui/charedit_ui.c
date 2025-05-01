@@ -1261,7 +1261,7 @@ void sub_55A240()
 
     sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, 0, -1, 13);
 
-    sub_441B60(charedit_obj, charedit_obj, v1[3]);
+    object_examine(charedit_obj, charedit_obj, v1[3]);
     tig_font_push(dword_64CDD0);
     font_desc.str = v1[3];
     pch = &(v1[3][strlen(v1[3])]);

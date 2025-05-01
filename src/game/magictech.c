@@ -6810,7 +6810,7 @@ void sub_45A760(int64_t obj, const char* msg)
     static char buffer[2000];
 
     if (obj != OBJ_HANDLE_NULL) {
-        sub_441B60(obj, obj, buffer);
+        object_examine(obj, obj, buffer);
         tig_debug_printf("\t%s: %s(%I64d), Loc: [%I64d x %I64d]\n",
             msg,
             buffer,

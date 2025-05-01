@@ -1625,7 +1625,7 @@ void sub_44ED90(AnimGoalData* goal_data)
         if (idx < 5) {
             if (goal_data->params[idx].obj != OBJ_HANDLE_NULL) {
                 if (sub_4E5470(goal_data->params[idx].obj)) {
-                    sub_441B60(goal_data->params[idx].obj, goal_data->params[idx].obj, str);
+                    object_examine(goal_data->params[idx].obj, goal_data->params[idx].obj, str);
                 } else {
                     strcpy(str, "INVALID_OBJ_HANDLE");
                 }

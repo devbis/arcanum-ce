@@ -2146,7 +2146,7 @@ void sub_463E20(int64_t obj)
                 seed += stat_level_get(pc_obj, STAT_RACE) * background_get(pc_obj);
                 seed += stat_level_get(pc_obj, STAT_GENDER);
 
-                sub_441B60(pc_obj, pc_obj, buffer);
+                object_examine(pc_obj, pc_obj, buffer);
                 len = (int)strlen(buffer);
 
                 for (pos = 1; pos < len; pos += 2) {
@@ -3719,7 +3719,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     if (tig_net_is_active()) {
         if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_MP_INSERTED) != 0) {
-            sub_441B60(item_obj, item_obj, name);
+            object_examine(item_obj, item_obj, name);
             tig_debug_printf("MP: Item: cannot item_insert( %s ) it is already flagged OIF_MP_INSERTED.\n", name);
             return;
         }
@@ -3941,7 +3941,7 @@ bool item_insert_failure(void* userinfo)
     char name[256];
     unsigned int flags;
 
-    sub_441B60(item_insert_info->item_obj, item_insert_info->item_obj, name);
+    object_examine(item_insert_info->item_obj, item_insert_info->item_obj, name);
     tig_debug_printf("MP: Item: item_insert_failure: removing from %s OIF_MP_INSERTED.\n", name);
     flags = obj_field_int32_get(item_insert_info->item_obj, OBJ_F_ITEM_FLAGS);
     flags &= ~OIF_MP_INSERTED;
@@ -4391,7 +4391,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     if (tig_net_is_active()) {
         if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_MP_INSERTED) == 0) {
             if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
-                sub_441B60(item_obj, item_obj, name);
+                object_examine(item_obj, item_obj, name);
                 tig_debug_printf("MP: Item: cannot item_force_remove( %s ) it is not flagged OIF_MP_INSERTED.\n", name);
                 return;
             }
@@ -4578,7 +4578,7 @@ bool item_force_remove_failure(void* userinfo)
     char name[256];
     unsigned int flags;
 
-    sub_441B60(item_remove_info->item_obj, item_remove_info->item_obj, name);
+    object_examine(item_remove_info->item_obj, item_remove_info->item_obj, name);
     tig_debug_printf("MP: Item: item_force_remove_failure: adding to %s OIF_MP_INSERTED.\n", name);
     flags = obj_field_int32_get(item_remove_info->item_obj, OBJ_F_ITEM_FLAGS);
     flags |= OIF_MP_INSERTED;
