@@ -1971,11 +1971,11 @@ void combat_dmg(CombatContext* combat)
                 sub_4B5580(combat);
             }
         } else {
-            if (trap_type(combat->target_obj) != 0) {
+            if (trap_type(combat->target_obj) != TRAP_TYPE_INVALID) {
                 int64_t triggerer_obj = (combat->flags & 0x200) == 0
                     ? combat->attacker_obj
                     : OBJ_HANDLE_NULL;
-                sub_4BCB00(triggerer_obj, combat->target_obj);
+                trap_invoke(triggerer_obj, combat->target_obj);
             }
 
             sub_43F1C0(combat->target_obj, combat->attacker_obj);

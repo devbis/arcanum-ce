@@ -600,18 +600,18 @@ int64_t get_trap_at_location(int64_t loc)
 }
 
 // 0x4BCB00
-void sub_4BCB00(int64_t a1, int64_t a2)
+void trap_invoke(int64_t triggerer_obj, int64_t attachee_obj)
 {
     Script scr;
     ScriptInvocation invocation;
 
-    obj_arrayfield_script_get(a2, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(attachee_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
 
-    invocation.triggerer_obj = a1;
+    invocation.triggerer_obj = triggerer_obj;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = 0;
     invocation.attachment_point = SAP_USE;
-    invocation.attachee_obj = a2;
+    invocation.attachee_obj = attachee_obj;
     invocation.script = &scr;
     script_execute(&invocation);
 }
