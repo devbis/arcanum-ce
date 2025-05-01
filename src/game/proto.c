@@ -15685,14 +15685,14 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_SHADOW, rgb);
         switch (description) {
         case 16066:
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
             obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, "none");
             obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, 1005);
             object_hp_damage_set(obj, 0);
             break;
         case 16067:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 76);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_HALFLING);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_HALFLING);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15705,7 +15705,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16068:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 77);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_GNOME);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_GNOME);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15718,7 +15718,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16069:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 78);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ELF);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15731,7 +15731,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16070:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 79);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HALF_OGRE, GENDER_MALE, RACE_HALF_OGRE);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALF_OGRE, GENDER_MALE, RACE_HALF_OGRE);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15744,7 +15744,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16071:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 80);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_MALE, RACE_ELF);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_MALE, RACE_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15757,7 +15757,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16072:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 81);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15770,7 +15770,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16073:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 82);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ORC);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ORC);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15783,7 +15783,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16074:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 83);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_DWARF, GENDER_MALE, RACE_DWARF);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_DWARF, GENDER_MALE, RACE_DWARF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15796,7 +15796,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16075:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 84);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HUMAN);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HUMAN);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15809,7 +15809,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16076:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 85);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_FEMALE, RACE_ELF);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_FEMALE, RACE_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15822,7 +15822,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16077:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 86);
-            sub_441C70(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ORC);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ORC);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
@@ -15835,7 +15835,7 @@ void sub_468930(int64_t obj, int description)
             break;
         case 16078:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 87);
-            sub_441C70(obj, RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ELF);
+            object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);

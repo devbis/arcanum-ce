@@ -4733,7 +4733,7 @@ bool mainmenu_ui_new_char_set_gender(int64_t obj, int gender)
         return false;
     }
 
-    sub_441C70(obj, stru_5C5170[race].racial_type, gender, race);
+    object_set_gender_and_race(obj, stru_5C5170[race].racial_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {
@@ -4817,7 +4817,7 @@ void mainmenu_ui_new_char_set_race(int64_t obj, int race)
             : GENDER_FEMALE;
     }
 
-    sub_441C70(obj, stru_5C5170[race].racial_type, gender, race);
+    object_set_gender_and_race(obj, stru_5C5170[race].racial_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {

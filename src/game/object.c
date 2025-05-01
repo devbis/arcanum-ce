@@ -4072,7 +4072,7 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
 }
 
 // 0x441C70
-void sub_441C70(int64_t obj, int racial_type, int gender, int race)
+void object_set_gender_and_race(int64_t obj, int racial_type, int gender, int race)
 {
     tig_art_id_t aid;
 
