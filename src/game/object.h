@@ -118,7 +118,7 @@ int object_hp_current(int64_t obj);
 int object_get_resistance(int64_t obj, int resistance_type, bool a2);
 int object_get_ac(int64_t obj, bool a2);
 bool sub_43D940(int64_t obj);
-bool sub_43D990(int64_t obj);
+bool object_is_static(int64_t obj);
 bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags);
 void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect);
 void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y);

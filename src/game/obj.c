@@ -2069,7 +2069,7 @@ ObjectID sub_407EF0(int64_t obj)
         if (object->oid.type == OID_TYPE_NULL) {
             if (!obj_editor
                 && sub_43D940(obj)
-                && sub_43D990(obj)) {
+                && object_is_static(obj)) {
                 objid_id_perm_by_load_order(&(object->oid), obj);
             } else {
                 sub_4E62A0(&(object->oid));

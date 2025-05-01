@@ -1156,7 +1156,7 @@ bool map_save_preprocess()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)) {
+            if (!object_is_static(obj)) {
                 sub_4064B0(obj);
             }
         } while (obj_inst_next(&obj, &iter));
@@ -1173,7 +1173,7 @@ bool map_save_objects()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)
+            if (!object_is_static(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
                 && obj_is_modified(obj)) {
                 if (!objf_solitary_write(obj, map_save_path, ".mob")) {
@@ -1220,7 +1220,7 @@ bool map_save_difs()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)
+            if (!object_is_static(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0
                 && obj_is_modified(obj)) {
                 oid = sub_407EF0(obj);
@@ -1290,7 +1290,7 @@ bool map_save_dynamic()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)) {
+            if (!object_is_static(obj)) {
                 flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
                 if ((flags & OF_DYNAMIC) != 0 && (flags & (OF_EXTINCT | OF_DESTROYED)) == 0) {
                     if (!obj_write(stream, obj)) {
@@ -1324,7 +1324,7 @@ void map_load_postprocess()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)) {
+            if (!object_is_static(obj)) {
                 sub_406520(obj);
             }
 
@@ -1557,7 +1557,7 @@ void map_clear_objects()
 
         if (obj_inst_first(&obj, &iter)) {
             do {
-                if (!sub_43D990(obj)) {
+                if (!object_is_static(obj)) {
                     sub_43CF70(obj);
                     sub_43CFF0(obj);
                 }
@@ -1622,7 +1622,7 @@ void map_disable_objects()
 
     if (obj_inst_first(&obj, &iter)) {
         do {
-            if (!sub_43D990(obj)) {
+            if (!object_is_static(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 sector_id = sector_id_from_loc(location);
                 if (!sub_4D0DE0(sector_id) && !player_is_local_pc_obj(obj)) {

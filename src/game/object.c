@@ -1347,7 +1347,7 @@ void sub_43CF70(int64_t obj)
     sub_443770(obj);
 
     sector_id = sector_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
-    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+    if (object_is_static(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         objlist_remove(&(sector->objects), obj);
 
@@ -1757,7 +1757,7 @@ bool sub_43D940(int64_t obj)
 }
 
 // 0x43D990
-bool sub_43D990(int64_t obj)
+bool object_is_static(int64_t obj)
 {
     int obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type == OBJ_TYPE_PROJECTILE
@@ -2236,7 +2236,7 @@ void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
 
     cur_sector_id = sector_id_from_loc(cur_loc);
     sector_id = sector_id_from_loc(loc);
-    is_static = sub_43D990(obj);
+    is_static = object_is_static(obj);
 
     if (cur_sector_id == sector_id) {
         if (is_static || sub_4D04E0(sector_id)) {
@@ -4348,7 +4348,7 @@ bool sub_442260(int64_t obj, int64_t loc)
     }
 
     sector_id = sector_id_from_loc(loc);
-    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+    if (object_is_static(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         objlist_insert(&(sector->objects), obj);
         sector_unlock(sector_id);
@@ -4393,7 +4393,7 @@ void sub_4423E0(int64_t obj, int offset_x, int offset_y)
     }
 
     sector_id = sector_id_from_loc(loc);
-    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+    if (object_is_static(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
         sector_unlock(sector_id);
@@ -5164,7 +5164,7 @@ void sub_443EB0(int64_t obj, Ryan* a2)
             a2->map = 0;
         } else {
             a2->objid = sub_407EF0(obj);
-            if (sub_43D990(obj)) {
+            if (object_is_static(obj)) {
                 a2->location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             } else {
                 a2->location = 0;

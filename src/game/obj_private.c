@@ -2117,7 +2117,7 @@ void sub_4E62A0(ObjectID* oid)
 // 0x4E62D0
 void objid_id_perm_by_load_order(ObjectID* oid, int64_t obj)
 {
-    if (sub_43D990(obj)) {
+    if (object_is_static(obj)) {
         oid->d.p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         oid->d.p.temp_id = obj_field_int32_get(obj, OBJ_F_TEMP_ID);
         oid->d.p.map = sub_40FF40();

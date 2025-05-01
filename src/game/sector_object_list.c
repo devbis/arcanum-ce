@@ -38,7 +38,7 @@ bool sector_object_list_reset(SectorObjectList* list)
             list->heads[index] = node->next;
             sub_4D9A90(node->obj);
 
-            if (sub_43D990(node->obj)) {
+            if (object_is_static(node->obj)) {
                 sub_43CFF0(node->obj);
             } else {
                 sub_443770(node->obj);
@@ -65,7 +65,7 @@ bool objlist_insert(SectorObjectList* list, int64_t obj)
         return false;
     }
 
-    if (sub_43D990(obj)) {
+    if (object_is_static(obj)) {
         list->field_4000 = 1;
     }
 
@@ -83,7 +83,7 @@ bool objlist_remove(SectorObjectList* list, int64_t obj)
 
     object_node_destroy(node);
 
-    if (sub_43D990(obj)) {
+    if (object_is_static(obj)) {
         list->field_4000 = 1;
     }
 
@@ -104,7 +104,7 @@ bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, i
     obj_field_int32_set(obj, OBJ_F_OFFSET_Y, dy);
     sub_4F20A0(list, node);
 
-    if (sub_43D990(obj)) {
+    if (object_is_static(obj)) {
         list->field_4000 = 1;
     }
 
@@ -312,7 +312,7 @@ bool objlist_save(SectorObjectList* list, TigFile* stream)
     for (index = 0; index < 4096; index++) {
         node = list->heads[index];
         while (node != NULL) {
-            if (sub_43D990(node->obj)) {
+            if (object_is_static(node->obj)) {
                 sub_4064B0(node->obj);
                 if (!obj_write(stream, node->obj)) {
                     return false;
@@ -347,7 +347,7 @@ bool sub_4F1A20(SectorObjectList* list)
     for (index = 0; index < 4096; index++) {
         node = list->heads[index];
         while (node != NULL) {
-            if (sub_43D990(node->obj) && obj_is_modified(node->obj)) {
+            if (object_is_static(node->obj) && obj_is_modified(node->obj)) {
                 return true;
             }
             node = node->next;
@@ -370,7 +370,7 @@ bool objlist_save_with_dif(SectorObjectList* list, TigFile* stream)
     for (idx = 0; idx < 4096; idx++) {
         node = list->heads[idx];
         while (node != NULL) {
-            if (sub_43D990(node->obj)) {
+            if (object_is_static(node->obj)) {
                 sub_4064B0(node->obj);
                 if (obj_is_modified(node->obj)) {
                     if (!dif) {
@@ -464,7 +464,7 @@ void objlist_fold(SectorObjectList* list, int64_t location, int a4)
     if (obj_find_walk_first(location, &obj, &iter)) {
         do {
             if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0
-                && !sub_43D990(obj)) {
+                && !object_is_static(obj)) {
                 objlist_insert_internal(list, obj);
                 sub_441FC0(obj, a4);
                 sub_438530(obj);
