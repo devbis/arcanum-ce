@@ -73,7 +73,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent);
 bool sub_45E820(int64_t obj, int a2, int a3);
 void critter_resting_heal(int64_t critter_obj, int hours);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
-bool sub_45EAB0(int64_t obj);
+bool critter_resting_timeevent_schedule(int64_t obj);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);
 bool critter_decay_schedule(int64_t obj);
 void critter_decay_cancel(int64_t obj);

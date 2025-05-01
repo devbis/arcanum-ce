@@ -31,7 +31,7 @@
 
 static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
-static bool sub_45EA80(TimeEvent* timeevent);
+static bool resting_timeevent_check(TimeEvent* timeevent);
 static bool sub_45ECB0(TimeEvent* timeevent);
 static void critter_set_concealed_internal(int64_t obj, bool concealed);
 
@@ -1255,19 +1255,18 @@ bool critter_resting_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45EA80
-bool sub_45EA80(TimeEvent* timeevent)
+bool resting_timeevent_check(TimeEvent* timeevent)
 {
     return timeevent != NULL && timeevent->params[0].object_value == qword_5E8648;
 }
 
 // 0x45EAB0
-bool sub_45EAB0(int64_t obj)
+bool critter_resting_timeevent_schedule(int64_t obj)
 {
     TimeEvent timeevent;
     DateTime datetime;
 
-    if (tig_net_is_active()
-        && !tig_net_is_host()) {
+    if (tig_net_is_active() && !tig_net_is_host()) {
         return true;
     }
 
@@ -1280,8 +1279,7 @@ bool sub_45EAB0(int64_t obj)
     }
 
     qword_5E8648 = obj;
-
-    if (timeevent_any(TIMEEVENT_TYPE_RESTING, sub_45EA80)) {
+    if (timeevent_any(TIMEEVENT_TYPE_RESTING, resting_timeevent_check)) {
         return true;
     }
 

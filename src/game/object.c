@@ -1600,7 +1600,7 @@ int object_hp_damage_set(int64_t obj, int value)
     if (value > 0) {
         obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
         if (obj_type_is_critter(obj_type)) {
-            sub_45EAB0(obj);
+            critter_resting_timeevent_schedule(obj);
         }
     }
 
