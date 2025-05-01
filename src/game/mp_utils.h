@@ -959,12 +959,12 @@ typedef struct PacketTownmapSetKnown {
 
 static_assert(sizeof(PacketTownmapSetKnown) == 0xC, "wrong size");
 
-typedef struct Packet111 {
+typedef struct PacketArtTouch {
     /* 0000 */ int type;
     /* 0004 */ tig_art_id_t art_id;
-} Packet111;
+} PacketArtTouch;
 
-static_assert(sizeof(Packet111) == 0x8, "wrong size");
+static_assert(sizeof(PacketArtTouch) == 0x8, "wrong size");
 
 typedef struct PacketMapTouch {
     /* 0000 */ int type;

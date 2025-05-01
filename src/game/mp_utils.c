@@ -978,7 +978,7 @@ void mp_handle_townmap_set_known(PacketTownmapSetKnown* pkt)
 // 0x4EF190
 void mp_art_touch(tig_art_id_t art_id)
 {
-    Packet111 pkt;
+    PacketArtTouch pkt;
 
     tig_art_touch(art_id);
 
@@ -990,7 +990,7 @@ void mp_art_touch(tig_art_id_t art_id)
 }
 
 // 0x4EF1D0
-void mp_handle_art_touch(Packet111* pkt)
+void mp_handle_art_touch(PacketArtTouch* pkt)
 {
     tig_art_touch(pkt->art_id);
 }
