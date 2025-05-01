@@ -2149,7 +2149,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             }
 
             // Process trap disarming.
-            sub_4BC7B0(source_obj, target_obj, &is_success, &is_critical);
+            trap_handle_disarm(source_obj, target_obj, &is_success, &is_critical);
 
             pkt.success = is_success;
             pkt.flags |= DISARM_TRAP_INVOCATION_DISARM;

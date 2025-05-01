@@ -498,13 +498,12 @@ bool trap_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4BC7B0
-void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is_critical_ptr)
+void trap_handle_disarm(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is_critical_ptr)
 {
     int disarm_item_name;
     int64_t prototype_handle;
     int64_t loc;
     int64_t disarm_item_obj;
-    Packet70 pkt;
 
     if (trap_type(trap_obj) == TRAP_TYPE_INVALID) {
         *is_success_ptr = false;
@@ -525,8 +524,9 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
             prototype_handle = sub_4685A0(disarm_item_name);
             loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
             if (object_create(prototype_handle, loc, &disarm_item_obj)) {
-                if (tig_net_is_active()
-                    && tig_net_is_host()) {
+                if (tig_net_is_active() && tig_net_is_host()) {
+                    Packet70 pkt;
+
                     pkt.type = 70;
                     pkt.subtype = 0;
                     pkt.s0.name = disarm_item_name;
@@ -545,7 +545,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
         sub_4BC220(trap_obj);
     } else {
         if (*is_critical_ptr) {
-            object_script_execute(pc_obj, trap_obj, OBJ_HANDLE_NULL, 1, 0);
+            object_script_execute(pc_obj, trap_obj, OBJ_HANDLE_NULL, SAP_USE, 0);
         }
     }
 }
@@ -555,7 +555,7 @@ bool get_disarm_item_name(int64_t trap_obj, int* name_ptr)
 {
     Script scr;
 
-    obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
     if (scr.num < TRAP_SCRIPT_FIRST || scr.num >= TRAP_SCRIPT_COUNT) {
         return false;
     }
