@@ -159,7 +159,7 @@ void ai_npc_near_death(int64_t npc_obj, int64_t pc_obj);
 bool ai_critter_can_open_portals(int64_t obj);
 int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir);
 int ai_attempt_open_container(int64_t obj, int64_t container_obj);
-void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness);
+void ai_notify_portal_container_guards(int64_t critter_obj, int64_t target_obj, bool a3, int loudness);
 void ai_flee(int64_t obj, int64_t danger_obj);
 void ai_stop_fleeing(int64_t obj);
 void ai_set_no_flee(int64_t obj);

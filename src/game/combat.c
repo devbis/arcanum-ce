@@ -1967,7 +1967,7 @@ void combat_dmg(CombatContext* combat)
 
         if (object_hp_current(combat->target_obj) > 0) {
             if (combat->field_30 != OBJ_HANDLE_NULL) {
-                sub_4AEE50(combat->field_30, combat->target_obj, 1, 2);
+                ai_notify_portal_container_guards(combat->field_30, combat->target_obj, true, LOUDNESS_LOUD);
                 sub_4B5580(combat);
             }
         } else {
@@ -1981,7 +1981,7 @@ void combat_dmg(CombatContext* combat)
             sub_43F1C0(combat->target_obj, combat->attacker_obj);
 
             if (combat->field_30 != OBJ_HANDLE_NULL) {
-                sub_4AEE50(combat->field_30, combat->target_obj, 0, 2);
+                ai_notify_portal_container_guards(combat->field_30, combat->target_obj, false, LOUDNESS_LOUD);
             }
         }
     }

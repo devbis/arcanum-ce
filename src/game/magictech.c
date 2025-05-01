@@ -3927,7 +3927,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                     sub_45A520(a6, obj);
                 }
 
-                sub_4AEE50(a6, obj, 0, 2);
+                ai_notify_portal_container_guards(a6, obj, false, LOUDNESS_LOUD);
                 v17 = true;
 
                 if (!v16) {
@@ -3943,7 +3943,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                     sub_45A520(a6, obj);
                 }
 
-                sub_4AEE50(a6, obj, 0, 2);
+                ai_notify_portal_container_guards(a6, obj, false, LOUDNESS_LOUD);
                 v17 = true;
 
                 if (!v16) {

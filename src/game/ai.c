@@ -3932,7 +3932,7 @@ int ai_attempt_open_container(int64_t obj, int64_t container_obj)
 }
 
 // 0x4AEE50
-void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
+void ai_notify_portal_container_guards(int64_t critter_obj, int64_t target_obj, bool a3, int loudness)
 {
     int64_t pc_obj;
     int notify_npc;

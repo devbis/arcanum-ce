@@ -2087,7 +2087,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                 object_locked_set(target_obj, false);
 
                 // Notify guards.
-                sub_4AEE50(source_obj, target_obj, 0, 0);
+                ai_notify_portal_container_guards(source_obj, target_obj, false, LOUDNESS_SILENT);
             } else {
                 // Critical failure jam the lock.
                 if (is_critical) {
@@ -2096,7 +2096,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                 }
 
                 // Notify guards.
-                sub_4AEE50(source_obj, target_obj, 1, 0);
+                ai_notify_portal_container_guards(source_obj, target_obj, true, LOUDNESS_SILENT);
             }
 
             // Notify UI of pick lock attempt.
