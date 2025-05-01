@@ -64,7 +64,7 @@ void critter_leader_set(int64_t follower_obj, int64_t leader_obj);
 bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force);
 bool critter_disband(int64_t obj, bool force);
 bool sub_45E180(int64_t obj);
-void sub_45E1E0(int64_t obj);
+void critter_toggle_on_off(int64_t obj);
 bool sub_45E2E0(int64_t a1, int64_t a2);
 int critter_num_followers(int64_t obj, bool exclude_forced_followers);
 int64_t critter_follower_prev(int64_t critter_obj);

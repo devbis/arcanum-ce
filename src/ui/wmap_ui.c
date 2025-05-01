@@ -1371,7 +1371,7 @@ void wmap_ui_close()
     pc_obj = player_get_local_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
-        sub_45E1E0(pc_obj);
+        critter_toggle_on_off(pc_obj);
         sub_4AA580(pc_obj);
     }
 
@@ -1637,7 +1637,7 @@ bool sub_5615D0(int a1)
             pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
-                sub_45E1E0(pc_obj);
+                critter_toggle_on_off(pc_obj);
                 ai_stop_attacking(pc_obj);
             }
             gsound_stop_all(25);
@@ -1661,7 +1661,7 @@ bool sub_5615D0(int a1)
             pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
-                sub_45E1E0(pc_obj);
+                critter_toggle_on_off(pc_obj);
                 sub_4AA580(pc_obj);
             }
             timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);

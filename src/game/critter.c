@@ -843,7 +843,7 @@ bool sub_45E180(int64_t obj)
 }
 
 // 0x45E1E0
-void sub_45E1E0(int64_t obj)
+void critter_toggle_on_off(int64_t obj)
 {
     void(*func)(int64_t obj, unsigned int flags);
     unsigned int critter_flags2;
