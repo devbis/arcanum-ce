@@ -159,7 +159,7 @@ static char* map_save_path;
 static char* map_base_path;
 
 // 0x5D11FC
-static int dword_5D11FC;
+static bool map_valid;
 
 // 0x5D1200
 static bool map_editor;
@@ -779,8 +779,8 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
     duration = tig_timer_elapsed(start_timestamp);
     tig_debug_printf("map_open(): Done.  Total time: %d ms.\n", duration);
 
-    dword_5D11E8 = 0;
-    dword_5D11FC = 1;
+    dword_5D11E8 = false;
+    map_valid = true;
 
     return true;
 }
@@ -801,7 +801,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
     }
 
     info = &(map_list_info[map - 1]);
-    if (dword_5D11FC && !a3) {
+    if (map_valid && !a3) {
         map_flush(0);
     }
 
@@ -1012,9 +1012,9 @@ void sub_4101D0(int64_t location, int64_t a2)
 }
 
 // 0x410270
-int sub_410270()
+bool map_is_valid()
 {
-    return dword_5D11FC;
+    return map_valid;
 }
 
 // 0x410280
@@ -1136,7 +1136,7 @@ void map_close()
         wallcheck_flush();
         gsound_flush();
 
-        dword_5D11FC = false;
+        map_valid = false;
 
         for (index = 0; index < MAP_MODULE_COUNT; index++) {
             if (map_modules[index].close_func != NULL) {

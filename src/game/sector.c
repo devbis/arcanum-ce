@@ -857,7 +857,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
         return false;
     }
 
-    if (!sub_410270()) {
+    if (!map_is_valid()) {
         tig_debug_printf("ERROR: Attempt to lock a sector when the map is not valid!!!\n");
     }
 

@@ -34,7 +34,7 @@ bool map_get_worldmap(int map, int* worldmap);
 bool map_is_clearing_objects();
 void map_flush(unsigned int flags);
 void sub_4101D0(int64_t location, int64_t a2);
-int sub_410270();
+bool map_is_valid();
 void sub_410280(int64_t* location);
 void sub_4102C0(char** name, char** folder);
 bool sub_4102F0(const char* name);
