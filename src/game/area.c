@@ -292,7 +292,7 @@ bool area_is_known(int64_t pc_obj, int area)
 // 0x4CAFD0
 bool area_set_known(int64_t pc_obj, int area)
 {
-    Packet101 pkt;
+    PacketAreaKnownSet pkt;
     int player;
 
     if (area_is_known(pc_obj, area)) {
@@ -356,7 +356,7 @@ int area_get_last_known_area(int64_t pc_obj)
 // 0x4CB160
 void area_reset_last_known_area(int64_t pc_obj)
 {
-    Packet102 pkt;
+    PacketAreaResetLastKnown pkt;
     int player;
 
     if (pc_obj != OBJ_HANDLE_NULL

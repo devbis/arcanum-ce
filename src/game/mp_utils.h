@@ -880,20 +880,20 @@ typedef struct Packet100 {
 
 static_assert(sizeof(Packet100) == 0x40, "wrong size");
 
-typedef struct Packet101 {
+typedef struct PacketAreaKnownSet {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int area;
-} Packet101;
+} PacketAreaKnownSet;
 
-static_assert(sizeof(Packet101) == 0x28, "wrong size");
+static_assert(sizeof(PacketAreaKnownSet) == 0x28, "wrong size");
 
-typedef struct Packet102 {
+typedef struct PacketAreaResetLastKnown {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-} Packet102;
+} PacketAreaResetLastKnown;
 
-static_assert(sizeof(Packet102) == 0x20, "wrong size");
+static_assert(sizeof(PacketAreaResetLastKnown) == 0x20, "wrong size");
 
 typedef struct PacketObjectLock {
     /* 0000 */ int type;

@@ -731,7 +731,7 @@ void sub_4EE5E0(Packet100* pkt)
 }
 
 // 0x4EEB90
-void sub_4EEB90(Packet102* pkt)
+void mp_handle_area_reset_last_known(PacketAreaResetLastKnown* pkt)
 {
     int64_t pc_obj;
 
@@ -742,7 +742,7 @@ void sub_4EEB90(Packet102* pkt)
 }
 
 // 0x4EEBD0
-void sub_4EEBD0(Packet101* pkt)
+void mp_handle_area_known_set(PacketAreaKnownSet* pkt)
 {
     int64_t pc_obj;
 
@@ -847,7 +847,7 @@ void mp_gsound_play_scheme(int music_scheme_idx, int ambient_scheme_idx)
 }
 
 // 0x4EEE50
-void sub_4EEE50(PacketPlaySound* pkt)
+void mp_handle_gsound_play_scheme(PacketPlaySound* pkt)
 {
     switch (pkt->subtype) {
     case 0:
@@ -907,7 +907,7 @@ void mp_portal_toggle(int64_t obj)
 }
 
 // 0x4EEFE0
-void sub_4EEFE0(PacketPortalToggle* pkt)
+void mp_handle_portal_toggle(PacketPortalToggle* pkt)
 {
     portal_toggle(objp_perm_lookup(pkt->oid));
 }
@@ -928,7 +928,7 @@ void mp_sector_block_set(int64_t sec, bool blocked)
 }
 
 // 0x4EF060
-void sub_4EF060(PacketSectorBlockSet* pkt)
+void mp_handle_sector_block_set(PacketSectorBlockSet* pkt)
 {
     sector_block_set(pkt->sec, pkt->blocked);
 }
