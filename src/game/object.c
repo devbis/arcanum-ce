@@ -461,7 +461,7 @@ void object_ping(tig_timestamp_t timestamp)
 }
 
 // 0x43AA40
-void sub_43AA40(ViewOptions* view_options)
+void object_update_view(ViewOptions* view_options)
 {
     object_view_options = *view_options;
 }

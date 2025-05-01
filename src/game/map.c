@@ -120,7 +120,7 @@ static MapModule map_modules[] = {
     { "Object_Node", object_node_init, NULL, NULL, NULL, object_node_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Obj", obj_init, NULL, NULL, NULL, obj_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
     { "Proto", proto_init, NULL, NULL, NULL, proto_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
-    { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, sub_43AA40, NULL, NULL, NULL, object_map_close, object_resize },
+    { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, object_update_view, NULL, NULL, NULL, object_map_close, object_resize },
     { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, terrain_map_new, terrain_map_close, NULL },
     { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sector_map_close, sector_resize },
     { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_map_close, tb_resize },
