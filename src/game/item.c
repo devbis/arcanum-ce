@@ -1468,7 +1468,7 @@ void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     }
 
     if (trap_is_trap_device(item_obj)) {
-        sub_4BC2E0(source_obj, item_obj, target_obj);
+        trap_use_on_obj(source_obj, item_obj, target_obj);
         return;
     }
 
@@ -1568,7 +1568,7 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
     }
 
     if (trap_is_trap_device(item_obj)) {
-        sub_4BC480(obj, item_obj, loc);
+        trap_use_at_loc(obj, item_obj, loc);
         return;
     }
 

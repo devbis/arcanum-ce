@@ -341,7 +341,7 @@ void sub_4BC220(int64_t trap_obj)
 }
 
 // 0x4BC2E0
-bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
+bool trap_use_on_obj(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
 {
     Script scr;
     MesFileEntry mes_file_entry;
@@ -353,7 +353,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     target_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (target_type == OBJ_TYPE_WALL) {
-        return sub_4BC480(pc_obj, item_obj, target_loc);
+        return trap_use_at_loc(pc_obj, item_obj, target_loc);
     }
 
     spl = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_2);
@@ -393,7 +393,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
 }
 
 // 0x4BC480
-bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
+bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
 {
     Script scr;
     MesFileEntry mes_file_entry;
