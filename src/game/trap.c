@@ -47,7 +47,7 @@ typedef struct TrapListNode {
 static_assert(sizeof(TrapListNode) == 0x38, "wrong size");
 
 static int trap_type_from_scr(Script* scr);
-static void sub_4BC690(int spl, int64_t loc, int delay, int64_t item_obj);
+static void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj);
 static bool get_disarm_item_name(int64_t obj, int* name_ptr);
 void trigger_trap(int64_t obj, ScriptInvocation* invocation);
 static int64_t find_trap_source(int64_t obj, uint8_t id);
@@ -387,7 +387,7 @@ bool trap_use_on_obj(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
     if (spl == 176) {
         ai_notify_explosion_dynamite(pc_obj);
     }
-    sub_4BC690(spl, target_loc, 88, OBJ_HANDLE_NULL);
+    trap_timeevent_schedule(spl, target_loc, 88, OBJ_HANDLE_NULL);
 
     return true;
 }
@@ -426,7 +426,7 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
             }
         }
 
-        sub_4BC690(spl, target_loc, 88, item_obj);
+        trap_timeevent_schedule(spl, target_loc, 88, item_obj);
         return true;
     }
 
@@ -463,7 +463,7 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
 }
 
 // 0x4BC690
-void sub_4BC690(int spl, int64_t loc, int delay, int64_t item_obj)
+void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj)
 {
     TimeEvent timeevent;
     DateTime datetime;
@@ -490,7 +490,7 @@ void sub_4BC690(int spl, int64_t loc, int delay, int64_t item_obj)
 // 0x4BC780
 bool trap_timeevent_process(TimeEvent* timeevent)
 {
-    sub_4BC690(timeevent->params[0].integer_value,
+    trap_timeevent_schedule(timeevent->params[0].integer_value,
         timeevent->params[1].object_value,
         false,
         timeevent->params[2].object_value);
