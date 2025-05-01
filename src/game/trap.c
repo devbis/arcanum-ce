@@ -47,6 +47,7 @@ typedef struct TrapListNode {
 static_assert(sizeof(TrapListNode) == 0x38, "wrong size");
 
 static int trap_type_from_scr(Script* scr);
+static void trap_remove_internal(int64_t trap_obj);
 static void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj);
 static bool get_disarm_item_name(int64_t obj, int* name_ptr);
 void trigger_trap(int64_t obj, ScriptInvocation* invocation);
@@ -318,7 +319,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
 }
 
 // 0x4BC220
-void sub_4BC220(int64_t trap_obj)
+void trap_remove_internal(int64_t trap_obj)
 {
     Script scr;
 
@@ -330,7 +331,7 @@ void sub_4BC220(int64_t trap_obj)
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
             object_destroy(trap_obj);
         } else {
-            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
                 animfx_remove(&trap_eye_candies, trap_obj, 3 * scr.num - 90000 - 2, -1);
             }
@@ -542,7 +543,7 @@ void trap_handle_disarm(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, 
                 multiplayer_unlock();
             }
         }
-        sub_4BC220(trap_obj);
+        trap_remove_internal(trap_obj);
     } else {
         if (*is_critical_ptr) {
             object_script_execute(pc_obj, trap_obj, OBJ_HANDLE_NULL, SAP_USE, 0);
