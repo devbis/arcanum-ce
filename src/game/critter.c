@@ -32,7 +32,7 @@
 static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool resting_timeevent_check(TimeEvent* timeevent);
-static bool sub_45ECB0(TimeEvent* timeevent);
+static bool decay_timeevent_check(TimeEvent* timeevent);
 static void critter_set_concealed_internal(int64_t obj, bool concealed);
 
 // 0x5B304C
@@ -585,7 +585,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
     anim_goal_dying(victim_obj, anim);
 
     if ((obj_field_int32_get(victim_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
-        critter_decay_schedule(victim_obj);
+        critter_decay_timeevent_schedule(victim_obj);
     }
 
     object_hp_damage_set(victim_obj, 32000);
@@ -1315,7 +1315,7 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45EBE0
-bool critter_decay_schedule(int64_t obj)
+bool critter_decay_timeevent_schedule(int64_t obj)
 {
     int type;
     TimeEvent timeevent;
@@ -1340,14 +1340,14 @@ bool critter_decay_schedule(int64_t obj)
 }
 
 // 0x45EC80
-void critter_decay_cancel(int64_t obj)
+void critter_decay_timeevent_cancel(int64_t obj)
 {
     qword_5E8650 = obj;
-    timeevent_clear_one_ex(TIMEEVENT_TYPE_DECAY_DEAD_BODIE, sub_45ECB0);
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_DECAY_DEAD_BODIE, decay_timeevent_check);
 }
 
 // 0x45ECB0
-bool sub_45ECB0(TimeEvent* timeevent)
+bool decay_timeevent_check(TimeEvent* timeevent)
 {
     return timeevent->params[0].object_value == qword_5E8650;
 }

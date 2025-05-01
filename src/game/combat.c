@@ -2245,7 +2245,7 @@ void combat_heal(CombatContext* combat)
     critter_flags &= ~OCF_STUNNED;
     obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
 
-    critter_decay_cancel(combat->target_obj);
+    critter_decay_timeevent_cancel(combat->target_obj);
 
     if (critter_fatigue_damage_get(combat->target_obj) != 10) {
         critter_fatigue_damage_set(combat->target_obj, 10);
@@ -2394,7 +2394,7 @@ void sub_4B5E90(int64_t loc)
             && tig_art_num_get(art_id) == 0) {
             obj = node->obj;
             object_list_destroy(&objects);
-            critter_decay_cancel(obj);
+            critter_decay_timeevent_cancel(obj);
             object_destroy(obj);
             return;
         }

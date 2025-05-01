@@ -475,7 +475,7 @@ void main_loop()
                                 object_hp_damage_set(pc_obj, 0);
                                 critter_fatigue_damage_set(pc_obj, 0);
                                 object_flags_unset(pc_obj, OF_NO_BLOCK | OF_FLAT);
-                                critter_decay_cancel(pc_obj);
+                                critter_decay_timeevent_cancel(pc_obj);
                                 break;
                             case DIK_GRAVE:
                                 stat_base_set(pc_obj, STAT_INTELLIGENCE, 20);
