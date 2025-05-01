@@ -2232,7 +2232,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         for (int idx = 0; idx < cnt; idx++) {
             int fatigue = critter_fatigue_current(handles[idx]);
 
-            int fatigue_damage = critter_fatigue_damage_get(handles[idx] - value);
+            int fatigue_damage = critter_fatigue_damage_get(handles[idx]) - value;
             if (fatigue_damage < 0) {
                 fatigue_damage = 0;
             }
