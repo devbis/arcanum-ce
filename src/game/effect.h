@@ -4,6 +4,8 @@
 #include "game/context.h"
 #include "game/obj.h"
 
+#define EFFECT_SCARRING 50
+
 typedef enum EffectCause {
     EFFECT_CAUSE_RACE,
     EFFECT_CAUSE_BACKGROUND,

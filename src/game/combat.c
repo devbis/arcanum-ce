@@ -2546,7 +2546,7 @@ void sub_4B5F40(CombatContext* combat)
 
             if (target_obj_type == OBJ_TYPE_PC
                 && ((combat->flags & 0x8) == 0
-                    || sub_4EA4A0(combat->target_obj, 50) <= 0)
+                    || sub_4EA4A0(combat->target_obj, EFFECT_SCARRING) <= 0)
                 && random_between(1, 100) <= chance + 5) {
                 combat->dam_flags |= CDF_SCAR;
             }
