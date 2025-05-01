@@ -270,7 +270,7 @@ bool antiteleport_check_can_teleport(int64_t obj, int64_t extra_loc)
         }
     }
 
-    if (map == sub_40FF50(MAP_TYPE_START_MAP)) {
+    if (map == map_by_type(MAP_TYPE_START_MAP)) {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     } else if (map_get_area(map, &area)) {
         loc = area_get_location(area);

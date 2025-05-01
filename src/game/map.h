@@ -27,7 +27,7 @@ void map_touch(int64_t loc);
 void sub_40FED0();
 bool map_get_name(int map, char** name);
 int map_current_map();
-int sub_40FF50(int map_type);
+int map_by_type(int map_type);
 bool map_get_starting_location(int map, int64_t* x, int64_t* y);
 bool map_get_area(int map, int* area);
 bool map_get_worldmap(int map, int* worldmap);

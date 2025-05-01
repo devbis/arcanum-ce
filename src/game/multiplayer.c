@@ -752,7 +752,7 @@ bool sub_49CC70(const char* a1, const char* a2)
             gamelib_current_mode_name_set(a1);
         }
     } else {
-        map = sub_40FF50(MAP_TYPE_START_MAP);
+        map = map_by_type(MAP_TYPE_START_MAP);
         if (map == 0) {
             mes_file_entry.num = 902;
             mes_get_msg(mes_file, &mes_file_entry);

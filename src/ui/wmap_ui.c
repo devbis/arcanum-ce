@@ -1420,7 +1420,7 @@ bool wmap_ui_create()
         return true;
     }
 
-    if (map_current_map() != sub_40FF50(1)) {
+    if (map_current_map() != map_by_type(MAP_TYPE_START_MAP)) {
         int area;
 
         if (!map_get_area(map_current_map(), &area)) {
@@ -1605,7 +1605,7 @@ bool sub_5614F0()
         return false;
     }
 
-    if (map_current_map() == sub_40FF50(MAP_TYPE_START_MAP)) {
+    if (map_current_map() == map_by_type(MAP_TYPE_START_MAP)) {
         return false;
     }
 
@@ -1713,7 +1713,7 @@ bool wmap_ui_teleport(int64_t loc)
     teleport_data.flags = TELEPORT_0x0020;
     teleport_data.obj = player_get_local_pc_obj();
     teleport_data.loc = loc;
-    teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
+    teleport_data.map = map_by_type(MAP_TYPE_START_MAP);
     return teleport_do(&teleport_data);
 }
 

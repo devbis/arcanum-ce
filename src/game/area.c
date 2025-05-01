@@ -509,7 +509,7 @@ int sub_4CB6A0(int64_t obj)
     }
 
     if (area == AREA_UNKNOWN
-        && map == sub_40FF50(MAP_TYPE_START_MAP)) {
+        && map == map_by_type(MAP_TYPE_START_MAP)) {
         area = sub_4CB630(obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
 

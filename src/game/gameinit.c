@@ -62,9 +62,9 @@ void gameinit_reset()
     int map;
 
     if (!gameinit_editor) {
-        map = sub_40FF50(MAP_TYPE_SHOPPING_MAP);
+        map = map_by_type(MAP_TYPE_SHOPPING_MAP);
         if (map == 0) {
-            map = sub_40FF50(MAP_TYPE_START_MAP);
+            map = map_by_type(MAP_TYPE_START_MAP);
         }
         map_open_in_game(map, 0, 1);
         player_create();

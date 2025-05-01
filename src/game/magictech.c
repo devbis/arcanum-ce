@@ -2690,7 +2690,7 @@ void sub_452650(int64_t obj)
     TeleportData teleport_data;
 
     cur_map = map_current_map();
-    start_map = sub_40FF50(MAP_TYPE_START_MAP);
+    start_map = map_by_type(MAP_TYPE_START_MAP);
 
     if (cur_map == start_map) {
         area = sub_4CB4D0(obj_field_int64_get(obj, OBJ_F_LOCATION), true);
@@ -2715,7 +2715,7 @@ void sub_452650(int64_t obj)
             sector_flush(0);
 
             teleport_data.loc = loc;
-            teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
+            teleport_data.map = map_by_type(MAP_TYPE_START_MAP);
             teleport_data.flags = TELEPORT_0x0100 | TELEPORT_0x0020;
             teleport_data.obj = obj;
             teleport_do(&teleport_data);

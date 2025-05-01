@@ -887,7 +887,7 @@ int map_current_map()
 }
 
 // 0x40FF50
-int sub_40FF50(int map_type)
+int map_by_type(int map_type)
 {
     if (map_type >= 0 && map_type < MAP_TYPE_COUNT) {
         return dword_5D1214[map_type];

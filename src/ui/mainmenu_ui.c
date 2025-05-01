@@ -2437,7 +2437,7 @@ void sub_5412E0(bool a1)
             } else {
                 dword_64C418 = false;
 
-                map = sub_40FF50(MAP_TYPE_START_MAP);
+                map = map_by_type(MAP_TYPE_START_MAP);
                 if (map == 0) {
                     tig_debug_printf("MMUI: ERROR: Teleport/World Loc Failure!\n");
                     exit(EXIT_FAILURE);
@@ -3058,7 +3058,7 @@ void mainmenu_ui_load_game_create()
         location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
-    if (sub_40FF50(2) == map_current_map()) {
+    if (map_by_type(MAP_TYPE_SHOPPING_MAP) == map_current_map()) {
         intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &pc_lens);
     } else {
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
@@ -3376,7 +3376,7 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
                         sub_542DF0(stru_64B898.description, &stru_5C4730, font);
 
-                        if (sub_40FF50(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
+                        if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
                             area = sub_4CB4D0(stru_64B898.pc_location, true);
                         } else if (!map_get_area(stru_64B898.field_340, &area)) {
                             area = 0;
@@ -4069,7 +4069,7 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
 
                     sub_542DF0(stru_64B898.description, &stru_5C4730, font);
 
-                    if (sub_40FF50(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
+                    if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
                         area = sub_4CB4D0(stru_64B898.pc_location, true);
                     } else if (!map_get_area(stru_64B898.field_340, &area)) {
                         area = 0;
@@ -5193,7 +5193,7 @@ void sub_545E80(TigRect* rect)
 
     pc_obj = player_get_local_pc_obj();
     item_generate_inventory(pc_obj);
-    if (!sub_40FF50(2)) {
+    if (map_by_type(MAP_TYPE_SHOPPING_MAP) == 0) {
         sub_5412D0();
         return;
     }
