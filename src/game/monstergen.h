@@ -11,7 +11,7 @@ void monstergen_resize(GameResizeInfo* resize_info);
 bool monstergen_load(GameLoadInfo* load_info);
 bool monstergen_save(TigFile* stream);
 bool sub_4BA790(int64_t obj, DateTime* datetime);
-void sub_4BAB30(int64_t obj);
+void monstergen_notify_killed(int64_t obj);
 bool monstergen_is_disabled(int index);
 void monstergen_enable(int index);
 void monstergen_disable(int index);

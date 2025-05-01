@@ -576,7 +576,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
             critter_disband(victim_obj, true);
         }
         critter_leader_set(victim_obj, leader_obj);
-        sub_4BAB30(victim_obj);
+        monstergen_notify_killed(victim_obj);
     } else {
         sub_467520(victim_obj);
     }

@@ -346,7 +346,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
 }
 
 // 0x4BAB30
-void sub_4BAB30(int64_t obj)
+void monstergen_notify_killed(int64_t obj)
 {
     unsigned int flags;
     GeneratorInfo generator_info;
