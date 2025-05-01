@@ -2426,7 +2426,7 @@ void sub_451C40(int mt_id, int64_t obj)
 
             flags &= ~OCF2_PERMA_POLYMORPH;
             obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
-            effect_remove_one_typed(obj, 156);
+            effect_remove_one_typed(obj, EFFECT_POLYMORPH);
         }
         break;
     }

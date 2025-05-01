@@ -5,6 +5,11 @@
 #include "game/obj.h"
 
 #define EFFECT_SCARRING 50
+#define EFFECT_RACE_SPECIFIC 64
+#define EFFECT_CLASS_SPECIFIC 75
+#define EFFECT_POLYMORPH 156
+#define EFFECT_ENCUMBRANCE 158
+#define EFFECT_FEMALE 330
 
 typedef enum EffectCause {
     EFFECT_CAUSE_RACE,
@@ -31,7 +36,7 @@ void effect_remove_one_typed(int64_t obj, int effect);
 void effect_remove_all_typed(int64_t obj, int effect);
 void effect_remove_one_caused_by(int64_t obj, int cause);
 void effect_remove_all_caused_by(int64_t obj, int cause);
-int effect_count_effects_of_type(int64_t obj, int effect_id);
+int effect_count_effects_of_type(int64_t obj, int effect);
 int effect_adjust_stat_level(int64_t obj, int stat, int value);
 int sub_4EA930(int64_t obj, int stat, int value);
 int effect_adjust_basic_skill_level(int64_t obj, int skill, int value);

@@ -583,7 +583,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 }
 
 // 0x4EA4A0
-int effect_count_effects_of_type(int64_t obj, int effect_id)
+int effect_count_effects_of_type(int64_t obj, int effect)
 {
     int effect_count = 0;
     int index;
@@ -593,7 +593,7 @@ int effect_count_effects_of_type(int64_t obj, int effect_id)
         || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
         for (index = 0; index < cnt; index++) {
-            if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect_id) {
+            if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
                 effect_count++;
             }
         }

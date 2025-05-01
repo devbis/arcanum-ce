@@ -808,12 +808,12 @@ int stat_base_set(int64_t obj, int stat, int value)
             // Add female effects:
             // - Strength -1
             // - Constitution +1
-            effect_add(obj, 330, EFFECT_CAUSE_GENDER);
+            effect_add(obj, EFFECT_FEMALE, EFFECT_CAUSE_GENDER);
         }
         break;
     case STAT_RACE:
         // Add racial effects.
-        effect_add(obj, value + 64, EFFECT_CAUSE_RACE);
+        effect_add(obj, EFFECT_RACE_SPECIFIC + value, EFFECT_CAUSE_RACE);
         break;
     }
 

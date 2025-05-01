@@ -1636,7 +1636,7 @@ void combat_dmg(CombatContext* combat)
         }
 
         if ((dam_flags & CDF_SCAR) != 0) {
-            effect_add(combat->target_obj, 50, EFFECT_CAUSE_INJURY);
+            effect_add(combat->target_obj, EFFECT_SCARRING, EFFECT_CAUSE_INJURY);
             logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_SCARRED);
 
             mes_file_entry.num = 3; // "Scarred"

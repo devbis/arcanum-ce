@@ -134,7 +134,7 @@ int critter_social_class_set(int64_t obj, int value)
 {
     effect_remove_one_caused_by(obj, EFFECT_CAUSE_CLASS);
     obj_field_int32_set(obj, OBJ_F_NPC_SOCIAL_CLASS, value);
-    effect_add(obj, value + 75, EFFECT_CAUSE_CLASS);
+    effect_add(obj, EFFECT_CLASS_SPECIFIC + value, EFFECT_CAUSE_CLASS);
     return value;
 }
 
@@ -1859,15 +1859,15 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
         return;
     }
 
-    effect_remove_all_typed(obj, 158);
+    effect_remove_all_typed(obj, EFFECT_ENCUMBRANCE);
 
     for (int lvl = 0; lvl < encumbrance_level; lvl++) {
-        effect_add(obj, 158, EFFECT_CAUSE_ITEM);
+        effect_add(obj, EFFECT_ENCUMBRANCE, EFFECT_CAUSE_ITEM);
     }
 
     if (encumbrance_level == ENCUMBRANCE_LEVEL_SEVERE) {
-        effect_add(obj, 158, EFFECT_CAUSE_ITEM);
-        effect_add(obj, 158, EFFECT_CAUSE_ITEM);
+        effect_add(obj, EFFECT_ENCUMBRANCE, EFFECT_CAUSE_ITEM);
+        effect_add(obj, EFFECT_ENCUMBRANCE, EFFECT_CAUSE_ITEM);
     }
 
     anim_speed_recalc(obj);
