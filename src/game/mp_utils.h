@@ -966,14 +966,14 @@ typedef struct Packet111 {
 
 static_assert(sizeof(Packet111) == 0x8, "wrong size");
 
-typedef struct Packet112 {
+typedef struct PacketMapTouch {
     /* 0000 */ int type;
     /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8;
+    /* 0008 */ int64_t loc;
     /* 0010 */ ObjectID oid;
-} Packet112;
+} PacketMapTouch;
 
-static_assert(sizeof(Packet112) == 0x28, "wrong size");
+static_assert(sizeof(PacketMapTouch) == 0x28, "wrong size");
 
 typedef struct PacketTextRemove {
     /* 0000 */ int type;
@@ -1224,7 +1224,7 @@ void mp_sector_block_set(int64_t sec, bool blocked);
 void mp_spell_mastery_set(int64_t obj, int college);
 void mp_townmap_set_known(int map, bool known);
 void mp_art_touch(tig_art_id_t art_id);
-void sub_4EF1E0(int64_t a1, int64_t obj);
+void mp_map_touch(int64_t loc, int64_t obj);
 void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
 void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);

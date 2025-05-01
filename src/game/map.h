@@ -23,7 +23,7 @@ void map_update_view(ViewOptions* view_options);
 bool map_new(MapNewInfo* new_map_info);
 bool map_open(const char* base_path, const char* save_path, bool a3);
 bool map_open_in_game(int map, bool a2, bool a3);
-void sub_40FE00(int64_t loc);
+void map_touch(int64_t loc);
 void sub_40FED0();
 bool map_get_name(int map, char** name);
 int sub_40FF40();

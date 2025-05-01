@@ -996,31 +996,31 @@ void mp_handle_art_touch(Packet111* pkt)
 }
 
 // 0x4EF1E0
-void sub_4EF1E0(int64_t a1, int64_t obj)
+void mp_map_touch(int64_t loc, int64_t obj)
 {
-    Packet112 pkt;
-
     if (player_get_local_pc_obj() == obj) {
-        sub_40FE00(a1);
+        map_touch(loc);
         return;
     }
 
     if (tig_net_is_active()) {
+        PacketMapTouch pkt;
+
         pkt.type = 112;
         pkt.oid = sub_407EF0(obj);
-        pkt.field_8 = a1;
+        pkt.loc = loc;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EF260
-void sub_4EF260(Packet112* pkt)
+void sub_4EF260(PacketMapTouch* pkt)
 {
     int64_t obj;
 
     obj = objp_perm_lookup(pkt->oid);
     if (obj == player_get_local_pc_obj()) {
-        sub_40FE00(pkt->field_8);
+        map_touch(pkt->loc);
     }
 }
 

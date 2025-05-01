@@ -262,7 +262,7 @@ bool teleport_process(TeleportData* teleport_data)
         if (oid.type != OID_TYPE_NULL) {
             obj = objp_perm_lookup(oid);
             if (obj != OBJ_HANDLE_NULL) {
-                sub_4EF1E0(teleport_data->loc, obj);
+                mp_map_touch(teleport_data->loc, obj);
             }
         }
     }

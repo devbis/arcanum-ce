@@ -825,7 +825,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
     location_origin_set(qword_5D11E0);
 
     if (a2) {
-        sub_40FE00(qword_5D11E0);
+        map_touch(qword_5D11E0);
     }
 
     sub_45C580();
@@ -840,7 +840,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
 }
 
 // 0x40FE00
-void sub_40FE00(int64_t loc)
+void map_touch(int64_t loc)
 {
     int64_t sector_id;
     int64_t x;
