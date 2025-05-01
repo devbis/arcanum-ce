@@ -3,7 +3,7 @@
 
 #include "game/context.h"
 
-void sub_4F06E0(int64_t a1, int64_t a2);
+void portal_bust(int64_t portal_obj, int64_t triggerer_obj);
 void sub_4F0790(int64_t obj, bool a2);
 bool portal_is_open(int64_t obj);
 void portal_toggle(int64_t obj);

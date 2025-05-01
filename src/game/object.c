@@ -2551,7 +2551,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         sub_4E1490(obj, triggerer_obj);
         break;
     case OBJ_TYPE_PORTAL:
-        sub_4F06E0(obj, triggerer_obj);
+        portal_bust(obj, triggerer_obj);
         break;
     case OBJ_TYPE_CONTAINER:
         if (sub_49B290(obj) == 3023) {

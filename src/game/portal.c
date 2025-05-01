@@ -9,30 +9,30 @@
 #include "game/wall.h"
 
 // 0x4F06E0
-void sub_4F06E0(int64_t a1, int64_t a2)
+void portal_bust(int64_t portal_obj, int64_t triggerer_obj)
 {
     tig_art_id_t art_id;
     unsigned int flags;
     int sound_id;
 
-    art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
+    art_id = obj_field_int32_get(portal_obj, OBJ_F_CURRENT_AID);
 
     // FIXME: Unused.
     tig_art_portal_id_type_get(art_id);
 
     art_id = sub_4EC830(art_id);
     if (art_id != TIG_ART_ID_INVALID) {
-        flags = obj_field_int32_get(a1, OBJ_F_PORTAL_FLAGS);
+        flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
         flags |= OPF_BUSTED;
-        obj_field_int32_set(a1, OBJ_F_PORTAL_FLAGS, flags);
-        object_set_current_aid(a1, art_id);
-        sound_id = sub_4F1050(a1, 0);
-        object_script_execute(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
-        gsound_play_sfx_on_obj(sound_id, 1, a1);
+        obj_field_int32_set(portal_obj, OBJ_F_PORTAL_FLAGS, flags);
+        object_set_current_aid(portal_obj, art_id);
+        sound_id = sub_4F1050(portal_obj, 0);
+        object_script_execute(triggerer_obj, portal_obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+        gsound_play_sfx_on_obj(sound_id, 1, portal_obj);
     } else {
-        object_destroy(a1);
-        sound_id = sub_4F1050(a1, 1);
-        gsound_play_sfx_on_obj(sound_id, 1, a1);
+        object_destroy(portal_obj);
+        sound_id = sub_4F1050(portal_obj, 1);
+        gsound_play_sfx_on_obj(sound_id, 1, portal_obj);
     }
 }
 
