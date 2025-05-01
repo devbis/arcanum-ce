@@ -388,13 +388,13 @@ void effect_add(int64_t obj, int effect, int cause)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet86 pkt;
+            PacketEffect pkt;
 
             pkt.type = 86;
-            pkt.subtype = 0;
+            pkt.subtype = PACKET_EFFECT_ADD;
             pkt.oid = sub_407EF0(obj);
-            pkt.field_20 = effect;
-            pkt.field_24 = cause;
+            pkt.add.effect = effect;
+            pkt.add.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
             if (!multiplayer_is_locked()) {
@@ -446,12 +446,12 @@ void effect_remove_one_typed(int64_t obj, int effect)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet86 pkt;
+            PacketEffect pkt;
 
             pkt.type = 86;
-            pkt.subtype = 1;
+            pkt.subtype = PACKET_EFFECT_REMOVE_ONE_BY_TYPE;
             pkt.oid = sub_407EF0(obj);
-            pkt.field_20 = effect;
+            pkt.remove.effect = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
             if (!multiplayer_is_locked()) {
@@ -483,12 +483,12 @@ void effect_remove_all_typed(int64_t obj, int effect)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet86 pkt;
+            PacketEffect pkt;
 
             pkt.type = 86;
-            pkt.subtype = 2;
+            pkt.subtype = PACKET_EFFECT_REMOVE_ALL_BY_TYPE;
             pkt.oid = sub_407EF0(obj);
-            pkt.field_20 = effect;
+            pkt.remove.effect = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
             if (!multiplayer_is_locked()) {
@@ -519,12 +519,12 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet86 pkt;
+            PacketEffect pkt;
 
             pkt.type = 86;
-            pkt.subtype = 3;
+            pkt.subtype = PACKET_EFFECT_REMOVE_ONE_BY_CAUSE;
             pkt.oid = sub_407EF0(obj);
-            pkt.field_20 = cause;
+            pkt.remove.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
             if (!multiplayer_is_locked()) {
@@ -554,12 +554,12 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            Packet86 pkt;
+            PacketEffect pkt;
 
             pkt.type = 86;
-            pkt.subtype = 4;
+            pkt.subtype = PACKET_EFFECT_REMOVE_ALL_BY_CAUSE;
             pkt.oid = sub_407EF0(obj);
-            pkt.field_20 = cause;
+            pkt.remove.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
             if (!multiplayer_is_locked()) {
