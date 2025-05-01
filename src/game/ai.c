@@ -2131,7 +2131,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
             return false;
         }
 
-        if (object_is_destroyed(target_obj)) {
+        if (object_is_busted(target_obj)) {
             return false;
         }
     }
@@ -3814,7 +3814,7 @@ int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
     unsigned int portal_flags;
     int key_id;
 
-    if (object_is_destroyed(portal_obj)) {
+    if (object_is_busted(portal_obj)) {
         return AI_ATTEMPT_OPEN_PORTAL_OK;
     }
 
@@ -3903,7 +3903,7 @@ int ai_attempt_open_container(int64_t obj, int64_t container_obj)
         return AI_ATTEMPT_OPEN_CONTAINER_OK;
     }
 
-    if (object_is_destroyed(container_obj)) {
+    if (object_is_busted(container_obj)) {
         return AI_ATTEMPT_OPEN_CONTAINER_OK;
     }
 

@@ -2697,7 +2697,7 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x43F630
-bool object_is_destroyed(int64_t obj)
+bool object_is_busted(int64_t obj)
 {
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
         return false;

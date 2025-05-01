@@ -7108,7 +7108,7 @@ bool sub_429760(AnimRunInfo* run_info)
         return false;
     }
 
-    if (object_is_destroyed(target_obj)) {
+    if (object_is_busted(target_obj)) {
         return false;
     }
 

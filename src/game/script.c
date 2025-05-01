@@ -1360,7 +1360,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (object_is_destroyed(objs[index])) {
+            if (object_is_busted(objs[index])) {
                 matched++;
             }
         }
