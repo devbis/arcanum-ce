@@ -29,8 +29,13 @@
 #include "game/tf.h"
 #include "game/ui.h"
 
+typedef enum FatigueEventType {
+    FATIGUE_EVENT_RECOVERY,
+    FATIGUE_EVENT_DAMAGE,
+} FatigueEventType;
+
 static void sub_45E040(int64_t obj);
-static bool sub_45E8D0(TimeEvent* timeevent);
+static bool fatigue_timeevent_check(TimeEvent* timeevent);
 static bool resting_timeevent_check(TimeEvent* timeevent);
 static bool decay_timeevent_check(TimeEvent* timeevent);
 static void critter_set_concealed_internal(int64_t obj, bool concealed);
@@ -344,7 +349,7 @@ int critter_fatigue_damage_get(int64_t obj)
 // 0x45D5A0
 int critter_fatigue_damage_set(int64_t obj, int value)
 {
-    bool v1;
+    bool was_unconscious;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -354,15 +359,15 @@ int critter_fatigue_damage_set(int64_t obj, int value)
         value = 0;
     }
 
-    v1 = critter_is_unconscious(obj);
+    was_unconscious = critter_is_unconscious(obj);
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE, value);
     sub_460260(obj);
 
     if (value != 0 && !sub_405BC0(obj)) {
-        sub_45E820(obj, 0, 80000);
+        critter_fatigue_timeevent_schedule(obj, FATIGUE_EVENT_RECOVERY, 80000);
 
-        if (!v1 && critter_is_unconscious(obj)) {
+        if (!was_unconscious && critter_is_unconscious(obj)) {
             sub_457450(obj);
             mt_item_notify_parent_going_unconscious(OBJ_HANDLE_NULL, obj);
             anim_goal_knockdown(obj);
@@ -1048,8 +1053,7 @@ int64_t critter_follower_next(int64_t critter_obj)
 bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 {
     int64_t critter_obj;
-    int v1;
-    int v2;
+    int type;
     int v3;
     int fatigue;
     int dam;
@@ -1061,9 +1065,8 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
         }
     }
 
-    v1 = timeevent->params[0].integer_value;
+    type = timeevent->params[0].integer_value;
     critter_obj = timeevent->params[1].object_value;
-    v2 = timeevent->params[2].integer_value;
 
     if (critter_obj == OBJ_HANDLE_NULL) {
         return true;
@@ -1074,15 +1077,15 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
     }
 
     // TODO: Figure out math.
-    v3 = sub_45A820(v2) / 8 / 10;
+    v3 = sub_45A820(timeevent->params[2].integer_value) / 8 / 10;
     if (v3 < 1) {
         v3 = 1;
     }
 
     dam = critter_fatigue_damage_get(critter_obj);
 
-    switch (v1) {
-    case 0:
+    switch (type) {
+    case FATIGUE_EVENT_RECOVERY:
         if (dam > 0) {
             // TODO: Figure out math.
             dam -= v3 * stat_level_get(critter_obj, STAT_HEAL_RATE);
@@ -1092,8 +1095,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             }
             critter_fatigue_damage_set(critter_obj, dam);
 
-            if (tig_net_is_active()
-                && tig_net_is_host()) {
+            if (tig_net_is_active() && tig_net_is_host()) {
                 PacketCritterFatigueDamageSet pkt;
 
                 pkt.type = 35;
@@ -1107,7 +1109,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             }
         }
         break;
-    case 1:
+    case FATIGUE_EVENT_DAMAGE:
         // TODO: Figure out math.
         fatigue = critter_fatigue_current(critter_obj);
         if (fatigue >= 5) {
@@ -1118,8 +1120,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             critter_fatigue_damage_set(critter_obj, dam);
         }
 
-        if (tig_net_is_active()
-            && tig_net_is_host()) {
+        if (tig_net_is_active() && tig_net_is_host()) {
             PacketCritterFatigueDamageSet pkt;
 
             pkt.type = 35;
@@ -1130,7 +1131,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 
         encumbrance_level = critter_encumbrance_level_get(critter_obj);
         if (dword_5B3050[encumbrance_level] != 0) {
-            sub_45E820(critter_obj, 1, dword_5B3050[encumbrance_level]);
+            critter_fatigue_timeevent_schedule(critter_obj, FATIGUE_EVENT_DAMAGE, dword_5B3050[encumbrance_level]);
         }
         break;
     }
@@ -1139,7 +1140,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45E820
-bool sub_45E820(int64_t obj, int a2, int a3)
+bool critter_fatigue_timeevent_schedule(int64_t obj, int type, int delay)
 {
     TimeEvent timeevent;
     DateTime datetime;
@@ -1158,22 +1159,21 @@ bool sub_45E820(int64_t obj, int a2, int a3)
     }
 
     qword_5E8648 = obj;
-    dword_5B304C = a2;
-
-    if (timeevent_any(TIMEEVENT_TYPE_FATIGUE, sub_45E8D0)) {
+    dword_5B304C = type;
+    if (timeevent_any(TIMEEVENT_TYPE_FATIGUE, fatigue_timeevent_check)) {
         return true;
     }
 
     timeevent.type = TIMEEVENT_TYPE_FATIGUE;
-    timeevent.params[0].integer_value = a2;
+    timeevent.params[0].integer_value = type;
     timeevent.params[1].object_value = obj;
     timeevent.params[2].integer_value = sub_45A7F0();
-    sub_45A950(&datetime, a3);
+    sub_45A950(&datetime, delay);
     return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x45E8D0
-bool sub_45E8D0(TimeEvent* timeevent)
+bool fatigue_timeevent_check(TimeEvent* timeevent)
 {
     return timeevent->params[0].integer_value == dword_5B304C
         && timeevent->params[1].object_value == qword_5E8648;
@@ -1882,7 +1882,7 @@ void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
     }
 
     if (dword_5B3050[encumbrance_level] != 0) {
-        sub_45E820(obj, 1, dword_5B3050[encumbrance_level]);
+        critter_fatigue_timeevent_schedule(obj, FATIGUE_EVENT_DAMAGE, dword_5B3050[encumbrance_level]);
     }
 }
 

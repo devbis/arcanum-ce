@@ -70,7 +70,7 @@ int critter_num_followers(int64_t obj, bool exclude_forced_followers);
 int64_t critter_follower_prev(int64_t critter_obj);
 int64_t critter_follower_next(int64_t critter_obj);
 bool critter_fatigue_timeevent_process(TimeEvent* timeevent);
-bool sub_45E820(int64_t obj, int a2, int a3);
+bool critter_fatigue_timeevent_schedule(int64_t obj, int type, int delay);
 void critter_resting_heal(int64_t critter_obj, int hours);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool critter_resting_timeevent_schedule(int64_t obj);
