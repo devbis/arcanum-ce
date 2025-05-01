@@ -447,7 +447,7 @@ void sub_57C3F0(int index)
         sub_5507E0(run_info->spell);
 
         if (obj != OBJ_HANDLE_NULL) {
-            sub_43C270(obj);
+            object_hover_obj_set(obj);
         }
     }
 }

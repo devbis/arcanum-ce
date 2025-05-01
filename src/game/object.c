@@ -915,7 +915,7 @@ void object_draw(GameDrawInfo* draw_info)
 }
 
 // 0x43C270
-void sub_43C270(int64_t obj)
+void object_hover_obj_set(int64_t obj)
 {
     TigRect rect;
     int type;
@@ -971,17 +971,19 @@ void sub_43C270(int64_t obj)
 }
 
 // 0x43C570
-int64_t sub_43C570()
+int64_t object_hover_obj_get()
 {
-    if (object_hover_obj != OBJ_HANDLE_NULL) {
-        if (sub_444020(&object_hover_obj, &stru_5E2F60)) {
-            return object_hover_obj;
-        }
-
-        sub_43C270(OBJ_HANDLE_NULL);
+    if (object_hover_obj == OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
     }
 
-    return OBJ_HANDLE_NULL;
+    if (!sub_444020(&object_hover_obj, &stru_5E2F60)) {
+        object_hover_obj_set(OBJ_HANDLE_NULL);
+        return OBJ_HANDLE_NULL;
+
+    }
+
+    return object_hover_obj;
 }
 
 // 0x43C5C0
@@ -1025,7 +1027,7 @@ void sub_43C690(GameDrawInfo* draw_info)
     TigRect dst_rect;
     bool blit_info_initialized = false;
 
-    object_hover_obj = sub_43C570();
+    object_hover_obj = object_hover_obj_get();
 
     if (object_hover_obj == OBJ_HANDLE_NULL) {
         return;
@@ -4996,7 +4998,7 @@ bool sub_4437E0(TigRect* rect)
 {
     TigRect tmp_rect;
 
-    object_hover_obj = sub_43C570();
+    object_hover_obj = object_hover_obj_get();
     if (object_hover_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -5026,7 +5028,7 @@ bool sub_443880(TigRect* rect, tig_art_id_t art_id)
     int64_t y;
     unsigned int flags;
 
-    object_hover_obj = sub_43C570();
+    object_hover_obj = object_hover_obj_get();
     if (object_hover_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -5357,7 +5359,7 @@ void sub_444270(int64_t obj, int a2)
         tile_script_exec(loc, obj);
     }
 
-    v1 = sub_43C570();
+    v1 = object_hover_obj_get();
     if (v1 != OBJ_HANDLE_NULL) {
         if (v1 == obj || player_is_local_pc_obj(obj)) {
             sub_4604F0(player_get_local_pc_obj(), v1);

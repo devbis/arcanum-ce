@@ -2361,25 +2361,25 @@ void mainmenu_ui_start(int window_type)
             dword_64C414 = 3;
             dword_5C4004 = false;
             sub_541740();
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case 3:
             dword_64C414 = 4;
             dword_5C4004 = false;
             sub_541740();
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case 4:
             dword_64C414 = 6;
             dword_5C4004 = false;
             sub_541740();
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case 5:
             dword_64C414 = 26;
             dword_5C4004 = false;
             sub_541740();
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         default:
             if (tig_mouse_hide() != TIG_OK) {
@@ -2389,7 +2389,7 @@ void mainmenu_ui_start(int window_type)
             dword_64C414 = 0;
             dword_5C4004 = true;
             sub_541740();
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         }
     }

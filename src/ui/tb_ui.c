@@ -246,7 +246,7 @@ void sub_57CC10(int64_t obj)
             sub_575770();
         }
     }
-    if (sub_43C570() == obj) {
+    if (object_hover_obj_get() == obj) {
         sub_57CCF0(player_get_local_pc_obj(), obj);
     }
     follower_ui_update_obj(obj);

@@ -3083,12 +3083,12 @@ void sub_54EBF0()
 
     obj = qword_64C690;
     if (obj == OBJ_HANDLE_NULL) {
-        obj = sub_43C570();
+        obj = object_hover_obj_get();
     }
 
     if (obj != OBJ_HANDLE_NULL) {
-        sub_43C270(OBJ_HANDLE_NULL);
-        sub_43C270(obj);
+        object_hover_obj_set(OBJ_HANDLE_NULL);
+        object_hover_obj_set(obj);
         if (obj != OBJ_HANDLE_NULL) {
             sub_57CCF0(pc_obj, obj);
         }
@@ -3102,12 +3102,12 @@ void sub_54ECD0()
         return;
     }
 
-    if (sub_43C570() != OBJ_HANDLE_NULL) {
+    if (object_hover_obj_get() != OBJ_HANDLE_NULL) {
         return;
     }
 
-    sub_43C270(qword_64C690);
-    sub_43C270(OBJ_HANDLE_NULL);
+    object_hover_obj_set(qword_64C690);
+    object_hover_obj_set(OBJ_HANDLE_NULL);
     sub_57CCF0(player_get_local_pc_obj(), qword_64C690);
 }
 
@@ -4413,7 +4413,7 @@ void sub_551160()
             if (pc_obj != OBJ_HANDLE_NULL) {
                 if (qword_64C690 != OBJ_HANDLE_NULL) {
                     sub_57CCF0(pc_obj, qword_64C690);
-                } else if ((obj = sub_43C570()) != OBJ_HANDLE_NULL) {
+                } else if ((obj = object_hover_obj_get()) != OBJ_HANDLE_NULL) {
                     sub_57CCF0(pc_obj, obj);
                 } else {
                     sub_552960(false);
@@ -4694,7 +4694,7 @@ void sub_551910(TigMessage* msg)
             if (sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, qword_5C7280, intgame_fullscreen)) {
                 if (!v1.is_loc) {
                     sub_57CCF0(player_get_local_pc_obj(), v1.obj);
-                    sub_43C270(v1.obj);
+                    object_hover_obj_set(v1.obj);
                 }
             } else if (combat_turn_based_is_active()
                 && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
@@ -6058,7 +6058,7 @@ void sub_553A70(TigMessage* msg)
         return;
     }
 
-    obj = sub_43C570();
+    obj = object_hover_obj_get();
     if (obj == OBJ_HANDLE_NULL) {
         return;
     }
@@ -6066,14 +6066,14 @@ void sub_553A70(TigMessage* msg)
     if (sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, qword_5C7280, intgame_fullscreen)) {
         if (obj != v1.obj) {
             sub_57CCF0(player_get_local_pc_obj(), v1.obj);
-            sub_43C270(v1.obj);
+            object_hover_obj_set(v1.obj);
         }
     } else {
-        if (qword_64C690 != OBJ_HANDLE_NULL || sub_43C570() == OBJ_HANDLE_NULL) {
+        if (qword_64C690 != OBJ_HANDLE_NULL || object_hover_obj_get() == OBJ_HANDLE_NULL) {
             if (intgame_iso_window_type != 3) {
                 if (sub_4E5470(qword_64C690)) {
-                    sub_43C270(qword_64C690);
-                    sub_43C270(OBJ_HANDLE_NULL);
+                    object_hover_obj_set(qword_64C690);
+                    object_hover_obj_set(OBJ_HANDLE_NULL);
                     sub_57CCF0(player_get_local_pc_obj(), qword_64C690);
                 }
                 qword_64C690 = OBJ_HANDLE_NULL;
@@ -6083,7 +6083,7 @@ void sub_553A70(TigMessage* msg)
                 sub_550770(-1, "");
                 sub_568F40();
             }
-            sub_43C270(OBJ_HANDLE_NULL);
+            object_hover_obj_set(OBJ_HANDLE_NULL);
         }
     }
 }
@@ -7994,7 +7994,7 @@ void sub_5571C0(int64_t obj)
         anim_ui_event_add(ANIM_UI_EVENT_TYPE_UPDATE_HEALTH_BAR, -1);
     }
 
-    if (sub_43C570() == obj || qword_64C690 == obj) {
+    if (object_hover_obj_get() == obj || qword_64C690 == obj) {
         sub_57CCF0(player_get_local_pc_obj(), obj);
     }
 
@@ -8211,7 +8211,7 @@ void sub_557730(int index)
 void sub_557790(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL
-        && obj == sub_43C570()) {
+        && obj == object_hover_obj_get()) {
         sub_57CCF0(player_get_local_pc_obj(), obj);
     }
 }

@@ -428,7 +428,7 @@ bool follower_ui_message_filter(TigMessage* msg)
                     if (follower_ui_subordinate_obj != OBJ_HANDLE_NULL) {
                         sub_57CD60(follower_ui_commander_obj, follower_ui_subordinate_obj, str);
                         sub_553BE0(follower_ui_commander_obj, follower_ui_subordinate_obj, str);
-                        sub_43C270(follower_ui_subordinate_obj);
+                        object_hover_obj_set(follower_ui_subordinate_obj);
                     }
                     return true;
                 }
@@ -438,7 +438,7 @@ bool follower_ui_message_filter(TigMessage* msg)
             for (index = 0; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
                 if (msg->data.button.button_handle == follower_ui_buttons[index]) {
                     sub_550720();
-                    sub_43C270(OBJ_HANDLE_NULL);
+                    object_hover_obj_set(OBJ_HANDLE_NULL);
                     return true;
                 }
             }
