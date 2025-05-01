@@ -2294,7 +2294,7 @@ void MTComponentDestroy_ProcFunc()
 
         if (tig_net_is_active()
             && tig_net_is_host()) {
-            Packet72 pkt;
+            PacketObjectDestroy pkt;
 
             pkt.type = 72;
             pkt.oid = sub_407EF0(stru_5E6D28.field_20);

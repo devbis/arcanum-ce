@@ -206,9 +206,9 @@ bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr)
 }
 
 // 0x4ED9E0
-void sub_4ED9E0(int64_t obj)
+void mp_object_destroy(int64_t obj)
 {
-    Packet72 pkt;
+    PacketObjectDestroy pkt;
 
     pkt.type = 72;
     pkt.oid = sub_407EF0(obj);

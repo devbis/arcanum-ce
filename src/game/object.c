@@ -1253,7 +1253,7 @@ void object_destroy(int64_t obj)
     }
 
     if (!multiplayer_is_locked() && tig_net_is_host()) {
-        sub_4ED9E0(obj);
+        mp_object_destroy(obj);
     }
 
     multiplayer_lock();
