@@ -1229,24 +1229,26 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
 }
 
 // 0x4AA0D0
-void sub_4AA0D0(int64_t obj)
+void ai_notify_explosion_dynamite(int64_t pc_obj)
 {
     ObjectList npcs;
     ObjectNode* node;
 
-    ai_objects_in_radius(obj, 10, &npcs, OBJ_TM_NPC);
+    ai_objects_in_radius(pc_obj, 10, &npcs, OBJ_TM_NPC);
 
     node = npcs.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
-            && critter_pc_leader_get(node->obj) != obj
-            && (ai_can_see(node->obj, obj) == 0
-                || ai_can_hear(node->obj, obj, LOUDNESS_SILENT) == 0)) {
-            ai_attack(obj, node->obj, LOUDNESS_SILENT, 0);
+            && critter_pc_leader_get(node->obj) != pc_obj
+            && (ai_can_see(node->obj, pc_obj) == 0
+                || ai_can_hear(node->obj, pc_obj, LOUDNESS_SILENT) == 0)) {
+            ai_attack(pc_obj, node->obj, LOUDNESS_SILENT, 0);
         }
         node = node->next;
     }
+
+    object_list_destroy(&npcs);
 }
 
 // 0x4AA1B0

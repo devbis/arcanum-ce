@@ -385,7 +385,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
 
     object_destroy(item_obj);
     if (spl == 176) {
-        sub_4AA0D0(pc_obj);
+        ai_notify_explosion_dynamite(pc_obj);
     }
     sub_4BC690(spl, target_loc, 88, OBJ_HANDLE_NULL);
 
@@ -408,7 +408,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         object_destroy(item_obj);
         switch (spl) {
         case 176:
-            sub_4AA0D0(pc_obj);
+            ai_notify_explosion_dynamite(pc_obj);
             prototype_handle = sub_4685A0(4047);
             break;
         case 220:
