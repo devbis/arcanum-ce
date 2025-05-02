@@ -3307,6 +3307,10 @@ void sub_54ED30(S4F2810* a1)
                 anim = AG_USE_CONTAINER;
                 v26 = true;
                 break;
+            case OBJ_TYPE_SCENERY:
+                anim = AG_USE_OBJECT;
+                v26 = true;
+                break;
             case OBJ_TYPE_WEAPON:
             case OBJ_TYPE_AMMO:
             case OBJ_TYPE_ARMOR:
