@@ -1379,8 +1379,12 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
             obj_unlock(obj);
             return false;
         }
-    } else if (oid.type > 0 && oid.type < 4) {
-        sub_4E4FD0(oid, obj);
+    } else {
+        object->oid = oid;
+
+        if (oid.type > 0 && oid.type < 4) {
+            sub_4E4FD0(oid, obj);
+        }
     }
 
     cnt = sub_40C030(object->type);
