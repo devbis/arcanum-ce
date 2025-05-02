@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+#define TOWNMAP_NONE 0
+
 typedef struct TownMapInfo {
     /* 0000 */ int version;
     /* 0004 */ int field_4;
