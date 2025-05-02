@@ -243,9 +243,9 @@ bool teleport_process(TeleportData* teleport_data)
 
         oid.type = OID_TYPE_NULL;
         if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            oid = sub_407EF0(teleport_data->obj);
+            oid = obj_get_id(teleport_data->obj);
         } else if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            oid = sub_407EF0(critter_pc_leader_get(teleport_data->obj));
+            oid = obj_get_id(critter_pc_leader_get(teleport_data->obj));
         }
 
         teleport_is_teleporting_pc = false;

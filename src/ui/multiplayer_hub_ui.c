@@ -1464,7 +1464,7 @@ void sub_5836A0()
         FREE(player_name);
 
         sub_4A40F0(0,
-            sub_407EF0(dword_64C41C[dword_5C3618]),
+            obj_get_id(dword_64C41C[dword_5C3618]),
             stat_level_get(dword_64C41C[dword_5C3618], STAT_LEVEL),
             data,
             size);

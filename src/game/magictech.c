@@ -1543,7 +1543,7 @@ bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
         }
 
         pkt.type = 76;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.cost = cost;
         pkt.field_24 = a3;
         pkt.magictech = magictech;
@@ -1866,7 +1866,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
 
             pkt.type = 73;
             pkt.summon_info = *summon_info;
-            pkt.summon_info.field_88 = sub_407EF0(obj);
+            pkt.summon_info.field_88 = obj_get_id(obj);
             sub_443EB0(pkt.summon_info.field_0.obj, &(pkt.summon_info.field_0.field_8));
             sub_443EB0(pkt.summon_info.field_30.obj, &(pkt.summon_info.field_30.field_8));
             summon_info->field_A0 = qword_5E75B8;
@@ -2297,7 +2297,7 @@ void MTComponentDestroy_ProcFunc()
             PacketObjectDestroy pkt;
 
             pkt.type = 72;
-            pkt.oid = sub_407EF0(stru_5E6D28.field_20);
+            pkt.oid = obj_get_id(stru_5E6D28.field_20);
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
     }
@@ -2323,7 +2323,7 @@ void sub_451BB0(int64_t obj, int mt_id)
         pkt.subtype = 1;
         pkt.mt_id = mt_id;
         if (obj != OBJ_HANDLE_NULL) {
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
         } else {
             pkt.oid.type = OID_TYPE_NULL;
         }
@@ -2491,7 +2491,7 @@ void MTComponentEyeCandy_ProcFunc()
 
                 pkt.type = 77;
                 pkt.subtype = 0;
-                pkt.oid = sub_407EF0(stru_5E6D28.field_20);
+                pkt.oid = obj_get_id(stru_5E6D28.field_20);
                 pkt.field_20 = dword_5E761C->data.eye_candy.num + 6 * dword_5E75F0->spell;
                 pkt.field_24 = v1;
                 tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -2791,7 +2791,7 @@ void magictech_pick_proto_from_list(ObjectID* oid, int list)
         break;
     }
 
-    *oid = sub_407EF0(sub_4685A0(stru_5B0ED8[list].entries[idx].basic_prototype));
+    *oid = obj_get_id(sub_4685A0(stru_5B0ED8[list].entries[idx].basic_prototype));
 }
 
 // 0x4529D0
@@ -2869,7 +2869,7 @@ void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type
 
         pkt.type = 74;
         pkt.subtype = 0;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.trait = *trait;
         pkt.obj_type = obj_type;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -3715,7 +3715,7 @@ bool sub_454920(int64_t obj, int num, int max)
         pkt.type = 74;
         pkt.subtype = 2;
         if (obj != OBJ_HANDLE_NULL) {
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
         } else {
             pkt.oid.type = OID_TYPE_NULL;
         }
@@ -4967,7 +4967,7 @@ void sub_456EC0(int64_t obj, int spell)
 
             pkt.type = 77;
             pkt.subtype = 0;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.field_20 = spell % 10 + 6 * (spell / 10);
             pkt.field_24 = -1;
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -5759,7 +5759,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             }
 
             if (value > 0) {
-                component_info->data.summon.oid = sub_407EF0(sub_4685A0(value));
+                component_info->data.summon.oid = obj_get_id(sub_4685A0(value));
             } else {
                 component_info->data.summon.oid.type = OID_TYPE_NULL;
             }

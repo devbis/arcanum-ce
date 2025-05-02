@@ -1710,8 +1710,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                         // Transfer item.
                         moved = item_transfer(item_obj, source_obj);
                         if (tig_net_is_active()) {
-                            sub_407EF0(source_obj);
-                            sub_407EF0(item_obj);
+                            obj_get_id(source_obj);
+                            obj_get_id(item_obj);
                         }
                         break;
                     }
@@ -1729,7 +1729,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                             Packet129 pkt;
 
                             pkt.type = 129;
-                            pkt.oid = sub_407EF0(target_obj);
+                            pkt.oid = obj_get_id(target_obj);
                             pkt.fld = OBJ_F_CRITTER_FLAGS2;
                             pkt.subtype = 0;
                             pkt.val = critter_flags2;
@@ -1804,8 +1804,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                             Packet128 pkt;
 
                             pkt.type = 128;
-                            pkt.target_oid = sub_407EF0(target_obj);
-                            pkt.item_oid = sub_407EF0(item_obj);
+                            pkt.target_oid = obj_get_id(target_obj);
+                            pkt.item_oid = obj_get_id(item_obj);
                             tig_net_send_app_all(&pkt, sizeof(pkt));
                         }
                         break;
@@ -1906,7 +1906,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
                 Packet129 pkt;
                 pkt.type = 129;
-                pkt.oid = sub_407EF0(target_obj);
+                pkt.oid = obj_get_id(target_obj);
                 pkt.fld = OBJ_F_CRITTER_FLAGS;
                 pkt.subtype = 0;
                 pkt.val = critter_flags;
@@ -1962,8 +1962,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         // Set up network packet.
         memset(&pkt, 0, sizeof(pkt));
         pkt.type = 88;
-        pkt.source_oid = sub_407EF0(source_obj);
-        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.source_oid = obj_get_id(source_obj);
+        pkt.target_oid = obj_get_id(target_obj);
         pkt.success = 1; // NOTE: Probably error.
 
         // Check if the target is repairable.
@@ -2076,8 +2076,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         // Set up network packet.
         pkt.type = 89;
         pkt.flags = 0;
-        pkt.source_oid = sub_407EF0(source_obj);
-        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.source_oid = obj_get_id(source_obj);
+        pkt.target_oid = obj_get_id(target_obj);
         pkt.success = is_success;
 
         if (object_locked_get(target_obj)) {
@@ -2133,8 +2133,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
         // Set up network packet.
         pkt.type = 91;
-        pkt.source_oid = sub_407EF0(source_obj);
-        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.source_oid = obj_get_id(source_obj);
+        pkt.target_oid = obj_get_id(target_obj);
         pkt.success = is_success;
         pkt.flags = 0;
 

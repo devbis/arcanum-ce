@@ -713,7 +713,7 @@ bool obj_validate_system(unsigned int flags)
                             }
 
                             if (is_id) {
-                                if (objid_is_equal(sub_407EF0(obj), oid)) {
+                                if (objid_is_equal(obj_get_id(obj), oid)) {
                                     tig_debug_println("!VS  Inventory entry has same id as ownder");
                                     return false;
                                 }
@@ -1124,11 +1124,11 @@ void sub_4063A0(int64_t obj, ObjectID** oids_ptr, int* cnt_ptr)
     }
 
     oids = *oids_ptr = (ObjectID*)MALLOC(sizeof(*oids) * (cnt + 1));
-    *oids++ = sub_407EF0(obj);
+    *oids++ = obj_get_id(obj);
 
     for (idx = cnt - 1; idx >= 0; idx--) {
         item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
-        *oids++ = sub_407EF0(item_obj);
+        *oids++ = obj_get_id(item_obj);
     }
 
     *cnt_ptr = cnt + 1;
@@ -2059,7 +2059,7 @@ void sub_407D50(int64_t obj, int fld)
 }
 
 // 0x407EF0
-ObjectID sub_407EF0(int64_t obj)
+ObjectID obj_get_id(int64_t obj)
 {
     ObjectID oid;
     Object* object;
@@ -3925,7 +3925,7 @@ void sub_40BBF0(Object* object)
                         flags = obj_field_int32_get(oid.d.h, OBJ_F_FLAGS);
                         if ((flags & OF_DESTROYED) == 0
                             || (flags & OF_EXTINCT) != 0) {
-                            oid = sub_407EF0(oid.d.h);
+                            oid = obj_get_id(oid.d.h);
                             sub_408760(object, fld, &oid);
                         } else {
                             oid.type = OID_TYPE_NULL;
@@ -4030,7 +4030,7 @@ bool sub_40BF00(void* entry, int index)
                 return true;
             }
 
-            oid = sub_407EF0(oid.d.h);
+            oid = obj_get_id(oid.d.h);
         } else {
             oid = sub_4E5280(oid.d.h);
         }

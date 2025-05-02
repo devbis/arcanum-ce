@@ -4951,7 +4951,7 @@ void mainmenu_ui_pregen_char_create()
 {
     dword_64C414 = 13;
     dword_5C5308 = 1;
-    qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(16067)));
+    qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(16067)));
     mainmenu_ui_create_window();
 }
 
@@ -5014,7 +5014,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         } else {
             dword_5C5308 = dword_5C361C - 1;
         }
-        qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(dword_5C5308 + 16066)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(dword_5C5308 + 16066)));
         window->refresh_func(NULL);
         return true;
     case 3:
@@ -5023,7 +5023,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         } else {
             dword_5C5308 = 1;
         }
-        qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(dword_5C5308 + 16067)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(dword_5C5308 + 16067)));
         window->refresh_func(NULL);
         return true;
     default:
@@ -5097,7 +5097,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
 
             settings_set_obj_value(&settings,
                 "selected_char_id",
-                sub_407EF0(player_get_local_pc_obj()));
+                obj_get_id(player_get_local_pc_obj()));
 
             dword_5C3618 = -1;
             if (dword_64C41C != NULL) {
@@ -5108,7 +5108,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
             sub_4A3D70(&dword_64C41C, &dword_64C420);
             sub_442050(&v1, &v2, player_get_local_pc_obj());
             sub_4A40F0(0,
-                sub_407EF0(player_get_local_pc_obj()),
+                obj_get_id(player_get_local_pc_obj()),
                 stat_level_get(player_get_local_pc_obj(), STAT_LEVEL),
                 v1,
                 v2);
@@ -6232,7 +6232,7 @@ bool sub_546EE0(TigMessage* msg)
                         tig_window_modal_dialog(&modal_dialog_info, &choice);
 
                         if (choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
-                            objid_id_to_str(str, sub_407EF0(dword_64C41C[dword_5C3618]));
+                            objid_id_to_str(str, obj_get_id(dword_64C41C[dword_5C3618]));
                             snprintf(path, sizeof(path), "Players\\%s.mpc", str);
                             tig_file_remove(path);
                             snprintf(path, sizeof(path), "Players\\%s_b.bmp", str);
@@ -6584,7 +6584,7 @@ void sub_548210(int x, int y)
 
     dword_5C3618 = dword_64C378 + y / 20;
     if (dword_5C3618 < dword_64C420) {
-        stru_64C248 = sub_407EF0(dword_64C41C[dword_5C3618]);
+        stru_64C248 = obj_get_id(dword_64C41C[dword_5C3618]);
         mainmenu_ui_refresh_multiplayer_select_char(NULL);
     } else {
         dword_5C3618 = -1;
@@ -6627,7 +6627,7 @@ void sub_5482A0(TigRect* rect)
             int index;
 
             for (index = 0; index < dword_64C420; index++) {
-                if (objid_is_equal(stru_64C248, sub_407EF0(dword_64C41C[index]))) {
+                if (objid_is_equal(stru_64C248, obj_get_id(dword_64C41C[index]))) {
                     dword_5C3618 = index;
                     break;
                 }
@@ -6636,7 +6636,7 @@ void sub_5482A0(TigRect* rect)
 
         if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
             dword_5C3618 = 0;
-            stru_64C248 = sub_407EF0(dword_64C41C[dword_5C3618]);
+            stru_64C248 = obj_get_id(dword_64C41C[dword_5C3618]);
             settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
         }
     }
@@ -7493,7 +7493,7 @@ void sub_549A80()
     int64_t obj;
 
     if (!dword_5C3620) {
-        obj = objp_perm_lookup(sub_407EF0(sub_4685A0(16075)));
+        obj = objp_perm_lookup(obj_get_id(sub_4685A0(16075)));
         if (obj != OBJ_HANDLE_NULL
             && tig_art_exists(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
             dword_5C3620 = false;

@@ -3328,8 +3328,8 @@ void sub_418B30(int a1, DialogState* a2)
         if (tig_net_is_active()
             && tig_net_is_host()) {
             pkt.type = 82;
-            pkt.field_8 = sub_407EF0(a2->pc_obj);
-            pkt.field_20 = sub_407EF0(a2->npc_obj);
+            pkt.field_8 = obj_get_id(a2->pc_obj);
+            pkt.field_20 = obj_get_id(a2->npc_obj);
             pkt.field_38 = a1;
             pkt.field_40.type = OID_TYPE_NULL;
         }

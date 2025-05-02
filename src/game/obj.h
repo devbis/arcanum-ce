@@ -469,7 +469,7 @@ void obj_arrayfield_length_set(int64_t obj, int fld, int length);
 void obj_arrayfield_pc_rumor_copy_to_flat(int64_t obj, int fld, int cnt, void* data);
 void obj_arrayfield_pc_quest_copy_to_flat(int64_t obj, int fld, int cnt, void* data);
 void sub_407D50(int64_t obj, int fld);
-ObjectID sub_407EF0(int64_t obj);
+ObjectID obj_get_id(int64_t obj);
 ObjectID sub_408020(int64_t obj, int a2);
 bool obj_inst_first(int64_t* obj_ptr, int* iter_ptr);
 bool obj_inst_next(int64_t* obj_ptr, int* iter_ptr);

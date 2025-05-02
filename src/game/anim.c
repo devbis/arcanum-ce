@@ -4289,13 +4289,13 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
             pkt.art_id = art_id;
 
             if (self_obj != OBJ_HANDLE_NULL) {
-                pkt.self_oid = sub_407EF0(self_obj);
+                pkt.self_oid = obj_get_id(self_obj);
             } else {
                 pkt.self_oid.type = OID_TYPE_NULL;
             }
 
             if (target_obj != OBJ_HANDLE_NULL) {
-                pkt.target_oid = sub_407EF0(self_obj);
+                pkt.target_oid = obj_get_id(self_obj);
             } else {
                 pkt.target_oid.type = OID_TYPE_NULL;
             }
@@ -4304,7 +4304,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
             pkt.target_loc = target_loc;
             pkt.spell = spell;
             pkt.anim_id = anim_id;
-            pkt.obj_oid = sub_407EF0(*obj_ptr);
+            pkt.obj_oid = obj_get_id(*obj_ptr);
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
 
@@ -8197,7 +8197,7 @@ bool sub_42B090(AnimRunInfo* run_info)
 
         pkt.type = 10;
         pkt.anim_id = run_info->id;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
@@ -8267,7 +8267,7 @@ bool sub_42B250(AnimRunInfo* run_info)
 
         pkt.type = 10;
         pkt.anim_id = run_info->id;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
@@ -8344,7 +8344,7 @@ bool sub_42B440(AnimRunInfo* run_info)
 
         pkt.type = 10;
         pkt.anim_id = run_info->id;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
@@ -13082,7 +13082,7 @@ void sub_432D90(int64_t obj)
 
         pkt.type = 70;
         pkt.subtype = 5;
-        pkt.s5.oid = sub_407EF0(obj);
+        pkt.s5.oid = obj_get_id(obj);
         pkt.s5.loc = loc;
         pkt.s5.offset_x = offset_x;
         pkt.s5.offset_y = offset_y;

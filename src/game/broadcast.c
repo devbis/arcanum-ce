@@ -181,7 +181,7 @@ void broadcast_msg(int64_t obj, Broadcast* bcast)
         PacketBroadcastMsg pkt;
 
         pkt.type = 18;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.bcast = *bcast;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 

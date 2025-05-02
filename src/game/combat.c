@@ -270,16 +270,16 @@ bool combat_save(TigFile* stream)
     if (qword_5FC238 == OBJ_HANDLE_NULL) {
         oid.type = OID_TYPE_NULL;
     } else {
-        oid = sub_407EF0(qword_5FC238);
+        oid = obj_get_id(qword_5FC238);
     }
     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
 
-    oid = sub_407EF0(dword_5FC240->obj);
+    oid = obj_get_id(dword_5FC240->obj);
     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
 
     if (tig_file_fwrite(&dword_5FC244, sizeof(dword_5FC244), 1, stream) != 1) return false;
 
-    oid = sub_407EF0(qword_5FC248);
+    oid = obj_get_id(qword_5FC248);
     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
 
     return true;
@@ -1290,7 +1290,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
             PacketCombatModeSet pkt;
 
             pkt.type = 19;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.active = combat_mode_is_active;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }

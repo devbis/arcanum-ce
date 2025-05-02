@@ -167,8 +167,8 @@ bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
     object_examine(obj, obj, str);
 
     // FIXME: Probably useless.
-    objid_id_to_str(v1, sub_407EF0(obj));
-    objid_id_to_str(v1, sub_407EF0(a4));
+    objid_id_to_str(v1, obj_get_id(obj));
+    objid_id_to_str(v1, obj_get_id(a4));
 
     pkt.type = 39;
     sub_4440E0(obj, &(pkt.field_8));
@@ -191,7 +191,7 @@ bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr)
             pkt.type = 70;
             pkt.subtype = 0;
             pkt.s0.name = name;
-            pkt.s0.oid = sub_407EF0(*obj_ptr);
+            pkt.s0.oid = obj_get_id(*obj_ptr);
             pkt.s0.loc = loc;
             pkt.s0.field_30 = 0;
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -211,7 +211,7 @@ void mp_object_destroy(int64_t obj)
     PacketObjectDestroy pkt;
 
     pkt.type = 72;
-    pkt.oid = sub_407EF0(obj);
+    pkt.oid = obj_get_id(obj);
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 
@@ -242,7 +242,7 @@ void mp_tf_add(int64_t obj, int tf_type, const char* str)
     pkt = (PacketTextFloater*)MALLOC(sizeof(*pkt) + extra_length);
     pkt->type = 85;
     pkt->extra_length = extra_length;
-    pkt->oid = sub_407EF0(obj);
+    pkt->oid = obj_get_id(obj);
     pkt->tf_type = tf_type;
     strncpy((char*)(pkt + 1), str, extra_length);
     tig_net_send_app_all(pkt, sizeof(*pkt) + extra_length);
@@ -255,8 +255,8 @@ void mp_reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
     PacketReactionAdj pkt;
 
     pkt.type = 87;
-    pkt.npc_oid = sub_407EF0(npc_obj);
-    pkt.pc_oid = sub_407EF0(pc_obj);
+    pkt.npc_oid = obj_get_id(npc_obj);
+    pkt.pc_oid = obj_get_id(pc_obj);
     pkt.value = value;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
@@ -267,8 +267,8 @@ void mp_trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason)
     PacketTrapMarkKnown pkt;
 
     pkt.type = 90;
-    pkt.pc_oid = sub_407EF0(pc_obj);
-    pkt.trap_oid = sub_407EF0(trap_obj);
+    pkt.pc_oid = obj_get_id(pc_obj);
+    pkt.trap_oid = obj_get_id(trap_obj);
     pkt.reason = reason;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
@@ -284,7 +284,7 @@ void sub_4EDCE0(int64_t obj, tig_art_id_t art_id)
 
         if (tig_net_is_host()) {
             pkt.type = 92;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.art_id = art_id;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
@@ -301,7 +301,7 @@ void sub_4EDD50(int64_t obj)
     if (tig_net_is_active()
         && tig_net_is_host()) {
         pkt.type = 94;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -351,7 +351,7 @@ void mp_item_arrange_inventory(int64_t obj, bool vertical)
     if (tig_net_is_active()
         && !tig_net_is_host()) {
         pkt.type = 96;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.vertical = vertical;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -386,7 +386,7 @@ void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7)
     if (tig_net_is_active()
         && tig_net_is_host()) {
         pkt.type = 99;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.location = location;
         pkt.dx = dx;
         pkt.dy = dy;
@@ -442,8 +442,8 @@ void sub_4EE0F0(int a1, int64_t a2, int64_t a3)
         pkt.type = 100;
         pkt.subtype = 4;
         pkt.d.c.field_8 = a1;
-        pkt.d.c.field_10 = sub_407EF0(a2);
-        pkt.d.c.field_28 = sub_407EF0(a3);
+        pkt.d.c.field_10 = obj_get_id(a2);
+        pkt.d.c.field_28 = obj_get_id(a3);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -472,7 +472,7 @@ void sub_4EE1D0(int64_t obj)
     if (tig_net_is_active()) {
         pkt.type = 100;
         pkt.subtype = 1;
-        pkt.d.b.field_8 = sub_407EF0(obj);
+        pkt.d.b.field_8 = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -761,7 +761,7 @@ void mp_object_locked_set(int64_t obj, int locked)
         PacketObjectLock pkt;
 
         pkt.type = 103;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.locked = locked;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -825,7 +825,7 @@ void mp_gsound_play_sfx_on_obj(int sound_id, int loops, int64_t obj)
         pkt.subtype = 1;
         pkt.sound_id = sound_id;
         pkt.loops = loops;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -872,7 +872,7 @@ void mp_container_close(int64_t obj)
 
         pkt.type = 129;
         pkt.subtype = 11;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -887,7 +887,7 @@ void mp_container_open(int64_t obj)
 
         pkt.type = 129;
         pkt.subtype = 10;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -901,7 +901,7 @@ void mp_portal_toggle(int64_t obj)
         PacketPortalToggle pkt;
 
         pkt.type = 107;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -942,7 +942,7 @@ void mp_spell_mastery_set(int64_t obj, int college)
 
     if (tig_net_is_active()) {
         pkt.type = 109;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.college = college;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1007,7 +1007,7 @@ void mp_map_touch(int64_t loc, int64_t obj)
         PacketMapTouch pkt;
 
         pkt.type = 112;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.loc = loc;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1053,7 +1053,7 @@ void mp_tf_remove(int64_t obj)
         pkt.type = 116;
         pkt.subtype = 1;
         pkt.action = 0;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1069,7 +1069,7 @@ void mp_tb_remove(int64_t obj)
         pkt.type = 116;
         pkt.subtype = 0;
         pkt.action = 0;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1322,7 +1322,7 @@ void mp_obj_field_int32_set(int64_t obj, int fld, int value)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 0;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.d.a.field_28 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1338,7 +1338,7 @@ void mp_obj_field_int64_set(int64_t obj, int fld, int64_t value)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 1;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.d.a.field_28 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1354,7 +1354,7 @@ void mp_object_flags_unset(int64_t obj, unsigned int flags)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 2;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.d.b.field_28 = flags;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1370,7 +1370,7 @@ void mp_object_flags_set(int64_t obj, unsigned int flags)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 3;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.d.c.field_28 = flags;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1386,10 +1386,10 @@ void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 4;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.fld = fld;
         if (value != OBJ_HANDLE_NULL) {
-            pkt.d.d.oid = sub_407EF0(value);
+            pkt.d.d.oid = obj_get_id(value);
         } else {
             pkt.d.d.oid.type = OID_TYPE_NULL;
         }
@@ -1411,10 +1411,10 @@ void sub_4F0070(int64_t obj, int fld, int index, int64_t value)
         && tig_net_is_host()) {
         pkt.type = 129;
         pkt.subtype = 5;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.fld = fld;
         if (value != OBJ_HANDLE_NULL) {
-            pkt.d.e.oid = sub_407EF0(value);
+            pkt.d.e.oid = obj_get_id(value);
         } else {
             pkt.d.e.oid.type = OID_TYPE_NULL;
         }
@@ -1452,7 +1452,7 @@ void mp_obj_arrayfield_script_set(int64_t obj, int fld, int index, Script* value
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = P129_SUBTYPE_SCRIPT;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.fld = fld;
         pkt.scr_val.idx = index;
         pkt.scr_val.scr = *value;
@@ -1489,7 +1489,7 @@ void mp_object_set_current_aid(int64_t obj, tig_art_id_t art_id)
     if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 9;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.d.h.art_id = art_id;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1570,7 +1570,7 @@ void sub_4F0500(int64_t obj, int fld)
         pkt.type = 130;
         pkt.field_4 = 0;
         pkt.fld = fld;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1587,7 +1587,7 @@ void sub_4F0570(int64_t obj, int fld, int length)
         pkt.field_4 = 1;
         pkt.fld = fld;
         pkt.length = length;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1602,7 +1602,7 @@ void sub_4F05F0()
 void sub_4F0640(int64_t obj, ObjectID* oid_ptr)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        *oid_ptr = sub_407EF0(obj);
+        *oid_ptr = obj_get_id(obj);
     } else {
         oid_ptr->type = OID_TYPE_NULL;
     }

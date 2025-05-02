@@ -3729,7 +3729,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
             insert_info->item_obj = item_obj;
             insert_info->parent_obj = parent_obj;
             insert_info->inventory_location = inventory_location;
-            sub_4A3230(sub_407EF0(item_obj),
+            sub_4A3230(obj_get_id(item_obj),
                 item_insert_success,
                 insert_info,
                 item_insert_failure,
@@ -4405,7 +4405,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
             ItemRemoveInfo* remove_info = (ItemRemoveInfo*)MALLOC(sizeof(*remove_info));
             remove_info->item_obj = item_obj;
             remove_info->parent_obj = parent_obj;
-            sub_4A3230(sub_407EF0(item_obj),
+            sub_4A3230(obj_get_id(item_obj),
                 item_force_remove_success,
                 remove_info,
                 item_force_remove_failure,

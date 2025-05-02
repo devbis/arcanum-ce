@@ -649,7 +649,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         pkt.type = 50;
         pkt.stat = stat;
         pkt.value = value;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
 
         if (!tig_net_is_host()) {
             if (player_is_local_pc_obj(obj)

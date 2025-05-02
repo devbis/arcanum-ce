@@ -2358,7 +2358,7 @@ void sub_5754C0(int x, int y)
 
     qword_6810E0 = OBJ_HANDLE_NULL;
 
-    sub_4A3230(sub_407EF0(entry->field_8), sub_5755A0, entry, sub_575580, entry);
+    sub_4A3230(obj_get_id(entry->field_8), sub_5755A0, entry, sub_575580, entry);
 }
 
 // 0x575580
@@ -3836,7 +3836,7 @@ void sub_578B80(int a1)
     pkt->field_8 = dword_739F60;
 
     if (qword_739F70 != OBJ_HANDLE_NULL) {
-        pkt->field_28 = sub_407EF0(qword_739F70);
+        pkt->field_28 = obj_get_id(qword_739F70);
     } else {
         pkt->field_28.type = OID_TYPE_NULL;
     }
@@ -3844,31 +3844,31 @@ void sub_578B80(int a1)
     pkt->field_58 = dword_739F80;
 
     if (qword_739F68 != OBJ_HANDLE_NULL) {
-        pkt->field_10 = sub_407EF0(qword_739F68);
+        pkt->field_10 = obj_get_id(qword_739F68);
     } else {
         pkt->field_10.type = OID_TYPE_NULL;
     }
 
     if (qword_739F78 != OBJ_HANDLE_NULL) {
-        pkt->field_40 = sub_407EF0(qword_739F78);
+        pkt->field_40 = obj_get_id(qword_739F78);
     } else {
         pkt->field_40.type = OID_TYPE_NULL;
     }
 
     if (qword_682C78 != OBJ_HANDLE_NULL) {
-        pkt->field_70 = sub_407EF0(qword_682C78);
+        pkt->field_70 = obj_get_id(qword_682C78);
     } else {
         pkt->field_70.type = OID_TYPE_NULL;
     }
 
     if (qword_6813A8 != OBJ_HANDLE_NULL) {
-        pkt->field_88 = sub_407EF0(qword_6813A8);
+        pkt->field_88 = obj_get_id(qword_6813A8);
     } else {
         pkt->field_88.type = OID_TYPE_NULL;
     }
 
     if (inven_ui_pc_obj != OBJ_HANDLE_NULL) {
-        pkt->field_A0 = sub_407EF0(inven_ui_pc_obj);
+        pkt->field_A0 = obj_get_id(inven_ui_pc_obj);
     } else {
         pkt->field_A0.type = OID_TYPE_NULL;
     }

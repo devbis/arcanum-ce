@@ -68,7 +68,7 @@ bool player_save(TigFile* stream)
         return false;
     }
 
-    temp_oid = sub_407EF0(player_pc_obj);
+    temp_oid = obj_get_id(player_pc_obj);
     if (tig_file_fwrite(&temp_oid, sizeof(temp_oid), 1, stream) != 1) {
         return false;
     }
@@ -149,7 +149,7 @@ void player_create()
     obj_field_int32_set(player_pc_obj, OBJ_F_AID, art_id);
     obj_field_int32_set(player_pc_obj, OBJ_F_CURRENT_AID, art_id);
 
-    player_pc_oid = sub_407EF0(player_pc_obj);
+    player_pc_oid = obj_get_id(player_pc_obj);
 }
 
 // 0x40D9F0
@@ -200,7 +200,7 @@ bool sub_40DAF0(int64_t obj)
 {
     player_pc_obj = obj;
     if (obj != OBJ_HANDLE_NULL) {
-        player_pc_oid = sub_407EF0(obj);
+        player_pc_oid = obj_get_id(obj);
         sub_4604E0();
     } else {
         player_pc_oid.type = OID_TYPE_NULL;
@@ -226,7 +226,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
     char str[80];
 
     if (player_create_info->basic_prototype != -1) {
-        player_pc_prototype_obj = objp_perm_lookup(sub_407EF0(sub_4685A0(player_create_info->basic_prototype)));
+        player_pc_prototype_obj = objp_perm_lookup(obj_get_id(sub_4685A0(player_create_info->basic_prototype)));
     } else {
         player_pc_prototype_obj = sub_468570(OBJ_TYPE_PC);
     }
@@ -261,7 +261,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
             exit(EXIT_FAILURE);
         }
 
-        player_create_info->oid = sub_407EF0(player_create_info->obj);
+        player_create_info->oid = obj_get_id(player_create_info->obj);
         objid_id_to_str(str, player_create_info->oid);
         tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
     }
@@ -281,7 +281,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
 
     if ((player_create_info->flags & PLAYER_CREATE_INFO_NETWORK) == 0) {
         player_pc_obj = player_create_info->obj;
-        player_pc_oid = sub_407EF0(player_pc_obj);
+        player_pc_oid = obj_get_id(player_pc_obj);
         tig_debug_printf("pcObj == %I64u\n", player_pc_obj);
     }
 

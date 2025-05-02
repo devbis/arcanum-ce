@@ -230,8 +230,8 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
                 && tig_net_is_host()) {
                 pkt.type = 44;
                 pkt.subtype = 0;
-                pkt.d.d.field_8 = sub_407EF0(pc_obj);
-                pkt.d.d.field_20 = sub_407EF0(npc_obj);
+                pkt.d.d.field_8 = obj_get_id(pc_obj);
+                pkt.d.d.field_20 = obj_get_id(npc_obj);
                 pkt.d.d.field_38 = script_num;
                 pkt.d.d.field_3C = script_line;
                 pkt.d.d.field_40 = num;
@@ -298,7 +298,7 @@ void sub_5678D0(int64_t obj, int a2)
         && tig_net_is_host()) {
         pkt.type = 44;
         pkt.subtype = 1;
-        pkt.d.b.field_8 = sub_407EF0(obj);
+        pkt.d.b.field_8 = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -355,13 +355,13 @@ void sub_567AB0(DialogUiEntry* entry, DialogSerializedData* serialized_data, cha
     int pos;
 
     if (entry->state.pc_obj != OBJ_HANDLE_NULL) {
-        serialized_data->field_8 = sub_407EF0(entry->state.pc_obj);
+        serialized_data->field_8 = obj_get_id(entry->state.pc_obj);
     } else {
         serialized_data->field_8.type = OID_TYPE_NULL;
     }
 
     if (entry->state.npc_obj != OBJ_HANDLE_NULL) {
-        serialized_data->field_20 = sub_407EF0(entry->state.npc_obj);
+        serialized_data->field_20 = obj_get_id(entry->state.npc_obj);
     } else {
         serialized_data->field_20.type = OID_TYPE_NULL;
     }
@@ -572,7 +572,7 @@ bool dialog_ui_message_filter(TigMessage* msg)
 
         pkt.type = 44;
         pkt.subtype = 2;
-        pkt.d.f.field_8 = sub_407EF0(player_get_local_pc_obj());
+        pkt.d.f.field_8 = obj_get_id(player_get_local_pc_obj());
         pkt.d.f.field_20 = entry->slot;
         pkt.d.f.field_24 = option;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -726,8 +726,8 @@ void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(npc_obj);
-        pkt.d.d.field_20 = sub_407EF0(pc_obj);
+        pkt.d.d.field_8 = obj_get_id(npc_obj);
+        pkt.d.d.field_20 = obj_get_id(pc_obj);
         pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 0;
@@ -761,8 +761,8 @@ void sub_5686C0(int64_t pc_obj, int64_t npc_obj, int type, int expires_in, const
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(pc_obj);
-        pkt.d.d.field_20 = sub_407EF0(npc_obj);
+        pkt.d.d.field_8 = obj_get_id(pc_obj);
+        pkt.d.d.field_20 = obj_get_id(npc_obj);
         pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 1;

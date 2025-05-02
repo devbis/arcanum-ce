@@ -596,8 +596,8 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     if (tig_net_is_active() && !tig_net_is_host()) {
                         pkt.type = 79;
                         pkt.field_4 = sub_56DB60();
-                        pkt.field_8 = sub_407EF0(qword_680E70);
-                        pkt.field_20 = sub_407EF0(qword_680E60);
+                        pkt.field_8 = obj_get_id(qword_680E70);
+                        pkt.field_20 = obj_get_id(qword_680E60);
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                         sub_56DDC0();
                     } else {

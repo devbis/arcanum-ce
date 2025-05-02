@@ -292,7 +292,7 @@ int critter_fatigue_pts_set(int64_t obj, int value)
 
         pkt.type = 51;
         pkt.field_4 = 1;
-        pkt.field_8 = sub_407EF0(obj);
+        pkt.field_8 = obj_get_id(obj);
         pkt.field_20 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
@@ -485,7 +485,7 @@ void critter_kill(int64_t obj)
         }
 
         pkt.type = 104;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -1099,7 +1099,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
                 PacketCritterFatigueDamageSet pkt;
 
                 pkt.type = 35;
-                pkt.oid = sub_407EF0(critter_obj);
+                pkt.oid = obj_get_id(critter_obj);
                 pkt.dam = dam;
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
@@ -1124,7 +1124,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             PacketCritterFatigueDamageSet pkt;
 
             pkt.type = 35;
-            pkt.oid = sub_407EF0(critter_obj);
+            pkt.oid = obj_get_id(critter_obj);
             pkt.dam = dam;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
@@ -1221,7 +1221,7 @@ void critter_resting_heal(int64_t critter_obj, int hours)
 
         pkt.type = 34;
         pkt.hours = hours;
-        pkt.oid = sub_407EF0(critter_obj);
+        pkt.oid = obj_get_id(critter_obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }

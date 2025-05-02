@@ -247,7 +247,7 @@ void sub_57A1F0(S4F2810* a1)
         pkt.field_38 = dword_5CB270;
         pkt.field_40 = *a1;
         if (!a1->is_loc) {
-            pkt.field_50 = sub_407EF0(a1->obj);
+            pkt.field_50 = obj_get_id(a1->obj);
         }
 
         if (!tig_net_is_host()) {

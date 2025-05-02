@@ -1231,7 +1231,7 @@ bool map_save_difs()
             if (!object_is_static(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0
                 && obj_is_modified(obj)) {
-                oid = sub_407EF0(obj);
+                oid = obj_get_id(obj);
                 if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_EXTINCT | OF_DESTROYED)) != 0) {
                     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream2) != 1) {
                         tig_file_fclose(stream2);

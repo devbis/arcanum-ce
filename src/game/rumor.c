@@ -293,7 +293,7 @@ void rumor_known_set(int64_t obj, int rumor)
 
         pkt.type = 38;
         pkt.rumor = rumor;
-        pkt.oid = sub_407EF0(obj);
+        pkt.oid = obj_get_id(obj);
         pkt.datetime = datetime;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }

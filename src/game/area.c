@@ -305,7 +305,7 @@ bool area_set_known(int64_t pc_obj, int area)
             if (!multiplayer_is_locked()) {
                 if (tig_net_is_host()) {
                     pkt.type = 101;
-                    pkt.oid = sub_407EF0(pc_obj);
+                    pkt.oid = obj_get_id(pc_obj);
                     pkt.area = area;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
 
@@ -368,7 +368,7 @@ void area_reset_last_known_area(int64_t pc_obj)
                 }
 
                 pkt.type = 102;
-                pkt.oid = sub_407EF0(pc_obj);
+                pkt.oid = obj_get_id(pc_obj);
                 tig_net_send_app_all(&pkt, sizeof(pkt));
 
                 player = sub_4A2B10(pc_obj);

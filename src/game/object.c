@@ -1545,7 +1545,7 @@ int object_hp_pts_set(int64_t obj, int value)
     if (!multiplayer_is_locked()) {
         pkt.type = 51;
         pkt.field_4 = 0;
-        pkt.field_8 = sub_407EF0(obj);
+        pkt.field_8 = obj_get_id(obj);
         pkt.field_20 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
@@ -3846,7 +3846,7 @@ void sub_4415C0(int64_t obj, int64_t loc)
         entry = (S4415C0*)MALLOC(sizeof(*entry));
         entry->obj = obj;
         entry->loc = loc;
-        sub_4A3230(sub_407EF0(obj), sub_441710, entry, sub_441780, entry);
+        sub_4A3230(obj_get_id(obj), sub_441710, entry, sub_441780, entry);
     }
 }
 
@@ -3918,7 +3918,7 @@ void sub_4417A0(int64_t item_obj, int64_t parent_obj)
         entry = (S4417A0*)MALLOC(sizeof(*entry));
         entry->item_obj = item_obj;
         entry->parent_obj = parent_obj;
-        sub_4A3230(sub_407EF0(item_obj), sub_4418E0, entry, sub_441960, entry);
+        sub_4A3230(obj_get_id(item_obj), sub_4418E0, entry, sub_441960, entry);
     }
 }
 
@@ -5085,7 +5085,7 @@ bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
         loc = a2->location;
         map = a2->map;
     } else if (*obj_ptr != OBJ_HANDLE_NULL) {
-        oid = sub_407EF0(*obj_ptr);
+        oid = obj_get_id(*obj_ptr);
         loc = obj_field_int64_get(*obj_ptr, OBJ_F_LOCATION);
         map = map_current_map();
     } else {
@@ -5171,7 +5171,7 @@ void sub_443EB0(int64_t obj, Ryan* a2)
             a2->location = 0;
             a2->map = 0;
         } else {
-            a2->objid = sub_407EF0(obj);
+            a2->objid = obj_get_id(obj);
             if (object_is_static(obj)) {
                 a2->location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             } else {

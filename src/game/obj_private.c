@@ -2558,7 +2558,7 @@ bool sub_4E7050(int64_t handle, char* path)
         path[length] = '\0';
     }
 
-    objid_id_to_str(path, sub_407EF0(handle));
+    objid_id_to_str(path, obj_get_id(handle));
 
     return true;
 }

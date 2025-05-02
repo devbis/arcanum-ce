@@ -533,9 +533,9 @@ void trap_handle_disarm(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, 
                     pkt.type = 70;
                     pkt.subtype = 0;
                     pkt.s0.name = disarm_item_name;
-                    pkt.s0.oid = sub_407EF0(pc_obj);
+                    pkt.s0.oid = obj_get_id(pc_obj);
                     pkt.s0.loc = loc;
-                    pkt.s0.field_38 = sub_407EF0(trap_obj);
+                    pkt.s0.field_38 = obj_get_id(trap_obj);
                     pkt.s0.field_30 = 1;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
@@ -816,8 +816,8 @@ TrapListNode* sub_4BD1E0(int64_t pc_obj, int64_t trap_obj)
     TrapListNode* node;
 
     node = (TrapListNode*)MALLOC(sizeof(*node));
-    node->pc_oid = sub_407EF0(pc_obj);
-    node->trap_oid = sub_407EF0(trap_obj);
+    node->pc_oid = obj_get_id(pc_obj);
+    node->trap_oid = obj_get_id(trap_obj);
     node->next = dword_5FC48C;
     dword_5FC48C = node;
 
@@ -832,7 +832,7 @@ int sub_4BD340(int64_t trap_obj)
     TrapListNode* node;
     TrapListNode* tmp;
 
-    trap_oid = sub_407EF0(trap_obj);
+    trap_oid = obj_get_id(trap_obj);
 
     while (dword_5FC48C != NULL) {
         if (!objid_is_equal(dword_5FC48C->trap_oid, trap_oid)) {
@@ -876,8 +876,8 @@ TrapListNode* sub_4BD480(int64_t pc_obj, int64_t trap_obj)
     ObjectID pc_oid;
     TrapListNode* node;
 
-    trap_oid = sub_407EF0(trap_obj);
-    pc_oid = sub_407EF0(pc_obj);
+    trap_oid = obj_get_id(trap_obj);
+    pc_oid = obj_get_id(pc_obj);
 
     node = dword_5FC48C;
     while (node != NULL) {
@@ -1013,7 +1013,7 @@ void sub_4BD850(int64_t obj)
     TrapListNode* node;
     int64_t trap_obj;
 
-    oid = sub_407EF0(obj);
+    oid = obj_get_id(obj);
     node = dword_5FC48C;
     while (node != NULL) {
         trap_obj = objp_perm_lookup(node->trap_oid);

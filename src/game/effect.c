@@ -392,7 +392,7 @@ void effect_add(int64_t obj, int effect, int cause)
 
             pkt.type = 86;
             pkt.subtype = PACKET_EFFECT_ADD;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.add.effect = effect;
             pkt.add.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -450,7 +450,7 @@ void effect_remove_one_typed(int64_t obj, int effect)
 
             pkt.type = 86;
             pkt.subtype = PACKET_EFFECT_REMOVE_ONE_BY_TYPE;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.remove.effect = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
@@ -487,7 +487,7 @@ void effect_remove_all_typed(int64_t obj, int effect)
 
             pkt.type = 86;
             pkt.subtype = PACKET_EFFECT_REMOVE_ALL_BY_TYPE;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.remove.effect = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
@@ -523,7 +523,7 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
 
             pkt.type = 86;
             pkt.subtype = PACKET_EFFECT_REMOVE_ONE_BY_CAUSE;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.remove.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
@@ -558,7 +558,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 
             pkt.type = 86;
             pkt.subtype = PACKET_EFFECT_REMOVE_ALL_BY_CAUSE;
-            pkt.oid = sub_407EF0(obj);
+            pkt.oid = obj_get_id(obj);
             pkt.remove.cause = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {

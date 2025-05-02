@@ -326,7 +326,7 @@ void reputation_add(int64_t pc_obj, int reputation)
         }
 
         pkt.type = 105;
-        pkt.pc_oid = sub_407EF0(pc_obj);
+        pkt.pc_oid = obj_get_id(pc_obj);
         pkt.reputation = reputation;
         pkt.action = CHANGE_REPUTATION_ACTION_ADD;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -361,7 +361,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
         }
 
         pkt.type = 105;
-        pkt.pc_oid = sub_407EF0(pc_obj);
+        pkt.pc_oid = obj_get_id(pc_obj);
         pkt.reputation = reputation;
         pkt.action = CHANGE_REPUTATION_ACTION_REMOVE;
         tig_net_send_app_all(&pkt, sizeof(pkt));

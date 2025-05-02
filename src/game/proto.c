@@ -285,7 +285,7 @@ bool proto_save(int64_t obj)
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    oid = sub_407EF0(obj);
+    oid = obj_get_id(obj);
     obj_field_string_get(obj, OBJ_F_NAME, &name);
 
     if (oid.type != 1) {
@@ -16035,7 +16035,7 @@ int sub_49B290(int64_t obj)
     ObjectID oid;
 
     prototype_handle = obj_field_handle_get(obj, OBJ_F_PROTOTYPE_HANDLE);
-    oid = sub_407EF0(prototype_handle);
+    oid = obj_get_id(prototype_handle);
 
     return oid.d.a - 20;
 }
