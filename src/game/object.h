@@ -180,7 +180,7 @@ void sub_442520(int64_t obj);
 void sub_443770(int64_t obj);
 bool sub_4437E0(TigRect* rect);
 bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream);
-bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream);
+bool object_load_obj_handle_safe(int64_t* obj_ptr, Ryan* a2, TigFile* stream);
 void sub_443EB0(int64_t obj, Ryan* a2);
 bool sub_443F80(int64_t* obj_ptr, Ryan* a2);
 bool sub_444020(int64_t* obj_ptr, Ryan* a2);

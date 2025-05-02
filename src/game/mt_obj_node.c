@@ -168,7 +168,7 @@ bool mt_obj_node_load_list_node(MagicTechObjectNode* node, TigFile* stream)
         return false;
     }
 
-    if (!sub_443AD0(&(node->obj), &(node->field_8), stream)) {
+    if (!object_load_obj_handle_safe(&(node->obj), &(node->field_8), stream)) {
         return false;
     }
 
@@ -222,7 +222,7 @@ bool mt_obj_node_load_detached(MagicTechObjectNode* node, TigFile* stream)
         return false;
     }
 
-    if (!sub_443AD0(&(node->obj), &(node->field_8), stream)) {
+    if (!object_load_obj_handle_safe(&(node->obj), &(node->field_8), stream)) {
         return false;
     }
 

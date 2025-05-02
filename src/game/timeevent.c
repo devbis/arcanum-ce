@@ -739,7 +739,7 @@ bool timeevent_load_node(TimeEvent* timeevent, TigFile* stream)
                 return false;
             }
         } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[timeevent->type].flags) != 0) {
-            if (!sub_443AD0(&obj, 0, stream)) {
+            if (!object_load_obj_handle_safe(&obj, 0, stream)) {
                 return false;
             }
             timeevent->params[index].object_value = obj;

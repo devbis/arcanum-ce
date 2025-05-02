@@ -5102,7 +5102,7 @@ bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
 }
 
 // 0x443AD0
-bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
+bool object_load_obj_handle_safe(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
 {
     ObjectID oid;
     int64_t loc;
@@ -5135,8 +5135,8 @@ bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
             objid_id_to_str(buffer, oid);
             tig_debug_printf("  Info: MapID: %d, Loc: [%dx, %dy], Sector: %d, ID: %s\n",
                 map,
-                LOCATION_GET_X(loc),
-                LOCATION_GET_Y(loc),
+                (int)LOCATION_GET_X(loc),
+                (int)LOCATION_GET_Y(loc),
                 sector_id_from_loc(loc),
                 buffer);
         }
