@@ -2537,7 +2537,7 @@ void sub_417590(int a1, int* a2, int* a3)
         *a3 = a1;
     } else if (a1 < 0) {
         *a2 = 2;
-        *a3 = -1;
+        *a3 = -a1;
     } else {
         *a2 = 1;
     }
