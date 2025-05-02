@@ -4682,7 +4682,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         v2.field_48 = 0;
         v2.field_0 = &v1;
 
-        if (sub_4F2D20(&v2)) {
+        if (!sub_4F2D20(&v2)) {
             if (a1->target_obj.obj == OBJ_HANDLE_NULL) {
                 return false;
             }
