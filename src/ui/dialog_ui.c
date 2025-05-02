@@ -677,7 +677,7 @@ void dialog_ui_float_line(int64_t npc_obj, int64_t pc_obj, const char* str, int 
 {
     int type;
 
-    type = obj_field_int32_get(npc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+    type = obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC
         ? TB_TYPE_WHITE
         : TB_TYPE_GREEN;
     sub_568540(npc_obj, pc_obj, type, TB_EXPIRE_DEFAULT, str, speech_id);
