@@ -2080,7 +2080,7 @@ ObjectID obj_get_id(int64_t obj)
             }
 
             sub_4E4FD0(object->oid, obj);
-            object->oid.type = OID_TYPE_A;
+            object->modified = true;
         }
 
         oid = object->oid;
