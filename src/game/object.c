@@ -5070,7 +5070,7 @@ bool sub_443880(TigRect* rect, tig_art_id_t art_id)
 }
 
 // 0x4439D0
-bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
+bool object_save_obj_handle_safe(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
 {
     ObjectID oid;
     int64_t loc;

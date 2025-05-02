@@ -655,7 +655,7 @@ bool timeevent_save_node(TimeEventTypeInfo* timeevent_type_info, TimeEventNode* 
                 return false;
             }
         } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & timeevent_type_info->flags) != 0) {
-            if (!sub_4439D0(&(node->te.params[index].object_value), &(node->field_30[index]), stream)) {
+            if (!object_save_obj_handle_safe(&(node->te.params[index].object_value), &(node->field_30[index]), stream)) {
                 return false;
             }
         } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_LOCATION] & timeevent_type_info->flags) != 0) {

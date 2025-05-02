@@ -2946,7 +2946,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->flags), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_state), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_14), 4, 1, stream) != 1) return false;
-    if (!sub_4439D0(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
+    if (!object_save_obj_handle_safe(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
     if (tig_file_fwrite(&(run_info->field_28), 8, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
@@ -3016,7 +3016,7 @@ bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream)
         // pObjSafeData != NULL
         ASSERT(a2 != NULL);
 
-        if (!sub_4439D0(&(param->obj), a2, stream)) return false;
+        if (!object_save_obj_handle_safe(&(param->obj), a2, stream)) return false;
         return true;
     case AGDATATYPE_LOC:
         if (tig_file_fwrite(&(param->loc), sizeof(param->loc), 1, stream) != 1) return false;
