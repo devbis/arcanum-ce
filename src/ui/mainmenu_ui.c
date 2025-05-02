@@ -195,7 +195,7 @@ static int mainmenu_font_colors[MM_COLOR_COUNT][3] = {
 int dword_5C3618 = -1;
 
 // 0x5C361C
-static int dword_5C361C = 9;
+static int mainmenu_ui_pregen_char_cnt = 9;
 
 // 0x5C3620
 static bool dword_5C3620 = true;
@@ -1640,7 +1640,7 @@ static MainMenuWindowInfo mainmenu_ui_pregen_char_window_info = {
 };
 
 // 0x5C5308
-static int dword_5C5308 = 1;
+static int mainmenu_ui_pregen_char_idx = 1;
 
 // 0x5C5310
 static MainMenuButtonInfo stru_5C5310[2] = {
@@ -4950,7 +4950,7 @@ bool mainmenu_ui_new_char_execute(int btn)
 void mainmenu_ui_pregen_char_create()
 {
     dword_64C414 = 13;
-    dword_5C5308 = 1;
+    mainmenu_ui_pregen_char_idx = 1;
     qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(16067)));
     mainmenu_ui_create_window();
 }
@@ -5009,21 +5009,21 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         sub_5417A0(1);
         return true;
     case 2:
-        if (dword_5C5308 > 1) {
-            dword_5C5308--;
+        if (mainmenu_ui_pregen_char_idx > 1) {
+            mainmenu_ui_pregen_char_idx--;
         } else {
-            dword_5C5308 = dword_5C361C - 1;
+            mainmenu_ui_pregen_char_idx = mainmenu_ui_pregen_char_cnt - 1;
         }
-        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(dword_5C5308 + 16066)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + 16066)));
         window->refresh_func(NULL);
         return true;
     case 3:
-        if (dword_5C5308 < dword_5C361C - 1) {
-            dword_5C5308++;
+        if (mainmenu_ui_pregen_char_idx < mainmenu_ui_pregen_char_cnt - 1) {
+            mainmenu_ui_pregen_char_idx++;
         } else {
-            dword_5C5308 = 1;
+            mainmenu_ui_pregen_char_idx = 1;
         }
-        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(dword_5C5308 + 16067)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + 16066)));
         window->refresh_func(NULL);
         return true;
     default:
@@ -5045,18 +5045,18 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 
     player_create_info_init(&player_create_info);
     player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
-    player_create_info.basic_prototype = dword_5C5308 + 16066;
+    player_create_info.basic_prototype = mainmenu_ui_pregen_char_idx + 16066;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mmUIPregenCharExecuteFunc: ERROR: Player Creation Failed!\n");
         exit(EXIT_FAILURE);
     }
 
-    for (index = 0; index < dword_5C361C - 1; index++) {
+    for (index = 0; index < mainmenu_ui_pregen_char_cnt - 1; index++) {
         mes_file_entry.num = 551 + index;
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         flag = atoi(mes_file_entry.str);
         if (flag > 0) {
-            script_gl_flag_set(flag, dword_5C5308 - 1 == index);
+            script_gl_flag_set(flag, mainmenu_ui_pregen_char_idx - 1 == index);
         }
     }
 
@@ -7497,7 +7497,7 @@ void sub_549A80()
         if (obj != OBJ_HANDLE_NULL
             && tig_art_exists(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
             dword_5C3620 = false;
-            dword_5C361C = 13;
+            mainmenu_ui_pregen_char_cnt = 13;
             mainmenu_ui_new_char_window_info.num_buttons = 10;
         } else {
             dword_5C3620 = true;
