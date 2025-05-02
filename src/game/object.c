@@ -1,5 +1,7 @@
 #include "game/object.h"
 
+#include <inttypes.h>
+
 #include "game/ai.h"
 #include "game/anim.h"
 #include "game/critter.h"
@@ -5133,10 +5135,13 @@ bool object_load_obj_handle_safe(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
         if (obj == OBJ_HANDLE_NULL) {
             tig_debug_printf("Object: object_load_obj_handle_safe: Note: Couldn't match ObjID to HANDLE!\n");
             objid_id_to_str(buffer, oid);
-            tig_debug_printf("  Info: MapID: %d, Loc: [%dx, %dy], Sector: %d, ID: %s\n",
+            // FIX: Use 64-bit specifiers instead of casting values to 32-bit
+            // ints (which is ok for coordinates, but plain wrong for sector
+            // id).
+            tig_debug_printf("  Info: MapID: %d, Loc: [%" PRIi64 "x, %" PRIi64" y], Sector: %" PRIu64 ", ID: %s\n",
                 map,
-                (int)LOCATION_GET_X(loc),
-                (int)LOCATION_GET_Y(loc),
+                LOCATION_GET_X(loc),
+                LOCATION_GET_Y(loc),
                 sector_id_from_loc(loc),
                 buffer);
         }
