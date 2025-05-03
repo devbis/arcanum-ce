@@ -487,6 +487,14 @@ typedef struct Packet60 {
 
 static_assert(sizeof(Packet60) == 0xC, "wrong size");
 
+typedef struct Packet61 {
+    /* 0000 */ int type;
+    /* 0004 */ int mt_id;
+    /* 0008 */ int player;
+} Packet61;
+
+static_assert(sizeof(Packet61) == 0xC, "wrong size");
+
 typedef struct Packet64 {
     /* 0000 */ int type;
     /* 0004 */ int player;

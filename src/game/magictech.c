@@ -107,6 +107,7 @@ static void sub_453FA0();
 static bool sub_4545E0(MagicTechRunInfo* run_info);
 static bool sub_454700(int64_t source_loc, int64_t target_loc, int64_t target_obj, int spell);
 static void sub_454790(TimeEvent* timeevent, int a2, int a3, DateTime* datetime);
+static bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime);
 static bool sub_4548D0(TimeEvent* timeevent, DateTime* a2, DateTime* a3);
 static int sub_455100(int64_t obj, int fld, unsigned int a3, bool a4);
 static bool sub_4551C0(int64_t a1, int64_t a2, int64_t a3);
@@ -3576,10 +3577,231 @@ void sub_453F20(int64_t a1, int64_t a2)
     }
 }
 
+// TODO: Lots of jumps, rewrite without goto.
+//
 // 0x453FA0
 void sub_453FA0()
 {
-    // TODO: Incomplete.
+    bool v0;
+    bool v1;
+    MagicTechMaintenanceInfo* maintenance;
+    MagicTechDurationInfo* duration;
+    MesFileEntry mes_file_entry;
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    v0 = false;
+    v1 = true;
+
+    if (dword_5E75D4) {
+        if (!dword_5E7630) {
+            dword_5E7630 = true;
+            if (dword_5E75D8) {
+                sub_457030(dword_5E75F0->id, MAGICTECH_ACTION_END_CALLBACK);
+            } else {
+                sub_457030(dword_5E75F0->id, MAGICTECH_ACTION_CALLBACK);
+            }
+            dword_5E7630 = false;
+            return;
+        }
+    } else {
+        if (dword_5E75F0->action == MAGICTECH_ACTION_END) {
+            goto LABEL_25;
+        }
+
+        if (dword_5E75F0->action >= MAGICTECH_ACTION_END && dword_5E75F0->action != MAGICTECH_ACTION_CALLBACK) {
+LABEL_69:
+            if (dword_5E7598->components[MAGICTECH_ACTION_CALLBACK].cnt == 0
+                && dword_5E7598->components[MAGICTECH_ACTION_END_CALLBACK].cnt == 0) {
+                v0 = true;
+            }
+
+            if (dword_5E75F0->action == MAGICTECH_ACTION_CALLBACK
+                && dword_5E7598->components[MAGICTECH_ACTION_END].cnt == 0) {
+                v0 = true;
+            }
+
+            if (dword_5E75F0->action == MAGICTECH_ACTION_END_CALLBACK) {
+                dword_5E75F0->action = MAGICTECH_ACTION_END;
+                v0 = false;
+            }
+
+            if ((dword_5E75F0->action != MAGICTECH_ACTION_BEGIN
+                    || dword_5E7598->components[MAGICTECH_ACTION_CALLBACK].cnt == 0
+                    || !dword_5E75CC)
+                && v0) {
+                dword_5E75F0->action = MAGICTECH_ACTION_END;
+                sub_451070(dword_5E75F0);
+                return;
+            }
+
+            if (!v1) {
+                return;
+            }
+
+            goto LABEL_25;
+        }
+
+        maintenance = magictech_get_maintenance(dword_5E75F0->spell);
+        if ((dword_5E75F0->field_13C & 0x10) != 0) {
+            v0 = true;
+            goto LABEL_69;
+        }
+
+        if (maintenance->period > 0) {
+            if (dword_5E75DC) {
+                if (dword_5E75F0->source_obj.obj != OBJ_HANDLE_NULL) {
+                    if (!sub_4545E0(dword_5E75F0)) {
+                        if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+                            mes_file_entry.num = 601;
+                            mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+                            sub_460610(mes_file_entry.str);
+                        }
+                        dword_5E75F0->action = MAGICTECH_ACTION_END;
+                        sub_451070(dword_5E75F0);
+                        return;
+                    }
+
+                    sub_454790(&timeevent, dword_5E75F0->id, maintenance->period, &datetime);
+
+                    if (sub_4547F0(&timeevent, &datetime)) {
+LABEL_25:
+                        if (dword_5E75F0->action != MAGICTECH_ACTION_END) {
+                            return;
+                        }
+
+                        if (dword_5E75CC
+                            && dword_5E7598->components[MAGICTECH_ACTION_END_CALLBACK].cnt == 0) {
+                            dword_5E75CC = false;
+                        }
+
+                        if (dword_5E75F0->action != MAGICTECH_ACTION_END
+                            || dword_5E75CC
+                            || dword_5E75F0->id == -1) {
+                            return;
+                        }
+
+                        goto END;
+                    }
+
+                    goto LABEL_69;
+                }
+
+                if (dword_5E75F0->field_150 == 0) {
+                    sub_454790(&timeevent, dword_5E75F0->id, maintenance->period, &datetime);
+                    v1 = false;
+                    if (dword_5E7598->duration_trigger_count != 0) {
+                        dword_5E75F0->field_150 = dword_5E7598->duration_trigger_count;
+                    } else {
+                        dword_5E75F0->field_150 = 8;
+                    }
+
+LABEL_22:
+                    if (sub_4547F0(&timeevent, &datetime)) {
+                        if (!v1) {
+                            return;
+                        }
+
+                        goto LABEL_25;
+                    }
+
+                    goto LABEL_69;
+                }
+
+                dword_5E75F0->field_150--;
+                if (dword_5E75F0->field_150 > 0) {
+                    sub_454790(&timeevent, dword_5E75F0->id, maintenance->period, &datetime);
+                    goto LABEL_22;
+                }
+            }
+            v0 = true;
+        } else {
+            duration = magictech_get_duration(dword_5E75F0->spell);
+            if (dword_5E75DC && (duration->period != 0 || duration->stat != -1)) {
+                timeevent.type = TIMEEVENT_TYPE_MAGICTECH;
+                timeevent.params[0].integer_value = dword_5E75F0->id;
+                timeevent.params[2].integer_value = 1;
+
+                if (dword_5E75F0->field_150 > 0) {
+                    dword_5E75F0->field_150--;
+                } else {
+                    dword_5E75F0->action = MAGICTECH_ACTION_END;
+                    dword_5E75F0->field_13C |= 0x10;
+                }
+
+                sub_45A950(&datetime, duration->period);
+
+                if (duration->stat > -1) {
+                    if (dword_5E75F0->parent_obj.type != -1) {
+                        if (obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
+                            int level = duration->level - stat_level_get(dword_5E75F0->parent_obj.obj, duration->stat);
+                            if (level < 0) {
+                                level = 0;
+                            }
+                            datetime.milliseconds += level * duration->modifier;
+                            v0 = false;
+                        }
+                    } else {
+                        if (dword_5E75F0->target_obj.obj != OBJ_HANDLE_NULL
+                            && obj_type_is_critter(dword_5E75F0->target_obj.type)) {
+                            int level = duration->level - stat_level_get(dword_5E75F0->target_obj.obj, duration->stat);
+                            if (level < 0) {
+                                level = 0;
+                            }
+                            datetime.milliseconds += level * duration->modifier;
+                        }
+
+                        v0 = false;
+                    }
+                }
+
+                if (datetime.milliseconds == 0) {
+                    datetime.milliseconds = 1;
+                }
+
+                datetime.milliseconds *= 1000;
+
+                sub_455250(dword_5E75F0, &datetime);
+
+                datetime.milliseconds *= 8;
+                if (sub_4548D0(&timeevent, &datetime, &dword_5E75F0->field_148)) {
+                    return;
+                }
+
+                v1 = true;
+            } else {
+                v0 = true;
+            }
+        }
+
+        goto LABEL_69;
+    }
+
+END:
+
+    if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+        sub_4604C0(dword_5E75F0->id);
+    }
+
+    if (tig_net_is_active() && tig_net_is_host()) {
+        Packet61 pkt;
+
+        pkt.type = 61;
+        pkt.mt_id = dword_5E75F0->id;
+        pkt.player = sub_4A2B10(dword_5E75F0->parent_obj.obj);
+
+        if (pkt.player != -1) {
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        } else {
+            tig_debug_println("MP: MagicTech: could not find player for object in SpellMaintainEnd but am handling...");
+        }
+    }
+
+    magictech_id_free_lock(dword_5E75F0->id);
+
+    if (player_is_pc_obj(dword_5E75F0->target_obj.obj)) {
+        sub_4601C0();
+    }
 }
 
 // 0x4545E0
