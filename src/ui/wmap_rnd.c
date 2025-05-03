@@ -931,10 +931,10 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
 
         for (k = 0; k < dword_64C74C[index]; k++) {
             // TODO: Check.
-            dx = origin;
-            dy = origin;
+            dx = LOCATION_GET_X(origin);
+            dy = LOCATION_GET_Y(origin);
             sub_5594E0(k, &dx, &dy);
-            loc = LOCATION_MAKE(LOCATION_GET_X(origin) + dx, LOCATION_GET_Y(origin) + dy);
+            loc = LOCATION_MAKE(dx, dy);
             wmap_rnd_encounter_build_object(entry->field_18[index], loc, &obj);
             if (tile_is_blocking(loc, 0)) {
                 pc_obj = player_get_local_pc_obj();
