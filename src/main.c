@@ -165,7 +165,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     init_info.height = 600;
     init_info.bpp = 16;
     init_info.instance = hInstance;
-    init_info.art_file_path_resolver = sub_41DAE0;
+    init_info.art_file_path_resolver = name_resolve_path;
     init_info.art_id_reset_func = name_normalize_aid;
     init_info.sound_file_path_resolver = gsound_resolve_path;
 

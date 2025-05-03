@@ -846,7 +846,7 @@ void fix_missing_art(int num, int cnt, unsigned int* missing, int* anim_ptr, int
 }
 
 // 0x41DAE0
-int sub_41DAE0(tig_art_id_t aid, char* path)
+int name_resolve_path(tig_art_id_t aid, char* path)
 {
     MesFileEntry mes_file_entry;
 
