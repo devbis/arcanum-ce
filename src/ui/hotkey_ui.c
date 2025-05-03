@@ -916,7 +916,7 @@ bool sub_57E8D0(int a1)
             flags &= ~OIF_NO_DISPLAY;
             obj_field_int32_set(stru_683950.item_obj.obj, OBJ_F_ITEM_FLAGS, flags);
             item_location_set(stru_683950.item_obj.obj, hotkey->slot + 2000);
-            sub_576100(player_get_local_pc_obj());
+            inven_ui_update(player_get_local_pc_obj());
             hotkey->item_obj = stru_683950.item_obj;
             hotkey->art_id = sub_554BE0(stru_683950.item_obj.obj);
             hotkey->count = item_count_items_matching_prototype(player_get_local_pc_obj(), hotkey->item_obj.obj);

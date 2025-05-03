@@ -246,11 +246,11 @@ void sub_4EDCE0(int64_t obj, tig_art_id_t art_id)
 }
 
 // 0x4EDD50
-void sub_4EDD50(int64_t obj)
+void mp_ui_update_inven(int64_t obj)
 {
-    Packet94 pkt;
+    PacketUpdateInven pkt;
 
-    sub_4601F0(obj);
+    ui_update_inven(obj);
 
     if (tig_net_is_active()
         && tig_net_is_host()) {
@@ -261,13 +261,13 @@ void sub_4EDD50(int64_t obj)
 }
 
 // 0x4EDDB0
-void sub_4EDDB0(Packet94* pkt)
+void mp_handle_ui_update_inven(PacketUpdateInven* pkt)
 {
     int64_t obj;
 
     obj = objp_perm_lookup(pkt->oid);
     if (obj != OBJ_HANDLE_NULL) {
-        sub_4601F0(obj);
+        ui_update_inven(obj);
     }
 }
 

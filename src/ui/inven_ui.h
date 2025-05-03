@@ -36,7 +36,7 @@ bool sub_575080(int64_t a1, int64_t a2);
 void sub_575770();
 void sub_575930();
 void sub_575C50(int64_t obj);
-void sub_576100(int64_t obj);
+void inven_ui_update(int64_t obj);
 void sub_578B80(int a1);
 bool sub_578EA0(Packet81* pkt);
 int64_t sub_579760();

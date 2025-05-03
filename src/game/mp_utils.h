@@ -806,12 +806,12 @@ typedef struct Packet93 {
 
 static_assert(sizeof(Packet93) == 0x28, "wrong size");
 
-typedef struct Packet94 {
+typedef struct PacketUpdateInven {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-} Packet94;
+} PacketUpdateInven;
 
-static_assert(sizeof(Packet94) == 0x20, "wrong size");
+static_assert(sizeof(PacketUpdateInven) == 0x20, "wrong size");
 
 typedef struct Packet95 {
     /* 0000 */ int type;
@@ -1223,6 +1223,7 @@ void mp_tf_add(int64_t obj, int tf_type, const char* str);
 void mp_reaction_adj(int64_t npc_obj, int64_t pc_obj, int value);
 void mp_trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason);
 void sub_4EDCE0(int64_t obj, tig_art_id_t art_id);
+void mp_ui_update_inven(int64_t obj);
 void sub_4EDDE0(int64_t obj);
 void mp_item_arrange_inventory(int64_t obj, bool vertical);
 void mp_handle_item_arrange_inventory(PacketArrangeInventory* pkt);

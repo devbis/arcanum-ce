@@ -4874,7 +4874,7 @@ bool sub_551A80(int a1)
                 obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
             }
 
-            sub_576100(OBJ_HANDLE_NULL);
+            inven_ui_update(OBJ_HANDLE_NULL);
             break;
         case 14:
             v1 = true;
@@ -4942,7 +4942,7 @@ bool sub_551A80(int a1)
                 flags |= OIF_NO_DISPLAY;
                 obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
             }
-            sub_576100(OBJ_HANDLE_NULL);
+            inven_ui_update(OBJ_HANDLE_NULL);
             break;
         }
 

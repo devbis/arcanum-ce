@@ -49,7 +49,7 @@ typedef struct S4F2810 S4F2810;
 
 typedef void(UI_CALLBACKS_FUNC_0)();
 typedef void(UI_CALLBACKS_FUNC_4)(int64_t obj);
-typedef void(UI_CALLBACKS_FUNC_8)(int64_t obj);
+typedef void(UiUpdateInven)(int64_t obj);
 typedef void(UI_CALLBACKS_FUNC_C)();
 typedef void(UI_CALLBACKS_FUNC_10)(int64_t a1);
 typedef void(UI_CALLBACKS_FUNC_14)(int64_t a1);
@@ -143,7 +143,7 @@ typedef void(UiMultiplayerChareditTraitDec)(int player, int trait, int param);
 typedef struct UiCallbacks {
     /* 0000 */ UI_CALLBACKS_FUNC_0* field_0;
     /* 0004 */ UI_CALLBACKS_FUNC_4* field_4;
-    /* 0008 */ UI_CALLBACKS_FUNC_8* field_8;
+    /* 0008 */ UiUpdateInven* update_inven;
     /* 000C */ UI_CALLBACKS_FUNC_C* field_C;
     /* 0010 */ UI_CALLBACKS_FUNC_10* field_10;
     /* 0014 */ UI_CALLBACKS_FUNC_14* field_14;
@@ -240,7 +240,7 @@ void ui_exit();
 bool ui_timeevent_process(TimeEvent* timeevent);
 void sub_4601C0();
 void sub_4601D0(int64_t obj);
-void sub_4601F0(int64_t obj);
+void ui_update_inven(int64_t obj);
 void sub_460240(int64_t a1);
 void sub_460260(int64_t a1);
 void sub_460280(int64_t obj);

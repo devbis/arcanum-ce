@@ -3964,7 +3964,7 @@ void sub_466D60(int64_t obj)
         sub_4605D0();
     }
 
-    sub_4601F0(obj);
+    ui_update_inven(obj);
 }
 
 // 0x466DA0
@@ -4159,6 +4159,8 @@ void item_arrange_inventory(int64_t parent_obj, bool vertical)
     for (idx = 0; idx < cnt; idx++) {
         mp_obj_field_int32_set(items[idx], OBJ_F_ITEM_INV_LOCATION, inventory_locations[idx]);
     }
+
+    mp_ui_update_inven(parent_obj);
 }
 
 // 0x4673B0

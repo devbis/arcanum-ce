@@ -36,7 +36,7 @@
 #include "ui/written_ui.h"
 
 static void sub_57CAE0();
-static void sub_57CAB0(int64_t obj);
+static void tb_inven_ui_update(int64_t obj);
 static void sub_57CAF0(int64_t obj);
 static void show_inven_loot(int64_t pc_obj, int64_t target_obj);
 static void show_inven_identify(int64_t pc_obj, int64_t target_obj);
@@ -74,7 +74,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_54 = sub_57C4B0;
     callbacks.field_0 = sub_57CAE0;
     callbacks.field_4 = sub_57CAF0;
-    callbacks.field_8 = sub_57CAB0;
+    callbacks.update_inven = tb_inven_ui_update;
     callbacks.field_C = sub_5704E0;
     callbacks.field_14 = sub_57CC10;
     callbacks.field_10 = sub_5571C0;
@@ -173,9 +173,9 @@ void tb_ui_exit()
 }
 
 // 0x57CAB0
-void sub_57CAB0(int64_t obj)
+void tb_inven_ui_update(int64_t obj)
 {
-    sub_576100(obj);
+    inven_ui_update(obj);
     if (player_is_local_pc_obj(obj)) {
         sub_556E60();
         sub_54B3C0();

@@ -59,10 +59,10 @@ void sub_4601D0(int64_t obj)
 }
 
 // 0x4601F0
-void sub_4601F0(int64_t obj)
+void ui_update_inven(int64_t obj)
 {
-    if (ui_callbacks.field_8 != NULL) {
-        ui_callbacks.field_8(obj);
+    if (ui_callbacks.update_inven != NULL) {
+        ui_callbacks.update_inven(obj);
     }
 }
 

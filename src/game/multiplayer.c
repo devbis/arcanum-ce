@@ -2467,10 +2467,10 @@ bool sub_4A50D0(int64_t pc_obj, int64_t item_obj)
             }
         }
 
-        sub_4601F0(item_obj);
+        ui_update_inven(item_obj);
 
         if (item_parent(item_obj, &parent_obj)) {
-            sub_4601F0(parent_obj);
+            ui_update_inven(parent_obj);
         }
 
         return true;

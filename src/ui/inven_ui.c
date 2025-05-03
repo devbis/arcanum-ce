@@ -2693,22 +2693,24 @@ int64_t sub_575FA0(int x, int y, int64_t* parent_obj_ptr)
 }
 
 // 0x576100
-void sub_576100(int64_t obj)
+void inven_ui_update(int64_t obj)
 {
-    if (inven_ui_created) {
-        if (obj == inven_ui_pc_obj) {
-            item_inventory_slots_get(inven_ui_pc_obj, dword_68111C);
-            redraw_inven(false);
-        } else if (obj == qword_6813A8 || obj == qword_682C78) {
+    if (!inven_ui_created) {
+        return;
+    }
+
+    if (obj == inven_ui_pc_obj) {
+        item_inventory_slots_get(inven_ui_pc_obj, dword_68111C);
+        redraw_inven(false);
+    } else if (obj == qword_6813A8 || obj == qword_682C78) {
+        item_inventory_slots_get(qword_6813A8, dword_681518);
+        redraw_inven(false);
+    } else if (obj == OBJ_HANDLE_NULL) {
+        item_inventory_slots_get(inven_ui_pc_obj, dword_68111C);
+        if (qword_6813A8 != OBJ_HANDLE_NULL) {
             item_inventory_slots_get(qword_6813A8, dword_681518);
-            redraw_inven(false);
-        } else if (obj != OBJ_HANDLE_NULL) {
-            item_inventory_slots_get(inven_ui_pc_obj, dword_68111C);
-            if (qword_6813A8 != OBJ_HANDLE_NULL) {
-                item_inventory_slots_get(qword_6813A8, dword_681518);
-            }
-            redraw_inven(false);
         }
+        redraw_inven(false);
     }
 }
 
