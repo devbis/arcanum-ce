@@ -1936,6 +1936,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 if (dword_66D868 == 0 || dword_66D868 == 1) {
                     v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     sub_562880(&stru_64E7E8);
+                    v3 = true;
                 } else if (dword_66D868 == 2) {
                     v3 = true;
                 } else {
