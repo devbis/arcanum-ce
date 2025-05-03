@@ -182,13 +182,13 @@ typedef struct S5F0E1C {
 
 static_assert(sizeof(S5F0E1C) == 0x40, "wrong size");
 
-typedef struct S5E8E08 {
+typedef struct MultiplayerLevelSchemeInfo {
     /* 0000 */ ObjectID oid;
-    /* 0018 */ char field_18[2000];
-    /* 07E8 */ char field_7E8[2000];
-} S5E8E08;
+    /* 0018 */ char rule[2000];
+    /* 07E8 */ char name[2000];
+} MultiplayerLevelSchemeInfo;
 
-static_assert(sizeof(S5E8E08) == 0xFB8, "wrong size");
+static_assert(sizeof(MultiplayerLevelSchemeInfo) == 0xFB8, "wrong size");
 
 typedef struct S5F0BC8 {
     /* 0000 */ ObjectID oid;
@@ -233,8 +233,8 @@ static void sub_4A3780();
 static bool sub_4A39F0(const char* path, int64_t obj);
 static bool sub_4A3F40(const char* path, int64_t* obj_ptr);
 static bool sub_4A40D0(int player);
-static void sub_4A43B0(int64_t obj, const char* a2, const char* a3);
-static int sub_4A44C0(int64_t obj, char* a2, char* a3);
+static void multiplayer_level_scheme_set(int64_t obj, const char* rule, const char* name);
+static int multiplayer_level_scheme_get(int64_t obj, char* rule, char* name);
 static void sub_4A5290();
 static bool sub_4A52C0(int client_id, int64_t item_obj);
 static bool sub_4A5320(int client_id);
@@ -301,7 +301,7 @@ static int64_t qword_5E8D78[NUM_PLAYERS];
 static char byte_5E8DB8[80];
 
 // 0x5E8E08
-static S5E8E08 stru_5E8E08[NUM_PLAYERS];
+static MultiplayerLevelSchemeInfo multiplayer_level_scheme_tbl[NUM_PLAYERS];
 
 // 0x5F0BE8
 static mes_file_handle_t multiplayer_mes_file;
@@ -1676,7 +1676,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
             break;
         }
 
-        sub_4A43B0(obj, scheme_rule, scheme_name);
+        multiplayer_level_scheme_set(obj, scheme_rule, scheme_name);
         tig_file_fclose(stream);
         FREE(data);
         multiplayer_unlock();
@@ -1923,50 +1923,50 @@ bool sub_4A4320()
 }
 
 // 0x4A43B0
-void sub_4A43B0(int64_t obj, const char* a2, const char* a3)
+void multiplayer_level_scheme_set(int64_t obj, const char* rule, const char* name)
 {
     int index;
 
-    index = sub_4A44C0(obj, NULL, NULL);
+    index = multiplayer_level_scheme_get(obj, NULL, NULL);
     if (index == -1) {
         index = dword_5F0DF4;
-        dword_5F0DF4 = (dword_5F0DF4 + 1) % 8;
-        stru_5E8E08[index].oid = obj_get_id(obj);
-        stru_5E8E08[index].field_18[0] = '\0';
-        stru_5E8E08[index].field_7E8[0] = '\0';
+        dword_5F0DF4 = (dword_5F0DF4 + 1) % NUM_PLAYERS;
+        multiplayer_level_scheme_tbl[index].oid = obj_get_id(obj);
+        multiplayer_level_scheme_tbl[index].rule[0] = '\0';
+        multiplayer_level_scheme_tbl[index].name[0] = '\0';
     }
 
-    if (a2 != NULL) {
-        if (a2[0] != '\0') {
-            strncpy(stru_5E8E08[index].field_18, a2, 2000);
+    if (rule != NULL) {
+        if (rule[0] != '\0') {
+            strncpy(multiplayer_level_scheme_tbl[index].rule, rule, 2000);
         } else {
-            stru_5E8E08[index].field_18[0] = '\0';
+            multiplayer_level_scheme_tbl[index].rule[0] = '\0';
         }
     }
 
-    if (a3 != NULL) {
-        if (a3[0] != '\0') {
-            strncpy(stru_5E8E08[index].field_7E8, a3, 2000);
+    if (name != NULL) {
+        if (name[0] != '\0') {
+            strncpy(multiplayer_level_scheme_tbl[index].name, name, 2000);
         } else {
-            stru_5E8E08[index].field_7E8[0] = '\0';
+            multiplayer_level_scheme_tbl[index].name[0] = '\0';
         }
     }
 }
 
 // 0x4A44C0
-int sub_4A44C0(int64_t obj, char* a2, char* a3)
+int multiplayer_level_scheme_get(int64_t obj, char* rule, char* name)
 {
     ObjectID oid;
     int index;
 
     oid = obj_get_id(obj);
     for (index = 0; index < NUM_PLAYERS; index++) {
-        if (objid_is_equal(oid, stru_5E8E08[index].oid)) {
-            if (a2 != NULL) {
-                strcpy(a2, stru_5E8E08[index].field_18);
+        if (objid_is_equal(oid, multiplayer_level_scheme_tbl[index].oid)) {
+            if (rule != NULL) {
+                strcpy(rule, multiplayer_level_scheme_tbl[index].rule);
             }
-            if (a3 != NULL) {
-                strcpy(a3, stru_5E8E08[index].field_7E8);
+            if (name != NULL) {
+                strcpy(name, multiplayer_level_scheme_tbl[index].name);
             }
             return index;
         }
@@ -1976,7 +1976,7 @@ int sub_4A44C0(int64_t obj, char* a2, char* a3)
 }
 
 // 0x4A45B0
-bool sub_4A45B0(int64_t obj)
+bool multiplayer_notify_level_scheme_changed(int64_t obj)
 {
     int size = 0;
     void* data = NULL;
@@ -2004,7 +2004,7 @@ bool sub_4A45B0(int64_t obj)
         name = "";
     }
 
-    sub_4A43B0(obj, rule, name);
+    multiplayer_level_scheme_set(obj, rule, name);
     objid_id_to_str(str, obj_get_id(obj));
     snprintf(path, sizeof(path), "Players\\%s.mpc", str);
 
@@ -2043,7 +2043,7 @@ bool sub_4A45B0(int64_t obj)
 }
 
 // 0x4A47D0
-bool sub_4A47D0(int64_t obj, char* str)
+bool multiplayer_level_scheme_rule(int64_t obj, char* str)
 {
     TigFile* stream;
     char oidstr[40];
@@ -2051,7 +2051,7 @@ bool sub_4A47D0(int64_t obj, char* str)
     int pos;
     int size;
 
-    if (sub_4A44C0(obj, str, NULL) != -1) {
+    if (multiplayer_level_scheme_get(obj, str, NULL) != -1) {
         return true;
     }
 
@@ -2077,7 +2077,7 @@ bool sub_4A47D0(int64_t obj, char* str)
                     break;
                 }
 
-                sub_4A43B0(obj, str, NULL);
+                multiplayer_level_scheme_set(obj, str, NULL);
                 tig_file_fclose(stream);
                 return true;
             } while (0);
@@ -2107,7 +2107,7 @@ bool sub_4A47D0(int64_t obj, char* str)
                     break;
                 }
 
-                sub_4A43B0(obj, str, NULL);
+                multiplayer_level_scheme_set(obj, str, NULL);
                 tig_file_fclose(stream);
                 return true;
             } while (0);
@@ -2121,7 +2121,7 @@ bool sub_4A47D0(int64_t obj, char* str)
 }
 
 // 0x4A49E0
-bool sub_4A49E0(int64_t obj, char* str)
+bool multiplayer_level_scheme_name(int64_t obj, char* str)
 {
     TigFile* stream;
     char oidstr[40];
@@ -2129,7 +2129,7 @@ bool sub_4A49E0(int64_t obj, char* str)
     int pos;
     int size;
 
-    if (sub_4A44C0(obj, NULL, str) != -1) {
+    if (multiplayer_level_scheme_get(obj, NULL, str) != -1) {
         return true;
     }
 
@@ -2163,7 +2163,7 @@ bool sub_4A49E0(int64_t obj, char* str)
                     break;
                 }
 
-                sub_4A43B0(obj, NULL, str);
+                multiplayer_level_scheme_set(obj, NULL, str);
                 tig_file_fclose(stream);
                 return true;
             } while (0);
@@ -2201,7 +2201,7 @@ bool sub_4A49E0(int64_t obj, char* str)
                     break;
                 }
 
-                sub_4A43B0(obj, NULL, str);
+                multiplayer_level_scheme_set(obj, NULL, str);
                 tig_file_fclose(stream);
                 return true;
             } while (0);

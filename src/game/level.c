@@ -588,7 +588,7 @@ bool sub_4A7030(int64_t obj, char* str)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && (obj_field_int32_get(obj, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
-        if (!sub_4A47D0(obj, buffer)) {
+        if (!multiplayer_level_scheme_rule(obj, buffer)) {
             return false;
         }
         rule = buffer;

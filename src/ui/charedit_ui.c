@@ -2887,7 +2887,7 @@ void sub_55D210()
 
     if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && (obj_field_int32_get(charedit_obj, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
-        if (!sub_4A49E0(charedit_obj, byte_64D714)) {
+        if (!multiplayer_level_scheme_name(charedit_obj, byte_64D714)) {
             byte_64D714[0] = '\0';
         }
         stru_5C8E40.str = byte_64D714;
@@ -3443,7 +3443,7 @@ bool sub_55DF90(TigMessage* msg)
                     if (index < dword_64CDC8) {
                         level_auto_level_scheme_set(charedit_obj, dword_64CFE4[index + dword_64D424]);
                         if (tig_net_is_active()) {
-                            sub_4A45B0(player_get_local_pc_obj());
+                            multiplayer_notify_level_scheme_changed(player_get_local_pc_obj());
                         }
                         sub_55D210();
                     }
