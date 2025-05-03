@@ -2602,7 +2602,7 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
             destroyed_art_id = obj_field_int32_get(obj, OBJ_F_DESTROYED_AID);
             if ((scenery_flags & OSCF_BUSTED) != 0) {
                 object_destroy(obj);
-                sound_id = sub_4F1050(obj, 1);
+                sound_id = sfx_misc_sound(obj, MISC_SOUND_DESTROYING);
             } else {
                 if (destroyed_art_id != TIG_ART_ID_INVALID) {
                     object_set_current_aid(obj, destroyed_art_id);
@@ -2610,7 +2610,7 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
 
                 object_hp_damage_set(obj, object_hp_max(obj));
                 obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
-                sound_id = sub_4F1050(obj, 0);
+                sound_id = sfx_misc_sound(obj, MISC_SOUND_BUSTING);
                 object_flags_set(obj, OF_INVULNERABLE);
                 object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             }
@@ -2646,11 +2646,11 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
                 item_drop(obj);
             }
 
-            sound_id = sub_4F1050(obj, 0);
+            sound_id = sfx_misc_sound(obj, MISC_SOUND_BUSTING);
             object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
         } else {
             object_destroy(obj);
-            sound_id = sub_4F1050(obj, 1);
+            sound_id = sfx_misc_sound(obj, MISC_SOUND_DESTROYING);
         }
         gsound_play_sfx_on_obj(sound_id, 1, obj);
         break;
@@ -2666,15 +2666,15 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
                 object_set_current_aid(obj, destroyed_art_id);
                 object_hp_damage_set(obj, 0);
                 obj_field_int32_set(obj, OBJ_F_TRAP_FLAGS, trap_flags | 0x2);
-                sound_id = sub_4F1050(obj, 0);
+                sound_id = sfx_misc_sound(obj, MISC_SOUND_BUSTING);
                 object_script_execute(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             } else {
                 object_destroy(obj);
-                sound_id = sub_4F1050(obj, 1);
+                sound_id = sfx_misc_sound(obj, MISC_SOUND_DESTROYING);
             }
         } else {
             object_destroy(obj);
-            sound_id = sub_4F1050(obj, 1);
+            sound_id = sfx_misc_sound(obj, MISC_SOUND_DESTROYING);
         }
         gsound_play_sfx_on_obj(sound_id, 1, obj);
         break;
@@ -2747,7 +2747,7 @@ void sub_43F710(int64_t obj)
         }
     } else {
         if (tig_art_anim_data(obj_field_int32_get(obj, OBJ_F_CURRENT_AID), &art_anim_data) == TIG_OK) {
-            if (art_anim_data.num_frames <= 1 && sub_4F1050(obj, 2) == -1) {
+            if (art_anim_data.num_frames <= 1 && sfx_misc_sound(obj, MISC_SOUND_ANIMATING) == -1) {
                 if (!sub_44CB60()) {
                     sub_423FF0(obj);
                 }

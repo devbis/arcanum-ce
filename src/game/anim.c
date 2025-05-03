@@ -9876,7 +9876,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
         return true;
     }
 
-    sound_id = sub_4F1050(obj, 2);
+    sound_id = sfx_misc_sound(obj, MISC_SOUND_ANIMATING);
     if (sound_id == -1) {
         return true;
     }

@@ -26,12 +26,12 @@ void portal_bust(int64_t portal_obj, int64_t triggerer_obj)
         flags |= OPF_BUSTED;
         obj_field_int32_set(portal_obj, OBJ_F_PORTAL_FLAGS, flags);
         object_set_current_aid(portal_obj, art_id);
-        sound_id = sub_4F1050(portal_obj, 0);
+        sound_id = sfx_misc_sound(portal_obj, MISC_SOUND_BUSTING);
         object_script_execute(triggerer_obj, portal_obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
         gsound_play_sfx_on_obj(sound_id, 1, portal_obj);
     } else {
         object_destroy(portal_obj);
-        sound_id = sub_4F1050(portal_obj, 1);
+        sound_id = sfx_misc_sound(portal_obj, MISC_SOUND_DESTROYING);
         gsound_play_sfx_on_obj(sound_id, 1, portal_obj);
     }
 }

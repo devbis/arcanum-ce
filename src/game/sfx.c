@@ -233,7 +233,7 @@ int sub_4F1010(int64_t obj, int a2)
 }
 
 // 0x4F1050
-int sub_4F1050(int64_t obj, int a2)
+int sfx_misc_sound(int64_t obj, MiscSoundType type)
 {
     int obj_type;
     int sound_effect;
@@ -254,8 +254,8 @@ int sub_4F1050(int64_t obj, int a2)
         sound_effect = obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT);
     }
 
-    switch (a2) {
-    case 0:
+    switch (type) {
+    case MISC_SOUND_BUSTING:
         if (sound_effect == 0) {
             return -1;
         }
@@ -265,7 +265,7 @@ int sub_4F1050(int64_t obj, int a2)
             return -1;
         }
         break;
-    case 1:
+    case MISC_SOUND_DESTROYING:
         if (sound_effect == 0) {
             return -1;
         }
@@ -275,7 +275,7 @@ int sub_4F1050(int64_t obj, int a2)
             return -1;
         }
         break;
-    case 2:
+    case MISC_SOUND_ANIMATING:
         if (sound_effect != 0) {
             sound_id = sound_effect + 2;
         }
