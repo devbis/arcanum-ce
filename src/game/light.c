@@ -70,7 +70,7 @@ static int dword_5B904C[] = {
 static int light_bpp;
 
 // 0x602E18
-static TigVideoBufferData stru_602E18;
+static TigVideoBufferData darker_vb_data;
 
 // 0x602E38
 static ViewOptions light_view_options;
@@ -88,13 +88,13 @@ static TigRect light_iso_content_rect;
 static TigPalette* dword_602E58;
 
 // 0x602E5C
-static TigVideoBuffer* dword_602E5C;
+static TigVideoBuffer* darker_vb;
 
 // 0x602E60
 static Shadow* off_602E60;
 
 // 0x602E68
-static TigVideoBufferData stru_602E68;
+static TigVideoBufferData lighter_vb_data;
 
 // 0x602E88
 static TigPalette light_outdoor_palette;
@@ -106,7 +106,7 @@ static IsoInvalidateRectFunc* light_iso_window_invalidate_rect;
 static bool light_shadows_enabled;
 
 // 0x602E94
-static TigVideoBuffer* dword_602E94;
+static TigVideoBuffer* lighter_vb;
 
 // 0x602E98
 static uint32_t* darker_colors;
@@ -166,7 +166,7 @@ static TigBmp light_shadowmap_bmp;
 static Light* dword_603400;
 
 // 0x603404
-static int dword_603404;
+static int light_buffers_lock_cnt;
 
 // 0x603408
 static tig_color_t light_indoor_color;
@@ -278,48 +278,48 @@ void sub_4D81F0()
 }
 
 // 0x4D8210
-void sub_4D8210()
+void light_buffers_lock()
 {
-    dword_603404++;
-    if (dword_603404 == 1) {
-        tig_video_buffer_lock(dword_602E94);
-        tig_video_buffer_data(dword_602E94, &stru_602E68);
+    light_buffers_lock_cnt++;
+    if (light_buffers_lock_cnt == 1) {
+        tig_video_buffer_lock(lighter_vb);
+        tig_video_buffer_data(lighter_vb, &lighter_vb_data);
 
-        tig_video_buffer_lock(dword_602E5C);
-        tig_video_buffer_data(dword_602E5C, &stru_602E18);
+        tig_video_buffer_lock(darker_vb);
+        tig_video_buffer_data(darker_vb, &darker_vb_data);
 
         switch (light_bpp) {
         case 8:
             break;
         case 16:
-            lighter_pitch = stru_602E68.pitch / 2;
-            dword_602EB4 = stru_602E68.surface_data.pixels;
-            darker_pitch = stru_602E18.pitch / 2;
-            dword_602E9C = stru_602E18.surface_data.pixels;
+            lighter_pitch = lighter_vb_data.pitch / 2;
+            dword_602EB4 = lighter_vb_data.surface_data.pixels;
+            darker_pitch = darker_vb_data.pitch / 2;
+            dword_602E9C = darker_vb_data.surface_data.pixels;
             break;
         case 24:
-            lighter_pitch = stru_602E68.pitch;
-            dword_602EB0 = stru_602E68.surface_data.pixels;
-            darker_pitch = stru_602E18.pitch;
-            dword_602EA0 = stru_602E18.surface_data.pixels;
+            lighter_pitch = lighter_vb_data.pitch;
+            dword_602EB0 = lighter_vb_data.surface_data.pixels;
+            darker_pitch = darker_vb_data.pitch;
+            dword_602EA0 = darker_vb_data.surface_data.pixels;
             break;
         case 32:
-            lighter_pitch = stru_602E68.pitch / 4;
-            lighter_colors = (uint32_t*)stru_602E68.surface_data.pixels;
-            darker_pitch = stru_602E18.pitch / 4;
-            darker_colors = (uint32_t*)stru_602E18.surface_data.pixels;
+            lighter_pitch = lighter_vb_data.pitch / 4;
+            lighter_colors = (uint32_t*)lighter_vb_data.surface_data.pixels;
+            darker_pitch = darker_vb_data.pitch / 4;
+            darker_colors = (uint32_t*)darker_vb_data.surface_data.pixels;
             break;
         }
     }
 }
 
 // 0x4D8320
-void sub_4D8320()
+void light_buffers_unlock()
 {
-    dword_603404--;
-    if (dword_603404 == 0) {
-        tig_video_buffer_unlock(dword_602E94);
-        tig_video_buffer_unlock(dword_602E5C);
+    light_buffers_lock_cnt--;
+    if (light_buffers_lock_cnt == 0) {
+        tig_video_buffer_unlock(lighter_vb);
+        tig_video_buffer_unlock(darker_vb);
     }
 }
 
@@ -1032,7 +1032,7 @@ bool sub_4DA360(int x, int y, tig_color_t color, tig_color_t* colors)
     int dy;
     int idx;
 
-    sub_4D8210();
+    light_buffers_lock();
 
     dx = (x - dword_602ED0) / 40;
     dy = (y - dword_602ED4) / 20;
@@ -1041,7 +1041,7 @@ bool sub_4DA360(int x, int y, tig_color_t color, tig_color_t* colors)
         || dx + 2 >= dword_603418
         || dy < 0
         || dy + 2 >= dword_60341C) {
-        sub_4D8320();
+        light_buffers_unlock();
         return false;
     }
 
@@ -1082,7 +1082,7 @@ bool sub_4DA360(int x, int y, tig_color_t color, tig_color_t* colors)
         }
     }
 
-    sub_4D8320();
+    light_buffers_unlock();
 
     for (idx = 0; idx < 8; idx++) {
         if (colors[idx] != colors[idx + 1]) {
@@ -2005,11 +2005,11 @@ bool sub_4DDF50()
     vb_create_info.color_key = tig_color_make(0, 255, 0);
     vb_create_info.background_color = vb_create_info.color_key;
 
-    if (tig_video_buffer_create(&vb_create_info, &dword_602E5C) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &darker_vb) != TIG_OK) {
         return false;
     }
 
-    if (tig_video_buffer_create(&vb_create_info, &dword_602E94) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &lighter_vb) != TIG_OK) {
         return false;
     }
 
@@ -2019,18 +2019,18 @@ bool sub_4DDF50()
 // 0x4DE060
 void sub_4DE060()
 {
-    if (dword_602E94 != NULL) {
-        tig_video_buffer_destroy(dword_602E94);
+    if (lighter_vb != NULL) {
+        tig_video_buffer_destroy(lighter_vb);
         dword_60341C = 0;
         dword_603418 = 0;
-        dword_602E94 = NULL;
+        lighter_vb = NULL;
     }
 
-    if (dword_602E5C != NULL) {
-        tig_video_buffer_destroy(dword_602E5C);
+    if (darker_vb != NULL) {
+        tig_video_buffer_destroy(darker_vb);
         dword_60341C = 0;
         dword_603418 = 0;
-        dword_602E5C = NULL;
+        darker_vb = NULL;
     }
 }
 
@@ -2391,9 +2391,9 @@ void light_render_internal(GameDrawInfo* draw_info)
     int64_t loc_x;
     int64_t loc_y;
 
-    tig_video_buffer_fill(dword_602E94, NULL, 0);
-    tig_video_buffer_fill(dword_602E5C, NULL, 0);
-    sub_4D8210();
+    tig_video_buffer_fill(lighter_vb, NULL, 0);
+    tig_video_buffer_fill(darker_vb, NULL, 0);
+    light_buffers_lock();
 
     indoor_color = light_get_indoor_color();
     outdoor_color = light_get_outdoor_color();
@@ -2526,7 +2526,7 @@ void light_render_internal(GameDrawInfo* draw_info)
         head = rect_node;
     }
 
-    sub_4D8320();
+    light_buffers_unlock();
 }
 
 // 0x4DF1D0

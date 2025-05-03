@@ -707,7 +707,7 @@ void tile_draw_iso(GameDrawInfo* draw_info)
     indoor_color = light_get_indoor_color();
     outdoor_color = light_get_outdoor_color();
 
-    sub_4D8210();
+    light_buffers_lock();
 
     for (v2 = 0; v2 < v1->height; v2++) {
         v3 = &(v1->field_8[v2]);
@@ -880,5 +880,5 @@ void tile_draw_iso(GameDrawInfo* draw_info)
         }
     }
 
-    sub_4D8320();
+    light_buffers_unlock();
 }
