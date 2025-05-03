@@ -639,7 +639,7 @@ int sub_41D390()
 }
 
 // 0x41D510
-tig_art_id_t sub_41D510(tig_art_id_t aid)
+tig_art_id_t name_normalize_aid(tig_art_id_t aid)
 {
     switch (tig_art_type(aid)) {
     case TIG_ART_TYPE_TILE:
@@ -854,7 +854,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         return TIG_ERR_IO;
     }
 
-    aid = sub_41D510(aid);
+    aid = name_normalize_aid(aid);
 
     switch (tig_art_type(aid)) {
     case TIG_ART_TYPE_TILE:

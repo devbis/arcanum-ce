@@ -476,7 +476,7 @@ void sub_40E940()
 // 0x40EA50
 bool sub_40EA50(tig_art_id_t art_id)
 {
-    if (sub_41D510(art_id) == sub_41D510(tig_mouse_cursor_get_art_id())) {
+    if (name_normalize_aid(art_id) == name_normalize_aid(tig_mouse_cursor_get_art_id())) {
         return true;
     }
 
