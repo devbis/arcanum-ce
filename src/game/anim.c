@@ -6397,7 +6397,7 @@ bool sub_428550(AnimRunInfo* run_info)
     }
 
     if (ai_attempt_open_portal(self_obj, door_obj, object_rot(self_obj, door_obj)) != AI_ATTEMPT_OPEN_PORTAL_OK) {
-        sound_id = sub_4F1010(door_obj, 2);
+        sound_id = sfx_portal_sound(door_obj, PORTAL_SOUND_LOCKED);
         gsound_play_sfx_on_obj(sound_id, 1, door_obj);
         return false;
     }
@@ -9410,6 +9410,7 @@ bool sub_42D080(AnimRunInfo* run_info)
     int64_t door_obj;
     tig_art_id_t art_id;
     TigArtAnimData art_anim_data;
+    int sound_id;
 
     door_obj = run_info->params[0].obj;
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 9543, doorObj != OBJ_HANDLE_NULL
@@ -9431,7 +9432,10 @@ bool sub_42D080(AnimRunInfo* run_info)
     }
 
     run_info->flags &= ~0xC;
-    gsound_play_sfx_on_obj(sub_4F1010(door_obj, 0), 1, door_obj);
+
+    sound_id = sfx_portal_sound(door_obj, PORTAL_SOUND_OPEN);
+    gsound_play_sfx_on_obj(sound_id, 1, door_obj);
+
     run_info->flags |= 0x10;
 
     return true;
@@ -9458,6 +9462,7 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     int64_t door_obj;
     tig_art_id_t art_id;
     TigArtAnimData art_anim_data;
+    int sound_id;
 
     door_obj = run_info->params[0].obj;
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 9603, doorObj != OBJ_HANDLE_NULL
@@ -9479,7 +9484,10 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     }
 
     run_info->flags &= ~0xC;
-    gsound_play_sfx_on_obj(sub_4F1010(door_obj, 1), 1, door_obj);
+
+    sound_id = sfx_portal_sound(door_obj, PORTAL_SOUND_CLOSE);
+    gsound_play_sfx_on_obj(sound_id, 1, door_obj);
+
     run_info->flags |= 0x10;
 
     return true;

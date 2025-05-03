@@ -225,11 +225,21 @@ int sub_4F0FD0(int64_t obj, int a2)
 }
 
 // 0x4F1010
-int sub_4F1010(int64_t obj, int a2)
+int sfx_portal_sound(int64_t obj, PortalSoundType type)
 {
-    return obj != OBJ_HANDLE_NULL && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL
-        ? obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT) + a2
-        : -1;
+    int sound_effect;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return -1;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
+        return -1;
+    }
+
+    sound_effect = obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT);
+
+    return sound_effect + type;
 }
 
 // 0x4F1050
