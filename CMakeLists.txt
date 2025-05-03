@@ -180,6 +180,8 @@ set(SRCS
     "src/game/sector.h"
     "src/game/settings.c"
     "src/game/settings.h"
+    "src/game/sfx.c"
+    "src/game/sfx.h"
     "src/game/skill.c"
     "src/game/skill.h"
     "src/game/spell.c"

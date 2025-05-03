@@ -26,6 +26,7 @@
 #include "game/roof.h"
 #include "game/scroll.h"
 #include "game/sector.h"
+#include "game/sfx.h"
 #include "game/stat.h"
 #include "game/tb.h"
 #include "game/tf.h"

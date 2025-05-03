@@ -31,6 +31,7 @@
 #include "game/reaction.h"
 #include "game/resistance.h"
 #include "game/script.h"
+#include "game/sfx.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/tf.h"

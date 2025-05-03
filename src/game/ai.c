@@ -23,6 +23,7 @@
 #include "game/reaction.h"
 #include "game/script.h"
 #include "game/sector.h"
+#include "game/sfx.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"

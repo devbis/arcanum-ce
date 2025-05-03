@@ -23,6 +23,7 @@
 #include "game/random.h"
 #include "game/reaction.h"
 #include "game/resistance.h"
+#include "game/sfx.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/teleport.h"

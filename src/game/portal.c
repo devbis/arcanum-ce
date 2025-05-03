@@ -2,10 +2,10 @@
 
 #include "game/a_name.h"
 #include "game/gsound.h"
-#include "game/mp_utils.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/script.h"
+#include "game/sfx.h"
 #include "game/wall.h"
 
 // 0x4F06E0

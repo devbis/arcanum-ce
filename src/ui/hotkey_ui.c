@@ -7,6 +7,7 @@
 #include "game/object.h"
 #include "game/obj_private.h"
 #include "game/player.h"
+#include "game/sfx.h"
 #include "game/spell.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
