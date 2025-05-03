@@ -523,6 +523,7 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
     int rot;
     tig_art_id_t art_id;
     int err;
+    int sound_id;
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
@@ -563,12 +564,14 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
                     ui_message.str = mes_file_entry.str;
                     sub_550750(&ui_message);
 
-                    gsound_play_sfx(sub_4F0FD0(target_obj, 2), 1);
+                    sound_id = sfx_container_sound(target_obj, CONTAINER_SOUND_LOCKED);
+                    gsound_play_sfx(sound_id, 1);
                     return false;
                 }
 
                 if (!object_script_execute(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
-                    gsound_play_sfx(sub_4F0FD0(target_obj, 2), 1);
+                    sound_id = sfx_container_sound(target_obj, CONTAINER_SOUND_LOCKED);
+                    gsound_play_sfx(sound_id, 1);
                     return false;
                 }
             }
@@ -650,6 +653,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
     int64_t prototype_obj;
     int64_t gold_obj;
     int amt;
+    int sound_id;
 
     if (target_obj == OBJ_HANDLE_NULL) {
         return;
@@ -676,7 +680,9 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
             if (mode == INVEN_UI_MODE_LOOT) {
                 if (tig_art_id_frame_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0) {
                     mp_container_open(target_obj);
-                    gsound_play_sfx(sub_4F0FD0(target_obj, 0), 1);
+
+                    sound_id = sfx_container_sound(target_obj, CONTAINER_SOUND_OPEN);
+                    gsound_play_sfx(sound_id, 1);
                 }
             }
             if ((obj_field_int32_get(target_obj, OBJ_F_CONTAINER_FLAGS) & OCOF_INVEN_SPAWN_ONCE) != 0) {
@@ -1107,7 +1113,7 @@ void inven_ui_destroy()
                 && (obj_field_int32_get(qword_6813A8, OBJ_F_CONTAINER_FLAGS) & OCOF_STICKY) == 0) {
                 object_dec_current_aid(qword_6813A8);
 
-                sound_id = sub_4F0FD0(qword_6813A8, 1);
+                sound_id = sfx_container_sound(qword_6813A8, CONTAINER_SOUND_CLOSE);
                 gsound_play_sfx(sound_id, 1);
             }
         }
