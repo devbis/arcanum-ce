@@ -199,8 +199,8 @@ static bool sub_563C60(WmapNote* note);
 static void sub_563D50(WmapNote* note);
 static void sub_563D80(int a1, int a2);
 static WmapNote* sub_563D90(int id);
-static bool sub_563DE0(WmapCoords* coords, int* id);
-static bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3);
+static bool find_note_by_coords(WmapCoords* coords, int* id_ptr);
+static bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type);
 static bool sub_563F00(WmapCoords* coords, int64_t* a2);
 static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
@@ -1827,7 +1827,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     return true;
                 case 3: {
                     int id;
-                    if (sub_563DE0(&stru_64E7E8, &id)) {
+                    if (find_note_by_coords(&stru_64E7E8, &id)) {
                         sub_564360(id);
                     } else {
                         sub_563F90(&stru_64E7E8);
@@ -1953,7 +1953,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
-                        if (sub_563DE0(&stru_64E7E8, &id)) {
+                        if (find_note_by_coords(&stru_64E7E8, &id)) {
                             if (v1->field_198 != id) {
                                 WmapNote* note = sub_563D90(id);
                                 if (note->id < 200) {
@@ -1990,7 +1990,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                 int id;
-                if (sub_563DE0(&stru_64E7E8, &id)) {
+                if (find_note_by_coords(&stru_64E7E8, &id)) {
                     if (v1->field_198 != id) {
                         WmapNote* note = sub_563D90(id);
                         if (note->id < 200) {
@@ -2014,7 +2014,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
-                        if (sub_563DE0(&stru_64E7E8, &id)) {
+                        if (find_note_by_coords(&stru_64E7E8, &id)) {
                             if (v1->field_198 != id) {
                                 WmapNote* note = sub_563D90(id);
                                 sub_550770(-1, note->str);
@@ -3205,21 +3205,21 @@ WmapNote* sub_563D90(int id)
 }
 
 // 0x563DE0
-bool sub_563DE0(WmapCoords* coords, int* id)
+bool find_note_by_coords(WmapCoords* coords, int* id_ptr)
 {
-    return sub_563E00(coords, id, dword_66D868);
+    return find_note_by_coords_type(coords, id_ptr, dword_66D868);
 }
 
 // 0x563E00
-bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3)
+bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
 {
     int dx;
     int dy;
-    Wmap* v1;
+    Wmap* wmap;
     int idx;
     WmapNote* note;
 
-    switch (a3) {
+    switch (type) {
     case 0:
     case 2:
         dx = dword_66D890 / 2;
@@ -3230,31 +3230,31 @@ bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3)
         dy = 20;
         break;
     default:
-        if (idx_ptr != NULL) {
-            *idx_ptr = -1;
+        if (id_ptr != NULL) {
+            *id_ptr = -1;
         }
         return false;
     }
 
-    v1 = &(stru_5C9228[a3]);
-    if (v1->notes != NULL) {
-        for (idx = *v1->num_notes - 1; idx >= 0; idx--) {
-            note = &(v1->notes[idx]);
+    wmap = &(stru_5C9228[type]);
+    if (wmap->notes != NULL) {
+        for (idx = *wmap->num_notes - 1; idx >= 0; idx--) {
+            note = &(wmap->notes[idx]);
             if (stru_5C9160[note->field_28].field_14
                 && coords->x >= note->coords.x - dx
                 && coords->x <= note->coords.x + dx
                 && coords->y >= note->coords.y - dy
                 && coords->y <= note->coords.y + dy) {
-                if (idx_ptr != NULL) {
-                    *idx_ptr = idx;
+                if (id_ptr != NULL) {
+                    *id_ptr = note->id;
                 }
                 return true;
             }
         }
     }
 
-    if (idx_ptr != NULL) {
-        *idx_ptr = -1;
+    if (id_ptr != NULL) {
+        *id_ptr = -1;
     }
 
     return false;
@@ -3777,7 +3777,7 @@ void wmap_ui_mark_townmap(int64_t obj)
 
     townmap_loc_to_coords(&stru_64E7F8, obj_loc, &(note.coords.x), &(note.coords.y));
 
-    if (sub_563E00(&(note.coords), NULL, 2)) {
+    if (find_note_by_coords_type(&(note.coords), NULL, 2)) {
         return;
     }
 
