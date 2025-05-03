@@ -1961,12 +1961,13 @@ bool wmap_ui_message_filter(TigMessage* msg)
                                     sub_550770(-1, area_get_description(note->id));
                                 }
                             }
+                            return true;
                         }
-                    } else {
-                        if (v1->field_198 != -1) {
-                            v1->field_198 = -1;
-                            sub_550720();
-                        }
+                    }
+
+                    if (v1->field_198 != -1) {
+                        v1->field_198 = -1;
+                        sub_550720();
                     }
 
                     return true;
