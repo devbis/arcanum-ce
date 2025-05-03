@@ -738,13 +738,16 @@ void sub_41BA20(int fade_duration, int index)
 
         for (snd = 0; snd < TWENTY_FIVE; snd++) {
             sound = &(scheme->sounds[snd]);
-            if (sound->song) {
+            if (sound->loop) {
                 if (sound->sound_handle != TIG_SOUND_HANDLE_INVALID) {
                     tig_sound_stop(sound->sound_handle, fade_duration);
                     sound->sound_handle = TIG_SOUND_HANDLE_INVALID;
                 }
             }
         }
+
+        scheme->scheme_num = 0;
+        sub_41AFB0(scheme);
     } else {
         if (!dword_5D5594) {
             dword_5D1A38[index] = 0;
