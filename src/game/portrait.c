@@ -115,7 +115,7 @@ void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, 
     if (obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && (obj_field_int32_get(obj, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
-        if (!sub_4A4C40(obj, width, bmp.name)) {
+        if (!multiplayer_portrait_path(obj, width, bmp.name)) {
             return;
         }
     } else {

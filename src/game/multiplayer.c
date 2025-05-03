@@ -2215,7 +2215,7 @@ bool sub_4A49E0(int64_t obj, char* str)
 }
 
 // 0x4A4C40
-bool sub_4A4C40(int64_t obj, int size, char* path)
+bool multiplayer_portrait_path(int64_t obj, int size, char* path)
 {
     char str[40];
 
