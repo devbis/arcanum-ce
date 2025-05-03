@@ -2645,7 +2645,7 @@ void MTComponentMovement_ProcFunc()
             sub_4F4E40(dword_5E75F0->target_obj.obj, dword_5E761C->data.movement.tile_radius, &loc);
             break;
         case 2:
-            if (antiteleport_check_can_teleport(dword_5E75F0->parent_obj.obj, 0)) {
+            if (antiteleport_check(dword_5E75F0->parent_obj.obj, 0)) {
                 if (tig_net_is_active()) {
                     TeleportData teleport_data;
 
@@ -2701,7 +2701,7 @@ void sub_452650(int64_t obj)
         }
     }
 
-    if (area > 0 && antiteleport_check_can_teleport(stru_5E6D28.field_20, 0)) {
+    if (area > 0 && antiteleport_check(stru_5E6D28.field_20, 0)) {
         loc = area_get_location(area);
 
         if (tig_net_is_active()) {
@@ -4973,7 +4973,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
 
     if (a1->parent_obj.obj != OBJ_HANDLE_NULL
         && a1->spell == SPELL_TELEPORTATION
-        && !antiteleport_check_can_teleport(a1->parent_obj.obj, 0)) {
+        && !antiteleport_check(a1->parent_obj.obj, 0)) {
         if (player_is_local_pc_obj(a1->parent_obj.obj)) {
             mes_file_entry.num = 10000; // "This place seems to block your attempt to teleport."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);

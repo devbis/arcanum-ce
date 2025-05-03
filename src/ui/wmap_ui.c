@@ -1792,7 +1792,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
 
                     int64_t pc_obj = player_get_local_pc_obj();
-                    if (antiteleport_check_can_teleport(pc_obj, loc)) {
+                    if (antiteleport_check(pc_obj, loc)) {
                         if (player_is_local_pc_obj(wmap_ui_obj)) {
                             sub_4507B0(wmap_ui_obj, wmap_ui_spell);
                         }
