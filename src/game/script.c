@@ -2052,6 +2052,8 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         }
 
         sub_45B800(&timeevent, &datetime);
+
+        return NEXT;
     }
     case SAT_TOGGLE_STATE: {
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
