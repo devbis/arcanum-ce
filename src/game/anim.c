@@ -7938,7 +7938,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
     }
 
     if (player_is_local_pc_obj(source_obj)) {
-        sound_id = sub_4F0BF0(target_obj, source_obj, OBJ_HANDLE_NULL, 0);
+        sound_id = sfx_item_sound(target_obj, source_obj, OBJ_HANDLE_NULL, ITEM_SOUND_PICKUP);
         gsound_play_sfx_on_obj(sound_id, 1, source_obj);
     }
 

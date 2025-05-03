@@ -3,6 +3,16 @@
 
 #include "game/context.h"
 
+typedef enum ItemSoundType {
+    ITEM_SOUND_PICKUP,
+    ITEM_SOUND_DROP,
+    WEAPON_SOUND_USE,
+    WEAPON_SOUND_OUT_OF_AMMO,
+    WEAPON_SOUND_HIT,
+    WEAPON_SOUND_MISS,
+    WEAPON_SOUND_CRITICAL_HIT,
+} ItemSoundType;
+
 typedef enum CritterSoundType {
     CRITTER_SOUND_CRITICALLY_HIT,
     CRITTER_SOUND_DYING,
@@ -32,7 +42,7 @@ typedef enum MiscSoundType {
     MISC_SOUND_ANIMATING,
 } MiscSoundType;
 
-int sub_4F0BF0(int64_t item_obj, int64_t parent_obj, int64_t target_obj, int type);
+int sfx_item_sound(int64_t item_obj, int64_t parent_obj, int64_t target_obj, ItemSoundType type);
 int sfx_critter_sound(int64_t obj, CritterSoundType type);
 int sfx_container_sound(int64_t obj, ContainerSoundType type);
 int sfx_portal_sound(int64_t obj, PortalSoundType type);

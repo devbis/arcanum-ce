@@ -2419,7 +2419,7 @@ bool sub_5755A0(void* userinfo)
 
     redraw_inven(false);
 
-    sound_id = sub_4F0BF0(entry->field_8, entry->field_10, OBJ_HANDLE_NULL, 0);
+    sound_id = sfx_item_sound(entry->field_8, entry->field_10, OBJ_HANDLE_NULL, ITEM_SOUND_PICKUP);
     gsound_play_sfx(sound_id, 1);
 
     FREE(entry);
@@ -2443,7 +2443,7 @@ void sub_575770()
         }
 
         if (IS_HOTKEY_INV_LOC(dword_6810E8)) {
-            sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
+            sound_id = sfx_item_sound(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
             gsound_play_sfx(sound_id, 1);
 
             if (!sub_57F260()) {
@@ -2466,7 +2466,7 @@ void sub_575770()
             sub_4A51C0(player_get_local_pc_obj(), qword_6810E0);
         }
 
-        sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
+        sound_id = sfx_item_sound(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
         gsound_play_sfx(sound_id, 1);
 
         sub_57F260();
@@ -2515,7 +2515,7 @@ void sub_575930()
 
     sub_4A51C0(player_get_local_pc_obj(), qword_6810E0);
 
-    sound_id = sub_4F0BF0(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, 1);
+    sound_id = sfx_item_sound(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
     gsound_play_sfx(sound_id, 1);
 
     qword_6810E0 = OBJ_HANDLE_NULL;
@@ -2530,7 +2530,7 @@ void sub_575BE0()
     location = obj_field_int64_get(qword_681450, OBJ_F_LOCATION);
     sub_466E50(qword_6810E0, location);
 
-    sound_id = sub_4F0BF0(qword_6810E0, qword_681450, 0, 1);
+    sound_id = sfx_item_sound(qword_6810E0, qword_681450, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
     gsound_play_sfx(sound_id, 1);
 }
 
@@ -3791,7 +3791,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             }
         }
 
-        sound_id = sub_4F0BF0(item_obj, target_obj, OBJ_HANDLE_NULL, 1);
+        sound_id = sfx_item_sound(item_obj, target_obj, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
         gsound_play_sfx(sound_id, 1);
     } else {
         obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
@@ -3991,7 +3991,7 @@ bool sub_578EA0(Packet81* pkt)
                     int64_t loc = obj_field_int64_get(v1, OBJ_F_LOCATION);
                     int64_t gold_obj = item_gold_create(qty, loc);
                     if (v6 != OBJ_HANDLE_NULL) {
-                        int sound_id = sub_4F0BF0(gold_obj, v1, OBJ_HANDLE_NULL, 1);
+                        int sound_id = sfx_item_sound(gold_obj, v1, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
                         sub_4EED00(v6, sound_id);
                     }
                     if ((flags & 0x04) != 0) {
@@ -4021,7 +4021,7 @@ bool sub_578EA0(Packet81* pkt)
                     int64_t loc = obj_field_int64_get(v1, OBJ_F_LOCATION);
                     int64_t ammo_obj = item_ammo_create(qty, ammo_type, loc);
                     if (v6 != OBJ_HANDLE_NULL) {
-                        int sound_id = sub_4F0BF0(ammo_obj, v1, OBJ_HANDLE_NULL, 0);
+                        int sound_id = sfx_item_sound(ammo_obj, v1, OBJ_HANDLE_NULL, ITEM_SOUND_PICKUP);
                         sub_4EED00(v6, sound_id);
                     }
                     if ((flags & 0x04) != 0) {
@@ -4068,7 +4068,7 @@ bool sub_578EA0(Packet81* pkt)
                     }
 
                     if (v6 != OBJ_HANDLE_NULL) {
-                        int sound_id = sub_4F0BF0(v2, v3, OBJ_HANDLE_NULL, 1);
+                        int sound_id = sfx_item_sound(v2, v3, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
                         sub_4EED00(v6, sound_id);
                     }
                 }
@@ -4077,7 +4077,7 @@ bool sub_578EA0(Packet81* pkt)
                     item_drop(v2);
                 }
                 if (v6 != OBJ_HANDLE_NULL) {
-                    int sound_id = sub_4F0BF0(v2, v3, OBJ_HANDLE_NULL, 1);
+                    int sound_id = sfx_item_sound(v2, v3, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
                     sub_4EED00(v6, sound_id);
                 }
             }

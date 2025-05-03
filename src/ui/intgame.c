@@ -3712,8 +3712,9 @@ void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
     }
 
     if (item_obj != OBJ_HANDLE_NULL) {
-        sound_id = sub_4F0BF0(item_obj, critter_obj, OBJ_HANDLE_NULL, 1);
+        sound_id = sfx_item_sound(item_obj, critter_obj, OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
     } else {
+        // FIXME: Looks wrong.
         sound_id = inventory_location;
     }
 

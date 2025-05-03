@@ -863,7 +863,7 @@ bool sub_57E8D0(int a1)
     if (index < 10) {
         hotkey = &(stru_6835E0[index]);
         if (dword_5CB4E4 == index) {
-            sound_id = sub_4F0BF0(hotkey->item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, 1);
+            sound_id = sfx_item_sound(hotkey->item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
             if (sound_id != -1) {
                 gsound_play_sfx(sound_id, 1);
             }
@@ -949,7 +949,7 @@ bool sub_57E8D0(int a1)
 
     if (stru_683950.type != HOTKEY_ITEM) {
         if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
-            sound_id = sub_4F0BF0(stru_683950.item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, 1);
+            sound_id = sfx_item_sound(stru_683950.item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
             if (sound_id != -1) {
                 gsound_play_sfx(sound_id, 1);
             }

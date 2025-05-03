@@ -768,14 +768,14 @@ void sub_4B2F60(CombatContext* combat)
             sound_id = sfx_critter_sound(combat->target_obj, CRITTER_SOUND_CRITICALLY_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
-            sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);
+            sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_CRITICAL_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         } else {
-            sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 4);
+            sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         }
     } else {
-        sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 5);
+        sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_MISS);
         gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (combat->target_obj != OBJ_HANDLE_NULL
@@ -823,7 +823,7 @@ int sub_4B3170(CombatContext* combat)
     if (!sub_4B65D0(combat->weapon_obj, combat->attacker_obj, 1, 0)) {
         combat->flags |= 0x400;
 
-        sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 3);
+        sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_OUT_OF_AMMO);
         gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
@@ -835,7 +835,7 @@ int sub_4B3170(CombatContext* combat)
         return 0;
     }
 
-    sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 2);
+    sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_USE);
     gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
     bool is_melee = true;
@@ -1033,10 +1033,10 @@ void sub_4B3770(CombatContext* combat)
             sound_id = sfx_critter_sound(combat->target_obj, CRITTER_SOUND_CRITICALLY_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
-            sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);
+            sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_CRITICAL_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         } else {
-            sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 4);
+            sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
         }
 
@@ -1047,7 +1047,7 @@ void sub_4B3770(CombatContext* combat)
             combat_dmg(&body_of_fire);
         }
     } else {
-        sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 5);
+        sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_MISS);
         gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
