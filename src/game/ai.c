@@ -1715,7 +1715,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sou
                 object_script_execute(target_obj, source_obj, OBJ_HANDLE_NULL, SAP_ENTER_COMBAT, 0);
 
                 if (sound_id_ptr != NULL) {
-                    *sound_id_ptr = sub_4F0ED0(source_obj, 5);
+                    *sound_id_ptr = sfx_critter_sound(source_obj, CRITTER_SOUND_ALERTED);
                 }
             }
 

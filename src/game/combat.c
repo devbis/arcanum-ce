@@ -765,7 +765,7 @@ void sub_4B2F60(CombatContext* combat)
         combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
-            sound_id = sub_4F0ED0(combat->target_obj, 0);
+            sound_id = sfx_critter_sound(combat->target_obj, CRITTER_SOUND_CRITICALLY_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);
@@ -1030,7 +1030,7 @@ void sub_4B3770(CombatContext* combat)
         combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
-            sound_id = sub_4F0ED0(combat->target_obj, 0);
+            sound_id = sfx_critter_sound(combat->target_obj, CRITTER_SOUND_CRITICALLY_HIT);
             gsound_play_sfx_on_obj(sound_id, 1, combat->target_obj);
 
             sound_id = sub_4F0BF0(combat->weapon_obj, combat->attacker_obj, combat->target_obj, 6);

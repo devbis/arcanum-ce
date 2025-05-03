@@ -3,6 +3,16 @@
 
 #include "game/obj.h"
 
+typedef enum TileSoundType {
+    TILE_SOUND_DIRT,
+    TILE_SOUND_SAND,
+    TILE_SOUND_SNOW,
+    TILE_SOUND_STONE,
+    TILE_SOUND_WATER,
+    TILE_SOUND_WOOD,
+    TILE_SOUND_COUNT,
+} TileSoundType;
+
 bool a_name_tile_init();
 void a_name_tile_exit();
 bool a_name_tile_aid_to_fname(tig_art_id_t aid, char* fname);

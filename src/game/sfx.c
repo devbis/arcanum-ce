@@ -46,13 +46,13 @@ static int dword_5BB960[MATERIAL_COUNT] = {
 };
 
 // 0x5BB998
-static int dword_5BB998[6] = {
-    2904,
-    2912,
-    2916,
-    2920,
-    2928,
-    2932,
+static int sfx_base_footstep_sound_ids[TILE_SOUND_COUNT] = {
+    /*  TILE_SOUND_DIRT */ 2904,
+    /*  TILE_SOUND_SAND */ 2912,
+    /*  TILE_SOUND_SNOW */ 2916,
+    /* TILE_SOUND_STONE */ 2920,
+    /* TILE_SOUND_WATER */ 2928,
+    /*  TILE_SOUND_WOOD */ 2932,
 };
 
 // 0x4F0BF0
@@ -164,12 +164,12 @@ int sub_4F0BF0(int64_t item_obj, int64_t parent_obj, int64_t target_obj, int typ
 }
 
 // 0x4F0ED0
-int sub_4F0ED0(int64_t obj, int a2)
+int sfx_critter_sound(int64_t obj, CritterSoundType type)
 {
     int64_t pc_obj;
     tig_art_id_t art_id;
     int armor_type;
-    int base;
+    int sound_id;
     int64_t loc;
     tig_art_id_t tile_art_id;
     int tile_sound_type;
@@ -191,29 +191,29 @@ int sub_4F0ED0(int64_t obj, int a2)
         return -1;
     }
 
-    if (a2 != 7) {
-        return obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT) + a2;
+    if (type != CRITTER_SOUND_FOOTSTEPS) {
+        return obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT) + type;
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     armor_type = tig_art_critter_id_armor_get(art_id);
     if (armor_type == TIG_ART_ARMOR_TYPE_PLATE
         || armor_type == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
-        base = 2900;
+        sound_id = 2900;
     } else {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         tile_art_id = tile_art_id_at(loc);
         tile_sound_type = a_name_tile_sound(tile_art_id);
-        base = dword_5BB998[tile_sound_type];
+        sound_id = sfx_base_footstep_sound_ids[tile_sound_type];
         if (armor_type == TIG_ART_ARMOR_TYPE_CHAIN
-            && (tile_sound_type == 5
-                || tile_sound_type == 3
-                || tile_sound_type == 0)) {
-            base += 4;
+            && (tile_sound_type == TILE_SOUND_WOOD
+                || tile_sound_type == TILE_SOUND_STONE
+                || tile_sound_type == TILE_SOUND_DIRT)) {
+            sound_id += 4;
         }
     }
 
-    return random_between(0, 3) + base;
+    return sound_id + random_between(0, 3);
 }
 
 // 0x4F0FD0

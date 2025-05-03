@@ -7523,9 +7523,9 @@ bool sub_42A010(AnimRunInfo* run_info)
 
         if (run_info->cur_stack_data->type == AG_DYING) {
             if (anim != 7) {
-                sound_id = sub_4F0ED0(obj, 2);
+                sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING_GRUESOME);
             } else {
-                sound_id = sub_4F0ED0(obj, 1);
+                sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING);
             }
             gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
@@ -9214,9 +9214,9 @@ bool sub_42CB10(AnimRunInfo* run_info)
 
         if (run_info->cur_stack_data->type == AG_DYING) {
             if (anim != 7) {
-                sound_id = sub_4F0ED0(obj, 2);
+                sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING_GRUESOME);
             } else {
-                sound_id = sub_4F0ED0(obj, 1);
+                sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING);
             }
              gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
@@ -9384,7 +9384,7 @@ bool sub_42CF40(AnimRunInfo* run_info)
 
     frame = tig_art_id_frame_get(art_id);
     if (frame == 1) {
-        sound_id = sub_4F0ED0(obj, 3);
+        sound_id = sfx_critter_sound(obj, CRITTER_SOUND_FIDGETING);
         gsound_play_sfx_on_obj(sound_id, 1, obj);
     }
 
@@ -9651,9 +9651,9 @@ bool sub_42D570(AnimRunInfo* run_info)
     }
 
     if (tig_art_id_anim_get(art_id) != 7) {
-        sound_id = sub_4F0ED0(obj, 2);
+        sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING_GRUESOME);
     } else {
-        sound_id = sub_4F0ED0(obj, 1);
+        sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING);
     }
     gsound_play_sfx_on_obj(sound_id, 1, obj);
 
@@ -11535,7 +11535,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
             if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
                 frame = tig_art_id_frame_get(art_id);
                 if (frame == 3 || frame == 8) {
-                    sound_id = sub_4F0ED0(obj, 7);
+                    sound_id = sfx_critter_sound(obj, CRITTER_SOUND_FOOTSTEPS);
                     gsound_play_sfx_on_obj(sound_id, 1, obj);
                 }
             }
@@ -12860,7 +12860,7 @@ bool sub_432700(AnimRunInfo* run_info)
     run_info->flags |= 0x10;
 
     if (obj_type_is_critter(source_obj_type) && random_between(1, 4) == 1) {
-        sound_id = sub_4F0ED0(source_obj, 4);
+        sound_id = sfx_critter_sound(source_obj, CRITTER_SOUND_ATTACKING);
         gsound_play_sfx_on_obj(sound_id, 1, source_obj);
     }
 
