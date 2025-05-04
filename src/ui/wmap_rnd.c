@@ -952,6 +952,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
                 if (node->obj != obj) {
                     object_destroy(obj);
                     obj = OBJ_HANDLE_NULL;
+                    break;
                 }
                 node = node->next;
             }
