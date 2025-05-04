@@ -156,7 +156,7 @@ static void wmap_ui_town_notes_save();
 static bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream);
 static bool sub_560440(TigRect* rect, TigFile* stream);
 static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
-static bool sub_5606B0(TigRect* rect, TigFile* stream);
+static bool wmap_ui_rect_read(TigRect* rect, TigFile* stream);
 static void wmap_ui_open_internal();
 static bool wmap_load_worldmap_info();
 static void sub_560EE0();
@@ -1028,7 +1028,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
     if (tig_file_fread(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
-    if (!sub_5606B0(&(note->field_18), stream)) return false;
+    if (!wmap_ui_rect_read(&(note->field_18), stream)) return false;
     if (tig_file_fread(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
     if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) return false;
 
@@ -1041,7 +1041,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
 }
 
 // 0x5606B0
-bool sub_5606B0(TigRect* rect, TigFile* stream)
+bool wmap_ui_rect_read(TigRect* rect, TigFile* stream)
 {
     if (tig_file_fread(&(rect->x), sizeof(rect->x), 1, stream) != 1) return false;
     if (tig_file_fread(&(rect->y), sizeof(rect->y), 1, stream) != 1) return false;
