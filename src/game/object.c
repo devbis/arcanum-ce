@@ -1839,8 +1839,8 @@ bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
         for (v62 = v3->field_50 - 1; v62 >= 0; v62--) {
             for (col = v3->width - 1; col >= 0; col--) {
                 if (locks[col]) {
-                    for (v60 = v3->field_44[col]; v60 >= 0; v60--) {
-                        for (obj_node = obj_node = sectors[col]->objects.heads[indexes[col]]; obj_node != NULL; obj_node = obj_node->next) {
+                    for (v60 = v3->field_44[col] - 1; v60 >= 0; v60--) {
+                        for (obj_node = sectors[col]->objects.heads[indexes[col]]; obj_node != NULL; obj_node = obj_node->next) {
                             obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
                             if (!object_type_visibility[obj_type]) {
                                 continue;
