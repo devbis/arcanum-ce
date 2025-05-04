@@ -1830,7 +1830,7 @@ void sub_4E5C60(int a1, int a2, bool a3)
     int v2;
 
     v1 = sub_4E61E0(a2);
-    if (v1 > dword_603710[a1].field_0) {
+    if (v1 >= dword_603710[a1].field_0) {
         if (!a3) {
             return;
         }
