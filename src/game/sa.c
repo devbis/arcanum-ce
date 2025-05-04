@@ -16,7 +16,7 @@ static SizeableArray* dword_603744;
 
 static void sub_4E7990(SizeableArray** sa_ptr, int a2);
 static void sub_4E79F0(SizeableArray** sa_ptr, int a2);
-static void* sub_4E7A50(SizeableArray* sa);
+static void* sa_data(SizeableArray* sa);
 static int sa_byte_size(SizeableArray* sa);
 static bool sub_4E7A70(int a1);
 static bool sub_4E7AB0(void* ptr, int a2);
@@ -118,7 +118,7 @@ void sa_set(SizeableArray** sa_ptr, int a2, const void* value)
         sub_4E7990(sa_ptr, index);
     }
 
-    memcpy((uint8_t*)sub_4E7A50(*sa_ptr) + (*sa_ptr)->size * index,
+    memcpy((uint8_t*)sa_data(*sa_ptr) + (*sa_ptr)->size * index,
         value,
         (*sa_ptr)->size);
 }
@@ -135,7 +135,7 @@ void sa_get(SizeableArray** sa_ptr, int a2, void* value)
 
     index = sub_4E5D30((*sa_ptr)->field_8, a2);
     memcpy(value,
-        (uint8_t*)sub_4E7A50(*sa_ptr) + (*sa_ptr)->size * index,
+        (uint8_t*)sa_data(*sa_ptr) + (*sa_ptr)->size * index,
         (*sa_ptr)->size);
 }
 
@@ -201,7 +201,7 @@ void sub_4E7820(SizeableArray** sa_ptr, uint8_t** data)
     (*sa_ptr)->field_8 = sa.field_8;
 
     if (size - sizeof(SizeableArray) != 0) {
-        sub_4E4C50(sub_4E7A50(*sa_ptr), size - sizeof(SizeableArray), data);
+        sub_4E4C50(sa_data(*sa_ptr), size - sizeof(SizeableArray), data);
     }
 
     sub_4E5F70(&((*sa_ptr)->field_8), data);
@@ -225,7 +225,7 @@ bool sa_read_no_dealloc(SizeableArray** sa_ptr, TigFile* stream)
     (*sa_ptr)->field_8 = sa.field_8;
 
     if (size - sizeof(SizeableArray) != 0) {
-        if (tig_file_fread(sub_4E7A50(*sa_ptr), size - sizeof(SizeableArray), 1, stream) != 1) {
+        if (tig_file_fread(sa_data(*sa_ptr), size - sizeof(SizeableArray), 1, stream) != 1) {
             return false;
         }
     }
@@ -243,7 +243,7 @@ void sub_4E7990(SizeableArray** sa_ptr, int a2)
 
     v1 = (*sa_ptr)->count - a2;
     if (v1 != 0) {
-        data = (uint8_t*)sub_4E7A50(*sa_ptr);
+        data = (uint8_t*)sa_data(*sa_ptr);
         memcpy(data + (*sa_ptr)->size * (a2 + 1),
             data + (*sa_ptr)->size * a2,
             (*sa_ptr)->size * v1);
@@ -260,7 +260,7 @@ void sub_4E79F0(SizeableArray** sa_ptr, int a2)
 
     v1 = (*sa_ptr)->count - a2 - 1;
     if (v1 != 0) {
-        data = (uint8_t*)sub_4E7A50(*sa_ptr);
+        data = (uint8_t*)sa_data(*sa_ptr);
         memcpy(data + (*sa_ptr)->size * a2,
             data + (*sa_ptr)->size * (a2 + 1),
             (*sa_ptr)->size * v1);
@@ -271,7 +271,7 @@ void sub_4E79F0(SizeableArray** sa_ptr, int a2)
 }
 
 // 0x4E7A50
-void* sub_4E7A50(SizeableArray* sa)
+void* sa_data(SizeableArray* sa)
 {
     return sa + 1;
 }
@@ -288,7 +288,7 @@ bool sub_4E7A70(int a1)
     int index;
 
     index = sub_4E5D30(dword_603744->field_8, a1);
-    return dword_60373C((uint8_t*)sub_4E7A50(dword_603744) + dword_603744->size * index, a1);
+    return dword_60373C((uint8_t*)sa_data(dword_603744) + dword_603744->size * index, a1);
 }
 
 // 0x4E7AB0
