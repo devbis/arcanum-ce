@@ -448,8 +448,8 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
             return true;
         }
 
-        if ((timeevent->params[0].integer_value == -1 && datetime_current_hour() == 7)
-            || (timeevent->params[0].integer_value == -2 && datetime_current_hour() == 20)
+        if ((timeevent->params[0].integer_value == -1 && datetime_current_hour() != 7)
+            || (timeevent->params[0].integer_value == -2 && datetime_current_hour() != 20)
             || (timeevent->params[0].integer_value == -3 && object_hp_damage_get(qword_6834A8) > 0)) {
             next_timeevent.params[0].integer_value = timeevent->params[0].integer_value;
             sub_45A950(&datetime, 200);
