@@ -205,7 +205,7 @@ static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6);
 static void sub_418B30(int a1, DialogState* a2);
 static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
 static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
-static void sub_418DE0(int a1, DialogState* a2);
+static void dialog_ask_money_for_training(int skill, DialogState* state);
 static void sub_418F30(int a1, DialogState* a2);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
 static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
@@ -1185,7 +1185,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_offer_training(v1, cnt, a2, a5);
         break;
     case 6:
-        sub_418DE0(a2, a5);
+        dialog_ask_money_for_training(a2, a5);
         break;
     case 7:
         sub_418F30(a2, a5);
@@ -3383,37 +3383,46 @@ void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogSt
 }
 
 // 0x418DE0
-void sub_418DE0(int a1, DialogState* a2)
+void dialog_ask_money_for_training(int skill, DialogState* state)
 {
-    int v1;
+    int index;
 
-    v1 = a2->num_options - 1;
-    if (IS_TECH_SKILL(a1)) {
-        if (tech_skill_training_get(a2->pc_obj, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
-            sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
+    index = state->num_options - 1;
+    if (IS_TECH_SKILL(skill)) {
+        // Check if PC is already trained.
+        if (tech_skill_training_get(state->pc_obj, GET_TECH_SKILL(skill)) != TRAINING_NONE) {
+            // "You already have received apprentice training in that skill."
+            sub_418C40(4000, state->field_17F0[index], state->field_1804[index], state);
             return;
         }
 
-        if (tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
-            sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
+        // Check if PC can be trained - attempt to temporarily grant apprentice
+        // training.
+        if (tech_skill_training_set(state->pc_obj, GET_TECH_SKILL(skill), TRAINING_APPRENTICE) == TRAINING_NONE) {
+            // "You are not skilled enough to be trained as an apprentice."
+            sub_418C40(5000, state->field_17F0[index], state->field_1804[index], state);
             return;
         }
 
-        tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_NONE);
-        sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
+        // Apprentice training was successfully applied, set it back to none...
+        tech_skill_training_set(state->pc_obj, GET_TECH_SKILL(skill), TRAINING_NONE);
+
+        // ...and ask for 100 coins.
+        sub_418A40(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
     } else {
-        if (basic_skill_training_get(a2->pc_obj, GET_BASIC_SKILL(a1)) != TRAINING_NONE) {
-            sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
+        // NOTE: The same flow as above (using basic skill function set).
+        if (basic_skill_training_get(state->pc_obj, GET_BASIC_SKILL(skill)) != TRAINING_NONE) {
+            sub_418C40(4000, state->field_17F0[index], state->field_1804[index], state);
             return;
         }
 
-        if (basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
-            sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
+        if (basic_skill_training_set(state->pc_obj, GET_BASIC_SKILL(skill), TRAINING_APPRENTICE) == TRAINING_NONE) {
+            sub_418C40(5000, state->field_17F0[index], state->field_1804[index], state);
             return;
         }
 
-        basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_NONE);
-        sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
+        basic_skill_training_set(state->pc_obj, GET_BASIC_SKILL(skill), TRAINING_NONE);
+        sub_418A40(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
     }
 }
 
