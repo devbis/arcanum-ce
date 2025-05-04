@@ -206,7 +206,7 @@ static void sub_418B30(int a1, DialogState* a2);
 static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
 static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
 static void dialog_ask_money_for_training(int skill, DialogState* state);
-static void sub_418F30(int a1, DialogState* a2);
+static void dialog_perform_training(int skill, DialogState* state);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
 static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
 static void sub_419190(int a1, int a2, int a3, DialogState* a4);
@@ -1188,7 +1188,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_ask_money_for_training(a2, a5);
         break;
     case 7:
-        sub_418F30(a2, a5);
+        dialog_perform_training(a2, a5);
         break;
     case 8:
         pch = strchr(&(a5->options[a4][strlen(a5->options[a4]) + 1]), '$');
@@ -3427,20 +3427,23 @@ void dialog_ask_money_for_training(int skill, DialogState* state)
 }
 
 // 0x418F30
-void sub_418F30(int a1, DialogState* a2)
+void dialog_perform_training(int skill, DialogState* state)
 {
-    if (IS_TECH_SKILL(a1)) {
-        tech_skill_training_set(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
+    if (IS_TECH_SKILL(skill)) {
+        tech_skill_training_set(state->pc_obj, GET_TECH_SKILL(skill), TRAINING_APPRENTICE);
     } else {
-        basic_skill_training_set(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
+        basic_skill_training_set(state->pc_obj, GET_BASIC_SKILL(skill), TRAINING_APPRENTICE);
     }
 
-    dialog_copy_npc_class_specific_msg(a2->reply, a2, 6000);
-    a2->num_options = 1;
-    dialog_copy_pc_class_specific_msg(a2->options[0], a2, 1000);
-    a2->field_17F0[0] = a2->field_17F0[1];
-    a2->field_1804[0] = a2->field_1804[1];
-    a2->actions[0] = NULL;
+    // "Your apprentice training is complete."
+    dialog_copy_npc_class_specific_msg(state->reply, state, 6000);
+
+    // Appreciate NPC for training.
+    state->num_options = 1;
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000); // "Thank you, sir."
+    state->field_17F0[0] = state->field_17F0[1];
+    state->field_1804[0] = state->field_1804[1];
+    state->actions[0] = NULL;
 }
 
 // 0x418FC0
