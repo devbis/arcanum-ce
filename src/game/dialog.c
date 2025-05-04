@@ -190,7 +190,7 @@ static int dialog_file_fgetc(TigFile* stream);
 static int dialog_entry_compare(const void* va, const void* vb);
 static void dialog_entry_copy(DialogFileEntry* dst, const DialogFileEntry* src);
 static void dialog_entry_free(DialogFileEntry* entry);
-static int sub_417F90(int* values, char* str);
+static int dialog_parse_params(int* values, char* str);
 static void dialog_check_generated(int gd);
 static void dialog_load_generated(int gd);
 static void dialog_copy_pc_generic_msg(char* buffer, DialogState* state, int start, int end);
@@ -1181,7 +1181,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_418B30(a2, a5);
         break;
     case 5:
-        cnt = sub_417F90(v1, &(a5->options[a4][strlen(a5->options[a4]) + 1]));
+        cnt = dialog_parse_params(v1, &(a5->options[a4][strlen(a5->options[a4]) + 1]));
         sub_418CA0(v1, cnt, a2, a5);
         break;
     case 6:
@@ -1194,7 +1194,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         pch = strchr(&(a5->options[a4][strlen(a5->options[a4]) + 1]), '$');
         v2 = atoi(pch + 1);
         pch = strchr(pch, ',');
-        cnt = sub_417F90(v1, pch + 1);
+        cnt = dialog_parse_params(v1, pch + 1);
         sub_418FC0(v2, v1, cnt, a2, a5);
         break;
     case 9:
@@ -2319,7 +2319,7 @@ bool sub_416840(DialogState* a1, bool a2)
         v8 = atoi(pch);
 
         pch = strchr(pch, ',');
-        v9 = sub_417F90(v10, pch + 1);
+        v9 = dialog_parse_params(v10, pch + 1);
 
         sub_418FC0(v8, v10, v9, entry.response_val, a1);
         return false;
@@ -2416,7 +2416,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_1804[a2] = entry.response_val;
     } else if (strnicmp(entry.str, "d:", 2) == 0) {
         pch = strchr(entry.str, ',');
-        cnt = sub_417F90(values, pch + 1);
+        cnt = dialog_parse_params(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
         }
@@ -2489,7 +2489,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "x:", 2) == 0) {
         pch = strchr(entry.str, ',');
-        cnt = sub_417F90(values, pch + 1);
+        cnt = dialog_parse_params(values, pch + 1);
         if (!sub_419E20(a3->pc_obj, values, cnt)) {
             return false;
         }
@@ -2911,15 +2911,15 @@ void dialog_entry_free(DialogFileEntry* entry)
 }
 
 // 0x417F90
-int sub_417F90(int* values, char* str)
+int dialog_parse_params(int* values, char* str)
 {
-    int cnt;
+    int cnt = 0;
     char* comma;
     char* dash;
     int start;
     int end;
 
-    for (cnt = 0; cnt < 100; cnt++) {
+    while (cnt < 100) {
         comma = strchr(str, ',');
         if (comma != NULL) {
             *comma = '\0';
@@ -3924,7 +3924,7 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5)
     v1 = atoi(pch + 1);
 
     pch = strchr(pch, ',');
-    v2 = sub_417F90(v3, pch + 1);
+    v2 = dialog_parse_params(v3, pch + 1);
 
     v4 = 0;
     v5 = sub_419E20(a5->pc_obj, v3, v2);
