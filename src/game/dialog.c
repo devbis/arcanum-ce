@@ -2470,7 +2470,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (strcmpi(entry.str, "s:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 200, 299);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(entry.str, "r:", 2) == 0) {
+    } else if (strnicmp(entry.str, "t:", 2) == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 500, 599);
 
         pch = a3->options[a2];
