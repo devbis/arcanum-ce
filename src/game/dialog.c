@@ -204,7 +204,7 @@ static int sub_4189C0(const char* a1, int a2);
 static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6);
 static void sub_418B30(int a1, DialogState* a2);
 static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
-static void sub_418CA0(int* a1, int a2, int a3, DialogState* a4);
+static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
 static void sub_418DE0(int a1, DialogState* a2);
 static void sub_418F30(int a1, DialogState* a2);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
@@ -1182,7 +1182,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         break;
     case 5:
         cnt = dialog_parse_params(v1, &(a5->options[a4][strlen(a5->options[a4]) + 1]));
-        sub_418CA0(v1, cnt, a2, a5);
+        dialog_offer_training(v1, cnt, a2, a5);
         break;
     case 6:
         sub_418DE0(a2, a5);
@@ -3352,28 +3352,34 @@ void sub_418C40(int a1, int a2, int a3, DialogState* a4)
 }
 
 // 0x418CA0
-void sub_418CA0(int* a1, int a2, int a3, DialogState* a4)
+void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state)
 {
     int index;
 
-    dialog_copy_npc_class_specific_msg(a4->reply, a4, 3000);
-    a4->num_options = a2 + 1;
+    // "What type of training are you seeking?"
+    dialog_copy_npc_class_specific_msg(state->reply, state, 3000);
 
-    for (index = 0; index < a2; index++) {
-        if (IS_TECH_SKILL(a1[index])) {
-            strcpy(a4->options[index], tech_skill_name(GET_TECH_SKILL(a1[index])));
+    // Set the number of available options to the number of skills plus one for
+    // "Forget it" option.
+    state->num_options = cnt + 1;
+
+    // Iterate through offered skills and use their names as options.
+    for (index = 0; index < cnt; index++) {
+        if (IS_TECH_SKILL(skills[index])) {
+            strcpy(state->options[index], tech_skill_name(GET_TECH_SKILL(skills[index])));
         } else {
-            strcpy(a4->options[index], tech_skill_name(GET_BASIC_SKILL(a1[index])));
+            strcpy(state->options[index], basic_skill_name(GET_BASIC_SKILL(skills[index])));
         }
 
-        a4->field_17F0[index] = 6;
-        a4->field_1804[index] = a1[index];
-        a4->actions[index] = NULL;
+        state->field_17F0[index] = 6;
+        state->field_1804[index] = skills[index];
+        state->actions[index] = NULL;
     }
 
-    a4->actions[a2] = NULL;
-    dialog_copy_pc_generic_msg(a4->options[a2], a4, 800, 899);
-    sub_417590(a3, &(a4->field_17F0[a2]), &(a4->field_1804[a2]));
+    // Last option - "Forget it".
+    state->actions[cnt] = NULL;
+    dialog_copy_pc_generic_msg(state->options[cnt], state, 800, 899);
+    sub_417590(back_response_val, &(state->field_17F0[cnt]), &(state->field_1804[cnt]));
 }
 
 // 0x418DE0
