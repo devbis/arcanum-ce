@@ -99,7 +99,7 @@ static TimeEventTypeInfo stru_5B2188[] = {
     { "Anim", true, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS, anim_timeevent_process },
     { "Bkg Anim", false, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
     { "Fidget Anim", false, 0, TIME_TYPE_REAL_TIME, anim_fidget_timeevent_process },
-    { "Script", true, TIME_EVENT_TYPE_FLAG_0x0400 | TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, script_timeevent_process },
+    { "Script", true, TIME_EVENT_TYPE_FLAG_0x0400 | TIME_EVENT_TYPE_FLAG_0x0080 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, script_timeevent_process },
     { "MagicTech", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, magictech_timeevent_process },
     { "Poison", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, stat_poison_timeevent_process },
     { "Resting", true, 10, TIME_TYPE_GAME_TIME, critter_resting_timeevent_process },
