@@ -50,7 +50,7 @@ static_assert(sizeof(S5C9160) == 0x18, "wrong size");
 
 typedef struct WmapNote {
     /* 0000 */ int id;
-    /* 0004 */ int field_4;
+    /* 0004 */ unsigned int flags;
     /* 0008 */ WmapCoords coords;
     /* 0010 */ int64_t field_10;
     /* 0018 */ TigRect field_18;
@@ -916,7 +916,7 @@ bool wmap_ui_save(TigFile* stream)
 
             cnt = num_notes;
             for (v2 = 0; v2 < num_notes; v2++) {
-                if ((stru_5C9228[v1].notes[v2].field_4 & 0x2) != 0) {
+                if ((stru_5C9228[v1].notes[v2].flags & 0x2) != 0) {
                     cnt--;
                 }
             }
@@ -926,7 +926,7 @@ bool wmap_ui_save(TigFile* stream)
             }
 
             for (v2 = 0; v2 < num_notes; v2++) {
-                if ((stru_5C9228[v1].notes[v2].field_4 & 0x2) == 0) {
+                if ((stru_5C9228[v1].notes[v2].flags & 0x2) == 0) {
                     if (!wmap_ui_town_note_save(&(stru_5C9228[v1].notes[v2]), stream)) {
                         return false;
                     }
@@ -946,7 +946,7 @@ bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream)
     if (stream == NULL) return false;
 
     if (tig_file_fwrite(&(note->id), sizeof(note->id), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(note->flags), sizeof(note->flags), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!wmap_ui_rect_write(&(note->field_18), stream)) return false;
@@ -1025,7 +1025,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
     if (stream == NULL) return false;
 
     if (tig_file_fread(&(note->id), sizeof(note->id), 1, stream) != 1) return false;
-    if (tig_file_fread(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
+    if (tig_file_fread(&(note->flags), sizeof(note->flags), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!wmap_ui_rect_read(&(note->field_18), stream)) return false;
@@ -2305,7 +2305,7 @@ void sub_562800(int id)
     const char* name;
 
     note.id = id;
-    note.field_4 = 0x2;
+    note.flags = 0x2;
     note.field_10 = 0;
     note.field_28 = 5;
 
@@ -3163,7 +3163,7 @@ bool sub_563C60(WmapNote* note)
         // Note does not exists, but there is a room for a new note.
         v1->notes[index] = *note;
         sub_563D50(&(v1->notes[index]));
-        note->field_4 &= ~0x4;
+        note->flags &= ~0x4;
         (*v1->num_notes)++;
         sub_563D80(v1->notes[index].id, dword_66D868);
         return true;
@@ -3336,7 +3336,7 @@ void sub_5640C0(TextEdit* textedit)
 
     if (*textedit->buffer != '\0' && sub_5643C0(textedit->buffer)) {
         if (textedit->buffer == stru_66D718.str) {
-            dword_66D9D4->field_4 = 0;
+            dword_66D9D4->flags = 0;
             v1 = sub_564140(dword_66D9D4);
         } else {
             v1 = true;
@@ -3371,7 +3371,7 @@ bool sub_564160(WmapNote* note, int a2)
     note_index = *stru_5C9228[a2].num_notes;
 
     note->id = stru_5C9228[a2].field_194++;
-    note->field_4 &= ~0x4;
+    note->flags &= ~0x4;
     stru_5C9228[a2].notes[note_index] = *note;
     sub_563D50(&(stru_5C9228[a2].notes[note_index]));
     (*stru_5C9228[a2].num_notes)++;
@@ -3432,9 +3432,9 @@ void sub_5642E0(int a1, int a2)
 // 0x5642F0
 void sub_5642F0(WmapNote* note)
 {
-    if ((note->field_4 & 0x4) != 0) {
+    if ((note->flags & 0x4) != 0) {
         tig_video_buffer_destroy(note->video_buffer);
-        note->field_4 &= ~0x4;
+        note->flags &= ~0x4;
     }
 }
 
@@ -3464,7 +3464,7 @@ void sub_564360(int id)
             }
         }
 
-        if (index < cnt && (v1->notes[index].field_4 & 0x2) == 0) {
+        if (index < cnt && (v1->notes[index].flags & 0x2) == 0) {
             sub_564030(&(v1->notes[index]));
         }
     }
@@ -3783,7 +3783,7 @@ void wmap_ui_mark_townmap(int64_t obj)
     object_examine(obj, OBJ_HANDLE_NULL, note.str);
     sub_563D50(&note);
     note.field_10 = 0;
-    note.field_4 = 0x2;
+    note.flags = 0x2;
     note.field_28 = 3;
 
     dword_66D878 = pc_townmap;
@@ -4363,7 +4363,7 @@ void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3)
 
     wmap_note_vbid_lock(note);
 
-    if ((note->field_4 & 0x4) != 0) {
+    if ((note->flags & 0x4) != 0) {
         x = 0;
         y = 0;
         dx = a2->x + note->coords.x - stru_5C9228[dword_66D868].field_34;
@@ -4404,7 +4404,7 @@ void wmap_note_vbid_lock(WmapNote* note)
     TigVideoBufferCreateInfo vb_create_info;
     TigRect dirty_rect;
 
-    if ((note->field_4 & 0x4) == 0) {
+    if ((note->flags & 0x4) == 0) {
         vb_create_info.flags = TIG_VIDEO_BUFFER_LOCKED | TIG_VIDEO_BUFFER_VIDEO_MEMORY;
         vb_create_info.width = dword_66D890 + 203;
         vb_create_info.height = 50;
@@ -4415,7 +4415,7 @@ void wmap_note_vbid_lock(WmapNote* note)
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
         }
 
-        note->field_4 |= 0x4;
+        note->flags |= 0x4;
 
         sub_565F00(note->video_buffer, &(note->field_18));
         tig_font_push(stru_5C9160[note->field_28].font);
