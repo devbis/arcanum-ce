@@ -2364,7 +2364,7 @@ void sub_416B00(char* dst, char* src, DialogState* a3)
     remainder = src;
     *dst = '\0';
 
-    start = strchr(src, '@');
+    start = strchr(remainder, '@');
     while (start != NULL) {
         *start = '\0';
         strcat(dst, remainder);
@@ -2378,7 +2378,8 @@ void sub_416B00(char* dst, char* src, DialogState* a3)
 
         *start = '@';
         *end = '@';
-        start = strchr(end + 1, '@');
+        remainder = end + 1;
+        start = strchr(remainder, '@');
     }
 
     strcat(dst, remainder);
