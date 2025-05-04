@@ -4704,8 +4704,7 @@ void sub_443010(ObjectRenderColors* colors)
 {
     ObjectRenderColorsNode* node;
 
-    // NOTE: Probably wrong.
-    node = (ObjectRenderColorsNode*)((uint8_t*)colors - sizeof(ObjectRenderColorsNode*));
+    node = ((IndexedObjectRenderColors*)((unsigned char*)colors - offsetof(IndexedObjectRenderColors, colors)))->ptr;
     node->next = dword_5E2F44;
     dword_5E2F44 = node;
 }
