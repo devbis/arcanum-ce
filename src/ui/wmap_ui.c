@@ -1035,7 +1035,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
     memset(note->str, 0, 248);
     note->str[248] = '\0';
     note->str[249] = '\0';
-    if (tig_file_fwrite(note->str, 1, size, stream) != size) return false;
+    if (tig_file_fread(note->str, 1, size, stream) != size) return false;
 
     return true;
 }
