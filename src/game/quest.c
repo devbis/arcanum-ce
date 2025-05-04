@@ -220,14 +220,14 @@ int quest_dialog_line(int64_t pc_obj, int64_t npc_obj, int num)
 
     state = quest_state_get(pc_obj, num);
     if (stat_level_get(pc_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
-        return quests[num].dumb_dialog[state];
+        return quests[num - 1000].dumb_dialog[state];
     }
 
     if (reaction_get(npc_obj, pc_obj) < 20) {
-        return quests[num].bad_reaction_dialog[state];
+        return quests[num - 1000].bad_reaction_dialog[state];
     }
 
-    return quests[num].normal_dialog[state];
+    return quests[num - 1000].normal_dialog[state];
 }
 
 // 0x4C4CB0
@@ -271,7 +271,7 @@ void quest_state_set(int64_t pc_obj, int num, int state, int64_t npc_obj)
     }
 
     if (state == QUEST_STATE_COMPLETED) {
-        critter_give_xp(pc_obj, quest_get_xp(quests[num].experience_level));
+        critter_give_xp(pc_obj, quest_get_xp(quests[num - 1000].experience_level));
     }
 
     if (!tig_net_is_active()) {
@@ -355,7 +355,7 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
     if (state == QUEST_STATE_COMPLETED) {
         stat_base_set(pc_obj,
             STAT_ALIGNMENT,
-            stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
+            stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[num - 1000].alignment_adjustment);
         tig_sound_quick_play(3028);
     }
 
