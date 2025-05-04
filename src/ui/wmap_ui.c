@@ -1032,9 +1032,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
     if (tig_file_fread(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
     if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) return false;
 
-    memset(note->str, 0, 248);
-    note->str[248] = '\0';
-    note->str[249] = '\0';
+    memset(note->str, 0, sizeof(note->str));
     if (tig_file_fread(note->str, 1, size, stream) != size) return false;
 
     return true;
