@@ -154,7 +154,7 @@ static S5C9160 stru_5C9160[8] = {
 static void sub_560010();
 static void wmap_ui_town_notes_save();
 static bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream);
-static bool sub_560440(TigRect* rect, TigFile* stream);
+static bool wmap_ui_rect_write(TigRect* rect, TigFile* stream);
 static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool wmap_ui_rect_read(TigRect* rect, TigFile* stream);
 static void wmap_ui_open_internal();
@@ -949,7 +949,7 @@ bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream)
     if (tig_file_fwrite(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
-    if (!sub_560440(&(note->field_18), stream)) return false;
+    if (!wmap_ui_rect_write(&(note->field_18), stream)) return false;
     if (tig_file_fwrite(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
 
     size = (int)strlen(note->str);
@@ -960,7 +960,7 @@ bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream)
 }
 
 // 0x560440
-bool sub_560440(TigRect* rect, TigFile* stream)
+bool wmap_ui_rect_write(TigRect* rect, TigFile* stream)
 {
     if (tig_file_fwrite(&(rect->x), sizeof(rect->x), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(rect->y), sizeof(rect->y), 1, stream) != 1) return false;
