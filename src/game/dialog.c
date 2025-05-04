@@ -1529,7 +1529,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
                     object_list_followers(a1->pc_obj, &followers);
                     node = followers.head;
                     while (node != NULL) {
-                        if (item_find_by_name(node->obj, value) == OBJ_HANDLE_NULL) {
+                        if (item_find_by_name(node->obj, value) != OBJ_HANDLE_NULL) {
                             break;
                         }
                         node = node->next;
