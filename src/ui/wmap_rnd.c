@@ -180,7 +180,7 @@ static WmapRndEncounterChart wmap_rnd_frequency_chart;
 static WmapRndEncounterChart wmap_rnd_power_chart;
 
 // 0x64C790
-static bool dword_64C790;
+static bool wmap_rnd_initialized;
 
 // 0x64C794
 static bool wmap_rnd_disabled;
@@ -226,7 +226,7 @@ bool wmap_rnd_mod_load()
         return true;
     }
 
-    if (dword_64C790) {
+    if (wmap_rnd_initialized) {
         return true;
     }
 
@@ -240,7 +240,7 @@ bool wmap_rnd_mod_load()
     if (!wmap_rnd_encounter_chart_parse(&wmap_rnd_frequency_chart, 10000, NULL)) {
         tig_debug_println("Disabling random encounters because of bad message file.");
         mes_unload(wmap_rnd_mes_file);
-        dword_64C790 = true;
+        wmap_rnd_initialized = true;
         return true;
     }
 
@@ -248,7 +248,7 @@ bool wmap_rnd_mod_load()
         tig_debug_println("Disabling random encounters because of bad message file.");
         wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
         mes_unload(wmap_rnd_mes_file);
-        dword_64C790 = true;
+        wmap_rnd_initialized = true;
         return true;
     }
 
@@ -257,7 +257,7 @@ bool wmap_rnd_mod_load()
         wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
         wmap_rnd_encounter_chart_exit(&wmap_rnd_power_chart);
         mes_unload(wmap_rnd_mes_file);
-        dword_64C790 = true;
+        wmap_rnd_initialized = true;
         return true;
     }
 
@@ -277,7 +277,7 @@ bool wmap_rnd_mod_load()
             sub_558AF0();
             sub_558B50();
             mes_unload(wmap_rnd_mes_file);
-            dword_64C790 = true;
+            wmap_rnd_initialized = true;
             return true;
         }
 
@@ -297,7 +297,7 @@ bool wmap_rnd_mod_load()
                 sub_558AF0();
                 sub_558B50();
                 mes_unload(wmap_rnd_mes_file);
-                dword_64C790 = true;
+                wmap_rnd_initialized = true;
                 return true;
             }
             entry->field_3C = mes_file_entry.num;
@@ -313,7 +313,7 @@ bool wmap_rnd_mod_load()
                 sub_558AF0();
                 sub_558B50();
                 mes_unload(wmap_rnd_mes_file);
-                dword_64C790 = true;
+                wmap_rnd_initialized = true;
                 return true;
             }
 
@@ -324,7 +324,7 @@ bool wmap_rnd_mod_load()
                     sub_558AF0();
                     sub_558B50();
                     mes_unload(wmap_rnd_mes_file);
-                    dword_64C790 = true;
+                    wmap_rnd_initialized = true;
                     return true;
                 }
                 entry->min_level = (int16_t)value;
@@ -337,7 +337,7 @@ bool wmap_rnd_mod_load()
                     sub_558AF0();
                     sub_558B50();
                     mes_unload(wmap_rnd_mes_file);
-                    dword_64C790 = true;
+                    wmap_rnd_initialized = true;
                     return true;
                 }
                 entry->max_level = (int16_t)value;
@@ -350,7 +350,7 @@ bool wmap_rnd_mod_load()
                     sub_558AF0();
                     sub_558B50();
                     mes_unload(wmap_rnd_mes_file);
-                    dword_64C790 = true;
+                    wmap_rnd_initialized = true;
                     return true;
                 }
                 entry->global_flag_num = value;
@@ -363,7 +363,7 @@ bool wmap_rnd_mod_load()
     }
 
     mes_unload(wmap_rnd_mes_file);
-    dword_64C790 = true;
+    wmap_rnd_initialized = true;
     return true;
 }
 
@@ -374,10 +374,10 @@ void wmap_rnd_mod_unload()
         return;
     }
 
-    if (dword_64C790) {
+    if (wmap_rnd_initialized) {
         sub_558AF0();
         sub_558B50();
-        dword_64C790 = false;
+        wmap_rnd_initialized = false;
     }
 }
 
@@ -399,7 +399,7 @@ bool wmap_rnd_save(TigFile* stream)
     num_entries = 0;
     save_info = NULL;
     if (!wmap_rnd_disabled
-        && dword_64C790
+        && wmap_rnd_initialized
         && wmap_rnd_encounter_tables != NULL) {
         for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
             num_entries += wmap_rnd_encounter_tables[table_idx].num_entries;
@@ -469,7 +469,7 @@ bool wmap_rnd_load(GameLoadInfo* load_info)
         }
 
         if (!wmap_rnd_disabled
-            && dword_64C790
+            && wmap_rnd_initialized
             && wmap_rnd_num_encounter_tables != 0
             && wmap_rnd_encounter_tables != NULL) {
             for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
@@ -702,7 +702,7 @@ bool sub_558DE0(int64_t loc)
         return false;
     }
 
-    if (!dword_64C790) {
+    if (!wmap_rnd_initialized) {
         return false;
     }
 
