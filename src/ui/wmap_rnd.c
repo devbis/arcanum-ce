@@ -17,6 +17,19 @@
 #include "ui/sleep_ui.h"
 #include "ui/wmap_ui.h"
 
+typedef enum WmapTerrainType {
+    WMAP_TERRAIN_TYPE_INVALID,
+    WMAP_TERRAIN_TYPE_GREEN_GRASSLANDS,
+    WMAP_TERRAIN_TYPE_PLAINS,
+    WMAP_TERRAIN_TYPE_SWAMPS,
+    WMAP_TERRAIN_TYPE_ELVEN_FOREST,
+    WMAP_TERRAIN_TYPE_TROPICAL_JUNGLE,
+    WMAP_TERRAIN_TYPE_DESERT,
+    WMAP_TERRAIN_TYPE_FOREST,
+    WMAP_TERRAIN_TYPE_SNOWY_PLAINS,
+    WMAP_TERRAIN_TYPE_VOID,
+} WmapTerrainType;
+
 typedef struct WmapRndEncounterChartEntry {
     /* 0000 */ int64_t loc;
     /* 0008 */ int64_t radius;
@@ -61,7 +74,7 @@ typedef struct WmapRndSaveInfo {
 
 static_assert(sizeof(WmapRndSaveInfo) == 0x8, "wrong size");
 
-static bool wmap_rnd_terrain_clear(uint16_t a1);
+static bool wmap_rnd_terrain_clear(uint16_t tid);
 static bool sub_558A40(MesFileEntry* mes_file_entry, int cnt, int* value_ptr);
 static void wmap_rnd_encounter_table_init(WmapRndEncounterTable* table);
 static void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry);
@@ -102,26 +115,26 @@ static const char* off_5C79B0[] = {
 };
 
 // 0x5C79C4
-static int dword_5C79C4[] = {
-    1,
-    3,
-    0,
-    2,
-    7,
-    6,
-    9,
-    2,
-    6,
-    0,
-    4,
-    2,
-    8,
-    5,
-    0,
-    0,
-    0,
-    0,
-    0,
+static int dword_5C79C4[TERRAIN_TYPE_COUNT] = {
+    /*   TERRAIN_TYPE_GREEN_GRASSLANDS */ WMAP_TERRAIN_TYPE_GREEN_GRASSLANDS,
+    /*             TERRAIN_TYPE_SWAMPS */ WMAP_TERRAIN_TYPE_SWAMPS,
+    /*              TERRAIN_TYPE_WATER */ WMAP_TERRAIN_TYPE_INVALID,
+    /*             TERRAIN_TYPE_PLAINS */ WMAP_TERRAIN_TYPE_PLAINS,
+    /*             TERRAIN_TYPE_FOREST */ WMAP_TERRAIN_TYPE_FOREST,
+    /*      TERRAIN_TYPE_DESERT_ISLAND */ WMAP_TERRAIN_TYPE_DESERT,
+    /*        TERRAIN_TYPE_VOID_PLAINS */ WMAP_TERRAIN_TYPE_VOID,
+    /*  TERRAIN_TYPE_BROAD_LEAF_FOREST */ WMAP_TERRAIN_TYPE_PLAINS,
+    /*             TERRAIN_TYPE_DESERT */ WMAP_TERRAIN_TYPE_DESERT,
+    /*          TERRAIN_TYPE_MOUNTAINS */ WMAP_TERRAIN_TYPE_INVALID,
+    /*       TERRAIN_TYPE_ELVEN_FOREST */ WMAP_TERRAIN_TYPE_ELVEN_FOREST,
+    /*         TERRAIN_TYPE_DEFORESTED */ WMAP_TERRAIN_TYPE_PLAINS,
+    /*        TERRAIN_TYPE_SNOW_PLAINS */ WMAP_TERRAIN_TYPE_SNOWY_PLAINS,
+    /*    TERRAIN_TYPE_TROPICAL_JUNGLE */ WMAP_TERRAIN_TYPE_TROPICAL_JUNGLE,
+    /*     TERRAIN_TYPE_VOID_MOUNTAINS */ WMAP_TERRAIN_TYPE_INVALID,
+    /*     TERRAIN_TYPE_SCORCHED_EARTH */ WMAP_TERRAIN_TYPE_INVALID,
+    /*   TERRAIN_TYPE_DESERT_MOUNTAINS */ WMAP_TERRAIN_TYPE_INVALID,
+    /*    TERRAIN_TYPE_SNOWY_MOUNTAINS */ WMAP_TERRAIN_TYPE_INVALID,
+    /* TERRAIN_TYPE_TROPICAL_MOUNTAINS */ WMAP_TERRAIN_TYPE_INVALID,
 };
 
 // 0x64C728
@@ -140,7 +153,7 @@ static bool dword_64C73C;
 static int dword_64C740;
 
 // 0x64C744
-static int dword_64C744;
+static WmapTerrainType wmap_rnd_terrain_type;
 
 // 0x64C748
 static int dword_64C748;
@@ -486,21 +499,20 @@ void wmap_rnd_disable()
 }
 
 // 0x5589E0
-bool wmap_rnd_terrain_clear(uint16_t a1)
+bool wmap_rnd_terrain_clear(uint16_t tid)
 {
     int v1;
     int v2;
 
-    v1 = sub_4E8DC0(a1);
-    v2 = sub_4E8DD0(a1);
-    if (v1 < 0 || v1 >= 19
-        || v2 < 0 || v2 >= 19) {
+    v1 = sub_4E8DC0(tid);
+    v2 = sub_4E8DD0(tid);
+    if (!TERRAIN_TYPE_IS_VALID(v1) || !TERRAIN_TYPE_IS_VALID(v2)) {
         tig_debug_println("Error:  Unknown terrain encountered in wmap_rnd_terrain_clear");
         return false;
     }
 
-    if (dword_5C79C4[v1] == 0
-        || dword_5C79C4[v2] == 0) {
+    if (dword_5C79C4[v1] == WMAP_TERRAIN_TYPE_INVALID
+        || dword_5C79C4[v2] == WMAP_TERRAIN_TYPE_INVALID) {
         return false;
     }
 
@@ -725,8 +737,8 @@ bool sub_558DE0(int64_t loc)
         return false;
     }
 
-    dword_64C744 = wmap_rnd_determine_terrain(loc);
-    if (!dword_64C744) {
+    wmap_rnd_terrain_type = wmap_rnd_determine_terrain(loc);
+    if (wmap_rnd_terrain_type == WMAP_TERRAIN_TYPE_INVALID) {
         return false;
     }
 
@@ -788,7 +800,7 @@ bool wmap_rnd_encounter_check()
     int v2 = -1;
 
     if (dword_64C748 == -1) {
-        dword_64C748 = dword_64C73C + 2 * (dword_64C740 + 2 * dword_64C744 + dword_64C744) - 8;
+        dword_64C748 = dword_64C73C + 2 * dword_64C740 + 6 * wmap_rnd_terrain_type - 8;
     }
 
     tig_debug_printf("WMap_Rnd: Random Encounter Fired: Table: %d.\n", dword_64C748);
