@@ -78,8 +78,8 @@ static bool wmap_rnd_terrain_clear(uint16_t tid);
 static bool sub_558A40(MesFileEntry* mes_file_entry, int cnt, int* value_ptr);
 static void wmap_rnd_encounter_table_init(WmapRndEncounterTable* table);
 static void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry);
-static void sub_558AF0();
-static void sub_558B50();
+static void wmap_rnd_encounter_table_clear();
+static void wmap_rnd_encounter_chart_clear();
 static bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const char** value_list);
 static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry);
 static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
@@ -274,8 +274,8 @@ bool wmap_rnd_mod_load()
         mes_file_entry.num = 50000 + 100 * table_idx;
         if (!sub_558A40(&mes_file_entry, 100, &num_entries)) {
             tig_debug_println("Disabling random encounters because of bad message file.");
-            sub_558AF0();
-            sub_558B50();
+            wmap_rnd_encounter_table_clear();
+            wmap_rnd_encounter_chart_clear();
             mes_unload(wmap_rnd_mes_file);
             wmap_rnd_initialized = true;
             return true;
@@ -294,8 +294,8 @@ bool wmap_rnd_mod_load()
             if (!mes_search(wmap_rnd_mes_file, &mes_file_entry)) {
                 tig_debug_printf("Error:  Random encounter table is discontinuous at line %d.\n", mes_file_entry.num);
                 tig_debug_println("Disabling random encounters because of bad message file.");
-                sub_558AF0();
-                sub_558B50();
+                wmap_rnd_encounter_table_clear();
+                wmap_rnd_encounter_chart_clear();
                 mes_unload(wmap_rnd_mes_file);
                 wmap_rnd_initialized = true;
                 return true;
@@ -310,8 +310,8 @@ bool wmap_rnd_mod_load()
             if (!wmap_rnd_parse_critters(&str, entry)) {
                 tig_debug_printf("Error: Random encounter table has no: prototype at line: %d.\n", mes_file_entry.num);
                 tig_debug_println("Disabling random encounters because of bad message file.");
-                sub_558AF0();
-                sub_558B50();
+                wmap_rnd_encounter_table_clear();
+                wmap_rnd_encounter_chart_clear();
                 mes_unload(wmap_rnd_mes_file);
                 wmap_rnd_initialized = true;
                 return true;
@@ -321,8 +321,8 @@ bool wmap_rnd_mod_load()
                 if (value < 0 || value > 32000) {
                     tig_debug_printf("WmapRnd: Init: ERROR: MinLevel Value Wrong: Line: %d.\n", mes_file_entry.num);
                     tig_debug_println("Disabling random encounters because of bad message file.");
-                    sub_558AF0();
-                    sub_558B50();
+                    wmap_rnd_encounter_table_clear();
+                    wmap_rnd_encounter_chart_clear();
                     mes_unload(wmap_rnd_mes_file);
                     wmap_rnd_initialized = true;
                     return true;
@@ -334,8 +334,8 @@ bool wmap_rnd_mod_load()
                 if (value < 0 || value > 32000) {
                     tig_debug_printf("WmapRnd: Init: ERROR: MaxLevel Value Wrong: Line: %d.\n", mes_file_entry.num);
                     tig_debug_println("Disabling random encounters because of bad message file.");
-                    sub_558AF0();
-                    sub_558B50();
+                    wmap_rnd_encounter_table_clear();
+                    wmap_rnd_encounter_chart_clear();
                     mes_unload(wmap_rnd_mes_file);
                     wmap_rnd_initialized = true;
                     return true;
@@ -347,8 +347,8 @@ bool wmap_rnd_mod_load()
                 if (value > 3200) {
                     tig_debug_printf("WmapRnd: Init: ERROR: globalFlagNum Value Wrong: Line: %d.\n", mes_file_entry.num);
                     tig_debug_println("Disabling random encounters because of bad message file.");
-                    sub_558AF0();
-                    sub_558B50();
+                    wmap_rnd_encounter_table_clear();
+                    wmap_rnd_encounter_chart_clear();
                     mes_unload(wmap_rnd_mes_file);
                     wmap_rnd_initialized = true;
                     return true;
@@ -375,8 +375,8 @@ void wmap_rnd_mod_unload()
     }
 
     if (wmap_rnd_initialized) {
-        sub_558AF0();
-        sub_558B50();
+        wmap_rnd_encounter_table_clear();
+        wmap_rnd_encounter_chart_clear();
         wmap_rnd_initialized = false;
     }
 }
@@ -565,7 +565,7 @@ void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry)
 }
 
 // 0x558AF0
-void sub_558AF0()
+void wmap_rnd_encounter_table_clear()
 {
     int index;
 
@@ -580,7 +580,7 @@ void sub_558AF0()
 }
 
 // 0x558B50
-void sub_558B50()
+void wmap_rnd_encounter_chart_clear()
 {
     wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
     wmap_rnd_encounter_chart_exit(&wmap_rnd_power_chart);
