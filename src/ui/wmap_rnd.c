@@ -86,7 +86,7 @@ static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
 static void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart);
 static int wmap_rnd_encounter_entry_compare(const void* va, const void* vb);
 static bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry);
-static bool sub_558DE0(int64_t location);
+static bool wmap_rnd_check(int64_t location);
 static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
 static int wmap_rnd_determine_terrain(int64_t loc);
 static bool wmap_rnd_encounter_check();
@@ -144,31 +144,31 @@ static WmapRndEncounterChart wmap_rnd_encounter_chart;
 static mes_file_handle_t wmap_rnd_mes_file;
 
 // 0x64C738
-static int dword_64C738;
+static int wmap_rnd_frequency;
 
 // 0x64C73C
-static bool dword_64C73C;
+static bool wmap_rnd_night;
 
 // 0x64C740
-static int dword_64C740;
+static int wmap_rnd_power;
 
 // 0x64C744
 static WmapTerrainType wmap_rnd_terrain_type;
 
 // 0x64C748
-static int dword_64C748;
+static int wmap_rnd_encounter;
 
 // 0x64C74C
 static int dword_64C74C[5];
 
 // 0x64C760
-static int64_t qword_64C760;
+static int64_t wmap_rnd_loc;
 
 // 0x64C768
-static int64_t qword_64C768;
+static int64_t wmap_rnd_loc_x;
 
 // 0x64C770
-static int64_t qword_64C770;
+static int64_t wmap_rnd_loc_y;
 
 // 0x64C778
 static int dword_64C778;
@@ -694,7 +694,7 @@ bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry)
 }
 
 // 0x558DE0
-bool sub_558DE0(int64_t loc)
+bool wmap_rnd_check(int64_t loc)
 {
     int hour;
 
@@ -706,32 +706,32 @@ bool sub_558DE0(int64_t loc)
         return false;
     }
 
-    qword_64C760 = loc;
-    qword_64C768 = LOCATION_GET_X(loc);
-    qword_64C770 = LOCATION_GET_Y(loc);
+    wmap_rnd_loc = loc;
+    wmap_rnd_loc_x = LOCATION_GET_X(loc);
+    wmap_rnd_loc_y = LOCATION_GET_Y(loc);
 
-    if (!sub_558F30(&wmap_rnd_frequency_chart, loc, &dword_64C738)) {
-        dword_64C738 = 5;
+    if (!sub_558F30(&wmap_rnd_frequency_chart, loc, &wmap_rnd_frequency)) {
+        wmap_rnd_frequency = 5;
     }
 
     if (sleep_ui_is_created()) {
-        dword_64C738 *= 5;
+        wmap_rnd_frequency *= 5;
     }
 
-    if (random_between(1, 100) > dword_64C738) {
+    if (random_between(1, 100) > wmap_rnd_frequency) {
         return false;
     }
 
-    if (sub_558F30(&wmap_rnd_power_chart, loc, &dword_64C740)) {
-        if (dword_64C740 == 0) {
+    if (sub_558F30(&wmap_rnd_power_chart, loc, &wmap_rnd_power)) {
+        if (wmap_rnd_power == 0) {
             return false;
         }
     } else {
-        dword_64C740 = 2;
+        wmap_rnd_power = 2;
     }
 
     hour = datetime_current_hour();
-    dword_64C73C = hour < 6 || hour >= 18;
+    wmap_rnd_night = hour < 6 || hour >= 18;
 
     if (townmap_get(sector_id_from_loc(loc))) {
         return false;
@@ -742,8 +742,8 @@ bool sub_558DE0(int64_t loc)
         return false;
     }
 
-    if (!sub_558F30(&wmap_rnd_encounter_chart, loc, &dword_64C748)) {
-        dword_64C748 = -1;
+    if (!sub_558F30(&wmap_rnd_encounter_chart, loc, &wmap_rnd_encounter)) {
+        wmap_rnd_encounter = -1;
     }
 
     if (!wmap_rnd_encounter_check()) {
@@ -799,18 +799,18 @@ bool wmap_rnd_encounter_check()
     int index;
     int v2 = -1;
 
-    if (dword_64C748 == -1) {
-        dword_64C748 = dword_64C73C + 2 * dword_64C740 + 6 * wmap_rnd_terrain_type - 8;
+    if (wmap_rnd_encounter == -1) {
+        wmap_rnd_encounter = wmap_rnd_night + 2 * wmap_rnd_power + 6 * wmap_rnd_terrain_type - 8;
     }
 
-    tig_debug_printf("WMap_Rnd: Random Encounter Fired: Table: %d.\n", dword_64C748);
+    tig_debug_printf("WMap_Rnd: Random Encounter Fired: Table: %d.\n", wmap_rnd_encounter);
 
-    if (dword_64C748 >= wmap_rnd_num_encounter_tables) {
-        tig_debug_printf("WmapRnd: wmap_rnd_encounter_check: ERROR: Table %d was out of bounds!\n", dword_64C748);
+    if (wmap_rnd_encounter >= wmap_rnd_num_encounter_tables) {
+        tig_debug_printf("WmapRnd: wmap_rnd_encounter_check: ERROR: Table %d was out of bounds!\n", wmap_rnd_encounter);
         return false;
     }
 
-    table = &(wmap_rnd_encounter_tables[dword_64C748]);
+    table = &(wmap_rnd_encounter_tables[wmap_rnd_encounter]);
     v1 = wmap_rnd_encounter_total_frequency(table);
     if (v1 <= 0) {
         return false;
@@ -928,11 +928,11 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
 
     if (random_between(1, 100) < 51) {
         // TODO: Check.
-        origin = LOCATION_MAKE(qword_64C768 - 6, qword_64C770);
+        origin = LOCATION_MAKE(wmap_rnd_loc_x - 6, wmap_rnd_loc_y);
         dword_64C778 = 6;
     } else {
         // TODO: Check.
-        origin = LOCATION_MAKE(qword_64C768, qword_64C770 - 6);
+        origin = LOCATION_MAKE(wmap_rnd_loc_x, wmap_rnd_loc_y - 6);
         dword_64C778 = 2;
     }
 
@@ -971,7 +971,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             object_list_destroy(&objects);
 
             if (obj != OBJ_HANDLE_NULL) {
-                rot = location_rot(loc, qword_64C760);
+                rot = location_rot(loc, wmap_rnd_loc);
                 art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
                 art_id = tig_art_id_rotation_set(art_id, rot);
                 object_set_current_aid(obj, art_id);
@@ -1027,7 +1027,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
     if (map_current_map() == map_by_type(MAP_TYPE_START_MAP)
         && sub_4CB6A0(player_get_local_pc_obj()) == AREA_UNKNOWN) {
         wmap_ui_get_current_location(&loc);
-        if (sub_558DE0(loc)) {
+        if (wmap_rnd_check(loc)) {
             if (wmap_ui_is_created()) {
                 wmap_ui_close();
                 wmap_ui_encounter_start();
