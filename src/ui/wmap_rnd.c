@@ -53,9 +53,9 @@ typedef struct WmapRndEncounterTableEntry {
     /* 002C */ int16_t min_level;
     /* 002E */ int16_t max_level;
     /* 0030 */ int global_flag_num;
-    /* 0034 */ int trigger_cnt;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
+    /* 0034 */ int max_trigger_cnt;
+    /* 0038 */ int trigger_cnt;
+    /* 003C */ int message_num;
 } WmapRndEncounterTableEntry;
 
 static_assert(sizeof(WmapRndEncounterTableEntry) == 0x40, "wrong size");
@@ -68,8 +68,8 @@ typedef struct WmapRndEncounterTable {
 static_assert(sizeof(WmapRndEncounterTable) == 0x8, "wrong size");
 
 typedef struct WmapRndSaveInfo {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
+    /* 0000 */ int trigger_cnt;
+    /* 0004 */ int message_num;
 } WmapRndSaveInfo;
 
 static_assert(sizeof(WmapRndSaveInfo) == 0x8, "wrong size");
@@ -300,7 +300,7 @@ bool wmap_rnd_mod_load()
                 wmap_rnd_initialized = true;
                 return true;
             }
-            entry->field_3C = mes_file_entry.num;
+            entry->message_num = mes_file_entry.num;
 
             mes_get_msg(wmap_rnd_mes_file, &mes_file_entry);
             str = mes_file_entry.str;
@@ -357,7 +357,7 @@ bool wmap_rnd_mod_load()
             }
 
             if (tig_str_parse_named_value(&str, "TriggerCount:", &value)) {
-                entry->trigger_cnt = value;
+                entry->max_trigger_cnt = value;
             }
         }
     }
@@ -412,8 +412,8 @@ bool wmap_rnd_save(TigFile* stream)
                 table = &(wmap_rnd_encounter_tables[table_idx]);
                 for (entry_idx = 0; entry_idx < table->num_entries; entry_idx++) {
                     entry = &(table->entries[entry_idx]);
-                    save_info[save_info_idx].field_0 = entry->field_38;
-                    save_info[save_info_idx].field_4 = entry->field_3C;
+                    save_info[save_info_idx].trigger_cnt = entry->trigger_cnt;
+                    save_info[save_info_idx].message_num = entry->message_num;
                 }
             }
         }
@@ -477,8 +477,8 @@ bool wmap_rnd_load(GameLoadInfo* load_info)
                 for (entry_idx = 0; entry_idx < table->num_entries; entry_idx++) {
                     entry = &(table->entries[entry_idx]);
                     for (save_info_idx = 0; save_info_idx < num_entries; save_info_idx++) {
-                        if (entry->field_3C == save_info[save_info_idx].field_4) {
-                            entry->field_38 = save_info[save_info_idx].field_0;
+                        if (entry->message_num == save_info[save_info_idx].message_num) {
+                            entry->trigger_cnt = save_info[save_info_idx].trigger_cnt;
                             break;
                         }
                     }
@@ -560,8 +560,8 @@ void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry)
     entry->min_level = 0;
     entry->max_level = 32000;
     entry->global_flag_num = -1;
-    entry->trigger_cnt = -1;
-    entry->field_38 = 0;
+    entry->max_trigger_cnt = -1;
+    entry->trigger_cnt = 0;
 }
 
 // 0x558AF0
@@ -835,7 +835,7 @@ bool wmap_rnd_encounter_check()
         index = v2;
     }
 
-    table->entries[index].field_38++;
+    table->entries[index].trigger_cnt++;
 
     if (wmap_rnd_encounter_entry_total_monsters(&(table->entries[index])) == 0) {
         tig_debug_println("WmapRnd: Total monsters is zero.");
@@ -868,7 +868,7 @@ bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
         return false;
     }
 
-    if (entry->trigger_cnt > -1 && entry->trigger_cnt <= entry->field_38) {
+    if (entry->max_trigger_cnt > -1 && entry->max_trigger_cnt <= entry->trigger_cnt) {
         return false;
     }
 
