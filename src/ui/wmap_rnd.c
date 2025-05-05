@@ -47,9 +47,9 @@ static_assert(sizeof(WmapRndEncounterChart) == 0x8, "wrong size");
 
 typedef struct WmapRndEncounterTableEntry {
     /* 0000 */ int frequency;
-    /* 0004 */ int16_t lower[5];
-    /* 000E */ int16_t upper[5];
-    /* 0018 */ int field_18[5];
+    /* 0004 */ int16_t critter_min_cnt[5];
+    /* 000E */ int16_t critter_max_cnt[5];
+    /* 0018 */ int critter_basic_prototype[5];
     /* 002C */ int16_t min_level;
     /* 002E */ int16_t max_level;
     /* 0030 */ int global_flag_num;
@@ -85,7 +85,7 @@ static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterCha
 static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
 static void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart);
 static int wmap_rnd_encounter_entry_compare(const void* va, const void* vb);
-static bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry);
+static bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry);
 static bool sub_558DE0(int64_t location);
 static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
 static int wmap_rnd_determine_terrain(int64_t loc);
@@ -307,7 +307,7 @@ bool wmap_rnd_mod_load()
 
             tig_str_parse_value(&str, &(entry->frequency));
 
-            if (!sub_558D40(&str, entry)) {
+            if (!wmap_rnd_parse_critters(&str, entry)) {
                 tig_debug_printf("Error: Random encounter table has no: prototype at line: %d.\n", mes_file_entry.num);
                 tig_debug_println("Disabling random encounters because of bad message file.");
                 sub_558AF0();
@@ -556,7 +556,7 @@ void wmap_rnd_encounter_table_init(WmapRndEncounterTable* table)
 // 0x558AD0
 void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry)
 {
-    entry->field_18[0] = 0;
+    entry->critter_basic_prototype[0] = 0;
     entry->min_level = 0;
     entry->max_level = 32000;
     entry->global_flag_num = -1;
@@ -670,24 +670,24 @@ int wmap_rnd_encounter_entry_compare(const void* va, const void* vb)
 }
 
 // 0x558D40
-bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry)
+bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry)
 {
     int index;
-    int type;
+    int bp;
     int lower;
     int upper;
 
     for (index = 0; index < 5; index++) {
-        if (!tig_str_parse_named_value(str, off_5C79B0[index], &type)) {
-            entry->field_18[index] = 0;
+        if (!tig_str_parse_named_value(str, off_5C79B0[index], &bp)) {
+            entry->critter_basic_prototype[index] = 0;
             return index != 0;
         }
 
-        entry->field_18[index] = type;
+        entry->critter_basic_prototype[index] = bp;
 
         tig_str_parse_range(str, &lower, &upper);
-        entry->lower[index] = (int16_t)lower;
-        entry->upper[index] = (int16_t)upper;
+        entry->critter_min_cnt[index] = (int16_t)lower;
+        entry->critter_max_cnt[index] = (int16_t)upper;
     }
 
     return true;
@@ -897,13 +897,13 @@ int wmap_rnd_encounter_entry_total_monsters(WmapRndEncounterTableEntry* entry)
     int index;
 
     for (index = 0; index < 5; index++) {
-        if (entry->field_18[index] == 0) {
+        if (entry->critter_basic_prototype[index] == 0) {
             break;
         }
 
-        dword_64C74C[index] = entry->lower[index] == entry->upper[index]
-            ? entry->lower[index]
-            : random_between(entry->lower[index], entry->upper[index]);
+        dword_64C74C[index] = entry->critter_min_cnt[index] == entry->critter_max_cnt[index]
+            ? entry->critter_min_cnt[index]
+            : random_between(entry->critter_min_cnt[index], entry->critter_max_cnt[index]);
         monsters += dword_64C74C[index];
     }
 
@@ -937,7 +937,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
     }
 
     for (index = 0; index < 5; index++) {
-        if (entry->field_18[index] == 0) {
+        if (entry->critter_basic_prototype[index] == 0) {
             break;
         }
 
@@ -947,7 +947,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             dy = LOCATION_GET_Y(origin);
             sub_5594E0(k, &dx, &dy);
             loc = LOCATION_MAKE(dx, dy);
-            wmap_rnd_encounter_build_object(entry->field_18[index], loc, &obj);
+            wmap_rnd_encounter_build_object(entry->critter_basic_prototype[index], loc, &obj);
             if (tile_is_blocking(loc, 0)) {
                 pc_obj = player_get_local_pc_obj();
                 if (!sub_4F4E40(pc_obj, 6, &loc) || tile_is_blocking(loc, 0)) {
