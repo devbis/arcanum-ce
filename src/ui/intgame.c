@@ -2771,7 +2771,7 @@ void sub_54DE50(TigMessage* msg)
                     if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
                         sub_57C110(&v1);
                     } else if (sub_4F2D10() == 0x100000) {
-                        sub_57BC30();
+                        spell_ui_error_target_not_damaged();
                     }
                 }
                 break;
@@ -2902,7 +2902,7 @@ void sub_54DE50(TigMessage* msg)
                 if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
                     sub_571CB0(&v1);
                 } else if (sub_4F2D10() == 0x100000) {
-                    sub_57BC30();
+                    spell_ui_error_target_not_damaged();
                 }
                 break;
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:

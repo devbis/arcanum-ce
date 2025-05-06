@@ -103,12 +103,12 @@ bool spell_ui_load(GameLoadInfo* load_info)
 }
 
 // 0x57BC30
-void sub_57BC30()
+void spell_ui_error_target_not_damaged()
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    mes_file_entry.num = 606;
+    mes_file_entry.num = 606; // "The target is already fully healed."
     magictech_get_msg(&mes_file_entry);
 
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
