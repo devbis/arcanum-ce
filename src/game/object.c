@@ -102,9 +102,9 @@ static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectI
 static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
 static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
-static void object_clear_render_palette(int64_t obj);
+static void object_render_palette_clear(int64_t obj);
 static void sub_442D90(int64_t obj, ObjectRenderColors* colors);
-static TigPalette object_get_render_palette(int64_t obj);
+static TigPalette object_render_palette_get(int64_t obj);
 static void sub_442F10(int64_t obj, const tig_color_t* colors);
 static void sub_442FA0(int64_t obj);
 static ObjectRenderColors* sub_442FE0();
@@ -4443,7 +4443,7 @@ void sub_442520(int64_t obj)
             | TIG_ART_BLT_BLEND_COLOR_LERP);
         render_flags |= ORF_02000000 | ORF_01000000;
         obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
-        object_clear_render_palette(obj);
+        object_render_palette_clear(obj);
         return;
     }
 
@@ -4555,7 +4555,7 @@ void sub_442520(int64_t obj)
 }
 
 // 0x442D50
-void object_clear_render_palette(int64_t obj)
+void object_render_palette_clear(int64_t obj)
 {
     TigPalette palette;
 
@@ -4615,7 +4615,7 @@ void sub_442D90(int64_t obj, ObjectRenderColors* colors)
     }
 
     if ((render_flags & TIG_ART_BLT_PALETTE_OVERRIDE) != 0) {
-        render_palette = object_get_render_palette(obj);
+        render_palette = object_render_palette_get(obj);
         if (tig_art_anim_data(obj_field_int32_get(obj, OBJ_F_CURRENT_AID), &art_anim_data) != TIG_OK) {
             return;
         }
@@ -4624,14 +4624,14 @@ void sub_442D90(int64_t obj, ObjectRenderColors* colors)
         palette_modify_info.dst_palette = render_palette;
         tig_palette_modify(&palette_modify_info);
     } else {
-        object_clear_render_palette(obj);
+        object_render_palette_clear(obj);
     }
 
     obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
 }
 
 // 0x442ED0
-TigPalette object_get_render_palette(int64_t obj)
+TigPalette object_render_palette_get(int64_t obj)
 {
     TigPalette palette;
 
@@ -4984,7 +4984,7 @@ void sub_443770(int64_t obj)
 {
     sub_4D9A90(obj);
     sub_4437C0(obj);
-    object_clear_render_palette(obj);
+    object_render_palette_clear(obj);
     sub_442FA0(obj);
     obj_field_int32_set(obj,
         OBJ_F_RENDER_FLAGS,
