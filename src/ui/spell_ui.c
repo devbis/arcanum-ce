@@ -327,7 +327,7 @@ void sub_57C110(S4F2810* a1)
                 sub_4440E0(a1->obj, &(v2.target_obj));
             }
 
-            if (sub_456BC0(&v2)) {
+            if (magictech_check_los(&v2)) {
                 sub_455AC0(&v2);
             } else {
                 // You cannot see the target.

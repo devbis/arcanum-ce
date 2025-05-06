@@ -4869,7 +4869,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         }
     }
 
-    if (!sub_456BC0(a1)) {
+    if (!magictech_check_los(a1)) {
         return false;
     }
 
@@ -5062,7 +5062,7 @@ bool sub_456A90(int mt_id)
 }
 
 // 0x456BC0
-bool sub_456BC0(MagicTechSerializedData* a1)
+bool magictech_check_los(MagicTechSerializedData* a1)
 {
     int64_t loc;
     int64_t blocking_obj;

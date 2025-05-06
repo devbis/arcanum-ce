@@ -371,7 +371,7 @@ void sub_455AC0(MagicTechSerializedData* a1);
 bool sub_4564E0(MagicTechSerializedData* a1);
 bool sub_456A10(int64_t a1, int64_t a2, int64_t a3);
 bool sub_456A90(int mt_id);
-bool sub_456BC0(MagicTechSerializedData* a1);
+bool magictech_check_los(MagicTechSerializedData* a1);
 bool sub_456D20(int mt_id, tig_art_id_t* art_id_ptr, tig_art_id_t* light_art_id_ptr, tig_color_t* light_color_ptr, int* a5, int* a6, int* a7, int* a8);
 void sub_456E00(int mt_id);
 void sub_456E60(int64_t obj, int a2);
