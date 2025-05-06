@@ -199,10 +199,10 @@ void sub_4604C0(int mt_id)
 }
 
 // 0x4604E0
-void sub_4604E0()
+void ui_maintain_refresh()
 {
-    if (ui_callbacks.field_54 != NULL) {
-        ui_callbacks.field_54();
+    if (ui_callbacks.maintain_refresh != NULL) {
+        ui_callbacks.maintain_refresh();
     }
 }
 

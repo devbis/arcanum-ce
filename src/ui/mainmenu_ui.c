@@ -4940,7 +4940,7 @@ bool mainmenu_ui_new_char_execute(int btn)
         return false;
     } else {
         obj_field_string_set(pc_obj, OBJ_F_PC_PLAYER_NAME, byte_64C2F8);
-        sub_4604E0();
+        ui_maintain_refresh();
         dword_64C424 = 1;
         return true;
     }
@@ -7103,7 +7103,7 @@ bool mainmenu_ui_execute_multiplayer_select_char(int index)
 {
     switch (index) {
     case 0:
-        sub_57C4B0();
+        spell_ui_maintain_bar_refresh();
         sub_5417A0(0);
         mainmenu_ui_create_multiplayer_hub();
         if (dword_64C384) {

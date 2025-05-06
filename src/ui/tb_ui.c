@@ -71,7 +71,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_48 = spell_ui_add;
     callbacks.field_4C = sub_57C290;
     callbacks.field_50 = sub_57C320;
-    callbacks.field_54 = sub_57C4B0;
+    callbacks.maintain_refresh = spell_ui_maintain_bar_refresh;
     callbacks.field_0 = sub_57CAE0;
     callbacks.field_4 = sub_57CAF0;
     callbacks.update_inven = tb_inven_ui_update;

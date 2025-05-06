@@ -39,7 +39,7 @@ static S5CB3A8 stru_5CB3A8[FIVE] = {
 };
 
 // 0x5CB3D0
-static int dword_5CB3D0 = -1;
+static int spell_ui_maintain_bar_num_slots = -1;
 
 // 0x6834F8
 static int64_t qword_6834F8;
@@ -463,31 +463,35 @@ void sub_57C470()
         sub_553620(index, TIG_ART_ID_INVALID);
     }
 
-    dword_5CB3D0 = -1;
+    spell_ui_maintain_bar_num_slots = -1;
 }
 
 // 0x57C4B0
-void sub_57C4B0()
+void spell_ui_maintain_bar_refresh()
 {
     int64_t obj;
-    int v1;
-    int v2;
+    int num_slots;
+    int slot;
 
     obj = player_get_local_pc_obj();
-    if (obj != OBJ_HANDLE_NULL) {
-        v1 = stat_level_get(obj, STAT_INTELLIGENCE) / 4;
-        if (v1 != dword_5CB3D0) {
-            v2 = 0;
-            while (v2 < v1) {
-                intgame_spell_maintain_refresh(v2++, true);
-            }
-            while (v2 < FIVE) {
-                intgame_spell_maintain_refresh(v2++, false);
-            }
-
-            dword_5CB3D0 = v1;
-        }
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
     }
+
+    num_slots = stat_level_get(obj, STAT_INTELLIGENCE) / 4;
+    if (num_slots == spell_ui_maintain_bar_num_slots) {
+        return;
+    }
+
+    slot = 0;
+    while (slot < num_slots) {
+        intgame_spell_maintain_refresh(slot++, true);
+    }
+    while (slot < FIVE) {
+        intgame_spell_maintain_refresh(slot++, false);
+    }
+
+    spell_ui_maintain_bar_num_slots = num_slots;
 }
 
 // 0x57C520

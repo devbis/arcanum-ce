@@ -21,7 +21,7 @@ bool sub_57C290(int mt_id);
 void sub_57C320(int mt_id);
 void spell_ui_maintain_bar_click(int index);
 void spell_ui_maintain_bar_hover(int index);
-void sub_57C4B0();
+void spell_ui_maintain_bar_refresh();
 bool spell_ui_maintain_bar_has_spell_in_slot(int index);
 void spell_ui_add(int64_t obj, int spell);
 void spell_ui_remove(int64_t obj, int spell);
