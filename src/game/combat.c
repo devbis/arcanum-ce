@@ -3284,7 +3284,6 @@ bool combat_turn_based_begin_turn()
     int64_t pc_loc;
     LocRect loc_rect;
     ObjectList objects;
-    ObjectNode* node;
 
     dword_5FC250 = 0;
     pc_obj = player_get_local_pc_obj();
@@ -3311,26 +3310,22 @@ bool combat_turn_based_begin_turn()
 
     if (dword_5FC240 == NULL) {
         if (critter_is_active(pc_obj)) {
-            node = stru_5FC180.head;
             dword_5FC250 = 0;
-            dword_5FC240 = node;
-            while (node != NULL && node->obj != pc_obj) {
-                node = node->next;
-                dword_5FC240 = node;
+            dword_5FC240 = stru_5FC180.head;
+            while (dword_5FC240 != NULL && dword_5FC240->obj != pc_obj) {
+                dword_5FC240 = dword_5FC240->next;
                 dword_5FC250++;
             }
 
-            if (node == OBJ_HANDLE_NULL) {
+            if (dword_5FC240 == OBJ_HANDLE_NULL) {
                 tig_debug_printf("Combat: combat_turn_based_begin_turn: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
                 combat_turn_based_end();
                 return false;
             }
         }
-    } else {
-        node = dword_5FC240;
     }
 
-    combat_debug(node != NULL ? node->obj : OBJ_HANDLE_NULL, "TB Begin Turn");
+    combat_debug(dword_5FC240 != NULL ? dword_5FC240->obj : OBJ_HANDLE_NULL, "TB Begin Turn");
     qword_5FC258 = OBJ_HANDLE_NULL;
     dword_5FC260 = 0;
     dword_5FC264 = 0;
