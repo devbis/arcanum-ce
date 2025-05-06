@@ -402,29 +402,38 @@ void spell_ui_maintain_end(int mt_id)
 }
 
 // 0x57C370
-void spell_ui_maintain_bar_click(int index)
+void spell_ui_maintain_click(int slot)
 {
-    Packet59 pkt;
 
-    if (stru_5CB3A8[index].mt_id != -1 && stru_5CB3A8[index].field_4 == 1) {
-        stru_5CB3A8[index].field_4 = 2;
-
-        if (tig_net_is_active()) {
-            pkt.type = 59;
-            pkt.field_4 = stru_5CB3A8[index].mt_id;
-            tig_net_send_app_all(&pkt, sizeof(pkt));
-
-            if (tig_net_is_host()) {
-                sub_457110(stru_5CB3A8[index].mt_id);
-            }
-        } else {
-            sub_457110(stru_5CB3A8[index].mt_id);
-        }
+    if (stru_5CB3A8[slot].mt_id == -1) {
+        return;
     }
+
+    if (stru_5CB3A8[slot].field_4 != 1) {
+        return;
+    }
+
+    stru_5CB3A8[slot].field_4 = 2;
+
+    if (tig_net_is_active()) {
+        PacketPlayerInterruptSpell pkt;
+
+        pkt.type = 59;
+        pkt.mt_id = stru_5CB3A8[slot].mt_id;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        if (tig_net_is_host()) {
+            sub_457110(stru_5CB3A8[slot].mt_id);
+        }
+
+        return;
+    }
+
+    sub_457110(stru_5CB3A8[slot].mt_id);
 }
 
 // 0x57C3F0
-void spell_ui_maintain_bar_hover(int index)
+void spell_ui_maintain_hover(int slot)
 {
     MagicTechRunInfo* run_info;
     int64_t obj;
@@ -432,23 +441,28 @@ void spell_ui_maintain_bar_hover(int index)
     // FIXME: Unused.
     player_get_local_pc_obj();
 
-    if (stru_5CB3A8[index].field_4 == 1
-        && magictech_id_to_run_info(stru_5CB3A8[index].mt_id, &run_info)) {
-        obj = run_info->target_obj.obj;
+    if (stru_5CB3A8[slot].field_4 != 1) {
+        return;
+    }
+
+    if (!magictech_id_to_run_info(stru_5CB3A8[slot].mt_id, &run_info)) {
+        return;
+    }
+
+    obj = run_info->target_obj.obj;
+    if (obj == OBJ_HANDLE_NULL) {
+        if (run_info->summoned_obj != NULL) {
+            obj = run_info->summoned_obj->obj;
+        }
         if (obj == OBJ_HANDLE_NULL) {
-            if (run_info->summoned_obj != NULL) {
-                obj = run_info->summoned_obj->obj;
-            }
-            if (obj == OBJ_HANDLE_NULL) {
-                obj = run_info->parent_obj.obj;
-            }
+            obj = run_info->parent_obj.obj;
         }
+    }
 
-        sub_5507E0(run_info->spell);
+    sub_5507E0(run_info->spell);
 
-        if (obj != OBJ_HANDLE_NULL) {
-            object_hover_obj_set(obj);
-        }
+    if (obj != OBJ_HANDLE_NULL) {
+        object_hover_obj_set(obj);
     }
 }
 
@@ -467,7 +481,7 @@ void sub_57C470()
 }
 
 // 0x57C4B0
-void spell_ui_maintain_bar_refresh()
+void spell_ui_maintain_refresh()
 {
     int64_t obj;
     int num_slots;
@@ -495,9 +509,9 @@ void spell_ui_maintain_bar_refresh()
 }
 
 // 0x57C520
-bool spell_ui_maintain_bar_has_spell_in_slot(int index)
+bool spell_ui_maintain_has(int slot)
 {
-    return stru_5CB3A8[index].field_4 != 0;
+    return stru_5CB3A8[slot].field_4 != 0;
 }
 
 // 0x57C540

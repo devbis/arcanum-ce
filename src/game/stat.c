@@ -744,7 +744,7 @@ int stat_base_set(int64_t obj, int stat, int value)
     case STAT_INTELLIGENCE:
         // Recalculate maintained spell slots.
         if (player_is_local_pc_obj(obj)) {
-            ui_maintain_refresh();
+            ui_spell_maintain_refresh();
         }
         break;
     case STAT_SPEED:

@@ -1068,7 +1068,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         hotkey_ui_start(dword_5C7288, &(window_data.rect), TIG_WINDOW_HANDLE_INVALID, true);
 
         for (index = 0; index < 5; index++) {
-            if (spell_ui_maintain_bar_has_spell_in_slot(index)) {
+            if (spell_ui_maintain_has(index)) {
                 tig_window_show(dword_5C6378[index]);
             }
         }
@@ -2069,14 +2069,14 @@ bool sub_54B5D0(TigMessage* msg)
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
-                    spell_ui_maintain_bar_click(index);
+                    spell_ui_maintain_click(index);
                     return true;
                 }
             }
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
-                    spell_ui_maintain_bar_click(index);
+                    spell_ui_maintain_click(index);
                     return true;
                 }
             }
@@ -2280,14 +2280,14 @@ bool sub_54B5D0(TigMessage* msg)
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
-                    spell_ui_maintain_bar_hover(index);
+                    spell_ui_maintain_hover(index);
                     return true;
                 }
             }
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
-                    spell_ui_maintain_bar_hover(index);
+                    spell_ui_maintain_hover(index);
                     return true;
                 }
             }
@@ -5978,7 +5978,7 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
             art_blit_info.dst_rect = &src_rect;
             tig_window_blit_art(window_handle, &art_blit_info);
         } else {
-            spell_ui_maintain_bar_click(slot);
+            spell_ui_maintain_click(slot);
         }
     }
 }

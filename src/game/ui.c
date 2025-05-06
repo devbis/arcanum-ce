@@ -199,10 +199,10 @@ void ui_spell_maintain_end(int mt_id)
 }
 
 // 0x4604E0
-void ui_maintain_refresh()
+void ui_spell_maintain_refresh()
 {
-    if (ui_callbacks.maintain_refresh != NULL) {
-        ui_callbacks.maintain_refresh();
+    if (ui_callbacks.spell_maintain_refresh != NULL) {
+        ui_callbacks.spell_maintain_refresh();
     }
 }
 

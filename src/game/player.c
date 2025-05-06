@@ -99,7 +99,7 @@ bool player_load(GameLoadInfo* load_info)
     location = obj_field_int64_get(player_pc_obj, OBJ_F_LOCATION);
     scroll_set_center(location);
     location_origin_set(location);
-    ui_maintain_refresh();
+    ui_spell_maintain_refresh();
 
     return true;
 }
@@ -201,7 +201,7 @@ bool sub_40DAF0(int64_t obj)
     player_pc_obj = obj;
     if (obj != OBJ_HANDLE_NULL) {
         player_pc_oid = obj_get_id(obj);
-        ui_maintain_refresh();
+        ui_spell_maintain_refresh();
     } else {
         player_pc_oid.type = OID_TYPE_NULL;
     }
@@ -288,7 +288,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
     level_set_level(player_create_info->obj, 1);
     sub_463E20(player_create_info->obj);
     obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
-    ui_maintain_refresh();
+    ui_spell_maintain_refresh();
 
     return true;
 }

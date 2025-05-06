@@ -472,12 +472,12 @@ typedef struct Packet58 {
 
 static_assert(sizeof(Packet58) == 0xE8, "wrong size");
 
-typedef struct Packet59 {
+typedef struct PacketPlayerInterruptSpell {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
-} Packet59;
+    /* 0004 */ int mt_id;
+} PacketPlayerInterruptSpell;
 
-static_assert(sizeof(Packet59) == 0x08, "wrong size");
+static_assert(sizeof(PacketPlayerInterruptSpell) == 0x08, "wrong size");
 
 typedef struct Packet60 {
     /* 0000 */ int type;
