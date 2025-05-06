@@ -116,10 +116,8 @@ void spell_ui_error_target_not_damaged()
     sub_460630(&ui_message);
 }
 
-// FIXME: Probably returns error code where 0 is success.
-//
 // 0x57BC70
-bool sub_57BC70(int64_t obj, int spl)
+SpellUiActivate spell_ui_activate(int64_t obj, int spl)
 {
     uint64_t* tgt_ptr;
     uint64_t tgt;
@@ -127,37 +125,37 @@ bool sub_57BC70(int64_t obj, int spl)
     S4F2810 v2;
 
     if (obj == OBJ_HANDLE_NULL) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     dword_683508 = true;
 
     if (obj_type_is_item(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         if (!item_parent(obj, &qword_683500)) {
-            return true;
+            return SPELL_UI_ACTIVATE_ERR;
         }
     } else {
         qword_683500 = obj;
     }
 
     if (qword_683500 == OBJ_HANDLE_NULL) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if (!player_is_pc_obj(qword_683500)) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if ((obj_field_int32_get(qword_683500, OBJ_F_FLAGS) & OF_OFF) != 0) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if (critter_is_dead(qword_683500)) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if (critter_is_unconscious(qword_683500)) {
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if (sub_551A00() == 1) {
@@ -166,7 +164,7 @@ bool sub_57BC70(int64_t obj, int spl)
 
     if (!magictech_is_enabled(spl)) {
         dword_683508 = false;
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     dword_5CB3A0 = spl;
@@ -195,7 +193,7 @@ bool sub_57BC70(int64_t obj, int spl)
     } else {
         if (!sub_551A80(0)) {
             dword_683508 = false;
-            return true;
+            return SPELL_UI_ACTIVATE_ERR;
         }
     }
 
@@ -207,7 +205,7 @@ bool sub_57BC70(int64_t obj, int spl)
         sub_4F27F0(&v2, obj_field_int64_get(qword_683500, OBJ_F_LOCATION));
         sub_57C110(&v2);
         dword_683508 = false;
-        return true;
+        return SPELL_UI_ACTIVATE_ERR;
     }
 
     if (!sub_4B7AA0(qword_683500)) {
@@ -231,7 +229,7 @@ bool sub_57BC70(int64_t obj, int spl)
             if ((*tgt_ptr & (Tgt_Obj_No_Self & ~Tgt_Object)) == 0) {
                 sub_57C110(&v2);
                 dword_683508 = false;
-                return true;
+                return SPELL_UI_ACTIVATE_ERR;
             }
         }
     }
@@ -243,7 +241,7 @@ bool sub_57BC70(int64_t obj, int spl)
     }
 
     dword_683508 = false;
-    return false;
+    return SPELL_UI_ACTIVATE_OK;
 }
 
 // 0x57BFF0
@@ -269,7 +267,7 @@ void sub_57C040(int64_t obj, int index)
 
     spl = mt_item_spell(obj, index);
     if (!sub_45A030(spl) && spl != -1) {
-        sub_57BC70(obj, spl);
+        spell_ui_activate(obj, spl);
     }
 }
 
@@ -277,7 +275,7 @@ void sub_57C040(int64_t obj, int index)
 void sub_57C080(int64_t obj, int spl)
 {
     if (!sub_45A030(spl) && spl != -1) {
-        sub_57BC70(obj, spl);
+        spell_ui_activate(obj, spl);
     }
 }
 

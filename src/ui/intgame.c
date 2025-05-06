@@ -2003,7 +2003,7 @@ bool sub_54B5D0(TigMessage* msg)
                         && msg->data.button.button_handle == intgame_spell_buttons[5 * dword_64C530 + index].button_handle) {
                         if (spell_is_known(player_get_local_pc_obj(), 5 * dword_64C530 + index)) {
                             sub_57EFA0(3, 5 * dword_64C530 + index, OBJ_HANDLE_NULL);
-                            sub_57BC70(player_get_local_pc_obj(), 5 * dword_64C530 + index);
+                            spell_ui_activate(player_get_local_pc_obj(), 5 * dword_64C530 + index);
                             return true;
                         }
                     }
@@ -3651,7 +3651,7 @@ void sub_54FCF0(Hotkey* hotkey)
         sub_579FA0(pc_obj, hotkey->data);
         break;
     case HOTKEY_SPELL:
-        sub_57BC70(pc_obj, hotkey->data);
+        spell_ui_activate(pc_obj, hotkey->data);
         break;
     case HOTKEY_ITEM_SPELL:
         sub_444130(&(hotkey->item_obj));
