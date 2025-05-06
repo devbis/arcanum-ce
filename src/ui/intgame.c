@@ -2769,7 +2769,7 @@ void sub_54DE50(TigMessage* msg)
             case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
                 if (!inven_ui_is_created()) {
                     if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
-                        sub_57C110(&v1);
+                        spell_ui_apply(&v1);
                     } else if (sub_4F2D10() == 0x100000) {
                         spell_ui_error_target_not_damaged();
                     }
@@ -2995,7 +2995,7 @@ void sub_54EA80(S4F2810* a1)
         switch (sub_551A00()) {
         case 1:
             if (sub_4F2680(&v1)) {
-                sub_57C110(a1);
+                spell_ui_apply(a1);
             }
             break;
         case 2:

@@ -340,7 +340,7 @@ void sub_57CE30(int64_t obj, void* a2, int a3)
 {
     if (!sub_45A030(a3)) {
         if (spell_ui_activate(obj, a3) == SPELL_UI_ACTIVATE_OK) {
-            sub_57C110(a2);
+            spell_ui_apply(a2);
         }
         spell_ui_cancel();
     }

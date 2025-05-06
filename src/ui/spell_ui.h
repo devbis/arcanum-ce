@@ -21,7 +21,7 @@ void sub_57C040(int64_t obj, int index);
 void sub_57C080(int64_t obj, int spl);
 void sub_57C0B0();
 void sub_57C0E0();
-void sub_57C110(S4F2810* a1);
+void spell_ui_apply(S4F2810* a1);
 bool spell_ui_maintain_add(int mt_id);
 void spell_ui_maintain_end(int mt_id);
 void spell_ui_maintain_click(int slot);

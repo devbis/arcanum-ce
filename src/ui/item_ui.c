@@ -106,7 +106,7 @@ void sub_571AA0(int64_t a1, int64_t a2)
             && (*tgt_ptr & Tgt_Tile) == 0)
         || *tgt_ptr == Tgt_Obj_Radius) {
         sub_4F27F0(&v1, obj_field_int64_get(a1, OBJ_F_LOCATION));
-        sub_57C110(&v1);
+        spell_ui_apply(&v1);
         return;
     }
 

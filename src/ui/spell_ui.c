@@ -203,7 +203,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
             && (*tgt_ptr & Tgt_Tile) == 0)
         || *tgt_ptr == Tgt_Obj_Radius) {
         sub_4F27F0(&v2, obj_field_int64_get(qword_683500, OBJ_F_LOCATION));
-        sub_57C110(&v2);
+        spell_ui_apply(&v2);
         dword_683508 = false;
         return SPELL_UI_ACTIVATE_ERR;
     }
@@ -227,7 +227,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
             sub_4F2810(&v2, player_get_local_pc_obj());
             // FIXME: Odd.
             if ((*tgt_ptr & (Tgt_Obj_No_Self & ~Tgt_Object)) == 0) {
-                sub_57C110(&v2);
+                spell_ui_apply(&v2);
                 dword_683508 = false;
                 return SPELL_UI_ACTIVATE_ERR;
             }
@@ -304,40 +304,44 @@ void sub_57C0E0()
 }
 
 // 0x57C110
-void sub_57C110(S4F2810* a1)
+void spell_ui_apply(S4F2810* a1)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
     MagicTechSerializedData v2;
 
-    if (!critter_is_dead(qword_683500) && !critter_is_unconscious(qword_683500)) {
-        if (obj_type_is_critter(obj_field_int32_get(qword_6834F8, OBJ_F_TYPE))
-            && !magictech_can_charge_spell_fatigue(qword_683500, dword_5CB3A0)) {
-            // Not enough Energy.
-            mes_file_entry.num = 600;
-            magictech_get_msg(&mes_file_entry);
-            sub_460610(mes_file_entry.str);
-        } else {
-            sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
-            if (a1->is_loc) {
-                v2.target_loc = a1->loc;
-            } else {
-                sub_4440E0(a1->obj, &(v2.target_obj));
-            }
-
-            if (magictech_check_los(&v2)) {
-                sub_455AC0(&v2);
-            } else {
-                // You cannot see the target.
-                mes_file_entry.num = 604;
-                magictech_get_msg(&mes_file_entry);
-
-                ui_message.type = UI_MSG_TYPE_FEEDBACK;
-                ui_message.str = mes_file_entry.str;
-                sub_460630(&ui_message);
-            }
-        }
+    if (critter_is_dead(qword_683500)
+        || critter_is_unconscious(qword_683500)) {
+        return;
     }
+
+    if (obj_type_is_critter(obj_field_int32_get(qword_6834F8, OBJ_F_TYPE))
+        && !magictech_can_charge_spell_fatigue(qword_683500, dword_5CB3A0)) {
+        mes_file_entry.num = 600; // "Not enough Energy."
+        magictech_get_msg(&mes_file_entry);
+
+        sub_460610(mes_file_entry.str);
+        return;
+    }
+
+    sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
+    if (a1->is_loc) {
+        v2.target_loc = a1->loc;
+    } else {
+        sub_4440E0(a1->obj, &(v2.target_obj));
+    }
+
+    if (!magictech_check_los(&v2)) {
+        mes_file_entry.num = 604; // "You cannot see the target."
+        magictech_get_msg(&mes_file_entry);
+
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
+        return;
+    }
+
+    sub_455AC0(&v2);
 }
 
 // 0x57C290

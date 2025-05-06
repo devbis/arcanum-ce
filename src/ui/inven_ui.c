@@ -1549,7 +1549,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_down(TigMessage*
         v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &qword_681450);
         if (v1 != OBJ_HANDLE_NULL) {
             sub_4F2810(&v3, v1);
-            sub_57C110(&v3);
+            spell_ui_apply(&v3);
             return true;
         }
         break;
