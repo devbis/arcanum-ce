@@ -105,8 +105,8 @@ static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
 static void object_render_palette_clear(int64_t obj);
 static void sub_442D90(int64_t obj, ObjectRenderColors* colors);
 static TigPalette object_render_palette_get(int64_t obj);
-static void sub_442F10(int64_t obj, const tig_color_t* colors);
-static void sub_442FA0(int64_t obj);
+static void object_render_colors_set(int64_t obj, ObjectRenderColors* colors);
+static void object_render_colors_clear(int64_t obj);
 static ObjectRenderColors* sub_442FE0();
 static void sub_443010(ObjectRenderColors* colors);
 static void sub_443030();
@@ -4605,13 +4605,13 @@ void sub_442D90(int64_t obj, ObjectRenderColors* colors)
     }
 
     if ((render_flags & ORF_40000000) != 0) {
-        sub_442F10(obj, colors);
+        object_render_colors_set(obj, colors);
         render_flags |= TIG_ART_BLT_BLEND_COLOR_ARRAY;
         if (!dword_5E2F48) {
             render_flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
         }
     } else {
-        sub_442FA0(obj);
+        object_render_colors_clear(obj);
     }
 
     if ((render_flags & TIG_ART_BLT_PALETTE_OVERRIDE) != 0) {
@@ -4645,33 +4645,33 @@ TigPalette object_render_palette_get(int64_t obj)
 }
 
 // 0x442F10
-void sub_442F10(int64_t obj, const tig_color_t* colors)
+void object_render_colors_set(int64_t obj, ObjectRenderColors* colors)
 {
-    tig_color_t* render_colors;
+    ObjectRenderColors* render_colors;
     tig_art_id_t aid;
     TigArtFrameData art_frame_data;
     tig_color_t color;
 
-    render_colors = (tig_color_t*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    render_colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
     if (render_colors == NULL) {
         render_colors = sub_442FE0();
         obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, (int)render_colors); // TODO: x64
     }
 
-    memcpy(render_colors, colors, sizeof(tig_color_t) * 160);
+    memcpy(render_colors, colors, sizeof(ObjectRenderColors));
 
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_frame_data(aid, &art_frame_data) == TIG_OK) {
-        color = render_colors[art_frame_data.width / 2];
+        color = render_colors->colors[art_frame_data.width / 2];
     } else {
-        color = render_colors[40];
+        color = render_colors->colors[40];
     }
 
     obj_field_int32_set(obj, OBJ_F_COLOR, color);
 }
 
 // 0x442FA0
-void sub_442FA0(int64_t obj)
+void object_render_colors_clear(int64_t obj)
 {
     ObjectRenderColors* colors;
 
@@ -4985,7 +4985,7 @@ void sub_443770(int64_t obj)
     sub_4D9A90(obj);
     sub_4437C0(obj);
     object_render_palette_clear(obj);
-    sub_442FA0(obj);
+    object_render_colors_clear(obj);
     obj_field_int32_set(obj,
         OBJ_F_RENDER_FLAGS,
         obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_40000000
