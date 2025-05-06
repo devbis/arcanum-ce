@@ -1068,7 +1068,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         hotkey_ui_start(dword_5C7288, &(window_data.rect), TIG_WINDOW_HANDLE_INVALID, true);
 
         for (index = 0; index < 5; index++) {
-            if (sub_57C520(index)) {
+            if (spell_ui_maintain_bar_has_spell_in_slot(index)) {
                 tig_window_show(dword_5C6378[index]);
             }
         }

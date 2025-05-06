@@ -491,7 +491,7 @@ void sub_57C4B0()
 }
 
 // 0x57C520
-bool sub_57C520(int index)
+bool spell_ui_maintain_bar_has_spell_in_slot(int index)
 {
     return stru_5CB3A8[index].field_4 != 0;
 }
