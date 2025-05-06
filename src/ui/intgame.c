@@ -151,7 +151,7 @@ static void sub_5528E0();
 static void sub_552930();
 static void sub_552960(bool play_sound);
 static void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
-static void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window_handle_t window_handle);
+static void intgame_spell_maintain_art_set_func(UiButtonInfo* button, int slot, tig_art_id_t art_id, tig_window_handle_t window_handle);
 static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int slot, bool active, tig_window_handle_t window_handle);
 static void sub_553960();
 static void sub_553A70(TigMessage* msg);
@@ -5797,10 +5797,10 @@ int sub_5533B0()
 }
 
 // 0x5533C0
-void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window_handle_t window_handle)
+void intgame_spell_maintain_art_set_func(UiButtonInfo* button, int slot, tig_art_id_t art_id, tig_window_handle_t window_handle)
 {
     int64_t pc_obj;
-    int score;
+    int num_slots;
     TigArtFrameData art_frame_data;
     TigArtBlitInfo art_blit_info;
     TigRect src_rect;
@@ -5813,17 +5813,17 @@ void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window
     if (art_id == TIG_ART_ID_INVALID) {
         pc_obj = player_get_local_pc_obj();
         if (pc_obj != OBJ_HANDLE_NULL) {
-            score = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
+            num_slots = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
         } else {
-            score = 5;
+            num_slots = 5;
         }
 
-        if (tig_art_interface_id_create(188 + index, 0, 0, 0, &art_id) == TIG_OK) {
+        if (tig_art_interface_id_create(188 + slot, 0, 0, 0, &art_id) == TIG_OK) {
             tig_button_set_art(button->button_handle, art_id);
             tig_button_hide(button->button_handle);
         }
 
-        if (index < score) {
+        if (slot < num_slots) {
             if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
                 src_rect.x = 0;
                 src_rect.y = 0;
@@ -5844,14 +5844,14 @@ void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window
                     dst_rect.x = button->x;
                     dst_rect.y = button->y;
                 } else {
-                    dst_rect.x = button->x - stru_5C6EE0[index].x;
-                    dst_rect.y = button->y - stru_5C6EE0[index].y;
+                    dst_rect.x = button->x - stru_5C6EE0[slot].x;
+                    dst_rect.y = button->y - stru_5C6EE0[slot].y;
                 }
 
                 tig_window_blit_art(window_handle, &art_blit_info);
             }
         } else {
-            if (tig_art_interface_id_create(628 + index, 0, 0, 0, &art_id) == TIG_OK
+            if (tig_art_interface_id_create(628 + slot, 0, 0, 0, &art_id) == TIG_OK
                 && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
                 src_rect.x = 0;
                 src_rect.y = 0;
@@ -5873,11 +5873,11 @@ void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window
         }
 
         if (window_handle != dword_64C4F8[0]) {
-            tig_window_hide(dword_5C6378[index]);
+            tig_window_hide(dword_5C6378[slot]);
         }
     } else {
         if (window_handle != dword_64C4F8[0]) {
-            tig_window_show(dword_5C6378[index]);
+            tig_window_show(dword_5C6378[slot]);
         }
         tig_button_set_art(button->button_handle, art_id);
         tig_button_show(button->button_handle);
@@ -5885,11 +5885,11 @@ void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window
 }
 
 // 0x553620
-void sub_553620(int index, tig_art_id_t art_id)
+void intgame_spell_maintain_art_set(int slot, tig_art_id_t art_id)
 {
     if (dword_64C6B4) {
-        sub_5533C0(&(stru_5C6E40[index]), index, art_id, dword_64C4F8[0]);
-        sub_5533C0(&(stru_5C6E90[index]), index, art_id, dword_5C6378[index]);
+        intgame_spell_maintain_art_set_func(&(stru_5C6E40[slot]), slot, art_id, dword_64C4F8[0]);
+        intgame_spell_maintain_art_set_func(&(stru_5C6E90[slot]), slot, art_id, dword_5C6378[slot]);
     }
 }
 

@@ -95,7 +95,7 @@ bool spell_ui_load(GameLoadInfo* load_info)
         if (tig_file_fread(&(stru_5CB3A8[index].field_4), sizeof(stru_5CB3A8[index].field_4), 1, load_info->stream) != 1) return false;
 
         if (stru_5CB3A8[index].field_4) {
-            sub_553620(index, sub_458AE0(stru_5CB3A8[index].mt_id));
+            intgame_spell_maintain_art_set(index, sub_458AE0(stru_5CB3A8[index].mt_id));
         }
     }
 
@@ -373,7 +373,7 @@ bool spell_ui_maintain_add(int mt_id)
 
     stru_5CB3A8[candidate].mt_id = mt_id;
     stru_5CB3A8[candidate].field_4 = 1;
-    sub_553620(candidate, sub_458AE0(mt_id));
+    intgame_spell_maintain_art_set(candidate, sub_458AE0(mt_id));
 
     return true;
 }
@@ -397,7 +397,7 @@ void spell_ui_maintain_end(int mt_id)
     if (index < FIVE) {
         stru_5CB3A8[index].mt_id = -1;
         stru_5CB3A8[index].field_4 = 0;
-        sub_553620(index, TIG_ART_ID_INVALID);
+        intgame_spell_maintain_art_set(index, TIG_ART_ID_INVALID);
     }
 }
 
@@ -474,7 +474,7 @@ void sub_57C470()
     for (index = 0; index < FIVE; index++) {
         stru_5CB3A8[index].mt_id = -1;
         stru_5CB3A8[index].field_4 = 0;
-        sub_553620(index, TIG_ART_ID_INVALID);
+        intgame_spell_maintain_art_set(index, TIG_ART_ID_INVALID);
     }
 
     spell_ui_maintain_bar_num_slots = -1;
