@@ -257,7 +257,7 @@ void tile_script_exec(int64_t loc, int64_t triggerer_obj)
 
     scr = tile_script.scr;
 
-    invocation.script = &(tile_script.scr);
+    invocation.script = &scr;
     invocation.attachee_obj = OBJ_HANDLE_NULL;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = 0;
@@ -265,9 +265,11 @@ void tile_script_exec(int64_t loc, int64_t triggerer_obj)
     invocation.triggerer_obj = triggerer_obj;
     script_execute(&invocation);
 
-    if (invocation.script->num != scr.num
-        || invocation.script->hdr.flags != scr.hdr.flags
-        || invocation.script->hdr.counters != scr.hdr.counters) {
+    if (tile_script.scr.num != scr.num
+        || tile_script.scr.hdr.flags != scr.hdr.flags
+        || tile_script.scr.hdr.counters != scr.hdr.counters) {
+        // TODO: Looks odd. Test how "remove this script" opcode works in this
+        // case using script 3071 (teleport to Kerghan room).
         tile_script_set(&tile_script);
     }
 }
