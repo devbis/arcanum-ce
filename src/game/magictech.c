@@ -3888,7 +3888,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
 
     if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
         if ((magictech_spells[dword_5E75F0->spell].flags & MAGICTECH_IS_TECH) == 0
-            && !sub_4604A0(dword_5E75F0->id)) {
+            && !ui_spell_maintain_add(dword_5E75F0->id)) {
             dword_5E75F0->action = MAGICTECH_ACTION_END;
         }
     } else {

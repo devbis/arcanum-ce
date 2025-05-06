@@ -181,12 +181,12 @@ int sub_460460(int64_t obj)
 }
 
 // 0x4604A0
-int sub_4604A0(int mt_id)
+bool ui_spell_maintain_add(int mt_id)
 {
-    if (ui_callbacks.field_4C != NULL) {
-        return ui_callbacks.field_4C(mt_id);
+    if (ui_callbacks.spell_maintain_add != NULL) {
+        return ui_callbacks.spell_maintain_add(mt_id);
     } else {
-        return 0;
+        return false;
     }
 }
 

@@ -343,7 +343,7 @@ void sub_57C110(S4F2810* a1)
 }
 
 // 0x57C290
-bool sub_57C290(int mt_id)
+bool spell_ui_maintain_add(int mt_id)
 {
     int candidate = -1;
     int64_t pc_obj;
