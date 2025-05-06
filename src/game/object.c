@@ -107,10 +107,10 @@ static void sub_442D90(int64_t obj, ObjectRenderColors* colors);
 static TigPalette object_render_palette_get(int64_t obj);
 static void object_render_colors_set(int64_t obj, ObjectRenderColors* colors);
 static void object_render_colors_clear(int64_t obj);
-static ObjectRenderColors* sub_442FE0();
-static void sub_443010(ObjectRenderColors* colors);
-static void sub_443030();
-static void sub_443070();
+static ObjectRenderColors* render_color_array_alloc();
+static void render_color_array_free(ObjectRenderColors* colors);
+static void render_color_array_reserve();
+static void render_color_array_clear();
 static void object_toggle_flat(int64_t obj, bool a2);
 static void object_setup_blit(int64_t obj, TigArtBlitInfo* blit_info);
 static void object_enqueue_blit(TigArtBlitInfo* blit_info, int order);
@@ -214,7 +214,7 @@ static bool object_lighting;
 static TigRect object_iso_content_rect_ex;
 
 // 0x5E2F44
-static ObjectRenderColorsNode* dword_5E2F44;
+static ObjectRenderColorsNode* object_render_color_array_node_head;
 
 // 0x5E2F48
 static bool dword_5E2F48;
@@ -347,7 +347,7 @@ void object_exit()
     }
 
     object_reset();
-    sub_443070();
+    render_color_array_clear();
 
     object_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
     object_iso_invalidate_rect = NULL;
@@ -4654,7 +4654,7 @@ void object_render_colors_set(int64_t obj, ObjectRenderColors* colors)
 
     render_colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
     if (render_colors == NULL) {
-        render_colors = sub_442FE0();
+        render_colors = render_color_array_alloc();
         obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, (int)render_colors); // TODO: x64
     }
 
@@ -4677,40 +4677,40 @@ void object_render_colors_clear(int64_t obj)
 
     colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
     if (colors != NULL) {
-        sub_443010(colors);
+        render_color_array_free(colors);
         obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, 0);
     }
 }
 
 // 0x442FE0
-ObjectRenderColors* sub_442FE0()
+ObjectRenderColors* render_color_array_alloc()
 {
     ObjectRenderColorsNode* node;
 
-    node = dword_5E2F44;
+    node = object_render_color_array_node_head;
     if (node == NULL) {
-        sub_443030();
-        node = dword_5E2F44;
+        render_color_array_reserve();
+        node = object_render_color_array_node_head;
     }
 
-    dword_5E2F44 = node->next;
+    object_render_color_array_node_head = node->next;
     node->next = NULL;
 
     return &(node->data->colors);
 }
 
 // 0x443010
-void sub_443010(ObjectRenderColors* colors)
+void render_color_array_free(ObjectRenderColors* colors)
 {
     ObjectRenderColorsNode* node;
 
     node = ((IndexedObjectRenderColors*)((unsigned char*)colors - offsetof(IndexedObjectRenderColors, colors)))->ptr;
-    node->next = dword_5E2F44;
-    dword_5E2F44 = node;
+    node->next = object_render_color_array_node_head;
+    object_render_color_array_node_head = node;
 }
 
 // 0x443030
-void sub_443030()
+void render_color_array_reserve()
 {
     int index;
     ObjectRenderColorsNode* node;
@@ -4720,25 +4720,25 @@ void sub_443030()
         node->data = (IndexedObjectRenderColors*)MALLOC(sizeof(*node->data));
         // Link back from data to node.
         node->data->ptr = node;
-        node->next = dword_5E2F44;
-        dword_5E2F44 = node;
+        node->next = object_render_color_array_node_head;
+        object_render_color_array_node_head = node;
     }
 }
 
 // 0x443070
-void sub_443070()
+void render_color_array_clear()
 {
     ObjectRenderColorsNode* node;
     ObjectRenderColorsNode* next;
 
-    node = dword_5E2F44;
+    node = object_render_color_array_node_head;
     while (node != NULL) {
         next = node->next;
         FREE(node->data);
         FREE(node);
         node = next;
     }
-    dword_5E2F44 = NULL;
+    object_render_color_array_node_head = NULL;
 }
 
 // 0x4430B0
