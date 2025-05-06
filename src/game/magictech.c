@@ -3135,7 +3135,7 @@ bool sub_452F20()
                 if (player_is_local_pc_obj(dword_5E75F0->parent_obj.obj)) {
                     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
                     sub_460610(mes_file_entry.str);
-                    sub_4604C0(dword_5E75F0->id);
+                    ui_spell_maintain_end(dword_5E75F0->id);
                 }
 
                 dword_5E75F0->action = MAGICTECH_ACTION_END;
@@ -3309,7 +3309,7 @@ bool sub_453710()
         mes_file_entry.num = 602;
         mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
         sub_460610(mes_file_entry.str);
-        sub_4604C0(dword_5E75F0->id);
+        ui_spell_maintain_end(dword_5E75F0->id);
     }
 
     return false;
@@ -3780,7 +3780,7 @@ LABEL_22:
 END:
 
     if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
-        sub_4604C0(dword_5E75F0->id);
+        ui_spell_maintain_end(dword_5E75F0->id);
     }
 
     if (tig_net_is_active() && tig_net_is_host()) {
@@ -4366,7 +4366,7 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
             mes_file_entry.num = 603; // "The effect is nullified."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
             sub_460610(mes_file_entry.str);
-            sub_4604C0(run_info->id);
+            ui_spell_maintain_end(run_info->id);
         }
         return false;
     }
@@ -4403,7 +4403,7 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
         mes_file_entry.num = 602; // "You lose your concentration."
         mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
         sub_460610(mes_file_entry.str);
-        sub_4604C0(run_info->id);
+        ui_spell_maintain_end(run_info->id);
     }
 
     return false;
@@ -5325,7 +5325,7 @@ void magictech_interrupt_delayed(int mt_id)
     TimeEvent timeevent;
     DateTime datetime;
 
-    sub_4604C0(mt_id);
+    ui_spell_maintain_end(mt_id);
 
     if (magictech_id_to_run_info(mt_id, &run_info)
         && run_info->action == MAGICTECH_ACTION_BEGIN

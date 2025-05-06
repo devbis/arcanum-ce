@@ -18,7 +18,7 @@ void sub_57C0B0();
 void sub_57C0E0();
 void sub_57C110(S4F2810* a1);
 bool spell_ui_maintain_add(int mt_id);
-void sub_57C320(int mt_id);
+void spell_ui_maintain_end(int mt_id);
 void spell_ui_maintain_bar_click(int index);
 void spell_ui_maintain_bar_hover(int index);
 void spell_ui_maintain_bar_refresh();

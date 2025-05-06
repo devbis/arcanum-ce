@@ -379,7 +379,7 @@ bool spell_ui_maintain_add(int mt_id)
 }
 
 // 0x57C320
-void sub_57C320(int mt_id)
+void spell_ui_maintain_end(int mt_id)
 {
     int index;
 

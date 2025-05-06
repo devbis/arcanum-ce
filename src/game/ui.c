@@ -191,10 +191,10 @@ bool ui_spell_maintain_add(int mt_id)
 }
 
 // 0x4604C0
-void sub_4604C0(int mt_id)
+void ui_spell_maintain_end(int mt_id)
 {
-    if (ui_callbacks.field_50 != NULL) {
-        ui_callbacks.field_50(mt_id);
+    if (ui_callbacks.spell_maintain_end != NULL) {
+        ui_callbacks.spell_maintain_end(mt_id);
     }
 }
 
