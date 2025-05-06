@@ -1817,7 +1817,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            ai_attack(handles[idx], target_obj, LOUDNESS_NORMAL, 2);
+            ai_attack(target_obj, handles[idx], LOUDNESS_NORMAL, 2);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;
