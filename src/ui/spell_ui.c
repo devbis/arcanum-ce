@@ -280,7 +280,7 @@ void sub_57C080(int64_t obj, int spl)
 }
 
 // 0x57C0B0
-void sub_57C0B0()
+void spell_ui_aggressive_mode_off()
 {
     uint64_t tgt;
 
@@ -292,7 +292,7 @@ void sub_57C0B0()
 }
 
 // 0x57C0E0
-void sub_57C0E0()
+void spell_ui_aggressive_mode_on()
 {
     uint64_t tgt;
 

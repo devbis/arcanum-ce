@@ -2791,7 +2791,7 @@ void sub_54DE50(TigMessage* msg)
                     case DIK_RMENU:
                         if (!tig_kb_is_key_pressed(DIK_LMENU)
                             && !tig_kb_is_key_pressed(DIK_RMENU)) {
-                            sub_57C0E0();
+                            spell_ui_aggressive_mode_on();
                         }
                         break;
                     case DIK_F1:
@@ -2811,7 +2811,7 @@ void sub_54DE50(TigMessage* msg)
                     switch (msg->data.keyboard.key) {
                     case DIK_LMENU:
                     case DIK_RMENU:
-                        sub_57C0B0();
+                        spell_ui_aggressive_mode_off();
                         break;
                     }
                 }
