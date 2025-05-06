@@ -152,7 +152,7 @@ static void sub_552930();
 static void sub_552960(bool play_sound);
 static void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
 static void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window_handle_t window_handle);
-static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle);
+static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int slot, bool active, tig_window_handle_t window_handle);
 static void sub_553960();
 static void sub_553A70(TigMessage* msg);
 static void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str);
@@ -5894,7 +5894,7 @@ void sub_553620(int index, tig_art_id_t art_id)
 }
 
 // 0x553670
-void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle)
+void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int slot, bool active, tig_window_handle_t window_handle)
 {
     TigButtonData button_data;
     TigArtFrameData art_frame_data;
@@ -5910,16 +5910,16 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
     }
 
     current_num = tig_art_num_get(button_data.art_id);
-    if (a4) {
-        if (current_num == num + 188 && tig_button_is_hidden(button_handle, &hidden) == TIG_OK) {
+    if (active) {
+        if (current_num == slot + 188 && tig_button_is_hidden(button_handle, &hidden) == TIG_OK) {
             tig_button_show(button_handle);
-            if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id) != TIG_OK) {
+            if (tig_art_interface_id_create(slot + 188, 0, 0, 0, &art_id) != TIG_OK) {
                 tig_debug_printf("intgame_spell_maintain_refresh_func: ERROR: tig_art_interface_id_create failed!\n");
                 return;
             }
 
             tig_button_set_art(button_handle, art_id);
-            if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
+            if (tig_art_interface_id_create(slot + 628, 0, 0, 0, &art_id) != TIG_OK) {
                 return;
             }
 
@@ -5947,14 +5947,14 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
             art_blit_info.dst_rect = &dst_rect;
             tig_window_blit_art(window_handle, &art_blit_info);
         }
-    } else if (current_num != num + 628) {
-        if (current_num == num + 188) {
-            if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id)) {
+    } else if (current_num != slot + 628) {
+        if (current_num == slot + 188) {
+            if (tig_art_interface_id_create(slot + 188, 0, 0, 0, &art_id)) {
                 tig_button_set_art(button_handle, art_id);
                 tig_button_hide(button_handle);
             }
 
-            if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
+            if (tig_art_interface_id_create(slot + 628, 0, 0, 0, &art_id) != TIG_OK) {
                 return;
             }
 
@@ -5978,24 +5978,24 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
             art_blit_info.dst_rect = &src_rect;
             tig_window_blit_art(window_handle, &art_blit_info);
         } else {
-            spell_ui_maintain_bar_click(num);
+            spell_ui_maintain_bar_click(slot);
         }
     }
 }
 
 // 0x553910
-void sub_553910(int index, bool a2)
+void intgame_spell_maintain_refresh(int slot, bool active)
 {
-    intgame_spell_maintain_refresh_func(stru_5C6E40[index].button_handle,
-        &(stru_5C6E40[index]),
-        index,
-        a2,
+    intgame_spell_maintain_refresh_func(stru_5C6E40[slot].button_handle,
+        &(stru_5C6E40[slot]),
+        slot,
+        active,
         dword_64C4F8[0]);
-    intgame_spell_maintain_refresh_func(stru_5C6E90[index].button_handle,
-        &(stru_5C6E90[index]),
-        index,
-        a2,
-        dword_5C6378[index]);
+    intgame_spell_maintain_refresh_func(stru_5C6E90[slot].button_handle,
+        &(stru_5C6E90[slot]),
+        slot,
+        active,
+        dword_5C6378[slot]);
 }
 
 // 0x553960

@@ -479,10 +479,10 @@ void sub_57C4B0()
         if (v1 != dword_5CB3D0) {
             v2 = 0;
             while (v2 < v1) {
-                sub_553910(v2++, true);
+                intgame_spell_maintain_refresh(v2++, true);
             }
             while (v2 < FIVE) {
-                sub_553910(v2++, false);
+                intgame_spell_maintain_refresh(v2++, false);
             }
 
             dword_5CB3D0 = v1;
