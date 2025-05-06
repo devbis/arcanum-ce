@@ -2280,14 +2280,14 @@ bool sub_54B5D0(TigMessage* msg)
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
-                    sub_57C3F0(index);
+                    spell_ui_maintain_bar_hover(index);
                     return true;
                 }
             }
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
-                    sub_57C3F0(index);
+                    spell_ui_maintain_bar_hover(index);
                     return true;
                 }
             }

@@ -424,7 +424,7 @@ void sub_57C370(int index)
 }
 
 // 0x57C3F0
-void sub_57C3F0(int index)
+void spell_ui_maintain_bar_hover(int index)
 {
     MagicTechRunInfo* run_info;
     int64_t obj;
