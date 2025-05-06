@@ -159,7 +159,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     }
 
     if (sub_551A00() == 1) {
-        sub_57BFF0();
+        spell_ui_cancel();
     }
 
     if (!magictech_is_enabled(spl)) {
@@ -245,7 +245,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
 }
 
 // 0x57BFF0
-void sub_57BFF0()
+void spell_ui_cancel()
 {
     if (!dword_68350C) {
         sub_500570();

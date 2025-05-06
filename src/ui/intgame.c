@@ -2776,7 +2776,7 @@ void sub_54DE50(TigMessage* msg)
                 }
                 break;
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
-                sub_57BFF0();
+                spell_ui_cancel();
                 break;
             case TIG_MESSAGE_MOUSE_IDLE:
                 sub_551910(msg);
@@ -4777,7 +4777,7 @@ bool sub_551A80(int a1)
         case 1:
             v1 = true;
             v17 = true;
-            sub_57BFF0();
+            spell_ui_cancel();
             sub_4B7AA0(player_get_local_pc_obj());
             break;
         case 2:

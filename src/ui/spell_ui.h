@@ -16,7 +16,7 @@ bool spell_ui_save(TigFile* stream);
 bool spell_ui_load(GameLoadInfo* load_info);
 void spell_ui_error_target_not_damaged();
 SpellUiActivate spell_ui_activate(int64_t obj, int spl);
-void sub_57BFF0();
+void spell_ui_cancel();
 void sub_57C040(int64_t obj, int index);
 void sub_57C080(int64_t obj, int spl);
 void sub_57C0B0();
