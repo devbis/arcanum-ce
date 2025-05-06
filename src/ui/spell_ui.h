@@ -19,7 +19,7 @@ void sub_57C0E0();
 void sub_57C110(S4F2810* a1);
 bool sub_57C290(int mt_id);
 void sub_57C320(int mt_id);
-void sub_57C370(int index);
+void spell_ui_maintain_bar_click(int index);
 void spell_ui_maintain_bar_hover(int index);
 void sub_57C4B0();
 bool sub_57C520(int index);

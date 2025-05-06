@@ -402,7 +402,7 @@ void sub_57C320(int mt_id)
 }
 
 // 0x57C370
-void sub_57C370(int index)
+void spell_ui_maintain_bar_click(int index)
 {
     Packet59 pkt;
 

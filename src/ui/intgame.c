@@ -2069,14 +2069,14 @@ bool sub_54B5D0(TigMessage* msg)
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
-                    sub_57C370(index);
+                    spell_ui_maintain_bar_click(index);
                     return true;
                 }
             }
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
-                    sub_57C370(index);
+                    spell_ui_maintain_bar_click(index);
                     return true;
                 }
             }
@@ -5978,7 +5978,7 @@ void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiBu
             art_blit_info.dst_rect = &src_rect;
             tig_window_blit_art(window_handle, &art_blit_info);
         } else {
-            sub_57C370(num);
+            spell_ui_maintain_bar_click(num);
         }
     }
 }
