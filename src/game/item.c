@@ -4436,7 +4436,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
         tig_debug_printf("Warning: item_force_remove called on item that doesn't think it has a parent.\n");
     }
 
-    sub_457450(item_obj);
+    magictech_demaintain_spells(item_obj);
 
     parent_type = obj_field_int32_get(parent_obj, OBJ_F_TYPE);
 

@@ -5383,7 +5383,7 @@ void sub_4573D0(MagicTechSerializedData* a1)
 }
 
 // 0x457450
-void sub_457450(int64_t obj)
+void magictech_demaintain_spells(int64_t obj)
 {
     int index;
     MagicTechInfo* info;

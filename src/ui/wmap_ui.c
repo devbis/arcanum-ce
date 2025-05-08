@@ -4023,7 +4023,7 @@ bool sub_565140()
         return false;
     }
 
-    sub_457450(player_get_local_pc_obj());
+    magictech_demaintain_spells(player_get_local_pc_obj());
 
     return true;
 }

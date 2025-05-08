@@ -384,7 +384,7 @@ void sub_457100();
 void magictech_interrupt(int mt_id);
 void magictech_interrupt_delayed(int mt_id);
 void sub_4573D0(MagicTechSerializedData* a1);
-void sub_457450(int64_t obj);
+void magictech_demaintain_spells(int64_t obj);
 void sub_4574D0(int64_t obj);
 bool magictech_check_env_sf(unsigned int flags);
 tig_art_id_t sub_458AE0(int mt_id);

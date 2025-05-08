@@ -415,7 +415,7 @@ bool sub_4A8570(Ai* ai)
             || !combat_critter_is_combat_mode_active(leader_obj)) {
             npc_flags &= ~ONF_DEMAINTAIN_SPELLS;
             obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
-            sub_457450(ai->obj);
+            magictech_demaintain_spells(ai->obj);
         }
     }
 

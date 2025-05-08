@@ -409,7 +409,7 @@ bool sleep_ui_message_filter(TigMessage* msg)
 
     sub_57B9E0();
     sub_57BAC0();
-    sub_457450(qword_6834A8);
+    magictech_demaintain_spells(qword_6834A8);
 
     return true;
 }

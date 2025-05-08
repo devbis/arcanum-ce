@@ -368,7 +368,7 @@ int critter_fatigue_damage_set(int64_t obj, int value)
         critter_fatigue_timeevent_schedule(obj, FATIGUE_EVENT_RECOVERY, 80000);
 
         if (!was_unconscious && critter_is_unconscious(obj)) {
-            sub_457450(obj);
+            magictech_demaintain_spells(obj);
             mt_item_notify_parent_going_unconscious(OBJ_HANDLE_NULL, obj);
             anim_goal_knockdown(obj);
             sub_4B7C90(obj);
