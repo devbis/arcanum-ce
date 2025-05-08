@@ -32,6 +32,10 @@ typedef enum MagicTechEyeCandyType {
     MAGICTECH_EYE_CANDY_TYPE_COUNT,
 } MagicTechEyeCandyType;
 
+#define MAGICTECH_FX_COMBAT_TOGGLE 223
+#define MAGICTECH_FX_RESURRECT 643
+#define MAGICTECH_FX_CHEST_BREAK 1203
+
 typedef enum MagicTechComponent {
     MTC_NOOP,
     MTC_AGOAL,
@@ -374,7 +378,7 @@ bool sub_456A90(int mt_id);
 bool magictech_check_los(MagicTechSerializedData* a1);
 bool sub_456D20(int mt_id, tig_art_id_t* art_id_ptr, tig_art_id_t* light_art_id_ptr, tig_color_t* light_color_ptr, int* a5, int* a6, int* a7, int* a8);
 void sub_456E00(int mt_id);
-void sub_456E60(int64_t obj, int a2);
+void magictech_fx_add(int64_t obj, int fx);
 void sub_456EC0(int64_t obj, int spell);
 void sub_456F70(int mt_id);
 void sub_456FA0(int mt_id, unsigned int flags);

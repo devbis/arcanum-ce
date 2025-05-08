@@ -5168,11 +5168,11 @@ void sub_456E00(int mt_id)
 }
 
 // 0x456E60
-void sub_456E60(int64_t obj, int a2)
+void magictech_fx_add(int64_t obj, int fx)
 {
     AnimFxNode node;
 
-    sub_4CCD20(&spell_eye_candies, &node, obj, -1, a2 % 10 + 6 * (a2 / 10));
+    sub_4CCD20(&spell_eye_candies, &node, obj, -1, fx % 10 + 6 * (fx / 10));
     node.animate = true;
     animfx_add(&node);
 }
@@ -6942,7 +6942,7 @@ void sub_45A520(int64_t a1, int64_t a2)
 {
     (void)a1;
 
-    sub_456E60(a2, 643);
+    magictech_fx_add(a2, MAGICTECH_FX_RESURRECT);
 }
 
 // 0x45A540
@@ -6954,7 +6954,7 @@ void magictech_error_unressurectable(int64_t obj)
     magictech_get_msg(&mes_file_entry);
     sub_460610(mes_file_entry.str);
 
-    sub_456E60(obj, 643);
+    magictech_fx_add(obj, MAGICTECH_FX_RESURRECT);
 }
 
 // 0x45A580

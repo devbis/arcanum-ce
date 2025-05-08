@@ -1394,7 +1394,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
     }
 
     if ((critter_flags2 & OCF2_COMBAT_TOGGLE_FX) != 0) {
-        sub_456E60(obj, 223);
+        magictech_fx_add(obj, MAGICTECH_FX_COMBAT_TOGGLE);
     }
 }
 

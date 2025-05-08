@@ -2566,7 +2566,7 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
             object_destroy(obj);
             object_list_location(loc, 32740, &objects);
             if (objects.head != NULL) {
-                sub_456E60(objects.head->obj, 1203);
+                magictech_fx_add(objects.head->obj, MAGICTECH_FX_CHEST_BREAK);
             }
             object_list_destroy(&objects);
         }
