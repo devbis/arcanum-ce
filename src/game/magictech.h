@@ -395,7 +395,7 @@ int sub_458CA0(int mt_id);
 bool sub_459040(int64_t obj, unsigned int flags, int64_t* parent_obj_ptr);
 bool sub_459170(int64_t obj, unsigned int flags, int* index_ptr);
 bool magictech_is_under_influence_of(int64_t obj, int magictech);
-bool sub_4593F0(int64_t obj, int magictech);
+bool magictech_stop_spell(int64_t obj, int magictech);
 bool magictech_timeevent_process(TimeEvent* timeevent);
 bool sub_459500(int index);
 bool magictech_recharge_timeevent_process(TimeEvent* timeevent);

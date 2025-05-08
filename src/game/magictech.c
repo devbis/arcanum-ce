@@ -6417,7 +6417,7 @@ bool magictech_is_under_influence_of(int64_t obj, int magictech)
 }
 
 // 0x4593F0
-bool sub_4593F0(int64_t obj, int magictech)
+bool magictech_stop_spell(int64_t obj, int magictech)
 {
     int mt_id;
 
