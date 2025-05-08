@@ -140,8 +140,8 @@ static bool magictech_find_next(int64_t obj, int* mt_id_ptr);
 static bool sub_459290(int64_t obj, int spell, int* index_ptr);
 static void sub_459490(int mt_id);
 static bool sub_4594D0(TimeEvent* timeevent);
-static bool sub_459590(int64_t obj, int a2, bool a3);
-static bool sub_459640(TimeEvent* timeevent);
+static bool magictech_recharge_timeevent_schedule(int64_t item_obj, int mana_cost, bool add);
+static bool magictech_recharge_timeevent_add(TimeEvent* timeevent);
 static void sub_45A480(MagicTechRunInfo* run_info);
 static void sub_45A760(int64_t obj, const char* msg);
 
@@ -697,13 +697,13 @@ static int dword_5E7600;
 static bool dword_5E7604;
 
 // 0x5E7608
-static int dword_5E7608;
+static int magictech_recharge_timeevent_mana_cost;
 
 // 0x5E760C
 static int dword_5E760C;
 
 // 0x5E7610
-static int64_t qword_5E7610;
+static int64_t magictech_recharge_timeevent_item_obj;
 
 // 0x5E7618
 static bool magictech_initialized;
@@ -1626,7 +1626,7 @@ bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
 
                     if (a3) {
                         obj_field_int32_set(item_obj, OBJ_F_ITEM_MANA_STORE, new_mana_store);
-                        sub_459590(item_obj, item_mana_cost, true);
+                        magictech_recharge_timeevent_schedule(item_obj, item_mana_cost, true);
                         sub_4605D0();
 
                         if (new_mana_store == 0) {
@@ -6495,36 +6495,38 @@ bool sub_459500(int index)
 }
 
 // 0x459590
-bool sub_459590(int64_t obj, int a2, bool a3)
+bool magictech_recharge_timeevent_schedule(int64_t item_obj, int mana_cost, bool add)
 {
     DateTime datetime;
     TimeEvent timeevent;
 
-    dword_5E7608 = a2;
-    qword_5E7610 = obj;
+    magictech_recharge_timeevent_mana_cost = mana_cost;
+    magictech_recharge_timeevent_item_obj = item_obj;
     dword_5E760C = sub_45A7F0();
 
-    if (a3 && timeevent_any(TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM, sub_459640)) {
-        return true;
+    if (add) {
+        if (timeevent_any(TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM, magictech_recharge_timeevent_add)) {
+            return true;
+        }
     }
 
     timeevent.type = TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM;
-    timeevent.params[0].object_value = obj;
+    timeevent.params[0].object_value = item_obj;
     timeevent.params[1].integer_value = dword_5E760C;
-    timeevent.params[2].integer_value = dword_5E7608;
+    timeevent.params[2].integer_value = magictech_recharge_timeevent_mana_cost;
     sub_45A950(&datetime, 60000);
     datetime.milliseconds *= 8;
     return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x459640
-bool sub_459640(TimeEvent* timeevent)
+bool magictech_recharge_timeevent_add(TimeEvent* timeevent)
 {
-    if (timeevent->params[0].object_value != qword_5E7610) {
+    if (timeevent->params[0].object_value != magictech_recharge_timeevent_item_obj) {
         return false;
     }
 
-    timeevent->params[2].integer_value += dword_5E7608;
+    timeevent->params[2].integer_value += magictech_recharge_timeevent_mana_cost;
 
     return true;
 }
@@ -6569,7 +6571,7 @@ bool magictech_recharge_timeevent_process(TimeEvent* timeevent)
     }
 
     if (diff > 0) {
-        sub_459590(obj, diff, false);
+        magictech_recharge_timeevent_schedule(obj, diff, false);
     }
 
     return true;
