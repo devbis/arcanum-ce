@@ -40,7 +40,7 @@ bool quest_load(GameLoadInfo* load_info);
 bool quest_save(TigFile* stream);
 int quest_dialog_line(int64_t pc_obj, int64_t npc_obj, int num);
 int quest_state_get(int64_t pc_obj, int num);
-void quest_state_set(int64_t pc_obj, int num, int state, int64_t npc_obj);
+int quest_state_set(int64_t pc_obj, int num, int state, int64_t npc_obj);
 int quest_unbotch(int64_t obj, int num);
 int quest_global_state_get(int num);
 int quest_global_state_set(int num, int state);
