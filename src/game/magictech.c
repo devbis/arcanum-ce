@@ -2470,7 +2470,7 @@ void MTComponentEffect_ProcFunc()
 // 0x451FE0
 void MTComponentEyeCandy_ProcFunc()
 {
-    int v1;
+    int mt_id;
 
     if (stru_5E6D28.field_20 == OBJ_HANDLE_NULL) {
         return;
@@ -2479,22 +2479,22 @@ void MTComponentEyeCandy_ProcFunc()
     if (dword_5E761C->data.eye_candy.add_remove == 0) {
         if (!tig_net_is_active()
             || tig_net_is_host()) {
-            v1 = (dword_5E761C->data.eye_candy.flags & 0x100) == 0
+            mt_id = (dword_5E761C->data.eye_candy.flags & 0x100) == 0
                 ? dword_5E75F0->id
                 : -1;
             animfx_remove(&spell_eye_candies,
                 stru_5E6D28.field_20,
                 dword_5E761C->data.eye_candy.num + 6 * dword_5E75F0->spell,
-                v1);
+                mt_id);
 
             if (tig_net_is_active()) {
-                Packet77 pkt;
+                PacketMagicTechEyeCandy pkt;
 
                 pkt.type = 77;
                 pkt.subtype = 0;
                 pkt.oid = obj_get_id(stru_5E6D28.field_20);
-                pkt.field_20 = dword_5E761C->data.eye_candy.num + 6 * dword_5E75F0->spell;
-                pkt.field_24 = v1;
+                pkt.fx_id = dword_5E761C->data.eye_candy.num + 6 * dword_5E75F0->spell;
+                pkt.mt_id = mt_id;
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
         }
@@ -5188,13 +5188,13 @@ void magictech_fx_remove(int64_t obj, int fx)
     animfx_remove(&spell_eye_candies, obj, fx % 10 + 6 * (fx / 10), -1);
 
     if (tig_net_is_active()) {
-        Packet77 pkt;
+        PacketMagicTechEyeCandy pkt;
 
         pkt.type = 77;
         pkt.subtype = 0;
         pkt.oid = obj_get_id(obj);
-        pkt.field_20 = fx % 10 + 6 * (fx / 10);
-        pkt.field_24 = -1;
+        pkt.fx_id = fx % 10 + 6 * (fx / 10);
+        pkt.mt_id = -1;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }

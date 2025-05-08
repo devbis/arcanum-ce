@@ -613,15 +613,15 @@ typedef struct Packet76 {
 
 static_assert(sizeof(Packet76) == 0x30, "wrong size");
 
-typedef struct Packet77 {
+typedef struct PacketMagicTechEyeCandy {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-} Packet77;
+    /* 0020 */ int fx_id;
+    /* 0024 */ int mt_id;
+} PacketMagicTechEyeCandy;
 
-static_assert(sizeof(Packet77) == 0x28, "wrong size");
+static_assert(sizeof(PacketMagicTechEyeCandy) == 0x28, "wrong size");
 
 typedef struct Packet79 {
     /* 0000 */ int type;
