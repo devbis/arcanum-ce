@@ -2616,15 +2616,15 @@ void MTComponentObjFlag_ProcFunc()
 
     if (tig_net_is_active()
         && tig_net_is_host()) {
-        Packet75 pkt;
+        PacketMagicTechObjFlag pkt;
 
         sub_4F0640(stru_5E6D28.field_20, &(pkt.field_8));
-        sub_4F0640(stru_5E6D28.self_obj, &(pkt.field_20));
-        pkt.field_38 = dword_5E761C->data.obj_flag.flags_fld;
-        pkt.field_3C = dword_5E761C->data.obj_flag.value;
-        pkt.field_40 = dword_5E761C->data.obj_flag.state;
-        sub_4F0640(dword_5E75F0->parent_obj.obj, &(pkt.field_48));
-        sub_4F0640(dword_5E75F0->source_obj.obj, &(pkt.field_60));
+        sub_4F0640(stru_5E6D28.self_obj, &(pkt.self_oid));
+        pkt.fld = dword_5E761C->data.obj_flag.flags_fld;
+        pkt.value = dword_5E761C->data.obj_flag.value;
+        pkt.state = dword_5E761C->data.obj_flag.state;
+        sub_4F0640(dword_5E75F0->parent_obj.obj, &(pkt.parent_oid));
+        sub_4F0640(dword_5E75F0->source_obj.obj, &(pkt.source_oid));
 
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }

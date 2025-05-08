@@ -588,20 +588,18 @@ typedef struct Packet74 {
 
 static_assert(sizeof(Packet74) == 0x40, "wrong size");
 
-typedef struct Packet75 {
+typedef struct PacketMagicTechObjFlag {
     /* 0000 */  int type;
-    /* 0004 */  int field_4;
     /* 0008 */  ObjectID field_8;
-    /* 0020 */  ObjectID field_20;
-    /* 0038 */  int field_38;
-    /* 003C */  int field_3C;
-    /* 0040 */  int field_40;
-    /* 0044 */  int field_44;
-    /* 0048 */  ObjectID field_48;
-    /* 0060 */  ObjectID field_60;
-} Packet75;
+    /* 0020 */  ObjectID self_oid;
+    /* 0038 */  int fld;
+    /* 003C */  int value;
+    /* 0040 */  int state;
+    /* 0048 */  ObjectID parent_oid;
+    /* 0060 */  ObjectID source_oid;
+} PacketMagicTechObjFlag;
 
-static_assert(sizeof(Packet75) == 0x78, "wrong size");
+static_assert(sizeof(PacketMagicTechObjFlag) == 0x78, "wrong size");
 
 typedef struct Packet76 {
     /* 0000 */ int type;
