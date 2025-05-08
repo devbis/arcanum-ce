@@ -6946,14 +6946,15 @@ void sub_45A520(int64_t a1, int64_t a2)
 }
 
 // 0x45A540
-void sub_45A540(int64_t a1)
+void magictech_error_unressurectable(int64_t obj)
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = 605;
+    mes_file_entry.num = 605; // "This life cannot be replenished."
     magictech_get_msg(&mes_file_entry);
     sub_460610(mes_file_entry.str);
-    sub_456E60(a1, 643);
+
+    sub_456E60(obj, 643);
 }
 
 // 0x45A580

@@ -2227,7 +2227,7 @@ void combat_heal(CombatContext* combat)
     }
 
     if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || v1) {
-        sub_45A540(combat->target_obj);
+        magictech_error_unressurectable(combat->target_obj);
         return;
     }
 

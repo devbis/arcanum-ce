@@ -415,7 +415,7 @@ bool sub_45A030(int magictech);
 int magictech_get_aptitude_adj(int64_t sector_id);
 void sub_45A4F0(int64_t obj, int fx_id, int mt_id);
 void sub_45A520(int64_t a1, int64_t a2);
-void sub_45A540(int64_t a1);
+void magictech_error_unressurectable(int64_t obj);
 bool sub_45A580(int64_t a1, int64_t a2);
 void magictech_debug_lists();
 
