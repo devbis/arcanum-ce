@@ -12249,9 +12249,6 @@ bool sub_431B20(AnimRunInfo* run_info)
     }
 
     run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data &= ~0x40;
-    if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0) {
-        return false;
-    }
 
     overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
     overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
