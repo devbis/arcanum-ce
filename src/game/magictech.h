@@ -381,7 +381,7 @@ void sub_456FA0(int mt_id, unsigned int flags);
 void sub_457000(int mt_id, int action);
 void sub_457060(MagicTechRunInfo* a1);
 void sub_457100();
-void sub_457110(int mt_id);
+void magictech_interrupt(int mt_id);
 void magictech_interrupt_delayed(int mt_id);
 void sub_4573D0(MagicTechSerializedData* a1);
 void sub_457450(int64_t obj);

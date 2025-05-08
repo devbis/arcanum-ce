@@ -425,13 +425,13 @@ void spell_ui_maintain_click(int slot)
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         if (tig_net_is_host()) {
-            sub_457110(stru_5CB3A8[slot].mt_id);
+            magictech_interrupt(stru_5CB3A8[slot].mt_id);
         }
 
         return;
     }
 
-    sub_457110(stru_5CB3A8[slot].mt_id);
+    magictech_interrupt(stru_5CB3A8[slot].mt_id);
 }
 
 // 0x57C3F0

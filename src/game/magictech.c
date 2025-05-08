@@ -3249,7 +3249,7 @@ void sub_4534E0(MagicTechRunInfo* run_info)
                 && other_run_info->source_obj.obj == run_info->source_obj.obj
                 && (magictech_spells[other_run_info->spell].cancels_sf & info->cancels_sf) != 0
                 && other_run_info->id != run_info->id) {
-                sub_457110(other_run_info->id);
+                magictech_interrupt(other_run_info->id);
             }
         }
     }
@@ -3261,7 +3261,7 @@ void sub_4534E0(MagicTechRunInfo* run_info)
                 && other_run_info->source_obj.obj == run_info->source_obj.obj
                 && (magictech_spells[other_run_info->spell].cancels_envsf & info->cancels_envsf) != 0
                 && other_run_info->id != run_info->id) {
-                sub_457110(other_run_info->id);
+                magictech_interrupt(other_run_info->id);
             }
         }
     }
@@ -5278,7 +5278,7 @@ void sub_457100()
 }
 
 // 0x457110
-void sub_457110(int mt_id)
+void magictech_interrupt(int mt_id)
 {
     MagicTechRunInfo* run_info;
     MagicTechInfo* info;
@@ -5375,7 +5375,7 @@ void sub_4573D0(MagicTechSerializedData* a1)
                 && run_info->parent_obj.obj == a1->parent_obj.obj
                 && run_info->target_obj.obj == a1->target_obj.obj
                 && run_info->spell == a1->spell) {
-                sub_457110(run_info->id);
+                magictech_interrupt(run_info->id);
                 break;
             }
         }
@@ -6425,7 +6425,7 @@ bool sub_4593F0(int64_t obj, int magictech)
         return false;
     }
 
-    sub_457110(mt_id);
+    magictech_interrupt(mt_id);
 
     return true;
 }
@@ -6440,7 +6440,7 @@ bool magictech_timeevent_process(TimeEvent* timeevent)
         sub_459490(timeevent->params[0].integer_value);
         break;
     case 2:
-        sub_457110(timeevent->params[0].integer_value);
+        magictech_interrupt(timeevent->params[0].integer_value);
         break;
     case 3:
         if (magictech_id_to_run_info(timeevent->params[0].integer_value, &run_info)) {
