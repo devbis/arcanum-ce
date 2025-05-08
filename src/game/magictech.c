@@ -5178,22 +5178,24 @@ void magictech_fx_add(int64_t obj, int fx)
 }
 
 // 0x456EC0
-void sub_456EC0(int64_t obj, int spell)
+void magictech_fx_remove(int64_t obj, int fx)
 {
-    if (!tig_net_is_active()
-        || tig_net_is_host()) {
-        animfx_remove(&spell_eye_candies, obj, spell % 10 + 6 * (spell / 10), -1);
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
 
-        if (tig_net_is_active()) {
-            Packet77 pkt;
+    }
 
-            pkt.type = 77;
-            pkt.subtype = 0;
-            pkt.oid = obj_get_id(obj);
-            pkt.field_20 = spell % 10 + 6 * (spell / 10);
-            pkt.field_24 = -1;
-            tig_net_send_app_all(&pkt, sizeof(pkt));
-        }
+    animfx_remove(&spell_eye_candies, obj, fx % 10 + 6 * (fx / 10), -1);
+
+    if (tig_net_is_active()) {
+        Packet77 pkt;
+
+        pkt.type = 77;
+        pkt.subtype = 0;
+        pkt.oid = obj_get_id(obj);
+        pkt.field_20 = fx % 10 + 6 * (fx / 10);
+        pkt.field_24 = -1;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 

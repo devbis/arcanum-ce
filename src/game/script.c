@@ -2632,9 +2632,9 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_STOP_SPELL_EYE_CANDY: {
-        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int fx = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_456EC0(obj, spell);
+        magictech_fx_remove(obj, fx);
         return NEXT;
     }
     case SAT_GRANT_ONE_FATE_POINT: {
