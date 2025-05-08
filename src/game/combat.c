@@ -2177,7 +2177,7 @@ void combat_heal(CombatContext* combat)
     int type;
     int index;
     unsigned int critter_flags;
-    bool v1 = false;
+    bool unressurectable = false;
     bool v2 = false;
     tig_art_id_t art_id;
 
@@ -2218,15 +2218,15 @@ void combat_heal(CombatContext* combat)
 
     critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_UNREVIVIFIABLE) != 0
-        && (combat->dam_flags & 0x400000) != 0) {
-        v1 = true;
+        && (combat->dam_flags & CDF_REANIMATE) != 0) {
+        unressurectable = true;
     }
     if ((critter_flags & OCF_UNRESSURECTABLE) != 0
-        && (combat->dam_flags & 0x400000) == 0) {
-        v1 = true;
+        && (combat->dam_flags & CDF_REANIMATE) == 0) {
+        unressurectable = true;
     }
 
-    if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || v1) {
+    if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || unressurectable) {
         magictech_error_unressurectable(combat->target_obj);
         return;
     }

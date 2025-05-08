@@ -399,7 +399,7 @@ static unsigned int dword_5B0D3C[] = {
     0,
     CDF_FULL,
     CDF_RESURRECT,
-    0x400002,
+    CDF_REANIMATE | CDF_RESURRECT,
     CDF_DEATH,
     CDF_STUN,
     CDF_SCAR,
