@@ -15,6 +15,8 @@
 
 #define QUEST_BOTCHED_MODIFIER 0x100
 
+#define quest_num_to_idx(num) ((num) - 1000)
+
 typedef struct Quest {
     int experience_level;
     int alignment_adjustment;
@@ -106,7 +108,7 @@ bool quest_mod_load()
             for (num = 1000; num < 2000; num++) {
                 mes_file_entry.num = num;
                 if (mes_search(quest_log_mes_file, &mes_file_entry)) {
-                    quests[num - 1000].normal_description = mes_file_entry.str;
+                    quests[quest_num_to_idx(num)].normal_description = mes_file_entry.str;
                 }
             }
         }
@@ -115,7 +117,7 @@ bool quest_mod_load()
             for (num = 1000; num < 2000; num++) {
                 mes_file_entry.num = num;
                 if (mes_search(quest_log_mes_file, &mes_file_entry)) {
-                    quests[num - 1000].dumb_description = mes_file_entry.str;
+                    quests[quest_num_to_idx(num)].dumb_description = mes_file_entry.str;
                 }
             }
         }
@@ -167,6 +169,7 @@ bool quest_parse(const char* path, int start, int end)
     MesFileEntry mes_file_entry;
     int num;
     char temp[2000];
+    Quest* quest;
 
     if (!mes_load(path, &mes_file)) {
         return false;
@@ -178,29 +181,30 @@ bool quest_parse(const char* path, int start, int end)
         if (mes_search(mes_file, &mes_file_entry)) {
             strcpy(temp, mes_file_entry.str);
 
-            quests[num - 1000].experience_level = atoi(strtok(temp, " "));
-            quests[num - 1000].alignment_adjustment = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].normal_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].bad_reaction_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
-            quests[num - 1000].dumb_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
+            quest = &(quests[quest_num_to_idx(num)]);
+            quest->experience_level = atoi(strtok(temp, " "));
+            quest->alignment_adjustment = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->normal_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->bad_reaction_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_UNKNOWN] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_MENTIONED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_ACCEPTED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_ACHIEVED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_OTHER_COMPLETED] = atoi(strtok(NULL, " "));
+            quest->dumb_dialog[QUEST_STATE_BOTCHED] = atoi(strtok(NULL, " "));
         }
     }
 
@@ -220,14 +224,14 @@ int quest_dialog_line(int64_t pc_obj, int64_t npc_obj, int num)
 
     state = quest_state_get(pc_obj, num);
     if (stat_level_get(pc_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
-        return quests[num - 1000].dumb_dialog[state];
+        return quests[quest_num_to_idx(num)].dumb_dialog[state];
     }
 
     if (reaction_get(npc_obj, pc_obj) < 20) {
-        return quests[num - 1000].bad_reaction_dialog[state];
+        return quests[quest_num_to_idx(num)].bad_reaction_dialog[state];
     }
 
-    return quests[num - 1000].normal_dialog[state];
+    return quests[quest_num_to_idx(num)].normal_dialog[state];
 }
 
 // 0x4C4CB0
@@ -271,7 +275,7 @@ void quest_state_set(int64_t pc_obj, int num, int state, int64_t npc_obj)
     }
 
     if (state == QUEST_STATE_COMPLETED) {
-        critter_give_xp(pc_obj, quest_get_xp(quests[num - 1000].experience_level));
+        critter_give_xp(pc_obj, quest_get_xp(quests[quest_num_to_idx(num)].experience_level));
     }
 
     if (!tig_net_is_active()) {
@@ -328,14 +332,14 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (quest_gstate[num - 1000] == QUEST_STATE_ACCEPTED) {
+    if (quest_gstate[quest_num_to_idx(num)] == QUEST_STATE_ACCEPTED) {
         if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_OTHER_COMPLETED) {
-            quest_gstate[num - 1000] = QUEST_STATE_COMPLETED;
+            quest_gstate[quest_num_to_idx(num)] = QUEST_STATE_COMPLETED;
         } else if (state == QUEST_STATE_BOTCHED) {
-            quest_gstate[num - 1000] = QUEST_STATE_BOTCHED;
+            quest_gstate[quest_num_to_idx(num)] = QUEST_STATE_BOTCHED;
         }
     } else {
-        if (quest_gstate[num - 1000] == QUEST_STATE_COMPLETED) {
+        if (quest_gstate[quest_num_to_idx(num)] == QUEST_STATE_COMPLETED) {
             state = QUEST_STATE_OTHER_COMPLETED;
         } else {
             state = QUEST_STATE_BOTCHED;
@@ -355,7 +359,7 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
     if (state == QUEST_STATE_COMPLETED) {
         stat_base_set(pc_obj,
             STAT_ALIGNMENT,
-            stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[num - 1000].alignment_adjustment);
+            stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[quest_num_to_idx(num)].alignment_adjustment);
         tig_sound_quick_play(3028);
     }
 
@@ -408,7 +412,7 @@ int quest_unbotch(int64_t obj, int num)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    quest_gstate[num - 1000] = QUEST_STATE_ACCEPTED;
+    quest_gstate[quest_num_to_idx(num)] = QUEST_STATE_ACCEPTED;
 
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     pc_quest_state.state &= ~QUEST_BOTCHED_MODIFIER;
@@ -431,7 +435,7 @@ int quest_unbotch(int64_t obj, int num)
 // 0x4C51A0
 int quest_global_state_get(int num)
 {
-    return quest_gstate[num - 1000];
+    return quest_gstate[quest_num_to_idx(num)];
 }
 
 // 0x4C51C0
@@ -439,7 +443,7 @@ int quest_global_state_set(int num, int state)
 {
     int old_state;
 
-    old_state = quest_gstate[num - 1000];
+    old_state = quest_gstate[quest_num_to_idx(num)];
     if (old_state == QUEST_STATE_COMPLETED || old_state == QUEST_STATE_BOTCHED) {
         return old_state;
     }
@@ -458,7 +462,7 @@ int quest_global_state_set(int num, int state)
     }
 
     if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_BOTCHED) {
-        quest_gstate[num - 1000] = state;
+        quest_gstate[quest_num_to_idx(num)] = state;
         return state;
     } else {
         return QUEST_STATE_ACCEPTED;
@@ -468,11 +472,11 @@ int quest_global_state_set(int num, int state)
 // 0x4C5250
 void quest_copy_description(int64_t obj, int num, char* buffer)
 {
-    if (quests[num - 1000].dumb_description != NULL
+    if (quests[quest_num_to_idx(num)].dumb_description != NULL
         && stat_level_get(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
-        strcpy(buffer, quests[num - 1000].dumb_description);
-    } else if (quests[num - 1000].normal_description != NULL) {
-        strcpy(buffer, quests[num - 1000].normal_description);
+        strcpy(buffer, quests[quest_num_to_idx(num)].dumb_description);
+    } else if (quests[quest_num_to_idx(num)].normal_description != NULL) {
+        strcpy(buffer, quests[quest_num_to_idx(num)].normal_description);
     }
 }
 
