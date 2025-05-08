@@ -3254,7 +3254,7 @@ void sub_4534E0(MagicTechRunInfo* run_info)
         }
     }
 
-    if (info->cancels_envsf != 0 && sub_458A80(info->cancels_envsf)) {
+    if (info->cancels_envsf != 0 && magictech_check_env_sf(info->cancels_envsf)) {
         for (index = 0; index < 512; index++) {
             other_run_info = &(magictech_run_info[index]);
             if ((other_run_info->field_13C & 0x1) != 0
@@ -6050,7 +6050,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
 }
 
 // 0x458A80
-bool sub_458A80(unsigned int flags)
+bool magictech_check_env_sf(unsigned int flags)
 {
     int64_t pc_obj;
 

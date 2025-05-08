@@ -197,7 +197,7 @@ bool trap_attempt_spot(int64_t pc_obj, int64_t trap_obj)
         return true;
     }
 
-    if (!sub_458A80(OSF_DETECTING_INVISIBLE)) {
+    if (!magictech_check_env_sf(OSF_DETECTING_INVISIBLE)) {
         skill_invocation_init(&skill_invocation);
         sub_4440E0(pc_obj, &(skill_invocation.source));
         sub_4440E0(trap_obj, &(skill_invocation.target));

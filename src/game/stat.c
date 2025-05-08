@@ -358,7 +358,7 @@ int stat_level_get(int64_t obj, int stat)
     switch (stat) {
     case STAT_SPEED:
         // Check if Tempus Fugit is active.
-        if (sub_458A80(OSF_TEMPUS_FUGIT)) {
+        if (magictech_check_env_sf(OSF_TEMPUS_FUGIT)) {
             // Critters affected by Tempus Fugit (usually party members) gets
             // +10 speed, while everyone else gets -10.
             if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {

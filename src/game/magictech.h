@@ -386,7 +386,7 @@ void magictech_interrupt_delayed(int mt_id);
 void sub_4573D0(MagicTechSerializedData* a1);
 void sub_457450(int64_t obj);
 void sub_4574D0(int64_t obj);
-bool sub_458A80(unsigned int flags);
+bool magictech_check_env_sf(unsigned int flags);
 tig_art_id_t sub_458AE0(int mt_id);
 const char* magictech_get_name(int magictech);
 tig_art_id_t sub_458B70(int mt_id);

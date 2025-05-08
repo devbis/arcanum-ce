@@ -562,7 +562,7 @@ void object_draw(GameDrawInfo* draw_info)
     }
 
     v1 = draw_info->field_8;
-    is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
+    is_detecting_invisible = magictech_check_env_sf(OSF_DETECTING_INVISIBLE);
 
     for (col = 0; col < v1->height; col++) {
         v2 = &(v1->field_8[col]);
@@ -1074,7 +1074,7 @@ void sub_43C690(GameDrawInfo* draw_info)
         }
 
         color = tig_color_make(200, 200, 200);
-        is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
+        is_detecting_invisible = magictech_check_env_sf(OSF_DETECTING_INVISIBLE);
         flags = obj_field_int32_get(object_hover_obj, OBJ_F_FLAGS);
         if (!is_detecting_invisible
             && (flags & (OF_DONTDRAW | OF_INVISIBLE)) != 0) {
