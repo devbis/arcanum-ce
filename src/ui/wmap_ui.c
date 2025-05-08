@@ -25,6 +25,18 @@
 #include "ui/textedit_ui.h"
 #include "ui/types.h"
 
+typedef enum WmapNoteType {
+    WMAP_NOTE_TYPE_NOTE,
+    WMAP_NOTE_TYPE_SKULL,
+    WMAP_NOTE_TYPE_CHEST,
+    WMAP_NOTE_TYPE_QUEST,
+    WMAP_NOTE_TYPE_CROSS,
+    WMAP_NOTE_TYPE_LOC,
+    WMAP_NOTE_TYPE_WAYPOINT,
+    WMAP_NOTE_TYPE_NEW_LOC,
+    WMAP_NOTE_TYPE_COUNT,
+} WmapNoteType;
+
 typedef struct WmapCoords {
     int x;
     int y;
@@ -32,7 +44,7 @@ typedef struct WmapCoords {
 
 static_assert(sizeof(WmapCoords) == 0x8, "wrong size");
 
-typedef struct S5C9160 {
+typedef struct WmapNoteTypeInfo {
     // NOTE: Rare case - during initialization the value at offset 0 is art num,
     // which is replaced with interface art id (see `wmap_ui_init`).
     union {
@@ -43,10 +55,10 @@ typedef struct S5C9160 {
     /* 0008 */ int height;
     /* 000C */ tig_color_t color;
     /* 0010 */ tig_font_handle_t font;
-    /* 0014 */ int field_14;
-} S5C9160;
+    /* 0014 */ bool enabled;
+} WmapNoteTypeInfo;
 
-static_assert(sizeof(S5C9160) == 0x18, "wrong size");
+static_assert(sizeof(WmapNoteTypeInfo) == 0x18, "wrong size");
 
 typedef struct WmapNote {
     /* 0000 */ int id;
@@ -54,10 +66,9 @@ typedef struct WmapNote {
     /* 0008 */ WmapCoords coords;
     /* 0010 */ int64_t field_10;
     /* 0018 */ TigRect field_18;
-    /* 0028 */ int field_28;
+    /* 0028 */ WmapNoteType type;
     /* 002C */ char str[250];
     /* 0128 */ TigVideoBuffer* video_buffer;
-    /* 012C */ int field_12C;
 } WmapNote;
 
 static_assert(sizeof(WmapNote) == 0x130, "wrong size");
@@ -140,15 +151,15 @@ static void sub_560150();
 static void sub_562FE0(int a1);
 
 // 0x5C9160
-static S5C9160 stru_5C9160[8] = {
-    { 142, 0, 0, 0, 0, 1 },
-    { 144, 0, 0, 0, 0, 1 },
-    { 141, 0, 0, 0, 0, 1 },
-    { 143, 0, 0, 0, 0, 1 },
-    { 204, 0, 0, 0, 0, 1 },
-    { 205, 0, 0, 0, 0, 1 },
-    { 206, 0, 0, 0, 0, 1 },
-    { 814, 0, 0, 0, 0, 1 },
+static WmapNoteTypeInfo wmap_note_type_info[WMAP_NOTE_TYPE_COUNT] = {
+    /*     WMAP_NOTE_TYPE_NOTE */ { 142, 0, 0, 0, 0, true },
+    /*    WMAP_NOTE_TYPE_SKULL */ { 144, 0, 0, 0, 0, true },
+    /*    WMAP_NOTE_TYPE_CHEST */ { 141, 0, 0, 0, 0, true },
+    /*    WMAP_NOTE_TYPE_QUEST */ { 143, 0, 0, 0, 0, true },
+    /*    WMAP_NOTE_TYPE_CROSS */ { 204, 0, 0, 0, 0, true },
+    /*      WMAP_NOTE_TYPE_LOC */ { 205, 0, 0, 0, 0, true },
+    /* WMAP_NOTE_TYPE_WAYPOINT */ { 206, 0, 0, 0, 0, true },
+    /*  WMAP_NOTE_TYPE_NEW_LOC */ { 814, 0, 0, 0, 0, true },
 };
 
 static void sub_560010();
@@ -242,7 +253,7 @@ static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
 static void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3);
-static void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5);
+static void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5);
 
 // 0x5C9220
 static int wmap_ui_spell = -1;
@@ -429,7 +440,7 @@ static int dword_66D894;
 static int dword_66D898;
 
 // 0x66D89C
-static int dword_66D89C;
+static WmapNoteType dword_66D89C;
 
 // 0x66D8A0
 static int dword_66D8A0;
@@ -657,18 +668,18 @@ bool wmap_ui_init(GameInitInfo* init_info)
     stru_5C9AB8.y -= stru_5C9B08.y;
     dword_64E03C = tig_color_make(0, 0, 255);
 
-    for (index = 0; index < 8; index++) {
-        stru_5C9160[index].field_14 = 1;
-        tig_art_interface_id_create(stru_5C9160[index].data.num, 0, 0, 0, &art_id);
-        stru_5C9160[index].data.art_id = art_id;
+    for (index = 0; index < WMAP_NOTE_TYPE_COUNT; index++) {
+        wmap_note_type_info[index].enabled = true;
+        tig_art_interface_id_create(wmap_note_type_info[index].data.num, 0, 0, 0, &art_id);
+        wmap_note_type_info[index].data.art_id = art_id;
 
         if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
             return false;
         }
 
         if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
-            stru_5C9160[index].width = art_frame_data.width;
-            stru_5C9160[index].height = art_frame_data.height;
+            wmap_note_type_info[index].width = art_frame_data.width;
+            wmap_note_type_info[index].height = art_frame_data.height;
 
             if (art_frame_data.width > dword_66D890) {
                 dword_66D890 = art_frame_data.width;
@@ -680,12 +691,12 @@ bool wmap_ui_init(GameInitInfo* init_info)
         }
     }
 
-    stru_5C9160[0].color = tig_color_make(255, 255, 255);
-    stru_5C9160[1].color = tig_color_make(255, 0, 0);
-    stru_5C9160[2].color = tig_color_make(255, 255, 0);
-    stru_5C9160[3].color = tig_color_make(0, 255, 0);
-    stru_5C9160[4].color = tig_color_make(150, 150, 150);
-    stru_5C9160[5].color = tig_color_make(250, 250, 250);
+    wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].color = tig_color_make(255, 255, 255);
+    wmap_note_type_info[WMAP_NOTE_TYPE_SKULL].color = tig_color_make(255, 0, 0);
+    wmap_note_type_info[WMAP_NOTE_TYPE_CHEST].color = tig_color_make(255, 255, 0);
+    wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].color = tig_color_make(0, 255, 0);
+    wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].color = tig_color_make(150, 150, 150);
+    wmap_note_type_info[WMAP_NOTE_TYPE_LOC].color = tig_color_make(250, 250, 250);
 
     mes_file_entry.num = 655;
     if (mes_search(wmap_ui_worldmap_mes_file, &mes_file_entry)) {
@@ -698,10 +709,10 @@ bool wmap_ui_init(GameInitInfo* init_info)
         tig_str_parse_value(&str, &r);
         tig_str_parse_value(&str, &g);
         tig_str_parse_value(&str, &b);
-        stru_5C9160[5].color = tig_color_make(r, g, b);
+        wmap_note_type_info[WMAP_NOTE_TYPE_LOC].color = tig_color_make(r, g, b);
     }
 
-    stru_5C9160[6].color = tig_color_make(150, 150, 150);
+    wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].color = tig_color_make(150, 150, 150);
 
     stru_66D708.x = 0;
     stru_66D708.y = stru_5C9AC8.y;
@@ -950,7 +961,7 @@ bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream)
     if (tig_file_fwrite(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!wmap_ui_rect_write(&(note->field_18), stream)) return false;
-    if (tig_file_fwrite(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(note->type), sizeof(note->type), 1, stream) != 1) return false;
 
     size = (int)strlen(note->str);
     if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) return false;
@@ -1029,7 +1040,7 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
     if (tig_file_fread(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!wmap_ui_rect_read(&(note->field_18), stream)) return false;
-    if (tig_file_fread(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
+    if (tig_file_fread(&(note->type), sizeof(note->type), 1, stream) != 1) return false;
     if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) return false;
 
     memset(note->str, 0, sizeof(note->str));
@@ -1330,8 +1341,8 @@ bool wmap_load_worldmap_info()
     }
 
     dword_5C9AD8 = -1;
-    dword_66D8A0 = stru_5C9160[5].width;
-    dword_66D8A4 = stru_5C9160[5].height;
+    dword_66D8A0 = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].width;
+    dword_66D8A4 = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].height;
     qword_66D850 = 320;
     sub_560EE0();
     dword_66D9BC = 1;
@@ -1382,8 +1393,8 @@ void wmap_ui_close()
         intgame_big_window_unlock();
 
         wmap_ui_window = TIG_WINDOW_HANDLE_INVALID;
-        for (index = 0; index < 8; index++) {
-            tig_font_destroy(stru_5C9160[index].font);
+        for (index = 0; index < WMAP_NOTE_TYPE_COUNT; index++) {
+            tig_font_destroy(wmap_note_type_info[index].font);
         }
         tig_video_buffer_destroy(dword_64E7F4);
         wmap_ui_created = 0;
@@ -1511,9 +1522,9 @@ bool wmap_ui_create()
     font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_interface_id_create(840, 0, 0, 0, &(font_desc.art_id));
 
-    for (index = 0; index < 8; index++) {
-        font_desc.color = stru_5C9160[index].color;
-        tig_font_create(&font_desc, &(stru_5C9160[index].font));
+    for (index = 0; index < WMAP_NOTE_TYPE_COUNT; index++) {
+        font_desc.color = wmap_note_type_info[index].color;
+        tig_font_create(&font_desc, &(wmap_note_type_info[index].font));
     }
 
     for (index = 0; index < 2; index++) {
@@ -2307,7 +2318,7 @@ void sub_562800(int id)
     note.id = id;
     note.flags = 0x2;
     note.field_10 = 0;
-    note.field_28 = 5;
+    note.type = WMAP_NOTE_TYPE_LOC;
 
     name = area_get_name(id);
     if (name != NULL) {
@@ -2351,7 +2362,7 @@ void sub_562880(WmapCoords* coords)
                 sprintf(str, "%d S", y);
             }
 
-            tig_font_push(stru_5C9160[0].font);
+            tig_font_push(wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
             if (tig_font_write(dword_64E7F4, str, &stru_66D708, &dst_rect) == TIG_OK) {
                 dst_rect.x = stru_5C9A98[index].x;
                 dst_rect.y = stru_5C9A98[index].y;
@@ -3239,7 +3250,7 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
     if (wmap->notes != NULL) {
         for (idx = *wmap->num_notes - 1; idx >= 0; idx--) {
             note = &(wmap->notes[idx]);
-            if (stru_5C9160[note->field_28].field_14
+            if (wmap_note_type_info[note->type].enabled
                 && coords->x >= note->coords.x - dx
                 && coords->x <= note->coords.x + dx
                 && coords->y >= note->coords.y - dy
@@ -3285,7 +3296,7 @@ bool sub_563F00(WmapCoords* coords, int64_t* a2)
 void sub_563F90(WmapCoords* coords)
 {
     stru_66D718.str[0] = '\0';
-    stru_66D718.field_28 = dword_66D89C;
+    stru_66D718.type = dword_66D89C;
     stru_66D718.coords = *coords;
     sub_563D50(&stru_66D718);
     stru_66D718.field_10 = 0;
@@ -3298,9 +3309,9 @@ void sub_564000(int a1)
 {
     int v1[3];
 
-    v1[0] = 0;
-    v1[1] = 1;
-    v1[2] = 2;
+    v1[0] = WMAP_NOTE_TYPE_NOTE;
+    v1[1] = WMAP_NOTE_TYPE_SKULL;
+    v1[2] = WMAP_NOTE_TYPE_CHEST;
     dword_66D89C = v1[a1];
 }
 
@@ -3312,7 +3323,7 @@ void sub_564030(WmapNote* note)
     stru_5C9B20.buffer = note->str;
     textedit_ui_focus(&stru_5C9B20);
     dword_66D898 = 1;
-    intgame_text_edit_refresh(note->str, stru_5C9160[0].font);
+    intgame_text_edit_refresh(note->str, wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
 }
 
 // 0x564070
@@ -3325,7 +3336,7 @@ void sub_564070(bool a1)
     textedit_ui_unfocus(&stru_5C9B20);
     stru_5C9B20.buffer = NULL;
     if (a1) {
-        intgame_text_edit_refresh(" ", stru_5C9160[0].font);
+        intgame_text_edit_refresh(" ", wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
     }
 }
 
@@ -3442,9 +3453,9 @@ void sub_5642F0(WmapNote* note)
 void sub_564320(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        intgame_text_edit_refresh(textedit->buffer, stru_5C9160[0].font);
+        intgame_text_edit_refresh(textedit->buffer, wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
     } else {
-        intgame_text_edit_refresh(" ", stru_5C9160[0].font);
+        intgame_text_edit_refresh(" ", wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
     }
 }
 
@@ -3784,7 +3795,7 @@ void wmap_ui_mark_townmap(int64_t obj)
     sub_563D50(&note);
     note.field_10 = 0;
     note.flags = 0x2;
-    note.field_28 = 3;
+    note.type = WMAP_NOTE_TYPE_QUEST;
 
     dword_66D878 = pc_townmap;
 
@@ -4080,7 +4091,7 @@ void sub_565230()
 
     for (idx = 0; idx < *stru_5C9228[0].num_notes; idx++) {
         note = &(stru_5C9228[0].notes[idx]);
-        if (stru_5C9160[idx].field_14 == 1) {
+        if (wmap_note_type_info[idx].enabled) {
             tmp_rect.x = vb_dst_rect.x + note->coords.x;
             tmp_rect.y = vb_dst_rect.y + note->coords.y + stru_5C9B08.y;
             sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
@@ -4290,9 +4301,9 @@ void sub_5657A0(TigRect* rect)
 
     for (idx = 0; idx < *v1->num_notes; idx++) {
         note = &(v1->notes[idx]);
-        if (stru_5C9160[note->field_28].field_14 == 1
+        if (wmap_note_type_info[note->type].enabled
             && sub_565CF0(note)) {
-            sub_566D10(note->field_28, &(note->coords), &tmp_rect, rect, v1);
+            sub_566D10(note->type, &(note->coords), &tmp_rect, rect, v1);
             sub_565D00(note, &tmp_rect, rect);
         }
     }
@@ -4304,16 +4315,16 @@ void sub_5657A0(TigRect* rect)
         WmapCoords coords;
 
         sub_561490(area_get_location(area), &coords);
-        sub_566D10(7, &coords, &tmp_rect, rect, v1);
+        sub_566D10(WMAP_NOTE_TYPE_NEW_LOC, &coords, &tmp_rect, rect, v1);
     }
 
-    offset_x = v1->field_3C.x - stru_5C9160[4].width / 2 - v1->field_34;
-    offset_y = v1->field_3C.y + stru_5C9160[4].height / -2 - v1->field_38;
+    offset_x = v1->field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - v1->field_34;
+    offset_y = v1->field_3C.y + wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / -2 - v1->field_38;
 
     vb_dst_rect.x = offset_x + tmp_rect.x;
     vb_dst_rect.y = offset_y + tmp_rect.y;
-    vb_dst_rect.width = stru_5C9160[4].width;
-    vb_dst_rect.height = stru_5C9160[4].height;
+    vb_dst_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width;
+    vb_dst_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height;
 
     if (tig_rect_intersection(&vb_dst_rect, rect, &vb_dst_rect) == TIG_OK) {
         dst_rect = vb_dst_rect;
@@ -4321,7 +4332,7 @@ void sub_5657A0(TigRect* rect)
         vb_dst_rect.y -= tmp_rect.y + offset_y;
 
         art_blit_info.flags = 0;
-        art_blit_info.art_id = stru_5C9160[4].data.art_id;
+        art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].data.art_id;
         art_blit_info.src_rect = &vb_dst_rect;
         art_blit_info.dst_rect = &dst_rect;
         art_blit_info.dst_video_buffer = dword_64E7F4;
@@ -4418,7 +4429,7 @@ void wmap_note_vbid_lock(WmapNote* note)
         note->flags |= 0x4;
 
         sub_565F00(note->video_buffer, &(note->field_18));
-        tig_font_push(stru_5C9160[note->field_28].font);
+        tig_font_push(wmap_note_type_info[note->type].font);
         tig_font_write(note->video_buffer, note->str, &stru_5C9AC8, &dirty_rect);
         tig_font_pop();
     }
@@ -4646,13 +4657,13 @@ void wmap_town_refresh_rect(TigRect* rect)
         offset_x = stru_5C9228[2].notes[note].coords.x;
         offset_y = stru_5C9228[2].notes[note].coords.y;
 
-        offset_x -= stru_5C9160[3].width / 2 - stru_5C9228[2].field_34;
-        offset_y -= stru_5C9160[3].height / 2 - stru_5C9228[2].field_38;
+        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width / 2 - stru_5C9228[2].field_34;
+        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height / 2 - stru_5C9228[2].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
-        vb_dst_rect.width = stru_5C9160[3].width;
-        vb_dst_rect.height = stru_5C9160[3].height;
+        vb_dst_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width;
+        vb_dst_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height;
 
         if (tig_rect_intersection(&vb_dst_rect, &dirty_rect, &vb_dst_rect) == TIG_OK) {
             art_dst_rect = vb_dst_rect;
@@ -4660,7 +4671,7 @@ void wmap_town_refresh_rect(TigRect* rect)
             vb_dst_rect.y -= bounds.y + offset_y;
 
             art_blit_info.flags = 0;
-            art_blit_info.art_id = stru_5C9160[3].data.art_id;
+            art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].data.art_id;
             art_blit_info.src_rect = &vb_dst_rect;
             art_blit_info.dst_video_buffer = dword_64E7F4;
             art_blit_info.dst_rect = &art_dst_rect;
@@ -4669,13 +4680,13 @@ void wmap_town_refresh_rect(TigRect* rect)
     }
 
     sub_566A80(&(stru_5C9228[2]), &bounds, &dirty_rect);
-    offset_x = stru_5C9228[2].field_3C.x - stru_5C9160[4].width / 2 - stru_5C9228[2].field_34;
-    offset_y = stru_5C9228[2].field_3C.y - stru_5C9160[4].height / 2 - stru_5C9228[2].field_38;
+    offset_x = stru_5C9228[2].field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - stru_5C9228[2].field_34;
+    offset_y = stru_5C9228[2].field_3C.y - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 - stru_5C9228[2].field_38;
 
     vb_dst_rect.x = bounds.x + offset_x;
     vb_dst_rect.y = bounds.y + offset_y;
-    vb_dst_rect.width = stru_5C9160[4].width;
-    vb_dst_rect.height = stru_5C9160[4].height;
+    vb_dst_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width;
+    vb_dst_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height;
 
     if (tig_rect_intersection(&vb_dst_rect, &dirty_rect, &vb_dst_rect) == TIG_OK) {
         art_dst_rect = vb_dst_rect;
@@ -4683,7 +4694,7 @@ void wmap_town_refresh_rect(TigRect* rect)
         vb_dst_rect.y -= bounds.y + offset_y;
 
         art_blit_info.flags = 0;
-        art_blit_info.art_id = stru_5C9160[4].data.art_id;
+        art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].data.art_id;
         art_blit_info.src_rect = &vb_dst_rect;
         art_blit_info.dst_video_buffer = dword_64E7F4;
         art_blit_info.dst_rect = &art_dst_rect;
@@ -4695,13 +4706,13 @@ void wmap_town_refresh_rect(TigRect* rect)
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
         townmap_loc_to_coords(&stru_64E7F8, loc, &offset_x, &offset_y);
-        offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
-        offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
+        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + stru_5C9228[2].field_34;
+        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + stru_5C9228[2].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
-        vb_dst_rect.width = stru_5C9160[4].width;
-        vb_dst_rect.height = stru_5C9160[4].height;
+        vb_dst_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width;
+        vb_dst_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height;
 
         if (tig_rect_intersection(&vb_dst_rect, &dirty_rect, &vb_dst_rect) == TIG_OK) {
             art_dst_rect = vb_dst_rect;
@@ -4709,7 +4720,7 @@ void wmap_town_refresh_rect(TigRect* rect)
             vb_dst_rect.y -= bounds.y + offset_y;
 
             art_blit_info.flags = 0;
-            art_blit_info.art_id = stru_5C9160[4].data.art_id;
+            art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].data.art_id;
             art_blit_info.src_rect = &vb_dst_rect;
             art_blit_info.dst_video_buffer = dword_64E7F4;
             art_blit_info.dst_rect = &art_dst_rect;
@@ -4727,13 +4738,13 @@ void wmap_town_refresh_rect(TigRect* rect)
             if (!player_is_local_pc_obj(node->obj)) {
                 loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
                 townmap_loc_to_coords(&stru_64E7F8, loc, &offset_x, &offset_y);
-                offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
-                offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
+                offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + stru_5C9228[2].field_34;
+                offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + stru_5C9228[2].field_38;
 
                 vb_dst_rect.x = bounds.x + offset_x;
                 vb_dst_rect.y = bounds.y + offset_y;
-                vb_dst_rect.width = stru_5C9160[4].width;
-                vb_dst_rect.height = stru_5C9160[4].height;
+                vb_dst_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width;
+                vb_dst_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height;
 
                 if (tig_rect_intersection(&vb_dst_rect, &dirty_rect, &vb_dst_rect) == TIG_OK) {
                     art_dst_rect = vb_dst_rect;
@@ -4741,7 +4752,7 @@ void wmap_town_refresh_rect(TigRect* rect)
                     vb_dst_rect.y -= bounds.y + offset_y;
 
                     art_blit_info.flags = 0;
-                    art_blit_info.art_id = stru_5C9160[4].data.art_id;
+                    art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].data.art_id;
                     art_blit_info.src_rect = &vb_dst_rect;
                     art_blit_info.dst_video_buffer = dword_64E7F4;
                     art_blit_info.dst_rect = &art_dst_rect;
@@ -4800,11 +4811,11 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = stru_5C9160[0].width;
-    src_rect.height = stru_5C9160[0].height;
+    src_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].width;
+    src_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].height;
 
     art_blit_info.flags = 0;
-    art_blit_info.art_id = stru_5C9160[0].data.art_id;
+    art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].data.art_id;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_video_buffer = dword_64E7F4;
 
@@ -4823,17 +4834,17 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
                 index == dword_5C9AD8 ? dword_64E034 : dword_65E974);
         }
 
-        src_rect.x = x2 - stru_5C9160[6].width / 2;
-        src_rect.y = y2 - stru_5C9160[6].height / 2;
-        src_rect.width = stru_5C9160[6].width;
-        src_rect.height = stru_5C9160[6].height;
-        art_blit_info.art_id = stru_5C9160[6].data.art_id;
+        src_rect.x = x2 - wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].width / 2;
+        src_rect.y = y2 - wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].height / 2;
+        src_rect.width = wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].width;
+        src_rect.height = wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].height;
+        art_blit_info.art_id = wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].data.art_id;
 
         if (tig_rect_intersection(&src_rect, a3, &src_rect) == TIG_OK) {
             dst_rect = src_rect;
 
-            src_rect.x -= x2 - stru_5C9160[6].width / 2;
-            src_rect.y -= y2 - stru_5C9160[6].height / 2;
+            src_rect.x -= x2 - wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].width / 2;
+            src_rect.y -= y2 - wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].height / 2;
 
             art_blit_info.dst_rect = &dst_rect;
             tig_window_blit_art(wmap_ui_window, &art_blit_info);
@@ -4855,7 +4866,7 @@ void wmap_ui_get_current_location(int64_t* loc_ptr)
 }
 
 // 0x566D10
-void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
+void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
 {
     int dx;
     int dy;
@@ -4863,13 +4874,13 @@ void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
     TigRect src_rect;
     TigRect dst_rect;
 
-    dx = coords->x - stru_5C9160[a1].width / 2 - a5->field_34;
-    dy = coords->y - stru_5C9160[a1].height / 2 - a5->field_38;
+    dx = coords->x - wmap_note_type_info[type].width / 2 - a5->field_34;
+    dy = coords->y - wmap_note_type_info[type].height / 2 - a5->field_38;
 
     src_rect.x = a3->x + dx;
     src_rect.y = a3->y + dy;
-    src_rect.width = stru_5C9160[a1].width;
-    src_rect.height = stru_5C9160[a1].height;
+    src_rect.width = wmap_note_type_info[type].width;
+    src_rect.height = wmap_note_type_info[type].height;
     if (tig_rect_intersection(&src_rect, a4, &src_rect) == TIG_OK) {
         dst_rect = src_rect;
 
@@ -4877,7 +4888,7 @@ void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
         src_rect.y -= a3->y + dy;
 
         art_blit_info.flags = 0;
-        art_blit_info.art_id = stru_5C9160[a1].data.art_id;
+        art_blit_info.art_id = wmap_note_type_info[type].data.art_id;
         art_blit_info.dst_video_buffer = dword_64E7F4;
         art_blit_info.src_rect = &src_rect;
         art_blit_info.dst_rect = &dst_rect;
