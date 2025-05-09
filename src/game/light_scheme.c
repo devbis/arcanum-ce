@@ -54,8 +54,9 @@ static int light_scheme_map_default = LIGHT_SCHEME_DEFAULT_LIGHTING;
 
 /**
  * Array of light scheme entries for each hour of the day (0-23).
+ *
+ * 0x5F5CA0
  */
-// 0x5F5CA0
 static LightSchemeData* light_scheme_colors;
 
 /**

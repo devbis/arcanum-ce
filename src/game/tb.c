@@ -118,7 +118,6 @@ static TbPosition tb_placement_tbl[9][TB_POS_COUNT] = {
  *
  * 0x602920
  */
-//
 static TigRect tb_iso_content_rect;
 
 /**
