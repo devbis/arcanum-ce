@@ -1,6 +1,7 @@
 #include "game/obj.h"
 
 #include "game/item.h"
+#include "game/obj_file.h"
 #include "game/obj_private.h"
 #include "game/oname.h"
 #include "game/skill.h"
@@ -1207,7 +1208,7 @@ bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
         return false;
     }
 
-    if (!obj_read_raw(&oid, sizeof(ObjectID), stream)) {
+    if (!objf_read(&oid, sizeof(ObjectID), stream)) {
         return false;
     }
 
@@ -1303,19 +1304,19 @@ bool obj_dif_write(TigFile* stream, int64_t obj)
     }
 
     marker = 0x12344321;
-    if (!obj_write_raw(&marker, sizeof(marker), stream)) {
+    if (!objf_write(&marker, sizeof(marker), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
+    if (!objf_write(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
     cnt = sub_40C030(object->type);
     for (index = 0; index < cnt; index++) {
-        if (!obj_write_raw(&(object->field_4C[index]), sizeof(object->field_4C[0]), stream)) {
+        if (!objf_write(&(object->field_4C[index]), sizeof(object->field_4C[0]), stream)) {
             obj_unlock(obj);
             return false;
         }
@@ -1326,7 +1327,7 @@ bool obj_dif_write(TigFile* stream, int64_t obj)
     obj_unlock(obj);
 
     marker = 0x23455432;
-    if (!obj_write_raw(&marker, sizeof(marker), stream)) {
+    if (!objf_write(&marker, sizeof(marker), stream)) {
         return false;
     }
 
@@ -1355,7 +1356,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
         return false;
     }
 
-    if (!obj_read_raw(&marker, sizeof(marker), stream)) {
+    if (!objf_read(&marker, sizeof(marker), stream)) {
         tig_debug_println("Error in obj_dif_read:\n  Unable to read start marker.");
         obj_unlock(obj);
         return false;
@@ -1367,7 +1368,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
         return false;
     }
 
-    if (!obj_read_raw(&oid, sizeof(oid), stream)) {
+    if (!objf_read(&oid, sizeof(oid), stream)) {
         tig_debug_println("Error in obj_dif_read:\n  Unable to read id.");
         obj_unlock(obj);
         return false;
@@ -1389,7 +1390,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
 
     cnt = sub_40C030(object->type);
     for (idx = 0; idx < cnt; idx++) {
-        if (!obj_read_raw(&(object->field_4C[idx]), 4, stream)) {
+        if (!objf_read(&(object->field_4C[idx]), 4, stream)) {
             tig_debug_println("Error in obj_dif_read:\n  Unable to read one of the modified flag vars.");
             obj_unlock(obj);
             return false;
@@ -1407,7 +1408,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
 
     obj_unlock(obj);
 
-    if (!obj_read_raw(&marker, sizeof(marker), stream)) {
+    if (!objf_read(&marker, sizeof(marker), stream)) {
         tig_debug_println("Error in obj_dif_read:\n  Unable to read the end marker");
         return false;
     }
@@ -2837,23 +2838,23 @@ bool obj_proto_write_file(TigFile* stream, int64_t obj)
 
     object = obj_lock(obj);
 
-    if (!obj_write_raw(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
+    if (!objf_write(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
+    if (!objf_write(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
+    if (!objf_write(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
         return false;
     }
 
     cnt = sub_40C030(object->type);
-    if (!obj_write_raw(object->field_4C, sizeof(object->field_4C[0]) * cnt, stream)) {
+    if (!objf_write(object->field_4C, sizeof(object->field_4C[0]) * cnt, stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -2880,13 +2881,13 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->prototype_oid = oid;
     object->prototype_obj = OBJ_HANDLE_NULL;
 
-    if (!obj_read_raw(&(object->oid), sizeof(object->oid), stream)) {
+    if (!objf_read(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
     }
 
-    if (!obj_read_raw(&(object->type), sizeof(object->type), stream)) {
+    if (!objf_read(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -2894,7 +2895,7 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     size = 4 * sub_40C030(object->type);
     object->field_4C = MALLOC(size);
-    if (!obj_read_raw(object->field_4C, size, stream)) {
+    if (!objf_read(object->field_4C, size, stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -2933,28 +2934,28 @@ bool obj_inst_write_file(TigFile* stream, int64_t obj)
 
     object = obj_lock(obj);
 
-    if (!obj_write_raw(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
+    if (!objf_write(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
+    if (!objf_write(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
+    if (!objf_write(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->num_fields), sizeof(object->num_fields), stream)) {
+    if (!objf_write(&(object->num_fields), sizeof(object->num_fields), stream)) {
         obj_unlock(obj);
         return false;
     }
 
     cnt = sub_40C030(object->type);
-    if (!obj_write_raw(object->field_48, sizeof(object->field_48[0]) * cnt, stream)) {
+    if (!objf_write(object->field_48, sizeof(object->field_48[0]) * cnt, stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -2979,19 +2980,19 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->prototype_oid = oid;
     object->prototype_obj = OBJ_HANDLE_NULL;
 
-    if (!obj_read_raw(&(object->oid), sizeof(object->oid), stream)) {
+    if (!objf_read(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
     }
 
-    if (!obj_read_raw(&(object->type), sizeof(object->type), stream)) {
+    if (!objf_read(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
     }
 
-    if (!obj_read_raw(&(object->num_fields), sizeof(object->num_fields), stream)) {
+    if (!objf_read(&(object->num_fields), sizeof(object->num_fields), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -3003,7 +3004,7 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
-    if (!obj_read_raw(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
+    if (!objf_read(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -5017,7 +5018,7 @@ void sub_40D4D0(Object* object, int fld)
 bool obj_version_write_file(TigFile* stream)
 {
     int version = OBJ_FILE_VERSION;
-    return obj_write_raw(&version, sizeof(version), stream);
+    return objf_write(&version, sizeof(version), stream);
 }
 
 // 0x40D590
@@ -5025,7 +5026,7 @@ bool obj_version_read_file(TigFile* stream)
 {
     int version;
 
-    if (!obj_read_raw(&version, sizeof(version), stream)) {
+    if (!objf_read(&version, sizeof(version), stream)) {
         return false;
     }
 

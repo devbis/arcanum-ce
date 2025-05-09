@@ -6,6 +6,7 @@
 #include "game/gamelib.h"
 #include "game/li.h"
 #include "game/map.h"
+#include "game/obj_file.h"
 #include "game/obj_private.h"
 #include "game/terrain.h"
 #include "game/tile.h"
@@ -1362,7 +1363,7 @@ bool sector_load_editor(int64_t id, Sector* sector)
             return false;
         }
 
-        if (!obj_read_raw(&placeholder, sizeof(placeholder), stream)
+        if (!objf_read(&placeholder, sizeof(placeholder), stream)
             || placeholder < 0xAA0000 || placeholder > 0xAA0004) {
             tig_debug_printf("Error loading placeholder from sector file %s\n", path);
             tig_file_fclose(stream);
@@ -1562,7 +1563,7 @@ bool sector_load_game(int64_t id, Sector* sector)
         }
 
         li_update();
-        if (!obj_read_raw(&placeholder, sizeof(placeholder), sec_stream)
+        if (!objf_read(&placeholder, sizeof(placeholder), sec_stream)
             || placeholder < 0xAA0000 || placeholder > 0xAA0004) {
             tig_debug_printf("Error loading placeholder from sector file %s\n", sec_path);
             tig_file_fclose(sec_stream);
@@ -1826,7 +1827,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
     }
 
     placeholder = 0xAA0004;
-    if (!obj_write_raw(&placeholder, sizeof(placeholder), stream)) {
+    if (!objf_write(&placeholder, sizeof(placeholder), stream)) {
         tig_debug_printf("Error saving placeholder to sector data file %s\n", path);
         tig_file_fclose(stream);
         tig_file_remove(path);

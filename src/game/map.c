@@ -14,6 +14,7 @@
 #include "game/location.h"
 #include "game/magictech.h"
 #include "game/mes.h"
+#include "game/obj_file.h"
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/oname.h"

@@ -15,6 +15,7 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/obj_file.h"
 #include "game/obj_private.h"
 #include "game/obj.h"
 #include "game/party.h"

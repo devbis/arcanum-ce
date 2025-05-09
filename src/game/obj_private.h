@@ -111,10 +111,5 @@ bool objid_is_equal(ObjectID a, ObjectID b);
 ObjectID sub_4E6540(int a1);
 void objid_id_to_str(char* buffer, ObjectID oid);
 bool objid_id_from_str(ObjectID* oid, const char* str);
-bool objf_solitary_write(int64_t handle, const char* dir, const char* ext);
-bool objf_solitary_read(int64_t* handle_ptr, const char* path);
-void objf_solitary_delete(int64_t handle, const char* dir, const char* ext);
-bool obj_write_raw(void* buffer, size_t size, TigFile* stream);
-bool obj_read_raw(void* buffer, size_t size, TigFile* stream);
 
 #endif /* ARCANUM_GAME_OBJ_PRIVATE_H_ */
