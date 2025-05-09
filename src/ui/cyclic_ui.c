@@ -117,7 +117,7 @@ void cyclic_ui_exit()
 }
 
 // 0x57F6D0
-bool sub_57F6D0(tig_button_handle_t button_handle)
+bool cyclic_ui_handle_button_pressed(tig_button_handle_t button_handle)
 {
     int index;
     CyclicUiControl* ctrl;

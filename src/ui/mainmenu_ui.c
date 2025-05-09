@@ -2928,7 +2928,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
     }
 
     if (index >= 4) {
-        return sub_589530(button_handle);
+        return options_ui_handle_button_pressed(button_handle);
     }
 
     if (index != 3) {

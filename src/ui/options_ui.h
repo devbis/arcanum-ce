@@ -6,6 +6,6 @@
 void options_ui_init(int type, tig_window_handle_t window_handle, bool a3);
 bool sub_589430();
 void options_ui_exit();
-int sub_589530(int a1);
+int options_ui_handle_button_pressed(tig_button_handle_t button_handle);
 
 #endif /* ARCANUM_UI_OPTIONS_UI_H_ */

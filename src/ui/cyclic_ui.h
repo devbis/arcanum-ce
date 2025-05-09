@@ -24,7 +24,7 @@ static_assert(sizeof(CyclicUiControlInfo) == 0x2C, "wrong size");
 
 bool cyclic_ui_init(GameInitInfo* init_info);
 void cyclic_ui_exit();
-bool sub_57F6D0(tig_button_handle_t button_handle);
+bool cyclic_ui_handle_button_pressed(tig_button_handle_t button_handle);
 void cyclic_ui_control_init(CyclicUiControlInfo* info);
 bool cyclic_ui_control_create(CyclicUiControlInfo* info, int* id_ptr);
 void cyclic_ui_control_destroy(int id, bool a2);

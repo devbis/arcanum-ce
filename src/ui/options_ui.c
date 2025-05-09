@@ -265,9 +265,9 @@ void options_ui_exit()
 }
 
 // 0x589530
-int sub_589530(int a1)
+int options_ui_handle_button_pressed(tig_button_handle_t button_handle)
 {
-    return sub_57F6D0(a1);
+    return cyclic_ui_handle_button_pressed(button_handle);
 }
 
 // 0x589540
