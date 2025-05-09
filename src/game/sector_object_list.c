@@ -5,7 +5,7 @@
 #include "game/light_scheme.h"
 #include "game/light.h"
 #include "game/location.h"
-#include "game/obj_private.h"
+#include "game/obj_find.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/sector_script.h"

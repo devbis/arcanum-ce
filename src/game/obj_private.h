@@ -49,15 +49,6 @@ typedef struct ObjSa {
 
 static_assert(sizeof(ObjSa) == 0x28, "wrong size");
 
-typedef struct FindNode FindNode;
-
-void obj_find_init();
-void obj_find_exit();
-void obj_find_add(int64_t obj);
-void obj_find_remove(int64_t obj);
-void obj_find_move(int64_t obj);
-bool obj_find_walk_first(int64_t sector_id, int64_t* obj_ptr, FindNode** iter_ptr);
-bool obj_find_walk_next(int64_t* obj_ptr, FindNode** iter_ptr);
 void sub_4E3F80();
 void sub_4E3F90();
 void sub_4E3FA0(ObjSa* a1);

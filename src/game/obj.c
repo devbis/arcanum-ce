@@ -2,6 +2,7 @@
 
 #include "game/item.h"
 #include "game/obj_file.h"
+#include "game/obj_find.h"
 #include "game/obj_private.h"
 #include "game/oname.h"
 #include "game/skill.h"

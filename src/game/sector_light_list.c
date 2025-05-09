@@ -3,7 +3,7 @@
 // TODO: Get rid.
 #include <stdio.h>
 
-#include "game/obj_private.h"
+#include "game/obj_find.h"
 #include "game/sector.h"
 #include "game/tile.h"
 
