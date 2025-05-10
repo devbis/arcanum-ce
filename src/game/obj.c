@@ -28,7 +28,7 @@ typedef bool (ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* 
 
 static void object_field_not_exists(Object* object, int fld);
 static void sub_408430(tig_art_id_t aid);
-static Object* sub_408710(int64_t* obj_handle_ptr);
+static Object* obj_allocate(int64_t* obj_ptr);
 static void sub_408760(Object* object, int fld, void* value_ptr);
 static void sub_4088B0(Object* object, int fld, int index, void* value_ptr);
 static void sub_408A20(Object* object, int fld, void* value_ptr);
@@ -784,7 +784,7 @@ void obj_create_proto(int type, int64_t* obj_ptr)
     Object* object;
     int index;
 
-    object = sub_408710(&handle);
+    object = obj_allocate(&handle);
     object->type = type;
     sub_4E62A0(&(object->oid));
     sub_4E4FD0(object->oid, handle);
@@ -819,7 +819,7 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
     Object* prototype;
     unsigned int flags;
 
-    object = sub_408710(&obj);
+    object = obj_allocate(&obj);
     object->prototype_obj = OBJ_HANDLE_NULL;
 
     prototype = obj_lock(proto_obj);
@@ -969,7 +969,7 @@ void sub_405D60(int64_t* new_obj_ptr, int64_t obj)
     int fld;
 
     object = obj_lock(obj);
-    new_object = sub_408710(&new_obj);
+    new_object = obj_allocate(&new_obj);
 
     new_object->type = object->type;
     new_object->oid = object->oid;
@@ -1017,7 +1017,7 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
 
     existing_object = obj_lock(existing_obj);
 
-    copy_object = sub_408710(&copy_obj);
+    copy_object = obj_allocate(&copy_obj);
     copy_object->type = existing_object->type;
     copy_object->oid = existing_object->oid;
 
@@ -2263,9 +2263,9 @@ void sub_408430(tig_art_id_t aid)
 }
 
 // 0x408710
-Object* sub_408710(int64_t* obj_handle_ptr)
+Object* obj_allocate(int64_t* obj_ptr)
 {
-    return obj_pool_allocate(obj_handle_ptr);
+    return obj_pool_allocate(obj_ptr);
 }
 
 // 0x408020
@@ -2878,7 +2878,7 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     Object* object;
     int size;
 
-    object = sub_408710(&obj);
+    object = obj_allocate(&obj);
     object->prototype_oid = oid;
     object->prototype_obj = OBJ_HANDLE_NULL;
 
@@ -2977,7 +2977,7 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     int64_t obj;
     Object* object;
 
-    object = sub_408710(&obj);
+    object = obj_allocate(&obj);
     object->prototype_oid = oid;
     object->prototype_obj = OBJ_HANDLE_NULL;
 
@@ -3059,7 +3059,7 @@ bool obj_proto_read_mem(uint8_t* data, int64_t* obj_ptr)
     Object* object;
     int size;
 
-    object = sub_408710(&obj);
+    object = obj_allocate(&obj);
     sub_4E4C50(&(object->prototype_oid), sizeof(object->prototype_oid), &data);
     object->prototype_obj = OBJ_HANDLE_NULL;
     sub_4E4C50(&(object->oid), sizeof(object->oid), &data);
@@ -3119,7 +3119,7 @@ bool obj_inst_read_mem(uint8_t* data, int64_t* obj_ptr)
     Object* object;
     int64_t obj;
 
-    object = sub_408710(&obj);
+    object = obj_allocate(&obj);
     sub_4E4C50(&(object->prototype_oid), sizeof(object->prototype_oid), &data);
     object->prototype_obj = OBJ_HANDLE_NULL;
     sub_4E4C50(&(object->oid), sizeof(object->oid), &data);
