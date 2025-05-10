@@ -7,7 +7,7 @@
 #include "game/player.h"
 #include "game/stat.h"
 
-static void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height);
+static void portrait_draw_func(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height);
 static bool sub_4CEAC0(int64_t obj, const char* str);
 
 // 0x5B7C0C
@@ -100,11 +100,11 @@ void portrait_path(int num, char* path, int size)
 // 0x4CE470
 void portrait_draw_native(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y)
 {
-    sub_4CE4A0(obj, num, window_handle, x, y, 0, 0);
+    portrait_draw_func(obj, num, window_handle, x, y, 0, 0);
 }
 
 // 0x4CE4A0
-void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height)
+void portrait_draw_func(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height)
 {
     TigBmp bmp;
     int rc;
@@ -161,13 +161,13 @@ void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, 
 // 0x4CE640
 void portrait_draw_128x128(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y)
 {
-    sub_4CE4A0(obj, num, window_handle, x, y, 128, 128);
+    portrait_draw_func(obj, num, window_handle, x, y, 128, 128);
 }
 
 // 0x4CE680
 void portrait_draw_32x32(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y)
 {
-    sub_4CE4A0(obj, num, window_handle, x, y, 32, 32);
+    portrait_draw_func(obj, num, window_handle, x, y, 32, 32);
 }
 
 // 0x4CE6B0
