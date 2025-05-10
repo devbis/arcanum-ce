@@ -2200,7 +2200,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
  * Determines if a skill invocation results in a critical hit based on a random
  * roll and success rate.
  *
- * Retuns `true` if it's a critical hit, or `false` otherwise.
+ * Returns `true` if it's a critical hit, or `false` otherwise.
  *
  * 0x4C81A0
  */
