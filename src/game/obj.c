@@ -2265,7 +2265,7 @@ void sub_408430(tig_art_id_t aid)
 // 0x408710
 Object* sub_408710(int64_t* obj_handle_ptr)
 {
-    return sub_4E4E60(obj_handle_ptr);
+    return obj_pool_allocate(obj_handle_ptr);
 }
 
 // 0x408020

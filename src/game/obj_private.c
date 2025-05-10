@@ -884,7 +884,7 @@ void obj_pool_exit()
 }
 
 // 0x4E4E60
-Object* sub_4E4E60(int64_t* obj_ptr)
+Object* obj_pool_allocate(int64_t* obj_ptr)
 {
     int v1;
     uint8_t* data;
