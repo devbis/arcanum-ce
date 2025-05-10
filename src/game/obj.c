@@ -577,7 +577,7 @@ void obj_exit()
 {
     sub_40BBB0();
     obj_find_exit();
-    sub_4E4DB0();
+    obj_pool_exit();
     sub_4E3F90();
     sub_4E5A50();
 
@@ -592,7 +592,7 @@ void obj_exit()
 // 0x405250
 void sub_405250()
 {
-    sub_4E4DB0();
+    obj_pool_exit();
     sub_4E3F90();
     sub_4E5A50();
     sub_4E59B0();

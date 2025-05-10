@@ -853,7 +853,7 @@ void obj_pool_init(int size, bool editor)
 }
 
 // 0x4E4DB0
-void sub_4E4DB0()
+void obj_pool_exit()
 {
     int index;
     uint8_t* data;
