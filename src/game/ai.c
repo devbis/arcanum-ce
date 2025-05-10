@@ -86,8 +86,8 @@ static_assert(sizeof(S4ABF10) == 0x18, "wrong size");
 
 static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);
-static bool sub_4A8940(Ai* ai);
-static bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3);
+static bool ai_heal(Ai* ai);
+static bool ai_heal_func(Ai* ai, int64_t obj, bool a3);
 static bool sub_4A8E70(Ai* ai);
 static bool sub_4A8F90(int64_t obj, unsigned int flags);
 static void sub_4A92D0(Ai* ai);
@@ -301,7 +301,7 @@ void ai_process(int64_t obj)
             || tig_net_is_host())) {
         sub_4A88D0(&ai, obj);
         if (sub_4A8570(&ai)) {
-            if (!sub_4A8940(&ai) && !sub_4A8E70(&ai)) {
+            if (!ai_heal(&ai) && !sub_4A8E70(&ai)) {
                 sub_4A92D0(&ai);
             }
             ai_action_perform(&ai);
@@ -438,11 +438,11 @@ void sub_4A88D0(Ai* ai, int64_t obj)
 }
 
 // 0x4A8940
-bool sub_4A8940(Ai* ai)
+bool ai_heal(Ai* ai)
 {
-    bool v1;
+    bool force;
     AiParams ai_params;
-    int64_t v2;
+    int64_t leader_obj;
     ObjectList objects;
     ObjectNode* node;
 
@@ -454,37 +454,37 @@ bool sub_4A8940(Ai* ai)
         return false;
     }
 
-    v1 = true;
+    force = true;
 
     if (combat_critter_is_combat_mode_active(ai->obj)) {
         ai_copy_params(ai->obj, &ai_params);
         if (random_between(1, 100) > ai_params.field_38) {
-            v1 = false;
+            force = false;
         }
     }
 
-    if (sub_4A8AA0(ai, ai->obj, v1)) {
+    if (ai_heal_func(ai, ai->obj, force)) {
         return true;
     }
 
-    v2 = critter_pc_leader_get(ai->obj);
-    if (v2 == OBJ_HANDLE_NULL) {
-        v2 = ai->leader_obj;
+    leader_obj = critter_pc_leader_get(ai->obj);
+    if (leader_obj == OBJ_HANDLE_NULL) {
+        leader_obj = ai->leader_obj;
     }
 
-    if (v2 != OBJ_HANDLE_NULL) {
-        if (sub_4A8AA0(ai, v2, v1)) {
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        if (ai_heal_func(ai, leader_obj, force)) {
             return true;
         }
     } else {
-        v2 = ai->obj;
+        leader_obj = ai->obj;
     }
 
-    object_list_all_followers(v2, &objects);
+    object_list_all_followers(leader_obj, &objects);
     node = objects.head;
     while (node != NULL) {
         if (node->obj != ai->obj
-            && sub_4A8AA0(ai, node->obj, v1)) {
+            && ai_heal_func(ai, node->obj, force)) {
             break;
         }
         node = node->next;
@@ -499,7 +499,7 @@ bool sub_4A8940(Ai* ai)
 }
 
 // 0x4A8AA0
-bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
+bool ai_heal_func(Ai* ai, int64_t obj, bool a3)
 {
     S4ABF10 v1;
     MagicTechAi magictech_ai;
