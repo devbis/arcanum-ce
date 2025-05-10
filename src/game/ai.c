@@ -791,7 +791,7 @@ void sub_4A92D0(Ai* ai)
             sub_4ABC20(ai);
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
-                ai->danger_source,
+                danger_source_obj,
                 &(ai->sound_id));
         }
         break;
@@ -802,28 +802,29 @@ void sub_4A92D0(Ai* ai)
             sub_4ABC20(ai);
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
-                ai->danger_source,
+                danger_source_obj,
                 &(ai->sound_id));
             break;
         }
 
-        obj_field_obj_get(ai->obj, OBJ_F_NPC_COMBAT_FOCUS, &danger_source_obj);
+        obj_field_obj_get(ai->obj, OBJ_F_NPC_WHO_HIT_ME_LAST, &danger_source_obj);
         ai->danger_source = danger_source_obj;
         if (sub_4AB990(ai->obj, ai->danger_source)) {
             sub_4ABC20(ai);
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
-                ai->danger_source,
+                danger_source_obj,
                 &(ai->sound_id));
             break;
         }
 
-        ai->danger_source = ai_shitlist_get(ai->obj);
+        danger_source_obj = ai_shitlist_get(ai->obj);
+        ai->danger_source = danger_source_obj;
         if (ai->danger_source != OBJ_HANDLE_NULL) {
             sub_4ABC20(ai);
             ai->danger_type = sub_4AABE0(ai->obj,
                 AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
-                ai->danger_source,
+                danger_source_obj,
                 &(ai->sound_id));
             break;
         }
