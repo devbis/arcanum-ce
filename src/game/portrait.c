@@ -8,7 +8,7 @@
 #include "game/stat.h"
 
 static void portrait_draw_func(int64_t obj, int num, tig_window_handle_t window_handle, int x, int y, int width, int height);
-static bool sub_4CEAC0(int64_t obj, const char* str);
+static bool portrait_is_valid(int64_t obj, const char* str);
 
 // 0x5B7C0C
 static const char* portrait_race_specifiers[RACE_COUNT] = {
@@ -184,7 +184,7 @@ bool portrait_find_first(int64_t obj, int* portrait_ptr)
 
     mes_file_entry.num = 1000;
     while (mes_search(portrait_mes_file, &mes_file_entry)) {
-        if (sub_4CEAC0(obj, mes_file_entry.str)) {
+        if (portrait_is_valid(obj, mes_file_entry.str)) {
             *portrait_ptr = mes_file_entry.num;
             return true;
         }
@@ -194,7 +194,7 @@ bool portrait_find_first(int64_t obj, int* portrait_ptr)
     if (portrait_have_user_mes_file) {
         mes_file_entry.num = 1;
         while (mes_file_entry.num < 1000 && mes_search(portrait_user_mes_file, &mes_file_entry)) {
-            if (sub_4CEAC0(obj, mes_file_entry.str)) {
+            if (portrait_is_valid(obj, mes_file_entry.str)) {
                 *portrait_ptr = mes_file_entry.num;
                 return true;
             }
@@ -218,7 +218,7 @@ bool portrait_find_last(int64_t obj, int* portrait_ptr)
 
     mes_file_entry.num = *portrait_ptr;
     while (mes_search(portrait_mes_file, &mes_file_entry)) {
-        if (sub_4CEAC0(obj, mes_file_entry.str)) {
+        if (portrait_is_valid(obj, mes_file_entry.str)) {
             num = mes_file_entry.num;
         }
         mes_file_entry.num++;
@@ -232,7 +232,7 @@ bool portrait_find_last(int64_t obj, int* portrait_ptr)
     if (portrait_have_user_mes_file) {
         mes_file_entry.num = 1;
         while (mes_file_entry.num < 1000 && mes_search(portrait_user_mes_file, &mes_file_entry)) {
-            if (sub_4CEAC0(obj, mes_file_entry.str)) {
+            if (portrait_is_valid(obj, mes_file_entry.str)) {
                 num = mes_file_entry.num;
             }
             mes_file_entry.num++;
@@ -260,7 +260,7 @@ bool portrait_find_next(int64_t obj, int* portrait_ptr)
     mes_file_entry.num = *portrait_ptr + 1;
     if (mes_file_entry.num >= 1000) {
         while (mes_search(portrait_mes_file, &mes_file_entry)) {
-            if (sub_4CEAC0(obj, mes_file_entry.str)) {
+            if (portrait_is_valid(obj, mes_file_entry.str)) {
                 *portrait_ptr = mes_file_entry.num;
                 return true;
             }
@@ -272,7 +272,7 @@ bool portrait_find_next(int64_t obj, int* portrait_ptr)
 
     if (portrait_have_user_mes_file) {
         while (mes_file_entry.num < 1000 && mes_search(portrait_user_mes_file, &mes_file_entry)) {
-            if (sub_4CEAC0(obj, mes_file_entry.str)) {
+            if (portrait_is_valid(obj, mes_file_entry.str)) {
                 *portrait_ptr = mes_file_entry.num;
                 return true;
             }
@@ -301,7 +301,7 @@ bool portrait_find_prev(int64_t obj, int* portrait_ptr)
     if (*portrait_ptr - 1 < 1000) {
         if (portrait_have_user_mes_file) {
             while (mes_file_entry.num >= 1 && mes_search(portrait_user_mes_file, &mes_file_entry)) {
-                if (sub_4CEAC0(obj, mes_file_entry.str)) {
+                if (portrait_is_valid(obj, mes_file_entry.str)) {
                     *portrait_ptr = mes_file_entry.num;
                     return true;
                 }
@@ -312,7 +312,7 @@ bool portrait_find_prev(int64_t obj, int* portrait_ptr)
     }
 
     while (mes_file_entry.num >= 1000 && mes_search(portrait_mes_file, &mes_file_entry)) {
-        if (sub_4CEAC0(obj, mes_file_entry.str)) {
+        if (portrait_is_valid(obj, mes_file_entry.str)) {
             *portrait_ptr = mes_file_entry.num;
             return true;
         }
@@ -323,7 +323,7 @@ bool portrait_find_prev(int64_t obj, int* portrait_ptr)
 }
 
 // 0x4CEAC0
-bool sub_4CEAC0(int64_t obj, const char* str)
+bool portrait_is_valid(int64_t obj, const char* str)
 {
     int race;
     int gender;
