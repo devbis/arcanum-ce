@@ -304,7 +304,7 @@ void main_loop()
     int index;
     TigMouseState mouse_state;
     int64_t mouse_loc;
-    char version_str[40];
+    char version_str[80];
     char mouse_state_str[20];
     char story_state_str[80];
 
