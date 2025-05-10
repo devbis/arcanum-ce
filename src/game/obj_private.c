@@ -934,7 +934,7 @@ Object* obj_pool_lock(int64_t obj)
 }
 
 // 0x4E4FA0
-void sub_4E4FA0(int64_t obj)
+void obj_pool_unlock(int64_t obj)
 {
     (void)obj;
 }

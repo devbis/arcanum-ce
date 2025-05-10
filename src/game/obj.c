@@ -2344,7 +2344,7 @@ Object* obj_lock(int64_t obj)
 // 0x408740
 void obj_unlock(int64_t obj)
 {
-    sub_4E4FA0(obj);
+    obj_pool_unlock(obj);
 }
 
 // 0x408760
