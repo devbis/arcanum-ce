@@ -88,8 +88,8 @@ static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);
 static bool ai_heal(Ai* ai);
 static bool ai_heal_func(Ai* ai, int64_t obj, bool a3);
-static bool sub_4A8E70(Ai* ai);
-static bool sub_4A8F90(int64_t obj, unsigned int flags);
+static bool ai_look_for_item(Ai* ai);
+static bool ai_look_for_item_func(int64_t obj, unsigned int flags);
 static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t source_obj, int64_t target_obj);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
@@ -301,7 +301,7 @@ void ai_process(int64_t obj)
             || tig_net_is_host())) {
         sub_4A88D0(&ai, obj);
         if (sub_4A8570(&ai)) {
-            if (!ai_heal(&ai) && !sub_4A8E70(&ai)) {
+            if (!ai_heal(&ai) && !ai_look_for_item(&ai)) {
                 sub_4A92D0(&ai);
             }
             ai_action_perform(&ai);
@@ -619,7 +619,7 @@ bool ai_heal_func(Ai* ai, int64_t obj, bool a3)
 }
 
 // 0x4A8E70
-bool sub_4A8E70(Ai* ai)
+bool ai_look_for_item(Ai* ai)
 {
     unsigned int npc_flags;
 
@@ -641,7 +641,7 @@ bool sub_4A8E70(Ai* ai)
         npc_flags &= ~ONF_LOOK_FOR_AMMO;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-        if (sub_4A8F90(ai->obj, 0x40)) {
+        if (ai_look_for_item_func(ai->obj, OBJ_TM_AMMO)) {
             return true;
         }
     }
@@ -650,7 +650,7 @@ bool sub_4A8E70(Ai* ai)
         npc_flags &= ~ONF_LOOK_FOR_WEAPON;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-        if (sub_4A8F90(ai->obj, 0x20)) {
+        if (ai_look_for_item_func(ai->obj, OBJ_TM_WEAPON)) {
             return true;
         }
     }
@@ -659,7 +659,7 @@ bool sub_4A8E70(Ai* ai)
         npc_flags &= ~ONF_LOOK_FOR_ARMOR;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-        if (sub_4A8F90(ai->obj, 0x80)) {
+        if (ai_look_for_item_func(ai->obj, OBJ_TM_ARMOR)) {
             return true;
         }
     }
@@ -668,7 +668,7 @@ bool sub_4A8E70(Ai* ai)
 }
 
 // 0x4A8F90
-bool sub_4A8F90(int64_t obj, unsigned int flags)
+bool ai_look_for_item_func(int64_t obj, unsigned int flags)
 {
     int64_t nearest_obj = OBJ_HANDLE_NULL;
     int64_t nearest_dist = 0;
@@ -2468,7 +2468,7 @@ void ai_action_perform_non_combat(Ai* ai)
 
     if (!critter_is_sleeping(ai->obj)) {
         if (sub_460C20() == OBJ_HANDLE_NULL && random_between(1, 100) == 1) {
-            sub_4A8F90(ai->obj, 32736);
+            ai_look_for_item_func(ai->obj, OBJ_TM_ITEM);
         }
     }
 }
