@@ -552,7 +552,7 @@ bool obj_init(GameInitInfo* init_info)
     object_fields_count_per_type = (int16_t*)CALLOC(18, sizeof(int16_t));
     obj_editor = init_info->editor;
     sub_4E59B0();
-    sub_4E4CD0(sizeof(Object), obj_editor);
+    obj_pool_init(sizeof(Object), obj_editor);
     sub_4E3F80();
     obj_find_init();
     sub_40A400();
@@ -596,7 +596,7 @@ void sub_405250()
     sub_4E3F90();
     sub_4E5A50();
     sub_4E59B0();
-    sub_4E4CD0(sizeof(Object), obj_editor);
+    obj_pool_init(sizeof(Object), obj_editor);
     sub_4E3F80();
 }
 

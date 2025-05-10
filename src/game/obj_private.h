@@ -65,7 +65,7 @@ int sub_4E4BA0(ObjSa* a1);
 void sub_4E4BD0(S4E4BD0* a1);
 void sub_4E4C00(const void* data, int size, S4E4BD0* a3);
 void sub_4E4C50(void* buffer, int size, uint8_t** data);
-void sub_4E4CD0(int size, bool editor);
+void obj_pool_init(int size, bool editor);
 void sub_4E4DB0();
 Object* sub_4E4E60(int64_t* obj_ptr);
 Object* sub_4E4F80(int64_t obj);

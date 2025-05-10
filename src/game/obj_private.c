@@ -490,10 +490,10 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-            *(int64_t**)a1->ptr = NULL;
+                *(int64_t**)a1->ptr = NULL;
             return true;
         }
-        *(int64_t**)a1->ptr = (int64_t*)MALLOC(sizeof(int64_t));
+            *(int64_t**)a1->ptr = (int64_t*)MALLOC(sizeof(int64_t));
         if (!objf_read(*(int64_t**)a1->ptr, sizeof(int64_t), stream)) {
             return false;
         }
@@ -509,7 +509,7 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-            *(SizeableArray**)a1->ptr = NULL;
+                *(SizeableArray**)a1->ptr = NULL;
             return true;
         }
         if (!sa_read_no_dealloc((SizeableArray**)a1->ptr, stream)) {
@@ -537,10 +537,10 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-            *(ObjectID**)a1->ptr = NULL;
+                *(ObjectID**)a1->ptr = NULL;
             return true;
         }
-        *(ObjectID**)a1->ptr = (ObjectID*)MALLOC(sizeof(ObjectID));
+            *(ObjectID**)a1->ptr = (ObjectID*)MALLOC(sizeof(ObjectID));
         if (!objf_read(*(ObjectID**)a1->ptr, sizeof(ObjectID), stream)) {
             return false;
         }
@@ -830,7 +830,7 @@ void sub_4E4C80(S4E4BD0* a1, int size)
 }
 
 // 0x4E4CD0
-void sub_4E4CD0(int size, bool editor)
+void obj_pool_init(int size, bool editor)
 {
     object_pool_buckets = (uint8_t**)CALLOC(256, sizeof(*object_pool_buckets));
     obj_priv_editor = editor;
