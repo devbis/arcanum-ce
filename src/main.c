@@ -361,7 +361,7 @@ void main_loop()
                 sub_4045A0();
             }
 
-            sub_54DE50(&message);
+            intgame_process_event(&message);
 
             if (sub_53EAD0()) {
                 mainmenu_ui_start(0);

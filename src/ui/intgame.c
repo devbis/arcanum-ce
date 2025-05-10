@@ -2596,7 +2596,7 @@ bool sub_54DC80(TigMessage* msg)
 }
 
 // 0x54DE50
-void sub_54DE50(TigMessage* msg)
+void intgame_process_event(TigMessage* msg)
 {
     int64_t pc_obj;
     int64_t loc = 0;
