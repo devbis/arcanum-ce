@@ -247,7 +247,7 @@ void sub_4C3BE0(unsigned int a1, int64_t loc)
 
     if (a1 < 6) {
         bcast.loc = loc;
-        strcpy(bcast.field_8, byte_5FDC90[a1]);
+        strcpy(bcast.str, byte_5FDC90[a1]);
         broadcast_msg(player_get_local_pc_obj(), &bcast);
     }
 }

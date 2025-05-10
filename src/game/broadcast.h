@@ -5,7 +5,7 @@
 
 typedef struct Broadcast {
     int64_t loc;
-    char field_8[128];
+    char str[128];
 } Broadcast;
 
 static_assert(sizeof(Broadcast) == 0x88, "wrong size");

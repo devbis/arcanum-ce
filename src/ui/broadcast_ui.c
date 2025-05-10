@@ -39,8 +39,8 @@ bool broadcast_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    broadcast_ui_bcast.field_8[0] = '\0';
-    broadcast_ui_textedit.buffer = broadcast_ui_bcast.field_8;
+    broadcast_ui_bcast.str[0] = '\0';
+    broadcast_ui_textedit.buffer = broadcast_ui_bcast.str;
 
     font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font_desc.art_id));
@@ -59,7 +59,7 @@ void broadcast_ui_exit()
 // 0x571890
 void broadcast_ui_reset()
 {
-    broadcast_ui_bcast.field_8[0] = '\0';
+    broadcast_ui_bcast.str[0] = '\0';
 }
 
 // 0x5718A0
