@@ -2338,7 +2338,7 @@ bool obj_inst_next(int64_t* obj_ptr, int* iter_ptr)
 // 0x408720
 Object* obj_lock(int64_t obj)
 {
-    return sub_4E4F80(obj);
+    return obj_pool_lock(obj);
 }
 
 // 0x408740

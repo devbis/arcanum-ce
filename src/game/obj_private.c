@@ -928,7 +928,7 @@ Object* obj_pool_allocate(int64_t* obj_ptr)
 }
 
 // 0x4E4F80
-Object* sub_4E4F80(int64_t obj)
+Object* obj_pool_lock(int64_t obj)
 {
     return object_ptr(sub_4E5900(obj));
 }
