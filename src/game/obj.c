@@ -929,7 +929,7 @@ void sub_405BF0(int64_t obj)
     }
 
     obj_unlock(obj);
-    sub_4E4FB0(obj);
+    obj_pool_deallocate(obj);
 }
 
 // 0x405CC0
@@ -957,7 +957,7 @@ void sub_405CC0(int64_t obj)
     }
 
     obj_unlock(obj);
-    sub_4E4FB0(obj);
+    obj_pool_deallocate(obj);
 }
 
 // 0x405D60
@@ -2884,13 +2884,13 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     if (!objf_read(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
     if (!objf_read(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -2898,7 +2898,7 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->field_4C = MALLOC(size);
     if (!objf_read(object->field_4C, size, stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -2911,7 +2911,7 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     dword_5D110C = stream;
     if (!obj_enumerate_fields(object, obj_proto_field_read_file)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -2983,19 +2983,19 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     if (!objf_read(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
     if (!objf_read(&(object->type), sizeof(object->type), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
     if (!objf_read(&(object->num_fields), sizeof(object->num_fields), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -3007,14 +3007,14 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     if (!objf_read(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
     dword_5D110C = stream;
     if (!sub_40CBA0(object, object_field_read)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -3078,7 +3078,7 @@ bool obj_proto_read_mem(uint8_t* data, int64_t* obj_ptr)
     dword_5D111C = data;
     if (!obj_enumerate_fields(object, obj_proto_field_read_mem)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 
@@ -3136,7 +3136,7 @@ bool obj_inst_read_mem(uint8_t* data, int64_t* obj_ptr)
     dword_5D111C = data;
     if (!sub_40CBA0(object, obj_inst_field_read_mem)) {
         obj_unlock(obj);
-        sub_4E4FB0(obj);
+        obj_pool_deallocate(obj);
         return false;
     }
 

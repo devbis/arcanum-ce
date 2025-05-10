@@ -940,7 +940,7 @@ void obj_pool_unlock(int64_t obj)
 }
 
 // 0x4E4FB0
-void sub_4E4FB0(int64_t obj)
+void obj_pool_deallocate(int64_t obj)
 {
     sub_4E56A0(sub_4E5900(obj));
 }
