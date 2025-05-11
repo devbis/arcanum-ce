@@ -44,7 +44,7 @@ static bool sector_save_editor(Sector* sector);
 static bool sub_4D2460(Sector* sector, const char* base_path);
 static bool sector_save_game(Sector* sector);
 static void sector_validate_game(const char* section);
-static void sub_4D2C30(const char* section);
+static void sector_validate_editor(const char* section);
 static bool sector_cache_find_by_id(int64_t id, int* index_ptr);
 static bool sector_cache_find_unused(unsigned int* index_ptr);
 static void sub_4D2D70();
@@ -1336,7 +1336,7 @@ bool sector_load_editor(int64_t id, Sector* sector)
         }
     }
 
-    sub_4D2C30("sector pre-load");
+    sector_validate_editor("sector pre-load");
 
     if (!v1) {
         stream = tig_file_fopen(path, "rb");
@@ -1431,10 +1431,10 @@ bool sector_load_editor(int64_t id, Sector* sector)
         tig_file_fclose(stream);
     }
 
-    sub_4D2C30("sector post-load (pre-fold)");
+    sector_validate_editor("sector post-load (pre-fold)");
     objlist_fold(&(sector->objects), id, sub_45A9B0(&(sector->datetime), 3000));
     sector_light_list_fold(&(sector->lights), id, &(sector->tiles));
-    sub_4D2C30("sector post-fold");
+    sector_validate_editor("sector post-fold");
 
     return true;
 }
@@ -1803,7 +1803,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
         return false;
     }
 
-    sub_4D2C30("sector pre-save");
+    sector_validate_editor("sector pre-save");
 
     if (!sector_light_list_save(&(sector->lights), stream)) {
         tig_debug_printf("Error saving lights to sector data file %s\n", path);
@@ -1892,7 +1892,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
         return false;
     }
 
-    sub_4D2C30("sector post-save");
+    sector_validate_editor("sector post-save");
     tig_file_fclose(stream);
 
     return true;
@@ -2084,7 +2084,7 @@ void sector_validate_game(const char* section)
 }
 
 // 0x4D2C30
-void sub_4D2C30(const char* section)
+void sector_validate_editor(const char* section)
 {
     char str[300];
 
