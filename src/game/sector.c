@@ -45,7 +45,7 @@ static bool sub_4D2460(Sector* sector, const char* base_path);
 static bool sector_save_game(Sector* sector);
 static void sub_4D2C00(const char* section);
 static void sub_4D2C30(const char* section);
-static bool sub_4D2CA0(int64_t id, int* index_ptr);
+static bool sector_cache_find_by_id(int64_t id, int* index_ptr);
 static bool sector_cache_find_unused(unsigned int* index_ptr);
 static void sub_4D2D70();
 static void sub_4D2EA0();
@@ -830,7 +830,7 @@ bool sub_4D04E0(int64_t id)
 {
     int index;
 
-    if (!sub_4D2CA0(id, &index)) {
+    if (!sector_cache_find_by_id(id, &index)) {
         return false;
     }
 
@@ -876,7 +876,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
     if (cache_entry->used && cache_entry->sector.id == id) {
         cache_entry->refcount++;
         cache_entry->timestamp = dword_6017BC;
-    } else if (sub_4D2CA0(id, &dword_60182C)) {
+    } else if (sector_cache_find_by_id(id, &dword_60182C)) {
         cache_entry = &(sector_cache_entries[sector_cache_indexes[dword_60182C]]);
         cache_entry->refcount++;
         cache_entry->timestamp = dword_6017BC;
@@ -909,7 +909,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
                 sizeof(*sector_cache_indexes) * (dword_601784 - oldest - 1));
             dword_601784--;
 
-            sub_4D2CA0(id, &dword_60182C);
+            sector_cache_find_by_id(id, &dword_60182C);
         }
 
         if (!sector_cache_find_unused(&index)) {
@@ -964,7 +964,7 @@ bool sector_unlock(int64_t id)
 {
     int index;
 
-    if (!sub_4D2CA0(id, &index)) {
+    if (!sector_cache_find_by_id(id, &index)) {
         return false;
     }
 
@@ -2097,7 +2097,7 @@ void sub_4D2C30(const char* section)
 }
 
 // 0x4D2CA0
-bool sub_4D2CA0(int64_t id, int* index_ptr)
+bool sector_cache_find_by_id(int64_t id, int* index_ptr)
 {
     int l;
     int r;
