@@ -43,7 +43,7 @@ static bool sector_load_game(int64_t id, Sector* sector);
 static bool sector_save_editor(Sector* sector);
 static bool sub_4D2460(Sector* sector, const char* base_path);
 static bool sector_save_game(Sector* sector);
-static void sub_4D2C00(const char* section);
+static void sector_validate_game(const char* section);
 static void sub_4D2C30(const char* section);
 static bool sector_cache_find_by_id(int64_t id, int* index_ptr);
 static bool sector_cache_find_unused(unsigned int* index_ptr);
@@ -1482,7 +1482,7 @@ bool sector_load_game(int64_t id, Sector* sector)
         }
     }
 
-    sub_4D2C00("sector pre-load");
+    sector_validate_game("sector pre-load");
     if (!v1) {
         li_update();
         sec_stream = tig_file_fopen(sec_path, "rb");
@@ -1698,12 +1698,12 @@ bool sector_load_game(int64_t id, Sector* sector)
         }
     }
 
-    sub_4D2C00("sector post-load (pre-fold)");
+    sector_validate_game("sector post-load (pre-fold)");
     li_update();
     objlist_fold(&(sector->objects), id, sub_45A9B0(&(sector->datetime), 3000));
     li_update();
     sector_light_list_fold(&(sector->lights), id, &(sector->tiles));
-    sub_4D2C00("sector post-fold");
+    sector_validate_game("sector post-fold");
 
     if (sector->townmap_info != 0) {
         sub_4D2ED0(sector);
@@ -1978,7 +1978,7 @@ bool sector_save_game(Sector* sector)
         return false;
     }
 
-    sub_4D2C00("sector pre-save");
+    sector_validate_game("sector pre-save");
 
     if ((flags & 0x0001) != 0
         && !sector_light_list_save_with_dif(&(sector->lights), stream)) {
@@ -2069,13 +2069,13 @@ bool sector_save_game(Sector* sector)
     }
 
     tig_file_fclose(stream);
-    sub_4D2C00("sector post-save");
+    sector_validate_game("sector post-save");
 
     return true;
 }
 
 // 0x4D2C00
-void sub_4D2C00(const char* section)
+void sector_validate_game(const char* section)
 {
     if (!obj_validate_system(1)) {
         tig_debug_printf("Object system validate failed in %s\n", section);
