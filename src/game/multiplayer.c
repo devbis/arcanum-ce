@@ -231,7 +231,7 @@ static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool save_char(const char* path, int64_t obj);
-static bool sub_4A3F40(const char* path, int64_t* obj_ptr);
+static bool load_char(const char* path, int64_t* obj_ptr);
 static bool sub_4A40D0(int player);
 static void multiplayer_level_scheme_set(int64_t obj, const char* rule, const char* name);
 static int multiplayer_level_scheme_get(int64_t obj, char* rule, char* name);
@@ -1739,7 +1739,7 @@ bool sub_4A3D70(int64_t** objs_ptr, int* cnt_ptr)
 
         for (idx = 0; idx < file_list.count; idx++) {
             snprintf(path, sizeof(path), "Players\\%s", file_list.entries[idx].path);
-            if (sub_4A3F40(path, &((*objs_ptr)[cnt]))) {
+            if (load_char(path, &((*objs_ptr)[cnt]))) {
                 obj_field_string_get((*objs_ptr)[cnt], OBJ_F_PC_PLAYER_NAME, &name);
                 FREE(name);
                 dword_5F0DE4[cnt] = (*objs_ptr)[cnt];
@@ -1768,7 +1768,7 @@ bool sub_4A3D70(int64_t** objs_ptr, int* cnt_ptr)
 }
 
 // 0x4A3F40
-bool sub_4A3F40(const char* path, int64_t* obj_ptr)
+bool load_char(const char* path, int64_t* obj_ptr)
 {
     TigFile* stream;
     int size;
