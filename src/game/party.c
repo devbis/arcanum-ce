@@ -165,7 +165,7 @@ int party_id_from_obj(int64_t obj)
 }
 
 // 0x4BA080
-bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
+bool party_add(int64_t leader_obj, int64_t target_obj, int* id_ptr)
 {
     int player1;
     int player2;
@@ -173,20 +173,20 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
     int64_t party_member_obj;
 
     if (tig_net_is_active()) {
-        player1 = multiplayer_find_slot_from_obj(a1);
+        player1 = multiplayer_find_slot_from_obj(leader_obj);
         if (player1 == -1) {
-            sub_4BA320(a1, a2, 1);
+            sub_4BA320(leader_obj, target_obj, 1);
             return false;
         }
 
-        player2 = multiplayer_find_slot_from_obj(a2);
+        player2 = multiplayer_find_slot_from_obj(target_obj);
         if (player2 == -1) {
-            sub_4BA320(a1, a2, 1);
+            sub_4BA320(leader_obj, target_obj, 1);
             return false;
         }
 
         if (dword_5FC32C[player2] != -1) {
-            sub_4BA320(a1, a2, 3);
+            sub_4BA320(leader_obj, target_obj, 3);
             return false;
         }
 
@@ -196,21 +196,21 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
 
         dword_5FC32C[player2] = dword_5FC32C[player1];
 
-        if (a3 != NULL) {
-            *a3 = dword_5FC32C[player2];
+        if (id_ptr != NULL) {
+            *id_ptr = dword_5FC32C[player2];
         }
 
-        sub_4BA320(a1, a2, 0);
+        sub_4BA320(leader_obj, target_obj, 0);
         sub_460AB0(115, 0, NULL);
         sub_4BA290();
 
-        party_member_obj = party_find_first(a1, &iter);
+        party_member_obj = party_find_first(leader_obj, &iter);
         do {
-            if (party_member_obj != a2) {
-                quest_copy_accepted(party_member_obj, a2);
-                quest_copy_accepted(a2, party_member_obj);
-                rumor_copy_known(party_member_obj, a2);
-                rumor_copy_known(a2, party_member_obj);
+            if (party_member_obj != target_obj) {
+                quest_copy_accepted(party_member_obj, target_obj);
+                quest_copy_accepted(target_obj, party_member_obj);
+                rumor_copy_known(party_member_obj, target_obj);
+                rumor_copy_known(target_obj, party_member_obj);
             }
             party_member_obj = party_find_next(&iter);
         } while (party_member_obj != OBJ_HANDLE_NULL);
