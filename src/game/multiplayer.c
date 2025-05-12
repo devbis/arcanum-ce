@@ -1160,7 +1160,7 @@ void multiplayer_unlock()
 }
 
 // 0x4A2BE0
-int64_t multiplayer_find_first_player_obj()
+int64_t multiplayer_player_find_first()
 {
     int64_t obj;
 
@@ -1182,7 +1182,7 @@ int64_t multiplayer_find_first_player_obj()
 }
 
 // 0x4A2C60
-int64_t multiplayer_find_next_player_obj()
+int64_t multiplayer_player_find_next()
 {
     int64_t obj;
 

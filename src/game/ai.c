@@ -2975,12 +2975,12 @@ bool sub_4AD420(int64_t obj)
     }
 
     if (tig_net_is_active()) {
-        pc_obj = multiplayer_find_first_player_obj();
+        pc_obj = multiplayer_player_find_first();
         while (pc_obj != OBJ_HANDLE_NULL) {
             if (object_dist(pc_obj, obj) <= 30) {
                 return true;
             }
-            pc_obj = multiplayer_find_next_player_obj();
+            pc_obj = multiplayer_player_find_next();
         }
 
         return false;
@@ -3056,13 +3056,13 @@ int sub_4AD610(int64_t obj)
 
     if (tig_net_is_active()) {
         nearest_dist = -1;
-        pc_obj = multiplayer_find_first_player_obj();
+        pc_obj = multiplayer_player_find_first();
         while (pc_obj != OBJ_HANDLE_NULL) {
             dist = object_dist(pc_obj, obj);
             if (nearest_dist == -1 || dist < nearest_dist) {
                 nearest_dist = dist;
             }
-            pc_obj = multiplayer_find_next_player_obj();
+            pc_obj = multiplayer_player_find_next();
         }
     } else {
         nearest_dist = object_dist(player_get_local_pc_obj(), obj);

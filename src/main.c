@@ -504,10 +504,10 @@ void main_loop()
                                 if (!tig_net_is_active()) {
                                     critter_give_xp(pc_obj, level_get_experience_points_to_next_level(pc_obj));
                                 } else if (tig_net_is_host()) {
-                                    party_member_obj = multiplayer_find_first_player_obj();
+                                    party_member_obj = multiplayer_player_find_first();
                                     while (party_member_obj != OBJ_HANDLE_NULL) {
                                         critter_give_xp(party_member_obj, level_get_experience_points_to_next_level(party_member_obj));
-                                        party_member_obj = multiplayer_find_next_player_obj();
+                                        party_member_obj = multiplayer_player_find_next();
                                     }
                                 }
                                 break;
