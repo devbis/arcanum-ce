@@ -23,50 +23,78 @@
 static int background_get_base_money();
 static bool background_is_legal(int64_t obj, char* str);
 
-// 0x5B6AEC
-static const char* off_5B6AEC[] = {
-    "HU",
-    "DW",
-    "EL",
-    "HE",
-    "GN",
-    "HA",
-    "HO",
-    "HG",
+/**
+ * 0x5B6AEC
+ */
+static const char* background_race_specifiers[] = {
+    /*     RACE_HUMAN */ "HU",
+    /*     RACE_DWARF */ "DW",
+    /*       RACE_ELF */ "EL",
+    /*  RACE_HALF_ELF */ "HE",
+    /*     RACE_GNOME */ "GN",
+    /*  RACE_HALFLING */ "HA",
+    /*  RACE_HALF_ORC */ "HO",
+    /* RACE_HALF_OGRE */ "HG",
 };
 
-// 0x5B6B0C
-static const char* off_5B6B0C = "FM";
+/**
+ * 0x5B6B0C
+ */
+static char background_gender_specifiers[GENDER_COUNT] = {
+    /* GENDER_FEMALE */ 'F',
+    /*   GENDER_MALE */ 'M',
+};
 
-// 0x5FD858
+/**
+ * 0x5FD858
+ */
 static char* background_description_name;
 
-// 0x5FD85C
+/**
+ * "backgrnd.mes"
+ *
+ * 0x5FD85C
+ */
 static mes_file_handle_t background_mes_file;
 
-// 0x5FD860
+/**
+ * "gameback.mes"
+ *
+ * 0x5FD860
+ */
 static mes_file_handle_t background_description_mes_file;
 
-// 0x4C2270
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4C2270
+ */
 bool background_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
+    // Load the background rules.
     if (!mes_load("rules\\backgrnd.mes", &background_mes_file)) {
         return false;
     }
 
+    // Load the background descriptions.
     if (!mes_load("mes\\gameback.mes", &background_description_mes_file)) {
         mes_unload(background_mes_file);
         return false;
     }
 
+    // Allocate memory for the background description name buffer.
     background_description_name = (char*)CALLOC(BACKGROUND_NAME_LENGTH, sizeof(*background_description_name));
 
     return true;
 }
 
-// 0x4C22D0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4C22D0
+ */
 void background_exit()
 {
     FREE(background_description_name);
@@ -74,7 +102,11 @@ void background_exit()
     mes_unload(background_description_mes_file);
 }
 
-// 0x4C2300
+/**
+ * Finds the first background suitable for the specified critter.
+ *
+ * 0x4C2300
+ */
 bool background_find_first(int64_t obj, int* background_ptr)
 {
     MesFileEntry mes_file_entry;
@@ -93,7 +125,11 @@ bool background_find_first(int64_t obj, int* background_ptr)
     return false;
 }
 
-// 0x4C2390
+/**
+ * Finds next valid background for the specified critter.
+ *
+ * 0x4C2390
+ */
 bool background_find_next(int64_t obj, int* background_ptr)
 {
     MesFileEntry mes_file_entry;
@@ -112,7 +148,11 @@ bool background_find_next(int64_t obj, int* background_ptr)
     return false;
 }
 
-// 0x4C2420
+/**
+ * Finds previous valid background for the specified critter.
+ *
+ * 0x4C2420
+ */
 bool background_find_prev(int64_t obj, int* background_ptr)
 {
     MesFileEntry mes_file_entry;
@@ -131,7 +171,13 @@ bool background_find_prev(int64_t obj, int* background_ptr)
     return false;
 }
 
-// 0x4C24B0
+/**
+ * Retrieves the description number for a given background.
+ *
+ * The description number correponds to a message number in "gameback.mes".
+ *
+ * 0x4C24B0
+ */
 int background_get_description(int background)
 {
     MesFileEntry mes_file_entry;
@@ -141,7 +187,14 @@ int background_get_description(int background)
     return atoi(mes_file_entry.str);
 }
 
-// 0x4C24E0
+/**
+ * Retrives the full text of a background description.
+ *
+ * The background text consists of two logical parts - name and body, separated
+ * by newline character.
+ *
+ * 0x4C24E0
+ */
 char* background_description_get_text(int num)
 {
     MesFileEntry mes_file_entry;
@@ -161,15 +214,18 @@ char* background_description_get_text(int num)
     return mes_file_entry.str;
 }
 
-// NOTE: Why this function does not use `background_description_get_text` under
-// the hood like `background_description_get_name` do?
-//
-// 0x4C2530
+/**
+ * Retrieves the body text of a background.
+ *
+ * 0x4C2530
+ */
 char* background_description_get_body(int num)
 {
     MesFileEntry mes_file_entry;
     char* pch;
 
+    // NOTE: Why this function does not use `background_description_get_text`
+    // under the hood like `background_description_get_name` do?
     if (num < FIRST_DESCRIPTION_ID) {
         if (num != 0) {
             return NULL;
@@ -182,6 +238,7 @@ char* background_description_get_body(int num)
         return NULL;
     }
 
+    // Find the newline to skip the name and return the body.
     pch = strchr(mes_file_entry.str, '\n');
     if (pch != NULL) {
         return pch + 1;
@@ -190,7 +247,11 @@ char* background_description_get_body(int num)
     }
 }
 
-// 0x4C2590
+/**
+ * Retrieves the name of a background.
+ *
+ * 0x4C2590
+ */
 char* background_description_get_name(int num)
 {
     char* text;
@@ -199,6 +260,7 @@ char* background_description_get_name(int num)
     text = background_description_get_text(num);
     strncpy(background_description_name, text, BACKGROUND_NAME_LENGTH);
 
+    // Find the newline to terminate the name.
     pch = strchr(background_description_name, '\n');
     if (pch != NULL) {
         *pch = '\0';
@@ -209,14 +271,20 @@ char* background_description_get_name(int num)
     return background_description_name;
 }
 
-// 0x4C25E0
+/**
+ * Assigns a background and its associated effect to a PC.
+ *
+ * 0x4C25E0
+ */
 void background_set(int64_t obj, int background, int background_text)
 {
     MesFileEntry mes_file_entry;
 
+    // Set the background and text IDs on the PC.
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, background);
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, background_text);
 
+    // Apply the background effect if it exists.
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_EFFECT;
     if (mes_file_entry.num != 0) {
         mes_get_msg(background_mes_file, &mes_file_entry);
@@ -224,7 +292,11 @@ void background_set(int64_t obj, int background, int background_text)
     }
 }
 
-// 0x4C2650
+/**
+ * Clears a background and its associated effect from a PC.
+ *
+ * 0x4C2650
+ */
 void background_clear(int64_t obj)
 {
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 0);
@@ -232,13 +304,18 @@ void background_clear(int64_t obj)
     effect_remove_one_caused_by(obj, EFFECT_CAUSE_BACKGROUND);
 }
 
-// 0x4C2690
+/**
+ * Retrieves the current background of a PC.
+ *
+ * 0x4C2690
+ */
 int background_get(int64_t obj)
 {
     if (obj == OBJ_HANDLE_NULL) {
         return 0;
     }
 
+    // Ensure the object is a player character.
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return 0;
     }
@@ -246,13 +323,21 @@ int background_get(int64_t obj)
     return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
 }
 
-// 0x4C26D0
+/**
+ * Retrieves the background text number of a PC.
+ *
+ * 0x4C26D0
+ */
 int background_text_get(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
 }
 
-// 0x4C26F0
+/**
+ * Generates starting inventory for a PC based on its background.
+ *
+ * 0x4C26F0
+ */
 void background_generate_inventory(int64_t obj)
 {
     MesFileEntry mes_file_entry;
@@ -265,11 +350,13 @@ void background_generate_inventory(int64_t obj)
     ObjectItemFlags item_flags;
 
     background = obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
+
+    // "The fourth line is how much money the background gives the character."
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
     mes_get_msg(background_mes_file, &mes_file_entry);
-
     item_gold_transfer(OBJ_HANDLE_NULL, obj, atoi(mes_file_entry.str), OBJ_HANDLE_NULL);
 
+    // "The last line is a list of item prototype numbers separated by spaces".
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_ITEMS;
     if (mes_search(background_mes_file, &mes_file_entry)) {
         strcpy(str, mes_file_entry.str);
@@ -279,9 +366,12 @@ void background_generate_inventory(int64_t obj)
             proto_obj = sub_4685A0(atoi(tok));
             loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
             if (object_create(proto_obj, loc, &item_obj)) {
+                // Mark item as identified.
                 item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
                 item_flags |= OIF_IDENTIFIED;
                 obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+
+                // Add item to PC's inventory.
                 item_transfer(item_obj, obj);
             }
             tok = strtok(NULL, " \t\n");
@@ -289,7 +379,13 @@ void background_generate_inventory(int64_t obj)
     }
 }
 
-// 0x4C2950
+/**
+ * Handles "Educator" background.
+ *
+ * Called when the specified PC's level or skill training have changed.
+ *
+ * 0x4C2950
+ */
 void background_educate_followers(int64_t obj)
 {
     ObjectList followers;
@@ -298,6 +394,7 @@ void background_educate_followers(int64_t obj)
     int educator_training;
     int follower_training;
 
+    // Validate that the object is a PC with the "Educator" background.
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
         || background_get(obj) != BACKGROUND_EDUCATOR) {
         return;
@@ -305,11 +402,13 @@ void background_educate_followers(int64_t obj)
 
     object_list_followers(obj, &followers);
 
+    // Update basic skills for all followers.
     for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
         educator_training = basic_skill_training_get(obj, skill);
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
+                // Increment follower training up to the educator's level.
                 follower_training = basic_skill_training_get(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
                     basic_skill_training_set(node->obj, skill, follower_training);
@@ -320,11 +419,13 @@ void background_educate_followers(int64_t obj)
         }
     }
 
+    // Update tech skills for all followers.
     for (skill = 0; skill < TECH_SKILL_COUNT; skill++) {
         educator_training = tech_skill_training_get(obj, skill);
         if (educator_training > TRAINING_APPRENTICE) {
             node = followers.head;
             while (node != NULL) {
+                // Increment follower training up to the educator's level.
                 follower_training = tech_skill_training_get(node->obj, skill) + 1;
                 while (follower_training < educator_training) {
                     tech_skill_training_set(node->obj, skill, follower_training);
@@ -338,7 +439,11 @@ void background_educate_followers(int64_t obj)
     object_list_destroy(&followers);
 }
 
-// 0x4C2A70
+/**
+ * Retrieves the base money amount which is used for scaling money adjustments.
+ *
+ * 0x4C2A70
+ */
 static int background_get_base_money()
 {
     MesFileEntry mes_file_entry;
@@ -348,18 +453,28 @@ static int background_get_base_money()
     return atoi(mes_file_entry.str);
 }
 
-// 0x4C2AA0
+/**
+ * Adjusts a money amount based on a background's money multiplier.
+ *
+ * 0x4C2AA0
+ */
 int background_adjust_money(int amount, int background)
 {
     MesFileEntry mes_file_entry;
 
+    // Retrieve the background's money value.
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
     mes_get_msg(background_mes_file, &mes_file_entry);
 
+    // Scale the amount based on the background's money relative to the base.
     return amount * (100 * atoi(mes_file_entry.str) / background_get_base_money()) / 100;
 }
 
-// 0x4C2B10
+/**
+ * Retrieves the list of starting items for a specified background.
+ *
+ * 0x4C2B10
+ */
 bool background_get_items(char* dest, size_t size, int background)
 {
     MesFileEntry mes_file_entry;
@@ -371,7 +486,14 @@ bool background_get_items(char* dest, size_t size, int background)
     return true;
 }
 
-// 0x4C2B50
+/**
+ * Checks if a background is legal for a given PC based on race and gender.
+ *
+ * NOTE: This function looks very similar to `portrait_is_valid`, but the
+ * implementation is slightly different.
+ *
+ * 0x4C2B50
+ */
 bool background_is_legal(int64_t obj, char* str)
 {
     int gender;
@@ -381,8 +503,16 @@ bool background_is_legal(int64_t obj, char* str)
     if (str != NULL && *str != '\0') {
         race = stat_base_get(obj, STAT_RACE);
         gender = stat_base_get(obj, STAT_GENDER);
-        sprintf(buffer, "%s%c", off_5B6AEC[race], off_5B6B0C[gender]);
+
+        // Construct the exact background prefix.
+        sprintf(buffer, "%s%c",
+            background_race_specifiers[race],
+            background_gender_specifiers[gender]);
+
+        // Convert the condition string to uppercase for comparison.
         str = strupr(str);
+
+        // Check race/gender spec, "ANY", or "NPC" (in case critter is NPC).
         if (strstr(str, buffer) == NULL
             && strstr(str, "ANY") == NULL
             && ((obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
