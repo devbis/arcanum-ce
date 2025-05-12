@@ -230,7 +230,7 @@ static void sub_4A30D0(ObjectID oid);
 static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
-static bool sub_4A39F0(const char* path, int64_t obj);
+static bool save_char(const char* path, int64_t obj);
 static bool sub_4A3F40(const char* path, int64_t* obj_ptr);
 static bool sub_4A40D0(int player);
 static void multiplayer_level_scheme_set(int64_t obj, const char* rule, const char* name);
@@ -917,7 +917,7 @@ bool multiplayer_timeevent_process(TimeEvent* timeevent)
         sub_424070(player_get_local_pc_obj(), PRIORITY_HIGHEST, false, true);
 
         if (sub_460BB0()) {
-            sub_4A39F0(path, player_get_local_pc_obj());
+            save_char(path, player_get_local_pc_obj());
         }
 
         dword_5F0E14 = 0;
@@ -1538,7 +1538,7 @@ bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_han
         objid_id_to_str(oidstr, obj_get_id(player_get_local_pc_obj()));
         snprintf(path, sizeof(path), "Players\\%s.mpc", oidstr);
         if (sub_460BB0()) {
-            sub_4A39F0(path, player_get_local_pc_obj());
+            save_char(path, player_get_local_pc_obj());
         }
 
         if (func != NULL) {
@@ -1575,7 +1575,7 @@ void sub_4A39D0(Func5F0DF8* func, tig_button_handle_t button_handle)
 }
 
 // 0x4A39F0
-bool sub_4A39F0(const char* path, int64_t obj)
+bool save_char(const char* path, int64_t obj)
 {
     int scheme;
     const char* scheme_rule;
@@ -1919,7 +1919,7 @@ bool sub_4A4320()
     objid_id_to_str(str, obj_get_id(player_get_local_pc_obj()));
     snprintf(path, sizeof(path), "Players\\%s.mpc", str);
     sub_424070(player_get_local_pc_obj(), 6, false, true);
-    return sub_4A39F0(path, player_get_local_pc_obj());
+    return save_char(path, player_get_local_pc_obj());
 }
 
 // 0x4A43B0
@@ -3187,7 +3187,7 @@ bool sub_4A6470(int64_t pc_obj)
             }
         }
 
-        if (!sub_4A39F0(path, pc_obj)) {
+        if (!save_char(path, pc_obj)) {
             return false;
         }
     }
