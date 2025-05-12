@@ -993,17 +993,17 @@ void map_flush(unsigned int flags)
 }
 
 // 0x4101D0
-void sub_4101D0(int64_t location, int64_t a2)
+void map_process_jumppoint(int64_t loc, int64_t obj)
 {
     JumpPoint jumppoint;
     TeleportData teleport_data;
 
     if (dword_5D1220 < 9) {
-        if (jumppoint_get(location, &jumppoint)) {
+        if (jumppoint_get(loc, &jumppoint)) {
             dword_5D1220++;
 
             teleport_data.flags = 0;
-            teleport_data.obj = a2;
+            teleport_data.obj = obj;
             teleport_data.loc = jumppoint.dst_loc;
             teleport_data.map = jumppoint.dst_map;
             teleport_do(&teleport_data);

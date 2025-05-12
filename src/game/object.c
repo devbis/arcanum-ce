@@ -5365,7 +5365,7 @@ void sub_444270(int64_t obj, int a2)
             scroll_set_center(loc);
         }
 
-        sub_4101D0(loc, obj);
+        map_process_jumppoint(loc, obj);
     }
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {

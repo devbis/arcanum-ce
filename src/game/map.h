@@ -33,7 +33,7 @@ bool map_get_area(int map, int* area);
 bool map_get_worldmap(int map, int* worldmap);
 bool map_is_clearing_objects();
 void map_flush(unsigned int flags);
-void sub_4101D0(int64_t location, int64_t a2);
+void map_process_jumppoint(int64_t loc, int64_t obj);
 bool map_is_valid();
 void map_starting_loc_get(int64_t* loc_ptr);
 void map_starting_loc_set(int64_t loc);
