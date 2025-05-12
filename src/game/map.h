@@ -38,7 +38,7 @@ bool map_is_valid();
 void map_starting_loc_get(int64_t* loc_ptr);
 void map_starting_loc_set(int64_t loc);
 void map_paths(char** base_path_ptr, char** save_path_ptr);
-bool sub_4102F0(const char* name);
+bool map_preprocess_mobile(const char* name);
 void map_clear_objects();
 void map_enable_gender_check();
 void map_gender_check();

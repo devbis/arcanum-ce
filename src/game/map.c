@@ -1047,7 +1047,7 @@ void map_paths(char** base_path_ptr, char** save_path_ptr)
 }
 
 // 0x4102F0
-bool sub_4102F0(const char* name)
+bool map_preprocess_mobile(const char* name)
 {
     GUID guid;
     GUID file_guid;
