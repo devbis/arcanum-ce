@@ -21,7 +21,7 @@ bool objlist_save(SectorObjectList* list, TigFile* stream);
 bool sub_4F1A20(SectorObjectList* list);
 bool objlist_save_with_dif(SectorObjectList* list, TigFile* stream);
 bool objlist_tile_of_object(SectorObjectList* list, int64_t obj, int* tile_ptr);
-void sub_4F1F00(SectorObjectList* list);
+void objlist_precache_art(SectorObjectList* list);
 void objlist_fold(SectorObjectList* list, int64_t location, int a4);
 void sub_4F2230(int64_t obj, int* a2, int* a3);
 void sub_4F2330(int64_t sector_id, int64_t obj);

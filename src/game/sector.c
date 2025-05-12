@@ -48,11 +48,11 @@ static void sector_validate_editor(const char* section);
 static bool sector_cache_find_by_id(int64_t id, int* index_ptr);
 static bool sector_cache_find_unused(unsigned int* index_ptr);
 static void sector_load_demo_limits();
-static void sub_4D2EA0();
-static void sub_4D2ED0(Sector* sector);
-static void sub_4D2F80();
-static void sub_4D2F90();
-static int sub_4D2FB0(const void* va, const void* vb);
+static void sector_art_cache_clear();
+static void sector_precache_art(Sector* sector);
+static void sector_art_cache_reset();
+static void sector_art_cache_sort();
+static int sector_art_cache_compare(const void* va, const void* vb);
 static int sector_block_find(int64_t sec);
 static void sector_block_add(int64_t sec);
 static void sector_block_remove(int idx);
@@ -63,7 +63,7 @@ static bool sector_block_load_internal(const char* base_map_name, const char* cu
 static DateTime qword_5B7CD0 = { -1, -1 };
 
 // 0x5B7CD8
-static int dword_5B7CD8 = 1;
+static int sector_art_cache_state = 1;
 
 // 0x601780
 static unsigned int sector_cache_size;
@@ -114,7 +114,7 @@ static int dword_6017BC;
 static bool in_sector_enumerate;
 
 // 0x6017C4
-static int dword_6017C4;
+static int sector_art_cache_capacity;
 
 // 0x6017C8
 static int64_t sector_demo_limits_max_y;
@@ -123,7 +123,7 @@ static int64_t sector_demo_limits_max_y;
 static int64_t sector_limit_y;
 
 // 0x6017D8
-static int dword_6017D8;
+static int sector_art_cache_size;
 
 // 0x6017E0
 static int64_t sector_demo_limits_max_x;
@@ -135,7 +135,7 @@ static int64_t* dword_6017E8;
 static int64_t* dword_6017EC;
 
 // 0x6017F0
-static tig_art_id_t* dword_6017F0;
+static tig_art_id_t* sector_art_cache;
 
 // 0x6017F4
 static int* sector_cache_indexes;
@@ -281,7 +281,7 @@ void sector_exit()
     FREE(sector_save_path);
     FREE(dword_6017E8);
     FREE(dword_6017EC);
-    sub_4D2EA0();
+    sector_art_cache_clear();
 }
 
 // 0x4CF2C0
@@ -1030,14 +1030,14 @@ bool sector_check_demo_limits(int64_t sec)
 }
 
 // 0x4D0E70
-void sub_4D0E70(tig_art_id_t art_id)
+void sector_art_cache_register(tig_art_id_t art_id)
 {
-    if (dword_6017D8 == dword_6017C4) {
-        dword_6017C4 += 128;
-        dword_6017F0 = (tig_art_id_t*)REALLOC(dword_6017F0, sizeof(*dword_6017F0) * dword_6017C4);
+    if (sector_art_cache_size == sector_art_cache_capacity) {
+        sector_art_cache_capacity += 128;
+        sector_art_cache = (tig_art_id_t*)REALLOC(sector_art_cache, sizeof(*sector_art_cache) * sector_art_cache_capacity);
     }
 
-    dword_6017F0[dword_6017D8++] = art_id;
+    sector_art_cache[sector_art_cache_size++] = art_id;
 }
 
 // 0x4D0EE0
@@ -1094,15 +1094,15 @@ void sector_block_clear()
 }
 
 // 0x4D1040
-void sub_4D1040()
+void sector_art_cache_enable()
 {
-    dword_5B7CD8++;
+    sector_art_cache_state++;
 }
 
 // 0x4D1050
-void sub_4D1050()
+void sector_art_cache_disable()
 {
-    dword_5B7CD8--;
+    sector_art_cache_state--;
 }
 
 // 0x4D1060
@@ -1697,7 +1697,7 @@ bool sector_load_game(int64_t id, Sector* sector)
     sector_validate_game("sector post-fold");
 
     if (sector->townmap_info != 0) {
-        sub_4D2ED0(sector);
+        sector_precache_art(sector);
     }
 
     return true;
@@ -2171,58 +2171,58 @@ void sector_load_demo_limits()
 }
 
 // 0x4D2EA0
-void sub_4D2EA0()
+void sector_art_cache_clear()
 {
-    if (dword_6017F0 != NULL) {
-        FREE(dword_6017F0);
+    if (sector_art_cache != NULL) {
+        FREE(sector_art_cache);
     }
 
-    dword_6017D8 = 0;
-    dword_6017C4 = 0;
+    sector_art_cache_size = 0;
+    sector_art_cache_capacity = 0;
 }
 
 // 0x4D2ED0
-void sub_4D2ED0(Sector* sector)
+void sector_precache_art(Sector* sector)
 {
     int index;
 
-    if (dword_5B7CD8 > 0) {
+    if (sector_art_cache_state > 0) {
         li_update();
-        sub_4F7CC0(&(sector->tiles));
+        sector_list_tile_precache_art(&(sector->tiles));
         li_update();
-        sub_4F7FF0(&(sector->roofs));
+        sector_roof_list_precache_art(&(sector->roofs));
         li_update();
-        sub_4F1F00(&(sector->objects));
+        objlist_precache_art(&(sector->objects));
         li_update();
-        sub_4D2F90();
+        sector_art_cache_sort();
         li_update();
 
-        for (index = 0; index < dword_6017D8; index++) {
-            while (index + 1 < dword_6017D8 && dword_6017F0[index] == dword_6017F0[index + 1]) {
+        for (index = 0; index < sector_art_cache_size; index++) {
+            while (index + 1 < sector_art_cache_size && sector_art_cache[index] == sector_art_cache[index + 1]) {
                 index++;
             }
-            tig_art_touch(dword_6017F0[index]);
+            tig_art_touch(sector_art_cache[index]);
             li_update();
         }
 
-        sub_4D2F80();
+        sector_art_cache_reset();
     }
 }
 
 // 0x4D2F80
-void sub_4D2F80()
+void sector_art_cache_reset()
 {
-    dword_6017D8 = 0;
+    sector_art_cache_size = 0;
 }
 
 // 0x4D2F90
-void sub_4D2F90()
+void sector_art_cache_sort()
 {
-    qsort(dword_6017F0, dword_6017D8, sizeof(*dword_6017F0), sub_4D2FB0);
+    qsort(sector_art_cache, sector_art_cache_size, sizeof(*sector_art_cache), sector_art_cache_compare);
 }
 
 // 0x4D2FB0
-int sub_4D2FB0(const void* va, const void* vb)
+int sector_art_cache_compare(const void* va, const void* vb)
 {
     const tig_art_id_t* a = (const tig_art_id_t*)va;
     const tig_art_id_t* b = (const tig_art_id_t*)vb;

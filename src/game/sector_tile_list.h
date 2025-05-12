@@ -18,6 +18,6 @@ bool sector_tile_list_load(SectorTileList* list, TigFile* stream);
 bool sector_tile_list_save(SectorTileList* list, TigFile* stream);
 bool sector_tile_list_load_with_dif(SectorTileList* list, TigFile* stream);
 bool sector_tile_list_save_with_dif(SectorTileList* list, TigFile* stream);
-void sub_4F7CC0(SectorTileList* list);
+void sector_list_tile_precache_art(SectorTileList* list);
 
 #endif /* ARCANUM_GAME_SECTOR_TILE_LIST_H_ */

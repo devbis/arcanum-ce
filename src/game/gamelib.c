@@ -417,7 +417,7 @@ void gamelib_reset()
 
     in_reset = true;
     strcpy(gamelib_current_module_name, "Arcanum");
-    sub_4D1050();
+    sector_art_cache_disable();
 
     if (tig_file_is_directory("Save\\Current")) {
         tig_debug_printf("gamelib_reset: Begin Removing Files...");
@@ -451,7 +451,7 @@ void gamelib_reset()
         }
     }
 
-    sub_4D1040();
+    sector_art_cache_enable();
     in_reset = false;
 
     duration = tig_timer_elapsed(reset_started_at);

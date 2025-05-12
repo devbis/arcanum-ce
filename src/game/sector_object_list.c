@@ -512,7 +512,7 @@ bool objlist_tile_of_object(SectorObjectList* list, int64_t obj, int* tile_ptr)
 }
 
 // 0x4F1F00
-void sub_4F1F00(SectorObjectList* list)
+void objlist_precache_art(SectorObjectList* list)
 {
     ObjectNode* node;
     int index;
@@ -522,7 +522,7 @@ void sub_4F1F00(SectorObjectList* list)
         node = list->heads[index];
         while (node != NULL) {
             art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
-            sub_4D0E70(art_id);
+            sector_art_cache_register(art_id);
             node = node->next;
         }
     }

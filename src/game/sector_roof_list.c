@@ -80,12 +80,12 @@ bool sector_roof_list_save_with_dif(SectorRoofList* list, TigFile* stream)
 }
 
 // 0x4F7FF0
-void sub_4F7FF0(SectorRoofList* list)
+void sector_roof_list_precache_art(SectorRoofList* list)
 {
     int index;
 
     for (index = 0; index < SECTOR_ROOF_LIST_SIZE; index++) {
-        sub_4D0E70(list->art_ids[index]);
+        sector_art_cache_register(list->art_ids[index]);
     }
 }
 

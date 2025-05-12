@@ -73,12 +73,12 @@ bool sector_tile_list_save_with_dif(SectorTileList* list, TigFile* stream)
 }
 
 // 0x4F7CC0
-void sub_4F7CC0(SectorTileList* list)
+void sector_list_tile_precache_art(SectorTileList* list)
 {
     int index;
 
     for (index = 0; index < 4096; index++) {
-        sub_4D0E70(list->art_ids[index]);
+        sector_art_cache_register(list->art_ids[index]);
     }
 }
 

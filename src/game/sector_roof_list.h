@@ -21,6 +21,6 @@ bool sector_roof_list_save(SectorRoofList* list, TigFile* stream);
 bool sector_roof_list_is_modified(SectorRoofList* list);
 bool sector_roof_list_load_with_dif(SectorRoofList* list, TigFile* stream);
 bool sector_roof_list_save_with_dif(SectorRoofList* list, TigFile* stream);
-void sub_4F7FF0(SectorRoofList* list);
+void sector_roof_list_precache_art(SectorRoofList* list);
 
 #endif /* ARCANUM_GAME_SECTOR_ROOF_LIST_H_ */
