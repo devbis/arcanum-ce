@@ -47,7 +47,7 @@ static void sector_validate_game(const char* section);
 static void sector_validate_editor(const char* section);
 static bool sector_cache_find_by_id(int64_t id, int* index_ptr);
 static bool sector_cache_find_unused(unsigned int* index_ptr);
-static void sub_4D2D70();
+static void sector_load_demo_limits();
 static void sub_4D2EA0();
 static void sub_4D2ED0(Sector* sector);
 static void sub_4D2F80();
@@ -117,7 +117,7 @@ static bool in_sector_enumerate;
 static int dword_6017C4;
 
 // 0x6017C8
-static int64_t qword_6017C8;
+static int64_t sector_demo_limits_max_y;
 
 // 0x6017D0
 static int64_t sector_limit_y;
@@ -126,7 +126,7 @@ static int64_t sector_limit_y;
 static int dword_6017D8;
 
 // 0x6017E0
-static int64_t qword_6017E0;
+static int64_t sector_demo_limits_max_x;
 
 // 0x6017E8
 static int64_t* dword_6017E8;
@@ -156,16 +156,16 @@ static SectorListNode* sector_list_free_node_head;
 static S60180C* dword_60180C;
 
 // 0x601810
-static int64_t qword_601810;
+static int64_t sector_demo_limits_min_y;
 
 // 0x601818
-static int64_t qword_601818;
+static int64_t sector_demo_limits_min_x;
 
 // 0x601820
 static SectorLockFunc* dword_601820;
 
 // 0x601824
-static bool dword_601824;
+static bool sector_demo_limits_set;
 
 // 0x601828
 static tig_color_t dword_601828;
@@ -812,7 +812,7 @@ bool sector_map_name_set(const char* base_path, const char* save_path)
     strcpy(sector_base_path, base_path);
     strcpy(sector_save_path, save_path);
 
-    sub_4D2D70();
+    sector_load_demo_limits();
 
     return true;
 }
@@ -1013,25 +1013,16 @@ void sector_flush(unsigned int flags)
 }
 
 // 0x4D0DE0
-bool sub_4D0DE0(int64_t id)
+bool sector_check_demo_limits(int64_t sec)
 {
-    if (!dword_601824) {
+    if (!sector_demo_limits_set) {
         return true;
     }
 
-    if ((id & 0x3FFFFFF) > qword_6017E0) {
-        return false;
-    }
-
-    if ((id & 0x3FFFFFF) < qword_601818) {
-        return false;
-    }
-
-    if ((id >> 26) > qword_6017C8) {
-        return false;
-    }
-
-    if ((id >> 26) < qword_601810) {
+    if (SECTOR_X(sec) > sector_demo_limits_max_x
+        || SECTOR_X(sec) < sector_demo_limits_min_x
+        || SECTOR_Y(sec) > sector_demo_limits_max_y
+        || SECTOR_Y(sec) < sector_demo_limits_min_y) {
         return false;
     }
 
@@ -1308,7 +1299,7 @@ bool sector_load_editor(int64_t id, Sector* sector)
     TigFile* stream;
     int placeholder;
 
-    if (sub_4D0DE0(id)) {
+    if (sector_check_demo_limits(id)) {
         strcpy(path, sector_save_path);
         strcat(path, "\\");
         _ui64toa(id, &path[strlen(path)], 10);
@@ -1453,7 +1444,7 @@ bool sector_load_game(int64_t id, Sector* sector)
     TigFile* dif_stream;
     int placeholder;
 
-    if (sub_4D0DE0(id)) {
+    if (sector_check_demo_limits(id)) {
         strcpy(sec_path, sector_base_path);
         strcat(sec_path, "\\");
         _ui64toa(id, &sec_path[strlen(sec_path)], 10);
@@ -1781,7 +1772,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
     TigFile* stream;
     int placeholder;
 
-    if (!sub_4D0DE0(sector->id)) {
+    if (!sector_check_demo_limits(sector->id)) {
         return true;
     }
 
@@ -1905,7 +1896,7 @@ bool sector_save_game(Sector* sector)
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    if (!sub_4D0DE0(sector->id)) {
+    if (!sector_check_demo_limits(sector->id)) {
         return true;
     }
 
@@ -2141,14 +2132,16 @@ bool sector_cache_find_unused(unsigned int* index_ptr)
 }
 
 // 0x4D2D70
-void sub_4D2D70()
+void sector_load_demo_limits()
 {
     char buffer[TIG_MAX_PATH];
     TigFile* stream;
 
-    dword_601824 = false;
-    sprintf(buffer, "%s\\134217730001.sec", sector_base_path);
+    sector_demo_limits_set = false;
 
+    // Sector with coordinates (2000,2000) + 1 is a special file which defines
+    // demo limits.
+    sprintf(buffer, "%s\\134217730001.sec", sector_base_path);
     if (!tig_file_exists(buffer, NULL)) {
         return;
     }
@@ -2160,18 +2153,18 @@ void sub_4D2D70()
 
     do {
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        qword_601818 = _atoi64(buffer);
+        sector_demo_limits_min_x = _atoi64(buffer);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        qword_6017E0 = _atoi64(buffer);
+        sector_demo_limits_max_x = _atoi64(buffer);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        qword_601810 = _atoi64(buffer);
+        sector_demo_limits_min_y = _atoi64(buffer);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        qword_6017C8 = _atoi64(buffer);
+        sector_demo_limits_max_y = _atoi64(buffer);
 
-        dword_601824 = true;
+        sector_demo_limits_set = true;
     } while (0);
 
     tig_file_fclose(stream);

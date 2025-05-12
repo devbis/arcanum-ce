@@ -1637,7 +1637,7 @@ void map_disable_objects()
             if (!object_is_static(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 sector_id = sector_id_from_loc(location);
-                if (!sub_4D0DE0(sector_id) && !player_is_local_pc_obj(obj)) {
+                if (!sector_check_demo_limits(sector_id) && !player_is_local_pc_obj(obj)) {
                     if (critter_pc_leader_get(obj) != player_get_local_pc_obj()) {
                         flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
                         flags |= OF_OFF;
