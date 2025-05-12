@@ -174,7 +174,7 @@ static tig_color_t dword_601828;
 static int dword_60182C;
 
 // 0x601830
-static bool dword_601830;
+static bool sector_grid_enabled;
 
 // 0x601834
 static unsigned int dword_601834;
@@ -189,7 +189,7 @@ bool sector_init(GameInitInfo* init_info)
     sector_iso_window_handle = init_info->iso_window_handle;
     sector_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     sector_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_601830 = false;
+    sector_grid_enabled = false;
     dword_6017AC = tig_color_make(255, 255, 0);
     dword_601828 = tig_color_make(255, 255, 0);
     sector_editor = init_info->editor;
@@ -312,9 +312,9 @@ void sub_4CF360(SectorLockFunc* func)
 }
 
 // 0x4CF370
-void sub_4CF370()
+void sector_grid_toggle()
 {
-    dword_601830 = !dword_601830;
+    sector_grid_enabled = !sector_grid_enabled;
     sector_iso_window_invalidate_rect(NULL);
 }
 
@@ -336,7 +336,7 @@ void sector_draw(GameDrawInfo* draw_info)
     TigRect dirty_rect;
     TigRectListNode* rect_node;
 
-    if (!dword_601830) {
+    if (!sector_grid_enabled) {
         return;
     }
 
