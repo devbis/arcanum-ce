@@ -827,7 +827,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
     location_origin_set(map_starting_loc);
 
     if (a2) {
-        map_touch(map_starting_loc);
+        map_precache_sectors(map_starting_loc);
     }
 
     sub_45C580();
@@ -842,7 +842,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
 }
 
 // 0x40FE00
-void map_touch(int64_t loc)
+void map_precache_sectors(int64_t loc)
 {
     int64_t sector_id;
     int64_t x;

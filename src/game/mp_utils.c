@@ -950,15 +950,15 @@ void mp_handle_art_touch(PacketArtTouch* pkt)
 }
 
 // 0x4EF1E0
-void mp_map_touch(int64_t loc, int64_t obj)
+void map_map_precache_sectors(int64_t loc, int64_t obj)
 {
     if (player_get_local_pc_obj() == obj) {
-        map_touch(loc);
+        map_precache_sectors(loc);
         return;
     }
 
     if (tig_net_is_active()) {
-        PacketMapTouch pkt;
+        PacketMapPrecacheSectors pkt;
 
         pkt.type = 112;
         pkt.oid = obj_get_id(obj);
@@ -968,13 +968,13 @@ void mp_map_touch(int64_t loc, int64_t obj)
 }
 
 // 0x4EF260
-void sub_4EF260(PacketMapTouch* pkt)
+void sub_4EF260(PacketMapPrecacheSectors* pkt)
 {
     int64_t obj;
 
     obj = objp_perm_lookup(pkt->oid);
     if (obj == player_get_local_pc_obj()) {
-        map_touch(pkt->loc);
+        map_precache_sectors(pkt->loc);
     }
 }
 

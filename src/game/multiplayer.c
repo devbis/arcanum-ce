@@ -1422,7 +1422,7 @@ void sub_4A33F0(int a1, int a2)
         if (tig_net_client_is_active(player)
             && stru_5E8AD0[player].field_8.type != OID_TYPE_NULL) {
             sub_4F0690(stru_5E8AD0[player].field_8, &obj);
-            map_touch(obj_field_int64_get(obj, OBJ_F_LOCATION));
+            map_precache_sectors(obj_field_int64_get(obj, OBJ_F_LOCATION));
         }
     }
 
