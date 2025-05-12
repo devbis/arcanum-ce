@@ -831,7 +831,7 @@ bool sub_45E180(int64_t obj)
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     switch (type) {
     case OBJ_TYPE_PC:
-        sub_4BA1E0(obj);
+        party_remove(obj);
         return true;
     case OBJ_TYPE_NPC:
         ai_npc_unwait(obj, true);

@@ -220,7 +220,7 @@ bool party_add(int64_t leader_obj, int64_t target_obj, int* id_ptr)
 }
 
 // 0x4BA1E0
-bool sub_4BA1E0(int64_t obj)
+bool party_remove(int64_t obj)
 {
     int index;
 
