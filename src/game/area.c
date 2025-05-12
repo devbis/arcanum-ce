@@ -277,7 +277,7 @@ bool area_is_known(int64_t pc_obj, int area)
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if (tig_net_is_active()) {
-            player = sub_4A2B10(pc_obj);
+            player = multiplayer_find_slot_from_obj(pc_obj);
             if (player != -1) {
                 return (area_flags_per_player[player][area] & 1) != 0;
             }
@@ -309,7 +309,7 @@ bool area_set_known(int64_t pc_obj, int area)
                     pkt.area = area;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
 
-                    player = sub_4A2B10(pc_obj);
+                    player = multiplayer_find_slot_from_obj(pc_obj);
                     if (player == -1) {
                         return false;
                     }
@@ -339,7 +339,7 @@ int area_get_last_known_area(int64_t pc_obj)
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if (tig_net_is_active()) {
-            player = sub_4A2B10(pc_obj);
+            player = multiplayer_find_slot_from_obj(pc_obj);
             if (player != -1) {
                 return area_last_known_area_per_player[player];
             }
@@ -371,7 +371,7 @@ void area_reset_last_known_area(int64_t pc_obj)
                 pkt.oid = obj_get_id(pc_obj);
                 tig_net_send_app_all(&pkt, sizeof(pkt));
 
-                player = sub_4A2B10(pc_obj);
+                player = multiplayer_find_slot_from_obj(pc_obj);
                 if (player != -1) {
                     area_last_known_area_per_player[player] = AREA_UNKNOWN;
                 }

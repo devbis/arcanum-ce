@@ -3020,7 +3020,7 @@ void script_print_line(ScriptAction* action, ScriptState* state)
 
     // TODO: Refactor.
     if (tig_net_is_active()) {
-        player = sub_4A2B10(state->invocation->triggerer_obj);
+        player = multiplayer_find_slot_from_obj(state->invocation->triggerer_obj);
         if (player == -1) {
             dialog_unload(v1.dlg);
             return;

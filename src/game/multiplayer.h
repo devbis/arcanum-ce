@@ -28,7 +28,7 @@ bool sub_49CC70(const char* a1, const char* a2);
 bool multiplayer_timeevent_process(TimeEvent* timeevent);
 bool multiplayer_map_open_by_name(const char* name);
 void sub_4A2B00(Func5F0E08* func);
-int sub_4A2B10(int64_t obj);
+int multiplayer_find_slot_from_obj(int64_t obj);
 int64_t sub_4A2B60(int player);
 bool multiplayer_is_locked();
 void multiplayer_lock();

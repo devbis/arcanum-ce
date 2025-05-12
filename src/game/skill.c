@@ -2791,7 +2791,7 @@ bool get_follower_skills(int64_t obj)
         int player;
 
         // Identify the player (client id) associated with the PC object.
-        player = sub_4A2B10(obj);
+        player = multiplayer_find_slot_from_obj(obj);
         if (player == -1) {
             return false;
         }
@@ -2818,7 +2818,7 @@ void set_follower_skills(bool enabled)
     // In multiplayer mode, update the player-specific flag.
     if (tig_net_is_active()) {
         // Identify the player (client id) associated with the local PC object.
-        player = sub_4A2B10(player_get_local_pc_obj());
+        player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
         if (player == -1) {
             return;
         }

@@ -298,7 +298,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         ui_message.field_8 = schematic;
 
         if (tig_net_is_active()) {
-            player = sub_4A2B10(pc_obj);
+            player = multiplayer_find_slot_from_obj(pc_obj);
             if (player == -1) {
                 return;
             }
@@ -317,7 +317,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         ui_message.field_8 = schematic;
 
         if (tig_net_is_active()) {
-            player = sub_4A2B10(pc_obj);
+            player = multiplayer_find_slot_from_obj(pc_obj);
             if (player == -1) {
                 return;
             }

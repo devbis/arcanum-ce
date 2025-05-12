@@ -1110,7 +1110,7 @@ void sub_4A2B00(Func5F0E08* func)
 }
 
 // 0x4A2B10
-int sub_4A2B10(int64_t obj)
+int multiplayer_find_slot_from_obj(int64_t obj)
 {
     int player;
     int64_t player_obj;
@@ -2455,7 +2455,7 @@ bool sub_4A50D0(int64_t pc_obj, int64_t item_obj)
         int64_t parent_obj;
 
         if (pc_obj == player_get_local_pc_obj()) {
-            client_id = sub_4A2B10(pc_obj);
+            client_id = multiplayer_find_slot_from_obj(pc_obj);
             if (client_id != -1) {
                 if (sub_4A52C0(client_id, item_obj)) {
                     pkt.type = 93;
@@ -2496,7 +2496,7 @@ bool sub_4A51C0(int64_t pc_obj, int64_t item_obj)
             return false;
         }
 
-        client_id = sub_4A2B10(pc_obj);
+        client_id = multiplayer_find_slot_from_obj(pc_obj);
         if (client_id == -1) {
             return false;
         }
@@ -2592,7 +2592,7 @@ void sub_4A53B0(int64_t a1, int64_t a2)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    client_id = sub_4A2B10(a1);
+    client_id = multiplayer_find_slot_from_obj(a1);
     if (client_id != -1) {
         qword_5E8D78[client_id] = a2;
     }

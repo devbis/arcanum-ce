@@ -11377,7 +11377,7 @@ bool get_always_run(int64_t obj)
     bool always_run;
 
     if (tig_net_is_active()) {
-        client_id = sub_4A2B10(obj);
+        client_id = multiplayer_find_slot_from_obj(obj);
         if (client_id != -1) {
             return (multiplayer_flags_get(client_id) & MULTIPLAYER_ALWAYS_RUN) != 0;
         }
@@ -11410,7 +11410,7 @@ void set_always_run(bool value)
     int client_id;
 
     if (tig_net_is_active()) {
-        client_id = sub_4A2B10(player_get_local_pc_obj());
+        client_id = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
         if (client_id != -1) {
             if (value) {
                 multiplayer_flags_set(client_id, MULTIPLAYER_ALWAYS_RUN);

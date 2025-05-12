@@ -95,7 +95,7 @@ int64_t party_find_first(int64_t obj, int* index_ptr)
         return obj;
     }
 
-    index = sub_4A2B10(obj);
+    index = multiplayer_find_slot_from_obj(obj);
     if (index == -1) {
         return OBJ_HANDLE_NULL;
     }
@@ -156,7 +156,7 @@ int sub_4BA020(int64_t obj)
         return -1;
     }
 
-    index = sub_4A2B10(obj);
+    index = multiplayer_find_slot_from_obj(obj);
     if (index == -1) {
         return -1;
     }
@@ -173,13 +173,13 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
     int64_t party_member_obj;
 
     if (tig_net_is_active()) {
-        player1 = sub_4A2B10(a1);
+        player1 = multiplayer_find_slot_from_obj(a1);
         if (player1 == -1) {
             sub_4BA320(a1, a2, 1);
             return false;
         }
 
-        player2 = sub_4A2B10(a2);
+        player2 = multiplayer_find_slot_from_obj(a2);
         if (player2 == -1) {
             sub_4BA320(a1, a2, 1);
             return false;
@@ -225,7 +225,7 @@ bool sub_4BA1E0(int64_t obj)
     int index;
 
     if (tig_net_is_active()) {
-        index = sub_4A2B10(obj);
+        index = multiplayer_find_slot_from_obj(obj);
         if (index == -1) {
             sub_4BA320(obj, obj, 5);
             return false;

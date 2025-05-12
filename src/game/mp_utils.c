@@ -112,7 +112,7 @@ bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
     char v1[40];
     PacketQuestStateSet pkt;
 
-    player = sub_4A2B10(obj);
+    player = multiplayer_find_slot_from_obj(obj);
 
     if (player == -1) {
         return false;
@@ -453,7 +453,7 @@ void mp_ui_toggle_primary_button(UiPrimaryButton btn, bool on, int client_id)
 void mp_ui_written_start_type(int64_t obj, WrittenType written_type, int num)
 {
     if (player_get_local_pc_obj() != obj) {
-        int client_id = sub_4A2B10(obj);
+        int client_id = multiplayer_find_slot_from_obj(obj);
         if (client_id != -1) {
             Packet100 pkt;
 
@@ -755,7 +755,7 @@ void sub_4EED00(int64_t obj, int sound_id)
     }
 
     if (tig_net_is_active() && tig_net_is_host()) {
-        int client_id = sub_4A2B10(obj);
+        int client_id = multiplayer_find_slot_from_obj(obj);
         if (client_id != -1) {
             PacketPlaySound pkt;
 
@@ -1234,7 +1234,7 @@ void sub_4EFC30(int64_t pc_obj, const char* name, const char* rule)
     pkt = (Packet123*)MALLOC(size);
     pkt->type = 123;
     pkt->total_size = size;
-    pkt->player = sub_4A2B10(pc_obj);
+    pkt->player = multiplayer_find_slot_from_obj(pc_obj);
     pkt->name_length = (int)strlen(name) + 1;
     pkt->rule_length = (int)strlen(rule) + 1;
     strncpy((char*)(pkt + 1), name, pkt->name_length);

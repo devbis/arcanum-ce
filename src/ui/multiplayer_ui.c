@@ -376,7 +376,7 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
     if (player_is_local_pc_obj(a1)) {
         sub_550750(&ui_message);
     } else {
-        client_id = sub_4A2B10(a1);
+        client_id = multiplayer_find_slot_from_obj(a1);
         if (client_id != -1) {
             sub_4EDA60(&ui_message, client_id, 0);
         }
@@ -395,7 +395,7 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
         if (player_is_local_pc_obj(a2)) {
             sub_550750(&ui_message);
         } else {
-            client_id = sub_4A2B10(a2);
+            client_id = multiplayer_find_slot_from_obj(a2);
             if (client_id != -1) {
                 sub_4EDA60(&ui_message, client_id, 0);
             }

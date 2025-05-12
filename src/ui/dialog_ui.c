@@ -129,7 +129,7 @@ DialogUiEntry* sub_567420(int64_t obj)
     int index = 0;
 
     if (tig_net_is_active()) {
-        index = sub_4A2B10(obj);
+        index = multiplayer_find_slot_from_obj(obj);
     }
 
     return &(stru_66DAB8[index]);
@@ -566,7 +566,7 @@ bool dialog_ui_message_filter(TigMessage* msg)
         return true;
     }
 
-    player = sub_4A2B10(player_get_local_pc_obj());
+    player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
     if (byte_679DB8[player] != 1) {
         byte_679DB8[player] = 1;
 
@@ -620,7 +620,7 @@ bool sub_568280(DialogUiEntry *a1)
     is_pc = player_is_local_pc_obj(a1->state.pc_obj);
 
     if (tig_net_is_active() && !tig_net_is_host()) {
-        byte_679DB8[sub_4A2B10(player_get_local_pc_obj())] = 0;
+        byte_679DB8[multiplayer_find_slot_from_obj(player_get_local_pc_obj())] = 0;
     }
 
     switch (a1->state.field_17E8) {

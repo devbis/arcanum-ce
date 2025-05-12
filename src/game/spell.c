@@ -478,7 +478,7 @@ bool spell_add(int64_t obj, int spell, bool force)
 
         if (!tig_net_is_host()) {
             pkt.type = 48;
-            pkt.player = sub_4A2B10(obj);
+            pkt.player = multiplayer_find_slot_from_obj(obj);
             pkt.spell = spell;
             pkt.force = force;
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -486,7 +486,7 @@ bool spell_add(int64_t obj, int spell, bool force)
         }
 
         pkt.type = 49;
-        pkt.player = sub_4A2B10(obj);
+        pkt.player = multiplayer_find_slot_from_obj(obj);
         pkt.spell = spell;
         pkt.force = force;
         tig_net_send_app_all(&pkt, sizeof(pkt));

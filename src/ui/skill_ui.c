@@ -464,7 +464,7 @@ bool skill_ui_steal_item(int64_t source_obj, int64_t target_obj, int64_t item_ob
     if (player_is_local_pc_obj(source_obj)) {
         sub_550750(&ui_message);
     } else {
-        client_id = sub_4A2B10(source_obj);
+        client_id = multiplayer_find_slot_from_obj(source_obj);
         if (client_id != -1) {
             sub_4EDA60(&ui_message, client_id, 0);
         }
@@ -508,7 +508,7 @@ bool skill_ui_plant_item(int64_t source_obj, int64_t target_obj, int64_t item_ob
     if (player_is_local_pc_obj(source_obj)) {
         sub_550750(&ui_message);
     } else {
-        client_id = sub_4A2B10(source_obj);
+        client_id = multiplayer_find_slot_from_obj(source_obj);
         if (client_id != -1) {
             sub_4EDA60(&ui_message, client_id, 0);
         }

@@ -351,7 +351,7 @@ void sub_57CE70(int64_t sec, int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
         if (tig_net_is_active()) {
-            if (sub_4A2B10(obj) != -1) {
+            if (multiplayer_find_slot_from_obj(obj) != -1) {
                 wmap_ui_notify_sector_changed(obj, sec);
             }
         } else {

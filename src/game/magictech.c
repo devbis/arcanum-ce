@@ -3788,7 +3788,7 @@ END:
 
         pkt.type = 61;
         pkt.mt_id = dword_5E75F0->id;
-        pkt.player = sub_4A2B10(dword_5E75F0->parent_obj.obj);
+        pkt.player = multiplayer_find_slot_from_obj(dword_5E75F0->parent_obj.obj);
 
         if (pkt.player != -1) {
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -3892,7 +3892,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
             dword_5E75F0->action = MAGICTECH_ACTION_END;
         }
     } else {
-        player = sub_4A2B10(dword_5E75F0->parent_obj.obj);
+        player = multiplayer_find_slot_from_obj(dword_5E75F0->parent_obj.obj);
         if (player != -1) {
             Packet60 pkt;
 
@@ -4588,7 +4588,7 @@ void sub_455AC0(MagicTechSerializedData* a1)
             Packet58 pkt;
 
             pkt.type = 58;
-            pkt.field_4 = sub_4A2B10(a1->source_obj.obj);
+            pkt.field_4 = multiplayer_find_slot_from_obj(a1->source_obj.obj);
             sub_4440E0(a1->source_obj.obj, &(a1->source_obj));
             sub_4440E0(a1->parent_obj.obj, &(a1->parent_obj));
             sub_4440E0(a1->target_obj.obj, &(a1->target_obj));
@@ -4600,7 +4600,7 @@ void sub_455AC0(MagicTechSerializedData* a1)
             Packet57 pkt;
 
             pkt.type = 57;
-            pkt.field_4 = sub_4A2B10(a1->source_obj.obj);
+            pkt.field_4 = multiplayer_find_slot_from_obj(a1->source_obj.obj);
             sub_4440E0(a1->source_obj.obj, &(a1->source_obj));
             sub_4440E0(a1->parent_obj.obj, &(a1->parent_obj));
             sub_4440E0(a1->target_obj.obj, &(a1->target_obj));

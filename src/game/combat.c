@@ -3942,7 +3942,7 @@ bool combat_auto_attack_get(int64_t obj)
         return settings_get_value(&settings, "auto attack");
     }
 
-    player = sub_4A2B10(obj);
+    player = multiplayer_find_slot_from_obj(obj);
     if (player == -1) {
         return false;
     }
@@ -3958,7 +3958,7 @@ void combat_auto_attack_set(bool value)
     settings_set_value(&settings, "auto attack", value);
 
     if (tig_net_is_active()) {
-        player = sub_4A2B10(player_get_local_pc_obj());
+        player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
                 multiplayer_flags_set(player, MULTIPLAYER_AUTO_ATTACK);
@@ -3996,7 +3996,7 @@ bool combat_auto_switch_weapons_get(int64_t obj)
         return settings_get_value(&settings, "auto switch");
     }
 
-    player = sub_4A2B10(obj);
+    player = multiplayer_find_slot_from_obj(obj);
     if (player == -1) {
         return false;
     }
@@ -4012,7 +4012,7 @@ void combat_auto_switch_weapons_set(bool value)
     settings_set_value(&settings, "auto switch", value);
 
     if (tig_net_is_active()) {
-        player = sub_4A2B10(player_get_local_pc_obj());
+        player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
         if (player != -1) {
             if (value) {
                 multiplayer_flags_set(player, MULTIPLAYER_AUTO_SWITCH_WEAPONS);
