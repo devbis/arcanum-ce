@@ -894,26 +894,26 @@ bool sub_45E2E0(int64_t a1, int64_t a2)
     int v3;
     int v4;
 
-    v3 = sub_4BA020(a1);
+    v3 = party_id_from_obj(a1);
     if (v3 == -1) {
         if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             v1 = a1;
         } else {
             v1 = critter_pc_leader_get(a1);
             if (v1 != OBJ_HANDLE_NULL) {
-                v3 = sub_4BA020(v1);
+                v3 = party_id_from_obj(v1);
             }
         }
     }
 
-    v4 = sub_4BA020(a2);
+    v4 = party_id_from_obj(a2);
     if (v4 == -1) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             v2 = a2;
         } else {
             v2 = critter_pc_leader_get(a2);
             if (v2 != OBJ_HANDLE_NULL) {
-                v4 = sub_4BA020(v2);
+                v4 = party_id_from_obj(v2);
             }
         }
     }
@@ -1569,7 +1569,7 @@ void critter_give_xp(int64_t obj, int xp_gain)
             return;
         }
 
-        player = sub_4BA020(obj);
+        player = party_id_from_obj(obj);
     } else {
         player = -1;
     }
@@ -1581,7 +1581,7 @@ void critter_give_xp(int64_t obj, int xp_gain)
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
-                && sub_4BA020(node->obj) == player) {
+                && party_id_from_obj(node->obj) == player) {
                 cnt++;
             }
             node = node->next;
@@ -1596,7 +1596,7 @@ void critter_give_xp(int64_t obj, int xp_gain)
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
-                && sub_4BA020(node->obj) == player) {
+                && party_id_from_obj(node->obj) == player) {
                 xp = stat_base_get(node->obj, STAT_EXPERIENCE_POINTS);
                 xp += effect_adjust_xp_gain(node->obj, xp_gain);
                 stat_base_set(node->obj, STAT_EXPERIENCE_POINTS, xp);

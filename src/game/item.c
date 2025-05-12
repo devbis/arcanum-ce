@@ -1742,12 +1742,12 @@ bool sub_463370(int64_t obj, int key_id)
                 party_member_obj = party_find_next(&iter);
             }
         } else {
-            player = sub_4BA020(obj);
+            player = party_id_from_obj(obj);
             if (player != -1) {
                 object_list_vicinity(obj, OBJ_TM_PC, &objects);
                 node = objects.head;
                 while (node != NULL) {
-                    if (sub_4BA020(node->obj) == player
+                    if (party_id_from_obj(node->obj) == player
                         && sub_463240(node->obj, key_id)) {
                         break;
                     }

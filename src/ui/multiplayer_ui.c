@@ -795,7 +795,7 @@ void sub_571100()
 
         obj = sub_4A2B60(dword_680FA4[index]);
         if (obj != OBJ_HANDLE_NULL) {
-            v1 = sub_4BA020(obj);
+            v1 = party_id_from_obj(obj);
             if (v1 != -1) {
                 tig_font_push(sub_571630(v1));
                 rect.x += font_desc.width;

@@ -144,7 +144,7 @@ int64_t party_find_next(int* index_ptr)
 }
 
 // 0x4BA020
-int sub_4BA020(int64_t obj)
+int party_id_from_obj(int64_t obj)
 {
     int index;
 

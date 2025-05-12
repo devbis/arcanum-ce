@@ -10,7 +10,7 @@ bool party_save(TigFile* stream);
 bool party_load(GameLoadInfo* load_info);
 int64_t party_find_first(int64_t obj, int* index_ptr);
 int64_t party_find_next(int* index_ptr);
-int sub_4BA020(int64_t obj);
+int party_id_from_obj(int64_t obj);
 bool sub_4BA080(int64_t a1, int64_t a2, int* a3);
 bool sub_4BA1E0(int64_t obj);
 bool sub_4BA2E0(int* party, int cnt);
