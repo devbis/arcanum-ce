@@ -1294,7 +1294,7 @@ void sub_4D1400(Sector* sector)
 // 0x4D1530
 bool sector_load_editor(int64_t id, Sector* sector)
 {
-    bool v1 = false;
+    bool generated = false;
     char path[TIG_MAX_PATH];
     TigFile* stream;
     int placeholder;
@@ -1314,22 +1314,22 @@ bool sector_load_editor(int64_t id, Sector* sector)
             if (!tig_file_exists(path, NULL)) {
                 terrain_sector_path(id, path);
                 if (!tig_file_exists(path, NULL)) {
-                    sub_4E86F0(sector);
-                    v1 = true;
+                    terrain_fill(sector);
+                    generated = true;
                 }
             }
         }
     } else {
         terrain_sector_path(id, path);
         if (!tig_file_exists(path, NULL)) {
-            sub_4E86F0(sector);
-            v1 = true;
+            terrain_fill(sector);
+            generated = true;
         }
     }
 
     sector_validate_editor("sector pre-load");
 
-    if (!v1) {
+    if (!generated) {
         stream = tig_file_fopen(path, "rb");
         if (stream == NULL) {
             tig_debug_printf("Error opening sector file %s\n", path);
@@ -1435,7 +1435,7 @@ bool sector_load_editor(int64_t id, Sector* sector)
 // 0x4D1A30
 bool sector_load_game(int64_t id, Sector* sector)
 {
-    bool v1 = false;
+    bool generated = false;
     unsigned int flags = 0;
     int64_t v2 = -1;
     char sec_path[TIG_MAX_PATH];
@@ -1458,8 +1458,8 @@ bool sector_load_game(int64_t id, Sector* sector)
                 tig_debug_printf("Sector: ERROR loading %s terrain sector while attempting to load sector %I64d\n",
                     sec_path,
                     id);
-                sub_4E86F0(sector);
-                v1 = true;
+                terrain_fill(sector);
+                generated = true;
             }
         }
     } else {
@@ -1468,13 +1468,13 @@ bool sector_load_game(int64_t id, Sector* sector)
         v2 = id;
 
         if (!tig_file_exists(sec_path, NULL)) {
-            sub_4E86F0(sector);
-            v1 = true;
+            terrain_fill(sector);
+            generated = true;
         }
     }
 
     sector_validate_game("sector pre-load");
-    if (!v1) {
+    if (!generated) {
         li_update();
         sec_stream = tig_file_fopen(sec_path, "rb");
         if (sec_stream == NULL) {

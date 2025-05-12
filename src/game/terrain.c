@@ -417,7 +417,7 @@ void terrain_sector_path(int64_t sector_id, char* path)
 }
 
 // 0x4E86F0
-void sub_4E86F0(Sector* sector)
+void terrain_fill(Sector* sector)
 {
     tig_art_id_t art_id;
     int index;

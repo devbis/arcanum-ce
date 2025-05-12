@@ -41,7 +41,7 @@ int sub_4E8DD0(uint16_t a1);
 int sub_4E8DE0(uint16_t a1);
 int sub_4E8DF0(uint16_t a1);
 bool terrain_is_blocked(int64_t sec);
-void sub_4E86F0(Sector* sector);
+void terrain_fill(Sector* sector);
 bool terrain_flush();
 uint16_t sub_4E87F0(int64_t sec);
 
