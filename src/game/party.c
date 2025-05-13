@@ -1,5 +1,6 @@
 #include "game/party.h"
 
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/quest.h"
 #include "game/rumor.h"
@@ -9,7 +10,7 @@
 #define PARTY_TABLE_SIZE 8
 
 static int sub_4BA260();
-static bool sub_4BA290();
+static bool party_update();
 static void sub_4BA320(int64_t a1, int64_t a2, int a3);
 
 // 0x5FC32C
@@ -202,7 +203,7 @@ bool party_add(int64_t leader_obj, int64_t target_obj, int* id_ptr)
 
         sub_4BA320(leader_obj, target_obj, 0);
         sub_460AB0(115, 0, NULL);
-        sub_4BA290();
+        party_update();
 
         party_member_obj = party_find_first(leader_obj, &iter);
         do {
@@ -239,7 +240,7 @@ bool party_remove(int64_t obj)
         dword_5FC32C[index] = -1;
         sub_4BA320(obj, obj, 6);
         sub_460AB0(115, 0, NULL);
-        sub_4BA290();
+        party_update();
     }
 
     return true;
@@ -261,24 +262,16 @@ int sub_4BA260()
 }
 
 // 0x4BA290
-bool sub_4BA290()
+bool party_update()
 {
-    struct {
-        int type;
-        int party[PARTY_TABLE_SIZE];
-    } packet;
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
+        PacketPartyUpdate pkt;
 
-    static_assert(sizeof(packet) == 0x24, "wrong size");
-
-    if (!tig_net_is_active()
-        || !tig_net_is_host()) {
-        return true;
+        pkt.type = 71;
+        memcpy(pkt.party, dword_5FC32C, sizeof(dword_5FC32C));
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
-
-
-    packet.type = 71;
-    memcpy(packet.party, dword_5FC32C, sizeof(dword_5FC32C));
-    tig_net_send_app_all(&packet, sizeof(packet));
 
     return true;
 }

@@ -559,6 +559,13 @@ typedef struct Packet70 {
 
 static_assert(sizeof(Packet70) == 0x68, "wrong size");
 
+typedef struct PacketPartyUpdate {
+    int type;
+    int party[8];
+} PacketPartyUpdate;
+
+static_assert(sizeof(PacketPartyUpdate) == 0x24, "wrong size");
+
 typedef struct PacketObjectDestroy {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
