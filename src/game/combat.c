@@ -51,7 +51,7 @@ static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static void sub_4B5F40(CombatContext* combat);
-static void sub_4B6410(CombatContext* combat);
+static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
 static void sub_4B6680(CombatContext* combat);
@@ -987,7 +987,7 @@ int sub_4B3170(CombatContext* combat)
 
     if ((combat->flags & CF_HIT) == 0
         && (combat->flags & CF_CRITICAL) != 0) {
-        sub_4B6410(combat);
+        combat_process_crit_miss(combat);
     }
 
     if ((combat->flags & 0x200) != 0) {
@@ -2592,7 +2592,7 @@ void sub_4B5F40(CombatContext* combat)
 }
 
 // 0x4B6410
-void sub_4B6410(CombatContext* combat)
+void combat_process_crit_miss(CombatContext* combat)
 {
     int crit_miss_chart;
     int chance;
