@@ -5381,7 +5381,7 @@ void sub_444270(int64_t obj, int a2)
 
     if (a2 != 1) {
         if (player_is_pc_obj(obj) && player_is_local_pc_obj(obj)) {
-            sub_4F2330(sector_id_from_loc(loc), obj);
+            objlist_notify_sector_changed(sector_id_from_loc(loc), obj);
         }
         sub_4D9590(obj, true);
     }

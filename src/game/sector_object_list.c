@@ -677,17 +677,17 @@ bool objlist_remove_internal(SectorObjectList* list, int64_t obj, ObjectNode** n
 }
 
 // 0x4F2330
-void sub_4F2330(int64_t sector_id, int64_t obj)
+void objlist_notify_sector_changed(int64_t sec, int64_t pc_obj)
 {
     Sector* sector;
     int light_scheme;
     Script scr;
     Script prev_scr;
-    ObjectList objects;
+    ObjectList followers;
     ObjectNode* node;
     ScriptInvocation invocation;
 
-    if (sector_lock(sector_id, &sector)) {
+    if (sector_lock(sec, &sector)) {
         light_scheme = sector->light_scheme;
         if (light_scheme == LIGHT_SCHEME_MAP_DEFAULT) {
             light_scheme = light_scheme_get_map_default();
@@ -699,15 +699,15 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
             || sector->sounds.ambient_scheme_idx != 0) {
             gsound_play_scheme(sector->sounds.music_scheme_idx, sector->sounds.ambient_scheme_idx);
         }
-        sector_unlock(sector_id);
+        sector_unlock(sec);
     }
 
-    if (sector_script_get(sector_id, &scr)) {
+    if (sector_script_get(sec, &scr)) {
         prev_scr = scr;
 
         invocation.script = &scr;
         invocation.attachment_point = SAP_USE;
-        invocation.triggerer_obj = obj;
+        invocation.triggerer_obj = pc_obj;
         invocation.attachee_obj = OBJ_HANDLE_NULL;
         invocation.extra_obj = OBJ_HANDLE_NULL;
         invocation.line = 0;
@@ -715,17 +715,17 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
 
         if (prev_scr.hdr.flags != scr.hdr.flags
             || prev_scr.hdr.counters != scr.hdr.counters) {
-            sector_script_set(sector_id, &scr);
+            sector_script_set(sec, &scr);
         }
     }
 
-    object_list_followers(obj, &objects);
-    node = objects.head;
+    object_list_followers(pc_obj, &followers);
+    node = followers.head;
     while (node != NULL) {
-        object_script_execute(obj, node->obj, OBJ_HANDLE_NULL, SAP_NEW_SECTOR, 0);
+        object_script_execute(pc_obj, node->obj, OBJ_HANDLE_NULL, SAP_NEW_SECTOR, 0);
         node = node->next;
     }
-    object_list_destroy(&objects);
+    object_list_destroy(&followers);
 
-    sub_4607D0(sector_id, obj);
+    sub_4607D0(sec, pc_obj);
 }

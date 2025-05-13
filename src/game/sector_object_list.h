@@ -24,6 +24,6 @@ bool objlist_tile_of_object(SectorObjectList* list, int64_t obj, int* tile_ptr);
 void objlist_precache_art(SectorObjectList* list);
 void objlist_fold(SectorObjectList* list, int64_t location, int a4);
 void sub_4F2230(int64_t obj, int* a2, int* a3);
-void sub_4F2330(int64_t sector_id, int64_t obj);
+void objlist_notify_sector_changed(int64_t sec, int64_t pc_obj);
 
 #endif /* ARCANUM_GAME_SECTOR_OBJECT_LIST_H_ */
