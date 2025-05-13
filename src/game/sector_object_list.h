@@ -5,8 +5,8 @@
 
 typedef struct SectorObjectList {
     /* 0000 */ ObjectNode* heads[4096];
-    /* 4000 */ int field_4000;
-    /* 4004 */ int field_4004;
+    /* 4000 */ int modified;
+    /* 4004 */ int next_temp_id;
 } SectorObjectList;
 
 bool sector_object_list_init(SectorObjectList* list);

@@ -66,7 +66,7 @@ bool objlist_insert(SectorObjectList* list, int64_t obj)
     }
 
     if (object_is_static(obj)) {
-        list->field_4000 = 1;
+        list->modified = 1;
     }
 
     return true;
@@ -84,7 +84,7 @@ bool objlist_remove(SectorObjectList* list, int64_t obj)
     object_node_destroy(node);
 
     if (object_is_static(obj)) {
-        list->field_4000 = 1;
+        list->modified = 1;
     }
 
     return true;
@@ -105,7 +105,7 @@ bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, i
     sub_4F20A0(list, node);
 
     if (object_is_static(obj)) {
-        list->field_4000 = 1;
+        list->modified = 1;
     }
 
     return true;
@@ -148,7 +148,7 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
         y = -1;
     }
 
-    list->field_4004 = 0;
+    list->next_temp_id = 0;
 
     for (idx = 0; idx < cnt; idx++) {
         if (!obj_read(stream, &obj)) {
@@ -163,13 +163,13 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
         }
 
         sub_406520(obj);
-        obj_field_int32_set(obj, OBJ_F_TEMP_ID, list->field_4004);
+        obj_field_int32_set(obj, OBJ_F_TEMP_ID, list->next_temp_id);
 
         if (!objlist_insert_internal(list, obj)) {
             break;
         }
 
-        list->field_4004++;
+        list->next_temp_id++;
     }
 
     if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
@@ -181,7 +181,7 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
         return false;
     }
 
-    list->field_4000 = 0;
+    list->modified = 0;
     return true;
 }
 
@@ -231,7 +231,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
 
     dif = false;
     extent = 0;
-    list->field_4004 = 0;
+    list->next_temp_id = 0;
 
     for (idx = 0; idx < cnt; idx++) {
         if (extent == 0) {
@@ -268,7 +268,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
         }
 
         extent--;
-        obj_field_int32_set(obj, OBJ_F_TEMP_ID, list->field_4004++);
+        obj_field_int32_set(obj, OBJ_F_TEMP_ID, list->next_temp_id++);
 
         if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_EXTINCT) == 0) {
             if (!objlist_insert_internal(list, obj)) {
@@ -287,7 +287,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
         return false;
     }
 
-    list->field_4004 = idx;
+    list->next_temp_id = idx;
 
     rc = tig_file_fread(&cnt, sizeof(cnt), 1, sec_stream);
     if (rc != 1) {
@@ -298,7 +298,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
         return false;
     }
 
-    list->field_4000 = 1;
+    list->modified = 1;
     return true;
 }
 
@@ -329,7 +329,7 @@ bool objlist_save(SectorObjectList* list, TigFile* stream)
         return false;
     }
 
-    list->field_4000 = 0;
+    list->modified = 0;
 
     return true;
 }
@@ -340,7 +340,7 @@ bool objlist_is_modified(SectorObjectList* list)
     ObjectNode* node;
     int index;
 
-    if (list->field_4000) {
+    if (list->modified) {
         return true;
     }
 
