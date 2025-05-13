@@ -387,10 +387,10 @@ void ui_set_map_button(UiPrimaryButton btn)
 }
 
 // 0x4607D0
-void sub_4607D0(int64_t a1, int64_t a2)
+void ui_notify_sector_changed(int64_t sec, int64_t obj)
 {
-    if (ui_callbacks.field_A8 != NULL) {
-        ui_callbacks.field_A8(a1, a2);
+    if (ui_callbacks.notify_sector_changed != NULL) {
+        ui_callbacks.notify_sector_changed(sec, obj);
     }
 }
 

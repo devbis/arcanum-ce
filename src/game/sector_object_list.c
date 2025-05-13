@@ -727,5 +727,5 @@ void objlist_notify_sector_changed(int64_t sec, int64_t pc_obj)
     }
     object_list_destroy(&followers);
 
-    sub_4607D0(sec, pc_obj);
+    ui_notify_sector_changed(sec, pc_obj);
 }

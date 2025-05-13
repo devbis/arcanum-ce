@@ -50,7 +50,7 @@ static void sub_57CDF0(int a1);
 static void sub_57CE00();
 static void sub_57CE10();
 static void sub_57CE30(int64_t obj, void* a2, int a3);
-static void sub_57CE70(int64_t sec, int64_t obj);
+static void handle_sector_changed(int64_t sec, int64_t obj);
 static void ui_charedit_error_msg(int type, int a2);
 static void sub_57CF70(int64_t a1, int64_t a2);
 static void sub_57CFA0();
@@ -107,7 +107,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.follower_update = follower_ui_update;
     callbacks.toggle_primary_button = intgame_toggle_primary_button;
     callbacks.set_map_button = intgame_set_map_button;
-    callbacks.field_A8 = sub_57CE70;
+    callbacks.notify_sector_changed = handle_sector_changed;
     callbacks.field_AC = written_ui_newspaper_headline;
     callbacks.field_B0 = sleep_ui_open;
     callbacks.field_B4 = ui_charedit_error_msg;
@@ -347,7 +347,7 @@ void sub_57CE30(int64_t obj, void* a2, int a3)
 }
 
 // 0x57CE70
-void sub_57CE70(int64_t sec, int64_t obj)
+void handle_sector_changed(int64_t sec, int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
         if (tig_net_is_active()) {
