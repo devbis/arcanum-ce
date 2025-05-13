@@ -456,21 +456,21 @@ typedef struct Packet54 {
 
 static_assert(sizeof(Packet54) == 0x08, "wrong size");
 
-typedef struct Packet57 {
+typedef struct PacketPlayerRequestCastSpell {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
+    /* 0004 */ int player;
     /* 0008 */ MagicTechSerializedData field_8;
-} Packet57;
+} PacketPlayerRequestCastSpell;
 
-static_assert(sizeof(Packet57) == 0xE8, "wrong size");
+static_assert(sizeof(PacketPlayerRequestCastSpell) == 0xE8, "wrong size");
 
-typedef struct Packet58 {
+typedef struct PacketPlayerCastSpell {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
+    /* 0004 */ int player;
     /* 0008 */ MagicTechSerializedData field_8;
-} Packet58;
+} PacketPlayerCastSpell;
 
-static_assert(sizeof(Packet58) == 0xE8, "wrong size");
+static_assert(sizeof(PacketPlayerCastSpell) == 0xE8, "wrong size");
 
 typedef struct PacketPlayerInterruptSpell {
     /* 0000 */ int type;
@@ -479,21 +479,21 @@ typedef struct PacketPlayerInterruptSpell {
 
 static_assert(sizeof(PacketPlayerInterruptSpell) == 0x08, "wrong size");
 
-typedef struct Packet60 {
+typedef struct PacketPlayerSpellMaintainAdd {
     /* 0000 */ int type;
     /* 0004 */ int mt_id;
     /* 0008 */ int player;
-} Packet60;
+} PacketPlayerSpellMaintainAdd;
 
-static_assert(sizeof(Packet60) == 0xC, "wrong size");
+static_assert(sizeof(PacketPlayerSpellMaintainAdd) == 0xC, "wrong size");
 
-typedef struct Packet61 {
+typedef struct PacketPlayerSpellMaintainEnd {
     /* 0000 */ int type;
     /* 0004 */ int mt_id;
     /* 0008 */ int player;
-} Packet61;
+} PacketPlayerSpellMaintainEnd;
 
-static_assert(sizeof(Packet61) == 0xC, "wrong size");
+static_assert(sizeof(PacketPlayerSpellMaintainEnd) == 0xC, "wrong size");
 
 typedef struct Packet64 {
     /* 0000 */ int type;
