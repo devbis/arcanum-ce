@@ -50,7 +50,7 @@ static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
-static void sub_4B5F40(CombatContext* combat);
+static void combat_process_crit_hit(CombatContext* combat);
 static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
@@ -1480,7 +1480,7 @@ void combat_dmg(CombatContext* combat)
     }
 
     if ((combat->flags & CF_CRITICAL) != 0) {
-        sub_4B5F40(combat);
+        combat_process_crit_hit(combat);
     }
 
     sub_4B6860(combat);
@@ -2412,7 +2412,7 @@ int combat_hit_loc_penalty(int hit_loc)
 }
 
 // 0x4B5F40
-void sub_4B5F40(CombatContext* combat)
+void combat_process_crit_hit(CombatContext* combat)
 {
     int target_obj_type;
     int attacker_obj_type;
@@ -2647,7 +2647,7 @@ void combat_process_crit_miss(CombatContext* combat)
             }
         }
 
-        sub_4B5F40(combat);
+        combat_process_crit_hit(combat);
     }
 }
 
