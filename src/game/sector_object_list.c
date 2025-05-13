@@ -335,7 +335,7 @@ bool objlist_save(SectorObjectList* list, TigFile* stream)
 }
 
 // 0x4F1A20
-bool sub_4F1A20(SectorObjectList* list)
+bool objlist_is_modified(SectorObjectList* list)
 {
     ObjectNode* node;
     int index;

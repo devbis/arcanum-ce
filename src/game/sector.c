@@ -1749,7 +1749,7 @@ bool sector_save_editor(Sector* sector)
         flags |= 0x0400;
     }
 
-    if (sub_4F1A20(&(sector->objects))) {
+    if (objlist_is_modified(&(sector->objects))) {
         flags |= 0x0008;
     }
 
@@ -1942,7 +1942,7 @@ bool sector_save_game(Sector* sector)
         flags |= 0x0400;
     }
 
-    if (sub_4F1A20(&(sector->objects))) {
+    if (objlist_is_modified(&(sector->objects))) {
         flags |= 0x0008;
     }
 

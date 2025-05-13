@@ -18,7 +18,7 @@ bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, i
 bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t loc);
 bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile* dif_stream, int64_t sector_id);
 bool objlist_save(SectorObjectList* list, TigFile* stream);
-bool sub_4F1A20(SectorObjectList* list);
+bool objlist_is_modified(SectorObjectList* list);
 bool objlist_save_with_dif(SectorObjectList* list, TigFile* stream);
 bool objlist_tile_of_object(SectorObjectList* list, int64_t obj, int* tile_ptr);
 void objlist_precache_art(SectorObjectList* list);
