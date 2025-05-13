@@ -68,7 +68,7 @@ static bool dword_67B964;
 
 // 0x679DC0
 static struct {
-    Packet44 pkt;
+    PacketDialog pkt;
     char buffer[6000];
 } stru_679DC0;
 
@@ -141,7 +141,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
     DialogUiEntry* entry;
     char path[TIG_MAX_PATH];
     char str[2000];
-    Packet44 pkt;
+    PacketDialog pkt;
 
     if (critter_is_dead(pc_obj)) {
         return;
@@ -266,7 +266,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
 void sub_5678D0(int64_t obj, int a2)
 {
     DialogUiEntry* entry;
-    Packet44 pkt;
+    PacketDialog pkt;
 
     (void)a2;
 
@@ -546,7 +546,7 @@ bool dialog_ui_message_filter(TigMessage* msg)
     DialogUiEntry* entry;
     int option;
     int player;
-    Packet44 pkt;
+    PacketDialog pkt;
 
     entry = sub_567420(player_get_local_pc_obj());
     if (sub_5681B0(entry)) {
@@ -718,7 +718,7 @@ void sub_5684C0(DialogUiEntry* entry)
 void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const char* str, int speech_id)
 {
     if (!multiplayer_is_locked()) {
-        Packet44 pkt;
+        PacketDialog pkt;
 
         if (!tig_net_is_host()) {
             return;
@@ -753,7 +753,7 @@ void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const
 void sub_5686C0(int64_t pc_obj, int64_t npc_obj, int type, int expires_in, const char* str)
 {
     if (!multiplayer_is_locked()) {
-        Packet44 pkt;
+        PacketDialog pkt;
 
         if (!tig_net_is_host()) {
             return;

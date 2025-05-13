@@ -368,7 +368,7 @@ typedef struct ChangeCursePacket {
 
 static_assert(sizeof(ChangeCursePacket) == 0x40, "wrong size");
 
-typedef struct Packet44 {
+typedef struct PacketDialog {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     union {
@@ -396,9 +396,9 @@ typedef struct Packet44 {
             /* 0024 */ int field_24;
         } f;
     } d;
-} Packet44;
+} PacketDialog;
 
-static_assert(sizeof(Packet44) == 0x430, "wrong size");
+static_assert(sizeof(PacketDialog) == 0x430, "wrong size");
 
 typedef struct Packet46 {
     /* 0000 */ int type;
