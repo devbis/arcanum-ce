@@ -2248,7 +2248,7 @@ void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
     if (cur_sector_id == sector_id) {
         if (is_static || sub_4D04E0(sector_id)) {
             sector_lock(sector_id, &sector);
-            sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
+            objlist_move(&(sector->objects), obj, loc, offset_x, offset_y);
             sector_unlock(sector_id);
         } else {
             obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
@@ -4408,7 +4408,7 @@ void sub_4423E0(int64_t obj, int offset_x, int offset_y)
     sector_id = sector_id_from_loc(loc);
     if (object_is_static(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
-        sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
+        objlist_move(&(sector->objects), obj, loc, offset_x, offset_y);
         sector_unlock(sector_id);
     } else {
         obj_field_int32_set(obj, OBJ_F_OFFSET_X, offset_x);

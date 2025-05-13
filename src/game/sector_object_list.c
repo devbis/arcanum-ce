@@ -91,7 +91,7 @@ bool objlist_remove(SectorObjectList* list, int64_t obj)
 }
 
 // 0x4F12C0
-bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, int dy)
+bool objlist_move(SectorObjectList* list, int64_t obj, int64_t loc, int offset_x, int offset_y)
 {
     ObjectNode* node;
 
@@ -99,9 +99,9 @@ bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, i
         return false;
     }
 
-    obj_field_int64_set(obj, OBJ_F_LOCATION, location);
-    obj_field_int32_set(obj, OBJ_F_OFFSET_X, dx);
-    obj_field_int32_set(obj, OBJ_F_OFFSET_Y, dy);
+    obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+    obj_field_int32_set(obj, OBJ_F_OFFSET_X, offset_x);
+    obj_field_int32_set(obj, OBJ_F_OFFSET_Y, offset_y);
     sub_4F20A0(list, node);
 
     if (object_is_static(obj)) {

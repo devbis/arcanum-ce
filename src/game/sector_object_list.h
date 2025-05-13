@@ -14,7 +14,7 @@ bool sector_object_list_reset(SectorObjectList* list);
 bool sector_object_list_exit(SectorObjectList* list);
 bool objlist_insert(SectorObjectList* list, int64_t obj);
 bool objlist_remove(SectorObjectList* list, int64_t obj);
-bool sub_4F12C0(SectorObjectList* list, int64_t obj, int64_t location, int dx, int dy);
+bool objlist_move(SectorObjectList* list, int64_t obj, int64_t location, int offset_x, int offset_y);
 bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t loc);
 bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile* dif_stream, int64_t sector_id);
 bool objlist_save(SectorObjectList* list, TigFile* stream);
