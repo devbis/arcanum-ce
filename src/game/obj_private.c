@@ -1084,7 +1084,7 @@ void sub_4E5300()
 }
 
 // 0x4E53C0
-bool sub_4E53C0(int64_t* obj_ptr, int* iter_ptr)
+bool obj_pool_walk_first(int64_t* obj_ptr, int* iter_ptr)
 {
     int iter;
     uint8_t* data;
@@ -1109,7 +1109,7 @@ bool sub_4E53C0(int64_t* obj_ptr, int* iter_ptr)
 }
 
 // 0x4E5420
-bool sub_4E5420(int64_t* obj_ptr, int* iter_ptr)
+bool obj_pool_walk_next(int64_t* obj_ptr, int* iter_ptr)
 {
     int iter;
     uint8_t* data;

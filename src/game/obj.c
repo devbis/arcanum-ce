@@ -612,7 +612,7 @@ bool obj_validate_system(unsigned int flags)
     int cnt;
     int idx;
 
-    if (sub_4E53C0(&obj, &iter)) {
+    if (obj_pool_walk_first(&obj, &iter)) {
         do {
             if (!sub_4E5470(obj)) {
                 tig_debug_printf("!VS  Walk found invalid handle: %i64x\n", obj);
@@ -753,7 +753,7 @@ bool obj_validate_system(unsigned int flags)
                     }
                 }
             }
-        } while (sub_4E5420(&obj, &iter));
+        } while (obj_pool_walk_next(&obj, &iter));
     }
 
     return true;
@@ -2294,7 +2294,7 @@ bool obj_inst_first(int64_t* obj_ptr, int* iter_ptr)
     Object* object;
     bool is_proto;
 
-    if (sub_4E53C0(&obj, &iter)) {
+    if (obj_pool_walk_first(&obj, &iter)) {
         do {
             object = obj_lock(obj);
             is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
@@ -2305,7 +2305,7 @@ bool obj_inst_first(int64_t* obj_ptr, int* iter_ptr)
                 *iter_ptr = iter;
                 return true;
             }
-        } while (sub_4E5420(&obj, &iter));
+        } while (obj_pool_walk_next(&obj, &iter));
     }
 
     return false;
@@ -2320,7 +2320,7 @@ bool obj_inst_next(int64_t* obj_ptr, int* iter_ptr)
     bool is_proto;
 
     iter = *iter_ptr;
-    while (sub_4E5420(&obj, &iter)) {
+    while (obj_pool_walk_next(&obj, &iter)) {
         object = obj_lock(obj);
         is_proto = object->prototype_oid.type == OID_TYPE_BLOCKED;
         obj_unlock(obj);
