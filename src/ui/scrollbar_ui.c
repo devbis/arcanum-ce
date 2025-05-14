@@ -218,7 +218,7 @@ void scrollbar_ui_control_destroy(ScrollbarId id)
 }
 
 // 0x5806F0
-void sub_5806F0(ScrollbarId id)
+void scrollbar_ui_control_redraw(ScrollbarId id)
 {
     ScrollbarUiControl* ctrl;
 
@@ -424,7 +424,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                             if (ctrl->info.field_3C != NULL) {
                                 ctrl->info.field_3C(ctrl->info.field_38);
                             }
-                            sub_5806F0(ctrl->id);
+                            scrollbar_ui_control_redraw(ctrl->id);
                         } else if (sub_581460(index, msg->data.mouse.x, msg->data.mouse.y)) {
                             ctrl->info.field_38 += ctrl->info.field_30;
                             if (ctrl->info.field_38 > ctrl->info.field_24) {
@@ -433,7 +433,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                             if (ctrl->info.field_3C != NULL) {
                                 ctrl->info.field_3C(ctrl->info.field_38);
                             }
-                            sub_5806F0(ctrl->id);
+                            scrollbar_ui_control_redraw(ctrl->id);
                         }
                     }
                 }
@@ -518,7 +518,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         if (ctrl->info.field_3C != NULL) {
                             ctrl->info.field_3C(ctrl->info.field_38);
                         }
-                        sub_5806F0(ctrl->id);
+                        scrollbar_ui_control_redraw(ctrl->id);
                         return true;
                     } else if (msg->data.mouse.z < 0) {
                         ctrl->info.field_38 += ctrl->info.field_34;
@@ -528,7 +528,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         if (ctrl->info.field_3C != NULL) {
                             ctrl->info.field_3C(ctrl->info.field_38);
                         }
-                        sub_5806F0(ctrl->id);
+                        scrollbar_ui_control_redraw(ctrl->id);
                         return true;
                     }
                     return false;
@@ -553,7 +553,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         if (ctrl->info.field_3C != NULL) {
                             ctrl->info.field_3C(ctrl->info.field_38);
                         }
-                        sub_5806F0(ctrl->id);
+                        scrollbar_ui_control_redraw(ctrl->id);
                         if (dword_5CBF78 == ctrl->id.index) {
                             dword_5CBF78 = -1;
                         }
@@ -568,7 +568,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         if (ctrl->info.field_3C != NULL) {
                             ctrl->info.field_3C(ctrl->info.field_38);
                         }
-                        sub_5806F0(ctrl->id);
+                        scrollbar_ui_control_redraw(ctrl->id);
                         if (dword_5CBF78 == ctrl->id.index) {
                             dword_5CBF78 = -1;
                         }
@@ -620,7 +620,7 @@ void sub_5810D0(ScrollbarId id, int a2, int a3)
         ctrl->info.field_3C(ctrl->info.field_38);
     }
 
-    sub_5806F0(ctrl->id);
+    scrollbar_ui_control_redraw(ctrl->id);
 }
 
 // 0x5811A0

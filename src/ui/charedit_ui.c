@@ -2907,7 +2907,7 @@ void sub_55D210()
     sub_55B880(dword_64CA60, dword_64CA68, &stru_5C8E40, NULL, -1, 1);
     sub_55B880(dword_64CA60, dword_64C9D0, &(stru_5C8E50[0]), NULL, -1, cnt);
 
-    sub_5806F0(stru_64C7A8);
+    scrollbar_ui_control_redraw(stru_64C7A8);
 }
 
 // 0x55D3A0
@@ -3840,7 +3840,7 @@ void sub_55EFF0()
         sb.field_40 = sub_55F110;
         sb.field_2C = 1;
         scrollbar_ui_control_create(&stru_64C7A8, &sb, dword_64CA60);
-        sub_5806F0(stru_64C7A8);
+        scrollbar_ui_control_redraw(stru_64C7A8);
         dword_64DEE4 = true;
     }
 }

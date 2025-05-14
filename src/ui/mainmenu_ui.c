@@ -3065,7 +3065,7 @@ void mainmenu_ui_load_game_create()
         dword_64C450 = true;
     }
 
-    sub_5806F0(stru_64C220);
+    scrollbar_ui_control_redraw(stru_64C220);
     tig_window_display();
 }
 
@@ -3217,7 +3217,7 @@ void mainmenu_ui_load_game_mouse_up(int x, int y)
     }
     sub_542560();
     window->refresh_func(NULL);
-    sub_5806F0(stru_64C220);
+    scrollbar_ui_control_redraw(stru_64C220);
 }
 
 // 0x542560
@@ -3554,7 +3554,7 @@ void sub_543060()
         gsound_play_sfx(0, 1);
         sub_542560();
         window->refresh_func(NULL);
-        sub_5806F0(stru_64C220);
+        scrollbar_ui_control_redraw(stru_64C220);
     }
 }
 
@@ -3572,7 +3572,7 @@ void sub_5430D0()
         gsound_play_sfx(0, 1);
         sub_542560();
         window->refresh_func(NULL);
-        sub_5806F0(stru_64C220);
+        scrollbar_ui_control_redraw(stru_64C220);
     }
 }
 
@@ -3743,7 +3743,7 @@ void mainmenu_ui_save_game_create()
     }
 
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
-    sub_5806F0(stru_64C220);
+    scrollbar_ui_control_redraw(stru_64C220);
 
     tig_window_display();
 }
@@ -3924,7 +3924,7 @@ void mainmenu_ui_save_game_mouse_up(int x, int y)
     }
     sub_544290();
     window->refresh_func(NULL);
-    sub_5806F0(stru_64C220);
+    scrollbar_ui_control_redraw(stru_64C220);
 }
 
 // 0x543990
@@ -5290,7 +5290,7 @@ void mainmenu_ui_create_multiplayer_select_char()
 
     mainmenu_ui_create_window();
     scrollbar_ui_control_create(&stru_64C2A8, &stru_64C2B0, sub_549820());
-    sub_5806F0(stru_64C2A8);
+    scrollbar_ui_control_redraw(stru_64C2A8);
 }
 
 // 0x546160
@@ -6195,7 +6195,7 @@ bool sub_546EE0(TigMessage* msg)
                 if (dword_5C3618 > 0 ) {
                     dword_5C3618--;
                     mainmenu_ui_refresh_multiplayer_select_char(0);
-                    sub_5806F0(stru_64C2A8);
+                    scrollbar_ui_control_redraw(stru_64C2A8);
                     return true;
                 }
                 return false;
@@ -6203,7 +6203,7 @@ bool sub_546EE0(TigMessage* msg)
                 if (dword_5C3618 < dword_64C420 - 1) {
                     dword_5C3618++;
                     mainmenu_ui_refresh_multiplayer_select_char(0);
-                    sub_5806F0(stru_64C2A8);
+                    scrollbar_ui_control_redraw(stru_64C2A8);
                     return true;
                 }
                 return false;
@@ -6259,7 +6259,7 @@ bool sub_546EE0(TigMessage* msg)
                     }
 
                     mainmenu_ui_refresh_multiplayer_select_char(0);
-                    sub_5806F0(stru_64C2A8);
+                    scrollbar_ui_control_redraw(stru_64C2A8);
                     return true;
                 }
                 return false;
@@ -6948,7 +6948,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
             && rect->y < stru_64C2B0.scrollbar_rect.y + stru_64C2B0.scrollbar_rect.height
             && stru_64C2B0.scrollbar_rect.x < rect->x + rect->width
             && stru_64C2B0.scrollbar_rect.y < rect->y + rect->height)) {
-        sub_5806F0(stru_64C2A8);
+        scrollbar_ui_control_redraw(stru_64C2A8);
     }
 }
 
@@ -7235,7 +7235,7 @@ void sub_549540(TextEdit* textedit)
     curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
     if (dword_64C414 == 8) {
-        sub_5806F0(stru_64C220);
+        scrollbar_ui_control_redraw(stru_64C220);
     }
 }
 

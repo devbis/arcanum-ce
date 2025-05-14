@@ -34,7 +34,7 @@ void scrollbar_ui_exit();
 void scrollbar_ui_reset();
 bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, tig_window_handle_t window_handle);
 void scrollbar_ui_control_destroy(ScrollbarId id);
-void sub_5806F0(ScrollbarId id);
+void scrollbar_ui_control_redraw(ScrollbarId id);
 bool scrollbar_ui_control_show(ScrollbarId id);
 bool scrollbar_ui_control_hide(ScrollbarId id);
 bool scrollbar_ui_process_event(TigMessage* msg);

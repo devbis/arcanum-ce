@@ -3598,7 +3598,7 @@ void redraw_inven(bool a1)
     }
 
     intgame_pc_lens_redraw();
-    sub_5806F0(inven_ui_target_inventory_scrollbar);
+    scrollbar_ui_control_redraw(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x5782D0
@@ -4341,7 +4341,7 @@ void inven_ui_target_inventory_scrollbar_create()
     info.field_40 = sub_579E30;
     info.field_2C = 1;
     scrollbar_ui_control_create(&inven_ui_target_inventory_scrollbar, &info, inven_ui_window_handle);
-    sub_5806F0(inven_ui_target_inventory_scrollbar);
+    scrollbar_ui_control_redraw(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x579D70

@@ -458,8 +458,8 @@ void multiplayer_hub_ui_exit()
 void sub_581910(TigRect* rect)
 {
     sub_582E50(rect);
-    sub_5806F0(stru_686248);
-    sub_5806F0(stru_6862D0);
+    scrollbar_ui_control_redraw(stru_686248);
+    scrollbar_ui_control_redraw(stru_6862D0);
 }
 
 // 0x581950
@@ -1534,7 +1534,7 @@ void sub_583830(TigRect* dirty_rect)
                     && dirty_rect->y < stru_5CC258.y + stru_5CC258.height
                     && stru_5CC258.x < dirty_rect->x + dirty_rect->width
                     && stru_5CC258.y < dirty_rect->y + dirty_rect->height)) {
-                sub_5806F0(stru_686520);
+                scrollbar_ui_control_redraw(stru_686520);
             }
         } else {
             tig_art_interface_id_create(760, 0, 0, 0, &art_id);

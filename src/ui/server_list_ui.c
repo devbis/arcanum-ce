@@ -263,7 +263,7 @@ void sub_585E40()
     sb_create_info.field_38 = 0;
     sb_create_info.field_40 = sub_586AB0;
     scrollbar_ui_control_create(&stru_686990, &sb_create_info, sub_549820());
-    sub_5806F0(stru_686990);
+    scrollbar_ui_control_redraw(stru_686990);
 
     dword_68699C = true;
 }
@@ -350,7 +350,7 @@ void sub_5860D0(TigRect* rect)
         sub_586ED0(rect, sub_549820());
         sub_586D20(rect, sub_549820());
         sub_586AD0(rect, sub_549820());
-        sub_5806F0(stru_686990);
+        scrollbar_ui_control_redraw(stru_686990);
     }
 }
 
@@ -583,7 +583,7 @@ bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
 
                 sub_587570(&stru_5CCC68, window_handle);
                 sub_587D60(&stru_5CCC48, window_handle);
-                sub_5806F0(stru_686990);
+                scrollbar_ui_control_redraw(stru_686990);
                 return true;
             }
             if (msg->data.mouse.x >= stru_5CCC68.x
