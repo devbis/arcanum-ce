@@ -3824,15 +3824,15 @@ void sub_55EFF0()
 
     if (!dword_64DEE4) {
         sb.flags = 0x39F;
-        sb.field_38 = dword_64D424;
+        sb.value = dword_64D424;
         sb.field_3C = sub_55F0E0;
         if (dword_64CDC8 > 15) {
-            sb.field_24 = dword_64CDC8 - 15;
+            sb.max_value = dword_64CDC8 - 15;
         } else {
-            sb.field_24 = 0;
+            sb.max_value = 0;
         }
         sb.scrollbar_rect = stru_5C8F40;
-        sb.field_28 = 0;
+        sb.min_value = 0;
         sb.content_rect.width = stru_5C8F40.width + 160;
         sb.content_rect.x = 23;
         sb.content_rect.y = 66;

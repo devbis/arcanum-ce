@@ -3031,12 +3031,12 @@ void mainmenu_ui_load_game_create()
 
     stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
-    stru_64C260.field_28 = 0;
-    stru_64C260.field_24 = window->max_top_index + 1;
-    if (stru_64C260.field_24 > 0) {
-        stru_64C260.field_24--;
+    stru_64C260.min_value = 0;
+    stru_64C260.max_value = window->max_top_index + 1;
+    if (stru_64C260.max_value > 0) {
+        stru_64C260.max_value--;
     }
-    stru_64C260.field_38 = window->selected_index < 7 ? 0 : window->selected_index;
+    stru_64C260.value = window->selected_index < 7 ? 0 : window->selected_index;
     stru_64C260.field_2C = 1;
     stru_64C260.field_3C = sub_542280;
     stru_64C260.field_40 = sub_5422A0;
@@ -3549,7 +3549,7 @@ void sub_543060()
     if (window->selected_index > 0) {
         window->selected_index--;
         if (window->selected_index < window->top_index) {
-            sub_5810D0(stru_64C220, 2, window->selected_index);
+            scrollbar_ui_control_set(stru_64C220, SCROLLBAR_CURRENT_VALUE, window->selected_index);
         }
         gsound_play_sfx(0, 1);
         sub_542560();
@@ -3567,7 +3567,7 @@ void sub_5430D0()
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
         if (window->selected_index > window->top_index + window->content_rect.height / 20) {
-            sub_5810D0(stru_64C220, 2, window->selected_index - window->content_rect.height / 20);
+            scrollbar_ui_control_set(stru_64C220, SCROLLBAR_CURRENT_VALUE, window->selected_index - window->content_rect.height / 20);
         }
         gsound_play_sfx(0, 1);
         sub_542560();
@@ -3717,12 +3717,12 @@ void mainmenu_ui_save_game_create()
 
     stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
-    stru_64C260.field_28 = 0;
-    stru_64C260.field_24 = window->max_top_index + 1;
-    if (stru_64C260.field_24 > 0) {
-        stru_64C260.field_24--;
+    stru_64C260.min_value = 0;
+    stru_64C260.max_value = window->max_top_index + 1;
+    if (stru_64C260.max_value > 0) {
+        stru_64C260.max_value--;
     }
-    stru_64C260.field_38 = 0;
+    stru_64C260.value = 0;
     stru_64C260.field_2C = 1;
     stru_64C260.field_3C = sub_542280;
     stru_64C260.field_40 = sub_5422A0;
@@ -5283,8 +5283,8 @@ void mainmenu_ui_create_multiplayer_select_char()
     stru_64C2B0.scrollbar_rect.y = 204;
     stru_64C2B0.scrollbar_rect.width = 16;
     stru_64C2B0.scrollbar_rect.height = 344;
-    stru_64C2B0.field_24 = dword_64C420 > 17 ? dword_64C420 - 17 : 0;
-    stru_64C2B0.field_28 = 0;
+    stru_64C2B0.max_value = dword_64C420 > 17 ? dword_64C420 - 17 : 0;
+    stru_64C2B0.min_value = 0;
     stru_64C2B0.field_40 = sub_548B60;
     stru_64C2B0.field_3C = sub_546180;
 

@@ -4320,9 +4320,9 @@ void inven_ui_target_inventory_scrollbar_create()
 
     info.flags = 0x39F;
     info.field_3C = sub_579E00;
-    info.field_38 = dword_681508;
-    info.field_24 = dword_681510;
-    info.field_28 = 0;
+    info.value = dword_681508;
+    info.max_value = dword_681510;
+    info.min_value = 0;
 
     if (inven_ui_mode == 1) {
         info.scrollbar_rect = inven_ui_barter_scrollbar_rect;

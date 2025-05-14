@@ -154,9 +154,9 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
     ctrl->id = *id;
     sub_5811F0(ctrl, info);
 
-    if (ctrl->info.field_38 < ctrl->info.field_28
-        || ctrl->info.field_38 > ctrl->info.field_24) {
-        ctrl->info.field_38 = ctrl->info.field_28;
+    if (ctrl->info.value < ctrl->info.min_value
+        || ctrl->info.value > ctrl->info.max_value) {
+        ctrl->info.value = ctrl->info.min_value;
     }
 
     ctrl->window_handle = window_handle;
@@ -192,7 +192,7 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
     tig_button_create(&button_data, &(ctrl->button_down));
 
     if (ctrl->info.field_3C != NULL) {
-        ctrl->info.field_3C(ctrl->info.field_38);
+        ctrl->info.field_3C(ctrl->info.value);
     }
 
     return true;
@@ -307,7 +307,7 @@ void sub_5807F0(int index, int a2)
     v1 = sub_581550(ctrl->id.index);
 
     dst_rect.x = ctrl->info.scrollbar_rect.x;
-    if (ctrl->info.field_38 != ctrl->info.field_24 || a2 != 0) {
+    if (ctrl->info.value != ctrl->info.max_value || a2 != 0) {
         dst_rect.y = sub_5815D0(ctrl->id.index) + a2;
     } else {
         dst_rect.y = ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - sub_5815A0(index);
@@ -417,21 +417,21 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         }
 
                         if (sub_5813E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
-                            ctrl->info.field_38 -= ctrl->info.field_30;
-                            if (ctrl->info.field_38 < ctrl->info.field_28) {
-                                ctrl->info.field_38 = ctrl->info.field_28;
+                            ctrl->info.value -= ctrl->info.field_30;
+                            if (ctrl->info.value < ctrl->info.min_value) {
+                                ctrl->info.value = ctrl->info.min_value;
                             }
                             if (ctrl->info.field_3C != NULL) {
-                                ctrl->info.field_3C(ctrl->info.field_38);
+                                ctrl->info.field_3C(ctrl->info.value);
                             }
                             scrollbar_ui_control_redraw(ctrl->id);
                         } else if (sub_581460(index, msg->data.mouse.x, msg->data.mouse.y)) {
-                            ctrl->info.field_38 += ctrl->info.field_30;
-                            if (ctrl->info.field_38 > ctrl->info.field_24) {
-                                ctrl->info.field_38 = ctrl->info.field_24;
+                            ctrl->info.value += ctrl->info.field_30;
+                            if (ctrl->info.value > ctrl->info.max_value) {
+                                ctrl->info.value = ctrl->info.max_value;
                             }
                             if (ctrl->info.field_3C != NULL) {
-                                ctrl->info.field_3C(ctrl->info.field_38);
+                                ctrl->info.field_3C(ctrl->info.value);
                             }
                             scrollbar_ui_control_redraw(ctrl->id);
                         }
@@ -441,8 +441,8 @@ bool scrollbar_ui_process_event(TigMessage* msg)
             return false;
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
             if (dword_5CBF78 != -1) {
-                if (sub_5816A0(dword_5CBF78, scrollbar_ui_controls[dword_5CBF78].info.field_38) + dword_684680) {
-                    scrollbar_ui_controls[dword_5CBF78].info.field_38 += dword_684680;
+                if (sub_5816A0(dword_5CBF78, scrollbar_ui_controls[dword_5CBF78].info.value) + dword_684680) {
+                    scrollbar_ui_controls[dword_5CBF78].info.value += dword_684680;
                 }
                 dword_684680 = 0;
                 sub_5807F0(dword_5CBF78, 0);
@@ -465,36 +465,36 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                     - sub_5815D0(dword_5CBF78);
                 v3 = sub_581550(dword_5CBF78);
                 v4 = v2 - dword_684680 * v3;
-                if (v4 > v3 && ctrl->info.field_38 + dword_684680 < ctrl->info.field_24) {
+                if (v4 > v3 && ctrl->info.value + dword_684680 < ctrl->info.max_value) {
                     do {
                         v4 -= v3;
                         dword_684680 += ctrl->info.field_2C;
-                    } while (v4 > v3 && ctrl->info.field_38 + dword_684680 < ctrl->info.field_24);
-                } else if (v4 < -v3 && ctrl->info.field_38 + dword_684680 > ctrl->info.field_28) {
+                    } while (v4 > v3 && ctrl->info.value + dword_684680 < ctrl->info.max_value);
+                } else if (v4 < -v3 && ctrl->info.value + dword_684680 > ctrl->info.min_value) {
                     do {
                         v4 += -v3;
                         dword_684680 -= ctrl->info.field_2C;
-                    } while (v4 < -v3 && ctrl->info.field_38 + dword_684680 > ctrl->info.field_28);
+                    } while (v4 < -v3 && ctrl->info.value + dword_684680 > ctrl->info.min_value);
                 } else {
                     sub_5807F0(dword_5CBF78, v2);
                     return true;
                 }
 
                 if (ctrl->info.field_3C != NULL) {
-                    if (sub_5816A0(dword_5CBF78, ctrl->info.field_38 + dword_684680)) {
+                    if (sub_5816A0(dword_5CBF78, ctrl->info.value + dword_684680)) {
                         sub_5816D0();
-                        ctrl->info.field_3C(ctrl->info.field_38 + dword_684680);
+                        ctrl->info.field_3C(ctrl->info.value + dword_684680);
                         sub_5816E0();
                     } else {
-                        if (ctrl->info.field_38 + dword_684680 > ctrl->info.field_24) {
-                            ctrl->info.field_3C(ctrl->info.field_24);
-                            sub_5807F0(dword_5CBF78, ctrl->info.scrollbar_rect.height - ((int)v3 * (ctrl->info.field_38 + 1)));
+                        if (ctrl->info.value + dword_684680 > ctrl->info.max_value) {
+                            ctrl->info.field_3C(ctrl->info.max_value);
+                            sub_5807F0(dword_5CBF78, ctrl->info.scrollbar_rect.height - ((int)v3 * (ctrl->info.value + 1)));
                             return true;
                         }
 
-                        if (ctrl->info.field_38 + dword_684680 < ctrl->info.field_28) {
-                            ctrl->info.field_3C(ctrl->info.field_28);
-                            sub_5807F0(dword_5CBF78, -(ctrl->info.field_38 * (int)v3));
+                        if (ctrl->info.value + dword_684680 < ctrl->info.min_value) {
+                            ctrl->info.field_3C(ctrl->info.min_value);
+                            sub_5807F0(dword_5CBF78, -(ctrl->info.value * (int)v3));
                             return true;
                         }
                     }
@@ -511,22 +511,22 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                     && (ctrl->flags & SB_HIDDEN) == 0
                     && sub_5814E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
                     if (msg->data.mouse.z > 0) {
-                        ctrl->info.field_38 -= ctrl->info.field_34;
-                        if (ctrl->info.field_38 < ctrl->info.field_28) {
-                            ctrl->info.field_38 = ctrl->info.field_28;
+                        ctrl->info.value -= ctrl->info.field_34;
+                        if (ctrl->info.value < ctrl->info.min_value) {
+                            ctrl->info.value = ctrl->info.min_value;
                         }
                         if (ctrl->info.field_3C != NULL) {
-                            ctrl->info.field_3C(ctrl->info.field_38);
+                            ctrl->info.field_3C(ctrl->info.value);
                         }
                         scrollbar_ui_control_redraw(ctrl->id);
                         return true;
                     } else if (msg->data.mouse.z < 0) {
-                        ctrl->info.field_38 += ctrl->info.field_34;
-                        if (ctrl->info.field_38 > ctrl->info.field_24) {
-                            ctrl->info.field_38 = ctrl->info.field_24;
+                        ctrl->info.value += ctrl->info.field_34;
+                        if (ctrl->info.value > ctrl->info.max_value) {
+                            ctrl->info.value = ctrl->info.max_value;
                         }
                         if (ctrl->info.field_3C != NULL) {
-                            ctrl->info.field_3C(ctrl->info.field_38);
+                            ctrl->info.field_3C(ctrl->info.value);
                         }
                         scrollbar_ui_control_redraw(ctrl->id);
                         return true;
@@ -546,12 +546,12 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                 if ((ctrl->flags & SB_IN_USE) != 0
                     && (ctrl->flags & SB_HIDDEN) == 0) {
                     if (msg->data.button.button_handle == ctrl->button_up) {
-                        ctrl->info.field_38 -= ctrl->info.field_2C;
-                        if (ctrl->info.field_38 < ctrl->info.field_28) {
-                            ctrl->info.field_38 = ctrl->info.field_28;
+                        ctrl->info.value -= ctrl->info.field_2C;
+                        if (ctrl->info.value < ctrl->info.min_value) {
+                            ctrl->info.value = ctrl->info.min_value;
                         }
                         if (ctrl->info.field_3C != NULL) {
-                            ctrl->info.field_3C(ctrl->info.field_38);
+                            ctrl->info.field_3C(ctrl->info.value);
                         }
                         scrollbar_ui_control_redraw(ctrl->id);
                         if (dword_5CBF78 == ctrl->id.index) {
@@ -561,12 +561,12 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                     }
 
                     if (msg->data.button.button_handle == ctrl->button_down) {
-                        ctrl->info.field_38 += ctrl->info.field_2C;
-                        if (ctrl->info.field_38 > ctrl->info.field_24) {
-                            ctrl->info.field_38 = ctrl->info.field_24;
+                        ctrl->info.value += ctrl->info.field_2C;
+                        if (ctrl->info.value > ctrl->info.max_value) {
+                            ctrl->info.value = ctrl->info.max_value;
                         }
                         if (ctrl->info.field_3C != NULL) {
-                            ctrl->info.field_3C(ctrl->info.field_38);
+                            ctrl->info.field_3C(ctrl->info.value);
                         }
                         scrollbar_ui_control_redraw(ctrl->id);
                         if (dword_5CBF78 == ctrl->id.index) {
@@ -586,7 +586,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
 }
 
 // 0x5810D0
-void sub_5810D0(ScrollbarId id, int a2, int a3)
+void scrollbar_ui_control_set(ScrollbarId id, int type, int value)
 {
     ScrollbarUiControl* ctrl;
 
@@ -594,30 +594,32 @@ void sub_5810D0(ScrollbarId id, int a2, int a3)
         return;
     }
 
-    switch (a2) {
-    case 0:
-        ctrl->info.field_28 = a3;
-        if (ctrl->info.field_38 < ctrl->info.field_28) {
-            ctrl->info.field_38 = ctrl->info.field_28;
+    switch (type) {
+    case SCROLLBAR_MIN_VALUE:
+        ctrl->info.min_value = value;
+        if (ctrl->info.value < ctrl->info.min_value) {
+            ctrl->info.value = ctrl->info.min_value;
         }
         break;
-    case 1:
-        ctrl->info.field_24 = a3;
-        if (ctrl->info.field_38 > ctrl->info.field_24) {
-            ctrl->info.field_38 = ctrl->info.field_24;
+    case SCROLLBAR_MAX_VALUE:
+        ctrl->info.max_value = value;
+        if (ctrl->info.value > ctrl->info.max_value) {
+            ctrl->info.value = ctrl->info.max_value;
         }
         break;
-    case 2:
-        if (a3 >= ctrl->info.field_28 && a3 <= ctrl->info.field_24) {
-            ctrl->info.field_38 = a3;
+    case SCROLLBAR_CURRENT_VALUE:
+        if (value >= ctrl->info.min_value && value <= ctrl->info.max_value) {
+            ctrl->info.value = value;
         } else {
-            ctrl->info.field_38 = ctrl->info.field_28;
+            ctrl->info.value = ctrl->info.min_value;
         }
         break;
+    default:
+        return;
     }
 
     if (ctrl->info.field_3C != NULL) {
-        ctrl->info.field_3C(ctrl->info.field_38);
+        ctrl->info.field_3C(ctrl->info.value);
     }
 
     scrollbar_ui_control_redraw(ctrl->id);
@@ -660,11 +662,11 @@ void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
     }
 
     if ((ctrl->info.flags & 0x4) == 0) {
-        ctrl->info.field_24 = 10;
+        ctrl->info.max_value = 10;
     }
 
     if ((ctrl->info.flags & 0x8) == 0) {
-        ctrl->info.field_28 = 0;
+        ctrl->info.min_value = 0;
     }
 
     if ((ctrl->info.flags & 0x10) == 0) {
@@ -680,7 +682,7 @@ void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
     }
 
     if ((ctrl->info.flags & 0x80) == 0) {
-        ctrl->info.field_38 = 0;
+        ctrl->info.value = 0;
     }
 
     if ((ctrl->info.flags & 0x100) == 0) {
@@ -800,7 +802,7 @@ float sub_581550(int id)
 
     ctrl = &(scrollbar_ui_controls[id]);
     return (float)(ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
-        / (float)(ctrl->info.field_2C + ctrl->info.field_24 - ctrl->info.field_28)
+        / (float)(ctrl->info.field_2C + ctrl->info.max_value - ctrl->info.min_value)
         * (float)ctrl->info.field_2C;
 }
 
@@ -822,7 +824,7 @@ int sub_5815D0(int id)
     return scrollbar_ui_button_up_height
         + scrollbar_ui_controls[id].info.scrollbar_rect.y
         + (int)(sub_581550(id)
-            * (float)(scrollbar_ui_controls[id].info.field_38 - scrollbar_ui_controls[id].info.field_28)
+            * (float)(scrollbar_ui_controls[id].info.value - scrollbar_ui_controls[id].info.min_value)
             / (float)(scrollbar_ui_controls[id].info.field_2C));
 }
 
@@ -838,8 +840,8 @@ int sub_581660(int id)
 // 0x5816A0
 bool sub_5816A0(int id, int a2)
 {
-    return a2 >= scrollbar_ui_controls[id].info.field_28
-        && a2 <= scrollbar_ui_controls[id].info.field_24;
+    return a2 >= scrollbar_ui_controls[id].info.min_value
+        && a2 <= scrollbar_ui_controls[id].info.max_value;
 }
 
 // 0x5816D0

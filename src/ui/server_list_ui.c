@@ -256,11 +256,11 @@ void sub_585E40()
     sb_create_info.content_rect.y = 0;
     sb_create_info.content_rect.width = 800;
     sb_create_info.content_rect.height = 600;
-    sb_create_info.field_24 = 0;
-    sb_create_info.field_28 = 0;
+    sb_create_info.max_value = 0;
+    sb_create_info.min_value = 0;
     sb_create_info.field_2C = 1;
     sb_create_info.field_3C = sub_588D70;
-    sb_create_info.field_38 = 0;
+    sb_create_info.value = 0;
     sb_create_info.field_40 = sub_586AB0;
     scrollbar_ui_control_create(&stru_686990, &sb_create_info, sub_549820());
     scrollbar_ui_control_redraw(stru_686990);
@@ -298,9 +298,9 @@ void sub_585F00(TigNetServer* server)
         }
 
         if (dword_6869A4 > 21) {
-            sub_5810D0(stru_686990, 1, dword_6869A4 - 21);
+            scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, dword_6869A4 - 21);
         } else {
-            sub_5810D0(stru_686990, 1, 0);
+            scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, 0);
         }
 
         sub_5860D0(NULL);
@@ -331,9 +331,9 @@ void sub_585FF0(TigNetServer* servers, int cnt)
     }
 
     if (cnt > 21) {
-        sub_5810D0(stru_686990, 1, cnt - 21);
+        scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, cnt - 21);
     } else {
-        sub_5810D0(stru_686990, 1, 0);
+        scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, 0);
     }
 
     sub_5860D0(NULL);

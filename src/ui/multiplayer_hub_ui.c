@@ -407,12 +407,12 @@ void multiplayer_hub_ui_init()
     sb_create_info.content_rect.y = 188;
     sb_create_info.content_rect.width = 259;
     sb_create_info.content_rect.height = 368;
-    sb_create_info.field_24 = 0;
-    sb_create_info.field_28 = 0;
+    sb_create_info.max_value = 0;
+    sb_create_info.min_value = 0;
     sb_create_info.field_2C = 1;
     sb_create_info.field_30 = 1;
     sb_create_info.field_34 = 1;
-    sb_create_info.field_38 = 0;
+    sb_create_info.value = 0;
     sb_create_info.field_3C = 0;
     sb_create_info.field_40 = sub_582E50;
     scrollbar_ui_control_create(&stru_686248, &sb_create_info, sub_549820());
@@ -425,8 +425,8 @@ void multiplayer_hub_ui_init()
     sb_create_info.content_rect.y = 99;
     sb_create_info.content_rect.width = 440;
     sb_create_info.content_rect.height = 1170;
-    sb_create_info.field_24 = 52;
-    sb_create_info.field_38 = 52;
+    sb_create_info.max_value = 52;
+    sb_create_info.value = 52;
     sb_create_info.field_3C = sub_581F90;
     scrollbar_ui_control_create(&stru_6862D0, &sb_create_info, sub_549820());
 
@@ -1303,9 +1303,9 @@ void mainmenu_ui_create_multiplayer_hub()
     sb_create_info.scrollbar_rect = stru_5CC258;
     sb_create_info.content_rect = stru_5CC268;
     sb_create_info.flags = 0xFFFF;
-    sb_create_info.field_38 = 0;
-    sb_create_info.field_24 = 0;
-    sb_create_info.field_28 = 0;
+    sb_create_info.value = 0;
+    sb_create_info.max_value = 0;
+    sb_create_info.min_value = 0;
     sb_create_info.field_34 = 1;
     sb_create_info.field_30 = 1;
     sb_create_info.field_2C = 1;
