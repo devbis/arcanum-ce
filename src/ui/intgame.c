@@ -1786,7 +1786,7 @@ bool sub_54B5D0(TigMessage* msg)
     char time_str_buffer[80];
     char buffer[80];
 
-    if (sub_580B10(msg)
+    if (scrollbar_ui_process_event(msg)
         || sub_54DC80(msg)
         || sub_57DC60(msg)) {
         return true;

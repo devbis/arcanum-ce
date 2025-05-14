@@ -296,7 +296,7 @@ void sub_5807F0(int index, int a2)
     }
 
     ctrl = &(scrollbar_ui_controls[index]);
-    if ((ctrl->flags & 0x02) != 0) {
+    if ((ctrl->flags & SB_HIDDEN) != 0) {
         return;
     }
 
@@ -388,11 +388,10 @@ void sub_5807F0(int index, int a2)
 }
 
 // 0x580B10
-bool sub_580B10(TigMessage* msg)
+bool scrollbar_ui_process_event(TigMessage* msg)
 {
     int index;
     ScrollbarUiControl* ctrl;
-    int v1;
 
     if (dword_684684 != 0) {
         return false;
@@ -405,8 +404,8 @@ bool sub_580B10(TigMessage* msg)
             if (dword_5CBF78 == -1) {
                 for (index = 0; index < 8; index++) {
                     ctrl = &(scrollbar_ui_controls[index]);
-                    if ((ctrl->flags & 0x1) != 0
-                        && (ctrl->flags & 0x2) == 0) {
+                    if ((ctrl->flags & SB_IN_USE) != 0
+                        && (ctrl->flags & SB_HIDDEN) == 0) {
                         if (sub_581360(index, msg->data.mouse.x, msg->data.mouse.y)) {
                             dword_5CBF78 = index;
                             dword_68467C = msg->data.mouse.y
@@ -508,8 +507,8 @@ bool sub_580B10(TigMessage* msg)
         case TIG_MESSAGE_MOUSE_WHEEL:
             for (index = 0; index < 8; index++) {
                 ctrl = &(scrollbar_ui_controls[index]);
-                if ((ctrl->flags & 0x1) != 0
-                    && (ctrl->flags & 0x2) == 0
+                if ((ctrl->flags & SB_IN_USE) != 0
+                    && (ctrl->flags & SB_HIDDEN) == 0
                     && sub_5814E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
                     if (msg->data.mouse.z > 0) {
                         ctrl->info.field_38 -= ctrl->info.field_34;
@@ -544,12 +543,11 @@ bool sub_580B10(TigMessage* msg)
         case TIG_BUTTON_STATE_PRESSED:
             for (index = 0; index < 8; index++) {
                 ctrl = &(scrollbar_ui_controls[index]);
-                if ((ctrl->flags & 0x8) != 0
-                    && (ctrl->flags & 0x2) == 0) {
+                if ((ctrl->flags & SB_IN_USE) != 0
+                    && (ctrl->flags & SB_HIDDEN) == 0) {
                     if (msg->data.button.button_handle == ctrl->button_up) {
-                        v1 = ctrl->info.field_38 - ctrl->info.field_2C;
-                        ctrl->info.field_38 = v1;
-                        if (v1 < ctrl->info.field_28) {
+                        ctrl->info.field_38 -= ctrl->info.field_2C;
+                        if (ctrl->info.field_38 < ctrl->info.field_28) {
                             ctrl->info.field_38 = ctrl->info.field_28;
                         }
                         if (ctrl->info.field_3C != NULL) {
@@ -563,9 +561,8 @@ bool sub_580B10(TigMessage* msg)
                     }
 
                     if (msg->data.button.button_handle == ctrl->button_down) {
-                        v1 = ctrl->info.field_38 + ctrl->info.field_2C;
-                        ctrl->info.field_38 += v1;
-                        if (v1 > ctrl->info.field_24) {
+                        ctrl->info.field_38 += ctrl->info.field_2C;
+                        if (ctrl->info.field_38 > ctrl->info.field_24) {
                             ctrl->info.field_38 = ctrl->info.field_24;
                         }
                         if (ctrl->info.field_3C != NULL) {

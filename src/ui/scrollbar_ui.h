@@ -37,7 +37,7 @@ void scrollbar_ui_control_destroy(ScrollbarId id);
 void sub_5806F0(ScrollbarId id);
 bool scrollbar_ui_control_show(ScrollbarId id);
 bool scrollbar_ui_control_hide(ScrollbarId id);
-bool sub_580B10(TigMessage* msg);
+bool scrollbar_ui_process_event(TigMessage* msg);
 void sub_5810D0(ScrollbarId id, int a2, int a3);
 void sub_581180();
 void sub_581190();
