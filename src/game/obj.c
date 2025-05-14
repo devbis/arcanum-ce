@@ -629,7 +629,7 @@ bool obj_validate_system(unsigned int flags)
             obj_type = object->type;
             obj_unlock(obj);
 
-            if (sub_405BC0(obj)) {
+            if (!obj_is_proto(obj)) {
                 if (obj_field_int32_get(obj, OBJ_F_TYPE) != obj_type) {
                     tig_debug_println("!VS  Type get failed.");
                     return false;
@@ -884,7 +884,7 @@ void sub_405B30(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
 }
 
 // 0x405BC0
-bool sub_405BC0(int64_t obj)
+bool obj_is_proto(int64_t obj)
 {
     Object* object;
     bool ret;

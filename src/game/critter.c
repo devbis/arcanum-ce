@@ -364,7 +364,7 @@ int critter_fatigue_damage_set(int64_t obj, int value)
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE, value);
     sub_460260(obj);
 
-    if (value != 0 && !sub_405BC0(obj)) {
+    if (value != 0 && !obj_is_proto(obj)) {
         critter_fatigue_timeevent_schedule(obj, FATIGUE_EVENT_RECOVERY, 80000);
 
         if (!was_unconscious && critter_is_unconscious(obj)) {
@@ -1154,7 +1154,7 @@ bool critter_fatigue_timeevent_schedule(int64_t obj, int type, int delay)
         return true;
     }
 
-    if (sub_405BC0(obj)) {
+    if (obj_is_proto(obj)) {
         return true;
     }
 
@@ -1274,7 +1274,7 @@ bool critter_resting_timeevent_schedule(int64_t obj)
         return true;
     }
 
-    if (sub_405BC0(obj)) {
+    if (obj_is_proto(obj)) {
         return true;
     }
 
@@ -1322,7 +1322,7 @@ bool critter_decay_timeevent_schedule(int64_t obj)
     DateTime datetime;
 
     if (obj == OBJ_HANDLE_NULL
-        || sub_405BC0(obj)) {
+        || obj_is_proto(obj)) {
         return false;
     }
 
@@ -1385,7 +1385,7 @@ bool critter_npc_combat_focus_wipe_schedule(int64_t npc_obj)
     DateTime datetime;
 
     if (npc_obj == OBJ_HANDLE_NULL
-        || !sub_405BC0(npc_obj)) {
+        || obj_is_proto(npc_obj)) {
         return false;
     }
 
