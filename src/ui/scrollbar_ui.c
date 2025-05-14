@@ -92,7 +92,7 @@ static int dword_68467C;
 static int dword_684680;
 
 // 0x684684
-static int dword_684684;
+static int scrollbar_ui_ignore_events_counter;
 
 // 0x580410
 bool scrollbar_ui_init(GameInitInfo* init_info)
@@ -135,7 +135,7 @@ void scrollbar_ui_reset()
 
     dword_684678 = random_between(0, 8192);
     dword_5CBF78 = -1;
-    dword_684684 = 0;
+    scrollbar_ui_ignore_events_counter = 0;
 }
 
 // 0x5804E0
@@ -393,7 +393,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
     int index;
     ScrollbarUiControl* ctrl;
 
-    if (dword_684684 != 0) {
+    if (scrollbar_ui_ignore_events_counter != 0) {
         return false;
     }
 
@@ -623,28 +623,16 @@ void sub_5810D0(ScrollbarId id, int a2, int a3)
     sub_5806F0(ctrl->id);
 }
 
-// 0x581180
-void sub_581180()
-{
-    dword_684684++;
-}
-
-// 0x581190
-void sub_581190()
-{
-    dword_684684--;
-}
-
 // 0x5811A0
-void sub_5811A0()
+void scrollbar_ui_begin_ignore_events()
 {
-    dword_684684 = 1;
+    scrollbar_ui_ignore_events_counter = 1;
 }
 
 // 0x5811B0
-void sub_5811B0()
+void scrollbar_ui_end_ignore_events()
 {
-    dword_684684 = 0;
+    scrollbar_ui_ignore_events_counter = 0;
 }
 
 // 0x5811C0

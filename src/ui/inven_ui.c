@@ -2111,9 +2111,9 @@ bool inven_ui_message_filter(TigMessage* msg)
     bool v45 = false;
 
     if (qword_6810E0 != OBJ_HANDLE_NULL) {
-        sub_5811A0();
+        scrollbar_ui_begin_ignore_events();
     } else {
-        sub_5811B0();
+        scrollbar_ui_end_ignore_events();
     }
 
     switch (msg->type) {
@@ -4310,7 +4310,7 @@ void inven_ui_target_inventory_scrollbar_create()
 {
     ScrollbarUiControlInfo info;
 
-    sub_5811B0();
+    scrollbar_ui_end_ignore_events();
 
     if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
         || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
@@ -4354,7 +4354,7 @@ void inven_ui_target_inventory_scrollbar_destroy()
     }
 
     scrollbar_ui_control_destroy(inven_ui_target_inventory_scrollbar);
-    sub_5811B0();
+    scrollbar_ui_end_ignore_events();
 }
 
 // 0x579DA0
