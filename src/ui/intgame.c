@@ -8387,7 +8387,7 @@ UiButtonInfo* intgame_recent_action_button_get(int index)
 }
 
 // 0x557B30
-void sub_557B30(int index, int x, int y)
+void intgame_recent_action_button_position_set(int index, int x, int y)
 {
     intgame_recent_action_buttons[index].x = x;
     intgame_recent_action_buttons[index].y = y;

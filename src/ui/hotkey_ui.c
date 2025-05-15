@@ -134,8 +134,8 @@ void hotkey_ui_resize(GameResizeInfo* resize_info)
 {
     (void)resize_info;
 
-    sub_557B30(0, 69, 548);
-    sub_557B30(1, 114, 548);
+    intgame_recent_action_button_position_set(0, 69, 548);
+    intgame_recent_action_button_position_set(1, 114, 548);
 }
 
 // 0x57D840

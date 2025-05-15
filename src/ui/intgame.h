@@ -115,7 +115,7 @@ void sub_557AC0(int group, int index, UiButtonInfo* button_info);
 int64_t sub_557B00();
 mes_file_handle_t sub_557B10();
 UiButtonInfo* intgame_recent_action_button_get(int index);
-void sub_557B30(int index, int x, int y);
+void intgame_recent_action_button_position_set(int index, int x, int y);
 int sub_557B50(int index);
 int sub_557B60();
 int sub_557C00();
