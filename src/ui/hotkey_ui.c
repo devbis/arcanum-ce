@@ -309,7 +309,7 @@ void sub_57DC20()
 }
 
 // 0x57DC60
-bool sub_57DC60(TigMessage* msg)
+bool hotkey_ui_process_event(TigMessage* msg)
 {
     int index;
 

@@ -17,7 +17,7 @@ void sub_57DAB0();
 bool hotkey_ui_save(TigFile* stream);
 bool hotkey_ui_load(GameLoadInfo* load_info);
 void sub_57DC20();
-bool sub_57DC60(TigMessage* msg);
+bool hotkey_ui_process_event(TigMessage* msg);
 bool sub_57DE00();
 void intgame_hotkey_refresh(int index);
 void sub_57E5A0(Hotkey* hotkey);

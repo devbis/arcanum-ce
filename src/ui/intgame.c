@@ -1788,7 +1788,7 @@ bool sub_54B5D0(TigMessage* msg)
 
     if (scrollbar_ui_process_event(msg)
         || sub_54DC80(msg)
-        || sub_57DC60(msg)) {
+        || hotkey_ui_process_event(msg)) {
         return true;
     }
 
