@@ -760,22 +760,24 @@ bool wmap_ui_init(GameInitInfo* init_info)
 // 0x55FF80
 void wmap_ui_exit()
 {
-    int v1;
-    int v2;
+    int wmap;
+    int tile;
 
     dword_66D868 = 0;
     dword_66D8AC = 0;
 
-    for (v1 = 0; v1 < 3; v1++) {
-        if (stru_5C9228[v1].tiles != NULL) {
-            for (v2 = 0; v2 < stru_5C9228[v1].num_tiles; v2++) {
-                if (stru_5C9228[v1].tiles[v2].field_18 != NULL) {
-                    FREE(stru_5C9228[v1].tiles[v2].field_18);
+    for (wmap = 0; wmap < 3; wmap++) {
+        if (stru_5C9228[wmap].tiles != NULL) {
+            for (tile = 0; tile < stru_5C9228[wmap].num_tiles; tile++) {
+                if (stru_5C9228[wmap].tiles[tile].field_18 != NULL) {
+                    FREE(stru_5C9228[wmap].tiles[tile].field_18);
                 }
             }
 
-            FREE(stru_5C9228[v1].tiles);
-            stru_5C9228[v1].tiles = NULL;
+            FREE(stru_5C9228[wmap].tiles);
+            stru_5C9228[wmap].tiles = NULL;
+
+            stru_5C9228[wmap].num_tiles = 0;
         }
     }
 
