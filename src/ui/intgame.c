@@ -469,7 +469,7 @@ static TigRect stru_5C6EE0[5] = {
 static UiButtonInfo stru_5C6F30 = { 616, 455, 182, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6F40
-static UiButtonInfo stru_5C6F40[] = {
+static UiButtonInfo intgame_recent_action_buttons[] = {
     { 69, 548, -1, TIG_BUTTON_HANDLE_INVALID },
     { 114, 548, -1, TIG_BUTTON_HANDLE_INVALID },
 };
@@ -8381,16 +8381,16 @@ mes_file_handle_t sub_557B10()
 }
 
 // 0x557B20
-UiButtonInfo* sub_557B20(int index)
+UiButtonInfo* intgame_recent_action_button_get(int index)
 {
-    return &(stru_5C6F40[index]);
+    return &(intgame_recent_action_buttons[index]);
 }
 
 // 0x557B30
 void sub_557B30(int index, int x, int y)
 {
-    stru_5C6F40[index].x = x;
-    stru_5C6F40[index].y = y;
+    intgame_recent_action_buttons[index].x = x;
+    intgame_recent_action_buttons[index].y = y;
 }
 
 // 0x557B50

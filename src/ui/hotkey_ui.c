@@ -107,7 +107,7 @@ bool hotkey_ui_init(GameInitInfo* init_info)
         hotkey = &(stru_683518[index]);
         hotkey->type = HOTKEY_SKILL;
         hotkey->data = sub_557B50(index);
-        sub_557B20(index)->art_num = sub_579F70(hotkey->data);
+        intgame_recent_action_button_get(index)->art_num = sub_579F70(hotkey->data);
     }
 
     for (index = 0; index < 10; index++) {
@@ -166,10 +166,10 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
     if (dword_683510 != TIG_WINDOW_HANDLE_INVALID) {
         for (index = 0; index < 2; index++) {
             hotkey = &(stru_683518[index]);
-            sub_557B20(index)->art_num = hotkey->type == 2 || hotkey->type != 3
+            intgame_recent_action_button_get(index)->art_num = hotkey->type == 2 || hotkey->type != 3
                 ? sub_579F70(hotkey->data)
                 : spell_icon(hotkey->data);
-            intgame_button_create_ex(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
+            intgame_button_create_ex(dword_683510, &stru_6835C8, intgame_recent_action_button_get(index), 0x1);
         }
     }
 
@@ -217,10 +217,10 @@ void sub_57DA50()
     tig_button_handle_t button_handle;
 
     for (index = 0; index < 2; index++) {
-        button_handle = sub_557B20(index)->button_handle;
+        button_handle = intgame_recent_action_button_get(index)->button_handle;
         if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
             tig_button_destroy(button_handle);
-            sub_557B20(index)->button_handle = TIG_BUTTON_HANDLE_INVALID;
+            intgame_recent_action_button_get(index)->button_handle = TIG_BUTTON_HANDLE_INVALID;
         }
     }
 
@@ -245,11 +245,11 @@ void sub_57DAB0()
         sub_57E5A0(&(stru_683518[index]));
         stru_683518[index].type = 2;
         stru_683518[index].data = sub_557B50(index);
-        sub_557B20(index)->art_num = sub_579F70(stru_683518[index].data);
+        intgame_recent_action_button_get(index)->art_num = sub_579F70(stru_683518[index].data);
 
-        button_handle = sub_557B20(index)->button_handle;
+        button_handle = intgame_recent_action_button_get(index)->button_handle;
         if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_art_interface_id_create(sub_557B20(index)->art_num, 0, 0, 0, &art_id);
+            tig_art_interface_id_create(intgame_recent_action_button_get(index)->art_num, 0, 0, 0, &art_id);
             tig_button_set_art(button_handle, art_id);
         }
     }
@@ -318,7 +318,7 @@ bool hotkey_ui_process_event(TigMessage* msg)
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_RELEASED:
             for (index = 0; index < 2; index++) {
-                if (msg->data.button.button_handle == sub_557B20(index)->button_handle) {
+                if (msg->data.button.button_handle == intgame_recent_action_button_get(index)->button_handle) {
                     sub_54FCF0(&(stru_683518[index]));
                     return true;
                 }
@@ -338,11 +338,11 @@ bool hotkey_ui_process_event(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            if (msg->data.button.button_handle == sub_557B20(0)->button_handle) {
+            if (msg->data.button.button_handle == intgame_recent_action_button_get(0)->button_handle) {
                 sub_550150(&(stru_683518[0]));
                 return true;
             }
-            if (msg->data.button.button_handle == sub_557B20(1)->button_handle) {
+            if (msg->data.button.button_handle == intgame_recent_action_button_get(1)->button_handle) {
                 sub_550150(&(stru_683518[1]));
                 return true;
             }
@@ -1101,18 +1101,18 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
     stru_683518[1].type = stru_683518[0].type;
     stru_683518[1].data = stru_683518[0].data;
     sub_4440E0(stru_683518[0].item_obj.obj, &stru_683518[1].item_obj);
-    sub_557B20(1)->art_num = sub_557B20(0)->art_num;
-    button_handle = sub_557B20(1)->button_handle;
+    intgame_recent_action_button_get(1)->art_num = intgame_recent_action_button_get(0)->art_num;
+    button_handle = intgame_recent_action_button_get(1)->button_handle;
     if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
-        tig_art_interface_id_create(sub_557B20(1)->art_num, 0, 0, 0, &old_art_id);
+        tig_art_interface_id_create(intgame_recent_action_button_get(1)->art_num, 0, 0, 0, &old_art_id);
         tig_button_set_art(button_handle, old_art_id);
     }
 
     stru_683518[0].type = type;
     stru_683518[0].data = data;
     sub_4440E0(item_obj, &stru_683518[1].item_obj);
-    sub_557B20(0)->art_num = tig_art_num_get(new_art_id);
-    button_handle = sub_557B20(0)->button_handle;
+    intgame_recent_action_button_get(0)->art_num = tig_art_num_get(new_art_id);
+    button_handle = intgame_recent_action_button_get(0)->button_handle;
     if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
         tig_button_set_art(button_handle, new_art_id);
     }
@@ -1252,11 +1252,11 @@ void intgame_hotkeys_recover()
 
             hotkey->type = HOTKEY_SKILL;
             hotkey->data = sub_557B50(index);
-            sub_557B20(index)->art_num = sub_579F70(hotkey->data);
+            intgame_recent_action_button_get(index)->art_num = sub_579F70(hotkey->data);
 
-            button_handle = sub_557B20(index)->button_handle;
+            button_handle = intgame_recent_action_button_get(index)->button_handle;
             if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
-                tig_art_interface_id_create(sub_557B20(index)->art_num, 0, 0, 0, &art_id);
+                tig_art_interface_id_create(intgame_recent_action_button_get(index)->art_num, 0, 0, 0, &art_id);
                 tig_button_set_art(button_handle, art_id);
             }
         }
