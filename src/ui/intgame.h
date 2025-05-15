@@ -113,7 +113,7 @@ int sub_557AA0();
 int sub_557AB0();
 void sub_557AC0(int group, int index, UiButtonInfo* button_info);
 int64_t sub_557B00();
-mes_file_handle_t sub_557B10();
+mes_file_handle_t intgame_hotkey_mes_file();
 UiButtonInfo* intgame_recent_action_button_get(int index);
 void intgame_recent_action_button_position_set(int index, int x, int y);
 int sub_557B50(int index);

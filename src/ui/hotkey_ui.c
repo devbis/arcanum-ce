@@ -844,8 +844,8 @@ bool sub_57E8D0(int a1)
         }
 
         if (sub_462A30(parent_obj, stru_683950.item_obj.obj)) {
-            mes_file_entry.num = 4000;
-            mes_get_msg(sub_557B10(), &mes_file_entry);
+            mes_file_entry.num = 4000; // "You already have a duplicate item on the hotkey bank."
+            mes_get_msg(intgame_hotkey_mes_file(), &mes_file_entry);
 
             ui_message.type = UI_MSG_TYPE_FEEDBACK;
             ui_message.str = mes_file_entry.str;

@@ -8375,7 +8375,7 @@ int64_t sub_557B00()
 }
 
 // 0x557B10
-mes_file_handle_t sub_557B10()
+mes_file_handle_t intgame_hotkey_mes_file()
 {
     return intgame_mes_file;
 }
