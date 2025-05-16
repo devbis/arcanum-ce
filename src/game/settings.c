@@ -162,7 +162,7 @@ void settings_set_str_value(Settings* settings, const char* key, const char* val
     if (entry == NULL) {
         settings_add(settings, key, value, NULL);
     } else {
-        if (strlen(value) < strlen(entry->value)) {
+        if (strlen(value) > strlen(entry->value)) {
             FREE(entry->value);
             entry->value = STRDUP(value);
         } else {
