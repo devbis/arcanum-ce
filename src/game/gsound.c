@@ -1407,7 +1407,7 @@ int gsound_music_volume_get()
 void gsound_music_volume_changed()
 {
     gsound_music_volume = 80 * (127 * settings_get_value(&settings, "music volume") / 10) / 100;
-    tig_sound_set_volume_by_type(TIG_SOUND_TYPE_VOICE, gsound_music_volume);
+    tig_sound_set_volume_by_type(TIG_SOUND_TYPE_MUSIC, gsound_music_volume);
 }
 
 // 0x41C9D0
