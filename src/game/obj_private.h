@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_OBJ_PRIVATE_H_
 
 #include "game/obj.h"
+#include "game/obj_id.h"
 #include "game/sa.h"
 #include "game/script.h"
 #include "game/quest.h"
@@ -95,12 +96,5 @@ int sub_4E5F10(int a1);
 void sub_4E5F30(int a1, void* a2);
 void sub_4E5F70(int* a1, uint8_t** data);
 int sub_4E5FE0(int a1, int a2);
-void sub_4E62A0(ObjectID* oid);
-void objid_id_perm_by_load_order(ObjectID* oid, int64_t obj);
-bool objid_is_valid(ObjectID a);
-bool objid_is_equal(ObjectID a, ObjectID b);
-ObjectID sub_4E6540(int a1);
-void objid_id_to_str(char* buffer, ObjectID oid);
-bool objid_id_from_str(ObjectID* oid, const char* str);
 
 #endif /* ARCANUM_GAME_OBJ_PRIVATE_H_ */

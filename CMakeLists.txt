@@ -119,6 +119,8 @@ set(SRCS
     "src/game/obj_find.h"
     "src/game/obj_flags.c"
     "src/game/obj_flags.h"
+    "src/game/obj_id.c"
+    "src/game/obj_id.h"
     "src/game/obj_private.c"
     "src/game/obj_private.h"
     "src/game/obj.c"

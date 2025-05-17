@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj_flags.h"
+#include "game/obj_id.h"
 
 #define OBJ_HANDLE_NULL 0LL
 
@@ -370,31 +371,6 @@ typedef enum ObjectType {
     OBJ_TYPE_UNIQUE_NPC,
     OBJ_TYPE_COUNT,
 } ObjectType;
-
-typedef struct ObjectID_P {
-    int64_t location;
-    int temp_id;
-    int map;
-} ObjectID_P;
-
-#define OID_TYPE_HANDLE ((int16_t)-2)
-#define OID_TYPE_BLOCKED ((int16_t)-1)
-#define OID_TYPE_NULL ((int16_t)0)
-#define OID_TYPE_A ((int16_t)1)
-#define OID_TYPE_GUID ((int16_t)2)
-#define OID_TYPE_P ((int16_t)3)
-
-typedef struct ObjectID {
-    int16_t type;
-    union {
-        int64_t h;
-        int a;
-        GUID g;
-        ObjectID_P p;
-    } d;
-} ObjectID;
-
-static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
 typedef struct Object {
     /* 0000 */ int type;
