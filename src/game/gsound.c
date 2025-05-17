@@ -11,6 +11,10 @@
 #define TWO 2
 #define TWENTY_FIVE 25
 
+#define EFFECTS_VOLUME_KEY "effects volume"
+#define VOICE_VOLUME_KEY "voice volume"
+#define MUSIC_VOLUME_KEY "music volume"
+
 typedef struct Sound {
     /* 0000 */ bool song;
     /* 0001 */ bool loop;
@@ -327,9 +331,9 @@ bool gsound_init(GameInitInfo* init_info)
         mes_unload(tmp_mes_file);
     }
 
-    settings_add(&settings, "effects volume", "5", gsound_effects_volume_changed);
-    settings_add(&settings, "voice volume", "5", gsound_voice_volume_changed);
-    settings_add(&settings, "music volume", "5", gsound_music_volume_changed);
+    settings_add(&settings, EFFECTS_VOLUME_KEY, "5", gsound_effects_volume_changed);
+    settings_add(&settings, VOICE_VOLUME_KEY, "5", gsound_voice_volume_changed);
+    settings_add(&settings, MUSIC_VOLUME_KEY, "5", gsound_music_volume_changed);
     gsound_effects_volume_changed();
     gsound_voice_volume_changed();
     gsound_music_volume_changed();
@@ -1374,7 +1378,7 @@ void gsound_effects_volume_changed()
     int64_t obj;
     int64_t location;
 
-    gsound_effects_volume = 80 * (127 * settings_get_value(&settings, "effects volume") / 10) / 100;
+    gsound_effects_volume = 80 * (127 * settings_get_value(&settings, EFFECTS_VOLUME_KEY) / 10) / 100;
     tig_sound_set_volume_by_type(TIG_SOUND_TYPE_EFFECT, gsound_effects_volume);
 
     obj = player_get_local_pc_obj();
@@ -1393,7 +1397,7 @@ int gsound_voice_volume_get()
 // 0x41C930
 void gsound_voice_volume_changed()
 {
-    gsound_voice_volume = 127 * settings_get_value(&settings, "voice volume") / 10;
+    gsound_voice_volume = 127 * settings_get_value(&settings, VOICE_VOLUME_KEY) / 10;
     tig_sound_set_volume_by_type(TIG_SOUND_TYPE_VOICE, gsound_voice_volume);
 }
 
@@ -1406,7 +1410,7 @@ int gsound_music_volume_get()
 // 0x41C980
 void gsound_music_volume_changed()
 {
-    gsound_music_volume = 80 * (127 * settings_get_value(&settings, "music volume") / 10) / 100;
+    gsound_music_volume = 80 * (127 * settings_get_value(&settings, MUSIC_VOLUME_KEY) / 10) / 100;
     tig_sound_set_volume_by_type(TIG_SOUND_TYPE_MUSIC, gsound_music_volume);
 }
 
