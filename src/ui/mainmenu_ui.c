@@ -2993,7 +2993,7 @@ void mainmenu_ui_load_game_create()
         gamelib_savlist_create(&stru_64BBF8);
     }
 
-    sub_403C10(&stru_64BBF8, 0, 0);
+    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
 
     window->cnt = stru_64BBF8.count;
     if (window->selected_index == -1) {
@@ -3603,7 +3603,7 @@ bool mainmenu_ui_load_game_handle_delete()
     gamelib_savlist_destroy(&stru_64BBF8);
     gamelib_savlist_create(&stru_64BBF8);
 
-    sub_403C10(&stru_64BBF8, 0, 0);
+    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
     window->selected_index = -1;
     window->cnt--;
     window->refresh_func(NULL);
@@ -3693,7 +3693,7 @@ void mainmenu_ui_save_game_create()
 
     sub_542200();
     gamelib_savlist_create(&stru_64BBF8);
-    sub_403C10(&stru_64BBF8, 0, 0);
+    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
     byte_64C2F8[0] = '\0';
     window->cnt = stru_64BBF8.count + 1;
     if (stru_64BBF8.count != 0) {
@@ -3788,7 +3788,7 @@ bool mainmenu_ui_save_game_execute(int btn)
             return false;
         }
     } else {
-        sub_403C10(&stru_64BBF8, 1, 0);
+        gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_NAME, false);
 
         if (stru_64BBF8.count > 0) {
             if (toupper(stru_64BBF8.paths[0][4]) == 'A') {
@@ -4251,7 +4251,7 @@ bool mainmenu_ui_save_game_handle_delete()
 
     gamelib_savlist_destroy(&stru_64BBF8);
     gamelib_savlist_create(&stru_64BBF8);
-    sub_403C10(&stru_64BBF8, 0, 0);
+    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
     window->selected_index = -1;
     window->cnt--;
     window->refresh_func(NULL);

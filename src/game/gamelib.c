@@ -118,8 +118,8 @@ typedef struct GameSaveEntry {
     char* path;
 } GameSaveEntry;
 
-static int sub_403D40(const void* va, const void* vb);
-static int sub_403DB0(const void* va, const void* vb);
+static int game_save_entry_compare_by_date(const void* va, const void* vb);
+static int game_save_entry_compare_by_name(const void* va, const void* vb);
 static void difficulty_changed();
 static void gamelib_render_game(GameDrawInfo* draw_info);
 static void gamelib_render_editor(GameDrawInfo* draw_info);
@@ -282,7 +282,7 @@ static GameExtraSaveFunc* gamelib_extra_save_func;
 static GameExtraLoadFunc* gamelib_extra_load_func;
 
 // 0x5D10DC
-static bool dword_5D10DC;
+static bool gamelib_savelist_sort_check_autosave;
 
 // 0x5D10E0
 static bool in_save;
@@ -1225,7 +1225,7 @@ const char* gamelib_last_save_name()
 
     byte_5D0D88[0] = '\0';
     gamelib_savlist_create(&save_list);
-    sub_403C10(&save_list, 0, 1);
+    gamelib_savelist_sort(&save_list, GAME_SAVE_LIST_ORDER_DATE, true);
 
     if (save_list.count > 0) {
         strcpy(byte_5D0D88, save_list.paths[0]);
@@ -1337,14 +1337,14 @@ void gamelib_savlist_destroy(GameSaveList* save_list)
 }
 
 // 0x403C10
-void sub_403C10(GameSaveList* save_list, int a2, int a3)
+void gamelib_savelist_sort(GameSaveList* save_list, GameSaveListOrder order, bool a3)
 {
     GameSaveEntry* entries;
     unsigned int index;
     char path[TIG_MAX_PATH];
     TigFileInfo file_info;
 
-    dword_5D10DC = a3 == 0;
+    gamelib_savelist_sort_check_autosave = !a3;
 
     entries = (GameSaveEntry*)MALLOC(sizeof(*entries) * save_list->count);
 
@@ -1363,17 +1363,21 @@ void sub_403C10(GameSaveList* save_list, int a2, int a3)
 
         if (!tig_file_exists(path, &file_info)) {
             tig_debug_printf("GameLib: : ERROR: Couldn't find file!\n");
-            // FIXME: Leaks `entries`.
+            // FIX: Memory leak.
+            FREE(entries);
             return;
         }
 
         entries[index].modify_time = file_info.modify_time;
     }
 
-    if (a2 == 1) {
-        qsort(entries, save_list->count, sizeof(*entries), sub_403DB0);
-    } else {
-        qsort(entries, save_list->count, sizeof(*entries), sub_403D40);
+    switch (order) {
+    case GAME_SAVE_LIST_ORDER_DATE:
+        qsort(entries, save_list->count, sizeof(*entries), game_save_entry_compare_by_date);
+        break;
+    case GAME_SAVE_LIST_ORDER_NAME:
+        qsort(entries, save_list->count, sizeof(*entries), game_save_entry_compare_by_name);
+        break;
     }
 
     for (index = 0; index < save_list->count; index++) {
@@ -1384,12 +1388,12 @@ void sub_403C10(GameSaveList* save_list, int a2, int a3)
 }
 
 // 0x403D40
-int sub_403D40(const void* va, const void* vb)
+int game_save_entry_compare_by_date(const void* va, const void* vb)
 {
     const GameSaveEntry* a = (const GameSaveEntry*)va;
     const GameSaveEntry* b = (const GameSaveEntry*)vb;
 
-    if (dword_5D10DC) {
+    if (gamelib_savelist_sort_check_autosave) {
         if (toupper(a->path[4]) == 'A') {
             return -1;
         }
@@ -1409,7 +1413,7 @@ int sub_403D40(const void* va, const void* vb)
 }
 
 // 0x403DB0
-int sub_403DB0(const void* va, const void* vb)
+int game_save_entry_compare_by_name(const void* va, const void* vb)
 {
     const GameSaveEntry* a = (const GameSaveEntry*)va;
     const GameSaveEntry* b = (const GameSaveEntry*)vb;

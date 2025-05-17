@@ -26,6 +26,11 @@ typedef struct GameSaveList {
     char** paths;
 } GameSaveList;
 
+typedef enum GameSaveListOrder {
+    GAME_SAVE_LIST_ORDER_DATE,
+    GAME_SAVE_LIST_ORDER_NAME,
+} GameSaveListOrder;
+
 typedef struct GameSaveInfo {
     /* 0000 */ int version;
     /* 0004 */ char name[256];
@@ -87,7 +92,7 @@ void gamelib_set_extra_load_func(GameExtraLoadFunc* func);
 void gamelib_savlist_create(GameSaveList* save_list);
 void gamelib_modsavlist_create(const char* module, GameSaveList* save_list);
 void gamelib_savlist_destroy(GameSaveList* save_list);
-void sub_403C10(GameSaveList* save_list, int a2, int a3);
+void gamelib_savelist_sort(GameSaveList* save_list, GameSaveListOrder order, bool a3);
 bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveInfo* save_info);
 void gamelib_saveinfo_exit(GameSaveInfo* save_info);
 bool gamelib_saveinfo_save(GameSaveInfo* save_info);
