@@ -5231,7 +5231,7 @@ bool sub_444020(int64_t* obj_ptr, Ryan* a2)
 
     if (a2->objid.type != OID_TYPE_NULL
         && *obj_ptr != OBJ_HANDLE_NULL
-        && !sub_4E5470(*obj_ptr)) {
+        && !obj_handle_is_valid(*obj_ptr)) {
         if (!sub_443F80(&obj, a2)) {
             tig_debug_printf("Object: ERROR: Object validate recovery FAILED!\n");
             *obj_ptr = OBJ_HANDLE_NULL;

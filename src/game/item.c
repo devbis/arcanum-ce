@@ -2278,7 +2278,7 @@ bool sub_4642C0(int64_t obj, int64_t item_obj)
     int index;
     int cnt;
 
-    if (!sub_4E5470(obj)) {
+    if (!obj_handle_is_valid(obj)) {
         return false;
     }
 

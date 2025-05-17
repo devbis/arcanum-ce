@@ -256,7 +256,7 @@ void sub_4C0370()
 
     for (idx = 0; idx < dword_5FC654; idx++) {
         if (stru_5FC668[idx].obj == OBJ_HANDLE_NULL
-            || !sub_4E5470(stru_5FC668[idx].obj)
+            || !obj_handle_is_valid(stru_5FC668[idx].obj)
             || obj_field_int32_get(stru_5FC668[idx].obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
             dword_5FC654--;
             memcpy(&(stru_5FC668[idx]),

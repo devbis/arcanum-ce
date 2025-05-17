@@ -1,5 +1,7 @@
 #include "game/obj.h"
 
+#include <inttypes.h>
+
 #include "game/item.h"
 #include "game/obj_file.h"
 #include "game/obj_find.h"
@@ -614,15 +616,15 @@ bool obj_validate_system(unsigned int flags)
 
     if (obj_pool_walk_first(&obj, &iter)) {
         do {
-            if (!sub_4E5470(obj)) {
-                tig_debug_printf("!VS  Walk found invalid handle: %i64x\n", obj);
+            if (!obj_handle_is_valid(obj)) {
+                tig_debug_printf("!VS  Walk found invalid handle: %" PRIx64 "\n", obj);
                 return false;
             }
 
             object = obj_lock(obj);
             if (object->oid.type != OID_TYPE_BLOCKED
                 && !objid_is_valid(object->oid)) {
-                tig_debug_printf("!VS  Permanent id invalid: %i64x\n", obj);
+                tig_debug_printf("!VS  Permanent id invalid: %" PRIx64 "\n", obj);
                 obj_unlock(obj);
                 return false;
             }
@@ -692,8 +694,8 @@ bool obj_validate_system(unsigned int flags)
                         if (oid.type != OID_TYPE_NULL) {
                             if (oid.type == OID_TYPE_HANDLE) {
                                 item_obj = oid.d.h;
-                                if (!sub_4E5470(item_obj)) {
-                                    tig_debug_printf("!VS  Inventory entry is an invalid handle.  handle: %i64x\n", oid.d.h);
+                                if (!obj_handle_is_valid(item_obj)) {
+                                    tig_debug_printf("!VS  Inventory entry is an invalid handle.  handle: % " PRIx64 "\n", oid.d.h);
                                     return false;
                                 }
 
@@ -701,7 +703,7 @@ bool obj_validate_system(unsigned int flags)
                             } else {
                                 if (!objid_is_valid(oid)) {
                                     // TODO: Unclear what is `a` and `b`.
-                                    tig_debug_printf("!VS  Inventory entry is neither a valid handle nor valid id.  a: %i64x  b: %i64x\n",
+                                    tig_debug_printf("!VS  Inventory entry is neither a valid handle nor valid id.  a: %" PRIx64 "  b: %" PRIx64 "\n",
                                         oid.d.h,
                                         oid.d.h);
                                 }
@@ -723,8 +725,8 @@ bool obj_validate_system(unsigned int flags)
                                 item_obj = objp_perm_lookup(oid);
 
                                 // TODO: Looks wrong, validates `obj` instead of `item_obj`.
-                                if (!sub_4E5470(obj)) {
-                                    tig_debug_printf("!VS  Inventory entry id resolved to invalid handle.  H: %i64x\n",  item_obj);
+                                if (!obj_handle_is_valid(obj)) {
+                                    tig_debug_printf("!VS  Inventory entry id resolved to invalid handle.  H: %" PRIx64 "\n",  item_obj);
                                 }
                             }
 
@@ -1597,7 +1599,7 @@ bool obj_field_obj_get(int64_t obj, int fld, int64_t* value_ptr)
 
     if (fld == OBJ_F_PROTOTYPE_HANDLE) {
         *value_ptr = obj_get_prototype_handle(object);
-        if (!sub_4E5470(*value_ptr)) {
+        if (!obj_handle_is_valid(*value_ptr)) {
             *value_ptr = OBJ_HANDLE_NULL;
             return false; // FIXME: Object not unlocked.
         }
@@ -1614,7 +1616,7 @@ bool obj_field_obj_get(int64_t obj, int fld, int64_t* value_ptr)
     }
 
     if (oid.type == OID_TYPE_HANDLE) {
-        if (!sub_4E5470(oid.d.h)) {
+        if (!obj_handle_is_valid(oid.d.h)) {
             oid.type = OID_TYPE_NULL;
             sub_408760(object, fld, &oid);
             obj_unlock(obj);
@@ -1850,7 +1852,7 @@ bool obj_arrayfield_obj_get(int64_t obj, int fld, int index, int64_t* value_ptr)
     }
 
     if (oid.type == OID_TYPE_HANDLE) {
-        if (!sub_4E5470(oid.d.h)) {
+        if (!obj_handle_is_valid(oid.d.h)) {
             oid.type = OID_TYPE_NULL;
             sub_4088B0(object, fld, index, &oid);
             obj_unlock(obj);
@@ -2070,7 +2072,7 @@ ObjectID obj_get_id(int64_t obj)
     ObjectID oid;
     Object* object;
 
-    if (sub_4E5470(obj)) {
+    if (obj_handle_is_valid(obj)) {
         object = obj_lock(obj);
         if (object->oid.type == OID_TYPE_NULL) {
             if (!obj_editor
@@ -3927,7 +3929,7 @@ void sub_40BBF0(Object* object)
             sub_408A20(object, fld, &oid);
             if (oid.type != OID_TYPE_NULL) {
                 if (oid.type == OID_TYPE_HANDLE) {
-                    if (sub_4E5470(oid.d.h)) {
+                    if (obj_handle_is_valid(oid.d.h)) {
                         flags = obj_field_int32_get(oid.d.h, OBJ_F_FLAGS);
                         if ((flags & OF_DESTROYED) == 0
                             || (flags & OF_EXTINCT) != 0) {
@@ -4027,7 +4029,7 @@ bool sub_40BF00(void* entry, int index)
     oid = *(ObjectID*)entry;
 
     if (oid.type != OID_TYPE_NULL) {
-        if (sub_4E5470(oid.d.h)) {
+        if (obj_handle_is_valid(oid.d.h)) {
             flags = obj_field_int32_get(oid.d.h, OBJ_F_FLAGS);
             if ((flags & OF_DESTROYED) != 0
                 && (flags & OF_EXTINCT) == 0) {

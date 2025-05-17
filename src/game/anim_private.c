@@ -955,7 +955,7 @@ bool anim_recover_handles(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode)
                 return false;
             }
 
-            if (!sub_4E5470(obj)) {
+            if (!obj_handle_is_valid(obj)) {
                 if (!sub_443F80(&obj, &(run_info->cur_stack_data->field_B0[idx]))) {
                     tig_debug_printf("Anim: ERROR: Object validate recovery FAILED!\n");
                     run_info->cur_stack_data->params[idx].obj = OBJ_HANDLE_NULL;
@@ -1624,7 +1624,7 @@ void sub_44ED90(AnimGoalData* goal_data)
     for (idx = 0; idx < AGDATA_COUNT; idx++) {
         if (idx < 5) {
             if (goal_data->params[idx].obj != OBJ_HANDLE_NULL) {
-                if (sub_4E5470(goal_data->params[idx].obj)) {
+                if (obj_handle_is_valid(goal_data->params[idx].obj)) {
                     object_examine(goal_data->params[idx].obj, goal_data->params[idx].obj, str);
                 } else {
                     strcpy(str, "INVALID_OBJ_HANDLE");

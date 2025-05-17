@@ -3025,7 +3025,7 @@ void combat_debug(int64_t obj, const char* msg)
     }
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (sub_4E5470(obj)) {
+        if (obj_handle_is_valid(obj)) {
             if (player_is_pc_obj(obj)) {
                 obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &name);
             } else {
@@ -3794,7 +3794,7 @@ void sub_4B7EB0()
     node = stru_5FC180.head;
     while (node != NULL) {
         name = NULL;
-        if (sub_4E5470(node->obj)) {
+        if (obj_handle_is_valid(node->obj)) {
             if (player_is_pc_obj(node->obj)) {
                 obj_field_string_get(node->obj, OBJ_F_PC_PLAYER_NAME, &name);
             } else {

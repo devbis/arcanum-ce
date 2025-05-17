@@ -6077,7 +6077,7 @@ void sub_553A70(TigMessage* msg)
     } else {
         if (qword_64C690 != OBJ_HANDLE_NULL || object_hover_obj_get() == OBJ_HANDLE_NULL) {
             if (intgame_iso_window_type != 3) {
-                if (sub_4E5470(qword_64C690)) {
+                if (obj_handle_is_valid(qword_64C690)) {
                     object_hover_obj_set(qword_64C690);
                     object_hover_obj_set(OBJ_HANDLE_NULL);
                     sub_57CCF0(player_get_local_pc_obj(), qword_64C690);

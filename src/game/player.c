@@ -170,7 +170,7 @@ int64_t player_get_local_pc_obj()
     int64_t obj = player_pc_obj;
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (sub_4E5470(player_pc_obj) || player_pc_oid.type == OID_TYPE_NULL) {
+        if (obj_handle_is_valid(player_pc_obj) || player_pc_oid.type == OID_TYPE_NULL) {
             obj = player_pc_obj;
         } else {
             player_pc_obj = objp_perm_lookup(player_pc_oid);

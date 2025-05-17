@@ -270,7 +270,7 @@ bool sub_4BF7B0(MesFileEntry* mes_file_entry, char* str)
             }
 
             obj = sub_4685A0(basic_prototype);
-            if (!sub_4E5470(obj)) {
+            if (!obj_handle_is_valid(obj)) {
                 sprintf(invensource_error,
                     "Error: Can't get valid handle for prototype in [%s]: set %d, entry %d, basic prototype %d\n",
                     off_5B64A8,
@@ -354,7 +354,7 @@ bool sub_4BFAA0(MesFileEntry* mes_file_entry, char* str)
         }
 
         obj = sub_4685A0(basic_prototype);
-        if (!sub_4E5470(obj)) {
+        if (!obj_handle_is_valid(obj)) {
             sprintf(invensource_error,
               "Error: Can't get valid handle for prototype in [%s]: set %d, entry %d, basic prototype %d\n",
               off_5B64AC,

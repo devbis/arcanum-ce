@@ -3,171 +3,187 @@
 #include "game/object.h"
 #include "game/map.h"
 
-typedef struct S6036B8 {
-    /* 0000 */ ObjectID field_0;
-    /* 0018 */ int64_t field_18;
-} S6036B8;
+#define OBJ_POOL_CAP 0x200000
+#define OBJ_POOL_BUCKET_SIZE 0x2000
 
-static_assert(sizeof(S6036B8) == 0x20, "wrong size");
+#define HANDLE_INDEX_SHIFT 29
 
-static int sub_4E5640();
-static void sub_4E56A0(int index);
-static bool sub_4E56E0();
-static void sub_4E5770(int index);
-static bool sub_4E57E0(ObjectID a1, int* index_ptr);
-static int64_t sub_4E58C0(int a1, int a2);
-static int sub_4E5900(int64_t a1);
-static uint8_t* sub_4E5920(int index);
-static void* object_ptr(int index);
-static void sub_4E5980(int* a1, int a2);
-static int sub_4E59A0(int* a1);
+#define HANDLE_SEQ_SHIFT 3
+#define HANDLE_SEQ_MAX 0x7FFFFF
+
+#define HANDLE_MARKER_MASK 0x7
+#define HANDLE_MARKER_VALUE 2
+
+#define STATUS_HANDLE 'H'
+#define STATUS_RELEASED 'P'
+
+typedef struct ObjPoolEntryHeader {
+    int status:8;
+    int seq:24;
+} ObjPoolEntryHeader;
+
+typedef struct PermOidLookupEntry {
+    /* 0000 */ ObjectID oid;
+    /* 0018 */ int64_t obj;
+} PermOidLookupEntry;
+
+static_assert(sizeof(PermOidLookupEntry) == 0x20, "wrong size");
+
+static int acquire_index();
+static void release_index(int index);
+static bool grow_pool();
+static void recycle_index(int index);
+static bool sub_4E57E0(ObjectID oid, int* index_ptr);
+static int64_t make_handle(int index, int seq);
+static int index_from_handle(int64_t obj);
+static ObjPoolEntryHeader* element_hdr_at_index(int index);
+static void* element_data_at_index(int index);
+static void sequence_to_hdr(ObjPoolEntryHeader* hdr, int seq);
+static int sequence_from_hdr(ObjPoolEntryHeader* hdr);
 
 // 0x5B9258
-static int dword_5B9258 = 4;
+static int obj_pool_entry_header_byte_size = sizeof(ObjPoolEntryHeader);
 
 // 0x6036B0
-static int dword_6036B0;
+static int obj_pool_next_seq;
 
 // 0x6036B4
-static bool obj_priv_editor;
+static bool obj_pool_editor;
 
 // 0x6036B8
-static S6036B8* dword_6036B8;
+static PermOidLookupEntry* dword_6036B8;
 
 // 0x6036BC
-static uint8_t** object_pool_buckets;
+static unsigned char** obj_pool_buckets;
 
 // 0x6036C0
 static int dword_6036C0;
 
 // 0x6036C4
-static int dword_6036C4;
+static int obj_pool_num_objects;
 
 // 0x6036C8
-static int object_pool_capacity;
+static int obj_pool_capacity;
 
 // 0x6036CC
-static int object_pool_num_buckets;
+static int obj_pool_num_buckets;
 
 // 0x6036D0
-static int dword_6036D0;
+static int obj_pool_freed_indexes_size;
 
 // 0x6036D4
-static int object_pool_size_plus_padding;
+static int obj_pool_bucket_byte_size;
 
 // 0x6036D8
-static int* dword_6036D8;
+static int* obj_pool_freed_indexes;
 
 // 0x6036DC
 static int dword_6036DC;
 
 // 0x6036E0
-static int dword_6036E0;
+static int obj_pool_freed_indexes_capacity;
 
 // 0x6036E4
-static int object_size_plus_padding;
+static int obj_pool_element_byte_size;
 
 // 0x6036E8
-static int dword_6036E8;
+static int obj_pool_warn;
 
 // 0x6036F0
-static int64_t qword_6036F0;
+static int64_t obj_handle_requested;
 
 // 0x6036F8
-static bool obj_priv_initialized;
+static bool obj_pool_initialized;
 
 // 0x4E4CD0
 void obj_pool_init(int size, bool editor)
 {
-    object_pool_buckets = (uint8_t**)CALLOC(256, sizeof(*object_pool_buckets));
-    obj_priv_editor = editor;
-    dword_6036E8 = 0x80000;
-    object_pool_capacity = 0x2000;
-    dword_6036B0 = 2 * ((int)time(0) & 0x3FFFFF) + 1;
-    object_size_plus_padding = dword_5B9258 + size;
-    object_pool_size_plus_padding = object_size_plus_padding * 8192;
-    object_pool_buckets[0] = (uint8_t*)MALLOC(object_pool_size_plus_padding);
-    object_pool_num_buckets = 1;
-    dword_6036C4 = 0;
-    dword_6036E0 = 4096;
-    dword_6036D8 = (int*)MALLOC(sizeof(*dword_6036D8) * dword_6036E0);
-    dword_6036D0 = 0;
+    obj_pool_buckets = (unsigned char**)CALLOC(256, sizeof(*obj_pool_buckets));
+    obj_pool_editor = editor;
+    obj_pool_warn = OBJ_POOL_CAP / 4;
+    obj_pool_capacity = OBJ_POOL_BUCKET_SIZE;
+    obj_pool_next_seq = ((int)time(0) & (HANDLE_SEQ_MAX / 2)) * 2 + 1;
+    obj_pool_element_byte_size = obj_pool_entry_header_byte_size + size;
+    obj_pool_bucket_byte_size = obj_pool_element_byte_size * OBJ_POOL_BUCKET_SIZE;
+    obj_pool_buckets[0] = (unsigned char*)MALLOC(obj_pool_bucket_byte_size);
+    obj_pool_num_buckets = 1;
+    obj_pool_num_objects = 0;
+    obj_pool_freed_indexes_capacity = 4096;
+    obj_pool_freed_indexes = (int*)MALLOC(sizeof(*obj_pool_freed_indexes) * obj_pool_freed_indexes_capacity);
+    obj_pool_freed_indexes_size = 0;
     dword_6036C0 = 1024;
     dword_6036DC = 0;
-    qword_6036F0 = OBJ_HANDLE_NULL;
-    dword_6036B8 = (S6036B8 *)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
-    obj_priv_initialized = true;
+    obj_handle_requested = OBJ_HANDLE_NULL;
+    dword_6036B8 = (PermOidLookupEntry *)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
+    obj_pool_initialized = true;
 }
 
 // 0x4E4DB0
 void obj_pool_exit()
 {
     int index;
-    uint8_t* data;
-    int v1;
+    ObjPoolEntryHeader* hdr;
+    int seq;
     int64_t obj;
 
-    if (dword_6036C4 != 0) {
-        tig_debug_printf("Destroying %d leftover objects.\n", dword_6036C4);
-        for (index = dword_6036D0 + dword_6036C4 - 1; index >= 0; index--) {
-            data = sub_4E5920(index);
-            if (data[0] == 'H') {
-                // TODO: Review cast.
-                v1 = sub_4E59A0((int*)data);
-                obj = sub_4E58C0(index, v1);
+    if (obj_pool_num_objects != 0) {
+        tig_debug_printf("Destroying %d leftover objects.\n", obj_pool_num_objects);
+        for (index = obj_pool_freed_indexes_size + obj_pool_num_objects - 1; index >= 0; index--) {
+            hdr = element_hdr_at_index(index);
+            if (hdr->status == STATUS_HANDLE) {
+                seq = sequence_from_hdr(hdr);
+                obj = make_handle(index, seq);
                 sub_405BF0(obj);
             }
         }
     }
 
-    for (index = 0; index < object_pool_num_buckets; index++) {
-        FREE(object_pool_buckets[index]);
+    for (index = 0; index < obj_pool_num_buckets; index++) {
+        FREE(obj_pool_buckets[index]);
     }
 
-    FREE(dword_6036D8);
+    FREE(obj_pool_freed_indexes);
     FREE(dword_6036B8);
-    FREE(object_pool_buckets);
-    obj_priv_initialized = 0;
+    FREE(obj_pool_buckets);
+    obj_pool_initialized = false;
 }
 
 // 0x4E4E60
 void* obj_pool_allocate(int64_t* obj_ptr)
 {
-    int v1;
-    uint8_t* data;
+    int index;
+    ObjPoolEntryHeader* hdr;
     void* object;
 
-    if (dword_6036C4 == 0x200000) {
+    if (obj_pool_num_objects == OBJ_POOL_CAP) {
         tig_message_post_quit(0);
         return NULL;
     }
 
-    if (qword_6036F0 != OBJ_HANDLE_NULL) {
-        *obj_ptr = qword_6036F0;
+    if (obj_handle_requested != OBJ_HANDLE_NULL) {
+        *obj_ptr = obj_handle_requested;
 
-        v1 = sub_4E5900(*obj_ptr);
+        index = index_from_handle(*obj_ptr);
 
-        data = sub_4E5920(v1);
-        data[0] = 'H';
-        // TODO: Review cast.
-        sub_4E5980((int*)data, (*obj_ptr >> 3) & 0x7FFFFF);
+        hdr = element_hdr_at_index(index);
+        hdr->status = STATUS_HANDLE;
 
-        object = object_ptr(v1);
-        dword_6036C4++;
-        dword_6036D0--;
-        qword_6036F0 = OBJ_HANDLE_NULL;
+        sequence_to_hdr(hdr, (*obj_ptr >> HANDLE_SEQ_SHIFT) & HANDLE_SEQ_MAX);
+        object = element_data_at_index(index);
+        obj_pool_num_objects++;
+        obj_pool_freed_indexes_size--;
+        obj_handle_requested = OBJ_HANDLE_NULL;
     } else {
-        v1 = sub_4E5640();
-        object = object_ptr(v1);
-        *obj_ptr = sub_4E58C0(v1, dword_6036B0);
+        index = acquire_index();
+        object = element_data_at_index(index);
+        *obj_ptr = make_handle(index, obj_pool_next_seq);
 
-        data = sub_4E5920(v1);
-        // TODO: Review cast.
-        sub_4E5980((int*)data, dword_6036B0);
+        hdr = element_hdr_at_index(index);
+        sequence_to_hdr(hdr, obj_pool_next_seq);
 
-        dword_6036B0++;
-        if (dword_6036B0 > 0x7FFFFF) {
-            dword_6036B0 = 1;
+        obj_pool_next_seq++;
+        obj_pool_next_seq = 1;
+        if (obj_pool_next_seq > HANDLE_SEQ_MAX) {
         }
     }
 
@@ -177,7 +193,7 @@ void* obj_pool_allocate(int64_t* obj_ptr)
 // 0x4E4F80
 void* obj_pool_lock(int64_t obj)
 {
-    return object_ptr(sub_4E5900(obj));
+    return element_data_at_index(index_from_handle(obj));
 }
 
 // 0x4E4FA0
@@ -189,26 +205,26 @@ void obj_pool_unlock(int64_t obj)
 // 0x4E4FB0
 void obj_pool_deallocate(int64_t obj)
 {
-    sub_4E56A0(sub_4E5900(obj));
+    release_index(index_from_handle(obj));
 }
 
 // 0x4E4FD0
-void sub_4E4FD0(ObjectID a1, int64_t obj)
+void sub_4E4FD0(ObjectID oid, int64_t obj)
 {
     int index;
 
-    if (sub_4E57E0(a1, &index)) {
-        dword_6036B8[index].field_18 = obj;
+    if (sub_4E57E0(oid, &index)) {
+        dword_6036B8[index].obj = obj;
         return;
     }
 
     if (dword_6036DC == dword_6036C0) {
         dword_6036C0 += 0x200;
-        if (dword_6036C0 > 0x200000) {
+        if (dword_6036C0 > OBJ_POOL_CAP) {
             return;
         }
 
-        dword_6036B8 = (S6036B8*)REALLOC(dword_6036B8, sizeof(*dword_6036B8) * dword_6036C0);
+        dword_6036B8 = (PermOidLookupEntry*)REALLOC(dword_6036B8, sizeof(*dword_6036B8) * dword_6036C0);
     }
 
     if (index != dword_6036DC) {
@@ -217,8 +233,8 @@ void sub_4E4FD0(ObjectID a1, int64_t obj)
             sizeof(*dword_6036B8) * (dword_6036DC - index));
     }
 
-    dword_6036B8[index].field_0 = a1;
-    dword_6036B8[index].field_18 = obj;
+    dword_6036B8[index].oid = oid;
+    dword_6036B8[index].obj = obj;
     dword_6036DC++;
 }
 
@@ -230,8 +246,8 @@ int64_t objp_perm_lookup(ObjectID oid)
     ObjectNode* node;
 
     if (sub_4E57E0(oid, &idx)) {
-        if (sub_4E5470(dword_6036B8[idx].field_18)) {
-            return dword_6036B8[idx].field_18;
+        if (obj_handle_is_valid(dword_6036B8[idx].obj)) {
+            return dword_6036B8[idx].obj;
         }
     }
 
@@ -239,7 +255,7 @@ int64_t objp_perm_lookup(ObjectID oid)
         return OBJ_HANDLE_NULL;
     }
 
-    if (obj_priv_editor) {
+    if (obj_pool_editor) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -272,7 +288,7 @@ int64_t objp_perm_lookup(ObjectID oid)
             return OBJ_HANDLE_NULL;
         }
 
-        return dword_6036B8[idx].field_18;
+        return dword_6036B8[idx].obj;
     }
 
     object_list_destroy(&objects);
@@ -286,8 +302,8 @@ ObjectID sub_4E5280(int64_t obj)
     int index;
 
     for (index = 0; index < dword_6036DC; index++) {
-        if (dword_6036B8[index].field_18 == obj) {
-            return dword_6036B8[index].field_0;
+        if (dword_6036B8[index].obj == obj) {
+            return dword_6036B8[index].oid;
         }
     }
 
@@ -305,7 +321,7 @@ void sub_4E52F0(ObjectID oid)
 // 0x4E5300
 void sub_4E5300()
 {
-    S6036B8* v1;
+    PermOidLookupEntry* v1;
     int cnt;
     int v2;
     int v3;
@@ -316,7 +332,7 @@ void sub_4E5300()
     v2 = dword_6036DC - 1;
     v3 = v2;
     while (v2 >= 0) {
-        if (dword_6036B8[v2].field_0.type == OID_TYPE_A) {
+        if (dword_6036B8[v2].oid.type == OID_TYPE_A) {
             v1[v3] = dword_6036B8[v2];
             v3--;
             cnt++;
@@ -334,17 +350,17 @@ void sub_4E5300()
 bool obj_pool_walk_first(int64_t* obj_ptr, int* iter_ptr)
 {
     int iter;
-    uint8_t* data;
+    ObjPoolEntryHeader* hdr;
 
-    if (dword_6036C4 == 0) {
+    if (obj_pool_num_objects == 0) {
         return false;
     }
 
-    iter = dword_6036D0 + dword_6036C4 - 1;
+    iter = obj_pool_freed_indexes_size + obj_pool_num_objects - 1;
     while (iter >= 0) {
-        data = sub_4E5920(iter);
-        if (*data == 'H') {
-            *obj_ptr = sub_4E58C0(iter, sub_4E59A0(data));
+        hdr = element_hdr_at_index(iter);
+        if (hdr->status == STATUS_HANDLE) {
+            *obj_ptr = make_handle(iter, sequence_from_hdr(hdr));
             *iter_ptr = iter;
             return true;
         }
@@ -359,13 +375,13 @@ bool obj_pool_walk_first(int64_t* obj_ptr, int* iter_ptr)
 bool obj_pool_walk_next(int64_t* obj_ptr, int* iter_ptr)
 {
     int iter;
-    uint8_t* data;
+    ObjPoolEntryHeader* hdr;
 
     iter = *iter_ptr - 1;
     while (iter >= 0) {
-        data = sub_4E5920(iter);
-        if (*data == 'H') {
-            *obj_ptr = sub_4E58C0(iter, sub_4E59A0(data));
+        hdr = element_hdr_at_index(iter);
+        if (hdr->status == STATUS_HANDLE) {
+            *obj_ptr = make_handle(iter, sequence_from_hdr(hdr));
             *iter_ptr = iter;
             return true;
         }
@@ -377,30 +393,30 @@ bool obj_pool_walk_next(int64_t* obj_ptr, int* iter_ptr)
 }
 
 // 0x4E5470
-bool sub_4E5470(int64_t obj)
+bool obj_handle_is_valid(int64_t obj)
 {
-    int64_t v1;
-    uint8_t* data;
+    int index;
+    ObjPoolEntryHeader* hdr;
 
     if (obj == OBJ_HANDLE_NULL) {
         return true;
     }
 
-    if ((obj & 0x7) != 2) {
+    if ((obj & HANDLE_MARKER_MASK) != HANDLE_MARKER_VALUE) {
         return false;
     }
 
-    v1 = obj >> 29;
-    if (v1 >= dword_6036C4 + dword_6036D0) {
+    index = (int)(obj >> HANDLE_INDEX_SHIFT);
+    if (index >= obj_pool_num_objects + obj_pool_freed_indexes_size) {
         return false;
     }
 
-    data = sub_4E5920(v1);
-    if (sub_4E59A0(data) != ((obj >> 3) & 0x7FFFFF)) {
+    hdr = element_hdr_at_index(index);
+    if (sequence_from_hdr(hdr) != ((obj >> HANDLE_SEQ_SHIFT) & HANDLE_SEQ_MAX)) {
         return false;
     }
 
-    if (data[0] != 'H') {
+    if (hdr->status != STATUS_HANDLE) {
         return false;
     }
 
@@ -408,111 +424,113 @@ bool sub_4E5470(int64_t obj)
 }
 
 // 0x4E5530
-int sub_4E5530(int64_t obj)
+bool obj_handle_request(int64_t obj)
 {
-    int v1;
-    int v2;
-    int v3;
-    uint8_t* data;
+    int index;
+    int num_indexes_to_recycle;
+    int tmp_index;
+    ObjPoolEntryHeader* hdr;
 
-    if ((obj & 0x7) != 2) {
+    if ((obj & HANDLE_MARKER_MASK) != HANDLE_MARKER_VALUE) {
         tig_debug_println("Handle requested is not marked as a handle.");
         return false;
     }
 
-    v1 = sub_4E5900(obj);
-    if (v1 < dword_6036D0 + dword_6036C4) {
-        data = sub_4E5920(v1);
-        if (data[0] != 'P') {
+    index = index_from_handle(obj);
+    if (index < obj_pool_freed_indexes_size + obj_pool_num_objects) {
+        hdr = element_hdr_at_index(index);
+        if (hdr->status != STATUS_RELEASED) {
             tig_debug_println("Index of handle requested is not released.");
             return false;
         }
 
-        qword_6036F0 = obj;
+        obj_handle_requested = obj;
+
         return true;
     }
 
-    if (v1 >= 0x200000) {
+    if (index >= OBJ_POOL_CAP) {
         tig_debug_println("Index of handle requested is too large.");
         return false;
     }
 
-    v2 = v1 - dword_6036D0 - dword_6036C4 + 1;
-    while (v1 >= object_pool_capacity) {
-        if (!sub_4E56E0()) {
+    num_indexes_to_recycle = index - obj_pool_freed_indexes_size - obj_pool_num_objects + 1;
+
+    while (index < obj_pool_capacity) {
+        if (!grow_pool()) {
             return false;
         }
     }
 
-    v3 = dword_6036D0 + dword_6036C4;
-    while (v2 != 0) {
-        sub_4E5770(v3);
-        data = sub_4E5920(v3);
-        sub_4E5980(data, 0);
-        data[0] = 'P';
-        v3++;
-        v2--;
+    tmp_index = obj_pool_freed_indexes_size + obj_pool_num_objects;
+    while (num_indexes_to_recycle != 0) {
+        recycle_index(tmp_index);
+        hdr = element_hdr_at_index(tmp_index);
+        sequence_to_hdr(hdr, 0);
+        hdr->status = STATUS_RELEASED;
+        tmp_index++;
+        num_indexes_to_recycle--;
     }
 
-    qword_6036F0 = obj;
+    obj_handle_requested = obj;
+
     return true;
 }
 
 // 0x4E5640
-int sub_4E5640()
+int acquire_index()
 {
-    int v1;
-    uint8_t* data;
+    int index;
+    ObjPoolEntryHeader* hdr;
 
-    if (dword_6036D0 > 0) {
-        v1 = dword_6036D8[--dword_6036D0];
-        dword_6036C4++;
-        data = sub_4E5920(v1);
-        data[0] = 'H';
-        return v1;
+    if (obj_pool_freed_indexes_size > 0) {
+        index = obj_pool_freed_indexes[--obj_pool_freed_indexes_size];
+        obj_pool_num_objects++;
+        hdr = element_hdr_at_index(index);
+        hdr->status = STATUS_HANDLE;
+        return index;
     }
 
-    if (dword_6036C4 == object_pool_capacity) {
-        if (!sub_4E56E0()) {
+    if (obj_pool_num_objects == obj_pool_capacity) {
+        if (!grow_pool()) {
             return 0;
         }
     }
 
-    v1 = dword_6036C4++;
-    data = sub_4E5920(v1);
-    data[0] = 'H';
-    return v1;
+    index = obj_pool_num_objects++;
+    hdr = element_hdr_at_index(index);
+    hdr->status = STATUS_HANDLE;
+    return index;
 }
 
 // 0x4E56A0
-void sub_4E56A0(int index)
+void release_index(int index)
 {
-    uint8_t* data;
+    ObjPoolEntryHeader* hdr;
 
-    data = sub_4E5920(index);
-    sub_4E5770(index);
-    dword_6036C4--;
-    // TODO: Review cast.
-    sub_4E5980((int*)data, 0);
-    data[0] = 'P';
+    hdr = element_hdr_at_index(index);
+    recycle_index(index);
+    obj_pool_num_objects--;
+    sequence_to_hdr(hdr, 0);
+    hdr->status = STATUS_RELEASED;
 }
 
 // 0x4E56E0
-bool sub_4E56E0()
+bool grow_pool()
 {
-    if (object_pool_capacity < 0x200000) {
-        object_pool_capacity += 0x2000;
-        if (dword_6036E8 <= dword_6036C4 + 1) {
-            tig_debug_printf("WARNING: storing %d objects --", dword_6036C4 + 1);
-            tig_debug_printf(" near %d, game will crash!\n", 0x200000);
+    if (obj_pool_capacity < OBJ_POOL_CAP) {
+        obj_pool_capacity += OBJ_POOL_BUCKET_SIZE;
+        if (obj_pool_num_objects + 1 >= obj_pool_warn) {
+            tig_debug_printf("WARNING: storing %d objects --", obj_pool_num_objects + 1);
+            tig_debug_printf(" near %d, game will crash!\n", OBJ_POOL_CAP);
         }
 
-        object_pool_buckets[object_pool_num_buckets++] = (uint8_t*)MALLOC(object_pool_size_plus_padding);
+        obj_pool_buckets[obj_pool_num_buckets++] = (unsigned char*)MALLOC(obj_pool_bucket_byte_size);
 
         return true;
     }
 
-    if (object_pool_capacity > 0x200000) {
+    if (obj_pool_capacity > OBJ_POOL_CAP) {
         tig_debug_println("Object pool element cap exceeded.  Capacity tracking out of sync");
     }
 
@@ -520,19 +538,19 @@ bool sub_4E56E0()
 }
 
 // 0x4E5770
-void sub_4E5770(int index)
+void recycle_index(int index)
 {
-    if (dword_6036D0 == dword_6036E0) {
-        dword_6036E0 += 2048;
-        dword_6036D8 = (int*)REALLOC(dword_6036D8, sizeof(*dword_6036D8) * dword_6036E0);
+    if (obj_pool_freed_indexes_size == obj_pool_freed_indexes_capacity) {
+        obj_pool_freed_indexes_capacity += 2048;
+        obj_pool_freed_indexes = (int*)REALLOC(obj_pool_freed_indexes, sizeof(*obj_pool_freed_indexes) * obj_pool_freed_indexes_capacity);
     }
 
-    dword_6036D8[dword_6036D0] = index;
-    dword_6036D0++;
+    obj_pool_freed_indexes[obj_pool_freed_indexes_size] = index;
+    obj_pool_freed_indexes_size++;
 }
 
 // 0x4E57E0
-bool sub_4E57E0(ObjectID a1, int* index_ptr)
+bool sub_4E57E0(ObjectID oid, int* index_ptr)
 {
     int l;
     int r;
@@ -543,9 +561,9 @@ bool sub_4E57E0(ObjectID a1, int* index_ptr)
     while (l <= r) {
         m = (l + r) / 2;
         // FIXME: Unnecessary copying.
-        if (objid_compare(dword_6036B8[m].field_0, a1)) {
+        if (objid_compare(dword_6036B8[m].oid, oid)) {
             l = m + 1;
-        } else if (objid_compare(a1, dword_6036B8[m].field_0)) {
+        } else if (objid_compare(oid, dword_6036B8[m].oid)) {
             r = m - 1;
         } else {
             *index_ptr = m;
@@ -558,41 +576,41 @@ bool sub_4E57E0(ObjectID a1, int* index_ptr)
 }
 
 // 0x4E58C0
-int64_t sub_4E58C0(int a1, int a2)
+int64_t make_handle(int index, int seq)
 {
-    return 8 * (a2 + ((int64_t)a1 << 26)) + 2;
+    return ((int64_t)index << HANDLE_INDEX_SHIFT) + (seq << HANDLE_SEQ_SHIFT) + HANDLE_MARKER_VALUE;
 }
 
 // 0x4E5900
-int sub_4E5900(int64_t a1)
+int index_from_handle(int64_t obj)
 {
-    return (int)(a1 >> 29);
+    return (int)(obj >> HANDLE_INDEX_SHIFT);
 }
 
 // 0x4E5920
-uint8_t* sub_4E5920(int index)
+ObjPoolEntryHeader* element_hdr_at_index(int index)
 {
-    return object_pool_buckets[index / 8192] + object_size_plus_padding * (index % 8192);
+    return (ObjPoolEntryHeader*)&(obj_pool_buckets[index / OBJ_POOL_BUCKET_SIZE][obj_pool_element_byte_size * (index % OBJ_POOL_BUCKET_SIZE)]);
 }
 
 // 0x4E5960
-void* object_ptr(int index)
+void* element_data_at_index(int index)
 {
-    uint8_t* data;
+    ObjPoolEntryHeader* hdr;
 
-    data = sub_4E5920(index);
+    hdr = element_hdr_at_index(index);
 
-    return data + dword_5B9258;
+    return (unsigned char*)hdr + obj_pool_entry_header_byte_size;
 }
 
 // 0x4E5980
-void sub_4E5980(int* a1, int a2)
+void sequence_to_hdr(ObjPoolEntryHeader* hdr, int seq)
 {
-    *a1 = (a2 << 8) + (uint8_t)*a1;
+    hdr->seq = seq;
 }
 
 // 0x4E59A0
-int sub_4E59A0(int* a1)
+int sequence_from_hdr(ObjPoolEntryHeader* hdr)
 {
-    return *a1 >> 8;
+    return hdr->seq;
 }

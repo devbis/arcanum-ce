@@ -941,7 +941,7 @@ bool timeevent_recover_handles_internal(TimeEventNode* node, bool force)
                 }
 
                 if (obj == OBJ_HANDLE_NULL
-                    || !sub_4E5470(obj)) {
+                    || !obj_handle_is_valid(obj)) {
                     if (!sub_443F80(&obj, &(node->field_30[index]))) {
                         node->te.params[index].object_value = OBJ_HANDLE_NULL;
                         tig_debug_printf("TimeEvent: ERROR: Object validate recovery FAILED: TE-Type: %s!\n", info->name);
@@ -995,7 +995,7 @@ bool sub_45B7A0(TimeEventNode* node)
     timeevent_type_info = &(stru_5B2188[node->te.type]);
     for (index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
         if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & timeevent_type_info->flags) != 0) {
-            if (!sub_4E5470(node->te.params[index].object_value)) {
+            if (!obj_handle_is_valid(node->te.params[index].object_value)) {
                 return false;
             }
         }
@@ -1973,7 +1973,7 @@ void timeevent_debug_node(TimeEventNode* node, int node_index)
                 index,
                 node->te.params[index].integer_value);
         } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->te.type].flags) != 0) {
-            if (sub_4E5470(node->te.params[index].object_value)) {
+            if (obj_handle_is_valid(node->te.params[index].object_value)) {
                 if (node->te.params[index].object_value != OBJ_HANDLE_NULL) {
                     object_examine(node->te.params[index].object_value,
                         node->te.params[index].object_value,

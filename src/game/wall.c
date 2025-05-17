@@ -126,7 +126,7 @@ void sub_4E18F0(int64_t obj, bool a2)
     }
 
     if (a2) {
-        if (sub_4E5470(obj)) {
+        if (obj_handle_is_valid(obj)) {
             sub_43CF70(obj);
             sub_43CFF0(obj);
         }

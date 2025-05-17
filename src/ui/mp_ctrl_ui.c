@@ -96,8 +96,8 @@ bool mp_ctrl_ui_process_callback(TimeEvent* timeevent)
         sub_5708B0(0);
         break;
     case 1:
-        if (sub_4E5470(timeevent->params[1].object_value)
-            && sub_4E5470(timeevent->params[2].object_value)) {
+        if (obj_handle_is_valid(timeevent->params[1].object_value)
+            && obj_handle_is_valid(timeevent->params[2].object_value)) {
             sub_5704E0(timeevent->params[1].object_value,
                 timeevent->params[2].object_value,
                 timeevent->params[3].integer_value);
