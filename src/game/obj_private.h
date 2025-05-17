@@ -3,6 +3,7 @@
 
 #include "game/obj.h"
 #include "game/obj_id.h"
+#include "game/obj_pool.h"
 #include "game/sa.h"
 #include "game/script.h"
 #include "game/quest.h"
@@ -66,21 +67,6 @@ int sub_4E4BA0(ObjSa* a1);
 void sub_4E4BD0(S4E4BD0* a1);
 void sub_4E4C00(const void* data, int size, S4E4BD0* a3);
 void sub_4E4C50(void* buffer, int size, uint8_t** data);
-void obj_pool_init(int size, bool editor);
-void obj_pool_exit();
-Object* obj_pool_allocate(int64_t* obj_ptr);
-Object* obj_pool_lock(int64_t obj);
-void obj_pool_unlock(int64_t obj);
-void obj_pool_deallocate(int64_t obj);
-void sub_4E4FD0(ObjectID a1, int64_t obj);
-int64_t objp_perm_lookup(ObjectID oid);
-ObjectID sub_4E5280(int64_t obj);
-void sub_4E52F0(ObjectID oid);
-void sub_4E5300();
-bool obj_pool_walk_first(int64_t* obj_ptr, int* iter_ptr);
-bool obj_pool_walk_next(int64_t* obj_ptr, int* iter_ptr);
-bool sub_4E5470(int64_t obj);
-int sub_4E5530(int64_t obj);
 void sub_4E59B0();
 void sub_4E5A50();
 int sub_4E5AA0();
