@@ -28,7 +28,7 @@ typedef struct ObjectID {
 
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
-void sub_4E62A0(ObjectID* oid);
+void objid_create_guid(ObjectID* oid);
 void objid_id_perm_by_load_order(ObjectID* oid, int64_t obj);
 bool objid_is_valid(ObjectID a);
 bool objid_compare(ObjectID a, ObjectID b);

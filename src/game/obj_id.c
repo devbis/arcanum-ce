@@ -13,7 +13,7 @@ static bool sub_4E6AA0(int* value_ptr, const char* str, size_t length);
 static bool sub_4E6B00(char* dst, const char* src, int size);
 
 // 0x4E62A0
-void sub_4E62A0(ObjectID* oid)
+void objid_create_guid(ObjectID* oid)
 {
     if (CoCreateGuid(&(oid->d.g)) != S_OK) {
         tig_debug_println("Error: Unable to generate permanent ID!");

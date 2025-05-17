@@ -786,7 +786,7 @@ void obj_create_proto(int type, int64_t* obj_ptr)
 
     object = obj_allocate(&handle);
     object->type = type;
-    sub_4E62A0(&(object->oid));
+    objid_create_guid(&(object->oid));
     sub_4E4FD0(object->oid, handle);
     object->prototype_oid.type = OID_TYPE_BLOCKED;
     object->prototype_obj = OBJ_HANDLE_NULL;
@@ -840,7 +840,7 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
         || obj_type_is_critter(object->type)
         || obj_type_is_item(object->type)
         || !obj_editor) {
-        sub_4E62A0(&(object->oid));
+        objid_create_guid(&(object->oid));
         sub_4E4FD0(object->oid, obj);
     } else {
         object->oid.type = OID_TYPE_NULL;
@@ -1025,7 +1025,7 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
         switch (copy_object->oid.type) {
         case OID_TYPE_GUID:
         case OID_TYPE_P:
-            sub_4E62A0(&(copy_object->oid));
+            objid_create_guid(&(copy_object->oid));
             sub_4E4FD0(copy_object->oid, copy_obj);
             break;
         default:
@@ -2078,7 +2078,7 @@ ObjectID obj_get_id(int64_t obj)
                 && object_is_static(obj)) {
                 objid_id_perm_by_load_order(&(object->oid), obj);
             } else {
-                sub_4E62A0(&(object->oid));
+                objid_create_guid(&(object->oid));
             }
 
             sub_4E4FD0(object->oid, obj);
