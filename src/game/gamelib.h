@@ -92,7 +92,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
 void gamelib_saveinfo_exit(GameSaveInfo* save_info);
 bool gamelib_saveinfo_save(GameSaveInfo* save_info);
 bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info);
-void gamelib_thumbnail_size_set(int a1, int a2);
+void gamelib_thumbnail_size_set(int width, int height);
 int gamelib_game_difficulty_get();
 void sub_4045A0();
 bool gamelib_copy_version(char* long_version, char* short_version, char* locale);
