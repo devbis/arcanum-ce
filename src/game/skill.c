@@ -847,13 +847,13 @@ int basic_skill_effectiveness(int64_t obj, int bs, int64_t target_obj)
 
     // For PC - adjust effectiveness based on game difficulty.
     if (obj == player_get_local_pc_obj()) {
-        game_difficulty = gamelib_get_game_difficulty();
+        game_difficulty = gamelib_game_difficulty_get();
         switch (game_difficulty) {
-        case 0:
+        case GAME_DIFFICULTY_EASY:
             // Easy: +50% to success rate.
             value += value / 2;
             break;
-        case 2:
+        case GAME_DIFFICULTY_HARD:
             // Hard: -25% to success rate.
             value -= value / 4;
             break;
@@ -1360,13 +1360,13 @@ int tech_skill_effectiveness(int64_t obj, int ts, int64_t target_obj)
 
     // For PC - adjust effectiveness based on game difficulty.
     if (obj == player_get_local_pc_obj()) {
-        game_difficulty = gamelib_get_game_difficulty();
+        game_difficulty = gamelib_game_difficulty_get();
         switch (game_difficulty) {
-        case 0:
+        case GAME_DIFFICULTY_EASY:
             // Easy: +50% to success rate.
             value += value / 2;
             break;
-        case 2:
+        case GAME_DIFFICULTY_HARD:
             // Hard: -25% to success rate.
             value -= value / 4;
             break;

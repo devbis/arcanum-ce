@@ -1507,14 +1507,14 @@ void combat_dmg(CombatContext* combat)
     if (player_is_pc_obj(combat->attacker_obj)) {
         if (!tig_net_is_active()
             || tig_net_is_host()) {
-            combat->game_difficulty = gamelib_get_game_difficulty();
+            combat->game_difficulty = gamelib_game_difficulty_get();
         }
 
         switch (combat->game_difficulty) {
-        case 0:
+        case GAME_DIFFICULTY_EASY:
             dam += dam / 2;
             break;
-        case 2:
+        case GAME_DIFFICULTY_HARD:
             dam -= dam / 4;
             break;
         }

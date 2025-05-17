@@ -1555,11 +1555,11 @@ void critter_give_xp(int64_t obj, int xp_gain)
         return;
     }
 
-    switch (gamelib_get_game_difficulty()) {
-    case 0:
+    switch (gamelib_game_difficulty_get()) {
+    case GAME_DIFFICULTY_EASY:
         xp_gain += xp_gain / 2;
         break;
-    case 2:
+    case GAME_DIFFICULTY_HARD:
         xp_gain -= xp_gain / 2;
         break;
     }

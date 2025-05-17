@@ -8,6 +8,12 @@
 typedef bool(GameExtraSaveFunc)();
 typedef bool(GameExtraLoadFunc)();
 
+typedef enum GameDifficulty {
+    GAME_DIFFICULTY_EASY,
+    GAME_DIFFICULTY_NORMAL,
+    GAME_DIFFICULTY_HARD,
+} GameDifficulty;
+
 typedef struct GameModuleList {
     unsigned int count;
     unsigned int selected;
@@ -87,7 +93,7 @@ void gamelib_saveinfo_exit(GameSaveInfo* save_info);
 bool gamelib_saveinfo_save(GameSaveInfo* save_info);
 bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info);
 void gamelib_thumbnail_size_set(int a1, int a2);
-int gamelib_get_game_difficulty();
+int gamelib_game_difficulty_get();
 void sub_4045A0();
 bool gamelib_copy_version(char* long_version, char* short_version, char* locale);
 void gamelib_patch_lvl_set(const char* patch_lvl);

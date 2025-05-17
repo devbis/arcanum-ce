@@ -81,6 +81,7 @@
 #define VERSION_PATCH 7
 #define VERSION_BUILD 4
 #define SPLASH_KEY "splash"
+#define DIFFICULTY_KEY "difficulty"
 
 #define TEN 10
 #define MODULE_COUNT 62
@@ -323,7 +324,7 @@ bool gamelib_init(GameInitInfo* init_info)
 
     settings_load(&settings);
 
-    settings_add(&settings, "difficulty", "1", difficulty_changed);
+    settings_add(&settings, DIFFICULTY_KEY, "1", difficulty_changed);
     difficulty_changed();
 
     gamelib_mod_loaded = false;
@@ -1605,11 +1606,11 @@ void gamelib_thumbnail_size_set(int width, int height)
 // 0x404570
 void difficulty_changed()
 {
-    gamelib_game_difficulty = settings_get_value(&settings, "difficulty");
+    gamelib_game_difficulty = settings_get_value(&settings, DIFFICULTY_KEY);
 }
 
 // 0x404590
-int gamelib_get_game_difficulty()
+int gamelib_game_difficulty_get()
 {
     return gamelib_game_difficulty;
 }
