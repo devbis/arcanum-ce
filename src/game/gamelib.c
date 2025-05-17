@@ -124,7 +124,6 @@ static void gamelib_render_game(GameDrawInfo* draw_info);
 static void gamelib_render_editor(GameDrawInfo* draw_info);
 static void gamelib_logo();
 static void gamelib_splash(tig_window_handle_t window_handle);
-static void sub_404930();
 static void sub_404A20();
 static bool sub_404C10(const char* module_name);
 static void sub_405070();
@@ -230,14 +229,8 @@ static ViewOptions gamelib_view_options;
 // 0x5D0B58
 static char byte_5D0B58[TIG_MAX_PATH];
 
-// 0x5D0C5C
-static char byte_5D0C5C[TIG_MAX_PATH];
-
 // 0x5D0D60
 static TigRect gamelib_iso_content_rect_ex;
-
-// 0x5D0D70
-static bool dword_5D0D70;
 
 // 0x5D0D74
 static bool in_redraw;
@@ -334,7 +327,6 @@ bool gamelib_init(GameInitInfo* init_info)
     difficulty_changed();
 
     gamelib_mod_loaded = false;
-    sub_404930();
     sub_404A20();
 
     if (!init_info->editor) {
@@ -1803,74 +1795,13 @@ void gamelib_splash(tig_window_handle_t window_handle)
     tig_file_list_destroy(&file_list);
 }
 
-// 0x404930
-void sub_404930()
-{
-    char data[260];
-    DWORD dwSize = sizeof(data);
-    DWORD dwType;
-    HKEY hKey;
-
-    dword_5D0D70 = true;
-
-    if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Troika\\Arcanum", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
-        dwType = REG_SZ;
-        if (RegQueryValueExA(hKey, "installed_mode", NULL, &dwType, (LPBYTE)data, &dwSize) == ERROR_SUCCESS
-            && strcmpi(data, "partial") == 0) {
-            dword_5D0D70 = false;
-        } else {
-            // NOTE: Purpose? (We already know it's true)
-            if (dword_5D0D70 == true) {
-                return;
-            }
-        }
-
-        dwType = REG_SZ;
-        if (RegQueryValueExA(hKey, "installed_from", NULL, &dwType, (LPBYTE)data, &dwSize) == ERROR_SUCCESS) {
-            strcpy(byte_5D0C5C, data);
-        } else {
-            dword_5D0D70 = true;
-        }
-
-        // FIXME: Missing RegCloseKey.
-    }
-}
-
 // 0x404A20
 void sub_404A20()
 {
     TigFileList file_list;
-    TigFileList remote_file_list;
-    char path[TIG_MAX_PATH];
     unsigned int index;
-    unsigned int remote_index;
-    bool found;
 
     tig_file_list_create(&file_list, "arcanum*.dat");
-
-    if (!dword_5D0D70) {
-        strcpy(path, byte_5D0C5C);
-        strcat(path, "\\Sierra\\Arcanum\\arcanum*.dat");
-        tig_file_list_create(&remote_file_list, path);
-
-        for (remote_index = 0; remote_index < remote_file_list.count; remote_index++) {
-            found = false;
-            for (index = 0; index < file_list.count; index++) {
-                if (strcmpi(remote_file_list.entries[remote_index].path, file_list.entries[index].path) == 0) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                strcpy(path, byte_5D0C5C);
-                strcat(path, "\\Sierra\\Arcanum\\");
-                strcat(path, remote_file_list.entries[remote_index].path);
-                tig_file_repository_add(path);
-            }
-        }
-
-        tig_file_list_destroy(&remote_file_list);
-    }
 
     for (index = 0; index < file_list.count; index++) {
         tig_file_repository_add(file_list.entries[index].path);
@@ -1919,36 +1850,9 @@ bool sub_404C10(const char* module_name)
                 strcpy(byte_5D0028[index], path2);
             }
         }
-    } else {
-        if (!dword_5D0D70) {
-            strcpy(path2, byte_5D0C5C);
-            strcat(path2, "\\Sierra\\Arcanum\\Modules\\");
-            strcat(path2, module_name);
-            strcat(path2, ".dat");
-
-            // FIXME: Probably broken: previous code builds `path2`, but
-            // attempts to load `path1`.
-            if (tig_file_exists(path1, NULL)) {
-                if (!tig_file_repository_add(path1)) {
-                    return false;
-                }
-
-                strcpy(byte_5D0FA8, path2);
-            }
-        }
     }
 
     path1[end] = '\0';
-
-    if (!dword_5D0D70) {
-        strcpy(path2, byte_5D0C5C);
-        strcat(path2, "\\Sierra\\Arcanum\\Modules\\");
-        strcat(path2, module_name);
-        if (tig_file_is_directory(path2)) {
-            tig_file_repository_add(path2);
-            strcpy(byte_5D0B58, path2);
-        }
-    }
 
     if (tig_file_is_directory(path1)) {
         tig_file_repository_add(path1);
