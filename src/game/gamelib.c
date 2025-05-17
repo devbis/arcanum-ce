@@ -294,7 +294,7 @@ static bool in_load;
 static bool in_reset;
 
 // 0x5D10EC
-static int dword_5D10EC;
+static int gamelib_cheat_level;
 
 // 0x739E60
 unsigned int gamelib_ping_time;
@@ -765,15 +765,13 @@ bool gamelib_in_reset()
 // 0x402CB0
 int gamelib_cheat_level_get()
 {
-    // NOTE: Make testing a little bit easier, but probably should be turned off
-    // for release.
-    return 3;
+    return gamelib_cheat_level;
 }
 
 // 0x402CC0
-void sub_402CC0()
+void gamelib_cheat_level_set(int level)
 {
-    dword_5D10EC = 0;
+    gamelib_cheat_level = level;
 }
 
 // 0x402CD0

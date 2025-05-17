@@ -74,6 +74,7 @@ bool gamelib_mod_guid(GUID* guid_ptr);
 void gamelib_mod_unload();
 bool gamelib_in_reset();
 int gamelib_cheat_level_get();
+void gamelib_cheat_level_set(int level);
 void gamelib_invalidate_rect(TigRect* rect);
 bool gamelib_redraw();
 void gamelib_renderlock_acquire();

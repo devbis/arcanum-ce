@@ -126,6 +126,20 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     sub_549A70();
 
+    // NOTE: These were original switches to set cheat level. They were removed
+    // from Arcanum release version.
+    if (strstr(lpCmdLine, "-2680") != NULL) {
+        gamelib_cheat_level_set(1);
+    }
+
+    if (strstr(lpCmdLine, "-0897") != NULL) {
+        gamelib_cheat_level_set(2);
+    }
+
+    if (strstr(lpCmdLine, "-4637") != NULL) {
+        gamelib_cheat_level_set(3);
+    }
+
     pch = strstr(lpCmdLine, "-pathlimit");
     if (pch != NULL) {
         value = atoi(pch + 10);
