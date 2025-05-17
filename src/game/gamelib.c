@@ -1751,34 +1751,56 @@ void gamelib_splash(tig_window_handle_t window_handle)
 {
     int splash;
     TigVideoBuffer* video_buffer;
+    TigVideoBufferData vb_data;
     TigFileList file_list;
+    TigWindowData window_data;
     int value;
     char path[TIG_MAX_PATH];
     int index;
+    TigRect src_rect;
+    TigRect dst_rect;
 
     settings_add(&settings, SPLASH_KEY, "0", NULL);
     splash = settings_get_value(&settings, SPLASH_KEY);
 
-    if (tig_window_vbid_get(window_handle, &video_buffer) == TIG_OK) {
-        tig_file_list_create(&file_list, "art\\splash\\*.bmp");
+    tig_file_list_create(&file_list, "art\\splash\\*.bmp");
 
-        if (file_list.count != 0) {
-            for (index = 0; index < 3; index++) {
-                value = (index + splash) % file_list.count;
-                sprintf(path, "art\\splash\\%s", file_list.entries[value].path);
-                if (tig_video_buffer_load_from_bmp(path, &video_buffer, 0) == TIG_OK) {
-                    break;
-                }
+    if (file_list.count != 0) {
+        for (index = 0; index < 3; index++) {
+            value = (index + splash) % file_list.count;
+            sprintf(path, "art\\splash\\%s", file_list.entries[value].path);
+            if (tig_video_buffer_load_from_bmp(path, &video_buffer, 0x1) == TIG_OK) {
+                break;
             }
-
-            tig_file_list_destroy(&file_list);
-            tig_window_set_needs_display_in_rect(NULL);
-            tig_window_display();
-            settings_set_value(&settings, SPLASH_KEY, value + 1);
-        } else {
-            tig_file_list_destroy(&file_list);
         }
+
+        if (video_buffer != NULL
+            && tig_window_data(window_handle, &window_data) == TIG_OK
+            && tig_video_buffer_data(video_buffer, &vb_data) == TIG_OK) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = vb_data.width;
+            src_rect.height = vb_data.height;
+
+            dst_rect.x = (window_data.rect.width - vb_data.width) / 2;
+            dst_rect.y = (window_data.rect.height - vb_data.height) / 2;
+            dst_rect.width = vb_data.width;
+            dst_rect.height = vb_data.height;
+
+            tig_window_copy_from_vbuffer(window_handle, &dst_rect, video_buffer, &src_rect);
+        }
+
+        if (video_buffer != NULL) {
+            tig_video_buffer_destroy(video_buffer);
+        }
+
+        tig_window_set_needs_display_in_rect(NULL);
+        tig_window_display();
+
+        settings_set_value(&settings, SPLASH_KEY, value + 1);
     }
+
+    tig_file_list_destroy(&file_list);
 }
 
 // 0x404930
