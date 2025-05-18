@@ -358,7 +358,7 @@ bool hotkey_ui_process_event(TigMessage* msg)
     case TIG_MESSAGE_CHAR:
         if (!textedit_ui_is_focused()
             && !sub_541680()
-            && (msg->data.character.ch == 'A' || msg->data.character.ch == 'a')) {
+            && (msg->data.character.ch == SDLK_A)) {
             sub_54FCF0(stru_683518);
             gsound_play_sfx(0, 1);
             return true;

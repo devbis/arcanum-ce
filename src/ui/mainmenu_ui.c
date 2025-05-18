@@ -6103,7 +6103,7 @@ bool sub_546EE0(TigMessage* msg)
             sub_541740();
             return true;
         case 2:
-            if (msg->data.keyboard.key == DIK_ESCAPE
+            if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE
                 && dword_64C43C > 1) {
                 gsound_play_sfx(0, 1);
                 sub_5412D0();
@@ -6112,7 +6112,7 @@ bool sub_546EE0(TigMessage* msg)
             }
             return false;
         case 6:
-            if (msg->data.keyboard.key == DIK_O) {
+            if (msg->data.keyboard.key == SDL_SCANCODE_O) {
                 if (!stru_5C36B0[dword_64C244][1]) {
                     sub_5412D0();
                 }
@@ -6121,58 +6121,58 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         case 7:
             switch (msg->data.keyboard.key) {
-            case DIK_ESCAPE:
+            case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
                 }
                 return true;
-            case DIK_UP:
+            case SDL_SCANCODE_UP:
                 sub_543060();
                 return true;
-            case DIK_DOWN:
+            case SDL_SCANCODE_DOWN:
                 sub_5430D0();
                 return true;
-            case DIK_BACK:
-            case DIK_DELETE:
+            case SDL_SCANCODE_BACKSPACE:
+            case SDL_SCANCODE_DELETE:
                 gsound_play_sfx(0, 1);
                 mainmenu_ui_load_game_handle_delete();
                 return true;
-            case DIK_RETURN:
-            case DIK_NUMPADENTER:
+            case SDL_SCANCODE_RETURN:
+            case SDL_SCANCODE_KP_ENTER:
                 sub_5480C0(2);
                 return true;
             }
             return false;
         case 8:
             switch (msg->data.keyboard.key) {
-            case DIK_ESCAPE:
+            case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
                 }
                 return true;
-            case DIK_UP:
+            case SDL_SCANCODE_UP:
                 sub_544210();
                 return true;
-            case DIK_DOWN:
+            case SDL_SCANCODE_DOWN:
                 sub_544250();
                 return true;
-            case DIK_BACK:
-            case DIK_DELETE:
+            case SDL_SCANCODE_BACKSPACE:
+            case SDL_SCANCODE_DELETE:
                 gsound_play_sfx(0, 1);
                 mainmenu_ui_save_game_handle_delete();
                 return true;
-            case DIK_RETURN:
-            case DIK_NUMPADENTER:
+            case SDL_SCANCODE_RETURN:
+            case SDL_SCANCODE_KP_ENTER:
                 sub_5480C0(2);
                 return true;
             }
             return false;
         case 17:
-            if (msg->data.keyboard.key == DIK_ESCAPE) {
+            if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE) {
                 gsound_play_sfx(0, 1);
                 tig_net_reset_connection();
                 sub_5417A0(1);
@@ -6184,14 +6184,14 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         case 22:
             switch (msg->data.keyboard.key) {
-            case DIK_ESCAPE:
+            case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
                 if (dword_64C414 == 0) {
                     sub_5412D0();
                 }
                 return true;
-            case DIK_UP:
+            case SDL_SCANCODE_UP:
                 if (dword_5C3618 > 0 ) {
                     dword_5C3618--;
                     mainmenu_ui_refresh_multiplayer_select_char(0);
@@ -6199,7 +6199,7 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 }
                 return false;
-            case DIK_DOWN:
+            case SDL_SCANCODE_DOWN:
                 if (dword_5C3618 < dword_64C420 - 1) {
                     dword_5C3618++;
                     mainmenu_ui_refresh_multiplayer_select_char(0);
@@ -6207,8 +6207,8 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 }
                 return false;
-            case DIK_BACK:
-            case DIK_DELETE:
+            case SDL_SCANCODE_BACKSPACE:
+            case SDL_SCANCODE_DELETE:
                 if (dword_5C3618 >= 0 && dword_5C3618 < dword_64C420) {
                     TigWindowModalDialogInfo modal_dialog_info;
                     TigWindowModalDialogChoice choice;
@@ -6276,7 +6276,7 @@ bool sub_546EE0(TigMessage* msg)
         }
 
         if ((dword_64C414 == 15 || dword_64C414 == 14)
-            && msg->data.character.ch == '\r'
+            && msg->data.character.ch == SDLK_RETURN
             && sub_552070() != 9) {
             gsound_play_sfx(0, 1);
             sub_5480C0(2);

@@ -220,7 +220,7 @@ bool fate_ui_message_filter(TigMessage* msg)
         }
         break;
     case TIG_MESSAGE_KEYBOARD:
-        if (msg->data.keyboard.key == DIK_SPACE
+        if (msg->data.keyboard.key == SDL_SCANCODE_SPACE
             && msg->data.keyboard.pressed == 1) {
             fate_ui_close();
             return true;

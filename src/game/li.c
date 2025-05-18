@@ -128,7 +128,7 @@ int sub_4BBC20()
 void li_update()
 {
     if (dword_5FC43C <= 0) {
-        tig_video_blit(li_indicator_vb, &li_indicator_bounds, &li_indicator_frame, 1);
+        tig_video_blit(li_indicator_vb, &li_indicator_bounds, &li_indicator_frame);
         li_indicator_art_id = tig_art_id_frame_inc(li_indicator_art_id);
         li_blit();
         tig_window_set_needs_display_in_rect(&li_indicator_frame);

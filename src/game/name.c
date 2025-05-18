@@ -1480,13 +1480,13 @@ bool sub_41F190(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_CHAR) {
         switch (msg->data.character.ch) {
-        case 'a':
+        case SDLK_A:
             if (dword_739E54 != -1) {
                 dword_739E54 = sub_41E960(dword_739E54);
                 sub_41F240();
             }
             break;
-        case 'z':
+        case SDLK_Z:
             if (dword_739E54 == -1) {
                 dword_739E54 = sub_41DFC0(dword_739E58, dword_739E50);
                 sub_41F240();
@@ -1498,10 +1498,10 @@ bool sub_41F190(TigMessage* msg)
                 sub_41F240();
             }
             break;
-        case '\x1B':
+        case SDLK_ESCAPE:
             dword_739E4C = -1;
             break;
-        case '\n':
+        case SDLK_RETURN:
             dword_739E4C = 1;
             break;
         }

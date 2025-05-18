@@ -174,8 +174,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     tgt = *tgt_ptr;
 
     if (magictech_is_aggressive(dword_5CB3A0)
-        && !tig_kb_is_key_pressed(DIK_LALT)
-        && !tig_kb_is_key_pressed(DIK_RALT)) {
+        && !tig_kb_get_modifier(SDL_KMOD_ALT)) {
         // FIXME: Looks odd.
         tgt |= (Tgt_Non_Party_Critters & ~Tgt_Object);
     }
@@ -222,8 +221,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
         }
 
         if ((*tgt_ptr & Tgt_Object) != 0
-            && (tig_kb_is_key_pressed(DIK_LSHIFT)
-                || tig_kb_is_key_pressed(DIK_RSHIFT))) {
+            && tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
             sub_4F2810(&v2, player_get_local_pc_obj());
             // FIXME: Odd.
             if ((*tgt_ptr & (Tgt_Obj_No_Self & ~Tgt_Object)) == 0) {

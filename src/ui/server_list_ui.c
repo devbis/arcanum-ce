@@ -609,25 +609,25 @@ bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
         }
         break;
     case TIG_MESSAGE_KEYBOARD:
-        if (msg->data.keyboard.key == DIK_LCONTROL
-            || msg->data.keyboard.key == DIK_RCONTROL) {
+        if (msg->data.keyboard.key == SDL_SCANCODE_LCTRL
+            || msg->data.keyboard.key == SDL_SCANCODE_RCTRL) {
             dword_68725C = msg->data.keyboard.pressed == 1;
         }
 
         if (!msg->data.keyboard.pressed && dword_687254) {
             switch (msg->data.keyboard.key) {
-            case DIK_ESCAPE:
+            case SDL_SCANCODE_ESCAPE:
                 dword_687254 = false;
                 byte_6869B0[0] = '\0';
                 sub_586D20(&stru_5CCC78, window_handle);
                 return true;
-            case DIK_BACK:
-            case DIK_DELETE:
+            case SDL_SCANCODE_BACKSPACE:
+            case SDL_SCANCODE_DELETE:
                 byte_6869B0[0] = '\0';
                 sub_586D20(&stru_5CCC78, window_handle);
                 return true;
-            case DIK_RETURN:
-            case DIK_NUMPADENTER:
+            case SDL_SCANCODE_RETURN:
+            case SDL_SCANCODE_KP_ENTER:
                 dword_687254 = false;
                 sub_586D20(&stru_5CCC78, window_handle);
                 return true;

@@ -160,7 +160,7 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
                     if (msg.type == TIG_MESSAGE_KEYBOARD) {
                         if (msg.data.keyboard.pressed == false) {
                             stop = true;
-                            if (msg.data.keyboard.key == DIK_ESCAPE) {
+                            if (msg.data.keyboard.key == SDL_SCANCODE_ESCAPE) {
                                 success = false;
                             }
                         }

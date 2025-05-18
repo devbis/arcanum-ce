@@ -560,7 +560,7 @@ void follower_ui_begin_order_mode(int cmd)
     if (cmd == FOLLOWER_UI_COMMAND_WALK) {
         tgt = Tgt_Tile;
     } else {
-        if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+        if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
             tgt = Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall;
         } else {
             tgt = Tgt_Obj_No_ST_Critter_Dead | Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall | Tgt_Non_Party_Critters;

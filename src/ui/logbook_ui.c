@@ -375,7 +375,7 @@ void logbook_ui_create()
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
     }
 
-    if (tig_kb_is_key_pressed(DIK_LCONTROL) && tig_kb_is_key_pressed(DIK_LMENU)) {
+    if (tig_kb_get_modifier(SDL_KMOD_LCTRL) && tig_kb_get_modifier(SDL_KMOD_LALT)) {
         logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
         dword_648798 = 1;
         dword_648980 = 1;

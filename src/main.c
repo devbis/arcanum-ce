@@ -69,7 +69,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     init_info.texture_width = 1024;
     init_info.texture_height = 1024;
-    init_info.flags = TIG_INITIALIZE_3D_HARDWARE_DEVICE | TIG_INITIALIZE_3D_SOFTWARE_DEVICE | TIG_INITIALIZE_VIDEO_MEMORY;
+    init_info.flags = 0;
 
     pch = lpCmdLine;
     while (*pch != '\0') {
@@ -83,19 +83,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     if (strstr(lpCmdLine, "-nosound") != NULL) {
         init_info.flags |= TIG_INITIALIZE_NO_SOUND;
-    }
-
-    if (strstr(lpCmdLine, "-no3d") != NULL) {
-        init_info.flags &= ~(TIG_INITIALIZE_ANY_3D | TIG_INITIALIZE_VIDEO_MEMORY);
-    }
-
-    if (strstr(lpCmdLine, "-3dref") != NULL) {
-        init_info.flags &= ~(TIG_INITIALIZE_3D_HARDWARE_DEVICE | TIG_INITIALIZE_3D_SOFTWARE_DEVICE);
-        init_info.flags |= TIG_INITIALIZE_3D_REF_DEVICE;
-    }
-
-    if (strstr(lpCmdLine, "-doublebuffer") != NULL) {
-        init_info.flags |= TIG_INITIALIZE_DOUBLE_BUFFER;
     }
 
     pch = strstr(lpCmdLine, "-vidfreed");
@@ -116,12 +103,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     if (strstr(lpCmdLine, "-norandom") != NULL) {
         wmap_rnd_disable();
-    }
-
-    if (strstr(lpCmdLine, "-nonmsmousez") != NULL) {
-        tig_mouse_set_z_axis_enabled(false);
-    } else if (strstr(lpCmdLine, "-msmousez") != NULL) {
-        tig_mouse_set_z_axis_enabled(true);
     }
 
     sub_549A70();
@@ -177,8 +158,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     init_info.width = 800;
     init_info.height = 600;
-    init_info.bpp = 16;
-    init_info.instance = hInstance;
+    init_info.bpp = 32;
     init_info.art_file_path_resolver = name_resolve_path;
     init_info.art_id_reset_func = name_normalize_aid;
     init_info.sound_file_path_resolver = gsound_resolve_path;
@@ -187,13 +167,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
     }
 
-    screenshotter.key = DIK_F12;
+    screenshotter.key = SDL_SCANCODE_F12;
     screenshotter.field_4 = 0;
     tig_video_screenshot_set_settings(&screenshotter);
-
-    if ((init_info.flags & TIG_INITIALIZE_ANY_3D) != 0) {
-        intgame_set_iso_window_flags(intgame_get_iso_window_flags() | TIG_WINDOW_RENDER_TARGET);
-    }
 
     intgame_set_iso_window_width(init_info.width);
     intgame_set_iso_window_height(init_info.height);
@@ -391,7 +367,7 @@ void main_loop()
             if (message.type == TIG_MESSAGE_KEYBOARD) {
                 if (!message.data.keyboard.pressed) {
                     switch (message.data.keyboard.key) {
-                    case DIK_ESCAPE:
+                    case SDL_SCANCODE_ESCAPE:
                         if (sub_567A10()
                             || wmap_ui_is_created()
                             || tig_net_is_active()
@@ -405,7 +381,7 @@ void main_loop()
                             return;
                         }
                         break;
-                    case DIK_F10:
+                    case SDL_SCANCODE_F10:
                         intgame_toggle_interface();
                         tig_debug_printf("iso_redraw...");
                         iso_redraw();
@@ -413,7 +389,7 @@ void main_loop()
                         tig_window_display();
                         tig_debug_printf("completed.\n");
                         break;
-                    case DIK_O:
+                    case SDL_SCANCODE_O:
                         if (!textedit_ui_is_focused()) {
                             mainmenu_ui_start(4);
                             if (!mainmenu_ui_handle()) {
@@ -421,7 +397,7 @@ void main_loop()
                             }
                         }
                         break;
-                    case DIK_F7:
+                    case SDL_SCANCODE_F7:
                         if (!critter_is_dead(player_get_local_pc_obj())) {
                             if (wmap_ui_is_created()) {
                                 wmap_ui_close();
@@ -444,14 +420,14 @@ void main_loop()
                             }
                         }
                         break;
-                    case DIK_F8:
+                    case SDL_SCANCODE_F8:
                         if (!tig_net_is_active()) {
                             mainmenu_ui_feedback_loading();
                             sub_543220();
                             mainmenu_ui_feedback_loading_completed();
                         }
                         break;
-                    case DIK_F11:
+                    case SDL_SCANCODE_F11:
                         if (gamelib_cheat_level_get() >= 3) {
                             for (index = 0; index < SPELL_COUNT; index++) {
                                 spell_add(pc_obj, index, true);
@@ -472,7 +448,7 @@ void main_loop()
                             intgame_draw_bar(INTGAME_BAR_FATIGUE);
                         }
                         break;
-                    case DIK_J:
+                    case SDL_SCANCODE_J:
                         for (index = 0; index < 8; index++) {
                             sub_526D20(index);
                         }
@@ -482,23 +458,23 @@ void main_loop()
                     if (!textedit_ui_is_focused()) {
                         if (gamelib_cheat_level_get() >= 3) {
                             switch (message.data.keyboard.key) {
-                            case DIK_H:
+                            case SDL_SCANCODE_H:
                                 timeevent_inc_milliseconds(3600000);
                                 break;
-                            case DIK_N:
+                            case SDL_SCANCODE_N:
                                 object_hp_damage_set(pc_obj, 0);
                                 critter_fatigue_damage_set(pc_obj, 0);
                                 object_flags_unset(pc_obj, OF_NO_BLOCK | OF_FLAT);
                                 critter_decay_timeevent_cancel(pc_obj);
                                 break;
-                            case DIK_GRAVE:
+                            case SDL_SCANCODE_GRAVE:
                                 stat_base_set(pc_obj, STAT_INTELLIGENCE, 20);
                                 for (index = 0; index < 8; index++) {
                                     tech_degree_inc(pc_obj, index);
                                 }
                                 charedit_refresh();
                                 break;
-                            case DIK_P:
+                            case SDL_SCANCODE_P:
                                 ai_npc_fighting_toggle();
                                 break;
                             }
@@ -506,7 +482,7 @@ void main_loop()
 
                         if (gamelib_cheat_level_get() >= 2) {
                             switch (message.data.keyboard.key) {
-                            case DIK_D:
+                            case SDL_SCANCODE_D:
                                 if (light_scheme_get() == LIGHT_SCHEME_DEFAULT_LIGHTING) {
                                     light_scheme_set(dword_5CFF00, light_scheme_get_hour());
                                 } else {
@@ -514,7 +490,7 @@ void main_loop()
                                     light_scheme_set(LIGHT_SCHEME_DEFAULT_LIGHTING, light_scheme_get_hour());
                                 }
                                 break;
-                            case DIK_Y:
+                            case SDL_SCANCODE_Y:
                                 if (!tig_net_is_active()) {
                                     critter_give_xp(pc_obj, level_get_experience_points_to_next_level(pc_obj));
                                 } else if (tig_net_is_host()) {
@@ -525,8 +501,8 @@ void main_loop()
                                     }
                                 }
                                 break;
-                            case DIK_4:
-                                if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                            case SDL_SCANCODE_4:
+                                if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                                     UiMessage ui_message;
 
                                     ui_message.type = UI_MSG_TYPE_FEEDBACK;
@@ -547,7 +523,7 @@ void main_loop()
 
                         if (gamelib_cheat_level_get() >= 1) {
                             switch (message.data.keyboard.key) {
-                            case DIK_V:
+                            case SDL_SCANCODE_V:
                                 gamelib_copy_version(version_str, NULL, NULL);
                                 if (tig_video_3d_check_hardware() == TIG_OK) {
                                     strcat(version_str, " [hardware renderer");
@@ -562,13 +538,13 @@ void main_loop()
                                 }
                                 sub_550770(-1, version_str);
                                 break;
-                            case DIK_E:
+                            case SDL_SCANCODE_E:
                                 critter_debug_obj(player_get_local_pc_obj());
                                 timeevent_debug_lists();
                                 magictech_debug_lists();
                                 anim_stats();
                                 break;
-                            case DIK_X:
+                            case SDL_SCANCODE_X:
                                 tig_mouse_get_state(&mouse_state);
                                 location_at(mouse_state.x, mouse_state.y, &mouse_loc);
                                 sprintf(mouse_state_str, "x: %d, y: %d",
@@ -577,11 +553,11 @@ void main_loop()
                                 tig_debug_printf("%s\n", mouse_state_str);
                                 sub_550770(-1, mouse_state_str);
                                 break;
-                            case DIK_U:
+                            case SDL_SCANCODE_U:
                                 sprintf(story_state_str, "Current Story State: %d", script_story_state_get());
                                 sub_550770(-1, story_state_str);
                                 break;
-                            case DIK_LBRACKET:
+                            case SDL_SCANCODE_LEFTBRACKET:
                                 switch (object_blit_flags_get()) {
                                 case 0:
                                     object_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_CONST);
@@ -594,7 +570,7 @@ void main_loop()
                                     break;
                                 }
                                 break;
-                            case DIK_RBRACKET:
+                            case SDL_SCANCODE_RIGHTBRACKET:
                                 switch (roof_blit_flags_get()) {
                                 case 0:
                                     roof_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_CONST);
@@ -607,32 +583,32 @@ void main_loop()
                                     break;
                                 }
                                 break;
-                            case DIK_APOSTROPHE:
+                            case SDL_SCANCODE_APOSTROPHE:
                                 settings_set_value(&settings, "shadows", 1 - settings_get_value(&settings, "shadows"));
                                 break;
-                            case DIK_BACKSLASH:
+                            case SDL_SCANCODE_BACKSLASH:
                                 wallcheck_set_enabled(!wallcheck_is_enabled());
                                 break;
-                            case DIK_NUMPAD7:
-                                if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            case SDL_SCANCODE_KP_7:
+                                if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                     disable_profiler = true;
                                 }
                                 break;
-                            case DIK_NUMPAD8:
-                                if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            case SDL_SCANCODE_KP_8:
+                                if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                     enable_profiler = true;
                                 }
                                 break;
-                            case DIK_NUMPAD9:
-                                if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            case SDL_SCANCODE_KP_9:
+                                if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                     output_profile_data = true;
                                 }
                                 break;
-                            case DIK_G:
-                                if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            case SDL_SCANCODE_G:
+                                if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                     gamma = 1.0f;
                                     tig_video_set_gamma(gamma);
-                                } else if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                                } else if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                                     if (gamma > 0.1f) {
                                         gamma -= 0.1f;
                                         tig_video_set_gamma(gamma);
@@ -699,25 +675,25 @@ void handle_mouse_scroll()
 // 0x402010
 void handle_keyboard_scroll()
 {
-    if (tig_kb_is_key_pressed(DIK_UP)) {
-        if (tig_kb_is_key_pressed(DIK_LEFT)) {
+    if (tig_kb_is_key_pressed(SDL_SCANCODE_UP)) {
+        if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
-        } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
+        } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
         } else {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
         }
-    } else if (tig_kb_is_key_pressed(DIK_DOWN)) {
-        if (tig_kb_is_key_pressed(DIK_LEFT)) {
+    } else if (tig_kb_is_key_pressed(SDL_SCANCODE_DOWN)) {
+        if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
-        } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
+        } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
         }
-    } else if (tig_kb_is_key_pressed(DIK_LEFT)) {
+    } else if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
         scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
-    } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
+    } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
         scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
     }
 }

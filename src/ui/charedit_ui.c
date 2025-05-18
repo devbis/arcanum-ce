@@ -1601,7 +1601,7 @@ bool charedit_window_message_filter(TigMessage* msg)
             return false;
         }
     case TIG_MESSAGE_CHAR:
-        if (toupper(msg->data.character.ch) == 'X'
+        if (msg->data.character.ch == SDLK_X
             && !tig_net_is_active()
             && charedit_mode == CHAREDIT_MODE_ACTIVE
             && (!combat_turn_based_is_active()

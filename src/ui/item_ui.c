@@ -120,8 +120,7 @@ void sub_571AA0(int64_t a1, int64_t a2)
             }
 
             if ((*tgt_ptr & Tgt_Object) != 0
-                && (tig_kb_is_key_pressed(DIK_LSHIFT)
-                    || tig_kb_is_key_pressed(DIK_RSHIFT))) {
+                && tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                 sub_4F2810(&v1, player_get_local_pc_obj());
                 sub_571CB0(&v1);
             }
@@ -161,7 +160,7 @@ void sub_571CB0(S4F2810* a1)
     }
 
     if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
-        && !tig_kb_is_key_pressed(DIK_LCONTROL)
+        && !tig_kb_get_modifier(SDL_KMOD_LCTRL)
         && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
         skill_invocation_init(&skill_invocation);
         sub_4440E0(pc_obj, &(skill_invocation.source));
@@ -231,15 +230,15 @@ void sub_571CB0(S4F2810* a1)
         if ((item_flags & OIF_IS_MAGICAL))
 
         anim_goal_use_item_on_obj(pc_obj, a1->obj, item_obj, 0);
-        if (tig_kb_is_key_pressed(DIK_LSHIFT)) {
+        if (tig_kb_get_modifier(SDL_KMOD_LSHIFT)) {
             sub_436C80();
             sub_571C80();
             return;
         }
 
-        if (tig_kb_is_key_pressed(DIK_LCONTROL)
-            || !tig_kb_get_modifier(DIK_NUMLOCK)
-            || (get_always_run(pc_obj) && !tig_kb_is_key_pressed(DIK_LCONTROL))) {
+        if (tig_kb_get_modifier(SDL_KMOD_LCTRL)
+            || !tig_kb_get_modifier(SDL_KMOD_NUM)
+            || (get_always_run(pc_obj) && !tig_kb_get_modifier(SDL_KMOD_LCTRL))) {
             sub_436C20();
             sub_571C80();
             return;

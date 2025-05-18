@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <combaseapi.h>
+
 #include "game/location.h"
 #include "game/map.h"
 #include "game/object.h"

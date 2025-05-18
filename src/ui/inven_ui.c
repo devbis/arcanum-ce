@@ -1646,8 +1646,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             sub_575770();
             if (!combat_turn_based_is_active()
                 || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
-                if (tig_kb_is_key_pressed(DIK_LSHIFT)
-                    || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                     item_use(inven_ui_pc_obj, v3, inven_ui_pc_obj);
                 } else {
                     item_use(inven_ui_pc_obj, v3, OBJ_HANDLE_NULL);
@@ -1890,7 +1889,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 sub_575770();
                 if (!combat_turn_based_is_active()
                     || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         item_use(inven_ui_pc_obj, item_obj, inven_ui_pc_obj);
                     } else {
                         item_use(inven_ui_pc_obj, item_obj, OBJ_HANDLE_NULL);

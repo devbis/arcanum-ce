@@ -85,33 +85,33 @@ bool textedit_ui_process_message(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_KEYBOARD) {
         if (msg->data.keyboard.pressed == 1) {
             switch (msg->data.keyboard.key) {
-            case DIK_HOME:
+            case SDL_SCANCODE_HOME:
                 dword_66DAAC = 0;
                 break;
-            case DIK_UP:
+            case SDL_SCANCODE_UP:
                 if (dword_66DAAC - 40 >= 0) {
                     dword_66DAAC -= 40;
                 }
                 break;
-            case DIK_LEFT:
+            case SDL_SCANCODE_LEFT:
                 if (dword_66DAAC > 0) {
                     dword_66DAAC--;
                 }
                 break;
-            case DIK_RIGHT:
+            case SDL_SCANCODE_RIGHT:
                 if (dword_66DAAC < dword_66DAB4) {
                     dword_66DAAC++;
                 }
                 break;
-            case DIK_DOWN:
+            case SDL_SCANCODE_DOWN:
                 if (dword_66DAAC + 40 < dword_66DAB4) {
                     dword_66DAAC += 40;
                 }
                 break;
-            case DIK_INSERT:
+            case SDL_SCANCODE_INSERT:
                 dword_66DAB0 = !dword_66DAB0;
                 break;
-            case DIK_DELETE:
+            case SDL_SCANCODE_DELETE:
                 memcpy(&(textedit_ui_current_textedit->buffer[dword_66DAAC]),
                     &(textedit_ui_current_textedit->buffer[dword_66DAAC + 1]),
                     dword_66DAB4 - dword_66DAAC);
@@ -130,7 +130,7 @@ bool textedit_ui_process_message(TigMessage* msg)
     }
 
     if (msg->type == TIG_MESSAGE_CHAR) {
-        if (msg->data.character.ch == VK_BACK) {
+        if (msg->data.character.ch == SDLK_BACKSPACE) {
             if (dword_66DAAC > 0) {
                 dword_66DAAC--;
                 memcpy(&(textedit_ui_current_textedit->buffer[dword_66DAAC]),
@@ -146,7 +146,7 @@ bool textedit_ui_process_message(TigMessage* msg)
             return true;
         }
 
-        if (msg->data.character.ch == VK_TAB) {
+        if (msg->data.character.ch == SDLK_TAB) {
             if (textedit_ui_current_textedit->on_tab != NULL) {
                 textedit_ui_current_textedit->on_tab(textedit_ui_current_textedit);
             }
@@ -154,7 +154,7 @@ bool textedit_ui_process_message(TigMessage* msg)
             return true;
         }
 
-        if (msg->data.character.ch == VK_RETURN) {
+        if (msg->data.character.ch == SDLK_RETURN) {
             textedit_ui_current_textedit->on_enter(textedit_ui_current_textedit);
             return true;
         }

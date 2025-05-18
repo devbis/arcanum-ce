@@ -349,7 +349,7 @@ void sub_57A620(SkillInvocation* skill_invocation)
     int64_t obj;
     char str[1000];
 
-    if (!tig_kb_is_key_pressed(DIK_LCONTROL) && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+    if (!tig_kb_get_modifier(SDL_KMOD_CTRL)) {
         obj = skill_invocation->source.obj;
         skill_pick_best_follower(skill_invocation);
         if (obj != skill_invocation->source.obj) {

@@ -1801,8 +1801,8 @@ bool sub_54B5D0(TigMessage* msg)
             return dword_64C6CC(msg);
         }
 
-        if (msg->data.keyboard.key != DIK_ESCAPE
-            && msg->data.keyboard.key != DIK_O) {
+        if (msg->data.keyboard.key != SDL_SCANCODE_ESCAPE
+            && msg->data.keyboard.key != SDL_SCANCODE_O) {
             return dword_64C6CC(msg);
         }
 
@@ -1813,7 +1813,7 @@ bool sub_54B5D0(TigMessage* msg)
         if (!player_is_local_pc_obj(combat_turn_based_whos_turn_get())) {
             if (msg->type != TIG_MESSAGE_KEYBOARD
                 && msg->type == TIG_MESSAGE_CHAR
-                && msg->data.character.ch == ' ') {
+                && msg->data.character.ch == SDLK_SPACE) {
                 combat_turn_based_toggle();
                 return true;
             }
@@ -2306,19 +2306,19 @@ bool sub_54B5D0(TigMessage* msg)
         // NOTE: Explicit check for 1, 0, and everything else.
         if (msg->data.keyboard.pressed == 1) {
             switch (msg->data.keyboard.key) {
-            case DIK_BACK:
-            case DIK_DELETE:
+            case SDL_SCANCODE_BACKSPACE:
+            case SDL_SCANCODE_DELETE:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 /= 10;
                     sub_553960();
                 }
                 return true;
-            case DIK_COMMA:
-            case DIK_PERIOD:
-            case DIK_SLASH:
+            case SDL_SCANCODE_COMMA:
+            case SDL_SCANCODE_PERIOD:
+            case SDL_SCANCODE_SLASH:
                 intgame_refresh_cursor();
                 return false;
-            case DIK_NUMPAD7:
+            case SDL_SCANCODE_KP_7:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 7;
                     if (dword_64C678 > dword_64C478) {
@@ -2327,7 +2327,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD8:
+            case SDL_SCANCODE_KP_8:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 8;
                     if (dword_64C678 > dword_64C478) {
@@ -2336,7 +2336,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD9:
+            case SDL_SCANCODE_KP_9:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 9;
                     if (dword_64C678 > dword_64C478) {
@@ -2345,7 +2345,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD4:
+            case SDL_SCANCODE_KP_4:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 4;
                     if (dword_64C678 > dword_64C478) {
@@ -2354,7 +2354,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD5:
+            case SDL_SCANCODE_KP_5:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 5;
                     if (dword_64C678 > dword_64C478) {
@@ -2363,7 +2363,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD6:
+            case SDL_SCANCODE_KP_6:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 6;
                     if (dword_64C678 > dword_64C478) {
@@ -2372,7 +2372,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD1:
+            case SDL_SCANCODE_KP_1:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 1;
                     if (dword_64C678 > dword_64C478) {
@@ -2381,7 +2381,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD2:
+            case SDL_SCANCODE_KP_2:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 2;
                     if (dword_64C678 > dword_64C478) {
@@ -2390,7 +2390,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD3:
+            case SDL_SCANCODE_KP_3:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678 + 3;
                     if (dword_64C678 > dword_64C478) {
@@ -2399,7 +2399,7 @@ bool sub_54B5D0(TigMessage* msg)
                     sub_553960();
                 }
                 return true;
-            case DIK_NUMPAD0:
+            case SDL_SCANCODE_KP_0:
                 if (intgame_iso_window_type == 9) {
                     dword_64C678 = 10 * dword_64C678;
                     if (dword_64C678 > dword_64C478) {
@@ -2413,19 +2413,19 @@ bool sub_54B5D0(TigMessage* msg)
             return false;
         } else if (msg->data.keyboard.pressed == 0) {
             switch (msg->data.keyboard.key) {
-            case DIK_K:
+            case SDL_SCANCODE_K:
                 if (!sub_541680()) {
                     sub_54DBF0(0, 2);
                 }
                 return true;
-            case DIK_M:
+            case SDL_SCANCODE_M:
                 if (!sub_541680()) {
                     sub_54DBF0(1, 1);
                 }
                 return true;
-            case DIK_COMMA:
-            case DIK_PERIOD:
-            case DIK_SLASH:
+            case SDL_SCANCODE_COMMA:
+            case SDL_SCANCODE_PERIOD:
+            case SDL_SCANCODE_SLASH:
                 intgame_refresh_cursor();
                 return false;
             }
@@ -2444,7 +2444,7 @@ bool sub_54B5D0(TigMessage* msg)
         }
 
         v2 = false;
-        if (msg->data.character.ch == '\r') {
+        if (msg->data.character.ch == SDLK_RETURN) {
             if (intgame_iso_window_type == 9) {
                 sub_578B80(dword_64C678);
                 sub_551A80(0);
@@ -2615,9 +2615,9 @@ void intgame_process_event(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_KEYBOARD
         && !textedit_ui_is_focused()
         && !msg->data.keyboard.pressed
-        && msg->data.keyboard.key >= DIK_1
-        && msg->data.keyboard.key <= DIK_0) {
-        sub_57F1D0(msg->data.keyboard.key - DIK_1);
+        && msg->data.keyboard.key >= SDL_SCANCODE_1
+        && msg->data.keyboard.key <= SDL_SCANCODE_0) {
+        sub_57F1D0(msg->data.keyboard.key - SDL_SCANCODE_1);
     }
 
     switch (sub_551A00()) {
@@ -2651,11 +2651,9 @@ void intgame_process_event(TigMessage* msg)
                                 }
                             }
                         } else if (critter_is_active(pc_obj)
-                            && !tig_kb_is_key_pressed(DIK_LSHIFT)
-                            && !tig_kb_is_key_pressed(DIK_RSHIFT)) {
-                            if ((tig_kb_is_key_pressed(DIK_LCONTROL)
-                                    || tig_kb_is_key_pressed(DIK_RCONTROL)
-                                    || tig_kb_is_key_pressed(DIK_NUMLOCK))
+                            && !tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
+                            if ((tig_kb_get_modifier(SDL_KMOD_CTRL)
+                                    || tig_kb_get_modifier(SDL_KMOD_NUM))
                                 && !settings_get_value(&settings, "always run")) {
                                 sub_433C80(pc_obj, v1.loc);
                             } else {
@@ -2734,16 +2732,16 @@ void intgame_process_event(TigMessage* msg)
             if (!textedit_ui_is_focused()
                 && !msg->data.keyboard.pressed) {
                 switch (msg->data.keyboard.key) {
-                case DIK_F1:
-                case DIK_F2:
-                case DIK_F3:
-                case DIK_F4:
-                case DIK_F5:
-                case DIK_F6:
+                case SDL_SCANCODE_F1:
+                case SDL_SCANCODE_F2:
+                case SDL_SCANCODE_F3:
+                case SDL_SCANCODE_F4:
+                case SDL_SCANCODE_F5:
+                case SDL_SCANCODE_F6:
                     intgame_get_location_under_cursor(&loc);
-                    sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                    sub_4C3BE0(msg->data.keyboard.key - SDL_SCANCODE_F1, loc);
                     break;
-                case DIK_HOME:
+                case SDL_SCANCODE_HOME:
                     sub_54EB60();
                     break;
                 }
@@ -2787,30 +2785,29 @@ void intgame_process_event(TigMessage* msg)
             if (!textedit_ui_is_focused()) {
                 if (!msg->data.keyboard.pressed) {
                     switch (msg->data.keyboard.key) {
-                    case DIK_LMENU:
-                    case DIK_RMENU:
-                        if (!tig_kb_is_key_pressed(DIK_LMENU)
-                            && !tig_kb_is_key_pressed(DIK_RMENU)) {
+                    case SDL_SCANCODE_LALT:
+                    case SDL_SCANCODE_RALT:
+                        if (!tig_kb_get_modifier(SDL_KMOD_ALT)) {
                             spell_ui_aggressive_mode_on();
                         }
                         break;
-                    case DIK_F1:
-                    case DIK_F2:
-                    case DIK_F3:
-                    case DIK_F4:
-                    case DIK_F5:
-                    case DIK_F6:
+                    case SDL_SCANCODE_F1:
+                    case SDL_SCANCODE_F2:
+                    case SDL_SCANCODE_F3:
+                    case SDL_SCANCODE_F4:
+                    case SDL_SCANCODE_F5:
+                    case SDL_SCANCODE_F6:
                         intgame_get_location_under_cursor(&loc);
-                        sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                        sub_4C3BE0(msg->data.keyboard.key - SDL_SCANCODE_F1, loc);
                         break;
-                    case DIK_HOME:
+                    case SDL_SCANCODE_HOME:
                         sub_54EB60();
                         break;
                     }
                 } else {
                     switch (msg->data.keyboard.key) {
-                    case DIK_LMENU:
-                    case DIK_RMENU:
+                    case SDL_SCANCODE_LALT:
+                    case SDL_SCANCODE_RALT:
                         spell_ui_aggressive_mode_off();
                         break;
                     }
@@ -2855,11 +2852,9 @@ void intgame_process_event(TigMessage* msg)
                     && v1.is_loc
                     && !sub_573620()
                     && !critter_is_dead(pc_obj)
-                    && !tig_kb_is_key_pressed(DIK_LSHIFT)
-                    && !tig_kb_is_key_pressed(DIK_RSHIFT)) {
-                    if ((tig_kb_is_key_pressed(DIK_LCONTROL)
-                            || tig_kb_is_key_pressed(DIK_RCONTROL)
-                            || tig_kb_is_key_pressed(DIK_NUMLOCK))
+                    && !tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
+                    if ((tig_kb_get_modifier(SDL_KMOD_CTRL)
+                            || tig_kb_get_modifier(SDL_KMOD_NUM))
                         && !settings_get_value(&settings, "always run")) {
                         sub_433C80(pc_obj, v1.loc);
                     } else {
@@ -2947,16 +2942,16 @@ void intgame_process_event(TigMessage* msg)
             if (textedit_ui_is_focused()
                 && !msg->data.keyboard.pressed) {
                 switch (msg->data.keyboard.key) {
-                case DIK_F1:
-                case DIK_F2:
-                case DIK_F3:
-                case DIK_F4:
-                case DIK_F5:
-                case DIK_F6:
+                case SDL_SCANCODE_F1:
+                case SDL_SCANCODE_F2:
+                case SDL_SCANCODE_F3:
+                case SDL_SCANCODE_F4:
+                case SDL_SCANCODE_F5:
+                case SDL_SCANCODE_F6:
                     intgame_get_location_under_cursor(&loc);
-                    sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                    sub_4C3BE0(msg->data.keyboard.key - SDL_SCANCODE_F1, loc);
                     break;
-                case DIK_HOME:
+                case SDL_SCANCODE_HOME:
                     sub_54EB60();
                     break;
                 }
@@ -3185,8 +3180,8 @@ void sub_54ED30(S4F2810* a1)
             switch (target_type) {
             case OBJ_TYPE_WALL:
             case OBJ_TYPE_PORTAL:
-                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         anim = AG_ATTEMPT_ATTACK;
                     } else {
                         anim = AG_ATTACK;
@@ -3205,8 +3200,8 @@ void sub_54ED30(S4F2810* a1)
                     return;
                 }
 
-                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         anim = AG_ATTEMPT_ATTACK;
                     } else {
                         anim = AG_ATTACK;
@@ -3217,8 +3212,8 @@ void sub_54ED30(S4F2810* a1)
                 }
                 break;
             case OBJ_TYPE_SCENERY:
-                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         anim = AG_ATTEMPT_ATTACK;
                     } else {
                         anim = AG_ATTACK;
@@ -3251,12 +3246,12 @@ void sub_54ED30(S4F2810* a1)
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
                 if (critter_is_dead(a1->obj)) {
-                    if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                         anim = AG_USE_CONTAINER;
                         v26 = true;
                     }
                 } else {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         anim = AG_ATTEMPT_ATTACK;
                     } else {
                         anim = AG_ATTACK;
@@ -3264,7 +3259,7 @@ void sub_54ED30(S4F2810* a1)
 
                     if (!a1->is_loc
                         && player_is_local_pc_obj(critter_pc_leader_get(a1->obj)
-                        && !tig_kb_is_key_pressed(DIK_LMENU))) {
+                        && !tig_kb_is_key_pressed(SDL_SCANCODE_LALT))) {
                         return;
                     }
                 }
@@ -3326,7 +3321,7 @@ void sub_54ED30(S4F2810* a1)
                     return;
                 }
 
-                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                     sub_4445A0(pc_obj, a1->obj);
                     return;
                 }
@@ -3350,7 +3345,7 @@ void sub_54ED30(S4F2810* a1)
                         return;
                     }
 
-                    if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                         sub_4445A0(pc_obj, a1->obj);
                         return;
                     }
@@ -3385,11 +3380,11 @@ void sub_54ED30(S4F2810* a1)
     }
 
     if (anim == AG_ATTACK || anim == AG_ATTEMPT_ATTACK) {
-        if (tig_kb_is_key_pressed(DIK_COMMA)) {
+        if (tig_kb_is_key_pressed(SDL_SCANCODE_COMMA)) {
             goal_data.params[AGDATA_SCRATCH_VAL3].data = 1;
-        } else if (tig_kb_is_key_pressed(DIK_PERIOD)) {
+        } else if (tig_kb_is_key_pressed(SDL_SCANCODE_PERIOD)) {
             goal_data.params[AGDATA_SCRATCH_VAL3].data = 2;
-        } else if (tig_kb_is_key_pressed(DIK_SLASH)) {
+        } else if (tig_kb_is_key_pressed(SDL_SCANCODE_SLASH)) {
             goal_data.params[AGDATA_SCRATCH_VAL3].data = 3;
         } else {
             goal_data.params[AGDATA_SCRATCH_VAL3].data = 0;
@@ -3423,13 +3418,11 @@ void sub_54ED30(S4F2810* a1)
 
         unsigned int flags = 0;
         if (tig_net_is_active()) {
-            if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+            if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                 flags |= 0x100;
-            } else if (tig_kb_is_key_pressed(DIK_LCONTROL)
-                || tig_kb_is_key_pressed(DIK_RCONTROL)
-                || ((!tig_kb_get_modifier(DIK_NUMLOCK) || get_always_run(pc_obj))
-                    && !tig_kb_is_key_pressed(DIK_LCONTROL)
-                    && !tig_kb_is_key_pressed(DIK_RCONTROL))) {
+            } else if (tig_kb_get_modifier(SDL_KMOD_CTRL)
+                || ((!tig_kb_get_modifier(SDL_KMOD_NUM) || get_always_run(pc_obj))
+                    && !tig_kb_get_modifier(SDL_KMOD_CTRL))) {
                 flags |= 0x40;
             }
 
@@ -3481,20 +3474,18 @@ void sub_54ED30(S4F2810* a1)
             } else {
                 if (sub_424070(pc_obj, 3, false, false)
                     && sub_44D520(&goal_data, &anim_id)) {
-                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                         sub_436C50(anim_id);
-                    } else if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                    } else if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                         turn_on_running(anim_id);
                     } else {
-                        if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+                        if (tig_kb_get_modifier(SDL_KMOD_NUM)) {
                             if (get_always_run(pc_obj)
-                                && !tig_kb_is_key_pressed(DIK_LCONTROL)
-                                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                                && !tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                 turn_on_running(anim_id);
                             }
                         } else {
-                            if (!tig_kb_is_key_pressed(DIK_LCONTROL)
-                                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            if (!tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                                 turn_on_running(anim_id);
                             }
                         }
@@ -3507,29 +3498,25 @@ void sub_54ED30(S4F2810* a1)
             }
         } else if (sub_424070(pc_obj, 3, false, false)) {
             if (tig_net_is_active()
-                && !tig_kb_is_key_pressed(DIK_LSHIFT)
-                && !tig_kb_is_key_pressed(DIK_RSHIFT)
-                && !tig_kb_is_key_pressed(DIK_LCONTROL)
-                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                && !tig_kb_get_modifier(SDL_KMOD_SHIFT)
+                && !tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                 // NOTE: Some useless checks.
             }
 
             if (sub_44D520(&goal_data, &anim_id)
                 && !tig_net_is_active()) {
-                if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                     sub_436C50(anim_id);
-                } else if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                } else if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                     turn_on_running(anim_id);
                 } else {
-                    if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_NUM)) {
                         if (get_always_run(pc_obj)
-                            && !tig_kb_is_key_pressed(DIK_LCONTROL)
-                            && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            && !tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                             turn_on_running(anim_id);
                         }
                     } else {
-                        if (!tig_kb_is_key_pressed(DIK_LCONTROL)
-                            && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                        if (!tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                             turn_on_running(anim_id);
                         }
                     }
@@ -3547,21 +3534,19 @@ void sub_54ED30(S4F2810* a1)
     }
 
     // 0x54FB19
-    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+    if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
         sub_436C50(anim_id);
     } else {
-        if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+        if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
             turn_on_running(anim_id);
         } else {
-            if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+            if (tig_kb_get_modifier(SDL_KMOD_NUM)) {
                 if (get_always_run(pc_obj)
-                    && !tig_kb_is_key_pressed(DIK_LCONTROL)
-                    && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                    && !tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                     turn_on_running(anim_id);
                 }
             } else {
-                if (!tig_kb_is_key_pressed(DIK_LCONTROL)
-                    && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                if (!tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                     turn_on_running(anim_id);
                 }
             }
@@ -3640,7 +3625,7 @@ void sub_54FCF0(Hotkey* hotkey)
                     }
                     break;
                 }
-            } else if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+            } else if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                 item_use(pc_obj, v2, pc_obj);
             } else {
                 item_use(pc_obj, v2, OBJ_HANDLE_NULL);
@@ -5008,7 +4993,7 @@ void sub_551F80()
         }
 
         if (combat_critter_is_combat_mode_active(pc_obj)) {
-            if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+            if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                 sub_4F25B0(Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall | Tgt_Tile);
                 qword_5C7280 = Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall;
             } else {
@@ -6027,11 +6012,11 @@ void intgame_refresh_cursor()
         art_num = dword_5C7178[sub_551A00()];
         if (art_num == -1) {
             if (have_weapon) {
-                if (tig_kb_is_key_pressed(DIK_COMMA)) {
+                if (tig_kb_is_key_pressed(SDL_SCANCODE_COMMA)) {
                     art_num = 818; // "cursor-called-head.art"
-                } else if (tig_kb_is_key_pressed(DIK_PERIOD)) {
+                } else if (tig_kb_is_key_pressed(SDL_SCANCODE_PERIOD)) {
                     art_num = 819; // "cursor-called-leg.art"
-                } else if (tig_kb_is_key_pressed(DIK_SLASH)) {
+                } else if (tig_kb_is_key_pressed(SDL_SCANCODE_SLASH)) {
                     art_num = 820; // "cursor-called-arm.art"
                 } else {
                     art_num = 353; // "battlecur.art"
@@ -8104,7 +8089,7 @@ void sub_557370(int64_t a1, int64_t a2)
             case OBJ_TYPE_WALL:
             case OBJ_TYPE_PORTAL:
             case OBJ_TYPE_SCENERY:
-                if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                     sub_4B78D0(a1, a2);
                 } else {
                     if ((spell_flags & OSF_POLYMORPHED) == 0) {
@@ -8114,7 +8099,7 @@ void sub_557370(int64_t a1, int64_t a2)
                 break;
             case OBJ_TYPE_CONTAINER:
                 if ((spell_flags & OSF_POLYMORPHED) == 0) {
-                    if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                         sub_4B78D0(a1, a2);
                     } else {
                         sub_4B79A0(a1, a2);
@@ -8138,11 +8123,11 @@ void sub_557370(int64_t a1, int64_t a2)
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
                 if (critter_is_dead(a2)) {
-                    if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                    if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
                         sub_4B79A0(a1, a2);
                     }
                 } else {
-                    if (!player_is_local_pc_obj(critter_pc_leader_get(a2)) || tig_kb_is_key_pressed(DIK_LALT)) {
+                    if (!player_is_local_pc_obj(critter_pc_leader_get(a2)) || tig_kb_get_modifier(SDL_KMOD_LALT)) {
                         sub_4B78D0(a1, a2);
                     }
                 }

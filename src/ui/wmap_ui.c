@@ -2208,7 +2208,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         }
 
         switch (msg->data.keyboard.key) {
-        case DIK_Z:
+        case SDL_SCANCODE_Z:
             if (msg->data.keyboard.pressed) {
                 return false;
             }
@@ -2231,44 +2231,44 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             return true;
-        case DIK_HOME:
+        case SDL_SCANCODE_HOME:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
                 sub_563590(&(v1->field_3C), true);
             }
             return true;
-        case DIK_LEFT:
+        case SDL_SCANCODE_LEFT:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(6);
             }
             return true;
-        case DIK_UP:
+        case SDL_SCANCODE_UP:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(0);
             }
             return true;
-        case DIK_RIGHT:
+        case SDL_SCANCODE_RIGHT:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(2);
             }
             return true;
-        case DIK_DOWN:
+        case SDL_SCANCODE_DOWN:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(4);
             }
             return true;
-        case DIK_DELETE:
+        case SDL_SCANCODE_DELETE:
             if (msg->data.keyboard.pressed) {
                 return false;
             }
 
             // TODO: Incomplete.
             return true;
-        case DIK_D:
+        case SDL_SCANCODE_D:
             if (!msg->data.keyboard.pressed
                 && gamelib_cheat_level_get() >= 3
                 && !dword_66D868) {
@@ -2886,17 +2886,17 @@ void wmap_ui_handle_scroll()
         dword_66D9D0 = gamelib_ping_time;
 
         if (dword_66D8AC != 2) {
-            if (tig_kb_is_key_pressed(DIK_LEFT)) {
+            if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
                 scroll_horizontally = true;
                 horizontal_direction = 6;
-            } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
+            } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
                 scroll_horizontally = true;
                 horizontal_direction = 2;
             }
 
-            if (tig_kb_is_key_pressed(DIK_UP)) {
+            if (tig_kb_is_key_pressed(SDL_SCANCODE_UP)) {
                 vertical_direction = 0;
-            } else if (tig_kb_is_key_pressed(DIK_DOWN)) {
+            } else if (tig_kb_is_key_pressed(SDL_SCANCODE_DOWN)) {
                 vertical_direction = 4;
             } else {
                 if (!scroll_horizontally) {

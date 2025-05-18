@@ -11388,14 +11388,12 @@ bool get_always_run(int64_t obj)
 
     if (player_is_local_pc_obj(obj)) {
         if (always_run) {
-            if (tig_kb_is_key_pressed(DIK_LCONTROL)
-                || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+            if (tig_kb_get_modifier(SDL_KMOD_CTRL)) {
                 return false;
             }
         } else {
-            if (tig_kb_is_key_pressed(DIK_LCONTROL)
-                || tig_kb_is_key_pressed(DIK_RCONTROL)
-                || tig_kb_get_modifier(DIK_NUMLOCK)) {
+            if (tig_kb_get_modifier(SDL_KMOD_CTRL)
+                || tig_kb_get_modifier(SDL_KMOD_NUM)) {
                 return true;
             }
         }
