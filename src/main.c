@@ -163,6 +163,24 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     init_info.art_id_reset_func = name_normalize_aid;
     init_info.sound_file_path_resolver = gsound_resolve_path;
 
+    // NOTE: The `window` switch is borrowed from ToEE.
+    if (strstr(lpCmdLine, "-window") != NULL) {
+        init_info.flags |= TIG_INITIALIZE_WINDOWED;
+    }
+
+    // NOTE: The `geometry` switch is also borrowed from ToEE, but the
+    // implementation is different (original implementaion is wrong).
+    pch = strstr(lpCmdLine, "-geometry");
+    if (pch != NULL) {
+        int width;
+        int height;
+
+        if (sscanf(pch + 10, "%dx%d", &width, &height) == 2) {
+            init_info.width = width;
+            init_info.height = height;
+        }
+    }
+
     if (tig_init(&init_info) != TIG_OK) {
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
     }
