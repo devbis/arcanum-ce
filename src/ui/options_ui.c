@@ -214,7 +214,7 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
 }
 
 // 0x589430
-bool sub_589430()
+bool options_ui_load_module()
 {
     unsigned int selected;
 

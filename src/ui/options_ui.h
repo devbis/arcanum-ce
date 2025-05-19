@@ -4,7 +4,7 @@
 #include "game/context.h"
 
 void options_ui_init(int type, tig_window_handle_t window_handle, bool a3);
-bool sub_589430();
+bool options_ui_load_module();
 void options_ui_exit();
 int options_ui_handle_button_pressed(tig_button_handle_t button_handle);
 

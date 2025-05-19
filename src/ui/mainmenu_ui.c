@@ -2937,7 +2937,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
     }
 
     if (dword_64C414 == 6) {
-        if (!sub_589430()) {
+        if (!options_ui_load_module()) {
             return true;
         }
     }
@@ -2957,7 +2957,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
 // 0x541E20
 void sub_541E20(int a1)
 {
-    if (dword_64C440 != a1 && sub_589430()) {
+    if (dword_64C440 != a1 && options_ui_load_module()) {
         options_ui_exit();
 
         dword_64C440 = a1;
@@ -5864,7 +5864,7 @@ bool sub_546EE0(TigMessage* msg)
             case 6:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     if (stru_5C36B0[dword_64C244][0]) {
-                        if (!sub_589430()) {
+                        if (!options_ui_load_module()) {
                             sub_5412D0();
                         }
                     } else {
@@ -6542,7 +6542,7 @@ void sub_5480C0(int a1)
         }
         return;
     case 3:
-        if (dword_64C414 != 6 || sub_589430()) {
+        if (dword_64C414 != 6 || options_ui_load_module()) {
             sub_5417A0(1);
         }
         return;
