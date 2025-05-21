@@ -1101,7 +1101,7 @@ Sound* sub_41BF70(SoundScheme* scheme, const char* path)
 void sub_41C260(char* str)
 {
     while (*str != '\0') {
-        *str = (unsigned char)tolower(*(unsigned char*)str);
+        *str = (char)(unsigned char)SDL_tolower(*(unsigned char*)str);
         str++;
     }
 }

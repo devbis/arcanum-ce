@@ -1392,11 +1392,11 @@ int game_save_entry_compare_by_date(const void* va, const void* vb)
     const GameSaveEntry* b = (const GameSaveEntry*)vb;
 
     if (gamelib_savelist_sort_check_autosave) {
-        if (toupper(a->path[4]) == 'A') {
+        if (SDL_toupper(a->path[4]) == 'A') {
             return -1;
         }
 
-        if (toupper(b->path[4]) == 'A') {
+        if (SDL_toupper(b->path[4]) == 'A') {
             return 1;
         }
     }

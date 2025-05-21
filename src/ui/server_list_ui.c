@@ -599,7 +599,7 @@ bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
         break;
     case TIG_MESSAGE_CHAR:
         if (dword_687254) {
-            if (!iscntrl(msg->data.character.ch)) {
+            if (!SDL_iscntrl(msg->data.character.ch)) {
                 ch[0] = msg->data.character.ch;
                 ch[1] = '\0';
                 strcat(byte_6869B0, ch);

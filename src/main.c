@@ -73,7 +73,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     pch = lpCmdLine;
     while (*pch != '\0') {
-        *pch = (unsigned char)tolower(*(unsigned char*)pch);
+        *pch = (char)(unsigned char)SDL_tolower(*(unsigned char*)pch);
         pch++;
     }
 

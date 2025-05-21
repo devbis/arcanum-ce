@@ -758,10 +758,10 @@ void sub_582060(const char* str)
 
     switch (cmd) {
     case 0:
-        while (isspace(*v1)) {
+        while (SDL_isspace(*v1)) {
             v1++;
         }
-        if (isdigit(*v1)) {
+        if (SDL_isdigit(*v1)) {
             room = atoi(v1);
             if (room > 0 && room <= dword_6862E0) {
                 if (!multiplayer_mm_chatroom_join(&(dword_6862DC[room - 1]), 0)
@@ -829,8 +829,8 @@ const char* sub_582440(const char* src, char* dst)
 {
     sub_5824C0(&src);
 
-    while (*src != '\0' && !isspace(*src)) {
-        *dst++ = (char)(unsigned char)tolower(*src);
+    while (*src != '\0' && !SDL_isspace(*src)) {
+        *dst++ = (char)(unsigned char)SDL_tolower(*src);
         src++;
     }
 
@@ -842,7 +842,7 @@ const char* sub_582440(const char* src, char* dst)
 // 0x5824C0
 void sub_5824C0(const char** src)
 {
-    while (**src != '\0' && isspace(**src)) {
+    while (**src != '\0' && SDL_isspace(**src)) {
         (*src)++;
     }
 }

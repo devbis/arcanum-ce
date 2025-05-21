@@ -1686,7 +1686,7 @@ bool sub_411880(char** str, char* token)
         return false;
     }
 
-    while (**str != '\0' && isspace(**str)) {
+    while (**str != '\0' && SDL_isspace(**str)) {
         (*str)++;
     }
 
@@ -1694,7 +1694,7 @@ bool sub_411880(char** str, char* token)
         return false;
     }
 
-    while (**str != '\0' && !isspace(**str)) {
+    while (**str != '\0' && !SDL_isspace(**str)) {
         *token++ = **str;
         (*str)++;
     }

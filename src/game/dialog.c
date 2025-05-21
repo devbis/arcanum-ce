@@ -1378,7 +1378,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
 
     pch = a2;
     while (*pch != '\0') {
-        while (*pch != '\0' && !isalpha(*pch) && *pch != '$') {
+        while (*pch != '\0' && !SDL_isalpha(*pch) && *pch != '$') {
             pch++;
         }
 
@@ -1874,7 +1874,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 
     pch = a2;
     while (*pch != '\0') {
-        while (*pch != '\0' && !isalpha(*pch) && *pch != '$') {
+        while (*pch != '\0' && !SDL_isalpha(*pch) && *pch != '$') {
             pch++;
         }
 
@@ -1931,7 +1931,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 
             reaction = reaction_get(a1->npc_obj, a1->pc_obj);
 
-            while (isspace(*pch)) {
+            while (SDL_isspace(*pch)) {
                 pch++;
             }
 
@@ -1977,7 +1977,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 
             alignment = stat_base_get(a1->pc_obj, STAT_ALIGNMENT);
 
-            while (isspace(*pch)) {
+            while (SDL_isspace(*pch)) {
                 pch++;
             }
 
@@ -2241,11 +2241,11 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 // 0x4167C0
 int sub_4167C0(const char* str)
 {
-    while (isspace(*str)) {
+    while (SDL_isspace(*str)) {
         str++;
     }
 
-    while (isdigit(*str)) {
+    while (SDL_isdigit(*str)) {
         str++;
     }
 
@@ -2704,7 +2704,7 @@ bool dialog_parse_entry(TigFile* stream, DialogFileEntry* entry, int* line_ptr)
         pos = 0;
         end = strlen(gender_str);
         while (pos < end) {
-            if (!isspace(gender_str[pos])) {
+            if (!SDL_isspace(gender_str[pos])) {
                 break;
             }
             pos++;
@@ -2714,7 +2714,7 @@ bool dialog_parse_entry(TigFile* stream, DialogFileEntry* entry, int* line_ptr)
             pos = 0;
             end = strlen(entry->str);
             while (pos < end) {
-                if (!isspace(entry->str[pos])) {
+                if (!SDL_isspace(entry->str[pos])) {
                     break;
                 }
                 pos++;
@@ -2860,7 +2860,7 @@ void dialog_entry_copy(DialogFileEntry* dst, const DialogFileEntry* src)
     pos = 0;
     end = strlen(src->conditions);
     while (pos < end) {
-        if (!isspace(src->conditions[pos])) {
+        if (!SDL_isspace(src->conditions[pos])) {
             break;
         }
         pos++;
@@ -2875,7 +2875,7 @@ void dialog_entry_copy(DialogFileEntry* dst, const DialogFileEntry* src)
     pos = 0;
     end = strlen(src->actions);
     while (pos < end) {
-        if (!isspace(src->actions[pos])) {
+        if (!SDL_isspace(src->actions[pos])) {
             break;
         }
         pos++;
@@ -3534,7 +3534,7 @@ void sub_419260(DialogState* a1, const char* str)
         int value;
 
         while (*str != '\0') {
-            while (!isdigit(*str)) {
+            while (!SDL_isdigit(*str)) {
                 str++;
             }
 

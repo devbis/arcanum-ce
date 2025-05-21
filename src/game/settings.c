@@ -1,6 +1,5 @@
 #include "game/settings.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -209,7 +208,7 @@ void settings_trim(char* str)
     char* curr;
 
     curr = str;
-    while (isspace(*curr)) {
+    while (SDL_isspace(*curr)) {
         curr++;
     }
 
@@ -219,7 +218,7 @@ void settings_trim(char* str)
 
     if (len > 0) {
         curr = str + len;
-        while (isspace(*curr)) {
+        while (SDL_isspace(*curr)) {
             *curr-- = '\0';
         }
     }

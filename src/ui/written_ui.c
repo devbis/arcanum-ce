@@ -746,7 +746,7 @@ void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
     *font_num_ptr = atoi(str);
 
     *str_ptr = str;
-    while (isdigit(**str_ptr)) {
+    while (SDL_isdigit(**str_ptr)) {
         (*str_ptr)++;
     }
 
@@ -756,7 +756,7 @@ void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
         (*str_ptr)++;
     }
 
-    if (isspace(**str_ptr)) {
+    if (SDL_isspace(**str_ptr)) {
         (*str_ptr)++;
     }
 }

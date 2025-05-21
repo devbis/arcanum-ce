@@ -1,6 +1,5 @@
 #include "game/mes.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -378,7 +377,7 @@ bool parse_entry(TigFile* stream, MesFileEntry* mes_file_entry)
         return false;
     }
 
-    if (!isdigit(buffer[0])) {
+    if (!SDL_isdigit(buffer[0])) {
         tig_debug_printf("Warning! Bad number field on line: %d (%s)\n",
             mes_file_parse_line,
             current_mes_file_path);

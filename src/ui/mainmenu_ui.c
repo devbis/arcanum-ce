@@ -3791,7 +3791,7 @@ bool mainmenu_ui_save_game_execute(int btn)
         gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_NAME, false);
 
         if (stru_64BBF8.count > 0) {
-            if (toupper(stru_64BBF8.paths[0][4]) == 'A') {
+            if (SDL_toupper(stru_64BBF8.paths[0][4]) == 'A') {
                 if (stru_64BBF8.count > 1
                     && stru_64BBF8.paths[1] != NULL) {
                     strncpy(fname, stru_64BBF8.paths[1], 8);
@@ -5636,7 +5636,7 @@ void mainmenu_ui_create_window_func(bool should_display)
             if (button->field_14 == 0 && (button->flags & 0x08) == 0) {
                 if (mes_search(mainmenu_ui_mainmenu_mes_file, &mes_file_entry)) {
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-                    button->field_14 = toupper(mes_file_entry.str[0]);
+                    button->field_14 = SDL_toupper(mes_file_entry.str[0]);
                 } else {
                     tig_debug_printf("MainMenu: Error: Can't Find Hotkey!");
                     button->field_14 = -1;

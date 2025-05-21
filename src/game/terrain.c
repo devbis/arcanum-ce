@@ -672,7 +672,7 @@ bool terrain_init_types()
 
             do {
                 pch--;
-            } while (isspace(*pch));
+            } while (SDL_isspace(*pch));
 
             pch[1] = '\0';
         }

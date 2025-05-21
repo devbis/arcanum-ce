@@ -2947,7 +2947,7 @@ int sub_4A5D80(int64_t obj, char* str)
     int basic_proto;
 
     while (str != NULL && *str != '\0') {
-        while (isspace(*str)) {
+        while (SDL_isspace(*str)) {
             str++;
         }
 
@@ -2974,7 +2974,7 @@ int sub_4A5E10(int64_t obj, char* str)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     while (str != NULL && *str != '\0') {
-        while (isspace(*str)) {
+        while (SDL_isspace(*str)) {
             str++;
         }
 

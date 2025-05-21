@@ -131,11 +131,11 @@ bool townmap_mod_load()
                 back = pch;
                 do {
                     *back-- = '\0';
-                } while (isspace(*back));
+                } while (SDL_isspace(*back));
 
                 // Jump to the value of the flag.
                 pch += 3;
-                while (isspace(*pch)) {
+                while (SDL_isspace(*pch)) {
                     pch++;
                 }
 
