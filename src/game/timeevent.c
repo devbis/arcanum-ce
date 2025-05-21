@@ -393,8 +393,7 @@ void datetime_format_datetime(DateTime* datetime, char* dest)
     int hour;
     int minute;
     int second;
-    char data[5];
-    int rc;
+    SDL_DateFormat date_format;
 
     if (dest != NULL) {
         year = datetime_get_year(datetime);
@@ -404,16 +403,23 @@ void datetime_format_datetime(DateTime* datetime, char* dest)
         minute = datetime_get_minute(datetime);
         second = datetime_seconds_since_reference_date(datetime) % 60;
 
-        rc = GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDATE, data, sizeof(data));
-        if (rc == 0 || data[0] == '0') {
+        if (!SDL_GetDateTimeLocalePreferences(&date_format, NULL)) {
+            date_format = SDL_DATE_FORMAT_MMDDYYYY;
+        }
+
+        switch (date_format) {
+        case SDL_DATE_FORMAT_MMDDYYYY:
             // Month/Day/Year (default)
             sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, month, day, year);
-        } else if (data[1] == '1') {
+            break;
+        case SDL_DATE_FORMAT_DDMMYYYY:
             // Day/Month/Year
             sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, day, month, year);
-        } else {
-            // NOTE: Implying '2' - Year/Month/Day
+            break;
+        case SDL_DATE_FORMAT_YYYYMMDD:
+            // Year/Month/Day
             sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, year, month, day);
+            break;
         }
     }
 }
@@ -439,24 +445,30 @@ void datetime_format_date(DateTime* time, char* dest)
     int year;
     int month;
     int day;
-    char data[5];
-    int rc;
+    SDL_DateFormat date_format;
 
     if (dest != NULL) {
         year = datetime_get_year(time);
         month = datetime_get_month(time);
         day = datetime_get_day(time);
 
-        rc = GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDATE, data, sizeof(data));
-        if (rc == 0 || data[0] == '0') {
+        if (!SDL_GetDateTimeLocalePreferences(&date_format, NULL)) {
+            date_format = SDL_DATE_FORMAT_MMDDYYYY;
+        }
+
+        switch (date_format) {
+        case SDL_DATE_FORMAT_MMDDYYYY:
             // Month/Day/Year (default)
             sprintf(dest, "%d/%d/%d", month, day, year);
-        } else if (data[1] == '1') {
+            break;
+        case SDL_DATE_FORMAT_DDMMYYYY:
             // Day/Month/Year
             sprintf(dest, "%d/%d/%d", day, month, year);
-        } else {
-            // NOTE: Implying '2' - Year/Month/Day
+            break;
+        case SDL_DATE_FORMAT_YYYYMMDD:
+            // Year/Month/Day
             sprintf(dest, "%d/%d/%d", year, month, day);
+            break;
         }
     }
 }
