@@ -380,6 +380,6 @@ void show_error(const char* msg)
 {
     tig_debug_println(msg);
     if (!dword_5FC62C && invensource_editor) {
-        MessageBoxA(NULL, msg, "Error", MB_ICONHAND | MB_ICONQUESTION);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg, NULL);
     }
 }

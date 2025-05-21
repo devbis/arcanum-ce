@@ -2082,7 +2082,7 @@ void sector_validate_editor(const char* section)
     if (!obj_validate_system(1)) {
         snprintf(str, sizeof(str) - 1, "Object system validate failed in %s", section);
         str[sizeof(str) - 1] = '\0';
-        MessageBoxA(NULL, str, "Execution Halting", MB_TASKMODAL | MB_ICONHAND);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Execution Halting", str, NULL);
         tig_message_post_quit(0);
     }
 }
