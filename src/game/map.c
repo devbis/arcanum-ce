@@ -1049,8 +1049,8 @@ void map_paths(char** base_path_ptr, char** save_path_ptr)
 // 0x4102F0
 bool map_preprocess_mobile(const char* name)
 {
-    GUID guid;
-    GUID file_guid;
+    TigGuid guid;
+    TigGuid file_guid;
     TigFile* stream;
     char path[TIG_MAX_PATH];
     char* pch;
@@ -1082,7 +1082,7 @@ bool map_preprocess_mobile(const char* name)
 
         tig_file_fclose(stream);
 
-        if (IsEqualGUID(&file_guid, &guid)) {
+        if (tig_guid_is_equal(&file_guid, &guid)) {
             return true;
         }
     }
@@ -1362,7 +1362,7 @@ bool map_load_mobile(const char* base_path, const char* save_path)
     ObjectID oid;
     int64_t obj;
     TigFile* stream;
-    GUID guid;
+    TigGuid guid;
 
     if (map_editor) {
         sprintf(path, "%s\\*.mob", base_path);

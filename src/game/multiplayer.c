@@ -316,7 +316,7 @@ static S5F0BC8* off_5F0BC8[NUM_PLAYERS];
 static char byte_5F0D18[128];
 
 // 0x5F0D98
-static GUID stru_5F0D98;
+static TigGuid stru_5F0D98;
 
 // 0x5F0DE0
 static int dword_5F0DE0;
@@ -705,17 +705,17 @@ bool sub_49CC70(const char* a1, const char* a2)
                     "%s\\%s-{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}.dat",
                     ".\\Modules",
                     a1,
-                    stru_5F0D98.Data1,
-                    stru_5F0D98.Data2,
-                    stru_5F0D98.Data3,
-                    stru_5F0D98.Data4[0],
-                    stru_5F0D98.Data4[1],
-                    stru_5F0D98.Data4[2],
-                    stru_5F0D98.Data4[3],
-                    stru_5F0D98.Data4[4],
-                    stru_5F0D98.Data4[5],
-                    stru_5F0D98.Data4[6],
-                    stru_5F0D98.Data4[7]);
+                    (stru_5F0D98.data[0] << 24) | (stru_5F0D98.data[1] << 16) | (stru_5F0D98.data[2] << 8) | stru_5F0D98.data[3],
+                    (stru_5F0D98.data[4] << 8) | stru_5F0D98.data[5],
+                    (stru_5F0D98.data[6] << 8) | stru_5F0D98.data[7],
+                    stru_5F0D98.data[8],
+                    stru_5F0D98.data[9],
+                    stru_5F0D98.data[10],
+                    stru_5F0D98.data[11],
+                    stru_5F0D98.data[12],
+                    stru_5F0D98.data[13],
+                    stru_5F0D98.data[14],
+                    stru_5F0D98.data[15]);
             }
         }
         tig_file_repository_remove(path);

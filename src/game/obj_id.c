@@ -2,13 +2,11 @@
 
 #include <stdio.h>
 
-#include <combaseapi.h>
-
 #include "game/location.h"
 #include "game/map.h"
 #include "game/object.h"
 
-static bool sub_4E67A0(GUID* guid, const char* str);
+static bool sub_4E67A0(TigGuid* guid, const char* str);
 static bool sub_4E6970(ObjectID_P* p, const char* str);
 static bool sub_4E6A60(int* value_ptr, const char* str);
 static bool sub_4E6AA0(int* value_ptr, const char* str, size_t length);
@@ -17,11 +15,7 @@ static bool sub_4E6B00(char* dst, const char* src, int size);
 // 0x4E62A0
 void objid_create_guid(ObjectID* oid)
 {
-    if (CoCreateGuid(&(oid->d.g)) != S_OK) {
-        tig_debug_println("Error: Unable to generate permanent ID!");
-        tig_message_post_quit(0);
-    }
-
+    tig_guid_create(&(oid->d.g));
     oid->type = OID_TYPE_GUID;
 }
 
@@ -48,6 +42,8 @@ bool objid_is_valid(ObjectID a)
 // 0x4E6360
 bool objid_compare(ObjectID a, ObjectID b)
 {
+    int i;
+
     if (a.type < b.type) return true;
     if (a.type > b.type) return false;
 
@@ -55,28 +51,11 @@ bool objid_compare(ObjectID a, ObjectID b)
     case 1:
         return a.d.a < b.d.a;
     case 2:
-        if (a.d.g.Data1 < b.d.g.Data1) return true;
-        if (a.d.g.Data1 > b.d.g.Data1) return false;
-        if (a.d.g.Data2 < b.d.g.Data2) return true;
-        if (a.d.g.Data2 > b.d.g.Data2) return false;
-        if (a.d.g.Data3 < b.d.g.Data3) return true;
-        if (a.d.g.Data3 > b.d.g.Data3) return false;
-        if (a.d.g.Data4[0] < b.d.g.Data4[0]) return true;
-        if (a.d.g.Data4[0] > b.d.g.Data4[0]) return false;
-        if (a.d.g.Data4[1] < b.d.g.Data4[1]) return true;
-        if (a.d.g.Data4[1] > b.d.g.Data4[1]) return false;
-        if (a.d.g.Data4[2] < b.d.g.Data4[2]) return true;
-        if (a.d.g.Data4[2] > b.d.g.Data4[2]) return false;
-        if (a.d.g.Data4[3] < b.d.g.Data4[3]) return true;
-        if (a.d.g.Data4[3] > b.d.g.Data4[3]) return false;
-        if (a.d.g.Data4[4] < b.d.g.Data4[4]) return true;
-        if (a.d.g.Data4[4] > b.d.g.Data4[4]) return false;
-        if (a.d.g.Data4[5] < b.d.g.Data4[5]) return true;
-        if (a.d.g.Data4[5] > b.d.g.Data4[5]) return false;
-        if (a.d.g.Data4[6] < b.d.g.Data4[6]) return true;
-        if (a.d.g.Data4[6] > b.d.g.Data4[6]) return false;
-        if (a.d.g.Data4[7] < b.d.g.Data4[7]) return true;
-        if (a.d.g.Data4[7] > b.d.g.Data4[7]) return false;
+        for (i = 0; i < 16; i++) {
+            if (a.d.g.data[i] < b.d.g.data[i]) return true;
+            if (a.d.g.data[i] > b.d.g.data[i]) return false;
+        }
+        break;
     case 3:
         if (a.d.p.location < b.d.p.location) return true;
         if (a.d.p.location > b.d.p.location) return false;
@@ -99,7 +78,7 @@ bool objid_is_equal(ObjectID a, ObjectID b)
         case OID_TYPE_A:
             return a.d.a == b.d.a;
         case OID_TYPE_GUID:
-            return InlineIsEqualGUID(&(a.d.g), &(b.d.g));
+            return tig_guid_is_equal(&(a.d.g), &(b.d.g));
         case OID_TYPE_P:
             return a.d.p.location == b.d.p.location
                 && a.d.p.temp_id == b.d.p.temp_id
@@ -137,17 +116,17 @@ void objid_id_to_str(char* buffer, ObjectID oid)
         break;
     case OID_TYPE_GUID:
         sprintf(buffer, "G_%08X_%04X_%04X_%02X%02X_%02X%02X%02X%02X%02X%02X",
-            oid.d.g.Data1,
-            oid.d.g.Data2,
-            oid.d.g.Data3,
-            oid.d.g.Data4[0],
-            oid.d.g.Data4[1],
-            oid.d.g.Data4[2],
-            oid.d.g.Data4[3],
-            oid.d.g.Data4[4],
-            oid.d.g.Data4[5],
-            oid.d.g.Data4[6],
-            oid.d.g.Data4[7]);
+            (oid.d.g.data[0] << 24) | (oid.d.g.data[1] << 16) | (oid.d.g.data[2] << 8) | oid.d.g.data[3],
+            (oid.d.g.data[4] << 8) | oid.d.g.data[5],
+            (oid.d.g.data[6] << 8) | oid.d.g.data[7],
+            oid.d.g.data[8],
+            oid.d.g.data[9],
+            oid.d.g.data[10],
+            oid.d.g.data[11],
+            oid.d.g.data[12],
+            oid.d.g.data[13],
+            oid.d.g.data[14],
+            oid.d.g.data[15]);
         break;
     case OID_TYPE_P:
         sprintf(buffer, "P_%08I64X_%08I64X_%08X_%08X",
@@ -202,7 +181,7 @@ bool objid_id_from_str(ObjectID* oid, const char* str)
 }
 
 // 0x4E67A0
-bool sub_4E67A0(GUID* guid, const char* str)
+bool sub_4E67A0(TigGuid* guid, const char* str)
 {
     int value;
 
@@ -210,59 +189,64 @@ bool sub_4E67A0(GUID* guid, const char* str)
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 8)) return false;
-    guid->Data1 = value;
+    guid->data[0] = (value >> 24) & 0xFF;
+    guid->data[1] = (value >> 16) & 0xFF;
+    guid->data[2] = (value >> 8) & 0xFF;
+    guid->data[3] = value & 0xFF;
     str += 8;
 
     if (str[0] != '_') return false;
     str++;
 
     if (!sub_4E6AA0(&value, str, 4)) return false;
-    guid->Data2 = value;
+    guid->data[4] = (value >> 8) & 0xFF;
+    guid->data[5] = value & 0xFF;
     str += 4;
 
     if (str[0] != '_') return false;
     str++;
 
     if (!sub_4E6AA0(&value, str, 4)) return false;
-    guid->Data3 = value;
+    guid->data[6] = (value >> 8) & 0xFF;
+    guid->data[7] = value & 0xFF;
     str += 4;
 
     if (str[0] != '_') return false;
     str++;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[0] = value;
+    guid->data[8] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[1] = value;
+    guid->data[9] = value;
     str += 2;
 
     if (str[0] != '_') return false;
     str++;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[2] = value;
+    guid->data[10] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[3] = value;
+    guid->data[11] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[4] = value;
+    guid->data[12] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[5] = value;
+    guid->data[13] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[6] = value;
+    guid->data[14] = value;
     str += 2;
 
     if (!sub_4E6AA0(&value, str, 2)) return false;
-    guid->Data4[7] = value;
+    guid->data[15] = value;
 
     return true;
 }

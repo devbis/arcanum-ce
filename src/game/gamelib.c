@@ -267,7 +267,7 @@ static char byte_5D0FA8[TIG_MAX_PATH];
 static void(*gamelib_render_func)(GameDrawInfo* draw_info);
 
 // 0x5D10B0
-static GUID stru_5D10B0;
+static TigGuid stru_5D10B0;
 
 // 0x5D10C0
 static int gamelib_thumbnail_width;
@@ -730,7 +730,7 @@ bool gamelib_mod_load(const char* path)
 }
 
 // 0x402C20
-bool gamelib_mod_guid(GUID* guid_ptr)
+bool gamelib_mod_guid(TigGuid* guid_ptr)
 {
     if (!dword_5D10C4) {
         return false;

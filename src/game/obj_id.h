@@ -21,7 +21,7 @@ typedef struct ObjectID {
     union {
         int64_t h;
         int a;
-        GUID g;
+        TigGuid g;
         ObjectID_P p;
     } d;
 } ObjectID;
