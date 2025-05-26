@@ -31,7 +31,7 @@ void random_seed(int value)
 // 0x4CEEE0
 int random_seed_generate()
 {
-    int seed = time(NULL);
+    int seed = (int)time(NULL);
 
     random_seed(seed);
 
