@@ -129,6 +129,8 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
     tig_sound_handle_t speech_handle;
     bool success = true;
     bool stop;
+    tig_timestamp_t start;
+    tig_duration_t elapsed;
 
     rect.x = 0;
     rect.y = 0;
@@ -152,8 +154,30 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
                 }
             }
 
+            // NOTE: There is an interesting bug related to the slideshow.
+            // Occasionally, the slides are played in rapid succession. This
+            // happens because the underlying `tig_sound_play_streamed_once`
+            // does not start the speech immediately. Instead, it marks the
+            // speech handle as active and ready to fade in (even with a fade
+            // duration of 0). If the host drains the message queue (below in
+            // the loop) too quickly, it may not trigger `tig_sound_update`,
+            // which is responsible for starting the stream. Consequently, by
+            // the time the iteration completes, the stream may not have started
+            // at all, causing `tig_sound_is_playing` to report `false` and
+            // immediately ending the loop.
+            //
+            // The fix is adapted from ToEE, where this function has been moved
+            // to TIG as `tig_movie_play_slide`. The solution involves adding a
+            // minimum delay of 3 seconds per slide. This delay not only serves
+            // as a fallback in case the voiceover is missing for any reason,
+            // but it also gives the sound system enough time to start the
+            // voiceover (which is typically longer than 3 seconds).
+            tig_timer_now(&start);
+
             stop = false;
             do {
+                elapsed = tig_timer_elapsed(start);
+
                 tig_ping();
 
                 while (tig_message_dequeue(&msg) == TIG_OK) {
@@ -178,7 +202,7 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
                 if (stop) {
                     break;
                 }
-            } while (speech_handle != TIG_SOUND_HANDLE_INVALID && tig_sound_is_playing(speech_handle));
+            } while ((speech_handle != TIG_SOUND_HANDLE_INVALID && tig_sound_is_playing(speech_handle)) || elapsed < 3000);
 
             tig_sound_destroy(speech_handle);
         }
