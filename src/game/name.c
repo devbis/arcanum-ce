@@ -863,7 +863,7 @@ int name_resolve_path(tig_art_id_t aid, char* path)
         }
         return TIG_OK;
     case TIG_ART_TYPE_WALL:
-        if (!sub_4ECEB0(aid, path)) {
+        if (!a_name_wall_aid_to_fname(aid, path)) {
             return TIG_ERR_GENERIC;
         }
         return TIG_OK;

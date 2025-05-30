@@ -38,7 +38,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid);
 tig_art_id_t sub_4EC830(tig_art_id_t aid);
 bool a_name_wall_init();
 void a_name_wall_exit();
-bool sub_4ECEB0(tig_art_id_t art_id, char* path);
+bool a_name_wall_aid_to_fname(tig_art_id_t art_id, char* path);
 tig_art_id_t sub_4ED070(tig_art_id_t art_id, unsigned int flags);
 int a_name_num_wall_structures();
 char* a_name_wall_get_structure(int index);

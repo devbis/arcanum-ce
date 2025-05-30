@@ -1272,7 +1272,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
 
     oid->type = OID_TYPE_NULL;
 
-    if (!sub_4ECEB0(art_id, path)) {
+    if (!a_name_wall_aid_to_fname(art_id, path)) {
         return TIG_ART_ID_INVALID;
     }
 
@@ -1488,7 +1488,7 @@ void init_wall_structures()
 }
 
 // 0x4ECEB0
-bool sub_4ECEB0(tig_art_id_t art_id, char* path)
+bool a_name_wall_aid_to_fname(tig_art_id_t art_id, char* path)
 {
     int num;
     int rotation;
