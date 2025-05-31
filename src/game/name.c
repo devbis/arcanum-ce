@@ -645,7 +645,7 @@ tig_art_id_t name_normalize_aid(tig_art_id_t aid)
     case TIG_ART_TYPE_TILE:
     case TIG_ART_TYPE_WALL:
         aid = tig_art_id_palette_set(aid, 0);
-        aid = sub_502D30(aid, 0);
+        aid = tig_art_id_flags_set(aid, 0);
         break;
     case TIG_ART_TYPE_CRITTER: {
         int armor;
@@ -705,7 +705,7 @@ tig_art_id_t name_normalize_aid(tig_art_id_t aid)
         aid = tig_art_id_frame_set(aid, 0);
         aid = tig_art_id_rotation_set(aid, 0);
         aid = tig_art_id_palette_set(aid, 0);
-        aid = sub_502D30(aid, 0);
+        aid = tig_art_id_flags_set(aid, 0);
         break;
     case TIG_ART_TYPE_SCENERY:
     case TIG_ART_TYPE_CONTAINER:
