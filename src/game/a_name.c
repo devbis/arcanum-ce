@@ -1640,7 +1640,7 @@ bool build_wall_file_name(const char* name, int piece, int damage, int variation
 }
 
 // 0x4ED070
-tig_art_id_t sub_4ED070(tig_art_id_t art_id, unsigned int flags)
+tig_art_id_t a_name_wall_aid_damage_set(tig_art_id_t art_id, unsigned int flags)
 {
     int p_piece;
     unsigned int damage;

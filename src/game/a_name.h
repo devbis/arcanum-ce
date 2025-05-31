@@ -39,7 +39,7 @@ tig_art_id_t sub_4EC830(tig_art_id_t aid);
 bool a_name_wall_init();
 void a_name_wall_exit();
 bool a_name_wall_aid_to_fname(tig_art_id_t art_id, char* path);
-tig_art_id_t sub_4ED070(tig_art_id_t art_id, unsigned int flags);
+tig_art_id_t a_name_wall_aid_damage_set(tig_art_id_t art_id, unsigned int flags);
 int a_name_num_wall_structures();
 char* a_name_wall_get_structure(int index);
 bool a_name_light_init();
