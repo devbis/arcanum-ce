@@ -3895,7 +3895,7 @@ void sub_419D50(int a1, int a2, int a3, DialogState* a4)
 {
     MagicTechInvocation mt_invocation;
 
-    sub_455A20(&mt_invocation, a4->npc_obj, a1);
+    magictech_invocation_init(&mt_invocation, a4->npc_obj, a1);
     sub_4440E0(a4->pc_obj, &(mt_invocation.target_obj));
     if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;

@@ -1967,7 +1967,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
 
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, source_obj, spell);
+        magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         sub_455AC0(&mt_invocation);
         return NEXT;
@@ -2121,7 +2121,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
 
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spell);
+        magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         sub_455AC0(&mt_invocation);
 
@@ -2652,7 +2652,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, source_obj, spell);
+        magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
         sub_455AC0(&mt_invocation);
@@ -2678,7 +2678,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, source_obj, spell);
+        magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
         sub_455AC0(&mt_invocation);
@@ -2689,7 +2689,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, source_obj, spell);
+        magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
@@ -2810,7 +2810,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         MagicTechInvocation mt_invocation;
-        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spell);
+        magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
         sub_455AC0(&mt_invocation);

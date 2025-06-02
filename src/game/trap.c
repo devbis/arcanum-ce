@@ -480,7 +480,7 @@ void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj)
         sub_45A950(&datetime, 1000 * delay);
         sub_45B800(&timeevent, &datetime);
     } else {
-        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spl);
+        magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spl);
         mt_invocation.target_loc = loc;
         sub_455AC0(&mt_invocation);
 
@@ -719,7 +719,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
 
     switch (invocation->script->num) {
     case TRAP_SCRIPT_MAGICAL:
-        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
+        magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
         sub_4440E0(obj, &(mt_invocation.target_obj));
         sub_455AC0(&mt_invocation);
         return;
@@ -779,7 +779,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     }
 
     if (((invocation->script->hdr.counters >> 18) & 0xFF) != 0) {
-        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
+        magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
         sub_4440E0(obj, &(mt_invocation.target_obj));
         sub_455AC0(&mt_invocation);
     }

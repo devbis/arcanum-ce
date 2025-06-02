@@ -322,7 +322,7 @@ void spell_ui_apply(S4F2810* a1)
         return;
     }
 
-    sub_455A20(&mt_invocation, qword_6834F8, dword_5CB3A0);
+    magictech_invocation_init(&mt_invocation, qword_6834F8, dword_5CB3A0);
     if (a1->is_loc) {
         mt_invocation.target_loc = a1->loc;
     } else {

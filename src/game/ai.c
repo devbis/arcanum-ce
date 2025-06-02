@@ -2377,9 +2377,9 @@ void ai_action_perform_cast(Ai* ai)
     MagicTechInvocation mt_invocation;
 
     if (ai->item_obj != OBJ_HANDLE_NULL) {
-        sub_455A20(&mt_invocation, ai->item_obj, ai->spell);
+        magictech_invocation_init(&mt_invocation, ai->item_obj, ai->spell);
     } else {
-        sub_455A20(&mt_invocation, ai->obj, ai->spell);
+        magictech_invocation_init(&mt_invocation, ai->obj, ai->spell);
     }
 
     sub_4440E0(ai->danger_source, &(mt_invocation.target_obj));

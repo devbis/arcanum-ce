@@ -2164,7 +2164,7 @@ void MTComponentCast_ProcFunc()
 {
     MagicTechInvocation mt_invocation;
 
-    sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
+    magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
     sub_4440E0(stru_5E6D28.field_20, &(mt_invocation.target_obj));
     sub_4440E0(dword_5E75F0->parent_obj.obj, &(mt_invocation.parent_obj));
     mt_invocation.flags |= MAGICTECH_INVOCATION_0x01;
@@ -2589,7 +2589,7 @@ void MTComponentInterrupt_ProcFunc()
 {
     MagicTechInvocation mt_invocation;
 
-    sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.interrupt.magictech);
+    magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.interrupt.magictech);
     sub_4440E0(stru_5E6D28.field_20, &(mt_invocation.target_obj));
     mt_invocation.target_loc = stru_5E6D28.field_28;
     if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != OBJ_HANDLE_NULL) {
@@ -4559,9 +4559,9 @@ void sub_4559E0(MagicTechRunInfo* run_info)
 }
 
 // 0x455A20
-void sub_455A20(MagicTechInvocation* mt_invocation, int64_t obj, int a3)
+void magictech_invocation_init(MagicTechInvocation* mt_invocation, int64_t obj, int spell)
 {
-    mt_invocation->spell = a3;
+    mt_invocation->spell = spell;
     sub_4440E0(obj, &(mt_invocation->source_obj));
     if (obj != OBJ_HANDLE_NULL) {
         mt_invocation->loc = obj_field_int64_get(obj, OBJ_F_LOCATION);

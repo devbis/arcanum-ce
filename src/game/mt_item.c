@@ -165,7 +165,7 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
                     && random_between(1, 100) <= 40)
                 || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT) != 0
                     && random_between(1, 100) <= 66)) {
-                sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
+                magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
 
                 if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ANY) != 0) {
                     if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER) != 0) {
@@ -440,11 +440,11 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
         }
 
         if ((mt_item_triggers(spl) & flags) != 0) {
-            sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
+            magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
             sub_4440E0(a2, &(mt_invocation.target_obj));
             sub_4573D0(&mt_invocation);
 
-            sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
+            magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
             sub_4440E0(a2, &(mt_invocation.target_obj));
             mt_invocation.field_D8 = flags;
             if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL) {
