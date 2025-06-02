@@ -4625,7 +4625,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
         return;
     }
 
-    if (!sub_4564E0(mt_invocation)) {
+    if (!magictech_invocation_check(mt_invocation)) {
         return;
     }
 
@@ -4842,7 +4842,7 @@ bool sub_456430(int64_t a1, int64_t a2, MagicTechInfo* magictech)
 }
 
 // 0x4564E0
-bool sub_4564E0(MagicTechInvocation* mt_invocation)
+bool magictech_invocation_check(MagicTechInvocation* mt_invocation)
 {
     MagicTechInfo* info;
     MesFileEntry mes_file_entry;
