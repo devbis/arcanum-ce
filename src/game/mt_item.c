@@ -211,8 +211,7 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
 // 0x4CBAA0
 void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj)
 {
-    // FIXME: Cast.
-    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, (unsigned int)MT_ITEM_TRIG_PICKUP);
+    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, MT_ITEM_TRIG_PICKUP);
 }
 
 // 0x4CBAD0
