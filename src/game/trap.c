@@ -470,7 +470,7 @@ void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj)
 {
     TimeEvent timeevent;
     DateTime datetime;
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
     if (delay != 0) {
         timeevent.type = TIMEEVENT_TYPE_TRAPS;
@@ -480,9 +480,9 @@ void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj)
         sub_45A950(&datetime, 1000 * delay);
         sub_45B800(&timeevent, &datetime);
     } else {
-        sub_455A20(&v1, OBJ_HANDLE_NULL, spl);
-        v1.target_loc = loc;
-        sub_455AC0(&v1);
+        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spl);
+        mt_invocation.target_loc = loc;
+        sub_455AC0(&mt_invocation);
 
         if (item_obj != OBJ_HANDLE_NULL) {
             object_destroy(item_obj);
@@ -713,15 +713,15 @@ bool trap_script_execute(ScriptInvocation* invocation)
 // 0x4BCDC0
 void trigger_trap(int64_t obj, ScriptInvocation* invocation)
 {
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
     CombatContext combat;
     int64_t trap_source_obj;
 
     switch (invocation->script->num) {
     case TRAP_SCRIPT_MAGICAL:
-        sub_455A20(&v1, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
-        sub_4440E0(obj, &(v1.target_obj));
-        sub_455AC0(&v1);
+        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
+        sub_4440E0(obj, &(mt_invocation.target_obj));
+        sub_455AC0(&mt_invocation);
         return;
     case TRAP_SCRIPT_MECHANICAL:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
@@ -779,9 +779,9 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     }
 
     if (((invocation->script->hdr.counters >> 18) & 0xFF) != 0) {
-        sub_455A20(&v1, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
-        sub_4440E0(obj, &(v1.target_obj));
-        sub_455AC0(&v1);
+        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
+        sub_4440E0(obj, &(mt_invocation.target_obj));
+        sub_455AC0(&mt_invocation);
     }
 }
 

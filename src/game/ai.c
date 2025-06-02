@@ -2374,18 +2374,18 @@ void ai_action_perform(Ai* ai)
 // 0x4AC250
 void ai_action_perform_cast(Ai* ai)
 {
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
     if (ai->item_obj != OBJ_HANDLE_NULL) {
-        sub_455A20(&v1, ai->item_obj, ai->spell);
+        sub_455A20(&mt_invocation, ai->item_obj, ai->spell);
     } else {
-        sub_455A20(&v1, ai->obj, ai->spell);
+        sub_455A20(&mt_invocation, ai->obj, ai->spell);
     }
 
-    sub_4440E0(ai->danger_source, &(v1.target_obj));
+    sub_4440E0(ai->danger_source, &(mt_invocation.target_obj));
 
-    if (sub_4564E0(&v1)) {
-        sub_455AC0(&v1);
+    if (sub_4564E0(&mt_invocation)) {
+        sub_455AC0(&mt_invocation);
 
         if (ai->item_obj != OBJ_HANDLE_NULL) {
             sub_4574D0(ai->item_obj);

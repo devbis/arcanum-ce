@@ -121,7 +121,7 @@ static bool sub_455820(MagicTechRunInfo* run_info);
 static void magictech_id_free_lock(int mt_id);
 static void sub_455960(MagicTechRunInfo* run_info);
 static void sub_4559E0(MagicTechRunInfo* run_info);
-static void sub_455C30(MagicTechSerializedData* a1);
+static void sub_455C30(MagicTechInvocation* mt_invocation);
 static bool sub_456430(int64_t a1, int64_t a2, MagicTechInfo* magictech);
 static void magictech_preload_art(MagicTechRunInfo* run_info);
 static void sub_457030(int mt_id, int action);
@@ -2162,28 +2162,28 @@ void MTComponentAIRedirect_ProcFunc()
 // 0x451740
 void MTComponentCast_ProcFunc()
 {
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
-    sub_455A20(&v1, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
-    sub_4440E0(stru_5E6D28.field_20, &(v1.target_obj));
-    sub_4440E0(dword_5E75F0->parent_obj.obj, &(v1.parent_obj));
-    v1.flags |= MAGICTECH_INVOCATION_0x01;
-    v1.target_loc = stru_5E6D28.field_28;
+    sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
+    sub_4440E0(stru_5E6D28.field_20, &(mt_invocation.target_obj));
+    sub_4440E0(dword_5E75F0->parent_obj.obj, &(mt_invocation.parent_obj));
+    mt_invocation.flags |= MAGICTECH_INVOCATION_0x01;
+    mt_invocation.target_loc = stru_5E6D28.field_28;
 
-    if (v1.parent_obj.obj != OBJ_HANDLE_NULL) {
-        v1.loc = obj_field_int64_get(v1.parent_obj.obj, OBJ_F_LOCATION);
+    if (mt_invocation.parent_obj.obj != OBJ_HANDLE_NULL) {
+        mt_invocation.loc = obj_field_int64_get(mt_invocation.parent_obj.obj, OBJ_F_LOCATION);
     }
 
-    if (v1.target_loc == 0) {
-        if (v1.target_obj.obj == OBJ_HANDLE_NULL) {
+    if (mt_invocation.target_loc == 0) {
+        if (mt_invocation.target_obj.obj == OBJ_HANDLE_NULL) {
             return;
         }
 
-        v1.target_loc = obj_field_int64_get(v1.target_obj.obj, OBJ_F_LOCATION);
+        mt_invocation.target_loc = obj_field_int64_get(mt_invocation.target_obj.obj, OBJ_F_LOCATION);
     }
 
-    if (v1.target_obj.obj != OBJ_HANDLE_NULL || v1.target_loc != 0) {
-        sub_455AC0(&v1);
+    if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != 0) {
+        sub_455AC0(&mt_invocation);
     }
 }
 
@@ -2587,13 +2587,13 @@ void MTComponentIdentify_ProcFunc()
 // 0x452300
 void MTComponentInterrupt_ProcFunc()
 {
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
-    sub_455A20(&v1, OBJ_HANDLE_NULL, dword_5E761C->data.interrupt.magictech);
-    sub_4440E0(stru_5E6D28.field_20, &(v1.target_obj));
-    v1.target_loc = stru_5E6D28.field_28;
-    if (v1.target_obj.obj != OBJ_HANDLE_NULL || v1.target_loc != OBJ_HANDLE_NULL) {
-        sub_4573D0(&v1);
+    sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.interrupt.magictech);
+    sub_4440E0(stru_5E6D28.field_20, &(mt_invocation.target_obj));
+    mt_invocation.target_loc = stru_5E6D28.field_28;
+    if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != OBJ_HANDLE_NULL) {
+        sub_4573D0(&mt_invocation);
     }
 }
 
@@ -4559,25 +4559,25 @@ void sub_4559E0(MagicTechRunInfo* run_info)
 }
 
 // 0x455A20
-void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3)
+void sub_455A20(MagicTechInvocation* mt_invocation, int64_t obj, int a3)
 {
-    a1->spell = a3;
-    sub_4440E0(obj, &(a1->source_obj));
+    mt_invocation->spell = a3;
+    sub_4440E0(obj, &(mt_invocation->source_obj));
     if (obj != OBJ_HANDLE_NULL) {
-        a1->loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        mt_invocation->loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     } else {
-        a1->loc = 0;
+        mt_invocation->loc = 0;
     }
-    sub_4440E0(OBJ_HANDLE_NULL, &(a1->target_obj));
-    a1->target_loc = 0;
-    sub_4440E0(sub_450A50(obj), &(a1->parent_obj));
-    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_A0));
-    a1->field_D8 = 0;
-    a1->flags = 0;
+    sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation->target_obj));
+    mt_invocation->target_loc = 0;
+    sub_4440E0(sub_450A50(obj), &(mt_invocation->parent_obj));
+    sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation->field_A0));
+    mt_invocation->field_D8 = 0;
+    mt_invocation->flags = 0;
 }
 
 // 0x455AC0
-void sub_455AC0(MagicTechSerializedData* a1)
+void sub_455AC0(MagicTechInvocation* mt_invocation)
 {
     if (magictech_editor) {
         return;
@@ -4588,34 +4588,34 @@ void sub_455AC0(MagicTechSerializedData* a1)
             PacketPlayerCastSpell pkt;
 
             pkt.type = 58;
-            pkt.player = multiplayer_find_slot_from_obj(a1->source_obj.obj);
-            sub_4440E0(a1->source_obj.obj, &(a1->source_obj));
-            sub_4440E0(a1->parent_obj.obj, &(a1->parent_obj));
-            sub_4440E0(a1->target_obj.obj, &(a1->target_obj));
-            sub_4440E0(a1->field_A0.obj, &(a1->field_A0));
-            pkt.field_8 = *a1;
+            pkt.player = multiplayer_find_slot_from_obj(mt_invocation->source_obj.obj);
+            sub_4440E0(mt_invocation->source_obj.obj, &(mt_invocation->source_obj));
+            sub_4440E0(mt_invocation->parent_obj.obj, &(mt_invocation->parent_obj));
+            sub_4440E0(mt_invocation->target_obj.obj, &(mt_invocation->target_obj));
+            sub_4440E0(mt_invocation->field_A0.obj, &(mt_invocation->field_A0));
+            pkt.invocation = *mt_invocation;
             tig_net_send_app_all(&pkt, sizeof(pkt));
-            sub_455C30(a1);
+            sub_455C30(mt_invocation);
         } else {
             PacketPlayerRequestCastSpell pkt;
 
             pkt.type = 57;
-            pkt.player = multiplayer_find_slot_from_obj(a1->source_obj.obj);
-            sub_4440E0(a1->source_obj.obj, &(a1->source_obj));
-            sub_4440E0(a1->parent_obj.obj, &(a1->parent_obj));
-            sub_4440E0(a1->target_obj.obj, &(a1->target_obj));
-            sub_4440E0(a1->field_A0.obj, &(a1->field_A0));
-            pkt.field_8 = *a1;
+            pkt.player = multiplayer_find_slot_from_obj(mt_invocation->source_obj.obj);
+            sub_4440E0(mt_invocation->source_obj.obj, &(mt_invocation->source_obj));
+            sub_4440E0(mt_invocation->parent_obj.obj, &(mt_invocation->parent_obj));
+            sub_4440E0(mt_invocation->target_obj.obj, &(mt_invocation->target_obj));
+            sub_4440E0(mt_invocation->field_A0.obj, &(mt_invocation->field_A0));
+            pkt.invocation = *mt_invocation;
             tig_net_send_app_all(&pkt, sizeof(pkt));
-            sub_455C30(a1);
+            sub_455C30(mt_invocation);
         }
     } else {
-        sub_455C30(a1);
+        sub_455C30(mt_invocation);
     }
 }
 
 // 0x455C30
-void sub_455C30(MagicTechSerializedData* a1)
+void sub_455C30(MagicTechInvocation* mt_invocation)
 {
     MagicTechInfo* info;
     MagicTechRunInfo* run_info;
@@ -4626,14 +4626,14 @@ void sub_455C30(MagicTechSerializedData* a1)
         return;
     }
 
-    if (!sub_4564E0(a1)) {
+    if (!sub_4564E0(mt_invocation)) {
         return;
     }
 
-    info = &(magictech_spells[a1->spell]);
+    info = &(magictech_spells[mt_invocation->spell]);
     magictech_id_new_lock(&run_info);
 
-    run_info->source_obj.obj = a1->source_obj.obj;
+    run_info->source_obj.obj = mt_invocation->source_obj.obj;
     sub_443EB0(run_info->source_obj.obj, &(run_info->source_obj.field_8));
     if (run_info->source_obj.obj != OBJ_HANDLE_NULL) {
         run_info->source_obj.type = obj_field_int32_get(run_info->source_obj.obj, OBJ_F_TYPE);
@@ -4643,9 +4643,9 @@ void sub_455C30(MagicTechSerializedData* a1)
     } else {
         run_info->source_obj.type = -1;
     }
-    run_info->source_obj.loc = a1->loc;
+    run_info->source_obj.loc = mt_invocation->loc;
 
-    run_info->parent_obj.obj = a1->parent_obj.obj;
+    run_info->parent_obj.obj = mt_invocation->parent_obj.obj;
     sub_443EB0(run_info->parent_obj.obj, &(run_info->parent_obj.field_8));
     if (run_info->parent_obj.obj != OBJ_HANDLE_NULL) {
         run_info->parent_obj.type = obj_field_int32_get(run_info->parent_obj.obj, OBJ_F_TYPE);
@@ -4655,9 +4655,9 @@ void sub_455C30(MagicTechSerializedData* a1)
     } else {
         run_info->parent_obj.type = -1;
     }
-    run_info->parent_obj.loc = a1->loc;
+    run_info->parent_obj.loc = mt_invocation->loc;
 
-    run_info->target_obj.obj = a1->target_obj.obj;
+    run_info->target_obj.obj = mt_invocation->target_obj.obj;
     sub_443EB0(run_info->target_obj.obj, &(run_info->target_obj.field_8));
     if (run_info->target_obj.obj != OBJ_HANDLE_NULL) {
         run_info->target_obj.type = obj_field_int32_get(run_info->target_obj.obj, OBJ_F_TYPE);
@@ -4667,9 +4667,9 @@ void sub_455C30(MagicTechSerializedData* a1)
     } else {
         run_info->target_obj.type = -1;
     }
-    run_info->target_obj.loc = a1->target_loc;
+    run_info->target_obj.loc = mt_invocation->target_loc;
 
-    run_info->field_E8.obj = a1->field_A0.obj;
+    run_info->field_E8.obj = mt_invocation->field_A0.obj;
     sub_443EB0(run_info->field_E8.obj, &(run_info->field_E8.field_8));
     if (run_info->field_E8.obj != OBJ_HANDLE_NULL) {
         run_info->field_E8.type = obj_field_int32_get(run_info->field_E8.obj, OBJ_F_TYPE);
@@ -4680,21 +4680,21 @@ void sub_455C30(MagicTechSerializedData* a1)
         run_info->field_E8.type = -1;
     }
 
-    run_info->spell = a1->spell;
+    run_info->spell = mt_invocation->spell;
     run_info->action = MAGICTECH_ACTION_BEGIN;
     run_info->objlist = NULL;
     run_info->summoned_obj = NULL;
 
-    if ((a1->flags & MAGICTECH_INVOCATION_FREE) != 0) {
+    if ((mt_invocation->flags & MAGICTECH_INVOCATION_FREE) != 0) {
         run_info->field_13C |= 0x02;
     }
 
-    if ((a1->flags & MAGICTECH_INVOCATION_UNRESISTABLE) != 0) {
+    if ((mt_invocation->flags & MAGICTECH_INVOCATION_UNRESISTABLE) != 0) {
         run_info->field_13C |= 0x10;
     }
 
     run_info->field_138 = 0;
-    run_info->field_140 = a1->field_D8;
+    run_info->field_140 = mt_invocation->field_D8;
     run_info->field_144 = 0;
     run_info->field_150 = info->duration_trigger_count;
 
@@ -4729,7 +4729,7 @@ void sub_455C30(MagicTechSerializedData* a1)
             ? AG_THROW_SPELL_W_CAST_ANIM
             : AG_THROW_SPELL;
 
-        if ((a1->flags & MAGICTECH_INVOCATION_0x01) != 0) {
+        if ((mt_invocation->flags & MAGICTECH_INVOCATION_0x01) != 0) {
             if (sub_44D500(&goal_data, run_info->parent_obj.obj, AG_THROW_SPELL_FRIENDLY)) {
                 goal_data.params[AGDATA_SPELL_DATA].data = run_info->id;
                 goal_data.params[AGDATA_TARGET_OBJ].obj = run_info->target_obj.obj;
@@ -4843,47 +4843,47 @@ bool sub_456430(int64_t a1, int64_t a2, MagicTechInfo* magictech)
 }
 
 // 0x4564E0
-bool sub_4564E0(MagicTechSerializedData* a1)
+bool sub_4564E0(MagicTechInvocation* mt_invocation)
 {
     MagicTechInfo* info;
     MesFileEntry mes_file_entry;
 
-    info = &(magictech_spells[a1->spell]);
+    info = &(magictech_spells[mt_invocation->spell]);
 
-    if (a1->parent_obj.obj != OBJ_HANDLE_NULL
+    if (mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL
         && combat_turn_based_is_active()
-        && combat_turn_based_whos_turn_get() != a1->parent_obj.obj
-        && obj_type_is_critter(obj_field_int32_get(a1->parent_obj.obj, OBJ_F_TYPE))) {
+        && combat_turn_based_whos_turn_get() != mt_invocation->parent_obj.obj
+        && obj_type_is_critter(obj_field_int32_get(mt_invocation->parent_obj.obj, OBJ_F_TYPE))) {
         return false;
     }
 
-    if (a1->spell < 0 || a1->spell >= MT_SPELL_COUNT) {
+    if (mt_invocation->spell < 0 || mt_invocation->spell >= MT_SPELL_COUNT) {
         tig_debug_printf("MagicTech: Activate: ERROR: NOT A SPELL!\n");
         return false;
     }
 
-    if (a1->parent_obj.obj != OBJ_HANDLE_NULL) {
-        int64_t parent_loc = obj_field_int64_get(a1->parent_obj.obj, OBJ_F_LOCATION);
-        if (!sub_454700(parent_loc, a1->target_loc, a1->target_obj.obj, a1->spell)) {
+    if (mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL) {
+        int64_t parent_loc = obj_field_int64_get(mt_invocation->parent_obj.obj, OBJ_F_LOCATION);
+        if (!sub_454700(parent_loc, mt_invocation->target_loc, mt_invocation->target_obj.obj, mt_invocation->spell)) {
             return false;
         }
     }
 
-    if (!magictech_check_los(a1)) {
+    if (!magictech_check_los(mt_invocation)) {
         return false;
     }
 
-    if (!sub_456430(a1->parent_obj.obj, a1->target_obj.obj, info)) {
+    if (!sub_456430(mt_invocation->parent_obj.obj, mt_invocation->target_obj.obj, info)) {
         return false;
     }
 
-    if (a1->parent_obj.obj != OBJ_HANDLE_NULL
-        && (obj_field_int32_get(a1->parent_obj.obj, OBJ_F_SPELL_FLAGS) & OSF_BONDS_OF_MAGIC) != 0
-        && a1->parent_obj.obj == a1->source_obj.obj) {
+    if (mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL
+        && (obj_field_int32_get(mt_invocation->parent_obj.obj, OBJ_F_SPELL_FLAGS) & OSF_BONDS_OF_MAGIC) != 0
+        && mt_invocation->parent_obj.obj == mt_invocation->source_obj.obj) {
         return false;
     }
 
-    if (!player_is_pc_obj(a1->parent_obj.obj)) {
+    if (!player_is_pc_obj(mt_invocation->parent_obj.obj)) {
         S603D20 v1;
         S603CB8 v2;
         S603CB8_F50 v3;
@@ -4891,21 +4891,21 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         uint64_t* tgt;
 
         sub_4F25E0(&v1);
-        sub_459F20(a1->spell, &tgt);
+        sub_459F20(mt_invocation->spell, &tgt);
         v1.aoe_flags = *tgt;
         v1.radius = 2;
 
-        sub_4F2600(&v2, NULL, a1->source_obj.obj);
-        v2.field_38 = a1->target_loc;
-        v2.field_28 = a1->target_loc;
-        v2.field_18 = a1->loc;
-        v2.field_30 = a1->target_obj.obj;
-        v2.field_20 = a1->target_obj.obj;
+        sub_4F2600(&v2, NULL, mt_invocation->source_obj.obj);
+        v2.field_38 = mt_invocation->target_loc;
+        v2.field_28 = mt_invocation->target_loc;
+        v2.field_18 = mt_invocation->loc;
+        v2.field_30 = mt_invocation->target_obj.obj;
+        v2.field_20 = mt_invocation->target_obj.obj;
         v2.field_48 = 0;
         v2.field_0 = &v1;
 
         if (!sub_4F2D20(&v2)) {
-            if (a1->target_obj.obj == OBJ_HANDLE_NULL) {
+            if (mt_invocation->target_obj.obj == OBJ_HANDLE_NULL) {
                 return false;
             }
 
@@ -4913,8 +4913,8 @@ bool sub_4564E0(MagicTechSerializedData* a1)
                 return false;
             }
 
-            v2.field_38 = obj_field_int64_get(a1->target_obj.obj, OBJ_F_LOCATION);
-            v2.field_28 = obj_field_int64_get(a1->target_obj.obj, OBJ_F_LOCATION);
+            v2.field_38 = obj_field_int64_get(mt_invocation->target_obj.obj, OBJ_F_LOCATION);
+            v2.field_28 = obj_field_int64_get(mt_invocation->target_obj.obj, OBJ_F_LOCATION);
             v2.field_50 = &v3;
             sub_4F40B0(&v2);
 
@@ -4931,25 +4931,25 @@ bool sub_4564E0(MagicTechSerializedData* a1)
                 return false;
             }
 
-            a1->target_loc = v2.field_28;
-            a1->target_obj.obj = OBJ_HANDLE_NULL;
-            a1->target_obj.field_8.objid.type = OID_TYPE_NULL;
+            mt_invocation->target_loc = v2.field_28;
+            mt_invocation->target_obj.obj = OBJ_HANDLE_NULL;
+            mt_invocation->target_obj.field_8.objid.type = OID_TYPE_NULL;
         }
     }
 
-    if ((a1->flags & MAGICTECH_INVOCATION_UNRESISTABLE) == 0) {
-        int source_aptitude = a1->parent_obj.obj != OBJ_HANDLE_NULL
-            ? stat_level_get(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE)
+    if ((mt_invocation->flags & MAGICTECH_INVOCATION_UNRESISTABLE) == 0) {
+        int source_aptitude = mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL
+            ? stat_level_get(mt_invocation->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE)
             : 0;
-        int target_aptitude = a1->target_obj.obj != OBJ_HANDLE_NULL
-            ? stat_level_get(a1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE)
+        int target_aptitude = mt_invocation->target_obj.obj != OBJ_HANDLE_NULL
+            ? stat_level_get(mt_invocation->target_obj.obj, STAT_MAGICK_TECH_APTITUDE)
             : 0;
 
-        if (a1->source_obj.obj != OBJ_HANDLE_NULL
+        if (mt_invocation->source_obj.obj != OBJ_HANDLE_NULL
             && source_aptitude < 0
-            && a1->parent_obj.obj != a1->source_obj.obj
-            && item_effective_power(a1->source_obj.obj, a1->parent_obj.obj) <= 0) {
-            sub_45A520(a1->parent_obj.obj, a1->target_obj.obj);
+            && mt_invocation->parent_obj.obj != mt_invocation->source_obj.obj
+            && item_effective_power(mt_invocation->source_obj.obj, mt_invocation->parent_obj.obj) <= 0) {
+            sub_45A520(mt_invocation->parent_obj.obj, mt_invocation->target_obj.obj);
             return false;
         }
 
@@ -4958,23 +4958,23 @@ bool sub_4564E0(MagicTechSerializedData* a1)
                 target_aptitude = target_aptitude * (100 - source_aptitude) / 100;
             }
             if (random_between(1, 100) <= target_aptitude) {
-                sub_45A520(a1->parent_obj.obj, a1->target_obj.obj);
+                sub_45A520(mt_invocation->parent_obj.obj, mt_invocation->target_obj.obj);
                 return false;
             }
         }
     }
 
-    if (a1->parent_obj.obj != OBJ_HANDLE_NULL
-        && obj_type_is_critter(obj_field_int32_get(a1->parent_obj.obj, OBJ_F_TYPE))
-        && a1->parent_obj.obj == a1->source_obj.obj
-        && stat_level_get(a1->parent_obj.obj, STAT_INTELLIGENCE) < magictech_min_intelligence(a1->spell)) {
+    if (mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(mt_invocation->parent_obj.obj, OBJ_F_TYPE))
+        && mt_invocation->parent_obj.obj == mt_invocation->source_obj.obj
+        && stat_level_get(mt_invocation->parent_obj.obj, STAT_INTELLIGENCE) < magictech_min_intelligence(mt_invocation->spell)) {
         return false;
     }
 
-    if (a1->parent_obj.obj != OBJ_HANDLE_NULL
-        && a1->spell == SPELL_TELEPORTATION
-        && !antiteleport_check(a1->parent_obj.obj, 0)) {
-        if (player_is_local_pc_obj(a1->parent_obj.obj)) {
+    if (mt_invocation->parent_obj.obj != OBJ_HANDLE_NULL
+        && mt_invocation->spell == SPELL_TELEPORTATION
+        && !antiteleport_check(mt_invocation->parent_obj.obj, 0)) {
+        if (player_is_local_pc_obj(mt_invocation->parent_obj.obj)) {
             mes_file_entry.num = 10000; // "This place seems to block your attempt to teleport."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
             sub_460610(mes_file_entry.str);
@@ -5062,35 +5062,35 @@ bool sub_456A90(int mt_id)
 }
 
 // 0x456BC0
-bool magictech_check_los(MagicTechSerializedData* a1)
+bool magictech_check_los(MagicTechInvocation* mt_invocation)
 {
     int64_t loc;
     int64_t blocking_obj;
 
-    if (a1->parent_obj.obj == a1->target_obj.obj || a1->parent_obj.obj == OBJ_HANDLE_NULL) {
+    if (mt_invocation->parent_obj.obj == mt_invocation->target_obj.obj || mt_invocation->parent_obj.obj == OBJ_HANDLE_NULL) {
         return true;
     }
 
-    loc = a1->target_loc;
+    loc = mt_invocation->target_loc;
     if (loc == 0) {
-        if (a1->target_obj.obj != OBJ_HANDLE_NULL) {
-            if (obj_type_is_item(obj_field_int32_get(a1->target_obj.obj, OBJ_F_TYPE))
-                && item_parent(a1->target_obj.obj, NULL)) {
+        if (mt_invocation->target_obj.obj != OBJ_HANDLE_NULL) {
+            if (obj_type_is_item(obj_field_int32_get(mt_invocation->target_obj.obj, OBJ_F_TYPE))
+                && item_parent(mt_invocation->target_obj.obj, NULL)) {
                 return true;
             }
 
-            loc = obj_field_int64_get(a1->target_obj.obj, OBJ_F_LOCATION);
+            loc = obj_field_int64_get(mt_invocation->target_obj.obj, OBJ_F_LOCATION);
         }
     }
 
     if (loc != 0) {
-        if (sub_4ADE00(a1->parent_obj.obj, loc, &blocking_obj) >= 100) {
+        if (sub_4ADE00(mt_invocation->parent_obj.obj, loc, &blocking_obj) >= 100) {
             return false;
         }
 
         if (blocking_obj != OBJ_HANDLE_NULL
             && (obj_field_int32_get(blocking_obj, OBJ_F_FLAGS) & OF_SHOOT_THROUGH) == 0
-            && blocking_obj != a1->target_obj.obj) {
+            && blocking_obj != mt_invocation->target_obj.obj) {
             return false;
         }
     }
@@ -5366,17 +5366,17 @@ void sub_457270(int mt_id)
 }
 
 // 0x4573D0
-void sub_4573D0(MagicTechSerializedData* a1)
+void sub_4573D0(MagicTechInvocation* mt_invocation)
 {
     int idx;
     MagicTechRunInfo* run_info;
 
-    if (a1->source_obj.obj) {
+    if (mt_invocation->source_obj.obj) {
         for (idx = 0; idx < 512; idx++) {
             if (magictech_id_to_run_info(idx, &run_info)
-                && run_info->parent_obj.obj == a1->parent_obj.obj
-                && run_info->target_obj.obj == a1->target_obj.obj
-                && run_info->spell == a1->spell) {
+                && run_info->parent_obj.obj == mt_invocation->parent_obj.obj
+                && run_info->target_obj.obj == mt_invocation->target_obj.obj
+                && run_info->spell == mt_invocation->spell) {
                 magictech_interrupt(run_info->id);
                 break;
             }

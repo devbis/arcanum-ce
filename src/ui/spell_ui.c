@@ -306,7 +306,7 @@ void spell_ui_apply(S4F2810* a1)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
-    MagicTechSerializedData v2;
+    MagicTechInvocation mt_invocation;
 
     if (critter_is_dead(qword_683500)
         || critter_is_unconscious(qword_683500)) {
@@ -322,14 +322,14 @@ void spell_ui_apply(S4F2810* a1)
         return;
     }
 
-    sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
+    sub_455A20(&mt_invocation, qword_6834F8, dword_5CB3A0);
     if (a1->is_loc) {
-        v2.target_loc = a1->loc;
+        mt_invocation.target_loc = a1->loc;
     } else {
-        sub_4440E0(a1->obj, &(v2.target_obj));
+        sub_4440E0(a1->obj, &(mt_invocation.target_obj));
     }
 
-    if (!magictech_check_los(&v2)) {
+    if (!magictech_check_los(&mt_invocation)) {
         mes_file_entry.num = 604; // "You cannot see the target."
         magictech_get_msg(&mes_file_entry);
 
@@ -339,7 +339,7 @@ void spell_ui_apply(S4F2810* a1)
         return;
     }
 
-    sub_455AC0(&v2);
+    sub_455AC0(&mt_invocation);
 }
 
 // 0x57C290

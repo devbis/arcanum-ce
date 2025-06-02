@@ -140,7 +140,7 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
     int index;
     int spl;
     unsigned int trig;
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
@@ -165,41 +165,41 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
                     && random_between(1, 100) <= 40)
                 || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT) != 0
                     && random_between(1, 100) <= 66)) {
-                sub_455A20(&v1, a1, sub_4CB790(spl));
+                sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
 
                 if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ANY) != 0) {
                     if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER) != 0) {
-                        sub_4440E0(a3, &(v1.target_obj));
+                        sub_4440E0(a3, &(mt_invocation.target_obj));
                     } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_WEAPON), &(v1.target_obj));
+                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_WEAPON), &(mt_invocation.target_obj));
                         } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
+                            sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
                         }
                     } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ARMOR) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_ARMOR), &(v1.target_obj));
+                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_ARMOR), &(mt_invocation.target_obj));
                         } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
+                            sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
                         }
                     } else {
-                        sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
+                        sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
                     }
                 } else if ((trig & MT_ITEM_TRIG_PARENT_ATKS_LOCATION) != 0) {
-                    v1.target_loc = a4;
+                    mt_invocation.target_loc = a4;
                 } else {
-                    sub_4440E0(a2, &(v1.target_obj));
+                    sub_4440E0(a2, &(mt_invocation.target_obj));
                 }
 
-                v1.field_D8 = flags;
-                v1.flags |= MAGICTECH_INVOCATION_0x01;
+                mt_invocation.field_D8 = flags;
+                mt_invocation.flags |= MAGICTECH_INVOCATION_0x01;
 
                 if (qword_5FF618 != OBJ_HANDLE_NULL) {
-                    sub_4440E0(qword_5FF618, &(v1.field_A0));
+                    sub_4440E0(qword_5FF618, &(mt_invocation.field_A0));
                 }
 
-                if (v1.target_obj.obj != OBJ_HANDLE_NULL || v1.target_loc != 0) {
-                    sub_455AC0(&v1);
+                if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != 0) {
+                    sub_455AC0(&mt_invocation);
                 }
             }
         }
@@ -418,7 +418,7 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
 {
     int index;
     int spl;
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
@@ -440,15 +440,15 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
         }
 
         if ((mt_item_triggers(spl) & flags) != 0) {
-            sub_455A20(&v1, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(v1.target_obj));
-            sub_4573D0(&v1);
+            sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
+            sub_4440E0(a2, &(mt_invocation.target_obj));
+            sub_4573D0(&mt_invocation);
 
-            sub_455A20(&v1, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(v1.target_obj));
-            v1.field_D8 = flags;
-            if (v1.target_obj.obj != OBJ_HANDLE_NULL) {
-                sub_455AC0(&v1);
+            sub_455A20(&mt_invocation, a1, sub_4CB790(spl));
+            sub_4440E0(a2, &(mt_invocation.target_obj));
+            mt_invocation.field_D8 = flags;
+            if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL) {
+                sub_455AC0(&mt_invocation);
             }
         }
     }

@@ -304,9 +304,8 @@ typedef unsigned int MagicTechInvocationFlags;
 #define MAGICTECH_INVOCATION_FREE 0x02u
 #define MAGICTECH_INVOCATION_UNRESISTABLE 0x04u
 
-typedef struct MagicTechSerializedData {
+typedef struct MagicTechInvocation {
     /* 0000 */ int spell;
-    /* 0004 */ int field_4;
     /* 0008 */ FollowerInfo source_obj;
     /* 0038 */ int64_t loc;
     /* 0040 */ FollowerInfo parent_obj;
@@ -315,9 +314,9 @@ typedef struct MagicTechSerializedData {
     /* 00D0 */ int64_t target_loc;
     /* 00D8 */ int field_D8;
     /* 00DC */ MagicTechInvocationFlags flags;
-} MagicTechSerializedData;
+} MagicTechInvocation;
 
-static_assert(sizeof(MagicTechSerializedData) == 0xE0, "wrong size");
+static_assert(sizeof(MagicTechInvocation) == 0xE0, "wrong size");
 
 typedef struct MagicTechSummonInfo {
     /* 0000 */ FollowerInfo field_0;
@@ -376,12 +375,12 @@ int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3);
 bool sub_454920(int64_t obj, int num, int max);
 void magictech_component_obj_flag(int64_t a1, int64_t a2, int a3, int a4, int a5, int64_t a6, int64_t a7);
 bool magictech_id_to_run_info(int mt_id, MagicTechRunInfo** lock_ptr);
-void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3);
-void sub_455AC0(MagicTechSerializedData* a1);
-bool sub_4564E0(MagicTechSerializedData* a1);
+void sub_455A20(MagicTechInvocation* mt_invocation, int64_t obj, int a3);
+void sub_455AC0(MagicTechInvocation* mt_invocation);
+bool sub_4564E0(MagicTechInvocation* mt_invocation);
 bool sub_456A10(int64_t a1, int64_t a2, int64_t a3);
 bool sub_456A90(int mt_id);
-bool magictech_check_los(MagicTechSerializedData* a1);
+bool magictech_check_los(MagicTechInvocation* mt_invocation);
 bool sub_456D20(int mt_id, tig_art_id_t* art_id_ptr, tig_art_id_t* light_art_id_ptr, tig_color_t* light_color_ptr, int* a5, int* a6, int* a7, int* a8);
 void sub_456E00(int mt_id);
 void magictech_fx_add(int64_t obj, int fx);
@@ -393,7 +392,7 @@ void sub_457060(MagicTechRunInfo* a1);
 void sub_457100();
 void magictech_interrupt(int mt_id);
 void magictech_interrupt_delayed(int mt_id);
-void sub_4573D0(MagicTechSerializedData* a1);
+void sub_4573D0(MagicTechInvocation* mt_invocation);
 void magictech_demaintain_spells(int64_t obj);
 void sub_4574D0(int64_t obj);
 bool magictech_check_env_sf(unsigned int flags);

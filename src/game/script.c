@@ -1966,10 +1966,10 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
 
-        MagicTechSerializedData v1;
-        sub_455A20(&v1, source_obj, spell);
-        sub_4440E0(target_obj, &(v1.target_obj));
-        sub_455AC0(&v1);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        sub_455AC0(&mt_invocation);
         return NEXT;
     }
     case SAT_MARK_MAP_LOCATION: {
@@ -2120,10 +2120,10 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int spell = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
 
-        MagicTechSerializedData v1;
-        sub_455A20(&v1, OBJ_HANDLE_NULL, spell);
-        sub_4440E0(target_obj, &(v1.target_obj));
-        sub_455AC0(&v1);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        sub_455AC0(&mt_invocation);
 
         return NEXT;
     }
@@ -2651,11 +2651,11 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
-        MagicTechSerializedData magictech_invocation;
-        sub_455A20(&magictech_invocation, source_obj, spell);
-        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= MAGICTECH_INVOCATION_FREE;
-        sub_455AC0(&magictech_invocation);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
+        sub_455AC0(&mt_invocation);
         return NEXT;
     }
     case SAT_SET_PC_QUEST_UNBOTCHED: {
@@ -2677,23 +2677,23 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
-        MagicTechSerializedData magictech_invocation;
-        sub_455A20(&magictech_invocation, source_obj, spell);
-        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&magictech_invocation);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
+        sub_455AC0(&mt_invocation);
         return NEXT;
     }
     case SAT_ACTION_CAST_FREE_UNRESISTABLE_SPELL: {
         int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int spell = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
-        MagicTechSerializedData magictech_invocation;
-        sub_455A20(&magictech_invocation, source_obj, spell);
-        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= MAGICTECH_INVOCATION_FREE;
-        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&magictech_invocation);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, source_obj, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
+        mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
+        sub_455AC0(&mt_invocation);
         return NEXT;
     }
     case SAT_TOUCH_ART: {
@@ -2809,11 +2809,11 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_CAST_UNRESISTABLE_SPELL: {
         int spell = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        MagicTechSerializedData magictech_invocation;
-        sub_455A20(&magictech_invocation, OBJ_HANDLE_NULL, spell);
-        sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&magictech_invocation);
+        MagicTechInvocation mt_invocation;
+        sub_455A20(&mt_invocation, OBJ_HANDLE_NULL, spell);
+        sub_4440E0(target_obj, &(mt_invocation.target_obj));
+        mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
+        sub_455AC0(&mt_invocation);
         return NEXT;
     }
     case SAT_ADJUST_STAT: {

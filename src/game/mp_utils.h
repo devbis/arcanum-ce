@@ -459,7 +459,7 @@ static_assert(sizeof(Packet54) == 0x08, "wrong size");
 typedef struct PacketPlayerRequestCastSpell {
     /* 0000 */ int type;
     /* 0004 */ int player;
-    /* 0008 */ MagicTechSerializedData field_8;
+    /* 0008 */ MagicTechInvocation invocation;
 } PacketPlayerRequestCastSpell;
 
 static_assert(sizeof(PacketPlayerRequestCastSpell) == 0xE8, "wrong size");
@@ -467,7 +467,7 @@ static_assert(sizeof(PacketPlayerRequestCastSpell) == 0xE8, "wrong size");
 typedef struct PacketPlayerCastSpell {
     /* 0000 */ int type;
     /* 0004 */ int player;
-    /* 0008 */ MagicTechSerializedData field_8;
+    /* 0008 */ MagicTechInvocation invocation;
 } PacketPlayerCastSpell;
 
 static_assert(sizeof(PacketPlayerCastSpell) == 0xE8, "wrong size");

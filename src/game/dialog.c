@@ -3893,14 +3893,14 @@ void sub_419CB0(int a1, int a2, int a3, DialogState* a4)
 // 0x419D50
 void sub_419D50(int a1, int a2, int a3, DialogState* a4)
 {
-    MagicTechSerializedData v1;
+    MagicTechInvocation mt_invocation;
 
-    sub_455A20(&v1, a4->npc_obj, a1);
-    sub_4440E0(a4->pc_obj, &(v1.target_obj));
+    sub_455A20(&mt_invocation, a4->npc_obj, a1);
+    sub_4440E0(a4->pc_obj, &(mt_invocation.target_obj));
     if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
-        v1.flags |= MAGICTECH_INVOCATION_FREE;
+        mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
     }
-    sub_455AC0(&v1);
+    sub_455AC0(&mt_invocation);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
     a4->num_options = 1;
     dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
