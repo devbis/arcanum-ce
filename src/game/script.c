@@ -1969,7 +1969,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechInvocation mt_invocation;
         magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return NEXT;
     }
     case SAT_MARK_MAP_LOCATION: {
@@ -2123,7 +2123,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechInvocation mt_invocation;
         magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
 
         return NEXT;
     }
@@ -2655,7 +2655,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return NEXT;
     }
     case SAT_SET_PC_QUEST_UNBOTCHED: {
@@ -2681,7 +2681,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         magictech_invocation_init(&mt_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return NEXT;
     }
     case SAT_ACTION_CAST_FREE_UNRESISTABLE_SPELL: {
@@ -2693,7 +2693,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return NEXT;
     }
     case SAT_TOUCH_ART: {
@@ -2813,7 +2813,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spell);
         sub_4440E0(target_obj, &(mt_invocation.target_obj));
         mt_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return NEXT;
     }
     case SAT_ADJUST_STAT: {

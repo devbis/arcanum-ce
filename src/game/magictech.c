@@ -2183,7 +2183,7 @@ void MTComponentCast_ProcFunc()
     }
 
     if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != 0) {
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
     }
 }
 
@@ -4577,7 +4577,7 @@ void magictech_invocation_init(MagicTechInvocation* mt_invocation, int64_t obj, 
 }
 
 // 0x455AC0
-void sub_455AC0(MagicTechInvocation* mt_invocation)
+void magictech_invocation_run(MagicTechInvocation* mt_invocation)
 {
     if (magictech_editor) {
         return;
@@ -4607,7 +4607,6 @@ void sub_455AC0(MagicTechInvocation* mt_invocation)
             sub_4440E0(mt_invocation->field_A0.obj, &(mt_invocation->field_A0));
             pkt.invocation = *mt_invocation;
             tig_net_send_app_all(&pkt, sizeof(pkt));
-            sub_455C30(mt_invocation);
         }
     } else {
         sub_455C30(mt_invocation);

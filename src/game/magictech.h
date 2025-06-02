@@ -376,7 +376,7 @@ bool sub_454920(int64_t obj, int num, int max);
 void magictech_component_obj_flag(int64_t a1, int64_t a2, int a3, int a4, int a5, int64_t a6, int64_t a7);
 bool magictech_id_to_run_info(int mt_id, MagicTechRunInfo** lock_ptr);
 void magictech_invocation_init(MagicTechInvocation* mt_invocation, int64_t obj, int spell);
-void sub_455AC0(MagicTechInvocation* mt_invocation);
+void magictech_invocation_run(MagicTechInvocation* mt_invocation);
 bool sub_4564E0(MagicTechInvocation* mt_invocation);
 bool sub_456A10(int64_t a1, int64_t a2, int64_t a3);
 bool sub_456A90(int mt_id);

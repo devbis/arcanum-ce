@@ -3900,7 +3900,7 @@ void sub_419D50(int a1, int a2, int a3, DialogState* a4)
     if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
     }
-    sub_455AC0(&mt_invocation);
+    magictech_invocation_run(&mt_invocation);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
     a4->num_options = 1;
     dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);

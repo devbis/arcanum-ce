@@ -199,7 +199,7 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
                 }
 
                 if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != 0) {
-                    sub_455AC0(&mt_invocation);
+                    magictech_invocation_run(&mt_invocation);
                 }
             }
         }
@@ -448,7 +448,7 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
             sub_4440E0(a2, &(mt_invocation.target_obj));
             mt_invocation.field_D8 = flags;
             if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL) {
-                sub_455AC0(&mt_invocation);
+                magictech_invocation_run(&mt_invocation);
             }
         }
     }

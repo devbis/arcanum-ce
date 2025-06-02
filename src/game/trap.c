@@ -482,7 +482,7 @@ void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj)
     } else {
         magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, spl);
         mt_invocation.target_loc = loc;
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
 
         if (item_obj != OBJ_HANDLE_NULL) {
             object_destroy(item_obj);
@@ -721,7 +721,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     case TRAP_SCRIPT_MAGICAL:
         magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
         sub_4440E0(obj, &(mt_invocation.target_obj));
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
         return;
     case TRAP_SCRIPT_MECHANICAL:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
@@ -781,7 +781,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     if (((invocation->script->hdr.counters >> 18) & 0xFF) != 0) {
         magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
         sub_4440E0(obj, &(mt_invocation.target_obj));
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
     }
 }
 

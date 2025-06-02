@@ -2385,7 +2385,7 @@ void ai_action_perform_cast(Ai* ai)
     sub_4440E0(ai->danger_source, &(mt_invocation.target_obj));
 
     if (sub_4564E0(&mt_invocation)) {
-        sub_455AC0(&mt_invocation);
+        magictech_invocation_run(&mt_invocation);
 
         if (ai->item_obj != OBJ_HANDLE_NULL) {
             sub_4574D0(ai->item_obj);

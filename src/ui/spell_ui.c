@@ -339,7 +339,7 @@ void spell_ui_apply(S4F2810* a1)
         return;
     }
 
-    sub_455AC0(&mt_invocation);
+    magictech_invocation_run(&mt_invocation);
 }
 
 // 0x57C290
