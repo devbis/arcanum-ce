@@ -144,7 +144,7 @@ int trap_type(int64_t obj)
 // 0x4BBE00
 int trap_type_from_scr(Script* scr)
 {
-    unsigned int flags;
+    ScriptFlags flags;
 
     if (scr->num == 0) {
         return TRAP_TYPE_INVALID;
@@ -622,7 +622,7 @@ void trap_invoke(int64_t triggerer_obj, int64_t attachee_obj)
 // 0x4BCB70
 bool trap_script_execute(ScriptInvocation* invocation)
 {
-    unsigned int flags;
+    ScriptFlags flags;
     int radius;
     ObjectList critters;
     ObjectNode* node;

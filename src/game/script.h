@@ -80,17 +80,17 @@ typedef enum ScriptValueType {
     SVT_PC_FLAG,
 } ScriptValueType;
 
-typedef enum ScriptFlags {
-    SF_NONMAGICAL_TRAP = 0x0001,
-    SF_MAGICAL_TRAP = 0x0002,
-    SF_AUTO_REMOVING = 0x0004,
-    SF_DEATH_SPEECH = 0x0008,
-    SF_SURRENDER_SPEECH = 0x0010,
-    SF_RADIUS_TWO = 0x0020,
-    SF_RADIUS_THREE = 0x0040,
-    SF_RADIUS_FIVE = 0x0080,
-    SF_TELEPORT_TRIGGER = 0x0100,
-} ScriptFlags;
+typedef unsigned int ScriptFlags;
+
+#define SF_NONMAGICAL_TRAP 0x0001u
+#define SF_MAGICAL_TRAP 0x0002u
+#define SF_AUTO_REMOVING 0x0004u
+#define SF_DEATH_SPEECH 0x0008u
+#define SF_SURRENDER_SPEECH 0x0010u
+#define SF_RADIUS_TWO 0x0020u
+#define SF_RADIUS_THREE 0x0040u
+#define SF_RADIUS_FIVE 0x0080u
+#define SF_TELEPORT_TRIGGER 0x0100u
 
 typedef enum ScriptConditionType {
     SCT_TRUE,
@@ -316,7 +316,7 @@ static_assert(sizeof(ScriptCondition) == 0x84, "wrong size");
 
 typedef struct ScriptFile {
     /* 0000 */ char description[40];
-    /* 0028 */ unsigned int flags;
+    /* 0028 */ ScriptFlags flags;
     /* 002C */ int num_entries;
     /* 0030 */ int max_entries;
     /* 0034 */ ScriptCondition* entries;
@@ -374,7 +374,7 @@ void script_story_state_set(int value);
 char* script_story_state_info(int story_state_num);
 bool script_timeevent_process(TimeEvent* timeevent);
 int sub_44BCC0(Script* scr);
-bool script_flags(Script* scr, unsigned int* flags_ptr);
+bool script_flags(Script* scr, ScriptFlags* flags_ptr);
 void script_play_explosion_fx(int64_t obj);
 
 static inline bool sfo_is_any(uint8_t type) {

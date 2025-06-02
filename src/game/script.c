@@ -280,7 +280,7 @@ void script_set_callbacks(ScriptStartDialogFunc* start_dialog_func, ScriptFloatL
 // 0x4449B0
 bool script_execute(ScriptInvocation* invocation)
 {
-    unsigned int flags;
+    ScriptFlags flags;
     int attachee_type;
     bool script_num_changed;
     int saved_script_num;
@@ -323,11 +323,13 @@ bool script_execute(ScriptInvocation* invocation)
     }
 
     if (invocation->attachment_point == SAP_DIALOG && attachee_type == OBJ_TYPE_NPC) {
-        if (critter_is_dead(invocation->attachee_obj) && (flags & 0x8) == 0) {
+        if (critter_is_dead(invocation->attachee_obj)
+            && (flags & SF_DEATH_SPEECH) == 0) {
             return true;
         }
 
-        if (ai_surrendered(invocation->attachee_obj, NULL) && (flags & 0x10) == 0) {
+        if (ai_surrendered(invocation->attachee_obj, NULL)
+            && (flags & SF_SURRENDER_SPEECH) == 0) {
             return true;
         }
 
@@ -370,7 +372,7 @@ bool script_execute(ScriptInvocation* invocation)
             if (next == RETURN_AND_SKIP_DEFAULT
                 || next == RETURN_AND_RUN_DEFAULT
                 || next == -4) {
-                if ((flags & 0x4) != 0) {
+                if ((flags & SF_AUTO_REMOVING) != 0) {
                     invocation->script->num = 0;
                 }
 
@@ -3384,7 +3386,7 @@ bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptCondition* en
 }
 
 // 0x44C310
-bool script_flags(Script* scr, unsigned int* flags_ptr)
+bool script_flags(Script* scr, ScriptFlags* flags_ptr)
 {
     ScriptFile* script_file;
 
