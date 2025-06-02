@@ -3898,7 +3898,7 @@ void sub_419D50(int a1, int a2, int a3, DialogState* a4)
     sub_455A20(&v1, a4->npc_obj, a1);
     sub_4440E0(a4->pc_obj, &(v1.target_obj));
     if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
-        v1.flags |= 0x2;
+        v1.flags |= MAGICTECH_INVOCATION_FREE;
     }
     sub_455AC0(&v1);
     dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);

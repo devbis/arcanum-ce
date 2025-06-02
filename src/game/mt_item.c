@@ -192,7 +192,7 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
                 }
 
                 v1.field_D8 = flags;
-                v1.flags |= 0x1;
+                v1.flags |= MAGICTECH_INVOCATION_0x01;
 
                 if (qword_5FF618 != OBJ_HANDLE_NULL) {
                     sub_4440E0(qword_5FF618, &(v1.field_A0));

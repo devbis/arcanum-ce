@@ -2167,7 +2167,7 @@ void MTComponentCast_ProcFunc()
     sub_455A20(&v1, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
     sub_4440E0(stru_5E6D28.field_20, &(v1.target_obj));
     sub_4440E0(dword_5E75F0->parent_obj.obj, &(v1.parent_obj));
-    v1.flags |= 0x1;
+    v1.flags |= MAGICTECH_INVOCATION_0x01;
     v1.target_loc = stru_5E6D28.field_28;
 
     if (v1.parent_obj.obj != OBJ_HANDLE_NULL) {
@@ -4685,11 +4685,11 @@ void sub_455C30(MagicTechSerializedData* a1)
     run_info->objlist = NULL;
     run_info->summoned_obj = NULL;
 
-    if ((a1->flags & 0x02) != 0) {
+    if ((a1->flags & MAGICTECH_INVOCATION_FREE) != 0) {
         run_info->field_13C |= 0x02;
     }
 
-    if ((a1->flags & 0x04) != 0) {
+    if ((a1->flags & MAGICTECH_INVOCATION_UNRESISTABLE) != 0) {
         run_info->field_13C |= 0x10;
     }
 
@@ -4729,7 +4729,7 @@ void sub_455C30(MagicTechSerializedData* a1)
             ? AG_THROW_SPELL_W_CAST_ANIM
             : AG_THROW_SPELL;
 
-        if ((a1->flags & 0x01) != 0) {
+        if ((a1->flags & MAGICTECH_INVOCATION_0x01) != 0) {
             if (sub_44D500(&goal_data, run_info->parent_obj.obj, AG_THROW_SPELL_FRIENDLY)) {
                 goal_data.params[AGDATA_SPELL_DATA].data = run_info->id;
                 goal_data.params[AGDATA_TARGET_OBJ].obj = run_info->target_obj.obj;
@@ -4937,7 +4937,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
         }
     }
 
-    if ((a1->flags & 0x04) == 0) {
+    if ((a1->flags & MAGICTECH_INVOCATION_UNRESISTABLE) == 0) {
         int source_aptitude = a1->parent_obj.obj != OBJ_HANDLE_NULL
             ? stat_level_get(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE)
             : 0;

@@ -2654,7 +2654,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechSerializedData magictech_invocation;
         sub_455A20(&magictech_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= 0x02;
+        magictech_invocation.flags |= MAGICTECH_INVOCATION_FREE;
         sub_455AC0(&magictech_invocation);
         return NEXT;
     }
@@ -2680,7 +2680,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechSerializedData magictech_invocation;
         sub_455A20(&magictech_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= 0x04;
+        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
         sub_455AC0(&magictech_invocation);
         return NEXT;
     }
@@ -2691,7 +2691,8 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechSerializedData magictech_invocation;
         sub_455A20(&magictech_invocation, source_obj, spell);
         sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= 0x02 | 0x04;
+        magictech_invocation.flags |= MAGICTECH_INVOCATION_FREE;
+        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
         sub_455AC0(&magictech_invocation);
         return NEXT;
     }
@@ -2811,7 +2812,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         MagicTechSerializedData magictech_invocation;
         sub_455A20(&magictech_invocation, OBJ_HANDLE_NULL, spell);
         sub_4440E0(target_obj, &(magictech_invocation.target_obj));
-        magictech_invocation.flags |= 0x04;
+        magictech_invocation.flags |= MAGICTECH_INVOCATION_UNRESISTABLE;
         sub_455AC0(&magictech_invocation);
         return NEXT;
     }

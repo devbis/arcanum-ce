@@ -298,6 +298,12 @@ typedef struct MagicTechRunInfo {
 
 static_assert(sizeof(MagicTechRunInfo) == 0x158, "wrong size");
 
+typedef unsigned int MagicTechInvocationFlags;
+
+#define MAGICTECH_INVOCATION_0x01 0x01u
+#define MAGICTECH_INVOCATION_FREE 0x02u
+#define MAGICTECH_INVOCATION_UNRESISTABLE 0x04u
+
 typedef struct MagicTechSerializedData {
     /* 0000 */ int spell;
     /* 0004 */ int field_4;
@@ -308,7 +314,7 @@ typedef struct MagicTechSerializedData {
     /* 00A0 */ FollowerInfo field_A0;
     /* 00D0 */ int64_t target_loc;
     /* 00D8 */ int field_D8;
-    /* 00DC */ unsigned int flags;
+    /* 00DC */ MagicTechInvocationFlags flags;
 } MagicTechSerializedData;
 
 static_assert(sizeof(MagicTechSerializedData) == 0xE0, "wrong size");
