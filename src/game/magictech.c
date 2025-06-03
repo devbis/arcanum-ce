@@ -4734,8 +4734,8 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                 goal_data.params[AGDATA_TARGET_OBJ].obj = run_info->target_obj.obj;
                 goal_data.params[AGDATA_TARGET_TILE].obj = run_info->target_obj.loc;
                 goal_data.params[AGDATA_ANIM_ID].data = TIG_ART_ID_INVALID;
-                if (tig_net_is_active()
-                    && !tig_net_is_host()) {
+
+                if (tig_net_is_active() && !tig_net_is_host()) {
                     return;
                 }
 
@@ -4744,11 +4744,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                     return;
                 }
             }
-
-            magictech_id_free_lock(run_info->id);
-        }
-
-        if (anim_is_current_goal_type(run_info->parent_obj.obj, AG_THROW_SPELL, &anim_id)) {
+        } else if (anim_is_current_goal_type(run_info->parent_obj.obj, AG_THROW_SPELL, &anim_id)) {
             if (num_goal_subslots_in_use(&anim_id) < 4
                 && !combat_turn_based_is_active()
                 && sub_44D500(&goal_data, run_info->parent_obj.obj, anim)) {
@@ -4764,10 +4760,12 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                     goal_data.params[AGDATA_ANIM_ID].data = art_id;
                 }
 
-                if ((!tig_net_is_active()
-                        || tig_net_is_host())
-                    && !sub_44DBE0(anim_id, &goal_data)) {
-                    magictech_id_free_lock(run_info->id);
+                if (tig_net_is_active() && !tig_net_is_host()) {
+                    return;
+                }
+
+                if (sub_44DBE0(anim_id, &goal_data)) {
+                    return;
                 }
             }
         } else if (sub_44D4E0(&goal_data, run_info->parent_obj.obj, anim)) {
@@ -4783,8 +4781,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                 goal_data.params[AGDATA_ANIM_ID].data = art_id;
             }
 
-            if (tig_net_is_active()
-                && !tig_net_is_host()) {
+            if (tig_net_is_active() && !tig_net_is_host()) {
                 return;
             }
 
@@ -4800,8 +4797,6 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                 }
                 return;
             }
-
-            magictech_id_free_lock(run_info->id);
         }
     } else {
         if (sub_458B70(run_info->id) == -1) {
@@ -4812,10 +4807,12 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
         timeevent.params[0].integer_value = run_info->id;
         timeevent.params[2].integer_value = 3;
         sub_45A950(&datetime, 2);
-        if (!sub_45B800(&timeevent, &datetime)) {
-            magictech_id_free_lock(run_info->id);
+        if (sub_45B800(&timeevent, &datetime)) {
+            return;
         }
     }
+
+    magictech_id_free_lock(run_info->id);
 }
 
 // 0x456430
