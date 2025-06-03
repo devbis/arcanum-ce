@@ -3452,7 +3452,9 @@ void sub_54ED30(S4F2810* a1)
                         }
                     }
                 } else {
-                    if (!sub_44DBE0(anim_id, &goal_data)) {
+                    // __FILE__: "C:\Troika\Code\Game\gameuilib\Intgame.c"
+                    // __LINE__: 5088
+                    if (!sub_44DBE0(anim_id, &goal_data, __FILE__, __LINE__)) {
                         return;
                     }
                 }
@@ -3466,7 +3468,9 @@ void sub_54ED30(S4F2810* a1)
                             return;
                         }
                     } else {
-                        if (!sub_44DBE0(anim_id, &goal_data)) {
+                        // __FILE__: "C:\Troika\Code\Game\gameuilib\Intgame.c"
+                        // __LINE__: 5026
+                        if (!sub_44DBE0(anim_id, &goal_data, __FILE__, __LINE__)) {
                             return;
                         }
                     }

@@ -13508,7 +13508,9 @@ bool sub_433A00(int64_t obj, int64_t loc, bool a3)
         sub_44D500(&goal_data, obj, AG_MOVE_TO_TILE);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
 
-        if (!sub_44DBE0(stru_5A1908, &goal_data)) {
+        // __FILE__: "C:\Troika\Code\Game\GameLibX\Anim.c"
+        // __LINE__: 15016
+        if (!sub_44DBE0(stru_5A1908, &goal_data, __FILE__, __LINE__)) {
             return false;
         }
     } else {
@@ -13670,7 +13672,10 @@ bool sub_434030(int64_t obj, int64_t loc)
     if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc != loc) {
         sub_44D500(&goal_data, obj, 3);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
-        sub_44DBE0(stru_5A1908, &goal_data);
+
+        // __FILE__: C:\Troika\Code\Game\GameLibX\Anim.c
+        // __LINE__: 15263
+        sub_44DBE0(stru_5A1908, &goal_data, __FILE__, __LINE__);
     }
 
     return true;

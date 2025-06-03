@@ -2131,7 +2131,9 @@ void MTComponentAGoal_ProcFunc()
             && sub_44D500(&goal_data, stru_5E6D28.field_20, dword_5E761C->data.agoal.goal)) {
             goal_data.params[AGDATA_TARGET_OBJ].obj = dword_5E75F0->parent_obj.obj;
             if ((dword_5E761C->data.agoal.subgoal & 1) != 0) {
-                sub_44DBE0(stru_5E75C0, &goal_data);
+                // __FILE__: "C:\Troika\Code\Game\GameLibX\MagicTech.c"
+                // __LINE__: 3277
+                sub_44DBE0(stru_5E75C0, &goal_data, __FILE__, __LINE__);
             } else {
                 sub_44D520(&goal_data, &stru_5E75C0);
             }
@@ -4764,7 +4766,9 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
                     return;
                 }
 
-                if (sub_44DBE0(anim_id, &goal_data)) {
+                // __FILE__: "C:\Troika\Code\Game\GameLibX\MagicTech.c"
+                // __LINE__: 6893
+                if (sub_44DBE0(anim_id, &goal_data, __FILE__, __LINE__)) {
                     return;
                 }
             }

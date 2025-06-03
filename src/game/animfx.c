@@ -666,14 +666,19 @@ bool animfx_add(AnimFxNode* node)
                 }
 
                 if ((node->flags & ANIMFX_PLAY_STACK) != 0) {
-                    sub_44DBE0(stru_601700, &goal_data);
+                    // __FILE__: "C:\Troika\Code\Game\GameLibX\AnimFX.c"
+                    // __LINE__: 790
+                    sub_44DBE0(stru_601700, &goal_data, __FILE__, __LINE__);
                 } else {
                     sub_44D520(&goal_data, &stru_601700);
                 }
 
                 if ((node->flags & ANIMFX_PLAY_DESTROY) != 0) {
                     if (sub_44D500(&goal_data, node->obj, AG_DESTROY_OBJ)) {
-                        sub_44DBE0(stru_601700, &goal_data);
+
+                        // __FILE__: "C:\Troika\Code\Game\GameLibX\AnimFX.c"
+                        // __LINE__: 798
+                        sub_44DBE0(stru_601700, &goal_data, __FILE__, __LINE__);
                     }
                 }
             }

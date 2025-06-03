@@ -896,11 +896,14 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
 }
 
 // 0x44DBE0
-bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
+bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data, const char* file, int line)
 {
     Packet7 pkt;
     int64_t obj;
     int idx;
+
+    (void)file;
+    (void)line;
 
     if (!tig_net_is_active()) {
         return anim_subgoal_add_func(anim_id, goal_data);
