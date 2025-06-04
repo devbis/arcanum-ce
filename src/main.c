@@ -1,6 +1,8 @@
-#include <tig/tig.h>
-
 #include <stdio.h>
+
+#include <SDL3/SDL_main.h>
+
+#include <tig/tig.h>
 
 #include "game/ai.h"
 #include "game/anim.h"
@@ -46,6 +48,7 @@
 static void main_loop();
 static void handle_mouse_scroll();
 static void handle_keyboard_scroll();
+static void build_cmd_line(char* dst, size_t size, int argc, char** argv);
 
 // 0x59A040
 static float gamma = 1.0f;
@@ -54,7 +57,7 @@ static float gamma = 1.0f;
 static int dword_5CFF00;
 
 // 0x401000
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int main(int argc, char** argv)
 {
     TigInitInfo init_info;
     TigVideoScreenshotSettings screenshotter;
@@ -65,8 +68,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     int64_t pc_starting_location;
     char msg[80];
 
-    (void)hPrevInstance;
-    (void)nShowCmd;
+    // Convert args array to WinMain-like lpCmdLine.
+    char lpCmdLine[260];
+    build_cmd_line(lpCmdLine, sizeof(lpCmdLine), argc, argv);
 
     init_info.texture_width = 1024;
     init_info.texture_height = 1024;
@@ -735,4 +739,25 @@ void handle_keyboard_scroll()
     } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
         scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
     }
+}
+
+void build_cmd_line(char* dst, size_t size, int argc, char** argv)
+{
+    int idx;
+    char* src;
+
+    for (idx = 1; idx < argc && size > 1; idx++) {
+        if (idx != 1) {
+            *dst++ = ' ';
+            size--;
+        }
+
+        src = argv[idx];
+        while (*src != '\0' && size > 1) {
+            *dst++ = *src++;
+            size--;
+        }
+    }
+
+    *dst = '\0';
 }
