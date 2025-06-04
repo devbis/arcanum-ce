@@ -382,7 +382,7 @@ void tc_hide()
  *
  * 0x4C9720
  */
-void tc_clear()
+void tc_clear(bool compact)
 {
     int idx;
 
@@ -415,10 +415,10 @@ void tc_clear()
     tc_content_rect.x = (tc_iso_window_rect.width - tc_content_rect.width) / 2;
 
     // Adjust vertical position depending on normal vs. compact mode.
-    if (tc_iso_window_rect.height == 400) {
-        tc_content_rect.y = tc_iso_window_rect.height - 101;
+    if (compact) {
+        tc_content_rect.y = tc_iso_window_rect.height - tc_content_rect.height - 37;
     } else {
-        tc_content_rect.y = tc_iso_window_rect.height - 181;
+        tc_content_rect.y = tc_iso_window_rect.height - tc_content_rect.height - 159;
     }
 }
 

@@ -68,6 +68,8 @@ set(SRCS
     "src/game/gmovie.h"
     "src/game/gsound.c"
     "src/game/gsound.h"
+    "src/game/hrp.c"
+    "src/game/hrp.h"
     "src/game/invensource.c"
     "src/game/invensource.h"
     "src/game/item_effect.c"

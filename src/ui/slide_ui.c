@@ -5,6 +5,7 @@
 #include "game/gamelib.h"
 #include "game/gfade.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/mes.h"
 #include "game/script.h"
 
@@ -77,6 +78,8 @@ void slide_ui_run(int type)
         window_data.rect.width = 800;
         window_data.rect.height = 600;
         window_data.background_color = 0;
+        hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
         if (tig_window_create(&window_data, &window_handle) == TIG_OK) {
             gsound_stop_all(25);
             tig_mouse_hide();

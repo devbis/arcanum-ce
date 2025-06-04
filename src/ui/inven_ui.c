@@ -6,6 +6,7 @@
 #include "game/critter.h"
 #include "game/dialog.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/item.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -2108,6 +2109,15 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
 bool inven_ui_message_filter(TigMessage* msg)
 {
     bool v45 = false;
+
+    // Convert mouse position from screen coordinate system to centered 800x600
+    // area.
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        TigRect rect = { 0, 0, 800, 600 };
+        hrp_apply(&rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+        msg->data.mouse.x -= rect.x;
+        msg->data.mouse.y -= rect.y;
+    }
 
     if (qword_6810E0 != OBJ_HANDLE_NULL) {
         scrollbar_ui_begin_ignore_events();

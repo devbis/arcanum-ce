@@ -7,6 +7,7 @@
 #include "game/critter.h"
 #include "game/effect.h"
 #include "game/gamelib.h"
+#include "game/hrp.h"
 #include "game/level.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -1103,7 +1104,10 @@ bool charedit_open(int64_t obj, ChareditMode mode)
 
     pc_lens.window_handle = charedit_window_handle;
     pc_lens.rect = &stru_5C8930;
-    tig_art_interface_id_create(198, 0, 0, 0, &pc_lens.art_id);
+
+    // FIX: Use 222 ("char_pcc.art") instead of 198 ("pcwincvr.art") to match
+    // character editor background.
+    tig_art_interface_id_create(222, 0, 0, 0, &(pc_lens.art_id));
 
     if (charedit_mode == CHAREDIT_MODE_ACTIVE || charedit_mode == CHAREDIT_MODE_PASSIVE) {
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
@@ -2028,6 +2032,8 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
             rect.height = font_desc.height;
         }
 
+        hrp_apply(&rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
         art_blit_info.src_rect = &rect;
         art_blit_info.dst_rect = &rect;
         tig_window_blit_art(window_handle, &art_blit_info);
@@ -2058,6 +2064,8 @@ bool charedit_create_skills_win()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = sub_55D3A0;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
     if (tig_window_create(&window_data, &charedit_skills_win) != TIG_OK) {
         return false;
     }
@@ -2294,6 +2302,8 @@ bool charedit_create_tech_win()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = charedit_tech_win_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
     if (tig_window_create(&window_data, &charedit_tech_win) != TIG_OK) {
         return false;
     }
@@ -2530,6 +2540,8 @@ bool charedit_create_spells_win()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = sub_55DC60;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
     if (tig_window_create(&window_data, &charedit_spells_win) != TIG_OK) {
         return false;
     }
@@ -2815,6 +2827,8 @@ bool sub_55D060()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = sub_55DF90;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
     if (tig_window_create(&window_data, &dword_64CA60) != TIG_OK) {
         return false;
     }

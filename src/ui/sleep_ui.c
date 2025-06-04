@@ -3,6 +3,7 @@
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/gfade.h"
+#include "game/hrp.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/object.h"
@@ -310,13 +311,15 @@ bool sleep_ui_create()
     }
 
     rect.x = 573;
-    rect.y = 42;
+    rect.y = 41;
     rect.width = art_frame_data.width;
     rect.height = art_frame_data.height;
 
     window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.message_filter = sleep_ui_message_filter;
     window_data.rect = rect;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_TOP);
+
     if (tig_window_create(&window_data, &sleep_ui_window) != TIG_OK) {
         tig_debug_printf("sleep_ui_create: ERROR: window create failed!\n");
         exit(EXIT_SUCCESS); // FIXME: Shoule be EXIT_FAILURE

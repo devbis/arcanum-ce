@@ -2,6 +2,7 @@
 
 #include "game/anim.h"
 #include "game/combat.h"
+#include "game/hrp.h"
 #include "game/obj.h"
 #include "game/player.h"
 #include "ui/anim_ui.h"
@@ -240,6 +241,7 @@ void combat_ui_create()
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = art_anim_data.color_key;
     window_data.message_filter = combat_ui_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
 
     if (tig_window_create(&window_data, &combat_ui_ap_bar_window_handle) != TIG_OK) {
         return;
@@ -273,6 +275,7 @@ void combat_ui_create()
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = tig_color_make(0, 0, 255);
     window_data.message_filter = combat_ui_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
 
     if (tig_window_create(&window_data, &combat_ui_compact_ap_bar_window_handle) != TIG_OK) {
         return;

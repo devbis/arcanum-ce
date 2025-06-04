@@ -4,6 +4,7 @@
 
 #include "game/broadcast.h"
 #include "game/critter.h"
+#include "game/hrp.h"
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/object.h"
@@ -209,6 +210,18 @@ void follower_ui_create(int index)
     }
 
     window_data.rect = follower_ui_button_rects[index];
+
+    switch (index) {
+    case FOLLOWER_UI_BUTTON_TOGGLE:
+    case FOLLOWER_UI_BUTTON_SCROLL_UP:
+    case FOLLOWER_UI_BUTTON_SCROLL_DOWN:
+        hrp_apply(&(window_data.rect), GRAVITY_LEFT | GRAVITY_BOTTOM);
+        break;
+    default:
+        hrp_apply(&(window_data.rect), GRAVITY_LEFT | GRAVITY_TOP);
+        break;
+    }
+
     tig_window_create(&window_data, &(follower_ui_windows[index]));
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -294,6 +307,11 @@ void follower_ui_resize(GameResizeInfo* resize_info)
     rects = intgame_is_compact_interface()
         ? follower_ui_special_button_rects_compact_mode
         : follower_ui_special_button_rects_normal_mode;
+
+    if (resize_info->window_rect.width - 800 > 134) {
+        rects = follower_ui_special_button_rects_compact_mode;
+    }
+
     for (index = FOLLOWER_UI_SLOTS; index < FOLLOWER_UI_BUTTON_COUNT; index++) {
         follower_ui_button_rects[index] = rects[index - FOLLOWER_UI_SLOTS];
     }
@@ -519,6 +537,8 @@ void follower_ui_drop_down_menu_create(int index)
 
     window_data.flags = 0;
     window_data.rect = follower_ui_drop_down_menu_rects[index];
+    hrp_apply(&(window_data.rect), GRAVITY_LEFT | GRAVITY_TOP);
+
     tig_window_create(&window_data, &follower_ui_drop_down_menu_window);
 
     follower_ui_drop_down_menu_refresh(-1);

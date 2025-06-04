@@ -23,6 +23,7 @@
 #include "game/gfade.h"
 #include "game/gmovie.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/invensource.h"
 #include "game/item_effect.h"
 #include "game/item.h"
@@ -84,7 +85,6 @@
 #define DIFFICULTY_KEY "difficulty"
 
 #define TEN 10
-#define MODULE_COUNT 62
 
 typedef bool(GameInitFunc)(GameInitInfo* init_info);
 typedef void(GameResetFunc)();
@@ -130,7 +130,8 @@ static bool sub_404C10(const char* module_name);
 static void sub_405070();
 
 // 0x59A330
-static GameLibModule gamelib_modules[MODULE_COUNT] = {
+static GameLibModule gamelib_modules[] = {
+    { "HighResolution", hrp_init, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, hrp_resize },
     { "Description", description_init, NULL, description_mod_load, description_mod_unload, description_exit, NULL, NULL, NULL, NULL },
     { "Item-Effect", item_effect_init, NULL, item_effect_mod_load, item_effect_mod_unload, item_effect_exit, NULL, NULL, NULL, NULL },
     { "Teleport", teleport_init, teleport_reset, NULL, NULL, teleport_exit, teleport_ping, NULL, NULL, NULL },
@@ -194,6 +195,8 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "Party", party_init, party_reset, NULL,0, party_exit, NULL, NULL, NULL, NULL, NULL },
     { "gameinit", gameinit_init, gameinit_reset, gameinit_mod_load, gameinit_mod_unload, gameinit_exit, NULL, NULL, NULL, NULL, NULL },
 };
+
+#define MODULE_COUNT SDL_arraysize(gamelib_modules)
 
 // 0x59ADD8
 static int gamelib_renderlock_cnt = 1;

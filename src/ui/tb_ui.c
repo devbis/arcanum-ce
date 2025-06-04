@@ -443,6 +443,7 @@ bool sub_57CFB0()
     modal_info.x = 237;
     modal_info.y = 232;
     modal_info.redraw = sub_4045A0;
+    hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
     mes_unload(mes_file);
@@ -477,6 +478,7 @@ bool sub_57D080()
     modal_info.x = 237;
     modal_info.y = 232;
     modal_info.redraw = sub_4045A0;
+    hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
     mes_unload(mes_file);
@@ -515,6 +517,7 @@ bool sub_57D150(const char* name, const char* a2)
     modal_info.x = 237;
     modal_info.y = 232;
     modal_info.redraw = sub_4045A0;
+    hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
     mes_unload(mes_file);

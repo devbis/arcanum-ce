@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "game/gamelib.h"
+#include "game/hrp.h"
 #include "game/mes.h"
 #include "game/player.h"
 #include "game/random.h"
@@ -198,6 +199,8 @@ bool gsound_init(GameInitInfo* init_info)
     MesFileEntry mes_file_entry;
     int index;
     int positional_sound_params;
+    int x;
+    int y;
 
     (void)init_info;
 
@@ -227,7 +230,12 @@ bool gsound_init(GameInitInfo* init_info)
 
     gsound_initialized = true;
 
-    set_listener_xy(400, 300);
+    x = 400;
+    y = 300;
+    hrp_center(&x, &y);
+    set_listener_xy(x, y);
+
+    // TODO: Figure out if these needs to be adjusted for HRP.
     gsound_set_defaults(150, 800, 150, 400);
 
     sound_maximum_volume[TIG_SOUND_SIZE_LARGE] = 100;

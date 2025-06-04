@@ -11,6 +11,7 @@
 #include "game/curse.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/item_effect.h"
 #include "game/item.h"
 #include "game/level.h"
@@ -1039,7 +1040,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
     }
 
-    if (resize_info->content_rect.height == 400) {
+    if (!intgame_compact_interface) {
         hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
 
         for (index = 0; index < 5; index++) {
@@ -1052,6 +1053,8 @@ void intgame_resize(GameResizeInfo* resize_info)
         window_data.rect.width = 411;
         window_data.rect.height = 37;
         window_data.color_key = tig_color_make(5, 5, 5);
+        hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
+
         if (tig_window_create(&window_data, &dword_5C7288) != TIG_OK) {
             tig_debug_printf("intgame_resize: ERROR: couldn't create window!");
             tig_exit();
@@ -1065,7 +1068,11 @@ void intgame_resize(GameResizeInfo* resize_info)
             &rect,
             tig_color_make(5, 5, 5));
 
-        hotkey_ui_start(dword_5C7288, &(window_data.rect), TIG_WINDOW_HANDLE_INVALID, true);
+        rect.x = 196;
+        rect.y = 563;
+        rect.width = 411;
+        rect.height = 37;
+        hotkey_ui_start(dword_5C7288, &rect, TIG_WINDOW_HANDLE_INVALID, true);
 
         for (index = 0; index < 5; index++) {
             if (spell_ui_maintain_has(index)) {
@@ -1192,6 +1199,15 @@ void iso_interface_create(tig_window_handle_t window_handle)
         window_data.rect = stru_5C6390[index];
         art_blit_info.art_id = art_id;
 
+        switch (index) {
+        case 0:
+            hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_TOP);
+            break;
+        case 1:
+            hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
+            break;
+        }
+
         if (tig_window_create(&window_data, &(dword_64C4F8[index])) != TIG_OK) {
             tig_debug_printf("iso_interface_create: ERROR: couldn't create window!\n");
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
@@ -1316,6 +1332,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
         window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP;
         window_data.rect = stru_5C6EE0[index];
         window_data.color_key = tig_color_make(5, 5, 5);
+        hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_TOP);
+
         if (tig_window_create(&window_data, &(dword_5C6378[index])) != TIG_OK) {
             tig_debug_printf("intgame_resize: ERROR: Couldn't create spellFSWid: %d!\n", index);
             tig_exit();
@@ -5764,7 +5782,7 @@ void intgame_dialog_end()
 // 0x553370
 void intgame_dialog_clear()
 {
-    tc_clear();
+    tc_clear(intgame_compact_interface);
 }
 
 // 0x553380
@@ -8008,6 +8026,8 @@ bool intgame_big_window_create()
     window_data.rect.height = 400;
     window_data.background_color = 0;
     window_data.message_filter = intgame_big_window_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+
     if (tig_window_create(&window_data, &intgame_big_window_handle) != TIG_OK) {
         return false;
     }
@@ -8242,16 +8262,9 @@ bool intgame_create_iso_window(tig_window_handle_t* window_handle_ptr)
 
     window_data.flags = intgame_iso_window_flags | TIG_WINDOW_ALWAYS_ON_BOTTOM | TIG_WINDOW_VIDEO_MEMORY;
     window_data.rect.x = 0;
+    window_data.rect.y = 0;
     window_data.rect.width = intgame_iso_window_width;
-
-    if (intgame_is_compact_interface()) {
-        window_data.rect.y = 0;
-        window_data.rect.height = intgame_iso_window_height;
-    } else {
-        window_data.rect.y = 41;
-        window_data.rect.height = 400;
-    }
-
+    window_data.rect.height = intgame_iso_window_height;
     window_data.background_color = 0;
 
     if (tig_window_create(&window_data, window_handle_ptr) != TIG_OK) {
@@ -8301,13 +8314,11 @@ void intgame_toggle_interface()
         resize_info.window_rect = window_data.rect;
         resize_info.content_rect = window_data.rect;
 
-        if (!intgame_is_compact_interface()) {
-            resize_info.content_rect.x = 0;
-            resize_info.content_rect.y = 41;
-        }
-
         if (intgame_compact_interface) {
             stru_64C510 = stru_5C63C0;
+            stru_64C510.x = (800 - stru_64C510.width) / 2;
+            stru_64C510.y = (600 - stru_64C510.height) / 2;
+            hrp_apply(&stru_64C510, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             for (index = 0; index < 2; index++) {
                 tig_window_hide(dword_64C4F8[index]);
@@ -8319,9 +8330,9 @@ void intgame_toggle_interface()
             compact_ui_create();
         } else {
             stru_64C510 = stru_5C63B0;
-
-            resize_info.window_rect.height = 400;
-            resize_info.content_rect.height = 400;
+            stru_64C510.x = (800 - stru_64C510.width) / 2;
+            stru_64C510.y = (600 - stru_64C510.height) / 2;
+            hrp_apply(&stru_64C510, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             gamelib_resize(&resize_info);
             gameuilib_resize(&resize_info);
@@ -8392,27 +8403,42 @@ int sub_557B50(int index)
 int sub_557B60()
 {
     TigMouseState mouse_state;
+    TigWindowData window_data;
     TigButtonData button_data;
     int x;
     int y;
     int index;
 
-    if (intgame_iso_window_type == 2) {
-        tig_mouse_get_state(&mouse_state);
-        x = mouse_state.x - stru_5C6390[1].x;
-        y = mouse_state.y - stru_5C6390[1].y;
+    if (intgame_iso_window_type != 2) {
+        return 4;
+    }
 
-        for (index = 0; index < 4; index++) {
-            if (tig_button_data(stru_5C6C68[index].button_handle, &button_data) != TIG_OK) {
-                break;
-            }
+    tig_mouse_get_state(&mouse_state);
 
-            if (x >= button_data.x
-                && y >= button_data.y
-                && x < button_data.x + button_data.width
-                && y < button_data.y + button_data.height) {
-                return index;
-            }
+    // Check if mouse position is within rotating window bounds.
+    if (tig_window_data(dword_64C4F8[1], &window_data) != TIG_OK
+        || mouse_state.x < window_data.rect.x
+        || mouse_state.y < window_data.rect.y
+        || mouse_state.y >= window_data.rect.x + window_data.rect.width
+        || mouse_state.y >= window_data.rect.y + window_data.rect.height) {
+        return 4;
+    }
+
+    // Convert mouse position from screen coordinate system to rotating
+    // window coordinate system.
+    x = mouse_state.x - window_data.rect.x;
+    y = mouse_state.y - window_data.rect.y;
+
+    for (index = 0; index < 4; index++) {
+        if (tig_button_data(stru_5C6C68[index].button_handle, &button_data) != TIG_OK) {
+            break;
+        }
+
+        if (x >= button_data.x
+            && y >= button_data.y
+            && x < button_data.x + button_data.width
+            && y < button_data.y + button_data.height) {
+            return index;
         }
     }
 
@@ -8423,6 +8449,7 @@ int sub_557B60()
 int sub_557C00()
 {
     TigMouseState mouse_state;
+    TigWindowData window_data;
     TigButtonData button_data;
     int x;
     int y;
@@ -8434,8 +8461,20 @@ int sub_557C00()
     }
 
     tig_mouse_get_state(&mouse_state);
-    x = mouse_state.x - stru_5C6390[1].x;
-    y = mouse_state.y - stru_5C6390[1].y;
+
+    // Check if mouse position is within rotating window bounds.
+    if (tig_window_data(dword_64C4F8[1], &window_data) != TIG_OK
+        || mouse_state.x < window_data.rect.x
+        || mouse_state.y < window_data.rect.y
+        || mouse_state.y >= window_data.rect.x + window_data.rect.width
+        || mouse_state.y >= window_data.rect.y + window_data.rect.height) {
+        return 5;
+    }
+
+    // Convert mouse position from screen coordinate system to rotating window
+    // coordinate system.
+    x = mouse_state.x - window_data.rect.x;
+    y = mouse_state.y - window_data.rect.y;
 
     pc_obj = player_get_local_pc_obj();
     if (pc_obj == OBJ_HANDLE_NULL) {
@@ -8466,6 +8505,7 @@ int sub_557C00()
 int sub_557CF0()
 {
     TigMouseState mouse_state;
+    TigWindowData window_data;
     TigButtonData button_data;
     int x;
     int y;
@@ -8477,8 +8517,20 @@ int sub_557CF0()
     }
 
     tig_mouse_get_state(&mouse_state);
-    x = mouse_state.x - stru_5C6390[1].x;
-    y = mouse_state.y - stru_5C6390[1].y;
+
+    // Check if mouse position is within rotating window bounds.
+    if (tig_window_data(dword_64C4F8[1], &window_data) != TIG_OK
+        || mouse_state.x < window_data.rect.x
+        || mouse_state.y < window_data.rect.y
+        || mouse_state.y >= window_data.rect.x + window_data.rect.width
+        || mouse_state.y >= window_data.rect.y + window_data.rect.height) {
+        return 5;
+    }
+
+    // Convert mouse position from screen coordinate system to rotating window
+    // coordinate system.
+    x = mouse_state.x - window_data.rect.x;
+    y = mouse_state.y - window_data.rect.y;
 
     pc_obj = player_get_local_pc_obj();
     if (pc_obj == OBJ_HANDLE_NULL) {

@@ -10,6 +10,7 @@
 #include "game/gamelib.h"
 #include "game/gmovie.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/item.h"
 #include "game/level.h"
 #include "game/light_scheme.h"
@@ -316,11 +317,15 @@ void main_loop()
     char mouse_state_str[20];
     char story_state_str[80];
 
+    // TODO: Figure out if this is really needed.
+#if 0
     if (!location_at(400, 200, &location)) {
         return;
     }
+#endif
 
     pc_obj = player_get_local_pc_obj();
+    location = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
     sub_43E770(pc_obj, location, 0, 0);
     location_origin_set(location);
 
@@ -661,28 +666,40 @@ void main_loop()
 void handle_mouse_scroll()
 {
     TigMouseState mouse_state;
-    tig_mouse_get_state(&mouse_state);
+    int width;
+    int height;
+    int tolerance;
 
-    if (mouse_state.x == 0) {
-        if (mouse_state.y == 0) {
+    if (!tig_get_active()) {
+        scroll_stop_scrolling();
+        return;
+    }
+
+    tig_mouse_get_state(&mouse_state);
+    width = hrp_iso_window_width_get();
+    height = hrp_iso_window_height_get();
+    tolerance = 8;
+
+    if (mouse_state.x < tolerance) {
+        if (mouse_state.y < tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
-        } else if (mouse_state.y == 600 - 1) {
+        } else if (mouse_state.y >= height - tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
         } else {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
         }
-    } else if (mouse_state.x == 800 - 1) {
-        if (mouse_state.y == 0) {
+    } else if (mouse_state.x >= width - tolerance) {
+        if (mouse_state.y < tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
-        } else if (mouse_state.y == 600 - 1) {
+        } else if (mouse_state.y >= height - tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
         }
     } else {
-        if (mouse_state.y == 0) {
+        if (mouse_state.y < tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
-        } else if (mouse_state.y == 600 - 1) {
+        } else if (mouse_state.y >= height - tolerance) {
             scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
         } else {
             scroll_stop_scrolling();

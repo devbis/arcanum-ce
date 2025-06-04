@@ -2,6 +2,7 @@
 
 #include "game/gamelib.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/item.h"
 #include "game/mt_item.h"
 #include "game/object.h"
@@ -614,27 +615,30 @@ void intgame_hotkey_refresh(int index)
 int sub_57E460()
 {
     TigMouseState mouse_state;
-    int v1;
+    TigRect rect;
     int index;
 
     tig_mouse_get_state(&mouse_state);
 
-    v1 = 440;
+    rect.y = 440;
     if (intgame_is_compact_interface()) {
-        v1 = 563;
+        rect.y = 563;
     }
 
-    if (mouse_state.x < dword_5CB4BC[0] - 5
-        || mouse_state.y < v1
-        || mouse_state.x >= dword_5CB4BC[9] + dword_5CB4BC[0] - 5 + 32
-        || mouse_state.y >= v1 + 37) {
+    rect.x = 0;
+    hrp_apply(&rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
+
+    if (mouse_state.x < rect.x + dword_5CB4BC[0] - 5
+        || mouse_state.y < rect.y
+        || mouse_state.x >= rect.x + dword_5CB4BC[9] + dword_5CB4BC[0] - 5 + 32
+        || mouse_state.y >= rect.y + 37) {
         return 11;
     }
 
     for (index = 0; index < 10; index++) {
-        if (mouse_state.x >= dword_5CB4BC[index]
-            && mouse_state.x < dword_5CB4BC[index] + 32
-            && mouse_state.y < v1 + 37) {
+        if (mouse_state.x >= rect.x + dword_5CB4BC[index]
+            && mouse_state.x < rect.x + dword_5CB4BC[index] + 32
+            && mouse_state.y < rect.y + 37) {
             break;
         }
     }

@@ -2,6 +2,7 @@
 
 #include "game/critter.h"
 #include "game/fate.h"
+#include "game/hrp.h"
 #include "game/mes.h"
 #include "ui/charedit_ui.h"
 #include "ui/intgame.h"
@@ -142,6 +143,8 @@ void fate_ui_create()
     window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect = window_rect;
     window_data.message_filter = fate_ui_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_TOP);
+
     if (tig_window_create(&window_data, &fate_ui_window) != TIG_OK) {
         tig_debug_printf("fate_ui_create: ERROR: window create failed!\n");
         exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.

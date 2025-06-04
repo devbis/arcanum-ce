@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/critter.h"
+#include "game/hrp.h"
 #include "game/player.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
@@ -26,13 +27,12 @@ typedef struct CompactUiComponent {
     /* 0010 */ TigWindowMessageFilterFunc* message_filter;
     /* 0014 */ CompactUiComponentDraw* draw;
     /* 0018 */ TigRect rect;
+    Gravity gravity;
     /* 0028 */ int r;
     /* 002C */ int g;
     /* 0030 */ int b;
     /* 0034 */ int field_34;
 } CompactUiComponent;
-
-static_assert(sizeof(CompactUiComponent) == 0x38, "wrong size");
 
 static bool compact_ui_health_bar_init(CompactUiComponent* comp);
 static void sub_569050();
@@ -60,6 +60,7 @@ static CompactUiComponent compact_ui_components[MAX_COMPONENTS] = {
         compact_ui_health_bar_message_filter,
         compact_ui_health_bar_draw,
         { 751, 498, 49, 102 },
+        GRAVITY_RIGHT | GRAVITY_BOTTOM,
         0,
         155,
         0,
@@ -73,6 +74,7 @@ static CompactUiComponent compact_ui_components[MAX_COMPONENTS] = {
         compact_ui_hotkey_bar_message_filter,
         compact_ui_hotkey_bar_draw,
         { 25, 25, 25, 25 },
+        GRAVITY_LEFT | GRAVITY_TOP,
         0,
         0,
         0,
@@ -147,6 +149,7 @@ bool compact_ui_create()
         window_data.background_color = tig_color_make(0, 0, 0);
         window_data.color_key = tig_color_make(comp->r, comp->g, comp->b);
         window_data.message_filter = comp->message_filter;
+        hrp_apply(&(window_data.rect), comp->gravity);
 
         if (tig_window_create(&window_data, &(comp->window_handle)) != TIG_OK) {
             tig_debug_printf("Compact_UI: could not create window component: %s\n", comp->name);
@@ -164,6 +167,7 @@ bool compact_ui_create()
     window_data.rect = compact_ui_message_window_frame;
     window_data.flags = 0;
     window_data.color_key = tig_color_make(5, 5, 5);
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
 
     if (tig_window_create(&window_data, &compact_ui_message_window_handle) != TIG_OK) {
         return false;

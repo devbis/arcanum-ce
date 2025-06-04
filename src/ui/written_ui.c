@@ -2,6 +2,7 @@
 
 #include "game/critter.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/location.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -322,6 +323,7 @@ void written_ui_create()
     window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect = written_ui_background_frame;
     window_data.message_filter = written_ui_message_filter;
+    hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
     if (tig_window_create(&window_data, &written_ui_window) != TIG_OK) {
         tig_debug_printf("written_ui_create: ERROR: window create failed!\n");

@@ -9,6 +9,7 @@
 #include "game/critter.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/location.h"
 #include "game/magictech.h"
 #include "game/map.h"
@@ -1738,6 +1739,15 @@ bool wmap_ui_message_filter(TigMessage* msg)
     char str[48];
     UiMessage ui_message;
     bool v3 = false;
+
+    // Convert mouse position from screen coordinate system to centered 800x600
+    // area.
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        TigRect rect = { 0, 0, 800, 600 };
+        hrp_apply(&rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+        msg->data.mouse.x -= rect.x;
+        msg->data.mouse.y -= rect.y;
+    }
 
     wmap_ui_handle_scroll();
 

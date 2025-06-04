@@ -9,6 +9,7 @@
 #include "game/gfade.h"
 #include "game/gmovie.h"
 #include "game/gsound.h"
+#include "game/hrp.h"
 #include "game/item.h"
 #include "game/map.h"
 #include "game/mes.h"
@@ -210,7 +211,7 @@ static TigRect stru_5C3628 = { 0, 0, 800, 600 };
 static TigRect stru_5C3638 = { 0, 0, 800, 600 };
 
 // 0x5C3648
-static TigRect stru_5C3648 = { 0, 41, 800, 399 };
+static TigRect stru_5C3648 = { 0, 41, 800, 400 };
 
 // 0x5C3658
 static tig_window_handle_t dword_5C3658 = TIG_WINDOW_HANDLE_INVALID;
@@ -2578,6 +2579,7 @@ TigWindowModalDialogChoice mainmenu_ui_confirm(int num)
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = 'n';
     modal_info.process = NULL;
     modal_info.redraw = sub_4045A0;
+    hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
     return choice;
@@ -5422,6 +5424,7 @@ void mainmenu_ui_create_window_func(bool should_display)
             window_data.background_color = art_anim_data.color_key;
             window_data.color_key = art_anim_data.color_key;
             window_data.message_filter = sub_546EE0;
+            hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             src_rect.x = stru_5C3628.x;
             src_rect.y = 0;
@@ -5464,6 +5467,7 @@ void mainmenu_ui_create_window_func(bool should_display)
                 window_data.rect.y = stru_5C3680[idx].y;
                 window_data.rect.width = stru_5C3680[idx].width;
                 window_data.rect.height = stru_5C3680[idx].height;
+                hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
                 src_rect.x = stru_5C3680[idx].x;
                 src_rect.y = 0;
@@ -5499,6 +5503,7 @@ void mainmenu_ui_create_window_func(bool should_display)
             window_data.background_color = art_anim_data.color_key;
             window_data.color_key = art_anim_data.color_key;
             window_data.message_filter = sub_546EE0;
+            hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             src_rect.x = stru_5C3660.x;
             src_rect.y = 0;
@@ -5817,6 +5822,15 @@ bool sub_546EE0(TigMessage* msg)
     UiMessage ui_message;
     char str[MAX_STRING];
     int v2;
+
+    // Convert mouse position from screen coordinate system to centered 800x600
+    // area.
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        TigRect rect = { 0, 0, 800, 600 };
+        hrp_apply(&rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+        msg->data.mouse.x -= rect.x;
+        msg->data.mouse.y -= rect.y;
+    }
 
     window = main_menu_window_info[dword_64C414];
 
@@ -6219,6 +6233,7 @@ bool sub_546EE0(TigMessage* msg)
                     modal_dialog_info.y = 232;
                     modal_dialog_info.process = NULL;
                     modal_dialog_info.redraw = sub_4045A0;
+                    hrp_center(&(modal_dialog_info.x), &(modal_dialog_info.y));
 
                     if (dword_64C41C[dword_5C3618] != OBJ_HANDLE_NULL) {
                         mes_file_entry.num = 2050;
@@ -7043,6 +7058,7 @@ bool sub_549040(int a1)
                 modal_dialog_info.x = 237;
                 modal_dialog_info.y = 232;
                 modal_dialog_info.text = mes_file_entry.str;
+                hrp_center(&(modal_dialog_info.x), &(modal_dialog_info.y));
                 tig_debug_printf("MainMenu_UI: Could not initialize MatchMaker. Aborting.\n");
                 tig_window_modal_dialog(&modal_dialog_info, &choice);
                 multiplayer_mm_exit();
@@ -7441,6 +7457,7 @@ bool sub_5499B0(const char* text)
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = ' ';
     modal_info.process = sub_549A10;
     modal_info.redraw = sub_4045A0;
+    hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
     return choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
