@@ -182,6 +182,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         }
     }
 
+    // Specify window name.
+    init_info.flags |= TIG_INITIALIZE_SET_WINDOW_NAME;
+    init_info.window_name = "Arcanum: Of Steamworks & Magick Obscura - Community Edition";
+
     if (tig_init(&init_info) != TIG_OK) {
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
     }
