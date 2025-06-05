@@ -98,7 +98,7 @@ static bool script_file_destroy(ScriptFile* script_file);
 static bool cache_add(int cache_entry_id, int script_id);
 static void cache_remove(int cache_entry_id);
 static int cache_find(int script_id);
-static int sub_44C710(TigFile* stream, ScriptHeader* hdr);
+static bool script_file_load_hdr(TigFile* stream, ScriptHeader* hdr);
 static bool script_file_load_code(TigFile* stream, ScriptFile* script_file);
 static void script_fx_play(int64_t obj, int fx_id);
 static void script_fx_stop(int64_t obj, int fx_id);
@@ -606,7 +606,7 @@ bool script_timeevent_process(TimeEvent* timeevent)
     ScriptInvocation invocation;
 
     scr.num = timeevent->params[0].integer_value;
-    sub_44BCC0(&scr);
+    script_load_hdr(&scr);
 
     invocation.script = &scr;
     invocation.triggerer_obj = timeevent->params[2].object_value;
@@ -2898,7 +2898,7 @@ void sub_44B030(ScriptAction* action, ScriptState* state)
     int attachee_idx;
 
     scr.num = script_get_value(action->op_type[0], action->op_value[0], state);
-    sub_44BCC0(&scr);
+    script_load_hdr(&scr);
 
     invocation.script = &scr;
     invocation.line = script_get_value(action->op_type[1], action->op_value[1], state);
@@ -3337,22 +3337,22 @@ int sub_44BC60(ScriptState* state)
 }
 
 // 0x44BCC0
-int sub_44BCC0(Script* scr)
+bool script_load_hdr(Script* scr)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
     bool rc;
 
     if (!script_name_build_scr_name(scr->num, path)) {
-        return 0;
+        return false;
     }
 
     stream = tig_file_fopen(path, "rb");
     if (stream == NULL) {
-        return 0;
+        return false;
     }
 
-    rc = sub_44C710(stream, &(scr->hdr));
+    rc = script_file_load_hdr(stream, &(scr->hdr));
     tig_file_fclose(stream);
 
     return rc;
@@ -3490,7 +3490,7 @@ bool cache_add(int cache_entry_id, int script_id)
         return false;
     }
 
-    if (!sub_44C710(stream, &hdr)) {
+    if (!script_file_load_hdr(stream, &hdr)) {
         tig_debug_printf("Script: cache_add: ERROR: Failed to load script variables: %d!\n", script_id);
         // FIXME: Leaking stream.
         return false;
@@ -3567,9 +3567,11 @@ int cache_find(int script_id)
 }
 
 // 0x44C710
-int sub_44C710(TigFile* stream, ScriptHeader* hdr)
+bool script_file_load_hdr(TigFile* stream, ScriptHeader* hdr)
 {
-    return tig_file_fread(hdr, sizeof(*hdr), 1, stream);
+    if (tig_file_fread(hdr, sizeof(*hdr), 1, stream) != 1) return false;
+
+    return true;
 }
 
 // 0x44C730

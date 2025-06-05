@@ -373,7 +373,7 @@ int script_story_state_get();
 void script_story_state_set(int value);
 char* script_story_state_info(int story_state_num);
 bool script_timeevent_process(TimeEvent* timeevent);
-int sub_44BCC0(Script* scr);
+bool script_load_hdr(Script* scr);
 bool script_flags(Script* scr, ScriptFlags* flags_ptr);
 void script_play_explosion_fx(int64_t obj);
 

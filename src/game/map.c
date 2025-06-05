@@ -1874,7 +1874,7 @@ void map_apply_obj_patch(int64_t obj, char* str)
             sub_411880(&str, value);
             scr.num = atoi(value);
 
-            if (sub_44BCC0(&scr)) {
+            if (script_load_hdr(&scr)) {
                 obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
             }
         } else if (strcmpi(key, "daystand") == 0) {

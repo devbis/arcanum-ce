@@ -15872,7 +15872,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30000;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15882,7 +15882,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30001;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15892,7 +15892,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30002;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15902,7 +15902,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30003;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15912,7 +15912,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30004;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15922,7 +15922,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30005;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15932,7 +15932,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30006;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -15941,7 +15941,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30007;
-            sub_44BCC0(&scr);
+            script_load_hdr(&scr);
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
