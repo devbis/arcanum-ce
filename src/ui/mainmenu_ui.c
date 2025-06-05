@@ -133,10 +133,10 @@ static void mainmenu_ui_charedit_create();
 static void mainmenu_ui_charedit_destroy();
 static bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle);
 static void mainmenu_ui_charedit_refresh(TigRect* rect);
-static void sub_545E20();
-static void sub_545E30();
-static bool sub_545E40(tig_button_handle_t button_handle);
-static void sub_545E80(TigRect* rect);
+static void mainmenu_ui_shop_create();
+static void mainmenu_ui_shop_destroy();
+static bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle);
+static void mainmenu_ui_shop_refresh(TigRect* rect);
 static void sub_545F60();
 static void sub_545FD0(int x, int y);
 static void mainmenu_ui_create_multiplayer_select_char();
@@ -1704,7 +1704,7 @@ static MainMenuWindowInfo mainmenu_ui_charedit_info = {
 };
 
 // 0x5C5408
-static MainMenuButtonInfo stru_5C5408[2] = {
+static MainMenuButtonInfo mainmenu_ui_shop_buttons[2] = {
     {
         675,
         55,
@@ -1730,19 +1730,19 @@ static MainMenuButtonInfo stru_5C5408[2] = {
 };
 
 // 0x5C5468
-static MainMenuWindowInfo stru_5C5468 = {
+static MainMenuWindowInfo mainmenu_ui_shop_info = {
     -1,
-    sub_545E20,
-    sub_545E30,
+    mainmenu_ui_shop_create,
+    mainmenu_ui_shop_destroy,
     0,
     NULL,
-    sub_545E40,
+    mainmenu_ui_shop_button_released,
     NULL,
     NULL,
     NULL,
     -1,
     2,
-    stru_5C5408,
+    mainmenu_ui_shop_buttons,
     0,
     0,
     0x5,
@@ -1750,7 +1750,7 @@ static MainMenuWindowInfo stru_5C5468 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_545E80,
+    mainmenu_ui_shop_refresh,
     NULL,
     { 0 },
     NULL,
@@ -2002,7 +2002,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_new_char_window_info,
     &mainmenu_ui_pregen_char_window_info,
     &mainmenu_ui_charedit_info,
-    &stru_5C5468,
+    &mainmenu_ui_shop_info,
     &stru_5C5500,
     &stru_5C5598,
     &stru_5C5650,
@@ -5152,14 +5152,14 @@ void mainmenu_ui_charedit_refresh(TigRect* rect)
 }
 
 // 0x545E20
-void sub_545E20()
+void mainmenu_ui_shop_create()
 {
     dword_64C414 = 15;
     mainmenu_ui_create_window();
 }
 
 // 0x545E30
-void sub_545E30()
+void mainmenu_ui_shop_destroy()
 {
     if (inven_ui_is_created()) {
         inven_ui_destroy();
@@ -5167,14 +5167,14 @@ void sub_545E30()
 }
 
 // 0x545E40
-bool sub_545E40(tig_button_handle_t button_handle)
+bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle)
 {
-    if (button_handle == stru_5C5408[0].button_handle) {
+    if (button_handle == mainmenu_ui_shop_buttons[0].button_handle) {
         sub_5412D0();
         return true;
     }
 
-    if (button_handle == stru_5C5408[1].button_handle) {
+    if (button_handle == mainmenu_ui_shop_buttons[1].button_handle) {
         sub_5417A0(1);
         return true;
     }
@@ -5183,7 +5183,7 @@ bool sub_545E40(tig_button_handle_t button_handle)
 }
 
 // 0x545E80
-void sub_545E80(TigRect* rect)
+void mainmenu_ui_shop_refresh(TigRect* rect)
 {
     int64_t pc_obj;
     LocRect loc_rect;
