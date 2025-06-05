@@ -104,7 +104,7 @@ static void sub_544250();
 static void sub_544290();
 static bool mainmenu_ui_save_game_handle_delete();
 static void sub_544440();
-static void sub_5445F0();
+static void mainmenu_ui_intro_create();
 static void mainmenu_ui_credits_create();
 static void sub_544690(TigRect* rect);
 static void mainmenu_ui_create_single_player();
@@ -350,9 +350,9 @@ static MainMenuWindowInfo stru_5C3B48 = {
 };
 
 // 0x5C3BE0
-static MainMenuWindowInfo stru_5C3BE0 = {
+static MainMenuWindowInfo mainmenu_ui_intro_info = {
     2,
-    sub_5445F0,
+    mainmenu_ui_intro_create,
     NULL,
     0,
     NULL,
@@ -1997,7 +1997,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_load_game_window_info,
     &mainmenu_ui_save_game_window_info,
     &stru_5C4900,
-    &stru_5C3BE0,
+    &mainmenu_ui_intro_info,
     &mainmenu_ui_pick_new_or_pregen_window_info,
     &mainmenu_ui_new_char_window_info,
     &mainmenu_ui_pregen_char_window_info,
@@ -4320,7 +4320,7 @@ void sub_544440()
 }
 
 // 0x5445F0
-void sub_5445F0()
+void mainmenu_ui_intro_create()
 {
     dword_64C414 = 10;
     gmovie_play(1, 0, 0);
