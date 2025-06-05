@@ -137,7 +137,7 @@ static void mainmenu_ui_shop_create();
 static void mainmenu_ui_shop_destroy();
 static bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle);
 static void mainmenu_ui_shop_refresh(TigRect* rect);
-static void sub_545F60();
+static void mainmenu_ui_multiplayer_create();
 static void sub_545FD0(int x, int y);
 static void mainmenu_ui_create_multiplayer_select_char();
 static void mainmenu_ui_destroy_multiplayer_select_char();
@@ -156,7 +156,7 @@ static void sub_548B60(TigRect* rect);
 static void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect);
 static void mmUIWinRefreshScrollBar();
 static void sub_548FF0(int a1);
-static bool sub_549040(int a1);
+static bool mainmenu_ui_multiplayer_execute(int btn);
 static bool mainmenu_ui_execute_multiplayer_select_char(int index);
 static void sub_549450();
 static void sub_5494C0(TextEdit* textedit);
@@ -268,7 +268,7 @@ static MainMenuButtonInfo stru_5C3860[4] = {
 };
 
 // 0x5C3920
-static MainMenuButtonInfo stru_5C3920[4] = {
+static MainMenuButtonInfo mainmenu_ui_multiplayer_buttons[4] = {
     { 409, 122, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
     { 409, 182, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
     { 409, 242, -1, TIG_BUTTON_HANDLE_INVALID, 0x14, 0, 0, { 0 }, -1 },
@@ -1764,9 +1764,9 @@ static MainMenuWindowInfo mainmenu_ui_shop_info = {
 };
 
 // 0x5C5500
-static MainMenuWindowInfo stru_5C5500 = {
+static MainMenuWindowInfo mainmenu_ui_multiplayer_window_info = {
     330,
-    sub_545F60,
+    mainmenu_ui_multiplayer_create,
     NULL,
     0,
     NULL,
@@ -1776,7 +1776,7 @@ static MainMenuWindowInfo stru_5C5500 = {
     NULL,
     200,
     4,
-    stru_5C3920,
+    mainmenu_ui_multiplayer_buttons,
     0,
     0,
     0xD,
@@ -1785,7 +1785,7 @@ static MainMenuWindowInfo stru_5C5500 = {
         { -1, 0, 0 },
     },
     NULL,
-    sub_549040,
+    mainmenu_ui_multiplayer_execute,
     { 0 },
     NULL,
     { 0 },
@@ -2003,7 +2003,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_pregen_char_window_info,
     &mainmenu_ui_charedit_info,
     &mainmenu_ui_shop_info,
-    &stru_5C5500,
+    &mainmenu_ui_multiplayer_window_info,
     &stru_5C5598,
     &stru_5C5650,
     &stru_5C3D10,
@@ -5234,7 +5234,7 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
 }
 
 // 0x545F60
-void sub_545F60()
+void mainmenu_ui_multiplayer_create()
 {
     dword_64C414 = 16;
     mainmenu_ui_create_window();
@@ -7026,14 +7026,14 @@ void sub_548FF0(int a1)
 }
 
 // 0x549040
-bool sub_549040(int a1)
+bool mainmenu_ui_multiplayer_execute(int btn)
 {
     MatchmakerInitInfo mm_init_info;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_dialog_info;
     TigWindowModalDialogChoice choice;
 
-    switch (a1) {
+    switch (btn) {
     case 0:
         if (multiplayer_mm_is_active()) {
             sub_581F10();
