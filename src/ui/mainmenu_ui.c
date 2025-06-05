@@ -103,10 +103,10 @@ static void sub_544210();
 static void sub_544250();
 static void sub_544290();
 static bool mainmenu_ui_save_game_handle_delete();
-static void sub_544440();
+static void mainmenu_ui_last_save_create();
 static void mainmenu_ui_intro_create();
 static void mainmenu_ui_credits_create();
-static void sub_544690(TigRect* rect);
+static void mainmenu_ui_last_save_refresh(TigRect* rect);
 static void mainmenu_ui_create_single_player();
 static void mainmenu_ui_pick_new_or_pregen_create();
 static void mainmenu_ui_new_char_create();
@@ -1077,9 +1077,9 @@ static MainMenuWindowInfo mainmenu_ui_save_game_window_info = {
 };
 
 // 0x5C4900
-static MainMenuWindowInfo stru_5C4900 = {
-    2,
-    sub_544440,
+static MainMenuWindowInfo mainmenu_ui_last_save_window_info = {
+    2, // "black.art"
+    mainmenu_ui_last_save_create,
     NULL,
     0,
     NULL,
@@ -1097,7 +1097,7 @@ static MainMenuWindowInfo stru_5C4900 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_544690,
+    mainmenu_ui_last_save_refresh,
     NULL,
     { 0 },
     NULL,
@@ -1996,7 +1996,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_options_window_info,
     &mainmenu_ui_load_game_window_info,
     &mainmenu_ui_save_game_window_info,
-    &stru_5C4900,
+    &mainmenu_ui_last_save_window_info,
     &mainmenu_ui_intro_info,
     &mainmenu_ui_pick_new_or_pregen_window_info,
     &mainmenu_ui_new_char_window_info,
@@ -4262,7 +4262,7 @@ bool mainmenu_ui_save_game_handle_delete()
 }
 
 // 0x544440
-void sub_544440()
+void mainmenu_ui_last_save_create()
 {
     const char* path;
     TigRect rect;
@@ -4351,7 +4351,7 @@ void mainmenu_ui_credits_create()
 }
 
 // 0x544690
-void sub_544690(TigRect* rect)
+void mainmenu_ui_last_save_refresh(TigRect* rect)
 {
     (void)rect;
 }
