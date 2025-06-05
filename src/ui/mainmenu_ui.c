@@ -5058,7 +5058,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         flag = atoi(mes_file_entry.str);
         if (flag > 0) {
-            script_gl_flag_set(flag, mainmenu_ui_pregen_char_idx - 1 == index);
+            script_global_flag_set(flag, mainmenu_ui_pregen_char_idx - 1 == index);
         }
     }
 

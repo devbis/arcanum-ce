@@ -864,7 +864,7 @@ bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
         return false;
     }
 
-    if (entry->global_flag_num != -1 && !script_gl_flag_get(entry->global_flag_num)) {
+    if (entry->global_flag_num != -1 && !script_global_flag_get(entry->global_flag_num)) {
         return false;
     }
 

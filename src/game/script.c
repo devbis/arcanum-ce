@@ -41,8 +41,8 @@
 #include "game/ui.h"
 
 #define MAX_CACHE_ENTRIES 100
-#define MAX_GL_VARS 2000
-#define MAX_GL_FLAGS 100
+#define MAX_GLOBAL_VARS 2000
+#define MAX_GLOBAL_FLAGS 100
 
 #define NEXT -1
 #define RETURN_AND_SKIP_DEFAULT -2
@@ -114,13 +114,13 @@ int dword_5A5700[3] = {
 };
 
 // 0x5E2FA0
-static int* script_gl_vars;
+static int* script_global_vars;
 
 // 0x5E2FA4
 static int script_story_state;
 
 // 0x5E2FA8
-static int* script_gl_flags;
+static int* script_global_flags;
 
 // 0x5E2FAC
 static IsoInvalidateRectFunc* script_iso_invalidate_rect;
@@ -156,8 +156,8 @@ bool script_init(GameInitInfo* init_info)
 
     script_editor = init_info->editor;
     script_cache_entries = (ScriptCacheEntry*)CALLOC(MAX_CACHE_ENTRIES, sizeof(ScriptCacheEntry));
-    script_gl_vars = (int*)CALLOC(MAX_GL_VARS, sizeof(int));
-    script_gl_flags = (int*)CALLOC(MAX_GL_FLAGS, sizeof(int));
+    script_global_vars = (int*)CALLOC(MAX_GLOBAL_VARS, sizeof(int));
+    script_global_flags = (int*)CALLOC(MAX_GLOBAL_FLAGS, sizeof(int));
 
     for (index = 0; index < MAX_CACHE_ENTRIES; index++) {
         script_cache_entries[index].script_id = 0;
@@ -167,12 +167,12 @@ bool script_init(GameInitInfo* init_info)
     script_float_line_func = NULL;
     script_story_state = 0;
 
-    for (index = 0; index < MAX_GL_VARS; index++) {
-        script_gl_vars[index] = 0;
+    for (index = 0; index < MAX_GLOBAL_VARS; index++) {
+        script_global_vars[index] = 0;
     }
 
-    for (index = 0; index < MAX_GL_FLAGS; index++) {
-        script_gl_flags[index] = 0;
+    for (index = 0; index < MAX_GLOBAL_FLAGS; index++) {
+        script_global_flags[index] = 0;
     }
 
     script_iso_invalidate_rect = init_info->invalidate_rect_func;
@@ -205,12 +205,12 @@ void script_reset()
 
     script_story_state = 0;
 
-    for (index = 0; index < MAX_GL_VARS; index++) {
-        script_gl_vars[index] = 0;
+    for (index = 0; index < MAX_GLOBAL_VARS; index++) {
+        script_global_vars[index] = 0;
     }
 
-    for (index = 0; index < MAX_GL_FLAGS; index++) {
-        script_gl_flags[index] = 0;
+    for (index = 0; index < MAX_GLOBAL_FLAGS; index++) {
+        script_global_flags[index] = 0;
     }
 }
 
@@ -225,8 +225,8 @@ void script_exit()
 
     script_story_state = 0;
     FREE(script_cache_entries);
-    FREE(script_gl_vars);
-    FREE(script_gl_flags);
+    FREE(script_global_vars);
+    FREE(script_global_flags);
 
     if (!script_editor) {
         animfx_list_exit(&script_eye_candies);
@@ -253,8 +253,8 @@ void script_mod_unload()
 // 0x4448D0
 bool script_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(script_gl_vars, sizeof(int) * MAX_GL_VARS, 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(script_gl_flags, sizeof(int) * MAX_GL_FLAGS, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(script_global_vars, sizeof(int) * MAX_GLOBAL_VARS, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(script_global_flags, sizeof(int) * MAX_GLOBAL_FLAGS, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&script_story_state, sizeof(int), 1, load_info->stream) != 1) return false;
 
     return true;
@@ -263,8 +263,8 @@ bool script_load(GameLoadInfo* load_info)
 // 0x444930
 bool script_save(TigFile* stream)
 {
-    if (tig_file_fwrite(script_gl_vars, sizeof(int) * MAX_GL_VARS, 1, stream) != 1) return false;
-    if (tig_file_fwrite(script_gl_flags, sizeof(int) * MAX_GL_FLAGS, 1, stream) != 1) return false;
+    if (tig_file_fwrite(script_global_vars, sizeof(int) * MAX_GLOBAL_VARS, 1, stream) != 1) return false;
+    if (tig_file_fwrite(script_global_flags, sizeof(int) * MAX_GLOBAL_FLAGS, 1, stream) != 1) return false;
     if (tig_file_fwrite(&script_story_state, sizeof(int), 1, stream) != 1) return false;
 
     return true;
@@ -404,13 +404,13 @@ bool script_execute(ScriptInvocation* invocation)
 }
 
 // 0x444C80
-int script_gl_var_get(int index)
+int script_global_var_get(int index)
 {
-    return script_gl_vars[index];
+    return script_global_vars[index];
 }
 
 // 0x444C90
-void script_gl_var_set(int index, int value)
+void script_global_var_set(int index, int value)
 {
     if (!multiplayer_is_locked()) {
         PacketScriptFunc pkt;
@@ -426,17 +426,17 @@ void script_gl_var_set(int index, int value)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    script_gl_vars[index] = value;
+    script_global_vars[index] = value;
 }
 
 // 0x444CF0
-int script_gl_flag_get(int index)
+int script_global_flag_get(int index)
 {
-    return (script_gl_flags[index / 32] >> (index % 32)) & 1;
+    return (script_global_flags[index / 32] >> (index % 32)) & 1;
 }
 
 // 0x444D20
-void script_gl_flag_set(int index, int value)
+void script_global_flag_set(int index, int value)
 {
     if (!multiplayer_is_locked()) {
         PacketScriptFunc pkt;
@@ -452,12 +452,12 @@ void script_gl_flag_set(int index, int value)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    script_gl_flags[index / 32] &= ~(1 << (index % 32));
-    script_gl_flags[index / 32] |= value << (index % 32);
+    script_global_flags[index / 32] &= ~(1 << (index % 32));
+    script_global_flags[index / 32] |= value << (index % 32);
 }
 
 // 0x444DB0
-int script_pc_gl_var_get(int64_t obj, int index)
+int script_pc_var_get(int64_t obj, int index)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         return obj_arrayfield_uint32_get(obj, OBJ_F_PC_GLOBAL_VARIABLES, index);
@@ -467,7 +467,7 @@ int script_pc_gl_var_get(int64_t obj, int index)
 }
 
 // 0x444DF0
-void script_pc_gl_var_set(int64_t obj, int index, int value)
+void script_pc_var_set(int64_t obj, int index, int value)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         mp_obj_arrayfield_uint32_set(obj, OBJ_F_PC_GLOBAL_VARIABLES, index, value);
@@ -475,7 +475,7 @@ void script_pc_gl_var_set(int64_t obj, int index, int value)
 }
 
 // 0x444E30
-int script_pc_gl_flag_get(int64_t obj, int index)
+int script_pc_flag_get(int64_t obj, int index)
 {
     int flags;
 
@@ -488,7 +488,7 @@ int script_pc_gl_flag_get(int64_t obj, int index)
 }
 
 // 0x444E90
-void script_pc_gl_flag_set(int64_t obj, int index, int value)
+void script_pc_flag_set(int64_t obj, int index, int value)
 {
     int flags;
 
@@ -1380,7 +1380,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         int num;
 
         num = script_get_value(condition->op_type[0], condition->op_value[0], state);
-        if (script_gl_var_get(num)) {
+        if (script_global_var_get(num)) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
@@ -2437,12 +2437,12 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     }
     case SAT_SET_GLOBAL_FLAG: {
         int flag = script_get_value(action->op_type[0], action->op_value[0], state);
-        script_gl_flag_set(flag, 1);
+        script_global_flag_set(flag, 1);
         return NEXT;
     }
     case SAT_CLEAR_GLOBAL_FLAG: {
         int flag = script_get_value(action->op_type[0], action->op_value[0], state);
-        script_gl_flag_set(flag, 0);
+        script_global_flag_set(flag, 0);
         return NEXT;
     }
     case SAT_FADE_AND_TELEPORT: {
@@ -3271,19 +3271,19 @@ int script_get_value(ScriptValueType type, int index, ScriptState* state)
     case SVT_COUNTER:
         return (state->invocation->script->hdr.counters >> (8 * index)) & 0xFF;
     case SVT_GL_VAR:
-        return script_gl_var_get(index);
+        return script_global_var_get(index);
     case SVT_LC_VAR:
         return state->lc_vars[index];
     case SVT_NUMBER:
         return index;
     case SVT_GL_FLAG:
-        return script_gl_flag_get(index);
+        return script_global_flag_get(index);
     case SVT_PC_VAR:
         obj = script_get_obj(index >> 16, 0, state);
-        return script_pc_gl_var_get(obj, index & 0xFFFF);
+        return script_pc_var_get(obj, index & 0xFFFF);
     case SVT_PC_FLAG:
         obj = script_get_obj(index >> 16, 0, state);
-        return script_pc_gl_flag_get(obj, index & 0xFFFF);
+        return script_pc_flag_get(obj, index & 0xFFFF);
     }
 
     return index;
@@ -3300,21 +3300,21 @@ void script_set_value(ScriptValueType type, int index, ScriptState* state, int v
         state->invocation->script->hdr.counters |= value << (8 * index);
         break;
     case SVT_GL_VAR:
-        script_gl_var_set(index, value);
+        script_global_var_set(index, value);
         break;
     case SVT_LC_VAR:
         state->lc_vars[index] = value;
         break;
     case SVT_GL_FLAG:
-        script_gl_flag_set(index, value);
+        script_global_flag_set(index, value);
         break;
     case SVT_PC_VAR:
         obj = script_get_obj(index >> 16, 0, state);
-        script_pc_gl_var_set(obj, index & 0xFFFF, value);
+        script_pc_var_set(obj, index & 0xFFFF, value);
         break;
     case SVT_PC_FLAG:
         obj = script_get_obj(index >> 16, 0, state);
-        script_pc_gl_flag_set(obj, index & 0xFFFF, value);
+        script_pc_flag_set(obj, index & 0xFFFF, value);
         break;
     }
 }

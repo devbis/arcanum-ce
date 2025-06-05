@@ -1468,12 +1468,12 @@ bool sub_4150D0(DialogState* a1, char* a2)
             }
             break;
         case DIALOG_COND_GV:
-            if (script_gl_var_get(value) != sub_4167C0(pch)) {
+            if (script_global_var_get(value) != sub_4167C0(pch)) {
                 return false;
             }
             break;
         case DIALOG_COND_GF:
-            if (script_gl_flag_get(value) != sub_4167C0(pch)) {
+            if (script_global_flag_get(value) != sub_4167C0(pch)) {
                 return false;
             }
             break;
@@ -1779,12 +1779,12 @@ bool sub_4150D0(DialogState* a1, char* a2)
             }
             break;
         case DIALOG_COND_PV:
-            if (script_pc_gl_var_get(a1->pc_obj, value) != sub_4167C0(pch)) {
+            if (script_pc_var_get(a1->pc_obj, value) != sub_4167C0(pch)) {
                 return false;
             }
             break;
         case DIALOG_COND_PF:
-            if (script_pc_gl_flag_get(a1->pc_obj, value) != sub_4167C0(pch)) {
+            if (script_pc_flag_get(a1->pc_obj, value) != sub_4167C0(pch)) {
                 return false;
             }
             break;
@@ -1964,10 +1964,10 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             attack = true;
             break;
         case DIALOG_ACTION_GV:
-            script_gl_var_set(value, sub_4167C0(pch));
+            script_global_var_set(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_GF:
-            script_gl_flag_set(value, sub_4167C0(pch));
+            script_global_flag_set(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_MM:
             area_set_known(a1->pc_obj, value);
@@ -2136,10 +2136,10 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             break;
         }
         case DIALOG_ACTION_PV:
-            script_pc_gl_var_set(a1->pc_obj, value, sub_4167C0(pch));
+            script_pc_var_set(a1->pc_obj, value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_PF:
-            script_pc_gl_flag_set(a1->pc_obj, value, sub_4167C0(pch));
+            script_pc_flag_set(a1->pc_obj, value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_XP:
             critter_give_xp(a1->pc_obj, quest_get_xp(value));
