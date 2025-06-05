@@ -494,7 +494,7 @@ bool sub_5819D0(int a1)
         break;
     case 1:
         sub_5417A0(false);
-        sub_585D50();
+        mainmenu_ui_serverlist_create();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }
@@ -1411,7 +1411,7 @@ bool mainmenu_ui_execute_multiplayer_hub(int button)
     case 1:
         sub_5836A0();
         sub_5417A0(false);
-        sub_585D50();
+        mainmenu_ui_serverlist_create();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }
@@ -2433,7 +2433,7 @@ bool sub_585270(int num)
         return false;
     case 1:
         sub_5417A0(false);
-        sub_585D50();
+        mainmenu_ui_serverlist_create();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }

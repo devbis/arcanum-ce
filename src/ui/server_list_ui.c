@@ -45,7 +45,7 @@ static int dword_5994BC[3] = {
 };
 
 // 0x5CCAF8
-MainMenuButtonInfo stru_5CCAF8[7] = {
+MainMenuButtonInfo mainmenu_ui_serverlist_buttons[7] = {
     { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
     { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, { 0 }, -1 },
     { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, { 0 }, -1 },
@@ -203,7 +203,7 @@ void serverlist_ui_exit()
 }
 
 // 0x585D50
-void sub_585D50()
+void mainmenu_ui_serverlist_create()
 {
     TigNetServer* servers = NULL;
     int servers_cnt = 0;
@@ -214,12 +214,12 @@ void sub_585D50()
     mainmenu_ui_create_window_func(false);
 
     if (multiplayer_mm_is_active()) {
-        tig_button_show(stru_5CCAF8[1].button_handle);
+        tig_button_show(mainmenu_ui_serverlist_buttons[1].button_handle);
         tig_net_on_server_bcast(sub_585F00);
         sub_588990();
     } else {
-        tig_button_hide(stru_5CCAF8[1].button_handle);
-        tig_button_hide(stru_5CCAF8[6].button_handle);
+        tig_button_hide(mainmenu_ui_serverlist_buttons[1].button_handle);
+        tig_button_hide(mainmenu_ui_serverlist_buttons[6].button_handle);
         tig_net_on_servers_change(sub_588EC0);
         tig_net_get_servers(&servers, &servers_cnt);
         sub_585FF0(servers, servers_cnt);
@@ -229,11 +229,11 @@ void sub_585D50()
     sub_4A3890();
     sub_4A2B00(sub_588EF0);
     sub_549990(dword_5994BC, 3);
-    sub_5860D0(0);
+    mainmenu_ui_serverlist_refresh(0);
 }
 
 // 0x585E20
-void sub_585E20()
+void mainmenu_ui_serverlist_destroy()
 {
     tig_net_on_servers_change(NULL);
     sub_4A2B00(NULL);
@@ -303,7 +303,7 @@ void sub_585F00(TigNetServer* server)
             scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, 0);
         }
 
-        sub_5860D0(NULL);
+        mainmenu_ui_serverlist_refresh(NULL);
     }
 }
 
@@ -336,11 +336,11 @@ void sub_585FF0(TigNetServer* servers, int cnt)
         scrollbar_ui_control_set(stru_686990, SCROLLBAR_MAX_VALUE, 0);
     }
 
-    sub_5860D0(NULL);
+    mainmenu_ui_serverlist_refresh(NULL);
 }
 
 // 0x5860D0
-void sub_5860D0(TigRect* rect)
+void mainmenu_ui_serverlist_refresh(TigRect* rect)
 {
     if (dword_68699C) {
         sub_588180(rect, sub_549820());
@@ -459,13 +459,13 @@ bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
                 index = dword_6869A8 + (msg->data.mouse.y - 131) / 20;
                 if (index < dword_6869A4) {
                     sub_588CC0(&dword_6869A0[index], 1);
-                    sub_5860D0(0);
+                    mainmenu_ui_serverlist_refresh(0);
                     dword_687258 = 0;
                     return true;
                 }
 
                 sub_588CC0(0, 1);
-                sub_5860D0(0);
+                mainmenu_ui_serverlist_refresh(0);
 
                 return false;
             }
@@ -540,7 +540,7 @@ bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
                 }
 
                 sub_585FF0(servers, num_servers);
-                sub_5860D0(0);
+                mainmenu_ui_serverlist_refresh(0);
                 return true;
             }
             if (msg->data.mouse.x >= stru_5CCC68.x
@@ -1561,7 +1561,7 @@ void sub_588650()
     }
 
     sub_585FF0(servers, num_servers);
-    sub_5860D0(NULL);
+    mainmenu_ui_serverlist_refresh(NULL);
 }
 
 // 0x5887F0
@@ -1618,7 +1618,7 @@ void sub_5887F0()
         FREE(games);
     }
 
-    sub_5860D0(NULL);
+    mainmenu_ui_serverlist_refresh(NULL);
 }
 
 // 0x588990
@@ -1837,7 +1837,7 @@ void sub_588EC0(TigNetServer* servers, int count)
 {
     if (sub_5496D0() == 17) {
         sub_585FF0(servers, count);
-        sub_5860D0(0);
+        mainmenu_ui_serverlist_refresh(0);
     }
 }
 
@@ -1850,14 +1850,14 @@ void sub_588EF0()
 }
 
 // 0x588F00
-void sub_588F00(int x, int y)
+void mainmenu_ui_serverlist_mouse_up(int x, int y)
 {
     (void)x;
     (void)y;
 }
 
 // 0x588F10
-bool sub_588F10(int a1)
+bool mainmenu_ui_serverlist_execute(int a1)
 {
     switch (a1) {
     case 0:
@@ -1885,7 +1885,7 @@ bool sub_588F10(int a1)
         }
         break;
     case 3:
-        sub_5883E0(stru_5CCAF8[3].button_handle, sub_549820());
+        sub_5883E0(mainmenu_ui_serverlist_buttons[3].button_handle, sub_549820());
         break;
     case 4:
         sub_588650();

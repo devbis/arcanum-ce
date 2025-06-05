@@ -1798,10 +1798,10 @@ static MainMenuWindowInfo mainmenu_ui_multiplayer_window_info = {
 };
 
 // 0x5C5598
-static MainMenuWindowInfo stru_5C5598 = {
+static MainMenuWindowInfo mainmenu_ui_serverlist_window_info = {
     750,
-    sub_585D50,
-    sub_585E20,
+    mainmenu_ui_serverlist_create,
+    mainmenu_ui_serverlist_destroy,
     0,
     NULL,
     NULL,
@@ -1810,7 +1810,7 @@ static MainMenuWindowInfo stru_5C5598 = {
     NULL,
     2110,
     7,
-    stru_5CCAF8,
+    mainmenu_ui_serverlist_buttons,
     0,
     0,
     0xD,
@@ -1818,10 +1818,10 @@ static MainMenuWindowInfo stru_5C5598 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_5860D0,
-    sub_588F10,
+    mainmenu_ui_serverlist_refresh,
+    mainmenu_ui_serverlist_execute,
     { 30, 550, 263, 15 },
-    sub_588F00,
+    mainmenu_ui_serverlist_mouse_up,
     { 0 },
     NULL,
     0,
@@ -2004,7 +2004,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_charedit_info,
     &mainmenu_ui_shop_info,
     &mainmenu_ui_multiplayer_window_info,
-    &stru_5C5598,
+    &mainmenu_ui_serverlist_window_info,
     &stru_5C5650,
     &stru_5C3D10,
     &stru_5C3DA8,

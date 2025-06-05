@@ -4,16 +4,16 @@
 #include "game/context.h"
 #include "ui/types.h"
 
-extern MainMenuButtonInfo stru_5CCAF8[7];
+extern MainMenuButtonInfo mainmenu_ui_serverlist_buttons[7];
 
 bool serverlist_ui_init();
 void serverlist_ui_exit();
-void sub_585D50();
-void sub_585E20();
-void sub_5860D0(TigRect* rect);
+void mainmenu_ui_serverlist_create();
+void mainmenu_ui_serverlist_destroy();
+void mainmenu_ui_serverlist_refresh(TigRect* rect);
 void sub_586150(int a1, int a2, void* a3);
 bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle);
-void sub_588F00(int x, int y);
-bool sub_588F10(int a1);
+void mainmenu_ui_serverlist_mouse_up(int x, int y);
+bool mainmenu_ui_serverlist_execute(int a1);
 
 #endif /* ARCANUM_UI_SERVER_LIST_UI_H_ */
