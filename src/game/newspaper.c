@@ -11,7 +11,7 @@
 #define GENERIC_NEWSPAPER_NUM 5000
 
 static void sub_4BF2C0();
-static int sub_4BF330();
+static int pick_random_generic_newspaper();
 
 // 0x6876CC
 static int dword_6876CC;
@@ -160,13 +160,13 @@ void sub_4BF2C0()
     }
 
     if (dword_6876CC < 5) {
-        off_6876D0[4] = sub_4BF330();
+        off_6876D0[4] = pick_random_generic_newspaper();
         dword_6876CC = 5;
     }
 }
 
 // 0x4BF330
-int sub_4BF330()
+int pick_random_generic_newspaper()
 {
     int cnt = 0;
     int v2 = GENERIC_NEWSPAPER_NUM;
@@ -178,5 +178,5 @@ int sub_4BF330()
         sub_460800(v2, str);
     } while (str[0] != '\0');
 
-    return 10 * (random_between(0, cnt - 1) + 500);
+    return GENERIC_NEWSPAPER_NUM + random_between(0, cnt - 1) * 10;
 }
