@@ -10,7 +10,7 @@
 #define TWENTY_FIVE 25
 #define GENERIC_NEWSPAPER_NUM 5000
 
-static void sub_4BF2C0();
+static void rotate_newspapers();
 static int pick_random_generic_newspaper();
 
 // 0x6876CC
@@ -138,7 +138,7 @@ bool newspaper_timeevent_process(TimeEvent* timeevent)
     (void)timeevent;
 
     if (!tig_net_is_active() || tig_net_is_host()) {
-        sub_4BF2C0();
+        rotate_newspapers();
 
         next_timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
         sub_45A950(&datetime, 86400000);
@@ -149,12 +149,15 @@ bool newspaper_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4BF2C0
-void sub_4BF2C0()
+void rotate_newspapers()
 {
     int index;
 
     index = off_6876D0[4] < GENERIC_NEWSPAPER_NUM ? 0 : 4;
-    while (index < dword_6876CC - 1) {
+
+    dword_6876CC--;
+
+    while (index < dword_6876CC) {
         off_6876D0[index] = off_6876D0[index + 1];
         index++;
     }
