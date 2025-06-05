@@ -4123,7 +4123,7 @@ void sub_41A520(int a1, DialogState* a2)
     dialog_copy_npc_generic_msg(a2->reply, a2, 4200, 4299);
     dialog_copy_pc_generic_msg(a2->options[0], a2, 2200, 2299);
     a2->field_17F0[0] = 28;
-    a2->field_1804[0] = sub_4BF200(4);
+    a2->field_1804[0] = newspaper_get(4);
     a2->field_1818[0] = a1;
     dialog_copy_pc_generic_msg(a2->options[1], a2, 2000, 2099);
     a2->field_17F0[1] = 26;
@@ -4146,7 +4146,7 @@ void sub_41A620(int a1, DialogState* a2)
     int v1;
     int pos;
 
-    v1 = sub_4BF200(4);
+    v1 = newspaper_get(4);
     sub_460800(v1, a2->reply);
 
     pos = (int)strlen(a2->reply);
@@ -4182,7 +4182,7 @@ void sub_41A700(int a1, DialogState* a2)
 
     cnt = 0;
     for (index = 0; index < 4; index++) {
-        v1[index] = sub_4BF200(index);
+        v1[index] = newspaper_get(index);
         if (v1[index] != -1) {
             cnt++;
         }

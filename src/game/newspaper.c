@@ -108,7 +108,7 @@ bool newspaper_is_queued(int num)
 }
 
 // 0x4BF200
-int sub_4BF200(int index)
+int newspaper_get(int index)
 {
     return off_6876D0[index];
 }
