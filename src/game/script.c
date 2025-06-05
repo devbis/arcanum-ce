@@ -99,7 +99,7 @@ static bool cache_add(int cache_entry_id, int script_id);
 static void cache_remove(int cache_entry_id);
 static int cache_find(int script_id);
 static int sub_44C710(TigFile* stream, ScriptHeader* hdr);
-static bool sub_44C730(TigFile* stream, ScriptFile* script_file);
+static bool script_file_load_code(TigFile* stream, ScriptFile* script_file);
 static void script_fx_play(int64_t obj, int fx_id);
 static void script_fx_stop(int64_t obj, int fx_id);
 
@@ -3502,7 +3502,7 @@ bool cache_add(int cache_entry_id, int script_id)
         return false;
     }
 
-    if (!sub_44C730(stream, script_cache_entries[cache_entry_id].file)) {
+    if (!script_file_load_code(stream, script_cache_entries[cache_entry_id].file)) {
         tig_debug_printf("Script: cache_add: ERROR: Failed to load script code: %d!\n", script_id);
         // FIXME: Leaking stream.
         return false;
@@ -3573,9 +3573,15 @@ int sub_44C710(TigFile* stream, ScriptHeader* hdr)
 }
 
 // 0x44C730
-bool sub_44C730(TigFile* stream, ScriptFile* script_file)
+bool script_file_load_code(TigFile* stream, ScriptFile* script_file)
 {
-    if (tig_file_fread(script_file, sizeof(ScriptFile), 1, stream) != 1) {
+    // CE: Read data field-by-field fixing `ScriptFile::entries` alignment/size
+    // discrepancy on x64.
+    if (tig_file_fread(script_file->description, sizeof(script_file->description), 1, stream) != 1
+        || tig_file_fread(&(script_file->flags), sizeof(script_file->flags), 1, stream) != 1
+        || tig_file_fread(&(script_file->num_entries), sizeof(script_file->num_entries), 1, stream) != 1
+        || tig_file_fread(&(script_file->max_entries), sizeof(script_file->max_entries), 1, stream) != 1
+        || tig_file_fseek(stream, 4, SEEK_CUR) != 0) {
         return false;
     }
 
