@@ -129,10 +129,10 @@ static void mainmenu_ui_pregen_char_create();
 static void mainmenu_ui_pregen_char_refresh(TigRect* rect);
 static bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle);
 static bool mainmenu_ui_pregen_char_execute(int btn);
-static void sub_545C50();
-static void sub_545C60();
-static bool sub_545C70(tig_button_handle_t button_handle);
-static void sub_545DF0(TigRect* rect);
+static void mainmenu_ui_charedit_create();
+static void mainmenu_ui_charedit_destroy();
+static bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle);
+static void mainmenu_ui_charedit_refresh(TigRect* rect);
 static void sub_545E20();
 static void sub_545E30();
 static bool sub_545E40(tig_button_handle_t button_handle);
@@ -1644,45 +1644,45 @@ static MainMenuWindowInfo mainmenu_ui_pregen_char_window_info = {
 static int mainmenu_ui_pregen_char_idx = 1;
 
 // 0x5C5310
-static MainMenuButtonInfo stru_5C5310[2] = {
+static MainMenuButtonInfo mainmenu_ui_charedit_buttons[2] = {
     {
         675,
         55,
-        321,
+        321, // "nextbut.art"
         TIG_BUTTON_HANDLE_INVALID,
         -1,
         -1,
         1,
         { 0 },
-        7003,
+        7003, // "Next Screen"
     },
     {
         69,
         55,
-        323,
+        323, // "backbut.art"
         TIG_BUTTON_HANDLE_INVALID,
         -2,
         -1,
         1,
         { 0 },
-        7002,
+        7002, // "Previous Screen"
     },
 };
 
 // 0x5C5370
-static MainMenuWindowInfo stru_5C5370 = {
+static MainMenuWindowInfo mainmenu_ui_charedit_info = {
     -1,
-    sub_545C50,
-    sub_545C60,
+    mainmenu_ui_charedit_create,
+    mainmenu_ui_charedit_destroy,
     0,
     NULL,
-    sub_545C70,
+    mainmenu_ui_charedit_button_released,
     NULL,
     NULL,
     NULL,
     -1,
     2,
-    stru_5C5310,
+    mainmenu_ui_charedit_buttons,
     0,
     0,
     0x5,
@@ -1690,7 +1690,7 @@ static MainMenuWindowInfo stru_5C5370 = {
         { -1, 0, 0 },
         { -1, 0, 0 },
     },
-    sub_545DF0,
+    mainmenu_ui_charedit_refresh,
     NULL,
     { 0 },
     NULL,
@@ -2001,7 +2001,7 @@ static MainMenuWindowInfo *main_menu_window_info[] = {
     &mainmenu_ui_pick_new_or_pregen_window_info,
     &mainmenu_ui_new_char_window_info,
     &mainmenu_ui_pregen_char_window_info,
-    &stru_5C5370,
+    &mainmenu_ui_charedit_info,
     &stru_5C5468,
     &stru_5C5500,
     &stru_5C5598,
@@ -5069,14 +5069,14 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 }
 
 // 0x545C50
-void sub_545C50()
+void mainmenu_ui_charedit_create()
 {
     dword_64C414 = 14;
     mainmenu_ui_create_window();
 }
 
 // 0x545C60
-void sub_545C60()
+void mainmenu_ui_charedit_destroy()
 {
     if (charedit_is_created()) {
         charedit_close();
@@ -5084,9 +5084,9 @@ void sub_545C60()
 }
 
 // 0x545C70
-bool sub_545C70(tig_button_handle_t button_handle)
+bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle)
 {
-    if (button_handle == stru_5C5310[0].button_handle) {
+    if (button_handle == mainmenu_ui_charedit_buttons[0].button_handle) {
         if (tig_net_is_active()) {
             uint8_t* v1;
             int v2;
@@ -5129,7 +5129,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
         return true;
     }
 
-    if (button_handle == stru_5C5310[1].button_handle) {
+    if (button_handle == mainmenu_ui_charedit_buttons[1].button_handle) {
         sub_5417A0(1);
         return true;
     }
@@ -5138,7 +5138,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
 }
 
 // 0x545DF0
-void sub_545DF0(TigRect* rect)
+void mainmenu_ui_charedit_refresh(TigRect* rect)
 {
     int64_t pc_obj;
 
