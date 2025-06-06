@@ -230,7 +230,7 @@ static void sub_41A3E0(int a1, DialogState* a2);
 static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void sub_41A520(int a1, DialogState* a2);
 static void sub_41A620(int a1, DialogState* a2);
-static void sub_41A700(int a1, DialogState* a2);
+static void dialog_offer_older_newspaper(int response_val, DialogState* state);
 static void sub_41A880(int a1, int a2, DialogState* a3);
 static void sub_41A8C0(int a1, int a2, int a3, DialogState* a4);
 
@@ -1252,7 +1252,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A620(a2, a5);
         break;
     case 27:
-        sub_41A700(a2, a5);
+        dialog_offer_older_newspaper(a2, a5);
         break;
     case 28:
         sub_41A880(a2, a3, a5);
@@ -4174,39 +4174,39 @@ void sub_41A620(int a1, DialogState* a2)
 }
 
 // 0x41A700
-void sub_41A700(int a1, DialogState* a2)
+void dialog_offer_older_newspaper(int response_val, DialogState* state)
 {
     int cnt;
     int index;
-    int v1[4];
+    int newspapers[4];
 
     cnt = 0;
     for (index = 0; index < 4; index++) {
-        v1[index] = newspaper_get(index);
-        if (v1[index] != -1) {
+        newspapers[cnt] = newspaper_get(index);
+        if (newspapers[cnt] != -1) {
             cnt++;
         }
     }
 
     if (cnt != 0) {
-        dialog_copy_npc_generic_msg(a2->reply, a2, 4500, 4599);
+        dialog_copy_npc_generic_msg(state->reply, state, 4500, 4599);
         for (index = 0; index < cnt; index++) {
-            sub_460800(v1[index], a2->options[index]);
-            a2->field_17F0[index] = 28;
-            a2->field_1804[index] = v1[index];
+            sub_460800(newspapers[index], state->options[index]);
+            state->field_17F0[index] = 28;
+            state->field_1804[index] = newspapers[index];
         }
-        dialog_copy_pc_generic_msg(a2->options[cnt], a2, 800, 899);
-        sub_417590(a1, &a2->field_17F0[cnt], &a2->field_1804[cnt]);
-        a2->num_options = cnt + 1;
+        dialog_copy_pc_generic_msg(state->options[cnt], state, 800, 899);
+        sub_417590(response_val, &(state->field_17F0[cnt]), &(state->field_1804[cnt]));
+        state->num_options = cnt + 1;
     } else {
-        dialog_copy_npc_generic_msg(a2->reply, a2, 4400, 4499);
-        dialog_copy_pc_generic_msg(a2->options[0], a2, 600, 699);
-        sub_417590(a1, a2->field_17F0, a2->field_1804);
-        a2->num_options = 1;
+        dialog_copy_npc_generic_msg(state->reply, state, 4400, 4499);
+        dialog_copy_pc_generic_msg(state->options[0], state, 600, 699);
+        sub_417590(response_val, &(state->field_17F0[0]), &(state->field_1804[0]));
+        state->num_options = 1;
     }
 
-    for (index = 0; index < a2->num_options; index++) {
-        a2->actions[index] = NULL;
+    for (index = 0; index < state->num_options; index++) {
+        state->actions[index] = NULL;
     }
 }
 
