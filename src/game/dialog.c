@@ -225,7 +225,7 @@ static void dialog_build_use_spell_option(int index, int spell, int response_val
 static void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state);
 static void dialog_ask_money_for_spell(int a1, int a2, DialogState* a3);
 static void dialog_use_skill(int a1, int a2, int a3, DialogState* a4);
-static void sub_419D50(int a1, int a2, int a3, DialogState* a4);
+static void dialog_use_spell(int spell, int a2, int a3, DialogState* state);
 static int sub_419E20(int64_t obj, int* a2, int cnt);
 static void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5);
 static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
@@ -1228,7 +1228,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_use_skill(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 17:
-        sub_419D50(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_use_spell(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 18:
         sub_419E70(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, 0, a5);
@@ -3883,7 +3883,7 @@ void dialog_ask_money_for_spell(int spell, int response_val, DialogState* state)
 
     sub_417590(response_val, &v1, &v2);
     if (critter_leader_get(state->npc_obj) == state->pc_obj) {
-        sub_419D50(spell, v1, v2, state);
+        dialog_use_spell(spell, v1, v2, state);
     } else {
         amt = spell_money(spell);
         sub_418A40(amt, 17, spell, v1, v2, state);
@@ -3918,22 +3918,27 @@ void dialog_use_skill(int skill, int a2, int a3, DialogState* state)
 }
 
 // 0x419D50
-void sub_419D50(int a1, int a2, int a3, DialogState* a4)
+void dialog_use_spell(int spell, int a2, int a3, DialogState* state)
 {
     MagicTechInvocation mt_invocation;
 
-    magictech_invocation_init(&mt_invocation, a4->npc_obj, a1);
-    sub_4440E0(a4->pc_obj, &(mt_invocation.target_obj));
-    if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
+    magictech_invocation_init(&mt_invocation, state->npc_obj, spell);
+    sub_4440E0(state->pc_obj, &(mt_invocation.target_obj));
+    if (critter_pc_leader_get(state->npc_obj) == OBJ_HANDLE_NULL) {
         mt_invocation.flags |= MAGICTECH_INVOCATION_FREE;
     }
     magictech_invocation_run(&mt_invocation);
-    dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
-    a4->num_options = 1;
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
+
+    // NPC: "It is done."
+    dialog_copy_npc_class_specific_msg(state->reply, state, 15000);
+
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+    state->actions[0] = NULL;
+
+    state->num_options = 1;
 }
 
 // 0x419E20
