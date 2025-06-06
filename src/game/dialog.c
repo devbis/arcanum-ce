@@ -213,7 +213,7 @@ static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
 static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
 static void dialog_ask_money_for_training(int skill, DialogState* state);
 static void dialog_perform_training(int skill, DialogState* state);
-static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
+static void dialog_ask_money_for_rumor(int cost, int* rumors, int num_rumors, int response_val, DialogState* state);
 static void dialog_tell_rumor(int rumor, int a2, int a3, DialogState* state);
 static void dialog_build_pc_insult_option(int a1, int a2, int a3, DialogState* a4);
 static void dialog_insult_reply(int a1, int a2, DialogState* state);
@@ -1163,8 +1163,6 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
 {
     int v1[100];
     int cnt;
-    char *pch;
-    int v2;
 
     switch (a1) {
     case 0:
@@ -1196,13 +1194,18 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
     case 7:
         dialog_perform_training(a2, a5);
         break;
-    case 8:
+    case 8: {
+        char* pch;
+        int cost;
+
         pch = strchr(&(a5->options[a4][strlen(a5->options[a4]) + 1]), '$');
-        v2 = atoi(pch + 1);
+        cost = atoi(pch + 1);
+
         pch = strchr(pch, ',');
         cnt = dialog_parse_params(v1, pch + 1);
-        sub_418FC0(v2, v1, cnt, a2, a5);
+        dialog_ask_money_for_rumor(cost, v1, cnt, a2, a5);
         break;
+    }
     case 9:
         dialog_tell_rumor(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
@@ -2317,17 +2320,17 @@ bool sub_416840(DialogState* a1, bool a2)
 
     if (strnicmp(entry.str, "r:", 2) == 0) {
         char* pch;
-        int v8;
-        int v9;
-        int v10[100];
+        int cost;
+        int cnt;
+        int rumors[100];
 
         pch = strchr(entry.str, '$') + 1;
-        v8 = atoi(pch);
+        cost = atoi(pch);
 
         pch = strchr(pch, ',');
-        v9 = dialog_parse_params(v10, pch + 1);
+        cnt = dialog_parse_params(rumors, pch + 1);
 
-        sub_418FC0(v8, v10, v9, entry.response_val, a1);
+        dialog_ask_money_for_rumor(cost, rumors, cnt, entry.response_val, a1);
         return false;
     }
 
@@ -3453,7 +3456,7 @@ void dialog_perform_training(int skill, DialogState* state)
 }
 
 // 0x418FC0
-void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
+void dialog_ask_money_for_rumor(int cost, int* rumors, int num_rumors, int response_val, DialogState* state)
 {
     int index;
     int num_known_rumors = 0;
@@ -3462,27 +3465,32 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
 
     for (index = 0; index < num_rumors; index++) {
         if (!rumor_qstate_get(rumors[index])
-            && !rumor_known_get(a5->pc_obj, rumors[index])) {
+            && !rumor_known_get(state->pc_obj, rumors[index])) {
             rumors[num_known_rumors++] = rumors[index];
         }
     }
 
-    sub_417590(a4, &v1, &v2);
+    sub_417590(response_val, &v1, &v2);
 
     if (num_known_rumors != 0) {
         index = random_between(0, num_known_rumors - 1);
-        if (a1 > 0) {
-            sub_418A40(a1, 9, rumors[index], v1, v2, a5);
+        if (cost > 0) {
+            sub_418A40(cost, 9, rumors[index], v1, v2, state);
         } else {
-            dialog_tell_rumor(rumors[index], v1, v2, a5);
+            dialog_tell_rumor(rumors[index], v1, v2, state);
         }
     } else {
-        dialog_copy_npc_class_specific_msg(a5->reply, a5, 7000);
-        a5->num_options = 1;
-        dialog_copy_pc_generic_msg(a5->options[0], a5, 600, 699);
-        a5->field_17F0[0] = v1;
-        a5->field_1804[0] = v2;
-        a5->actions[0] = NULL;
+        // NPC: "I have no information to impart."
+        dialog_copy_npc_class_specific_msg(state->reply, state, 7000);
+
+        // PC: "[continue]"
+        dialog_copy_pc_generic_msg(state->options[0], state, 600, 699);
+        state->field_17F0[0] = v1;
+        state->field_1804[0] = v2;
+
+        state->num_options = 1;
+
+        state->actions[0] = NULL;
     }
 }
 
