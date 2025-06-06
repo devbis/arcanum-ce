@@ -229,7 +229,7 @@ static void dialog_use_spell(int spell, int a2, int a3, DialogState* state);
 static int filter_unknown_areas(int64_t obj, int* areas, int cnt);
 static void dialog_offer_directions(const char* str, int response_val, int offset, bool mark, DialogState* state);
 static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
-static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
+static void dialog_give_directions(int area, int a2, int a3, DialogState* state);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
 static void dialog_check_story(int response_val, DialogState* state);
@@ -1237,7 +1237,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A0F0(a5->field_17EC, a2, a3, a5);
         break;
     case 20:
-        sub_41A150(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_give_directions(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 21:
         dialog_offer_directions(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, true, a5);
@@ -4031,39 +4031,45 @@ void sub_41A0F0(int a1, int a2, int a3, DialogState* a4)
     if (a1 > 0) {
         sub_418A40(a1, 20, a2, v1, v2, a4);
     } else {
-        sub_41A150(a2, v1, v2, a4);
+        dialog_give_directions(a2, v1, v2, a4);
     }
 }
 
 // 0x41A150
-void sub_41A150(int area, int a2, int a3, DialogState* a4)
+void dialog_give_directions(int area, int a2, int a3, DialogState* state)
 {
-    int64_t loc;
-    int64_t area_loc;
+    int64_t src_loc;
+    int64_t dst_loc;
     int rot;
-    int64_t v3;
-    int v4;
+    int64_t leagues;
+    int base;
 
-    loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
-    area_loc = area_get_location(area);
-    rot = location_rot(loc, area_loc);
-    v3 = location_dist(loc, area_loc) / 3168;
+    src_loc = obj_field_int64_get(state->npc_obj, OBJ_F_LOCATION);
+    dst_loc = area_get_location(area);
+    rot = location_rot(src_loc, dst_loc);
+    leagues = location_dist(src_loc, dst_loc) / 3168;
 
-    if (v3 < 2) {
-        v4 = 200;
-    } else if (v3 < 100) {
-        v4 = 300;
+    if (leagues < 2) {
+        // Neary: "It is just a stone's throw away to the north."
+        base = 200;
+    } else if (leagues < 100) {
+        // Medium: "It is to the north a ways."
+        base = 300;
     } else {
-        v4 = 400;
+        // Far: "It is a long ways going to the north. A long ways."
+        base = 400;
     }
 
-    dialog_copy_npc_generic_msg(a4->reply, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
+    // NPC: Distance/rotation-specific.
+    dialog_copy_npc_generic_msg(state->reply, state, base + 10 * rot, base + 10 * rot + 9);
 
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
-    a4->num_options = 1;
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+    state->actions[0] = NULL;
+
+    state->num_options = 1;
 }
 
 // 0x41A230
