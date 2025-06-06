@@ -4207,19 +4207,29 @@ void dialog_offer_older_newspaper(int response_val, DialogState* state)
     }
 
     if (cnt != 0) {
+        // NPC: "I have these older newspapers for sale."
         dialog_copy_npc_generic_msg(state->reply, state, 4500, 4599);
+
+        // PC: Each option is a newspaper headline.
         for (index = 0; index < cnt; index++) {
             sub_460800(newspapers[index], state->options[index]);
             state->field_17F0[index] = 28;
             state->field_1804[index] = newspapers[index];
         }
+
+        // PC: "Forget it."
         dialog_copy_pc_generic_msg(state->options[cnt], state, 800, 899);
         sub_417590(response_val, &(state->field_17F0[cnt]), &(state->field_1804[cnt]));
+
         state->num_options = cnt + 1;
     } else {
+        // NPC: "I'm sorry. I don't have any older papers."
         dialog_copy_npc_generic_msg(state->reply, state, 4400, 4499);
+
+        // PC: "[continue]"
         dialog_copy_pc_generic_msg(state->options[0], state, 600, 699);
         sub_417590(response_val, &(state->field_17F0[0]), &(state->field_1804[0]));
+
         state->num_options = 1;
     }
 
@@ -4247,9 +4257,14 @@ void dialog_buy_newspaper(int newspaper, int a2, int a3, DialogState* state)
     loc = obj_field_int64_get(state->pc_obj, OBJ_F_LOCATION);
     obj = newspaper_create(newspaper, loc);
     item_transfer(obj, state->pc_obj);
+
+    // NPC: "It is completed."
     dialog_copy_npc_class_specific_msg(state->reply, state, 15000);
+
+    // PC: "Thank you."
     dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
     state->field_17F0[0] = a2;
     state->field_1804[0] = a3;
+
     state->actions[0] = NULL;
 }
