@@ -220,7 +220,7 @@ static void sub_4191E0(int a1, int a2, DialogState* a3);
 static void sub_419260(DialogState* a1, const char* a2);
 static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
 static void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state);
-static void sub_419A00(int a1, int a2, int a3, DialogState* a4);
+static void dialog_build_use_skill_option(int index, int skill, int response_val, DialogState* state);
 static void sub_419AC0(int a1, int a2, int a3, DialogState* a4);
 static void sub_419B50(int a1, int a2, DialogState* a3);
 static void sub_419C30(int a1, int a2, DialogState* a3);
@@ -2489,7 +2489,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
             return false;
         }
 
-        sub_419A00(a2, v4, entry.response_val, a3);
+        dialog_build_use_skill_option(a2, v4, entry.response_val, a3);
     } else if (strcmpi(entry.str, "w:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1800, 1899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
@@ -3762,7 +3762,7 @@ void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogS
     case DIALOG_HEALING_OFFER_OPTIONS:
         item_obj = skill_supplementary_item(state->npc_obj, SKILL_HEAL);
         if (ai_check_use_skill(state->npc_obj, state->pc_obj, item_obj, SKILL_HEAL) == AI_USE_SKILL_OK) {
-            sub_419A00(cnt, SKILL_HEAL, response_val, state);
+            dialog_build_use_skill_option(cnt, SKILL_HEAL, response_val, state);
             cnt++;
         }
         if (lvl >= 1) {
@@ -3814,21 +3814,24 @@ void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogS
 }
 
 // 0x419A00
-void sub_419A00(int a1, int a2, int a3, DialogState* a4)
+void dialog_build_use_skill_option(int index, int skill, int response_val, DialogState* state)
 {
     char buffer[1000];
     const char* name;
 
-    if (IS_TECH_SKILL(a2)) {
-        name = tech_skill_name(GET_TECH_SKILL(a2));
+    // PC: "[%s Skill]"
+    dialog_copy_pc_generic_msg(buffer, state, 900, 999);
+
+    if (IS_TECH_SKILL(skill)) {
+        name = tech_skill_name(GET_TECH_SKILL(skill));
     } else {
-        name = basic_skill_name(GET_BASIC_SKILL(a2));
+        name = basic_skill_name(GET_BASIC_SKILL(skill));
     }
 
-    sprintf(a4->options[a1], buffer, name);
-    a4->field_17F0[a1] = 14;
-    a4->field_1804[a1] = a2;
-    a4->field_1818[a1] = a3;
+    sprintf(state->options[index], buffer, name);
+    state->field_17F0[index] = 14;
+    state->field_1804[index] = skill;
+    state->field_1818[index] = response_val;
 }
 
 // 0x419AC0
