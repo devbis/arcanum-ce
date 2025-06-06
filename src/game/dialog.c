@@ -216,7 +216,7 @@ static void dialog_perform_training(int skill, DialogState* state);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
 static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
 static void dialog_build_pc_insult_option(int a1, int a2, int a3, DialogState* a4);
-static void sub_4191E0(int a1, int a2, DialogState* a3);
+static void dialog_insult_reply(int a1, int a2, DialogState* state);
 static void sub_419260(DialogState* a1, const char* a2);
 static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
 static void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state);
@@ -1207,7 +1207,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_4190E0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 10:
-        sub_4191E0(a2, a3, a5);
+        dialog_insult_reply(a2, a3, a5);
         break;
     case 11:
         dialog_offer_healing(DIALOG_HEALING_OFFER_OPTIONS, a2, a5);
@@ -3512,15 +3512,16 @@ void dialog_build_pc_insult_option(int index, int a2, int a3, DialogState* state
 }
 
 // 0x4191E0
-void sub_4191E0(int a1, int a2, DialogState* a3)
+void dialog_insult_reply(int a1, int a2, DialogState* state)
 {
-    reaction_adj(a3->npc_obj, a3->pc_obj, -10);
-    if (reaction_get(a3->npc_obj, a3->pc_obj) > 20) {
-        sub_414810(a1, a2, 0, 0, a3);
+    reaction_adj(state->npc_obj, state->pc_obj, -10);
+    if (reaction_get(state->npc_obj, state->pc_obj) > 20) {
+        sub_414810(a1, a2, 0, 0, state);
     } else {
-        dialog_copy_npc_race_specific_msg(a3->reply, a3, 1000);
-        a3->num_options = 0;
-        a3->field_17E8 = 4;
+        // NPC: "You insolent worm! How dare you?"
+        dialog_copy_npc_race_specific_msg(state->reply, state, 1000);
+        state->num_options = 0;
+        state->field_17E8 = 4;
     }
 }
 
