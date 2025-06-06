@@ -231,7 +231,7 @@ static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void sub_41A520(int a1, DialogState* a2);
 static void sub_41A620(int a1, DialogState* a2);
 static void dialog_offer_older_newspaper(int response_val, DialogState* state);
-static void sub_41A880(int a1, int a2, DialogState* a3);
+static void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState* state);
 static void sub_41A8C0(int a1, int a2, int a3, DialogState* a4);
 
 // 0x5A063C
@@ -1255,7 +1255,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_offer_older_newspaper(a2, a5);
         break;
     case 28:
-        sub_41A880(a2, a3, a5);
+        dialog_ask_money_for_newspaper(a2, a3, a5);
         break;
     case 29:
         sub_41A8C0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
@@ -4211,13 +4211,13 @@ void dialog_offer_older_newspaper(int response_val, DialogState* state)
 }
 
 // 0x41A880
-void sub_41A880(int a1, int a2, DialogState* a3)
+void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState* state)
 {
     int v1;
     int v2;
 
-    sub_417590(a2, &v1, &v2);
-    sub_418A40(2, 29, a1, v1, v2, a3);
+    sub_417590(response_val, &v1, &v2);
+    sub_418A40(2, 29, newspaper, v1, v2, state);
 }
 
 // 0x41A8C0
