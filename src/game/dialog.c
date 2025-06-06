@@ -142,6 +142,12 @@ typedef enum DialogAction {
     DIALOG_ACTION_COUNT,
 } DialogAction;
 
+typedef enum DialogHealingOfferType {
+    DIALOG_HEALING_OFFER_OPTIONS,
+    DIALOG_HEALING_OFFER_MAGICKAL_HEALING,
+    DIALOG_HEALING_OFFER_MAGICKAL_POISON_HEALING,
+} DialogHealingOfferType;
+
 typedef struct DialogFileEntry {
     /* 0000 */ int num;
     /* 0004 */ char* str;
@@ -213,7 +219,7 @@ static void sub_419190(int a1, int a2, int a3, DialogState* a4);
 static void sub_4191E0(int a1, int a2, DialogState* a3);
 static void sub_419260(DialogState* a1, const char* a2);
 static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
-static void sub_419830(int a1, int a2, DialogState* a3);
+static void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state);
 static void sub_419A00(int a1, int a2, int a3, DialogState* a4);
 static void sub_419AC0(int a1, int a2, int a3, DialogState* a4);
 static void sub_419B50(int a1, int a2, DialogState* a3);
@@ -1204,13 +1210,13 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_4191E0(a2, a3, a5);
         break;
     case 11:
-        sub_419830(0, a2, a5);
+        dialog_offer_healing(DIALOG_HEALING_OFFER_OPTIONS, a2, a5);
         break;
     case 12:
-        sub_419830(1, a2, a5);
+        dialog_offer_healing(DIALOG_HEALING_OFFER_MAGICKAL_HEALING, a2, a5);
         break;
     case 13:
-        sub_419830(2, a2, a5);
+        dialog_offer_healing(DIALOG_HEALING_OFFER_MAGICKAL_POISON_HEALING, a2, a5);
         break;
     case 14:
         sub_419B50(a2, a3, a5);
@@ -3739,62 +3745,71 @@ bool sub_4197D0(unsigned int flags, int a2, DialogState* a3)
 }
 
 // 0x419830
-void sub_419830(int a1, int a2, DialogState* a3)
+void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state)
 {
-    int v1;
+    int lvl;
     int64_t item_obj;
-    int v3;
+    int cnt;
     int index;
 
-    dialog_copy_npc_class_specific_msg(a3->reply, a3, 14000);
-    v1 = spell_college_level_get(a3->npc_obj, 12);
-    v3 = 0;
-    switch (a1) {
-    case 0:
-        item_obj = skill_supplementary_item(a3->npc_obj, SKILL_HEAL);
-        if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, item_obj, SKILL_HEAL) == AI_USE_SKILL_OK) {
-            sub_419A00(0, SKILL_HEAL, a2, a3);
-            v3 = 1;
+    // NPC: "What type of healing would you be seeking?"
+    dialog_copy_npc_class_specific_msg(state->reply, state, 14000);
+
+    lvl = spell_college_level_get(state->npc_obj, COLLEGE_NECROMANTIC_WHITE);
+    cnt = 0;
+
+    switch (type) {
+    case DIALOG_HEALING_OFFER_OPTIONS:
+        item_obj = skill_supplementary_item(state->npc_obj, SKILL_HEAL);
+        if (ai_check_use_skill(state->npc_obj, state->pc_obj, item_obj, SKILL_HEAL) == AI_USE_SKILL_OK) {
+            sub_419A00(cnt, SKILL_HEAL, response_val, state);
+            cnt++;
         }
-        if (v1 >= 1) {
-            dialog_copy_pc_generic_msg(a3->options[v3], a3, 1100, 1199);
-            a3->field_17F0[v3] = 12;
-            a3->field_1804[v3] = a2;
-            v3++;
+        if (lvl >= 1) {
+            // PC: "[Magickal Healing]"
+            dialog_copy_pc_generic_msg(state->options[cnt], state, 1100, 1199);
+            state->field_17F0[cnt] = 12;
+            state->field_1804[cnt] = response_val;
+            cnt++;
         }
-        if (v1 >= 2) {
-            dialog_copy_pc_generic_msg(a3->options[v3], a3, 1200, 1299);
-            a3->field_17F0[v3] = 13;
-            a3->field_1804[v3] = a2;
-            v3++;
+        if (lvl >= 2) {
+            // PC: "[Magickal Poison Healing]"
+            dialog_copy_pc_generic_msg(state->options[cnt], state, 1200, 1299);
+            state->field_17F0[cnt] = 13;
+            state->field_1804[cnt] = response_val;
+            cnt++;
         }
-        if (v1 == 5) {
-            sub_419AC0(v3++, 64, a2, a3);
-        }
-        break;
-    case 1:
-        if (v1 >= 1) {
-            sub_419AC0(0, 60, a2, a3);
-            v3 = 1;
-        }
-        if (v1 >= 3) {
-            sub_419AC0(v3++, 62, a2, a3);
+        if (lvl == 5) {
+            sub_419AC0(cnt, SPELL_RESURRECT, response_val, state);
+            cnt++;
         }
         break;
-    case 2:
-        if (v1 >= 2) {
-            sub_419AC0(0, 61, a2, a3);
-            v3 = 1;
+    case DIALOG_HEALING_OFFER_MAGICKAL_HEALING:
+        if (lvl >= 1) {
+            sub_419AC0(cnt, SPELL_MINOR_HEALING, response_val, state);
+            cnt++;
+        }
+        if (lvl >= 3) {
+            sub_419AC0(cnt, SPELL_MAJOR_HEALING, response_val, state);
+            cnt++;
+        }
+        break;
+    case DIALOG_HEALING_OFFER_MAGICKAL_POISON_HEALING:
+        if (lvl >= 2) {
+            sub_419AC0(cnt, SPELL_HALT_POISON, response_val, state);
+            cnt++;
         }
         break;
     }
 
-    dialog_copy_pc_generic_msg(a3->options[v3], a3, 800, 899);
-    sub_417590(a2, &(a3->field_17F0[v3]), &(a3->field_1804[v3]));
-    a3->num_options = v3 + 1;
+    // PC: "Forget it."
+    dialog_copy_pc_generic_msg(state->options[cnt], state, 800, 899);
+    sub_417590(response_val, &(state->field_17F0[cnt]), &(state->field_1804[cnt]));
 
-    for (index = 0; index < a3->num_options; index++) {
-        a3->actions[index] = NULL;
+    state->num_options = cnt + 1;
+
+    for (index = 0; index < state->num_options; index++) {
+        state->actions[index] = NULL;
     }
 }
 
