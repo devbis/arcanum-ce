@@ -13,64 +13,102 @@ static void fate_ui_destroy();
 static bool fate_ui_message_filter(TigMessage* msg);
 static void fate_ui_handle_fate_resolved(int64_t obj, int fate);
 
-// 0x5CAAE0
+/**
+ * Handle to the parent window.
+ *
+ * 0x5CAAE0
+ */
 static tig_window_handle_t fate_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
-// 0x5CAAE8
+/**
+ * Fate button configurations.
+ *
+ * 0x5CAAE8
+ */
 static UiButtonInfo fate_ui_buttons[FATE_COUNT] = {
-    { 223, 4, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 22, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 40, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 58, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 76, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 94, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 112, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 130, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 148, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 166, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 184, 293, TIG_BUTTON_HANDLE_INVALID },
-    { 223, 202, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*                 FATE_FULL_HEAL */ { 223, 4, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*       FATE_FORCE_GOOD_REACTION */ { 223, 22, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*                  FATE_CRIT_HIT */ { 223, 40, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*                 FATE_CRIT_MISS */ { 223, 58, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*       FATE_SAVE_AGAINST_MAGICK */ { 223, 76, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*          FATE_SPELL_AT_MAXIMUM */ { 223, 94, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*     FATE_CRIT_SUCCESS_GAMBLING */ { 223, 112, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*         FATE_CRIT_SUCCESS_HEAL */ { 223, 130, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*  FATE_CRIT_SUCCESS_PICK_POCKET */ { 223, 148, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*       FATE_CRIT_SUCCESS_REPAIR */ { 223, 166, 293, TIG_BUTTON_HANDLE_INVALID },
+    /*   FATE_CRIT_SUCCESS_PICK_LOCKS */ { 223, 184, 293, TIG_BUTTON_HANDLE_INVALID },
+    /* FATE_CRIT_SUCCESS_DISARM_TRAPS */ { 223, 202, 293, TIG_BUTTON_HANDLE_INVALID },
 };
 
-// 0x680ED0
+/**
+ * Font for rendering fate labels.
+ *
+ * 0x680ED0
+ */
 static tig_font_handle_t fate_ui_font;
 
-// 0x680ED8
+/**
+ * 0x680ED8
+ */
 static int64_t fate_ui_obj;
 
-// 0x680EE0
-static int fate_ui_mes;
+/**
+ * "fate_ui.mes"
+ *
+ * 0x680EE0
+ */
+static mes_file_handle_t fate_ui_mes;
 
-// 0x680EE4
+/**
+ * Flag indicating whether the fate UI system is initialized.
+ *
+ * 0x680EE4
+ */
 static bool fate_ui_initialized;
 
-// 0x680EE8
+/**
+ * Flag indicating whether the fate UI window is created.
+ *
+ * 0x680EE8
+ */
 static bool fate_ui_created;
 
-// 0x56FAE0
+/**
+ * Called when the game is initialized.
+ *
+ * 0x56FAE0
+ */
 bool fate_ui_init(GameInitInfo* init_info)
 {
     TigFont font_info;
 
     (void)init_info;
 
+    // Load fate button labels (required).
     if (!mes_load("mes\\fate_ui.mes", &fate_ui_mes)) {
         return false;
     }
 
+    // Create white font for rendering labels.
     font_info.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_info.art_id));
     font_info.str = NULL;
     font_info.color = tig_color_make(255, 255, 255);
     tig_font_create(&font_info, &fate_ui_font);
 
-    fate_ui_initialized = true;
+    // Bind fate change handler.
     fate_set_callback(fate_ui_handle_fate_resolved);
+
+    fate_ui_initialized = true;
 
     return true;
 }
 
-// 0x56FBB0
+/**
+ * Called when the game is being reset.
+ *
+ * 0x56FBB0
+ */
 void fate_ui_reset()
 {
     if (fate_ui_created) {
@@ -78,7 +116,11 @@ void fate_ui_reset()
     }
 }
 
-// 0x56FBC0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x56FBC0
+ */
 void fate_ui_exit()
 {
     mes_unload(fate_ui_mes);
@@ -86,24 +128,41 @@ void fate_ui_exit()
     fate_ui_initialized = false;
 }
 
-// 0x56FBF0
-void fate_ui_open(int64_t obj)
+/**
+ * Toggles the fate UI.
+ *
+ * This function shows or hides the fate UI when the fate button in the top bar
+ * is clicked or the `W` key is pressed.
+ *
+ * The `obj` is mandatory for presenting fate UI and should be the local PC.
+ *
+ * 0x56FBF0
+ */
+void fate_ui_toggle(int64_t obj)
 {
+    // Close fate UI if it's currently visible.
     if (fate_ui_created) {
         fate_ui_close();
         return;
     }
 
+    // Make sure PC object is specified and it's not dead.
     if (obj == OBJ_HANDLE_NULL
         || critter_is_dead(obj)) {
         return;
     }
 
     fate_ui_obj = obj;
+
+    // Proceed to create the UI.
     fate_ui_create();
 }
 
-// 0x56FC40
+/**
+ * Closes the fate UI.
+ *
+ * 0x56FC40
+ */
 void fate_ui_close()
 {
     if (fate_ui_created) {
@@ -112,17 +171,23 @@ void fate_ui_close()
     }
 }
 
-// 0x56FC70
+/**
+ * Creates the fate UI window.
+ *
+ * 0x56FC70
+ */
 void fate_ui_create()
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
     TigRect window_rect;
-    TigRect button_rect;
+    TigRect label_rect;
     TigWindowData window_data;
     TigArtBlitInfo blit_info;
     MesFileEntry mes_file_entry;
+    int fate;
 
+    // Skip if UI is already created.
     if (fate_ui_created) {
         return;
     }
@@ -135,6 +200,7 @@ void fate_ui_create()
         return;
     }
 
+    // Set up window properties.
     window_rect.x = 0;
     window_rect.y = 41;
     window_rect.width = art_frame_data.width;
@@ -147,35 +213,39 @@ void fate_ui_create()
 
     if (tig_window_create(&window_data, &fate_ui_window) != TIG_OK) {
         tig_debug_printf("fate_ui_create: ERROR: window create failed!\n");
-        exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
+        exit(EXIT_FAILURE); // FIX: Proper exit code.
     }
 
+    // Draw background.
     window_rect.x = 0;
     window_rect.y = 0;
 
-    blit_info.src_rect = &window_rect;
-    blit_info.art_id = art_id;
     blit_info.flags = 0;
+    blit_info.art_id = art_id;
+    blit_info.src_rect = &window_rect;
     blit_info.dst_rect = &window_rect;
     tig_window_blit_art(fate_ui_window, &blit_info);
 
     tig_font_push(fate_ui_font);
 
-    button_rect.x = 11;
-    button_rect.y = 3;
-    button_rect.width = window_rect.width - 11;
-    button_rect.height = 18;
+    // Set up initial label rect.
+    label_rect.x = 11;
+    label_rect.y = 3;
+    label_rect.width = window_rect.width - 11;
+    label_rect.height = 18;
 
-    for (int fate = 0; fate < FATE_COUNT; fate++) {
+    // Write fate button label from the message file.
+    for (fate = 0; fate < FATE_COUNT; fate++) {
         mes_file_entry.num = fate;
         mes_get_msg(fate_ui_mes, &mes_file_entry);
-        tig_window_text_write(fate_ui_window, mes_file_entry.str, &button_rect);
-        button_rect.y += button_rect.height;
+        tig_window_text_write(fate_ui_window, mes_file_entry.str, &label_rect);
+        label_rect.y += label_rect.height;
     }
 
     tig_font_pop();
 
-    for (int fate = 0; fate < FATE_COUNT; fate++) {
+    // Create fate buttons.
+    for (fate = 0; fate < FATE_COUNT; fate++) {
         intgame_button_create_ex(fate_ui_window,
             &window_rect,
             &(fate_ui_buttons[fate]),
@@ -187,7 +257,11 @@ void fate_ui_create()
     fate_ui_created = true;
 }
 
-// 0x56FE40
+/**
+ * Destroys the fate UI window.
+ *
+ * 0x56FE40
+ */
 void fate_ui_destroy()
 {
     if (fate_ui_created) {
@@ -198,42 +272,68 @@ void fate_ui_destroy()
     }
 }
 
-// 0x56FE70
+/**
+ * Called when an event occurred.
+ *
+ * 0x56FE70
+ */
 bool fate_ui_message_filter(TigMessage* msg)
 {
+    int fate;
+
     switch (msg->type) {
     case TIG_MESSAGE_BUTTON:
-        for (int fate = 0; fate < FATE_COUNT; fate++) {
+        for (fate = 0; fate < FATE_COUNT; fate++) {
             if (fate_ui_buttons[fate].button_handle == msg->data.button.button_handle) {
-                if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED
-                    && !fate_activate(fate_ui_obj, fate)) {
-                    tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_RELEASED);
-                    tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_MOUSE_INSIDE);
-                    return true;
+                if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
+                    // Button is pressed - attempt to activate appropriate fate.
+                    if (fate_activate(fate_ui_obj, fate)) {
+                        // Refresh UI.
+                        sub_551160();
+                    } else {
+                        // Fate was not activated - simulate button release by
+                        // programatically changing state so that appropriate
+                        // art is displayed.
+                        tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_RELEASED);
+
+                        // Since the user just pressed this button the mouse
+                        // cursor is within button bounds - mark it as
+                        // highlighted.
+                        tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_MOUSE_INSIDE);
+                    }
+                } else if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
+                    // Button is released - attempt to deactivate appropriate
+                    // fate.
+                    if (fate_deactivate(fate_ui_obj, fate)) {
+                        // Refresh UI.
+                        sub_551160();
+                    }
                 }
 
-                if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
-                    && fate_deactivate(fate_ui_obj, fate)) {
-                    return true;
-                }
-
-                sub_551160();
                 return true;
             }
         }
         break;
     case TIG_MESSAGE_KEYBOARD:
+        // Pressing space closes fate UI.
         if (msg->data.keyboard.key == SDL_SCANCODE_SPACE
             && msg->data.keyboard.pressed == 1) {
             fate_ui_close();
             return true;
         }
+        break;
+    default:
+        break;
     }
 
     return false;
 }
 
-// 0x56FF40
+/**
+ * Called when fate has been resolved.
+ *
+ * 0x56FF40
+ */
 void fate_ui_handle_fate_resolved(int64_t obj, int fate)
 {
     if (fate_ui_obj == obj) {
