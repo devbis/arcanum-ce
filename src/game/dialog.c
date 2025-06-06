@@ -229,7 +229,7 @@ static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A3E0(int a1, DialogState* a2);
 static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void dialog_ask_about_buying_newspapers(int response_val, DialogState* state);
-static void sub_41A620(int a1, DialogState* a2);
+static void dialog_offer_today_newspaper(int response_val, DialogState* state);
 static void dialog_offer_older_newspaper(int response_val, DialogState* state);
 static void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState* state);
 static void dialog_buy_newspaper(int a1, int a2, int a3, DialogState* a4);
@@ -1249,7 +1249,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_ask_about_buying_newspapers(a2, a5);
         break;
     case 26:
-        sub_41A620(a2, a5);
+        dialog_offer_today_newspaper(a2, a5);
         break;
     case 27:
         dialog_offer_older_newspaper(a2, a5);
@@ -4152,36 +4152,43 @@ void dialog_ask_about_buying_newspapers(int response_val, DialogState* state)
 }
 
 // 0x41A620
-void sub_41A620(int a1, DialogState* a2)
+void dialog_offer_today_newspaper(int response_val, DialogState* state)
 {
-    int v1;
-    int pos;
+    int newspaper;
+    size_t pos;
 
-    v1 = newspaper_get(NEWSPAPER_CURRENT);
-    sub_460800(v1, a2->reply);
+    newspaper = newspaper_get(NEWSPAPER_CURRENT);
+    sub_460800(newspaper, state->reply);
 
-    pos = (int)strlen(a2->reply);
+    pos = strlen(state->reply);
     if (pos > 0) {
-        if (a2->reply[pos - 1] != '.'
-            && a2->reply[pos - 1] != '?'
-            && a2->reply[pos - 1] != '!') {
-            a2->reply[pos++] = '.';
+        if (state->reply[pos - 1] != '.'
+            && state->reply[pos - 1] != '?'
+            && state->reply[pos - 1] != '!') {
+            state->reply[pos++] = '.';
         }
 
-        a2->reply[pos++] = ' ';
-        a2->reply[pos++] = '\0';
+        state->reply[pos++] = ' ';
+        state->reply[pos++] = '\0';
     }
 
-    dialog_copy_npc_generic_msg(&(a2->reply[pos]), a2, 4300, 4399);
-    dialog_copy_pc_generic_msg(a2->options[0], a2, 1, 99);
-    a2->field_17F0[0] = 28;
-    a2->field_1804[0] = v1;
-    a2->field_1818[0] = a1;
-    dialog_copy_pc_generic_msg(a2->options[1], a2, 100, 199);
-    sub_417590(a1, &a2->field_17F0[1], &a2->field_1804[1]);
-    a2->actions[0] = NULL;
-    a2->actions[1] = NULL;
-    a2->num_options = 2;
+    // NPC: "Do you want to buy this newspaper?"
+    dialog_copy_npc_generic_msg(&(state->reply[pos]), state, 4300, 4399);
+
+    // PC: "Yes."
+    dialog_copy_pc_generic_msg(state->options[0], state, 1, 99);
+    state->field_17F0[0] = 28;
+    state->field_1804[0] = newspaper;
+    state->field_1818[0] = response_val;
+
+    // PC: "No."
+    dialog_copy_pc_generic_msg(state->options[1], state, 100, 199);
+    sub_417590(response_val, &state->field_17F0[1], &state->field_1804[1]);
+
+    state->actions[0] = NULL;
+    state->actions[1] = NULL;
+
+    state->num_options = 2;
 }
 
 // 0x41A700
