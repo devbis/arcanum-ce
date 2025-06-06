@@ -227,7 +227,7 @@ static void dialog_ask_money_for_spell(int a1, int a2, DialogState* a3);
 static void dialog_use_skill(int a1, int a2, int a3, DialogState* a4);
 static void dialog_use_spell(int spell, int a2, int a3, DialogState* state);
 static int filter_unknown_areas(int64_t obj, int* areas, int cnt);
-static void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5);
+static void dialog_offer_directions(const char* str, int response_val, int offset, bool mark, DialogState* state);
 static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
@@ -1231,7 +1231,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_use_spell(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 18:
-        sub_419E70(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, 0, a5);
+        dialog_offer_directions(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, false, a5);
         break;
     case 19:
         sub_41A0F0(a5->field_17EC, a2, a3, a5);
@@ -1240,7 +1240,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A150(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 21:
-        sub_419E70(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, 1, a5);
+        dialog_offer_directions(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, true, a5);
         break;
     case 22:
         sub_41A230(a5->field_17EC, a2, a3, a5);
@@ -3957,64 +3957,67 @@ int filter_unknown_areas(int64_t obj, int* areas, int cnt)
 }
 
 // 0x419E70
-void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5)
+void dialog_offer_directions(const char* str, int response_val, int offset, bool mark, DialogState* state)
 {
     char buffer[1000];
     char* pch;
-    int v1;
-    int v2;
-    int v3[100];
-    int v4;
-    int v5;
-    int index;
+    int cost;
+    int cnt;
+    int areas[100];
+    int idx;
 
     strcpy(buffer, str);
 
     pch = strchr(buffer, '$');
-    v1 = atoi(pch + 1);
+    cost = atoi(pch + 1);
 
     pch = strchr(pch, ',');
-    v2 = dialog_parse_params(v3, pch + 1);
+    cnt = dialog_parse_params(areas, pch + 1);
 
-    v4 = 0;
-    v5 = filter_unknown_areas(a5->pc_obj, v3, v2);
+    cnt = filter_unknown_areas(state->pc_obj, areas, cnt);
 
-    if (a4) {
-        dialog_copy_npc_generic_msg(a5->reply, a5, 500, 599);
+    if (mark) {
+        // NPC: "What place do you want marked on your map?"
+        dialog_copy_npc_generic_msg(state->reply, state, 500, 599);
     } else {
-        dialog_copy_npc_generic_msg(a5->reply, a5, 100, 199);
+        // NPC: "Where do you need directions to?"
+        dialog_copy_npc_generic_msg(state->reply, state, 100, 199);
     }
 
-    if (critter_leader_get(a5->npc_obj) == a5->pc_obj) {
-        a5->field_17EC = 0;
+    if (critter_leader_get(state->npc_obj) == state->pc_obj) {
+        state->field_17EC = 0;
     } else {
-        a5->field_17EC = v1;
+        state->field_17EC = cost;
     }
 
-    for (v4 = 0; v4 < 4; v4++) {
-        if (a3 + v4 >= v5) {
+    // PC: Up to 4 options, each is the name of the area.
+    for (idx = 0; idx < 4; idx++) {
+        if (offset + idx >= cnt) {
             break;
         }
 
-        strcpy(a5->options[v4], area_get_name(v3[a3 + v4]));
-        a5->field_17F0[v4] = a4 ? 22 : 19;
-        a5->field_1804[v4] = v3[a3 + v4];
-        a5->field_1818[v4] = a2;
+        strcpy(state->options[idx], area_get_name(areas[offset + idx]));
+        state->field_17F0[idx] = mark ? 22 : 19;
+        state->field_1804[idx] = areas[offset + idx];
+        state->field_1818[idx] = response_val;
     }
 
-    if (a3 + v4 < v5) {
-        dialog_copy_pc_generic_msg(a5->options[v4], a5, 600, 699);
-        a5->field_17F0[v4] = a4 ? 21 : 18;
-        a5->field_1804[v4] = a2;
-        a5->field_1818[v4] = a3 + v4;
+    if (offset + idx < cnt) {
+        // PC: "[continue]"
+        dialog_copy_pc_generic_msg(state->options[idx], state, 600, 699);
+        state->field_17F0[idx] = mark ? 21 : 18;
+        state->field_1804[idx] = response_val;
+        state->field_1818[idx] = offset + idx;
     } else {
-        dialog_copy_pc_generic_msg(a5->options[v4], a5, 800, 899);
-        sub_417590(a2, &(a5->field_17F0[v4]), &(a5->field_1804[v4]));
+        // PC: "Forget it."
+        dialog_copy_pc_generic_msg(state->options[idx], state, 800, 899);
+        sub_417590(response_val, &(state->field_17F0[idx]), &(state->field_1804[idx]));
     }
 
-    a5->num_options = v4 + 1;
-    for (index = 0; index < a5->num_options; index++) {
-        a5->actions[index] = NULL;
+    state->num_options = idx + 1;
+
+    for (idx = 0; idx < state->num_options; idx++) {
+        state->actions[idx] = NULL;
     }
 }
 
