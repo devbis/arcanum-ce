@@ -226,7 +226,7 @@ static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
-static void sub_41A3E0(int a1, DialogState* a2);
+static void dialog_check_story(int response_val, DialogState* state);
 static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void dialog_ask_about_buying_newspapers(int response_val, DialogState* state);
 static void dialog_offer_today_newspaper(int response_val, DialogState* state);
@@ -1243,7 +1243,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A290(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 24:
-        sub_41A3E0(a2, a5);
+        dialog_check_story(a2, a5);
         break;
     case 25:
         dialog_ask_about_buying_newspapers(a2, a5);
@@ -4078,13 +4078,18 @@ void sub_41A290(int area, int a2, int a3, DialogState* a4)
 }
 
 // 0x41A3E0
-void sub_41A3E0(int a1, DialogState* a2)
+void dialog_check_story(int response_val, DialogState* state)
 {
-    dialog_copy_npc_story_msg(a2->reply, a2);
-    dialog_copy_pc_class_specific_msg(a2->options[0], a2, 1000);
-    sub_417590(a1, a2->field_17F0, a2->field_1804);
-    a2->actions[0] = NULL;
-    a2->num_options = 1;
+    // NPC: Story-specific.
+    dialog_copy_npc_story_msg(state->reply, state);
+
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    sub_417590(response_val, &(state->field_17F0[0]), &(state->field_1804[0]));
+
+    state->actions[0] = NULL;
+
+    state->num_options = 1;
 }
 
 // 0x41A440
