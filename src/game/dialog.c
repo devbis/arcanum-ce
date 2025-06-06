@@ -228,7 +228,7 @@ static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A3E0(int a1, DialogState* a2);
 static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
-static void sub_41A520(int a1, DialogState* a2);
+static void dialog_ask_about_buying_newspapers(int response_val, DialogState* state);
 static void sub_41A620(int a1, DialogState* a2);
 static void dialog_offer_older_newspaper(int response_val, DialogState* state);
 static void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState* state);
@@ -1246,7 +1246,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A3E0(a2, a5);
         break;
     case 25:
-        sub_41A520(a2, a5);
+        dialog_ask_about_buying_newspapers(a2, a5);
         break;
     case 26:
         sub_41A620(a2, a5);
@@ -4118,26 +4118,37 @@ void dialog_copy_npc_story_msg(char* buffer, DialogState* state)
 }
 
 // 0x41A520
-void sub_41A520(int a1, DialogState* a2)
+void dialog_ask_about_buying_newspapers(int response_val, DialogState* state)
 {
-    dialog_copy_npc_generic_msg(a2->reply, a2, 4200, 4299);
-    dialog_copy_pc_generic_msg(a2->options[0], a2, 2200, 2299);
-    a2->field_17F0[0] = 28;
-    a2->field_1804[0] = newspaper_get(NEWSPAPER_CURRENT);
-    a2->field_1818[0] = a1;
-    dialog_copy_pc_generic_msg(a2->options[1], a2, 2000, 2099);
-    a2->field_17F0[1] = 26;
-    a2->field_1804[1] = a1;
-    dialog_copy_pc_generic_msg(a2->options[2], a2, 2100, 2199);
-    a2->field_17F0[2] = 27;
-    a2->field_1804[2] = a1;
-    dialog_copy_pc_generic_msg(a2->options[3], a2, 800, 899);
-    sub_417590(a1, &a2->field_17F0[3], &a2->field_1804[3]);
-    a2->actions[0] = NULL;
-    a2->actions[1] = NULL;
-    a2->actions[2] = NULL;
-    a2->actions[3] = NULL;
-    a2->num_options = 4;
+    // NPC: "What newspaper are you looking for?"
+    dialog_copy_npc_generic_msg(state->reply, state, 4200, 4299);
+
+    // PC: "I want to buy today's newspaper."
+    dialog_copy_pc_generic_msg(state->options[0], state, 2200, 2299);
+    state->field_17F0[0] = 28;
+    state->field_1804[0] = newspaper_get(NEWSPAPER_CURRENT);
+    state->field_1818[0] = response_val;
+
+    // PC: "What is the headline of today's paper?"
+    dialog_copy_pc_generic_msg(state->options[1], state, 2000, 2099);
+    state->field_17F0[1] = 26;
+    state->field_1804[1] = response_val;
+
+    // PC: "I would like see some older newspapers."
+    dialog_copy_pc_generic_msg(state->options[2], state, 2100, 2199);
+    state->field_17F0[2] = 27;
+    state->field_1804[2] = response_val;
+
+    // PC: "Forget it."
+    dialog_copy_pc_generic_msg(state->options[3], state, 800, 899);
+    sub_417590(response_val, &(state->field_17F0[3]), &(state->field_1804[3]));
+
+    state->actions[0] = NULL;
+    state->actions[1] = NULL;
+    state->actions[2] = NULL;
+    state->actions[3] = NULL;
+
+    state->num_options = 4;
 }
 
 // 0x41A620
