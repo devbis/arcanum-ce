@@ -223,7 +223,7 @@ static void dialog_offer_healing(DialogHealingOfferType type, int response_val, 
 static void dialog_build_use_skill_option(int index, int skill, int response_val, DialogState* state);
 static void dialog_build_use_spell_option(int index, int spell, int response_val, DialogState* state);
 static void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state);
-static void sub_419C30(int a1, int a2, DialogState* a3);
+static void dialog_ask_money_for_spell(int a1, int a2, DialogState* a3);
 static void sub_419CB0(int a1, int a2, int a3, DialogState* a4);
 static void sub_419D50(int a1, int a2, int a3, DialogState* a4);
 static int sub_419E20(int64_t obj, int* a2, int cnt);
@@ -1222,7 +1222,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_ask_money_for_skill(a2, a3, a5);
         break;
     case 15:
-        sub_419C30(a2, a3, a5);
+        dialog_ask_money_for_spell(a2, a3, a5);
         break;
     case 16:
         sub_419CB0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
@@ -3875,16 +3875,18 @@ void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state)
 }
 
 // 0x419C30
-void sub_419C30(int a1, int a2, DialogState* a3)
+void dialog_ask_money_for_spell(int spell, int response_val, DialogState* state)
 {
     int v1;
     int v2;
+    int amt;
 
-    sub_417590(a2, &v1, &v2);
-    if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
-        sub_419D50(a1, v1, v2, a3);
+    sub_417590(response_val, &v1, &v2);
+    if (critter_leader_get(state->npc_obj) == state->pc_obj) {
+        sub_419D50(spell, v1, v2, state);
     } else {
-        sub_418A40(spell_money(a1), 17, a1, v1, v2, a3);
+        amt = spell_money(spell);
+        sub_418A40(amt, 17, spell, v1, v2, state);
     }
 }
 
