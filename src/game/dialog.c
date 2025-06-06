@@ -221,7 +221,7 @@ static void sub_419260(DialogState* a1, const char* a2);
 static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
 static void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state);
 static void dialog_build_use_skill_option(int index, int skill, int response_val, DialogState* state);
-static void sub_419AC0(int a1, int a2, int a3, DialogState* a4);
+static void dialog_build_use_spell_option(int index, int spell, int response_val, DialogState* state);
 static void sub_419B50(int a1, int a2, DialogState* a3);
 static void sub_419C30(int a1, int a2, DialogState* a3);
 static void sub_419CB0(int a1, int a2, int a3, DialogState* a4);
@@ -2510,7 +2510,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1, 99);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "z:", 2) == 0) {
-        sub_419AC0(a2, atoi(entry.str + 2), entry.response_val, a3);
+        dialog_build_use_spell_option(a2, atoi(entry.str + 2), entry.response_val, a3);
     } else {
         sub_416B00(a3->options[a2], entry.str, a3);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
@@ -3780,23 +3780,23 @@ void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogS
             cnt++;
         }
         if (lvl == 5) {
-            sub_419AC0(cnt, SPELL_RESURRECT, response_val, state);
+            dialog_build_use_spell_option(cnt, SPELL_RESURRECT, response_val, state);
             cnt++;
         }
         break;
     case DIALOG_HEALING_OFFER_MAGICKAL_HEALING:
         if (lvl >= 1) {
-            sub_419AC0(cnt, SPELL_MINOR_HEALING, response_val, state);
+            dialog_build_use_spell_option(cnt, SPELL_MINOR_HEALING, response_val, state);
             cnt++;
         }
         if (lvl >= 3) {
-            sub_419AC0(cnt, SPELL_MAJOR_HEALING, response_val, state);
+            dialog_build_use_spell_option(cnt, SPELL_MAJOR_HEALING, response_val, state);
             cnt++;
         }
         break;
     case DIALOG_HEALING_OFFER_MAGICKAL_POISON_HEALING:
         if (lvl >= 2) {
-            sub_419AC0(cnt, SPELL_HALT_POISON, response_val, state);
+            dialog_build_use_spell_option(cnt, SPELL_HALT_POISON, response_val, state);
             cnt++;
         }
         break;
@@ -3835,15 +3835,17 @@ void dialog_build_use_skill_option(int index, int skill, int response_val, Dialo
 }
 
 // 0x419AC0
-void sub_419AC0(int a1, int a2, int a3, DialogState* a4)
+void dialog_build_use_spell_option(int index, int spell, int response_val, DialogState* state)
 {
     char buffer[1000];
 
-    dialog_copy_pc_generic_msg(buffer, a4, 1000, 1099);
-    sprintf(a4->options[a1], buffer, spell_name(a2));
-    a4->field_17F0[a1] = 15;
-    a4->field_1804[a1] = a2;
-    a4->field_1818[a1] = a3;
+    // PC: "[%s Spell]"
+    dialog_copy_pc_generic_msg(buffer, state, 1000, 1099);
+
+    sprintf(state->options[index], buffer, spell_name(spell));
+    state->field_17F0[index] = 15;
+    state->field_1804[index] = spell;
+    state->field_1818[index] = response_val;
 }
 
 // 0x419B50
