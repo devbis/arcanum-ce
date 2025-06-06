@@ -222,7 +222,7 @@ static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
 static void dialog_offer_healing(DialogHealingOfferType type, int response_val, DialogState* state);
 static void dialog_build_use_skill_option(int index, int skill, int response_val, DialogState* state);
 static void dialog_build_use_spell_option(int index, int spell, int response_val, DialogState* state);
-static void sub_419B50(int a1, int a2, DialogState* a3);
+static void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state);
 static void sub_419C30(int a1, int a2, DialogState* a3);
 static void sub_419CB0(int a1, int a2, int a3, DialogState* a4);
 static void sub_419D50(int a1, int a2, int a3, DialogState* a4);
@@ -1219,7 +1219,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_offer_healing(DIALOG_HEALING_OFFER_MAGICKAL_POISON_HEALING, a2, a5);
         break;
     case 14:
-        sub_419B50(a2, a3, a5);
+        dialog_ask_money_for_skill(a2, a3, a5);
         break;
     case 15:
         sub_419C30(a2, a3, a5);
@@ -3849,7 +3849,7 @@ void dialog_build_use_spell_option(int index, int spell, int response_val, Dialo
 }
 
 // 0x419B50
-void sub_419B50(int a1, int a2, DialogState* a3)
+void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state)
 {
     int v1;
     int v2;
@@ -3857,20 +3857,20 @@ void sub_419B50(int a1, int a2, DialogState* a3)
     int training;
     int amt;
 
-    sub_417590(a2, &v1, &v2);
-    if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
-        sub_419CB0(a1, v1, v2, a3);
+    sub_417590(response_val, &v1, &v2);
+    if (critter_leader_get(state->npc_obj) == state->pc_obj) {
+        sub_419CB0(skill, v1, v2, state);
     } else {
-        if (IS_TECH_SKILL(a1)) {
-            skill_level = tech_skill_level(a3->npc_obj, GET_TECH_SKILL(a1));
-            training = tech_skill_training_get(a3->npc_obj, GET_TECH_SKILL(a1));
-            amt = tech_skill_money(GET_TECH_SKILL(a1), skill_level, training);
+        if (IS_TECH_SKILL(skill)) {
+            skill_level = tech_skill_level(state->npc_obj, GET_TECH_SKILL(skill));
+            training = tech_skill_training_get(state->npc_obj, GET_TECH_SKILL(skill));
+            amt = tech_skill_money(GET_TECH_SKILL(skill), skill_level, training);
         } else {
-            skill_level = basic_skill_level(a3->npc_obj, GET_BASIC_SKILL(a1));
-            training = basic_skill_training_get(a3->npc_obj, GET_BASIC_SKILL(a1));
-            amt = basic_skill_money(GET_BASIC_SKILL(a1), skill_level, training);
+            skill_level = basic_skill_level(state->npc_obj, GET_BASIC_SKILL(skill));
+            training = basic_skill_training_get(state->npc_obj, GET_BASIC_SKILL(skill));
+            amt = basic_skill_money(GET_BASIC_SKILL(skill), skill_level, training);
         }
-        sub_418A40(amt, 16, a1, v1, v2, a3);
+        sub_418A40(amt, 16, skill, v1, v2, state);
     }
 }
 
