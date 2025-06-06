@@ -226,7 +226,7 @@ static void dialog_ask_money_for_skill(int skill, int response_val, DialogState*
 static void dialog_ask_money_for_spell(int a1, int a2, DialogState* a3);
 static void dialog_use_skill(int a1, int a2, int a3, DialogState* a4);
 static void dialog_use_spell(int spell, int a2, int a3, DialogState* state);
-static int sub_419E20(int64_t obj, int* a2, int cnt);
+static int filter_unknown_areas(int64_t obj, int* areas, int cnt);
 static void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5);
 static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A150(int a1, int a2, int a3, DialogState* a4);
@@ -2423,7 +2423,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (strnicmp(entry.str, "d:", 2) == 0) {
         pch = strchr(entry.str, ',');
         cnt = dialog_parse_params(values, pch + 1);
-        if (!sub_419E20(a3->pc_obj, values, cnt)) {
+        if (filter_unknown_areas(a3->pc_obj, values, cnt) == 0) {
             return false;
         }
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1300, 1399);
@@ -2496,7 +2496,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (strnicmp(entry.str, "x:", 2) == 0) {
         pch = strchr(entry.str, ',');
         cnt = dialog_parse_params(values, pch + 1);
-        if (!sub_419E20(a3->pc_obj, values, cnt)) {
+        if (filter_unknown_areas(a3->pc_obj, values, cnt) == 0) {
             return false;
         }
 
@@ -3942,18 +3942,18 @@ void dialog_use_spell(int spell, int a2, int a3, DialogState* state)
 }
 
 // 0x419E20
-int sub_419E20(int64_t obj, int* a2, int cnt)
+int filter_unknown_areas(int64_t obj, int* areas, int cnt)
 {
-    int v1 = 0;
+    int unknown = 0;
     int index;
 
     for (index = 0; index < cnt; index++) {
-        if (!area_is_known(obj, a2[index])) {
-            a2[v1++] = a2[index];
+        if (!area_is_known(obj, areas[index])) {
+            areas[unknown++] = areas[index];
         }
     }
 
-    return v1;
+    return unknown;
 }
 
 // 0x419E70
@@ -3977,7 +3977,7 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5)
     v2 = dialog_parse_params(v3, pch + 1);
 
     v4 = 0;
-    v5 = sub_419E20(a5->pc_obj, v3, v2);
+    v5 = filter_unknown_areas(a5->pc_obj, v3, v2);
 
     if (a4) {
         dialog_copy_npc_generic_msg(a5->reply, a5, 500, 599);
