@@ -224,7 +224,7 @@ static void dialog_build_use_skill_option(int index, int skill, int response_val
 static void dialog_build_use_spell_option(int index, int spell, int response_val, DialogState* state);
 static void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state);
 static void dialog_ask_money_for_spell(int a1, int a2, DialogState* a3);
-static void sub_419CB0(int a1, int a2, int a3, DialogState* a4);
+static void dialog_use_skill(int a1, int a2, int a3, DialogState* a4);
 static void sub_419D50(int a1, int a2, int a3, DialogState* a4);
 static int sub_419E20(int64_t obj, int* a2, int cnt);
 static void sub_419E70(const char* str, int a2, int a3, int a4, DialogState* a5);
@@ -1225,7 +1225,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_ask_money_for_spell(a2, a3, a5);
         break;
     case 16:
-        sub_419CB0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_use_skill(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 17:
         sub_419D50(a2, a5->field_17F0[1], a5->field_1804[1], a5);
@@ -3859,7 +3859,7 @@ void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state)
 
     sub_417590(response_val, &v1, &v2);
     if (critter_leader_get(state->npc_obj) == state->pc_obj) {
-        sub_419CB0(skill, v1, v2, state);
+        dialog_use_skill(skill, v1, v2, state);
     } else {
         if (IS_TECH_SKILL(skill)) {
             skill_level = tech_skill_level(state->npc_obj, GET_TECH_SKILL(skill));
@@ -3891,25 +3891,30 @@ void dialog_ask_money_for_spell(int spell, int response_val, DialogState* state)
 }
 
 // 0x419CB0
-void sub_419CB0(int a1, int a2, int a3, DialogState* a4)
+void dialog_use_skill(int skill, int a2, int a3, DialogState* state)
 {
     unsigned int flags;
     int64_t item_obj;
 
-    if (critter_pc_leader_get(a4->npc_obj) != OBJ_HANDLE_NULL) {
+    if (critter_pc_leader_get(state->npc_obj) != OBJ_HANDLE_NULL) {
         flags = 0;
     } else {
         flags = 0x2000;
     }
 
-    item_obj = skill_supplementary_item(a4->npc_obj, a1);
-    anim_goal_use_skill_on(a4->npc_obj, a4->pc_obj, item_obj, a1, flags);
-    dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
-    a4->num_options = 1;
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
+    item_obj = skill_supplementary_item(state->npc_obj, skill);
+    anim_goal_use_skill_on(state->npc_obj, state->pc_obj, item_obj, skill, flags);
+
+    // NPC: "It is done."
+    dialog_copy_npc_class_specific_msg(state->reply, state, 15000);
+
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+    state->actions[0] = NULL;
+
+    state->num_options = 1;
 }
 
 // 0x419D50
