@@ -215,7 +215,7 @@ static void dialog_ask_money_for_training(int skill, DialogState* state);
 static void dialog_perform_training(int skill, DialogState* state);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
 static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
-static void sub_419190(int a1, int a2, int a3, DialogState* a4);
+static void dialog_build_pc_insult_option(int a1, int a2, int a3, DialogState* a4);
 static void sub_4191E0(int a1, int a2, DialogState* a3);
 static void sub_419260(DialogState* a1, const char* a2);
 static bool sub_4197D0(unsigned int flags, int a2, DialogState* a3);
@@ -2445,7 +2445,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_1804[a2] = entry.response_val;
     } else if (strcmpi(entry.str, "i:") == 0) {
         sub_417590(entry.response_val, &v2, &v3);
-        sub_419190(a2, v2, v3, a3);
+        dialog_build_pc_insult_option(a2, v2, v3, a3);
     } else if (strcmpi(entry.str, "k:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1500, 1599);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
@@ -3503,12 +3503,12 @@ void sub_4190E0(int a1, int a2, int a3, DialogState* a4)
 }
 
 // 0x419190
-void sub_419190(int a1, int a2, int a3, DialogState* a4)
+void dialog_build_pc_insult_option(int index, int a2, int a3, DialogState* state)
 {
-    dialog_copy_pc_class_specific_msg(a4->options[a1], a4, 3000);
-    a4->field_17F0[a1] = 10;
-    a4->field_1804[a1] = a2;
-    a4->field_1818[a1] = a3;
+    dialog_copy_pc_class_specific_msg(state->options[index], state, 3000);
+    state->field_17F0[index] = 10;
+    state->field_1804[index] = a2;
+    state->field_1818[index] = a3;
 }
 
 // 0x4191E0
