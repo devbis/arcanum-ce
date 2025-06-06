@@ -228,7 +228,7 @@ static void dialog_use_skill(int a1, int a2, int a3, DialogState* a4);
 static void dialog_use_spell(int spell, int a2, int a3, DialogState* state);
 static int filter_unknown_areas(int64_t obj, int* areas, int cnt);
 static void dialog_offer_directions(const char* str, int response_val, int offset, bool mark, DialogState* state);
-static void sub_41A0F0(int a1, int a2, int a3, DialogState* a4);
+static void dialog_ask_money_for_directions(int cost, int area, int response_val, DialogState* state);
 static void dialog_give_directions(int area, int a2, int a3, DialogState* state);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
@@ -1234,7 +1234,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_offer_directions(&(a5->options[a4][strlen(a5->options[a4]) + 1]), a2, a3, false, a5);
         break;
     case 19:
-        sub_41A0F0(a5->field_17EC, a2, a3, a5);
+        dialog_ask_money_for_directions(a5->field_17EC, a2, a3, a5);
         break;
     case 20:
         dialog_give_directions(a2, a5->field_17F0[1], a5->field_1804[1], a5);
@@ -4022,16 +4022,16 @@ void dialog_offer_directions(const char* str, int response_val, int offset, bool
 }
 
 // 0x41A0F0
-void sub_41A0F0(int a1, int a2, int a3, DialogState* a4)
+void dialog_ask_money_for_directions(int cost, int area, int response_val, DialogState* state)
 {
     int v1;
     int v2;
 
-    sub_417590(a3, &v1, &v2);
-    if (a1 > 0) {
-        sub_418A40(a1, 20, a2, v1, v2, a4);
+    sub_417590(response_val, &v1, &v2);
+    if (cost > 0) {
+        sub_418A40(cost, 20, area, v1, v2, state);
     } else {
-        dialog_give_directions(a2, v1, v2, a4);
+        dialog_give_directions(area, v1, v2, state);
     }
 }
 
