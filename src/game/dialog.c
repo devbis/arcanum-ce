@@ -214,7 +214,7 @@ static void dialog_offer_training(int* skills, int cnt, int back_response_val, D
 static void dialog_ask_money_for_training(int skill, DialogState* state);
 static void dialog_perform_training(int skill, DialogState* state);
 static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogState* a5);
-static void sub_4190E0(int a1, int a2, int a3, DialogState* a4);
+static void dialog_tell_rumor(int rumor, int a2, int a3, DialogState* state);
 static void dialog_build_pc_insult_option(int a1, int a2, int a3, DialogState* a4);
 static void dialog_insult_reply(int a1, int a2, DialogState* state);
 static void sub_419260(DialogState* a1, const char* a2);
@@ -1204,7 +1204,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_418FC0(v2, v1, cnt, a2, a5);
         break;
     case 9:
-        sub_4190E0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_tell_rumor(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 10:
         dialog_insult_reply(a2, a3, a5);
@@ -3474,7 +3474,7 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
         if (a1 > 0) {
             sub_418A40(a1, 9, rumors[index], v1, v2, a5);
         } else {
-            sub_4190E0(rumors[index], v1, v2, a5);
+            dialog_tell_rumor(rumors[index], v1, v2, a5);
         }
     } else {
         dialog_copy_npc_class_specific_msg(a5->reply, a5, 7000);
@@ -3487,19 +3487,25 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogState* a5)
 }
 
 // 0x4190E0
-void sub_4190E0(int a1, int a2, int a3, DialogState* a4)
+void dialog_tell_rumor(int rumor, int a2, int a3, DialogState* state)
 {
     char buffer[1000];
 
-    rumor_copy_interaction_str(a4->pc_obj, a4->npc_obj, a1, buffer);
-    sub_416B00(a4->reply, buffer, a4);
-    a4->speech_id = -1;
-    rumor_known_set(a4->pc_obj, a1);
-    a4->num_options = 1;
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
+    // NPC: Rumor-specific.
+    rumor_copy_interaction_str(state->pc_obj, state->npc_obj, rumor, buffer);
+    sub_416B00(state->reply, buffer, state);
+    state->speech_id = -1;
+
+    rumor_known_set(state->pc_obj, rumor);
+
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+
+    state->num_options = 1;
+
+    state->actions[0] = NULL;
 }
 
 // 0x419190
