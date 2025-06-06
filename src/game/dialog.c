@@ -2155,7 +2155,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             }
             break;
         case DIALOG_ACTION_NP:
-            newspaper_queue(value, sub_4167C0(pch));
+            newspaper_enqueue(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_CE:
             dialog_copy_npc_order_ok_msg(a1->npc_obj, a1->pc_obj, a1->reply, &(a1->speech_id));
@@ -4123,7 +4123,7 @@ void sub_41A520(int a1, DialogState* a2)
     dialog_copy_npc_generic_msg(a2->reply, a2, 4200, 4299);
     dialog_copy_pc_generic_msg(a2->options[0], a2, 2200, 2299);
     a2->field_17F0[0] = 28;
-    a2->field_1804[0] = newspaper_get(4);
+    a2->field_1804[0] = newspaper_get(NEWSPAPER_CURRENT);
     a2->field_1818[0] = a1;
     dialog_copy_pc_generic_msg(a2->options[1], a2, 2000, 2099);
     a2->field_17F0[1] = 26;
@@ -4146,7 +4146,7 @@ void sub_41A620(int a1, DialogState* a2)
     int v1;
     int pos;
 
-    v1 = newspaper_get(4);
+    v1 = newspaper_get(NEWSPAPER_CURRENT);
     sub_460800(v1, a2->reply);
 
     pos = (int)strlen(a2->reply);

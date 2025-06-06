@@ -2309,7 +2309,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     case SAT_QUEUE_NEWSPAPER: {
         int newspaper = script_get_value(action->op_type[0], action->op_value[0], state);
         int priority = script_get_value(action->op_type[1], action->op_value[1], state);
-        newspaper_queue(newspaper, priority);
+        newspaper_enqueue(newspaper, priority);
         return NEXT;
     }
     case SAT_FLOAT_NEWSPAPER_HEADLINE: {
@@ -2317,7 +2317,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         // opcode accepts just 1 param. Check.
         int64_t npc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         char str[MAX_STRING];
-        sub_460800(newspaper_get(4), str);
+        sub_460800(newspaper_get(NEWSPAPER_CURRENT), str);
         size_t len = strlen(str);
         if (len > 0) {
             if (str[len] != '.' && str[len] != '?' && str[len] != '!') {
