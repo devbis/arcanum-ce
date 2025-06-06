@@ -231,7 +231,7 @@ static void dialog_offer_directions(const char* str, int response_val, int offse
 static void dialog_ask_money_for_directions(int cost, int area, int response_val, DialogState* state);
 static void dialog_give_directions(int area, int a2, int a3, DialogState* state);
 static void sub_41A230(int a1, int a2, int a3, DialogState* a4);
-static void sub_41A290(int a1, int a2, int a3, DialogState* a4);
+static void dialog_mark_area(int area, int a2, int a3, DialogState* state);
 static void dialog_check_story(int response_val, DialogState* state);
 static void dialog_copy_npc_story_msg(char* buffer, DialogState* state);
 static void dialog_ask_about_buying_newspapers(int response_val, DialogState* state);
@@ -1246,7 +1246,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         sub_41A230(a5->field_17EC, a2, a3, a5);
         break;
     case 23:
-        sub_41A290(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_mark_area(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 24:
         dialog_check_story(a2, a5);
@@ -4082,40 +4082,51 @@ void sub_41A230(int a1, int a2, int a3, DialogState* a4)
     if (a1 > 0) {
         sub_418A40(a1, 23, a2, v1, v2, a4);
     } else {
-        sub_41A290(a2, v1, v2, a4);
+        dialog_mark_area(a2, v1, v2, a4);
     }
 }
 
 // 0x41A290
-void sub_41A290(int area, int a2, int a3, DialogState* a4)
+void dialog_mark_area(int area, int a2, int a3, DialogState* state)
 {
     int64_t loc;
     int64_t area_loc;
     int rot;
-    int64_t v3;
-    int v4;
+    int64_t leagues;
+    int base;
     char buffer[1000];
 
-    loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(state->npc_obj, OBJ_F_LOCATION);
     area_loc = area_get_location(area);
     rot = location_rot(loc, area_loc);
-    v3 = location_dist(loc, area_loc) / 3168;
-    v4 = v3 < 2 ? 600 : 700;
+    leagues = location_dist(loc, area_loc) / 3168;
 
-    dialog_copy_npc_generic_msg(buffer, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
-
-    if (v3 < 2) {
-        strcpy(a4->reply, buffer);
+    if (leagues < 2) {
+        // Nearby: "It is very near. I have marked it just to the north."
+        base = 600;
     } else {
-        sprintf(a4->reply, buffer, v3);
+        // Non-nearby: "It is marked on your map. Not more than %d leagues to the north."
+        base = 700;
     }
 
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
-    a4->num_options = 1;
-    area_set_known(a4->pc_obj, area);
+    // NPC: Distance/rotation-specific.
+    dialog_copy_npc_generic_msg(buffer, state, base + 10 * rot, base + 10 * rot + 9);
+
+    if (leagues < 2) {
+        strcpy(state->reply, buffer);
+    } else {
+        sprintf(state->reply, buffer, leagues);
+    }
+
+    // PC: "Thank you."
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+    state->actions[0] = NULL;
+
+    state->num_options = 1;
+
+    area_set_known(state->pc_obj, area);
 }
 
 // 0x41A3E0
