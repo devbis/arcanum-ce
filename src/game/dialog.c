@@ -232,7 +232,7 @@ static void sub_41A520(int a1, DialogState* a2);
 static void sub_41A620(int a1, DialogState* a2);
 static void dialog_offer_older_newspaper(int response_val, DialogState* state);
 static void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState* state);
-static void sub_41A8C0(int a1, int a2, int a3, DialogState* a4);
+static void dialog_buy_newspaper(int a1, int a2, int a3, DialogState* a4);
 
 // 0x5A063C
 static const char* dialog_gd_mes_file_names[GD_COUNT] = {
@@ -1258,7 +1258,7 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5)
         dialog_ask_money_for_newspaper(a2, a3, a5);
         break;
     case 29:
-        sub_41A8C0(a2, a5->field_17F0[1], a5->field_1804[1], a5);
+        dialog_buy_newspaper(a2, a5->field_17F0[1], a5->field_1804[1], a5);
         break;
     case 30:
         a5->field_17E8 = 6;
@@ -4221,17 +4221,17 @@ void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState
 }
 
 // 0x41A8C0
-void sub_41A8C0(int a1, int a2, int a3, DialogState* a4)
+void dialog_buy_newspaper(int newspaper, int a2, int a3, DialogState* state)
 {
     int64_t loc;
     int64_t obj;
 
-    loc = obj_field_int64_get(a4->pc_obj, OBJ_F_LOCATION);
-    obj = newspaper_create(a1, loc);
-    item_transfer(obj, a4->pc_obj);
-    dialog_copy_npc_class_specific_msg(a4->reply, a4, 15000);
-    dialog_copy_pc_class_specific_msg(a4->options[0], a4, 1000);
-    a4->field_17F0[0] = a2;
-    a4->field_1804[0] = a3;
-    a4->actions[0] = NULL;
+    loc = obj_field_int64_get(state->pc_obj, OBJ_F_LOCATION);
+    obj = newspaper_create(newspaper, loc);
+    item_transfer(obj, state->pc_obj);
+    dialog_copy_npc_class_specific_msg(state->reply, state, 15000);
+    dialog_copy_pc_class_specific_msg(state->options[0], state, 1000);
+    state->field_17F0[0] = a2;
+    state->field_1804[0] = a3;
+    state->actions[0] = NULL;
 }
