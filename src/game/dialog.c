@@ -207,7 +207,7 @@ static void dialog_copy_npc_race_specific_msg(char* buffer, DialogState* state, 
 static void dialog_copy_npc_generic_msg(char* buffer, DialogState* state, int start, int end);
 static bool dialog_copy_npc_override_msg(char* buffer, DialogState* state, int num);
 static int sub_4189C0(const char* a1, int a2);
-static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6);
+static void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState *state);
 static void sub_418B30(int a1, DialogState* a2);
 static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
 static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
@@ -2313,7 +2313,7 @@ bool sub_416840(DialogState* a1, bool a2)
 
         sub_417590(v3, &v4, &v5);
         sub_417590(entry.response_val, &v6, &v7);
-        sub_418A40(v2, v4, v5, v6, v7, a1);
+        dialog_ask_money(v2, v4, v5, v6, v7, a1);
 
         return false;
     }
@@ -3302,29 +3302,36 @@ void sub_418A00(int a1, int* a2, int* a3)
 }
 
 // 0x418A40
-void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogState *a6)
+void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState *state)
 {
-    int v1;
     char buffer[1000];
 
-    v1 = sub_4C1150(a6->npc_obj, a6->pc_obj, a1);
-    if (v1 == 1) {
-        v1 = 2;
+    amt = sub_4C1150(state->npc_obj, state->pc_obj, amt);
+    if (amt == 1) {
+        amt = 2;
     }
 
-    dialog_copy_npc_class_specific_msg(buffer, a6, 1000);
-    sprintf(a6->reply, buffer, v1);
-    a6->num_options = 2;
-    dialog_copy_pc_generic_msg(a6->options[0], a6, 1, 99);
-    a6->field_1804[0] = v1;
-    a6->field_17F0[0] = 4;
-    a6->actions[0] = NULL;
-    dialog_copy_pc_generic_msg(a6->options[1], a6, 100, 199);
-    a6->field_17F0[1] = a4;
-    a6->actions[1] = NULL;
-    a6->field_1804[1] = a5;
-    a6->field_17F0[2] = a2;
-    a6->field_1804[2] = a3;
+    // NPC: "It will cost you %d coins. Are you interested?"
+    dialog_copy_npc_class_specific_msg(buffer, state, 1000);
+    sprintf(state->reply, buffer, amt);
+
+    // PC: "Yes."
+    dialog_copy_pc_generic_msg(state->options[0], state, 1, 99);
+    state->field_17F0[0] = 4;
+    state->field_1804[0] = amt;
+    state->actions[0] = NULL;
+
+    // PC: "No."
+    dialog_copy_pc_generic_msg(state->options[1], state, 100, 199);
+    state->field_17F0[1] = a4;
+    state->field_1804[1] = a5;
+    state->actions[1] = NULL;
+
+    state->num_options = 2;
+
+    state->field_17F0[2] = param1;
+    state->field_1804[2] = param2;
+
 }
 
 // 0x418B30
@@ -3417,7 +3424,7 @@ void dialog_ask_money_for_training(int skill, DialogState* state)
         tech_skill_training_set(state->pc_obj, GET_TECH_SKILL(skill), TRAINING_NONE);
 
         // ...and ask for 100 coins.
-        sub_418A40(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
+        dialog_ask_money(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
     } else {
         // NOTE: The same flow as above (using basic skill function set).
         if (basic_skill_training_get(state->pc_obj, GET_BASIC_SKILL(skill)) != TRAINING_NONE) {
@@ -3431,7 +3438,7 @@ void dialog_ask_money_for_training(int skill, DialogState* state)
         }
 
         basic_skill_training_set(state->pc_obj, GET_BASIC_SKILL(skill), TRAINING_NONE);
-        sub_418A40(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
+        dialog_ask_money(100, 7, skill, state->field_17F0[index], state->field_1804[index], state);
     }
 }
 
@@ -3475,7 +3482,7 @@ void dialog_ask_money_for_rumor(int cost, int* rumors, int num_rumors, int respo
     if (num_known_rumors != 0) {
         index = random_between(0, num_known_rumors - 1);
         if (cost > 0) {
-            sub_418A40(cost, 9, rumors[index], v1, v2, state);
+            dialog_ask_money(cost, 9, rumors[index], v1, v2, state);
         } else {
             dialog_tell_rumor(rumors[index], v1, v2, state);
         }
@@ -3885,7 +3892,7 @@ void dialog_ask_money_for_skill(int skill, int response_val, DialogState* state)
             training = basic_skill_training_get(state->npc_obj, GET_BASIC_SKILL(skill));
             amt = basic_skill_money(GET_BASIC_SKILL(skill), skill_level, training);
         }
-        sub_418A40(amt, 16, skill, v1, v2, state);
+        dialog_ask_money(amt, 16, skill, v1, v2, state);
     }
 }
 
@@ -3901,7 +3908,7 @@ void dialog_ask_money_for_spell(int spell, int response_val, DialogState* state)
         dialog_use_spell(spell, v1, v2, state);
     } else {
         amt = spell_money(spell);
-        sub_418A40(amt, 17, spell, v1, v2, state);
+        dialog_ask_money(amt, 17, spell, v1, v2, state);
     }
 }
 
@@ -4044,7 +4051,7 @@ void dialog_ask_money_for_directions(int cost, int area, int response_val, Dialo
 
     sub_417590(response_val, &v1, &v2);
     if (cost > 0) {
-        sub_418A40(cost, 20, area, v1, v2, state);
+        dialog_ask_money(cost, 20, area, v1, v2, state);
     } else {
         dialog_give_directions(area, v1, v2, state);
     }
@@ -4095,7 +4102,7 @@ void dialog_ask_money_for_mark_area(int cost, int area, int response_val, Dialog
 
     sub_417590(response_val, &v1, &v2);
     if (cost > 0) {
-        sub_418A40(cost, 23, area, v1, v2, state);
+        dialog_ask_money(cost, 23, area, v1, v2, state);
     } else {
         dialog_mark_area(area, v1, v2, state);
     }
@@ -4317,7 +4324,7 @@ void dialog_ask_money_for_newspaper(int newspaper, int response_val, DialogState
     int v2;
 
     sub_417590(response_val, &v1, &v2);
-    sub_418A40(2, 29, newspaper, v1, v2, state);
+    dialog_ask_money(2, 29, newspaper, v1, v2, state);
 }
 
 // 0x41A8C0
