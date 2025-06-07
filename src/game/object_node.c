@@ -5,10 +5,18 @@
 static void object_node_reserve();
 static void object_node_remove_all();
 
-// 0x603AC0
+/**
+ * A pool of the free `ObjectNode` instances for reuse.
+ *
+ * 0x603AC0
+ */
 static ObjectNode* object_node_head;
 
-// 0x4E9920
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4E9920
+ */
 bool object_node_init(GameInitInfo* init_info)
 {
     (void)init_info;
@@ -16,13 +24,22 @@ bool object_node_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4E9930
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4E9930
+ */
 void object_node_exit()
 {
     object_node_remove_all();
 }
 
-// 0x4E9940
+/**
+ * Creates a new `ObjectNode` instance, reusing from the free pool if
+ * available.
+ *
+ * 0x4E9940
+ */
 ObjectNode* object_node_create()
 {
     ObjectNode* node;
@@ -39,14 +56,22 @@ ObjectNode* object_node_create()
     return node;
 }
 
-// 0x4E9970
+/**
+ * Destroys an `ObjectNode` instance by returning it to the free pool.
+ *
+ * 0x4E9970
+ */
 void object_node_destroy(ObjectNode* node)
 {
     node->next = object_node_head;
     object_node_head = node;
 }
 
-// 0x4E9990
+/**
+ * Allocates a batch of `ObjectNode` instances and place them into free pool.
+ *
+ * 0x4E9990
+ */
 void object_node_reserve()
 {
     int index;
@@ -63,7 +88,11 @@ void object_node_reserve()
     }
 }
 
-// 0x4E99C0
+/**
+ * Deallocates all `ObjectNode` instances in the free pool.
+ *
+ * 0x4E99C0
+ */
 void object_node_remove_all()
 {
     ObjectNode* next;
