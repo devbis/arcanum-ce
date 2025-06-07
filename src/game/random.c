@@ -2,12 +2,18 @@
 
 #include <time.h>
 
-// 0x601778
+/**
+ * 0x601778
+ */
 static int random_prev_value;
 
 static void random_set_prev_value(int value);
 
-// 0x4CEEB0
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4CEEB0
+ */
 bool random_init(GameInitInfo* init_info)
 {
     (void)init_info;
@@ -17,18 +23,30 @@ bool random_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4CEEC0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4CEEC0
+ */
 void random_exit()
 {
 }
 
-// 0x4CEED0
+/**
+ * Sets the seed for the random number generator.
+ *
+ * 0x4CEED0
+ */
 void random_seed(int value)
 {
     random_set_prev_value(value);
 }
 
-// 0x4CEEE0
+/**
+ * Generates a seed based on the current time and sets it.
+ *
+ * 0x4CEEE0
+ */
 int random_seed_generate()
 {
     int seed = (int)time(NULL);
@@ -38,7 +56,11 @@ int random_seed_generate()
     return seed;
 }
 
-// 0x4CEF00
+/**
+ * Generates a random integer within a specified inclusive range.
+ *
+ * 0x4CEF00
+ */
 int random_between(int lower, int upper)
 {
     if (lower == upper) {
@@ -50,13 +72,35 @@ int random_between(int lower, int upper)
     }
 }
 
-// 0x4CEF40
+/**
+ * Sets the internal state of the random number generator.
+ *
+ * 0x4CEF40
+ */
 void random_set_prev_value(int value)
 {
     random_prev_value = value;
 }
 
-// 0x4CEF50
+/**
+ * Generates the next random number.
+ *
+ * NOTE: The parameters are from Knuth and H.W. Lewis, Numerical Recipes, 2nd.
+ * edition, chapter 7.1, $An Even Quicker Generator, p.284, available for free
+ * on their website.
+ *
+ * The Numerical Recipes, 3rd. edition no longer recommends using LCG. I guess
+ * that CE can follow ToEE approach, which has a switch to select either this
+ * legacy implementation (referred to as `arcanum` in ToEE codebase), or
+ * Mersenne Twister (`mt19937ar`), with the latter being the default.
+ *
+ * See:
+ *  - https://numerical.recipes
+ *  - https://en.wikipedia.org/wiki/Linear_congruential_generator
+ *  - https://en.wikipedia.org/wiki/Mersenne_Twister
+ *
+ * 0x4CEF50
+ */
 int random_rand()
 {
     random_prev_value = 1664525 * random_prev_value + 1013904223;
