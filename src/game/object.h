@@ -160,7 +160,7 @@ void object_list_party(int64_t obj, ObjectList* objects);
 void object_list_team(int64_t obj, ObjectList* objects);
 void object_list_copy(ObjectList* dst, ObjectList* src);
 void object_drop(int64_t obj, int64_t loc);
-void sub_4417A0(int64_t item_obj, int64_t parent_obj);
+void object_pickup(int64_t item_obj, int64_t parent_obj);
 bool object_script_execute(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, int a4, int a5);
 int64_t object_dist(int64_t a, int64_t b);
 int object_rot(int64_t a, int64_t b);

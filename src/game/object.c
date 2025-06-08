@@ -83,12 +83,12 @@ typedef struct ObjectDropInfo {
 
 static_assert(sizeof(ObjectDropInfo) == 0x10, "wrong size");
 
-typedef struct S4417A0 {
+typedef struct ObjectPickupInfo {
     /* 0000 */ int64_t item_obj;
     /* 0008 */ int64_t parent_obj;
-} S4417A0;
+} ObjectPickupInfo;
 
-static_assert(sizeof(S4417A0) == 0x10, "wrong size");
+static_assert(sizeof(ObjectPickupInfo) == 0x10, "wrong size");
 
 static void sub_43C5C0(GameDrawInfo* draw_info);
 static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);
@@ -98,8 +98,8 @@ static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags
 static void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects);
 static bool object_drop_success(void* userinfo);
 static bool object_drop_failure(void* userinfo);
-static bool sub_4418E0(void* userinfo);
-static bool sub_441960(void* userinfo);
+static bool object_pickup_success(void* userinfo);
+static bool object_pickup_failure(void* userinfo);
 static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
 static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
@@ -3893,72 +3893,75 @@ bool object_drop_failure(void* userinfo)
 }
 
 // 0x4417A0
-void sub_4417A0(int64_t item_obj, int64_t parent_obj)
+void object_pickup(int64_t item_obj, int64_t parent_obj)
 {
-    if (!tig_net_is_active()
-        || multiplayer_is_locked()) {
-        unsigned int flags;
-        TigRect rect;
-        int64_t loc;
-        int64_t sector_id;
-        Sector* sector;
+    unsigned int flags;
+    TigRect rect;
+    int64_t loc;
+    int64_t sec;
+    Sector* sector;
 
-        flags = obj_field_int32_get(item_obj, OBJ_F_FLAGS);
-        if ((flags & OF_DESTROYED) == 0) {
-            sub_4D9990(item_obj);
-            sub_4D9A90(item_obj);
-            object_get_rect(item_obj, 0x07, &rect);
-            loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
-            sector_id = sector_id_from_loc(loc);
-            if (sub_4D04E0(sector_id)) {
-                sector_lock(sector_id, &sector);
-                objlist_remove(&(sector->objects), item_obj);
-                sector_unlock(sector_id);
-            }
+    if (tig_net_is_active() && !multiplayer_is_locked()) {
+        ObjectPickupInfo* pickup_info;
 
-            flags |= OF_INVENTORY;
-            obj_field_int32_set(item_obj, OBJ_F_FLAGS, flags);
-            obj_field_handle_set(item_obj, OBJ_F_ITEM_PARENT, parent_obj);
-            object_iso_invalidate_rect(&rect);
-        }
-    } else {
-        S4417A0* entry;
+        pickup_info = (ObjectPickupInfo*)MALLOC(sizeof(*pickup_info));
+        pickup_info->item_obj = item_obj;
+        pickup_info->parent_obj = parent_obj;
+        sub_4A3230(obj_get_id(item_obj), object_pickup_success, pickup_info, object_pickup_failure, pickup_info);
 
-        entry = (S4417A0*)MALLOC(sizeof(*entry));
-        entry->item_obj = item_obj;
-        entry->parent_obj = parent_obj;
-        sub_4A3230(obj_get_id(item_obj), sub_4418E0, entry, sub_441960, entry);
+        return;
     }
+
+    flags = obj_field_int32_get(item_obj, OBJ_F_FLAGS);
+    if ((flags & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    sub_4D9990(item_obj);
+    sub_4D9A90(item_obj);
+    object_get_rect(item_obj, 0x07, &rect);
+    loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
+    sec = sector_id_from_loc(loc);
+    if (sub_4D04E0(sec)) {
+        sector_lock(sec, &sector);
+        objlist_remove(&(sector->objects), item_obj);
+        sector_unlock(sec);
+    }
+
+    flags |= OF_INVENTORY;
+    obj_field_int32_set(item_obj, OBJ_F_FLAGS, flags);
+    obj_field_handle_set(item_obj, OBJ_F_ITEM_PARENT, parent_obj);
+    object_iso_invalidate_rect(&rect);
 }
 
 // 0x4418E0
-bool sub_4418E0(void* userinfo)
+bool object_pickup_success(void* userinfo)
 {
-    S4417A0* entry = (S4417A0*)userinfo;
+    ObjectPickupInfo* pickup_info = (ObjectPickupInfo*)userinfo;
 
-    if (entry != NULL) {
+    if (pickup_info != NULL) {
         Packet23 pkt;
 
         multiplayer_lock();
 
         pkt.type = 23;
-        sub_4F0640(entry->item_obj, &(pkt.item_oid));
-        sub_4F0640(entry->parent_obj, &(pkt.parent_oid));
+        sub_4F0640(pickup_info->item_obj, &(pkt.item_oid));
+        sub_4F0640(pickup_info->parent_obj, &(pkt.parent_oid));
 
-        sub_4417A0(entry->item_obj, entry->parent_obj);
+        object_pickup(pickup_info->item_obj, pickup_info->parent_obj);
         multiplayer_unlock();
-        FREE(entry);
+        FREE(pickup_info);
     }
 
     return true;
 }
 
 // 0x441960
-bool sub_441960(void* userinfo)
+bool object_pickup_failure(void* userinfo)
 {
-    S4417A0* entry = (S4417A0*)userinfo;
+    ObjectPickupInfo* pickup_info = (ObjectPickupInfo*)userinfo;
 
-    FREE(entry);
+    FREE(pickup_info);
 
     return true;
 }

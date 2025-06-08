@@ -4006,13 +4006,13 @@ bool sub_578EA0(Packet81* pkt)
                         sub_4EED00(v6, sound_id);
                     }
                     if ((flags & 0x04) != 0) {
-                        sub_4417A0(gold_obj, v1);
+                        object_pickup(gold_obj, v1);
                         if (v6 != OBJ_HANDLE_NULL && player_is_local_pc_obj(v6)) {
                             sub_573630(gold_obj);
                             qword_681450 = v1;
                         }
                     } else if ((flags & 0x02) != 0) {
-                        sub_4417A0(gold_obj, v1);
+                        object_pickup(gold_obj, v1);
                         sub_466E50(gold_obj, loc);
                     }
                 }
@@ -4036,13 +4036,13 @@ bool sub_578EA0(Packet81* pkt)
                         sub_4EED00(v6, sound_id);
                     }
                     if ((flags & 0x04) != 0) {
-                        sub_4417A0(ammo_obj, v1);
+                        object_pickup(ammo_obj, v1);
                         if (v6 != OBJ_HANDLE_NULL && player_is_local_pc_obj(v6)) {
                             sub_573630(ammo_obj);
                             qword_681450 = v1;
                         }
                     } else if ((flags & 0x02) != 0) {
-                        sub_4417A0(ammo_obj, v1);
+                        object_pickup(ammo_obj, v1);
                         sub_466E50(ammo_obj, loc);
                     }
                 }

@@ -679,7 +679,7 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
         return false;
     }
 
-    sub_4417A0(item_obj, critter_obj);
+    object_pickup(item_obj, critter_obj);
 
     if (inventory_location != -1) {
         if (!v1) {
@@ -2378,7 +2378,7 @@ void sub_464470(int64_t obj, int* a2, int* a3)
             // TODO: Incomplete.
 
             if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
-                sub_4417A0(item_obj, obj);
+                object_pickup(item_obj, obj);
                 v2++;
             }
             cnt--;
