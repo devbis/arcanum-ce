@@ -1160,10 +1160,10 @@ void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, in
         combat.flags &= ~0xC000;
         combat.flags |= 0x40240;
         mp_object_flags_set(weapon_obj, OF_OFF);
-        sub_4415C0(weapon_obj, attacker_loc);
+        object_drop(weapon_obj, attacker_loc);
         sub_4B3170(&combat);
     } else {
-        sub_4415C0(weapon_obj, attacker_loc);
+        object_drop(weapon_obj, attacker_loc);
         item_transfer(weapon_obj, attacker_obj);
     }
 }

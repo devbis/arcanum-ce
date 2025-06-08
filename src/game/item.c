@@ -1879,7 +1879,7 @@ void sub_463730(int64_t obj, bool a2)
             if (a2) {
                 sub_466E50(item_obj, loc);
             } else {
-                sub_4415C0(item_obj, loc);
+                object_drop(item_obj, loc);
             }
         }
     }
@@ -1926,10 +1926,10 @@ void sub_463860(int64_t obj, bool a2)
                 if (a2) {
                     sub_466E50(item_obj, loc);
                 } else {
-                    sub_4415C0(item_obj, loc);
+                    object_drop(item_obj, loc);
                 }
             } else {
-                sub_4415C0(item_obj, loc);
+                object_drop(item_obj, loc);
                 object_destroy(item_obj);
             }
         }
@@ -1974,7 +1974,7 @@ void sub_4639E0(int64_t obj, bool a2)
             if (a2) {
                 sub_466E50(item_obj, loc);
             } else {
-                sub_4415C0(item_obj, loc);
+                object_drop(item_obj, loc);
             }
         }
     }
@@ -2014,7 +2014,7 @@ void sub_463B30(int64_t obj, bool a2)
             idx++;
         } else {
             item_force_remove(item_obj, obj);
-            sub_4415C0(item_obj, loc);
+            object_drop(item_obj, loc);
             object_destroy(item_obj);
         }
 
@@ -3770,7 +3770,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
             existing_qty = obj_field_int32_get(existing_item_obj, qty_fld);
             obj_field_int32_set(existing_item_obj, qty_fld, existing_qty + qty);
 
-            sub_4415C0(item_obj, obj_field_int64_get(parent_obj, OBJ_F_LOCATION));
+            object_drop(item_obj, obj_field_int64_get(parent_obj, OBJ_F_LOCATION));
             sub_466D60(parent_obj);
             object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
             object_destroy(item_obj);
@@ -4012,7 +4012,7 @@ void sub_466E50(int64_t obj, int64_t loc)
     }
 
     if (!sub_466EF0(obj, loc)) {
-        sub_4415C0(obj, loc);
+        object_drop(obj, loc);
     }
 
     item_decay(obj, 172800000);

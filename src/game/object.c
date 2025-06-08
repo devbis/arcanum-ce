@@ -76,12 +76,12 @@ typedef struct ObjectRenderColorsNode {
 
 static_assert(sizeof(ObjectRenderColorsNode) == 0x8, "wrong size");
 
-typedef struct S4415C0 {
+typedef struct ObjectDropInfo {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t loc;
-} S4415C0;
+} ObjectDropInfo;
 
-static_assert(sizeof(S4415C0) == 0x10, "wrong size");
+static_assert(sizeof(ObjectDropInfo) == 0x10, "wrong size");
 
 typedef struct S4417A0 {
     /* 0000 */ int64_t item_obj;
@@ -96,8 +96,8 @@ static int sub_43D690(int64_t obj);
 static int sub_43D630(int64_t obj);
 static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* a6, int* a7, int* a8);
 static void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects);
-static bool sub_441710(void* userinfo);
-static bool sub_441780(void* userinfo);
+static bool object_drop_success(void* userinfo);
+static bool object_drop_failure(void* userinfo);
 static bool sub_4418E0(void* userinfo);
 static bool sub_441960(void* userinfo);
 static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
@@ -1283,7 +1283,7 @@ void object_destroy(int64_t obj)
         if (item_parent(obj, &parent_obj)) {
             loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
             item_remove(obj);
-            sub_4415C0(obj, loc);
+            object_drop(obj, loc);
         }
     } else if (obj_type == OBJ_TYPE_CONTAINER) {
         sub_4639E0(obj, true);
@@ -3816,49 +3816,53 @@ int sub_441540(int64_t obj)
 }
 
 // 0x4415C0
-void sub_4415C0(int64_t obj, int64_t loc)
+void object_drop(int64_t obj, int64_t loc)
 {
-    if (!tig_net_is_active() || multiplayer_is_locked()) {
-        unsigned int flags;
-        int64_t sector_id;
-        Sector* sector;
-        TigRect rect;
+    unsigned int flags;
+    int64_t sec;
+    Sector* sector;
+    TigRect rect;
 
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        if ((flags & OF_DESTROYED) == 0) {
-            flags &= ~OF_INVENTORY;
-            obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-            obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
-            obj_field_int32_set(obj, OBJ_F_OFFSET_X, 0);
-            obj_field_int32_set(obj, OBJ_F_OFFSET_Y, 0);
+    if (tig_net_is_active() && !multiplayer_is_locked()) {
+        ObjectDropInfo* drop_info;
 
-            sector_id = sector_id_from_loc(loc);
-            if (sub_4D04E0(sector_id)) {
-                sector_lock(sector_id, &sector);
-                objlist_insert(&(sector->objects), obj);
-                sector_unlock(sector_id);
-            }
+        drop_info = (ObjectDropInfo*)MALLOC(sizeof(*drop_info));
+        drop_info->obj = obj;
+        drop_info->loc = loc;
+        sub_4A3230(obj_get_id(obj), object_drop_success, drop_info, object_drop_failure, drop_info);
 
-            obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, 0);
-            sub_4D9590(obj, true);
-            sub_444270(obj, 2);
-            object_get_rect(obj, 0x07, &rect);
-            object_iso_invalidate_rect(&rect);
-        }
-    } else {
-        S4415C0* entry;
-
-        entry = (S4415C0*)MALLOC(sizeof(*entry));
-        entry->obj = obj;
-        entry->loc = loc;
-        sub_4A3230(obj_get_id(obj), sub_441710, entry, sub_441780, entry);
+        return;
     }
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    if ((flags & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    flags &= ~OF_INVENTORY;
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+    obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+    obj_field_int32_set(obj, OBJ_F_OFFSET_X, 0);
+    obj_field_int32_set(obj, OBJ_F_OFFSET_Y, 0);
+
+    sec = sector_id_from_loc(loc);
+    if (sub_4D04E0(sec)) {
+        sector_lock(sec, &sector);
+        objlist_insert(&(sector->objects), obj);
+        sector_unlock(sec);
+    }
+
+    obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, 0);
+    sub_4D9590(obj, true);
+    sub_444270(obj, 2);
+    object_get_rect(obj, 0x07, &rect);
+    object_iso_invalidate_rect(&rect);
 }
 
 // 0x441710
-bool sub_441710(void* userinfo)
+bool object_drop_success(void* userinfo)
 {
-    S4415C0* entry = (S4415C0*)userinfo;
+    ObjectDropInfo* entry = (ObjectDropInfo*)userinfo;
 
     if (entry != NULL) {
         Packet22 pkt;
@@ -3870,7 +3874,7 @@ bool sub_441710(void* userinfo)
         pkt.loc = entry->loc;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
-        sub_4415C0(entry->obj, entry->loc);
+        object_drop(entry->obj, entry->loc);
         multiplayer_unlock();
         FREE(entry);
     }
@@ -3879,11 +3883,11 @@ bool sub_441710(void* userinfo)
 }
 
 // 0x441780
-bool sub_441780(void* userinfo)
+bool object_drop_failure(void* userinfo)
 {
-    S4415C0* entry = (S4415C0*)userinfo;
+    ObjectDropInfo* drop_info = (ObjectDropInfo*)userinfo;
 
-    FREE(entry);
+    FREE(drop_info);
 
     return true;
 }
