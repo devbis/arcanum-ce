@@ -178,9 +178,8 @@ void sleep_ui_open(int64_t bed_obj)
     }
 
     if (combat_critter_is_combat_mode_active(pc_obj)) {
-        if (!sub_4B3D90(pc_obj)) {
-            // You cannot sleep with enemies near.
-            mes_file_entry.num = 9;
+        if (!combat_can_exit_combat_mode(pc_obj)) {
+            mes_file_entry.num = 9; // "You cannot sleep with enemies near."
             mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
             ui_message.type = UI_MSG_TYPE_EXCLAMATION;

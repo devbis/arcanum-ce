@@ -1179,7 +1179,7 @@ bool combat_critter_is_combat_mode_active(int64_t obj)
 }
 
 // 0x4B3D90
-bool sub_4B3D90(int64_t obj)
+bool combat_can_exit_combat_mode(int64_t obj)
 {
     bool ret = true;
     ObjectList pcs;

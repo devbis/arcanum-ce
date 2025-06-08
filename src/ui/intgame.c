@@ -3079,7 +3079,7 @@ void intgame_combat_mode_toggle()
     }
 
     if (combat_critter_is_combat_mode_active(pc_obj)) {
-        if (sub_4B3D90(pc_obj)) {
+        if (combat_can_exit_combat_mode(pc_obj)) {
             combat_critter_deactivate_combat_mode(pc_obj);
         } else {
             mes_file_entry.num = 24; // "You cannot exit combat-mode when under attack."

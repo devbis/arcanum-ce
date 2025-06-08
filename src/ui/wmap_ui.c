@@ -1150,7 +1150,7 @@ void wmap_ui_open_internal()
     }
 
     if (combat_critter_is_combat_mode_active(pc_obj)) {
-        if (!sub_4B3D90(pc_obj)) {
+        if (!combat_can_exit_combat_mode(pc_obj)) {
             mes_file_entry.num = 600; // "You cannot access the World Map during combat."
             mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 

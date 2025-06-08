@@ -160,7 +160,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
     }
 
     if (combat_critter_is_combat_mode_active(pc_obj)) {
-        if (!sub_4B3D90(pc_obj)) {
+        if (!combat_can_exit_combat_mode(pc_obj)) {
             return;
         }
         combat_critter_deactivate_combat_mode(pc_obj);
