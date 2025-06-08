@@ -118,7 +118,7 @@ static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static bool iso_interface_message_filter(TigMessage* msg);
 static void sub_54DBF0(int btn, int window_type);
 static void sub_54EB60();
-static void sub_54EBF0();
+static void intgame_combat_mode_toggle();
 static void sub_54ECD0();
 static void sub_54ED30(S4F2810* a1);
 static void sub_550000(int64_t critter_obj, Hotkey* a2, int inventory_location);
@@ -1946,7 +1946,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C6480[2].button_handle) {
-                sub_54EBF0();
+                intgame_combat_mode_toggle();
                 return true;
             }
 
@@ -2495,7 +2495,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'R':
         case 'r':
-            sub_54EBF0();
+            intgame_combat_mode_toggle();
             break;
         case 'S':
         case 's':
@@ -2705,7 +2705,7 @@ void intgame_process_event(TigMessage* msg)
                         if (combat_critter_is_combat_mode_active(pc_obj)) {
                             if (anim_is_current_goal_type(pc_obj, AG_ANIM_FIDGET, NULL)
                                 || !sub_423300(pc_obj, 0)) {
-                                sub_54EBF0();
+                                intgame_combat_mode_toggle();
                             }
                         } else {
                             if (critter_is_concealed(pc_obj)
@@ -3066,7 +3066,7 @@ void sub_54EB60()
 }
 
 // 0x54EBF0
-void sub_54EBF0()
+void intgame_combat_mode_toggle()
 {
     int64_t pc_obj;
     MesFileEntry mes_file_entry;
@@ -3082,7 +3082,7 @@ void sub_54EBF0()
         if (sub_4B3D90(pc_obj)) {
             combat_critter_deactivate_combat_mode(pc_obj);
         } else {
-            mes_file_entry.num = 24;
+            mes_file_entry.num = 24; // "You cannot exit combat-mode when under attack."
             mes_get_msg(intgame_mes_file, &mes_file_entry);
 
             ui_message.type = UI_MSG_TYPE_FEEDBACK;
