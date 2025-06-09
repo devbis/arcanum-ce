@@ -4343,7 +4343,7 @@ void mainmenu_ui_credits_create()
     dword_64C414 = 2;
     sub_541740();
     dword_64C38C = true;
-    slide_ui_run(SLIDE_UI_TYPE_CREDITS);
+    slide_ui_start(SLIDE_UI_TYPE_CREDITS);
 
     if (dword_64C384) {
         if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {

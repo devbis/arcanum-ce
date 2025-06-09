@@ -134,7 +134,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_104 = sub_57A6C0;
     callbacks.field_108 = sub_575770;
     callbacks.wmap_rnd_timeevent_process = wmap_rnd_timeevent_process;
-    callbacks.queue_slide = slide_ui_queue_slide;
+    callbacks.queue_slide = slide_ui_enqueue;
     callbacks.field_118 = gameuilib_mod_load;
     callbacks.field_11C = sub_57CFB0;
     callbacks.field_120 = sub_57D080;
