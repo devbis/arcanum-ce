@@ -5,6 +5,7 @@
 #include "game/ai.h"
 #include "game/critter.h"
 #include "game/gamelib.h"
+#include "game/hrp.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/multiplayer.h"
