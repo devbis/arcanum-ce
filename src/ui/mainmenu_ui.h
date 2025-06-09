@@ -28,13 +28,22 @@ typedef enum MainMenuColor {
     MM_COLOR_COUNT,
 } MainMenuColor;
 
+typedef enum MainMenuType {
+    MM_TYPE_DEFAULT,
+    MM_TYPE_1,
+    MM_TYPE_IN_PLAY,
+    MM_TYPE_IN_PLAY_LOCKED,
+    MM_TYPE_OPTIONS,
+    MM_TYPE_5,
+} MainMenuType;
+
 extern int dword_5C3618;
 extern int dword_64C420;
 extern int64_t* dword_64C41C;
 
 bool mainmenu_ui_init(GameInitInfo* init_info);
 void mainmenu_ui_exit();
-void mainmenu_ui_start(int window_type);
+void mainmenu_ui_start(MainMenuType type);
 void sub_5412D0();
 bool mainmenu_ui_handle();
 bool sub_541680();

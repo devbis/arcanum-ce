@@ -385,7 +385,7 @@ void main_loop()
             intgame_process_event(&message);
 
             if (sub_53EAD0()) {
-                mainmenu_ui_start(0);
+                mainmenu_ui_start(MM_TYPE_DEFAULT);
                 if (!mainmenu_ui_handle()) {
                     return;
                 }
@@ -404,9 +404,9 @@ void main_loop()
                             || tig_net_is_active()
                             || (combat_turn_based_is_active()
                                 && player_get_local_pc_obj() != combat_turn_based_whos_turn_get())) {
-                            mainmenu_ui_start(3);
+                            mainmenu_ui_start(MM_TYPE_IN_PLAY_LOCKED);
                         } else {
-                            mainmenu_ui_start(2);
+                            mainmenu_ui_start(MM_TYPE_IN_PLAY);
                         }
                         if (!mainmenu_ui_handle()) {
                             return;
@@ -422,7 +422,7 @@ void main_loop()
                         break;
                     case SDL_SCANCODE_O:
                         if (!textedit_ui_is_focused()) {
-                            mainmenu_ui_start(4);
+                            mainmenu_ui_start(MM_TYPE_5);
                             if (!mainmenu_ui_handle()) {
                                 return;
                             }

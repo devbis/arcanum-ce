@@ -172,7 +172,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
                 tig_debug_printf("DEATH: Resetting game!\n");
                 gamelib_reset();
                 gameuilib_reset();
-                mainmenu_ui_start(0);
+                mainmenu_ui_start(MM_TYPE_DEFAULT);
 
                 fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;
@@ -205,7 +205,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             tig_debug_printf("EndGame: Resetting game!\n");
             gamelib_reset();
             gameuilib_reset();
-            mainmenu_ui_start(0);
+            mainmenu_ui_start(MM_TYPE_DEFAULT);
 
             fade_data.flags = FADE_IN;
             fade_data.duration = 2.0f;
