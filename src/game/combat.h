@@ -118,7 +118,7 @@ void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 void sub_4B4320(int64_t obj);
 void combat_dmg(CombatContext* combat);
-void sub_4B5810(CombatContext* combat);
+void combat_acid_dmg(CombatContext* combat);
 void combat_heal(CombatContext* combat);
 int combat_hit_loc_penalty(int hit_loc);
 int combat_projectile_rot(int64_t from_loc, int64_t to_loc);

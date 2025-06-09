@@ -2150,23 +2150,25 @@ void sub_4B5580(CombatContext* combat)
 }
 
 // 0x4B5810
-void sub_4B5810(CombatContext* combat)
+void combat_acid_dmg(CombatContext* combat)
 {
-    int64_t obj;
-    int index;
+    int64_t target_obj;
+    int inventory_location;
     int64_t item_obj;
 
-    obj = combat->target_obj;
-    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
-        for (index = 0; index < 9; index++) {
-            item_obj = item_wield_get(obj, 1000 + index);
+    target_obj = combat->target_obj;
+
+    if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
+        for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
+            item_obj = item_wield_get(target_obj, inventory_location);
             if (item_obj != OBJ_HANDLE_NULL) {
                 combat->target_obj = item_obj;
                 combat_dmg(combat);
             }
         }
     }
-    combat->target_obj = obj;
+
+    combat->target_obj = target_obj;
     combat->dam[DAMAGE_TYPE_NORMAL] /= 3;
     combat_dmg(combat);
 }

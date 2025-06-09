@@ -2271,7 +2271,7 @@ void MTComponentDamage_ProcFunc()
             combat_dmg(&combat);
         }
     } else if (dword_5E761C->data.damage.damage_type == DAMAGE_TYPE_COUNT) {
-        sub_4B5810(&combat);
+        combat_acid_dmg(&combat);
     }
 
     dword_5E75D0 = obj_field_int32_get(combat.target_obj, OBJ_F_FLAGS);
