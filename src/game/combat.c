@@ -1140,7 +1140,7 @@ void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int hit_loc)
 }
 
 // 0x4B3C00
-void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc)
+void combat_throw(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc)
 {
     int64_t attacker_loc;
     CombatContext combat;

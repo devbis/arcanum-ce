@@ -111,7 +111,7 @@ void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);
 bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t projectile_obj, int range, int64_t cur_loc, int64_t a7);
 int sub_4B3170(CombatContext* combat);
 void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int hit_loc);
-void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc);
+void combat_throw(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc);
 bool combat_critter_is_combat_mode_active(int64_t obj);
 bool combat_can_exit_combat_mode(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
