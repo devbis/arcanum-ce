@@ -49,7 +49,7 @@ static void written_ui_destroy();
 static bool written_ui_message_filter(TigMessage* msg);
 static void written_ui_refresh();
 static void written_ui_draw_background(int num, int x, int y);
-static void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
+static void written_ui_draw_element(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
 static void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect);
 static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
 static void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
@@ -103,7 +103,7 @@ static TigRect written_ui_telegram_disclaimer_rect = { 335, 90, 234, 20 };
 static TigRect written_ui_plaque_content_rect = { 269, 40, 428, 327 };
 
 // 0x5CA538
-static WrittenUiElement written_ui_telegram_elements[11] = {
+static WrittenUiElement written_ui_telegram_elements[] = {
     { 481, 1000, 342, 35, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 481, 1001, 342, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 481, 1002, 321, 50, WRITTEN_TEXT_ALIGNMENT_LEFT },
@@ -124,7 +124,7 @@ static TigRect stru_5CA618[2] = {
 };
 
 // 0x5CA638
-static WrittenUiElement written_ui_newspaper_tarantian_elements[6] = {
+static WrittenUiElement written_ui_newspaper_tarantian_elements[] = {
     { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 484, 1, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 485, 0, 689, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
@@ -134,7 +134,7 @@ static WrittenUiElement written_ui_newspaper_tarantian_elements[6] = {
 };
 
 // 0x5CA6B0
-static WrittenUiElement written_ui_vendigroth_times_elements[6] = {
+static WrittenUiElement written_ui_vendigroth_times_elements[] = {
     { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 815, 4, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 485, 0, 689, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
@@ -447,6 +447,7 @@ void written_ui_refresh()
     int v2;
     int v3;
     WrittenUiElement* elements;
+    int cnt;
     MesFileEntry mes_file_entry;
     int index;
     int width;
@@ -488,13 +489,17 @@ void written_ui_refresh()
         written_ui_draw_paragraph(written_ui_text, 497, &written_ui_note_content_rect);
         break;
     case WRITTEN_TYPE_NEWSPAPER:
-        elements = written_ui_is_vendigroth_times
-            ? written_ui_vendigroth_times_elements
-            : written_ui_newspaper_tarantian_elements;
-        for (index = 0; index < 6; index++) {
+        if (written_ui_is_vendigroth_times) {
+            elements = written_ui_vendigroth_times_elements;
+            cnt = SDL_arraysize(written_ui_vendigroth_times_elements);
+        } else {
+            elements = written_ui_newspaper_tarantian_elements;
+            cnt = SDL_arraysize(written_ui_newspaper_tarantian_elements);
+        }
+        for (index = 0; index < cnt; index++) {
             mes_file_entry.num = elements[index].message_num;
             mes_get_msg(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry);
-            sub_56C630(mes_file_entry.str,
+            written_ui_draw_element(mes_file_entry.str,
                 elements[index].font_num,
                 elements[index].x,
                 elements[index].y,
@@ -577,10 +582,11 @@ void written_ui_refresh()
         }
         break;
     case WRITTEN_TYPE_TELEGRAM:
-        for (index = 0; index < 11; index++) {
+        cnt = SDL_arraysize(written_ui_telegram_elements);
+        for (index = 0; index < cnt; index++) {
             mes_file_entry.num = written_ui_telegram_elements[index].message_num;
             mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
-            sub_56C630(mes_file_entry.str,
+            written_ui_draw_element(mes_file_entry.str,
                 written_ui_telegram_elements[index].font_num,
                 written_ui_telegram_elements[index].x,
                 written_ui_telegram_elements[index].y,
@@ -626,7 +632,7 @@ void written_ui_draw_background(int num, int x, int y)
 }
 
 // 0x56C630
-void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment)
+void written_ui_draw_element(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
