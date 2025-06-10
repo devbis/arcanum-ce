@@ -144,7 +144,7 @@ static WrittenUiElement written_ui_vendigroth_times_elements[] = {
 };
 
 // 0x5CA728
-static TigRect stru_5CA728[5] = {
+static TigRect written_ui_newspaper_content_rects[5] = {
     { 186, 97, 255, 90 },
     { 188, 196, 120, 175 },
     { 328, 196, 120, 175 },
@@ -509,7 +509,7 @@ void written_ui_refresh()
         mes_file_entry.num = written_ui_num;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-            written_ui_draw_multiline(str, font_num, centered, &(stru_5CA728[0]), &height);
+            written_ui_draw_multiline(str, font_num, centered, &(written_ui_newspaper_content_rects[0]), &height);
         }
 
         mes_file_entry.num++;
@@ -517,7 +517,7 @@ void written_ui_refresh()
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
             index = 1;
-            rect = stru_5CA728[index];
+            rect = written_ui_newspaper_content_rects[index];
             while (true) {
                 while (!written_ui_draw_multiline(str, font_num, centered, &rect, &height)) {
                     index++;
@@ -525,7 +525,7 @@ void written_ui_refresh()
                         return;
                     }
 
-                    rect = stru_5CA728[index];
+                    rect = written_ui_newspaper_content_rects[index];
                     str += height;
                 }
 
@@ -560,7 +560,7 @@ void written_ui_refresh()
                                 return;
                             }
 
-                            rect = stru_5CA728[index];
+                            rect = written_ui_newspaper_content_rects[index];
                             str += height;
                         }
 
