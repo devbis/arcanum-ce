@@ -714,7 +714,7 @@ bool wmap_rnd_check(int64_t loc)
         wmap_rnd_frequency = 5;
     }
 
-    if (sleep_ui_is_created()) {
+    if (sleep_ui_is_active()) {
         wmap_rnd_frequency *= 5;
     }
 
@@ -1031,7 +1031,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
             if (wmap_ui_is_created()) {
                 wmap_ui_close();
                 wmap_ui_encounter_start();
-            } else if (sleep_ui_is_created()) {
+            } else if (sleep_ui_is_active()) {
                 sleep_ui_close();
             }
         }

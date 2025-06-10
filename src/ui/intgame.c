@@ -1984,7 +1984,7 @@ bool sub_54B5D0(TigMessage* msg)
                 if (tig_net_is_active()) {
                     sub_5700C0();
                 } else {
-                    sleep_ui_open(OBJ_HANDLE_NULL);
+                    sleep_ui_toggle(OBJ_HANDLE_NULL);
                 }
                 return true;
             }
@@ -2499,7 +2499,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'S':
         case 's':
-            sleep_ui_open(OBJ_HANDLE_NULL);
+            sleep_ui_toggle(OBJ_HANDLE_NULL);
             break;
         case 'T':
         case 't':
