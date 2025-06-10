@@ -51,7 +51,7 @@ static void written_ui_refresh();
 static void written_ui_draw_background(int num, int x, int y);
 static void written_ui_draw_element(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
 static void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect);
-static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
+static bool written_ui_draw_multiline(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
 static void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
 static void sub_56CAA0(int a1, int* a2, int* a3);
 static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
@@ -509,7 +509,7 @@ void written_ui_refresh()
         mes_file_entry.num = written_ui_num;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-            sub_56C800(str, font_num, centered, &(stru_5CA728[0]), &height);
+            written_ui_draw_multiline(str, font_num, centered, &(stru_5CA728[0]), &height);
         }
 
         mes_file_entry.num++;
@@ -519,7 +519,7 @@ void written_ui_refresh()
             index = 1;
             rect = stru_5CA728[index];
             while (true) {
-                while (!sub_56C800(str, font_num, centered, &rect, &height)) {
+                while (!written_ui_draw_multiline(str, font_num, centered, &rect, &height)) {
                     index++;
                     if (index >= 5) {
                         return;
@@ -554,7 +554,7 @@ void written_ui_refresh()
                     written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
                     while (true) {
-                        while (!sub_56C800(str, font_num, centered, &rect, &height)) {
+                        while (!written_ui_draw_multiline(str, font_num, centered, &rect, &height)) {
                             index++;
                             if (index >= 5) {
                                 return;
@@ -687,7 +687,7 @@ void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect)
 }
 
 // 0x56C800
-bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr)
+bool written_ui_draw_multiline(char* str, int font_num, int centered, TigRect* rect, int* height_ptr)
 {
     TigFont font_desc;
     tig_font_handle_t font;
@@ -821,7 +821,7 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
     v1 = *height_ptr;
     str += *height_ptr;
     v4 = *rect;
-    if (sub_56C800(str, font_num, centered, &v4, height_ptr)) {
+    if (written_ui_draw_multiline(str, font_num, centered, &v4, height_ptr)) {
         v1 = 0;
         do {
             v4.y += *height_ptr;
@@ -836,7 +836,7 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
             }
 
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-        } while (sub_56C800(str, font_num, centered, &v4, height_ptr));
+        } while (written_ui_draw_multiline(str, font_num, centered, &v4, height_ptr));
     }
 
     *num_ptr = mes_file_entry.num;
