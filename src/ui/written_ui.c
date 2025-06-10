@@ -91,16 +91,16 @@ static UiButtonInfo written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_COUNT] = {
 };
 
 // 0x5CA4F8
-static TigRect stru_5CA4F8 = { 349, 49, 215, 300 };
+static TigRect written_ui_note_content_rect = { 349, 49, 215, 300 };
 
 // 0x5CA508
-static TigRect stru_5CA508 = { 327, 126, 250, 240 };
+static TigRect written_ui_telegram_content_rect = { 327, 126, 250, 240 };
 
 // 0x5CA518
-static TigRect stru_5CA518 = { 335, 90, 234, 20 };
+static TigRect written_ui_telegram_disclaimer_rect = { 335, 90, 234, 20 };
 
 // 0x5CA528
-static TigRect stru_5CA528 = { 269, 40, 428, 327 };
+static TigRect written_ui_plaque_content_rect = { 269, 40, 428, 327 };
 
 // 0x5CA538
 static WrittenUiElement written_ui_telegram_elements[11] = {
@@ -485,7 +485,7 @@ void written_ui_refresh()
         }
         break;
     case WRITTEN_TYPE_NOTE:
-        written_ui_draw_paragraph(written_ui_text, 497, &stru_5CA4F8);
+        written_ui_draw_paragraph(written_ui_text, 497, &written_ui_note_content_rect);
         break;
     case WRITTEN_TYPE_NEWSPAPER:
         elements = written_ui_is_vendigroth_times
@@ -589,13 +589,13 @@ void written_ui_refresh()
 
         mes_file_entry.num = 1011;
         mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
-        written_ui_draw_paragraph(mes_file_entry.str, 481, &stru_5CA518);
-        written_ui_draw_paragraph(written_ui_text, 480, &stru_5CA508);
+        written_ui_draw_paragraph(mes_file_entry.str, 481, &written_ui_telegram_disclaimer_rect);
+        written_ui_draw_paragraph(written_ui_text, 480, &written_ui_telegram_content_rect);
         break;
     case WRITTEN_TYPE_PLAQUE:
         width = written_ui_num;
         height = 0;
-        sub_56CB60(&stru_5CA528, &width, &height);
+        sub_56CB60(&written_ui_plaque_content_rect, &width, &height);
         break;
     }
 }
