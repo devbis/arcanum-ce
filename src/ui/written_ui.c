@@ -47,7 +47,7 @@ static void written_ui_draw_background(int num, int x, int y);
 static void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
 static void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect);
 static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
-static void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
+static void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
 static void sub_56CAA0(int a1, int* a2, int* a3);
 static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
 
@@ -498,13 +498,13 @@ void written_ui_refresh()
 
         mes_file_entry.num = written_ui_num;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
-            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+            written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
             sub_56C800(str, font_num, centered, &(stru_5CA728[0]), &height);
         }
 
         mes_file_entry.num++;
         if (mes_search(dword_680DB4, &mes_file_entry)) {
-            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+            written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
             index = 1;
             rect = stru_5CA728[index];
@@ -531,7 +531,7 @@ void written_ui_refresh()
                     break;
                 }
 
-                sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+                written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
             }
 
             if (index < 5) {
@@ -541,7 +541,7 @@ void written_ui_refresh()
                 }
 
                 if (mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
-                    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+                    written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
                     while (true) {
                         while (!sub_56C800(str, font_num, centered, &rect, &height)) {
@@ -563,7 +563,7 @@ void written_ui_refresh()
                             break;
                         }
 
-                        sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+                        written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
                         rect.height -= height;
                         rect.y += height;
                     }
@@ -743,7 +743,7 @@ bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* heigh
 }
 
 // 0x56C9F0
-void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
+void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
 {
     *font_num_ptr = atoi(str);
 
@@ -805,7 +805,7 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
         return -1;
     }
 
-    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+    written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
     v1 = *height_ptr;
     str += *height_ptr;
@@ -824,7 +824,7 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
                 break;
             }
 
-            sub_56C9F0(mes_file_entry.str, &font_num, &centered, &str);
+            written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
         } while (sub_56C800(str, font_num, centered, &v4, height_ptr));
     }
 
@@ -856,7 +856,7 @@ void written_ui_newspaper_headline(int num, char* str)
         return;
     }
 
-    sub_56C9F0(mes_file_entry.str, &font_num, &centered, &tmp);
+    written_ui_parse(mes_file_entry.str, &font_num, &centered, &tmp);
 
     strcpy(str, tmp);
 
