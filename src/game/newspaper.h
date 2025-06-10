@@ -13,7 +13,7 @@ bool newspaper_load(GameLoadInfo* load_info);
 bool newspaper_save(TigFile* stream);
 void newspaper_enqueue(int num, bool priority);
 int newspaper_get(int index);
-int64_t newspaper_create(int start, int64_t loc);
+int64_t newspaper_create(int num, int64_t loc);
 bool newspaper_timeevent_process(TimeEvent* timeevent);
 
 #endif /* ARCANUM_GAME_NEWSPAPER_H_ */
