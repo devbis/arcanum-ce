@@ -13,7 +13,6 @@
 #include "ui/intgame.h"
 #include "ui/types.h"
 
-#define TWO 2
 #define TEN 10
 
 typedef enum WrittenMes {
@@ -30,6 +29,12 @@ typedef enum WrittenTextAlignment {
     WRITTEN_TEXT_ALIGNMENT_CENTER,
     WRITTEN_TEXT_ALIGNMENT_RIGHT,
 } WrittenTextAlignment;
+
+typedef enum WrittenUiBookButton {
+    WRITTEN_UI_BOOK_BUTTON_PREV,
+    WRITTEN_UI_BOOK_BUTTON_NEXT,
+    WRITTEN_UI_BOOK_BUTTON_COUNT,
+} WrittenUiBookButton;
 
 typedef struct WrittenUiElement {
     /* 0000 */ int font_num;
@@ -80,9 +85,9 @@ static int dword_5CA4B8[WRITTEN_TYPE_COUNT] = {
 };
 
 // 0x5CA4D8
-static UiButtonInfo stru_5CA4D8[2] = {
-    { 213, 77, 495, TIG_BUTTON_HANDLE_INVALID },
-    { 675, 77, 496, TIG_BUTTON_HANDLE_INVALID },
+static UiButtonInfo written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_COUNT] = {
+    /* WRITTEN_UI_BOOK_BUTTON_PREV */ { 213, 77, 495, TIG_BUTTON_HANDLE_INVALID },
+    /* WRITTEN_UI_BOOK_BUTTON_NEXT */ { 675, 77, 496, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5CA4F8
@@ -343,10 +348,10 @@ void written_ui_create()
 
     switch (written_ui_type) {
     case WRITTEN_TYPE_BOOK:
-        for (index = 0; index < TWO; index++) {
+        for (index = 0; index < WRITTEN_UI_BOOK_BUTTON_COUNT; index++) {
             intgame_button_create_ex(written_ui_window,
                 &written_ui_background_frame,
-                &(stru_5CA4D8[index]),
+                &(written_ui_book_buttons[index]),
                 TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
         }
         dword_680DD0 = 0;
@@ -415,14 +420,14 @@ bool written_ui_message_filter(TigMessage* msg)
         break;
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
-            if (stru_5CA4D8[0].button_handle == msg->data.button.button_handle) {
+            if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 -= 2;
                 written_ui_refresh();
                 gsound_play_sfx(3010, 1);
                 return true;
             }
 
-            if (stru_5CA4D8[1].button_handle == msg->data.button.button_handle) {
+            if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 += 2;
                 written_ui_refresh();
                 gsound_play_sfx(3010, 1);
@@ -452,8 +457,8 @@ void written_ui_refresh()
     TigRect rect;
 
     if (written_ui_type == WRITTEN_TYPE_BOOK) {
-        tig_button_hide(stru_5CA4D8[0].button_handle);
-        tig_button_hide(stru_5CA4D8[1].button_handle);
+        tig_button_hide(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle);
+        tig_button_hide(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle);
     }
 
     if (written_ui_type == WRITTEN_TYPE_IMAGE) {
@@ -473,10 +478,10 @@ void written_ui_refresh()
         sub_56CAA0(0, &v2, &v3);
         sub_56CAA0(1, &v2, &v3);
         if (dword_680DD0 > 0) {
-            tig_button_show(stru_5CA4D8[0].button_handle);
+            tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle);
         }
         if (dword_680DD0 < dword_680DD4 - 1 && dword_680DD4 < 100) {
-            tig_button_show(stru_5CA4D8[1].button_handle);
+            tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle);
         }
         break;
     case WRITTEN_TYPE_NOTE:
