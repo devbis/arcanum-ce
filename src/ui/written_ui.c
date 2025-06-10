@@ -45,7 +45,7 @@ static bool written_ui_message_filter(TigMessage* msg);
 static void written_ui_refresh();
 static void written_ui_draw_background(int num, int x, int y);
 static void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
-static void sub_56C750(const char* str, int font_num, TigRect* rect);
+static void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect);
 static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
 static void sub_56C9F0(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
 static void sub_56CAA0(int a1, int* a2, int* a3);
@@ -480,7 +480,7 @@ void written_ui_refresh()
         }
         break;
     case WRITTEN_TYPE_NOTE:
-        sub_56C750(written_ui_text, 497, &stru_5CA4F8);
+        written_ui_draw_paragraph(written_ui_text, 497, &stru_5CA4F8);
         break;
     case WRITTEN_TYPE_NEWSPAPER:
         elements = written_ui_is_vendigroth_times
@@ -584,8 +584,8 @@ void written_ui_refresh()
 
         mes_file_entry.num = 1011;
         mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
-        sub_56C750(mes_file_entry.str, 481, &stru_5CA518);
-        sub_56C750(written_ui_text, 480, &stru_5CA508);
+        written_ui_draw_paragraph(mes_file_entry.str, 481, &stru_5CA518);
+        written_ui_draw_paragraph(written_ui_text, 480, &stru_5CA508);
         break;
     case WRITTEN_TYPE_PLAQUE:
         width = written_ui_num;
@@ -659,7 +659,7 @@ void sub_56C630(const char* str, int font_num, int x, int y, WrittenTextAlignmen
 }
 
 // 0x56C750
-void sub_56C750(const char* str, int font_num, TigRect* rect)
+void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
