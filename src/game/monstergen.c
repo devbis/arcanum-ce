@@ -114,6 +114,26 @@ int sub_4BA590(int index)
     return index >= 0 && index < 256 ? off_5FC350[index] & 0x1F : 0;
 }
 
+// 0x4BA5B0
+bool monstergen_set(GeneratorInfo* info)
+{
+    unsigned int npc_flags;
+
+    if (obj_field_int32_get(info->obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    npc_flags = obj_field_int32_get(info->obj, OBJ_F_NPC_FLAGS);
+    npc_flags |= ONF_GENERATOR;
+    mp_obj_field_int32_set(info->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+    mp_object_flags_set(info->obj, OF_INVULNERABLE | OF_OFF);
+
+    sub_4BA620(info);
+
+    return true;
+}
+
 // 0x4BA620
 void sub_4BA620(GeneratorInfo* info)
 {
