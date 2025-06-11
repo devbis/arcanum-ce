@@ -10,7 +10,7 @@
 #define DISABLED 0x80
 
 static int monstergen_concurrent_get(int id);
-static void sub_4BA620(GeneratorInfo* info);
+static void monstergen_update(GeneratorInfo* info);
 static int monstergen_concurrent_set(int id, int value);
 static bool sub_4BA720(int64_t obj);
 static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
@@ -128,13 +128,13 @@ bool monstergen_set(GeneratorInfo* info)
 
     mp_object_flags_set(info->obj, OF_INVULNERABLE | OF_OFF);
 
-    sub_4BA620(info);
+    monstergen_update(info);
 
     return true;
 }
 
 // 0x4BA620
-void sub_4BA620(GeneratorInfo* info)
+void monstergen_update(GeneratorInfo* info)
 {
     unsigned int flags;
 
@@ -271,7 +271,7 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
         if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
             generator_info.cur_total += v3;
         }
-        sub_4BA620(&generator_info);
+        monstergen_update(&generator_info);
     } while (0);
 
     *datetime = stru_5B5EC0[generator_info.rate];
