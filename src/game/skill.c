@@ -144,8 +144,8 @@ static unsigned int skill_flags[SKILL_COUNT] = {
 /**
  * Defines the maximum skill level allowed for each stat level (1-20).
  *
- * For example at character level 12, the maximum effective skill level is
- * capped at 15.
+ * For example, at stat level 12, the maximum effective skill level is capped at
+ * 15.
  *
  * 0x5B6FA4
  */
