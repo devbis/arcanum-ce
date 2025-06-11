@@ -34,8 +34,8 @@ void monstergen_get(int64_t obj, GeneratorInfo* info);
 bool monstergen_set(GeneratorInfo* info);
 bool sub_4BA790(int64_t obj, DateTime* datetime);
 void monstergen_notify_killed(int64_t obj);
-bool monstergen_is_disabled(int index);
-void monstergen_enable(int index);
-void monstergen_disable(int index);
+bool monstergen_is_disabled(int id);
+void monstergen_enable(int id);
+void monstergen_disable(int id);
 
 #endif /* ARCANUM_GAME_MONSTERGEN_H_ */

@@ -9,9 +9,9 @@
 
 #define DISABLED 0x80
 
-static int sub_4BA590(int index);
+static int monstergen_concurrent_get(int id);
 static void sub_4BA620(GeneratorInfo* info);
-static void sub_4BA6D0(int index, int value);
+static int monstergen_concurrent_set(int id, int value);
 static bool sub_4BA720(int64_t obj);
 static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
 
@@ -28,7 +28,7 @@ static DateTime stru_5B5EC0[8] = {
 };
 
 // 0x5FC350
-static uint8_t* off_5FC350;
+static uint8_t* monstergen_state;
 
 // 0x5FC358
 static TigRect monstergen_iso_content_rect;
@@ -47,7 +47,7 @@ bool monstergen_init(GameInitInfo* init_info)
     monstergen_iso_content_rect.width = window_data.rect.width;
     monstergen_iso_content_rect.height = window_data.rect.height;
 
-    off_5FC350 = (uint8_t*)CALLOC(256, 1);
+    monstergen_state = (uint8_t*)CALLOC(256, 1);
 
     return true;
 }
@@ -58,14 +58,14 @@ void monstergen_reset()
     int index;
 
     for (index = 0; index < 256; index++) {
-        off_5FC350[index] = 0;
+        monstergen_state[index] = 0;
     }
 }
 
 // 0x4BA420
 void monstergen_exit()
 {
-    FREE(off_5FC350);
+    FREE(monstergen_state);
 }
 
 // 0x4BA430
@@ -77,7 +77,7 @@ void monstergen_resize(GameResizeInfo* resize_info)
 // 0x4BA460
 bool monstergen_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(off_5FC350, 256, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(monstergen_state, 256, 1, load_info->stream) != 1) return false;
 
     return true;
 }
@@ -85,7 +85,7 @@ bool monstergen_load(GameLoadInfo* load_info)
 // 0x4BA490
 bool monstergen_save(TigFile* stream)
 {
-    if (tig_file_fwrite(off_5FC350, 256, 1, stream) != 1) return false;
+    if (tig_file_fwrite(monstergen_state, 256, 1, stream) != 1) return false;
 
     return true;
 }
@@ -102,15 +102,15 @@ void monstergen_get(int64_t obj, GeneratorInfo* info)
     info->id = (flags >> 19);
     info->max_total = (flags >> 7) & 0x7F;
     info->cur_total = flags & 0x7F;
-    info->cur_concurrent = sub_4BA590(info->id);
+    info->cur_concurrent = monstergen_concurrent_get(info->id);
     info->rate = (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) >> 21) & 0x7;
     info->enabled = !monstergen_is_disabled(info->id);
 }
 
 // 0x4BA590
-int sub_4BA590(int index)
+int monstergen_concurrent_get(int id)
 {
-    return index >= 0 && index < 256 ? off_5FC350[index] & 0x1F : 0;
+    return id >= 0 && id < 256 ? monstergen_state[id] & 0x1F : 0;
 }
 
 // 0x4BA5B0
@@ -144,7 +144,7 @@ void sub_4BA620(GeneratorInfo* info)
     flags |= info->id << 19;
     flags |= info->flags << 27;
     obj_field_int32_set(info->obj, OBJ_F_NPC_GENERATOR_DATA, flags);
-    sub_4BA6D0(info->id, info->cur_concurrent);
+    monstergen_concurrent_set(info->id, info->cur_concurrent);
 
     flags = obj_field_int32_get(info->obj, OBJ_F_NPC_FLAGS);
     flags &= ~(ONF_GENERATOR_RATE1 | ONF_GENERATOR_RATE2 | ONF_GENERATOR_RATE3);
@@ -159,20 +159,20 @@ void sub_4BA620(GeneratorInfo* info)
 }
 
 // 0x4BA6D0
-void sub_4BA6D0(int index, int value)
+int monstergen_concurrent_set(int id, int value)
 {
-    if (index < 0 || index >= 256) {
-        sub_4BA590(index);
-        return;
+    if (id < 0 || id >= 256) {
+        return monstergen_concurrent_get(id);
     }
 
     if (value < 0 || value >= 32) {
-        sub_4BA590(index);
-        return;
+        return monstergen_concurrent_get(id);
     }
 
-    off_5FC350[index] &= ~0x1F;
-    off_5FC350[index] |= value;
+    monstergen_state[id] &= ~0x1F;
+    monstergen_state[id] |= value;
+
+    return value;
 }
 
 // 0x4BA720
@@ -367,28 +367,28 @@ void monstergen_notify_killed(int64_t obj)
     }
 
     monstergen_get(obj, &generator_info);
-    sub_4BA6D0(generator_info.id, sub_4BA590(generator_info.id) - 1);
+    monstergen_concurrent_set(generator_info.id, monstergen_concurrent_get(generator_info.id) - 1);
 }
 
 // 0x4BABA0
-bool monstergen_is_disabled(int index)
+bool monstergen_is_disabled(int id)
 {
-    return index >= 0 && index < 256
-        && (off_5FC350[index] & DISABLED) != 0;
+    return id >= 0 && id < 256
+        && (monstergen_state[id] & DISABLED) != 0;
 }
 
 // 0x4BABD0
-void monstergen_enable(int index)
+void monstergen_enable(int id)
 {
-    if (index >= 0 && index < 256) {
-        off_5FC350[index] &= ~DISABLED;
+    if (id >= 0 && id < 256) {
+        monstergen_state[id] &= ~DISABLED;
     }
 }
 
 // 0x4BABF0
-void monstergen_disable(int index)
+void monstergen_disable(int id)
 {
-    if (index >= 0 && index < 256) {
-        off_5FC350[index] |= DISABLED;
+    if (id >= 0 && id < 256) {
+        monstergen_state[id] |= DISABLED;
     }
 }
