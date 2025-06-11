@@ -9,19 +9,6 @@
 
 #define DISABLED 0x80
 
-typedef struct GeneratorInfo {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t obj;
-    /* 0010 */ int index;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int rate;
-    /* 0020 */ bool enabled;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-} GeneratorInfo;
-
 static void sub_4BA500(int64_t obj, GeneratorInfo* info);
 static int sub_4BA590(int index);
 static void sub_4BA620(GeneratorInfo* info);
@@ -110,15 +97,15 @@ void sub_4BA500(int64_t obj, GeneratorInfo* info)
     unsigned int flags;
 
     flags = obj_field_int32_get(obj, OBJ_F_NPC_GENERATOR_DATA);
-    info->field_0 = (flags >> 27) & 0x1F;
-    info->field_14 = (flags >> 14) & 0x1F;
+    info->flags = (flags >> 27) & 0x1F;
+    info->max_concurrent = (flags >> 14) & 0x1F;
     info->obj = obj;
-    info->index = (flags >> 19);
-    info->field_18 = (flags >> 7) & 0x7F;
-    info->field_28 = flags & 0x7F;
-    info->field_24 = sub_4BA590(info->index);
+    info->id = (flags >> 19);
+    info->max_total = (flags >> 7) & 0x7F;
+    info->cur_total = flags & 0x7F;
+    info->cur_concurrent = sub_4BA590(info->id);
     info->rate = (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) >> 21) & 0x7;
-    info->enabled = !monstergen_is_disabled(info->index);
+    info->enabled = !monstergen_is_disabled(info->id);
 }
 
 // 0x4BA590
@@ -132,13 +119,13 @@ void sub_4BA620(GeneratorInfo* info)
 {
     unsigned int flags;
 
-    flags = info->field_28;
-    flags |= info->field_18 << 7;
-    flags |= info->field_14 << 14;
-    flags |= info->index << 19;
-    flags |= info->field_0 << 27;
+    flags = info->cur_total;
+    flags |= info->max_total << 7;
+    flags |= info->max_concurrent << 14;
+    flags |= info->id << 19;
+    flags |= info->flags << 27;
     obj_field_int32_set(info->obj, OBJ_F_NPC_GENERATOR_DATA, flags);
-    sub_4BA6D0(info->index, info->field_24);
+    sub_4BA6D0(info->id, info->cur_concurrent);
 
     flags = obj_field_int32_get(info->obj, OBJ_F_NPC_FLAGS);
     flags &= ~(ONF_GENERATOR_RATE1 | ONF_GENERATOR_RATE2 | ONF_GENERATOR_RATE3);
@@ -146,9 +133,9 @@ void sub_4BA620(GeneratorInfo* info)
     obj_field_int32_set(info->obj, OBJ_F_NPC_FLAGS, flags);
 
     if (info->enabled) {
-        monstergen_enable(info->index);
+        monstergen_enable(info->id);
     } else {
-        monstergen_disable(info->index);
+        monstergen_disable(info->id);
     }
 }
 
@@ -209,28 +196,28 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
 
     sub_4BA500(obj, &generator_info);
 
-    v2 = generator_info.field_14 - generator_info.field_24;
+    v2 = generator_info.max_concurrent - generator_info.cur_concurrent;
 
     do {
         if (v2 <= 0) {
             break;
         }
 
-        if (monstergen_is_disabled(generator_info.index)) {
+        if (monstergen_is_disabled(generator_info.id)) {
             break;
         }
 
         if (game_time_is_day()) {
-            if ((generator_info.field_0 & 1) == 0) {
+            if ((generator_info.flags & GENERATOR_DAY) == 0) {
                 break;
             }
         } else {
-            if ((generator_info.field_0 & 2) == 0) {
+            if ((generator_info.flags & GENERATOR_NIGHT) == 0) {
                 break;
             }
         }
 
-        if ((generator_info.field_0 & 0x4) != 0) {
+        if ((generator_info.flags & GENERATOR_INACTIVE_ON_SCREEN) != 0) {
             object_get_rect(obj, 0x8, &rect);
             if (rect.x < monstergen_iso_content_rect.width + monstergen_iso_content_rect.x
                 && rect.y < monstergen_iso_content_rect.height + monstergen_iso_content_rect.y
@@ -240,8 +227,8 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
             }
         }
 
-        if ((generator_info.field_0 & 0x10) == 0) {
-            v1 = generator_info.field_18 - generator_info.field_28;
+        if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
+            v1 = generator_info.max_total - generator_info.cur_total;
             if (v1 <= 0) {
                 break;
             }
@@ -255,15 +242,15 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
             break;
         }
 
-        if ((generator_info.field_0 & 0x08) == 0) {
+        if ((generator_info.flags & GENERATOR_SPAWN_ALL) == 0) {
             v2 = 1;
         }
 
         v3 = sub_4BA910(&generator_info, v2);
-        generator_info.field_24 += v3;
+        generator_info.cur_concurrent += v3;
 
-        if ((generator_info.field_0 & 0x10) == 0) {
-            generator_info.field_28 += v3;
+        if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
+            generator_info.cur_total += v3;
         }
         sub_4BA620(&generator_info);
     } while (0);
@@ -300,14 +287,14 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
 
     gen_cnt = 0;
     while (gen_cnt < cnt) {
-        if (generator_info->field_14 == 1) {
+        if (generator_info->max_concurrent == 1) {
             target_loc = loc;
         } else {
             for (attempt = 0; attempt < 10; attempt++) {
                 distance = random_between(1, 5);
                 if (sub_4F4E40(generator_info->obj, distance, &target_loc)
                     && tile_type == tig_art_tile_id_type_get(tile_art_id_at(target_loc))) {
-                    if ((generator_info->field_0 & 0x4) == 0) {
+                    if ((generator_info->flags & GENERATOR_INACTIVE_ON_SCREEN) == 0) {
                         break;
                     }
 
@@ -361,7 +348,7 @@ void monstergen_notify_killed(int64_t obj)
     }
 
     sub_4BA500(obj, &generator_info);
-    sub_4BA6D0(generator_info.index, sub_4BA590(generator_info.index) - 1);
+    sub_4BA6D0(generator_info.id, sub_4BA590(generator_info.id) - 1);
 }
 
 // 0x4BABA0
