@@ -268,7 +268,7 @@ void rotate_newspapers()
         index++;
     }
 
-    // Add a a new generic newspaper when the queue does not have enough old
+    // Add a new generic newspaper when the queue does not have enough old
     // story-specific newspapers. This only happens early the game until the
     // "past" portion of the queue is filled with story-specific newspapers.
     if (newspaper_queue_size < 5) {
