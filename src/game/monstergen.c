@@ -9,7 +9,6 @@
 
 #define DISABLED 0x80
 
-static void sub_4BA500(int64_t obj, GeneratorInfo* info);
 static int sub_4BA590(int index);
 static void sub_4BA620(GeneratorInfo* info);
 static void sub_4BA6D0(int index, int value);
@@ -92,7 +91,7 @@ bool monstergen_save(TigFile* stream)
 }
 
 // 0x4BA500
-void sub_4BA500(int64_t obj, GeneratorInfo* info)
+void monstergen_get(int64_t obj, GeneratorInfo* info)
 {
     unsigned int flags;
 
@@ -214,7 +213,7 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
         return false;
     }
 
-    sub_4BA500(obj, &generator_info);
+    monstergen_get(obj, &generator_info);
 
     v2 = generator_info.max_concurrent - generator_info.cur_concurrent;
 
@@ -367,7 +366,7 @@ void monstergen_notify_killed(int64_t obj)
         return;
     }
 
-    sub_4BA500(obj, &generator_info);
+    monstergen_get(obj, &generator_info);
     sub_4BA6D0(generator_info.id, sub_4BA590(generator_info.id) - 1);
 }
 

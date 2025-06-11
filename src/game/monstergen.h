@@ -30,6 +30,7 @@ void monstergen_exit();
 void monstergen_resize(GameResizeInfo* resize_info);
 bool monstergen_load(GameLoadInfo* load_info);
 bool monstergen_save(TigFile* stream);
+void monstergen_get(int64_t obj, GeneratorInfo* info);
 bool monstergen_set(GeneratorInfo* info);
 bool sub_4BA790(int64_t obj, DateTime* datetime);
 void monstergen_notify_killed(int64_t obj);
