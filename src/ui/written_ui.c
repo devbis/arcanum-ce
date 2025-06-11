@@ -783,7 +783,7 @@ void sub_56CAA0(int a1, int* a2, int* a3)
 
     rect = stru_5CA618[a1];
     v1 = sub_56CB60(&rect, a2, a3);
-    if (v1 == -1) {
+    if (v1 != -1) {
         *a3 += v1;
         mes_file_entry.num = *a2;
         if (mes_file_entry.num < written_ui_num + 10
@@ -812,7 +812,7 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
         return -1;
     }
 
-    if (mes_search(dword_680DB4, &mes_file_entry)) {
+    if (!mes_search(dword_680DB4, &mes_file_entry)) {
         return -1;
     }
 
