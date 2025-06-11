@@ -150,8 +150,11 @@ void roller_ui_draw(int value, tig_window_handle_t window_handle, int x, int y, 
             roller_ui_video_buffer,
             &src_rect);
         tig_window_text_write(window_handle, sign, &dst_rect);
+
+        dst_rect.x += dword_67BB1C;
     }
 
+    dst_rect.x += dword_67BB2C * (max_digits - 1);
     dst_rect.width = dword_67BB2C;
     dst_rect.height = dword_67BB30;
 
