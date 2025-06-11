@@ -12,7 +12,6 @@
 static int monstergen_concurrent_get(int id);
 static void monstergen_update(GeneratorInfo* info);
 static int monstergen_concurrent_set(int id, int value);
-static bool sub_4BA720(int64_t obj);
 static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
 
 // 0x5B5EC0
@@ -176,21 +175,22 @@ int monstergen_concurrent_set(int id, int value)
 }
 
 // 0x4BA720
-bool sub_4BA720(int64_t obj)
+bool monstergen_remove(int64_t obj)
 {
-    unsigned int flags;
+    unsigned int npc_flags;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return false;
     }
 
-    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-    if ((flags & ONF_GENERATOR) == 0) {
+    npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_GENERATOR) == 0) {
         return false;
     }
 
-    flags &= ~ONF_GENERATOR;
-    mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    npc_flags &= ~ONF_GENERATOR;
+    mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
+
     mp_object_flags_unset(obj, OF_INVULNERABLE | OF_OFF);
 
     return true;
@@ -339,7 +339,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
             break;
         }
 
-        sub_4BA720(obj);
+        monstergen_remove(obj);
 
         flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
         flags |= ONF_GENERATED;
