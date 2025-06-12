@@ -37,6 +37,37 @@ typedef enum MainMenuType {
     MM_TYPE_5,
 } MainMenuType;
 
+typedef enum MainMenuWindowType {
+    MM_WINDOW_0,
+    MM_WINDOW_1,
+    MM_WINDOW_MAINMENU,
+    MM_WINDOW_MAINMENU_IN_PLAY,
+    MM_WINDOW_MAINMENU_IN_PLAY_LOCKED,
+    MM_WINDOW_SINGLE_PLAYER,
+    MM_WINDOW_OPTIONS,
+    MM_WINDOW_LOAD_GAME,
+    MM_WINDOW_SAVE_GAME,
+    MM_WINDOW_LAST_SAVE_GAME,
+    MM_WINDOW_INTRO,
+    MM_WINDOW_PICK_NEW_OR_PREGEN,
+    MM_WINDOW_NEW_CHAR,
+    MM_WINDOW_PREGEN_CHAR,
+    MM_WINDOW_CHAREDIT,
+    MM_WINDOW_SHOP,
+    MM_WINDOW_MULTIPLAYER,
+    MM_WINDOW_SERVERLIST,
+    MM_WINDOW_18,
+    MM_WINDOW_19,
+    MM_WINDOW_20,
+    MM_WINDOW_21,
+    MM_WINDOW_MP_SELECT_CHAR,
+    MM_WINDOW_23,
+    MM_WINDOW_24,
+    MM_WINDOW_CREDITS,
+    MM_WINDOW_26,
+    MM_WINDOW_COUNT,
+} MainMenuWindowType;
+
 extern int dword_5C3618;
 extern int dword_64C420;
 extern int64_t* dword_64C41C;
@@ -50,7 +81,7 @@ bool sub_541680();
 TigWindowModalDialogChoice mainmenu_ui_confirm_quit();
 void sub_541710();
 void sub_5417A0(bool a1);
-void sub_541810(int a1);
+void sub_541810(MainMenuWindowType window_type);
 bool sub_543220();
 void mainmenu_ui_create_window();
 void mainmenu_ui_create_window_func(bool should_display);
@@ -63,14 +94,14 @@ void mainmenu_ui_exit_game();
 void mainmenu_ui_progressbar_init(int max_value);
 void mainmenu_ui_progressbar_update(int value);
 MainMenuWindowInfo* sub_5496C0(int index);
-int sub_5496D0();
+MainMenuWindowType mainmenu_ui_window_type_get();
 void mainmenu_ui_feedback_saving();
 void mainmenu_ui_feedback_saving_completed();
 void mainmenu_ui_feedback_cannot_save_in_tb();
 void mainmenu_ui_feedback_loading();
 void mainmenu_ui_feedback_loading_completed();
 tig_window_handle_t sub_549820();
-void sub_549830(int a1);
+void mainmenu_ui_window_type_set(MainMenuWindowType window_type);
 mes_file_handle_t mainmenu_ui_mes_file();
 tig_font_handle_t mainmenu_ui_font(MainMenuFont font, MainMenuColor color);
 void sub_549960();

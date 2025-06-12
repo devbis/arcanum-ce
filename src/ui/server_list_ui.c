@@ -46,13 +46,13 @@ static int dword_5994BC[3] = {
 
 // 0x5CCAF8
 MainMenuButtonInfo mainmenu_ui_serverlist_buttons[7] = {
-    { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
-    { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, { 0 }, -1 },
-    { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, { 0 }, -1 },
-    { 58, 533, 357, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
-    { 72, 491, 751, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
-    { 232, 492, 752, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
-    { 764, 101, 762, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, { 0 }, -1 },
+    { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
+    { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_23, 0, 0, { 0 }, -1 },
+    { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_18, 0, 0, { 0 }, -1 },
+    { 58, 533, 357, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SERVERLIST, -1, 0x0C, { 0 }, -1 },
+    { 72, 491, 751, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SERVERLIST, -1, 0x0C, { 0 }, -1 },
+    { 232, 492, 752, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SERVERLIST, -1, 0x0C, { 0 }, -1 },
+    { 764, 101, 762, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SERVERLIST, -1, 0x0C, { 0 }, -1 },
 };
 
 // 0x5CCC48
@@ -210,7 +210,7 @@ void mainmenu_ui_serverlist_create()
 
     dword_687258 = 0;
     dword_687254 = 0;
-    sub_549830(17);
+    mainmenu_ui_window_type_set(MM_WINDOW_SERVERLIST);
     mainmenu_ui_create_window_func(false);
 
     if (multiplayer_mm_is_active()) {
@@ -1835,7 +1835,7 @@ const char* sub_588E10(int seconds)
 // 0x588EC0
 void sub_588EC0(TigNetServer* servers, int count)
 {
-    if (sub_5496D0() == 17) {
+    if (mainmenu_ui_window_type_get() == MM_WINDOW_SERVERLIST) {
         sub_585FF0(servers, count);
         mainmenu_ui_serverlist_refresh(0);
     }
@@ -1865,7 +1865,7 @@ bool mainmenu_ui_serverlist_execute(int a1)
         sub_5417A0(false);
         mainmenu_ui_create_multiplayer_hub();
         if (sub_541680()) {
-            sub_541810(sub_5496D0());
+            sub_541810(mainmenu_ui_window_type_get());
         }
         break;
     case 1:
@@ -1873,7 +1873,7 @@ bool mainmenu_ui_serverlist_execute(int a1)
         sub_5417A0(false);
         multiplayer_hub_ui_init();
         if (sub_541680()) {
-            sub_541810(sub_5496D0());
+            sub_541810(mainmenu_ui_window_type_get());
         }
         break;
     case 2:
@@ -1881,7 +1881,7 @@ bool mainmenu_ui_serverlist_execute(int a1)
         sub_5417A0(false);
         sub_584AE0();
         if (sub_541680()) {
-            sub_541810(sub_5496D0());
+            sub_541810(mainmenu_ui_window_type_get());
         }
         break;
     case 3:

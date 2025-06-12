@@ -59,7 +59,7 @@ static_assert(sizeof(S64B870) == 0x14, "wrong size");
 static void sub_5412E0(bool a1);
 static TigWindowModalDialogChoice mainmenu_ui_confirm(int num);
 static void sub_541740();
-static int sub_5417E0();
+static MainMenuWindowType sub_5417E0();
 static void sub_541830(char* dst, const char* src);
 static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void mainmenu_ui_create_mainmenu();
@@ -235,50 +235,50 @@ static TigRect stru_5C3680[3] = {
 
 // 0x5C36B0
 static bool stru_5C36B0[6][2] = {
-    { false, true },
-    { false, true },
-    { true, false },
-    { true, false },
-    { true, false },
-    { false, false },
+    /*        MM_TYPE_DEFAULT */ { false, true },
+    /*              MM_TYPE_1 */ { false, true },
+    /*        MM_TYPE_IN_PLAY */ { true, false },
+    /* MM_TYPE_IN_PLAY_LOCKED */ { true, false },
+    /*        MM_TYPE_OPTIONS */ { true, false },
+    /*              MM_TYPE_5 */ { false, false },
 };
 
 // 0x5C36E0
-static MainMenuButtonInfo mainmenu_ui_mainmenu_in_play_buttons[5] = {
-    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, 8, 0, 0, { 0 }, -1 },
-    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, 7, 0, 0, { 0 }, -1 },
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 6, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo mainmenu_ui_mainmenu_in_play_buttons[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SAVE_GAME, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_LOAD_GAME, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
     { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
     { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C37D0
-static MainMenuButtonInfo mainmenu_ui_mainmenu_in_play_locked_buttons[3] = {
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 6, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo mainmenu_ui_mainmenu_in_play_locked_buttons[] = {
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
     { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
     { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C3860
-static MainMenuButtonInfo stru_5C3860[4] = {
-    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, 8, 0, 0, { 0 }, -1 },
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 6, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo stru_5C3860[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SAVE_GAME, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
     { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
     { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C3920
-static MainMenuButtonInfo mainmenu_ui_multiplayer_buttons[4] = {
-    { 409, 122, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
-    { 409, 182, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
-    { 409, 242, -1, TIG_BUTTON_HANDLE_INVALID, 0x14, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo mainmenu_ui_multiplayer_buttons[] = {
+    { 409, 122, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
+    { 409, 182, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
+    { 409, 242, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_20, 0, 0, { 0 }, -1 },
     { 409, 302, -1, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C39E0
-static MainMenuButtonInfo stru_5C39E0[2] = {
-    { 162, 43, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
-    { 162, 84, -1, TIG_BUTTON_HANDLE_INVALID, 0xC, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo mainmenu_ui_mp_select_char_buttons[] = {
+    { 162, 43, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
+    { 162, 84, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_NEW_CHAR, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C3AB0
@@ -429,7 +429,7 @@ static MainMenuWindowInfo stru_5C3D10 = {
     NULL,
     NULL,
     -1,
-    2,
+    SDL_arraysize(stru_5CC520),
     stru_5CC520,
     0,
     0,
@@ -463,7 +463,7 @@ static MainMenuWindowInfo stru_5C3DA8 = {
     NULL,
     NULL,
     -1,
-    2,
+    SDL_arraysize(stru_5CC4C0),
     stru_5CC4C0,
     0,
     0,
@@ -497,7 +497,7 @@ static MainMenuWindowInfo stru_5C3E40 = {
     NULL,
     NULL,
     240,
-    7,
+    SDL_arraysize(stru_5CC278),
     stru_5CC278,
     0,
     0,
@@ -520,7 +520,7 @@ static MainMenuWindowInfo stru_5C3E40 = {
 };
 
 // 0x5C3ED8
-static MainMenuWindowInfo stru_5C3ED8 = {
+static MainMenuWindowInfo mainmenu_ui_mp_select_char_window_info = {
     753,
     mainmenu_ui_create_multiplayer_select_char,
     mainmenu_ui_destroy_multiplayer_select_char,
@@ -531,8 +531,8 @@ static MainMenuWindowInfo stru_5C3ED8 = {
     NULL,
     NULL,
     260,
-    2,
-    stru_5C39E0,
+    SDL_arraysize(mainmenu_ui_mp_select_char_buttons),
+    mainmenu_ui_mp_select_char_buttons,
     0,
     0,
     0xD,
@@ -632,12 +632,12 @@ static int dword_5C4070[3] = {
 static char off_5C407C[] = "...";
 
 // 0x5C4080
-static MainMenuButtonInfo mainmenu_ui_mainmenu_buttons[5] = {
-    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, 0x5, 0, 0, { 0 }, -1 },
-    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, 0x10, 0, 0, { 0 }, -1 },
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, 0x6, 0, 0, { 0 }, -1 },
-    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, 0x19, 0, 0, { 0 }, -1 },
-    { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, 0x0, 0, 0, { 0 }, -1 },
+static MainMenuButtonInfo mainmenu_ui_mainmenu_buttons[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SINGLE_PLAYER, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_MULTIPLAYER, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
+    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_CREDITS, 0, 0, { 0 }, -1 },
+    { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_0, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4170
@@ -652,7 +652,7 @@ static MainMenuWindowInfo mainmenu_ui_mainmenu_window_info = {
     NULL,
     NULL,
     10,
-    5,
+    SDL_arraysize(mainmenu_ui_mainmenu_buttons),
     mainmenu_ui_mainmenu_buttons,
     0,
     0,
@@ -686,7 +686,7 @@ static MainMenuWindowInfo mainmenu_ui_mainmenu_in_play_window_info = {
     NULL,
     NULL,
     30,
-    5,
+    SDL_arraysize(mainmenu_ui_mainmenu_in_play_buttons),
     mainmenu_ui_mainmenu_in_play_buttons,
     0,
     0,
@@ -720,7 +720,7 @@ static MainMenuWindowInfo mainmenu_ui_mainmenu_in_play_locked_window_info = {
     NULL,
     NULL,
     70,
-    3,
+    SDL_arraysize(mainmenu_ui_mainmenu_in_play_locked_buttons),
     mainmenu_ui_mainmenu_in_play_locked_buttons,
     0,
     0,
@@ -754,7 +754,7 @@ static MainMenuWindowInfo stru_5C4338 = {
     NULL,
     NULL,
     30,
-    4,
+    SDL_arraysize(stru_5C3860),
     stru_5C3860,
     0,
     0,
@@ -777,51 +777,11 @@ static MainMenuWindowInfo stru_5C4338 = {
 };
 
 // 0x5C43D0
-static MainMenuButtonInfo mainmenu_ui_options_buttons[4] = {
-    {
-        130,
-        221,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        130,
-        261,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        130,
-        301,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        130,
-        341,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_options_buttons[] = {
+    { 130, 221, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 130, 261, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 130, 301, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 130, 341, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4490
@@ -839,7 +799,7 @@ static MainMenuWindowInfo mainmenu_ui_options_window_info = {
     NULL,
     NULL,
     4000,
-    4,
+    SDL_arraysize(mainmenu_ui_options_buttons),
     mainmenu_ui_options_buttons,
     0,
     0,
@@ -865,40 +825,10 @@ static MainMenuWindowInfo mainmenu_ui_options_window_info = {
 static TigRect stru_5C4538 = { 150, 273, 240, 40 };
 
 // 0x5C4548
-static MainMenuButtonInfo mainmenu_ui_load_game_buttons[3] = {
-    {
-        675,
-        55,
-        321, // nextbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7020, // "Load Game"
-    },
-    {
-        69,
-        55,
-        323, // backbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7002, // "Previous Screen"
-    },
-    {
-        115,
-        396,
-        32, // cncl_big.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        0,
-        { 0 },
-        7022, // "Delete Save Game"
-    },
+static MainMenuButtonInfo mainmenu_ui_load_game_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7020 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7002 },
+    { 115, 396, 32, TIG_BUTTON_HANDLE_INVALID, -1, -1, 0, { 0 }, 7022 },
 };
 
 // 0x5C45D8
@@ -926,7 +856,7 @@ static MainMenuWindowInfo mainmenu_ui_load_game_window_info = {
     NULL,
     NULL,
     -1,
-    3,
+    SDL_arraysize(mainmenu_ui_load_game_buttons),
     mainmenu_ui_load_game_buttons,
     0,
     0,
@@ -993,40 +923,10 @@ static bool dword_5C4790 = true;
 static TigRect stru_5C4798 = { 213, 111, 12, 232 };
 
 // 0x5C47A8
-static MainMenuButtonInfo mainmenu_ui_save_game_buttons[3] = {
-    {
-        675,
-        55,
-        321, // nextbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7021, // "Save Game"
-    },
-    {
-        69,
-        55,
-        323, // backbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7002, // "Previous Screen"
-    },
-    {
-        115,
-        396,
-        32, // cncl_big.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        0,
-        { 0 },
-        7022, // "Delete Save Game"
-    },
+static MainMenuButtonInfo mainmenu_ui_save_game_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7021 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7002 },
+    { 115, 396, 32, TIG_BUTTON_HANDLE_INVALID, -1, -1, 0, { 0 }, 7022 },
 };
 
 // 0x5C4838
@@ -1054,7 +954,7 @@ static MainMenuWindowInfo mainmenu_ui_save_game_window_info = {
     NULL,
     NULL,
     -1,
-    3,
+    SDL_arraysize(mainmenu_ui_save_game_buttons),
     mainmenu_ui_save_game_buttons,
     0,
     0,
@@ -1111,62 +1011,12 @@ static MainMenuWindowInfo mainmenu_ui_last_save_window_info = {
 };
 
 // 0x5C4998
-static MainMenuButtonInfo mainmenu_ui_single_player_buttons[5] = {
-    {
-        410,
-        143,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0xB,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        193,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        7,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        243,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        9,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        293,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0xA,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        343,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -2,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_single_player_buttons[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_PICK_NEW_OR_PREGEN, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_LOAD_GAME, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_LAST_SAVE_GAME, 0, 0, { 0 }, -1 },
+    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_INTRO, 0, 0, { 0 }, -1 },
+    { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4A88
@@ -1181,7 +1031,7 @@ static MainMenuWindowInfo mainmenu_ui_single_player_window_info = {
     NULL,
     NULL,
     50,
-    5,
+    SDL_arraysize(mainmenu_ui_single_player_buttons),
     mainmenu_ui_single_player_buttons,
     0,
     0,
@@ -1204,40 +1054,10 @@ static MainMenuWindowInfo mainmenu_ui_single_player_window_info = {
 };
 
 // 0x5C4B20
-static MainMenuButtonInfo mainmenu_ui_pick_new_or_pregen_buttons[3] = {
-    {
-        410,
-        143,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0xD,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        193,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0xC,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        243,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        -2,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_pick_new_or_pregen_buttons[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_PREGEN_CHAR, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_NEW_CHAR, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4BB0
@@ -1252,7 +1072,7 @@ static MainMenuWindowInfo mainmenu_ui_pick_new_or_pregen_window_info = {
     NULL,
     NULL,
     420,
-    3,
+    SDL_arraysize(mainmenu_ui_pick_new_or_pregen_buttons),
     mainmenu_ui_pick_new_or_pregen_buttons,
     0,
     0,
@@ -1275,116 +1095,17 @@ static MainMenuWindowInfo mainmenu_ui_pick_new_or_pregen_window_info = {
 };
 
 // 0x5C4C48
-static MainMenuButtonInfo mainmenu_ui_new_char_buttons[10] = {
-    { 675,
-        55,
-        321, // nextbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7003, // "Next Screen"
-    },
-    {
-        69,
-        55,
-        323, // backbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7002, // "Previous Screen"
-    },
-    {
-        43,
-        118,
-        283, // Big_Grn_L.ART
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        244,
-        118,
-        284, // big_grn_r.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        42,
-        331,
-        757, // mpcycleleftbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        255,
-        332,
-        758, // mpcyclerightbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        42,
-        381,
-        757, // mpcycleleftbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        255,
-        382,
-        758, // mpcyclerightbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        42,
-        281,
-        757, // mpcycleleftbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        255,
-        282,
-        758, // mpcyclerightbutton.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_new_char_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7003 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7002 },
+    { 43, 118, 283, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 244, 118, 284, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 42, 331, 757, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 255, 332, 758, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 42, 381, 757, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 255, 382, 758, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 42, 281, 757, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 255, 282, 758, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4E28
@@ -1399,7 +1120,7 @@ static MainMenuWindowInfo mainmenu_ui_new_char_window_info = {
     mainmenu_ui_new_char_button_leave,
     mainmenu_ui_new_char_mouse_idle,
     -1,
-    8,
+    8, // TODO: `mainmenu_ui_new_char_buttons` has 10 buttons, figure out why only 8 are used.
     mainmenu_ui_new_char_buttons,
     0,
     0,
@@ -1559,51 +1280,11 @@ static struct {
 };
 
 // 0x5C51B0
-static MainMenuButtonInfo mainmenu_ui_pregen_char_buttons[4] = {
-    {
-        675,
-        55,
-        321, // nextbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7003, // "Next Screen"
-    },
-    {
-        69,
-        55,
-        323, // backbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 }, // "Previous Screen"
-        7002,
-    },
-    {
-        43,
-        118,
-        283, // big_grn_l.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        244,
-        118,
-        284, // big_grn_r.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_pregen_char_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7003 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7002 },
+    { 43, 118, 283, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
+    { 244, 118, 284, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C5270
@@ -1618,7 +1299,7 @@ static MainMenuWindowInfo mainmenu_ui_pregen_char_window_info = {
     NULL,
     NULL,
     -1,
-    4,
+    SDL_arraysize(mainmenu_ui_pregen_char_buttons),
     mainmenu_ui_pregen_char_buttons,
     0,
     0,
@@ -1644,29 +1325,9 @@ static MainMenuWindowInfo mainmenu_ui_pregen_char_window_info = {
 static int mainmenu_ui_pregen_char_idx = 1;
 
 // 0x5C5310
-static MainMenuButtonInfo mainmenu_ui_charedit_buttons[2] = {
-    {
-        675,
-        55,
-        321, // "nextbut.art"
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7003, // "Next Screen"
-    },
-    {
-        69,
-        55,
-        323, // "backbut.art"
-        TIG_BUTTON_HANDLE_INVALID,
-        -2,
-        -1,
-        1,
-        { 0 },
-        7002, // "Previous Screen"
-    },
+static MainMenuButtonInfo mainmenu_ui_charedit_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7003 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -2, -1, 1, { 0 }, 7002 },
 };
 
 // 0x5C5370
@@ -1681,7 +1342,7 @@ static MainMenuWindowInfo mainmenu_ui_charedit_info = {
     NULL,
     NULL,
     -1,
-    2,
+    SDL_arraysize(mainmenu_ui_charedit_buttons),
     mainmenu_ui_charedit_buttons,
     0,
     0,
@@ -1704,29 +1365,9 @@ static MainMenuWindowInfo mainmenu_ui_charedit_info = {
 };
 
 // 0x5C5408
-static MainMenuButtonInfo mainmenu_ui_shop_buttons[2] = {
-    {
-        675,
-        55,
-        321, // nextbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -1,
-        -1,
-        1,
-        { 0 },
-        7003, // "Next Screen"
-    },
-    {
-        69,
-        55,
-        323, // backbut.art
-        TIG_BUTTON_HANDLE_INVALID,
-        -2,
-        -1,
-        1,
-        { 0 },
-        7002, // "Previous Screen"
-    },
+static MainMenuButtonInfo mainmenu_ui_shop_buttons[] = {
+    { 675, 55, 321, TIG_BUTTON_HANDLE_INVALID, -1, -1, 1, { 0 }, 7003 },
+    { 69, 55, 323, TIG_BUTTON_HANDLE_INVALID, -2, -1, 1, { 0 }, 7002 },
 };
 
 // 0x5C5468
@@ -1741,7 +1382,7 @@ static MainMenuWindowInfo mainmenu_ui_shop_info = {
     NULL,
     NULL,
     -1,
-    2,
+    SDL_arraysize(mainmenu_ui_shop_buttons),
     mainmenu_ui_shop_buttons,
     0,
     0,
@@ -1775,7 +1416,7 @@ static MainMenuWindowInfo mainmenu_ui_multiplayer_window_info = {
     NULL,
     NULL,
     200,
-    4,
+    SDL_arraysize(mainmenu_ui_multiplayer_buttons),
     mainmenu_ui_multiplayer_buttons,
     0,
     0,
@@ -1809,7 +1450,7 @@ static MainMenuWindowInfo mainmenu_ui_serverlist_window_info = {
     NULL,
     NULL,
     2110,
-    7,
+    SDL_arraysize(mainmenu_ui_serverlist_buttons),
     mainmenu_ui_serverlist_buttons,
     0,
     0,
@@ -1846,7 +1487,7 @@ static MainMenuWindowInfo stru_5C5650 = {
     NULL,
     NULL,
     400,
-    20,
+    SDL_arraysize(stru_5CC6C8),
     stru_5CC6C8,
     0,
     0,
@@ -1880,7 +1521,7 @@ static MainMenuWindowInfo stru_5C56E8 = {
     NULL,
     NULL,
     440,
-    3,
+    SDL_arraysize(stru_5CC058),
     stru_5CC058,
     0,
     0,
@@ -1914,7 +1555,7 @@ static MainMenuWindowInfo stru_5C5780 = {
     NULL,
     NULL,
     440,
-    5,
+    SDL_arraysize(stru_5CC0E8),
     stru_5CC0E8,
     0,
     0,
@@ -1937,83 +1578,42 @@ static MainMenuWindowInfo stru_5C5780 = {
 };
 
 // 0x5C5818
-static MainMenuButtonInfo stru_5C5818[4] = {
-    {
-        410,
-        143,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0x5,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        193,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0x6,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        243,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0x19,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
-    {
-        410,
-        293,
-        -1,
-        TIG_BUTTON_HANDLE_INVALID,
-        0,
-        0,
-        0,
-        { 0 },
-        -1,
-    },
+static MainMenuButtonInfo mainmenu_ui_mainmenu_no_multiplayer_buttons[] = {
+    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SINGLE_PLAYER, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_CREDITS, 0, 0, { 0 }, -1 },
+    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_0, 0, 0, { 0 }, -1 },
 };
 
-
 // 0x5C3A40
-static MainMenuWindowInfo *main_menu_window_info[] = {
-    &stru_5C3AB0,
-    &stru_5C3B48,
-    &mainmenu_ui_mainmenu_window_info,
-    &mainmenu_ui_mainmenu_in_play_window_info,
-    &mainmenu_ui_mainmenu_in_play_locked_window_info,
-    &mainmenu_ui_single_player_window_info,
-    &mainmenu_ui_options_window_info,
-    &mainmenu_ui_load_game_window_info,
-    &mainmenu_ui_save_game_window_info,
-    &mainmenu_ui_last_save_window_info,
-    &mainmenu_ui_intro_info,
-    &mainmenu_ui_pick_new_or_pregen_window_info,
-    &mainmenu_ui_new_char_window_info,
-    &mainmenu_ui_pregen_char_window_info,
-    &mainmenu_ui_charedit_info,
-    &mainmenu_ui_shop_info,
-    &mainmenu_ui_multiplayer_window_info,
-    &mainmenu_ui_serverlist_window_info,
-    &stru_5C5650,
-    &stru_5C3D10,
-    &stru_5C3DA8,
-    &stru_5C3E40,
-    &stru_5C3ED8,
-    &stru_5C56E8,
-    &stru_5C5780,
-    &mainmenu_ui_credits_window_info,
-    &stru_5C4338,
+static MainMenuWindowInfo *main_menu_window_info[MM_WINDOW_COUNT] = {
+    /*                       MM_WINDOW_0 */ &stru_5C3AB0,
+    /*                       MM_WINDOW_1 */ &stru_5C3B48,
+    /*                MM_WINDOW_MAINMENU */ &mainmenu_ui_mainmenu_window_info,
+    /*        MM_WINDOW_MAINMENU_IN_PLAY */ &mainmenu_ui_mainmenu_in_play_window_info,
+    /* MM_WINDOW_MAINMENU_IN_PLAY_LOCKED */ &mainmenu_ui_mainmenu_in_play_locked_window_info,
+    /*           MM_WINDOW_SINGLE_PLAYER */ &mainmenu_ui_single_player_window_info,
+    /*                 MM_WINDOW_OPTIONS */ &mainmenu_ui_options_window_info,
+    /*               MM_WINDOW_LOAD_GAME */ &mainmenu_ui_load_game_window_info,
+    /*               MM_WINDOW_SAVE_GAME */ &mainmenu_ui_save_game_window_info,
+    /*          MM_WINDOW_LAST_SAVE_GAME */ &mainmenu_ui_last_save_window_info,
+    /*                   MM_WINDOW_INTRO */ &mainmenu_ui_intro_info,
+    /*      MM_WINDOW_PICK_NEW_OR_PREGEN */ &mainmenu_ui_pick_new_or_pregen_window_info,
+    /*                MM_WINDOW_NEW_CHAR */ &mainmenu_ui_new_char_window_info,
+    /*             MM_WINDOW_PREGEN_CHAR */ &mainmenu_ui_pregen_char_window_info,
+    /*                MM_WINDOW_CHAREDIT */ &mainmenu_ui_charedit_info,
+    /*                    MM_WINDOW_SHOP */ &mainmenu_ui_shop_info,
+    /*             MM_WINDOW_MULTIPLAYER */ &mainmenu_ui_multiplayer_window_info,
+    /*              MM_WINDOW_SERVERLIST */ &mainmenu_ui_serverlist_window_info,
+    /*                      MM_WINDOW_18 */ &stru_5C5650,
+    /*                      MM_WINDOW_19 */ &stru_5C3D10,
+    /*                      MM_WINDOW_20 */ &stru_5C3DA8,
+    /*                      MM_WINDOW_21 */ &stru_5C3E40,
+    /*          MM_WINDOW_MP_SELECT_CHAR */ &mainmenu_ui_mp_select_char_window_info,
+    /*                      MM_WINDOW_23 */ &stru_5C56E8,
+    /*                      MM_WINDOW_24 */ &stru_5C5780,
+    /*                 MM_WINDOW_CREDITS */ &mainmenu_ui_credits_window_info,
+    /*                      MM_WINDOW_26 */ &stru_5C4338,
 };
 
 // 0x64B870
@@ -2035,7 +1635,7 @@ static tig_font_handle_t dword_64BC10[3];
 static char byte_64BC1C[1000];
 
 // 0x64C004
-static int dword_64C004[50];
+static MainMenuWindowType dword_64C004[50];
 
 // 0x64C0CC
 static tig_font_handle_t dword_64C0CC[2][3];
@@ -2110,7 +1710,7 @@ static int dword_64C390;
 static char byte_64C394[128];
 
 // 0x64C414
-static int dword_64C414;
+static MainMenuWindowType mainmenu_ui_window_type;
 
 // 0x64C418
 static bool dword_64C418;
@@ -2270,7 +1870,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
     strncpy(byte_64C2F8, mes_file_entry.str, 23);
 
     mainmenu_ui_initialized = true;
-    dword_64C414 = 0;
+    mainmenu_ui_window_type = MM_WINDOW_0;
 
     dword_64C388 = true;
     mainmenu_ui_start(MM_TYPE_DEFAULT);
@@ -2325,7 +1925,7 @@ void mainmenu_ui_exit()
 // 0x541150
 void sub_541150()
 {
-    dword_64C414 = 2;
+    mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
     dword_64C418 = 0;
     dword_64C424 = false;
 }
@@ -2361,25 +1961,25 @@ void mainmenu_ui_start(MainMenuType type)
 
         switch (type) {
         case MM_TYPE_IN_PLAY:
-            dword_64C414 = 3;
+            mainmenu_ui_window_type = MM_WINDOW_MAINMENU_IN_PLAY;
             dword_5C4004 = false;
             sub_541740();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_IN_PLAY_LOCKED:
-            dword_64C414 = 4;
+            mainmenu_ui_window_type = MM_WINDOW_MAINMENU_IN_PLAY_LOCKED;
             dword_5C4004 = false;
             sub_541740();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_OPTIONS:
-            dword_64C414 = 6;
+            mainmenu_ui_window_type = MM_WINDOW_OPTIONS;
             dword_5C4004 = false;
             sub_541740();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_5:
-            dword_64C414 = 26;
+            mainmenu_ui_window_type = MM_WINDOW_26;
             dword_5C4004 = false;
             sub_541740();
             object_hover_obj_set(OBJ_HANDLE_NULL);
@@ -2389,7 +1989,7 @@ void mainmenu_ui_start(MainMenuType type)
                 tig_debug_printf("mainmenu_ui_start: ERROR: tig_mouse_hide failed!\n");
                 exit(EXIT_FAILURE);
             }
-            dword_64C414 = 0;
+            mainmenu_ui_window_type = MM_WINDOW_0;
             dword_5C4004 = true;
             sub_541740();
             object_hover_obj_set(OBJ_HANDLE_NULL);
@@ -2431,7 +2031,7 @@ void sub_5412E0(bool a1)
             dword_64C424 = false;
         }
 
-        if (dword_64C414 || !stru_5C36B0[mainmenu_ui_type][1]) {
+        if (mainmenu_ui_window_type != MM_WINDOW_0 || !stru_5C36B0[mainmenu_ui_type][1]) {
             if (!dword_64C418 || tig_net_is_active()) {
                 if (dword_5C4004) {
                     sub_40FED0();
@@ -2512,9 +2112,9 @@ bool mainmenu_ui_handle()
         intgame_toggle_interface();
     }
 
-    if (dword_64C414 < 2) {
+    if (mainmenu_ui_window_type < MM_WINDOW_MAINMENU) {
         sub_5417A0(0);
-        dword_64C414 = 2;
+        mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
         sub_541740();
 
         if (tig_mouse_show() != TIG_OK) {
@@ -2606,15 +2206,15 @@ void sub_541740()
 {
     if (!dword_64C384) {
         dword_5C3FB8 = -1;
-        if (main_menu_window_info[dword_64C414]->init_func != NULL) {
-            main_menu_window_info[dword_64C414]->init_func();
+        if (main_menu_window_info[mainmenu_ui_window_type]->init_func != NULL) {
+            main_menu_window_info[mainmenu_ui_window_type]->init_func();
         } else {
             mainmenu_ui_create_window();
         }
 
         if (dword_64C384) {
             if (!dword_64C38C) {
-                sub_541810(dword_64C414);
+                sub_541810(mainmenu_ui_window_type);
             }
         }
 
@@ -2625,22 +2225,22 @@ void sub_541740()
 // 0x5417A0
 void sub_5417A0(bool a1)
 {
-    if (main_menu_window_info[dword_64C414]->exit_func != NULL) {
-        main_menu_window_info[dword_64C414]->exit_func();
+    if (main_menu_window_info[mainmenu_ui_window_type]->exit_func != NULL) {
+        main_menu_window_info[mainmenu_ui_window_type]->exit_func();
     }
 
     sub_546DD0();
 
     if (a1) {
-        dword_64C414 = sub_5417E0();
-        if (dword_64C414) {
+        mainmenu_ui_window_type = sub_5417E0();
+        if (mainmenu_ui_window_type != MM_WINDOW_0) {
             sub_541740();
         }
     }
 }
 
 // 0x5417E0
-int sub_5417E0()
+MainMenuWindowType sub_5417E0()
 {
     if (dword_64C390 > 0) {
         if (--dword_64C390 > 0) {
@@ -2649,13 +2249,13 @@ int sub_5417E0()
     } else {
         dword_64C390 = 0;
     }
-    return 0;
+    return MM_WINDOW_0;
 }
 
 // 0x541810
-void sub_541810(int a1)
+void sub_541810(MainMenuWindowType window_type)
 {
-    dword_64C004[dword_64C390++] = a1;
+    dword_64C004[dword_64C390++] = window_type;
 }
 
 // 0x541830
@@ -2760,7 +2360,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
 // 0x541AA0
 void mainmenu_ui_create_mainmenu()
 {
-    dword_64C414 = 2;
+    mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
     mainmenu_ui_create_window();
     ++dword_64C43C;
     mainmenu_ui_draw_version();
@@ -2797,7 +2397,7 @@ bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (button_handle == window->buttons[3].button_handle) {
         if (mainmenu_ui_confirm_quit() != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
             return false;
@@ -2821,7 +2421,7 @@ bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
 
         sub_5417A0(1);
 
-        if (dword_64C414 == 0) {
+        if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
             return false;
         }
@@ -2837,7 +2437,7 @@ bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (button_handle == window->buttons[1].button_handle) {
         if (mainmenu_ui_confirm_quit() != TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
             return false;
@@ -2861,7 +2461,7 @@ bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle
 
         sub_5417A0(1);
 
-        if (dword_64C414 == 0) {
+        if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
             return false;
         }
@@ -2880,7 +2480,7 @@ void mainmenu_ui_create_options()
     int64_t loc;
 
     sub_541D40();
-    dword_64C414 = 6;
+    mainmenu_ui_window_type = MM_WINDOW_OPTIONS;
     mainmenu_ui_create_window_func(false);
     dword_64C440 = 0;
     options_ui_init(0, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
@@ -2940,7 +2540,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
         return true;
     }
 
-    if (dword_64C414 == 6) {
+    if (mainmenu_ui_window_type == MM_WINDOW_OPTIONS) {
         if (!options_ui_load_module()) {
             return true;
         }
@@ -2950,7 +2550,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
         sub_5412D0();
     } else {
         sub_5417A0(1);
-        if (dword_64C414 == 0) {
+        if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
         }
     }
@@ -2986,8 +2586,8 @@ void mainmenu_ui_load_game_create()
     int64_t pc_obj;
     PcLens pc_lens;
 
-    dword_64C414 = 7;
-    window = main_menu_window_info[dword_64C414];
+    mainmenu_ui_window_type = MM_WINDOW_LOAD_GAME;
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     sub_542200();
 
@@ -3105,7 +2705,7 @@ void mainmenu_ui_load_game_destroy()
 // 0x542280
 void sub_542280(int a1)
 {
-    main_menu_window_info[dword_64C414]->top_index = a1;
+    main_menu_window_info[mainmenu_ui_window_type]->top_index = a1;
 }
 
 // 0x5422A0
@@ -3113,7 +2713,7 @@ void sub_5422A0(TigRect* rect)
 {
     (void)rect;
 
-    main_menu_window_info[dword_64C414]->refresh_func(NULL);
+    main_menu_window_info[mainmenu_ui_window_type]->refresh_func(NULL);
 }
 
 // 0x5422C0
@@ -3125,7 +2725,7 @@ bool mainmenu_ui_load_game_execute(int btn)
 
     (void)btn;
 
-    index = main_menu_window_info[dword_64C414]->selected_index;
+    index = main_menu_window_info[mainmenu_ui_window_type]->selected_index;
     if (index == -1) {
         return false;
     }
@@ -3172,7 +2772,7 @@ bool mainmenu_ui_load_game_button_pressed(tig_button_handle_t button_handle)
     }
 
     dword_5C4790 = 0;
-    main_menu_window_info[dword_64C414]->refresh_func(&stru_5C46C0);
+    main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C46C0);
 
     return true;
 }
@@ -3183,7 +2783,7 @@ bool mainmenu_ui_load_game_button_released(tig_button_handle_t button_handle)
     MainMenuWindowInfo* window;
     int index;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     for (index = 0; index < 2; index++) {
         if (button_handle == window->buttons[index].button_handle) {
@@ -3214,7 +2814,7 @@ void mainmenu_ui_load_game_mouse_up(int x, int y)
 
     (void)x;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     window->selected_index = window->top_index + y / 20;
     if (window->selected_index >= window->cnt) {
         window->selected_index = -1;
@@ -3229,7 +2829,7 @@ void sub_542560()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (dword_64C444) {
         gamelib_saveinfo_exit(&stru_64B898);
         dword_64C444 = 0;
@@ -3260,7 +2860,7 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
     char* area_name;
     char* story_state_desc;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
@@ -3549,7 +3149,7 @@ void sub_543060()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->selected_index > 0) {
         window->selected_index--;
         if (window->selected_index < window->top_index) {
@@ -3567,7 +3167,7 @@ void sub_5430D0()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
         if (window->selected_index > window->top_index + window->content_rect.height / 20) {
@@ -3585,7 +3185,7 @@ bool mainmenu_ui_load_game_handle_delete()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->selected_index == -1) {
         return false;
     }
@@ -3692,8 +3292,8 @@ void mainmenu_ui_save_game_create()
     int64_t pc_obj;
     PcLens pc_lens;
 
-    dword_64C414 = 8;
-    window = main_menu_window_info[dword_64C414];
+    mainmenu_ui_window_type = MM_WINDOW_SAVE_GAME;
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     sub_542200();
     gamelib_savlist_create(&stru_64BBF8);
@@ -3778,7 +3378,7 @@ bool mainmenu_ui_save_game_execute(int btn)
 
     (void)btn;
 
-    v1 = main_menu_window_info[dword_64C414]->selected_index;
+    v1 = main_menu_window_info[mainmenu_ui_window_type]->selected_index;
     if (v1 == -1) {
         return false;
     }
@@ -3880,7 +3480,7 @@ bool mainmenu_ui_save_game_button_pressed(tig_button_handle_t button_handle)
     }
 
     dword_5C4790 = 0;
-    main_menu_window_info[dword_64C414]->refresh_func(&stru_5C46C0);
+    main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C46C0);
 
     return true;
 }
@@ -3891,7 +3491,7 @@ bool mainmenu_ui_save_game_button_released(tig_button_handle_t button_handle)
     MainMenuWindowInfo* window;
     int index;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     for (index = 0; index < 2; index++) {
         if (button_handle == window->buttons[index].button_handle) {
             sub_5480C0(index + 2);
@@ -3921,7 +3521,7 @@ void mainmenu_ui_save_game_mouse_up(int x, int y)
 
     (void)x;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     window->selected_index = window->top_index + y / 20;
     if (window->selected_index >= window->cnt) {
         window->selected_index = window->cnt - 1;
@@ -3950,7 +3550,7 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
     char* area_name;
     char* story_state_desc;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
@@ -4176,7 +3776,7 @@ void sub_544210()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->selected_index > 0) {
         window->selected_index--;
         gsound_play_sfx(0, 1);
@@ -4190,7 +3790,7 @@ void sub_544250()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->selected_index < window->cnt - 1) {
         window->selected_index++;
         gsound_play_sfx(0, 1);
@@ -4204,7 +3804,7 @@ void sub_544290()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     sub_549450();
 
     if (!dword_64C444) {
@@ -4233,7 +3833,7 @@ bool mainmenu_ui_save_game_handle_delete()
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     if (window->selected_index <= 0) {
         return false;
@@ -4271,7 +3871,7 @@ void mainmenu_ui_last_save_create()
     MesFileEntry mes_file_entry;
     char name[256];
 
-    dword_64C414 = 9;
+    mainmenu_ui_window_type = MM_WINDOW_LAST_SAVE_GAME;
     mainmenu_ui_create_window();
     dword_64C384 = false;
 
@@ -4324,12 +3924,12 @@ void mainmenu_ui_last_save_create()
 // 0x5445F0
 void mainmenu_ui_intro_create()
 {
-    dword_64C414 = 10;
+    mainmenu_ui_window_type = MM_WINDOW_INTRO;
     gmovie_play(1, 0, 0);
     gmovie_play(7, 0, 0);
     dword_64C390++;
     sub_5417E0();
-    dword_64C414 = 5;
+    mainmenu_ui_window_type = MM_WINDOW_SINGLE_PLAYER;
     sub_541740();
     dword_64C38C = true;
 }
@@ -4337,17 +3937,17 @@ void mainmenu_ui_intro_create()
 // 0x544640
 void mainmenu_ui_credits_create()
 {
-    dword_64C414 = 25;
+    mainmenu_ui_window_type = MM_WINDOW_CREDITS;
     dword_64C390++;
     sub_5417E0();
-    dword_64C414 = 2;
+    mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
     sub_541740();
     dword_64C38C = true;
     slide_ui_start(SLIDE_UI_TYPE_CREDITS);
 
     if (dword_64C384) {
-        if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
-            main_menu_window_info[dword_64C414]->refresh_func(NULL);
+        if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
+            main_menu_window_info[mainmenu_ui_window_type]->refresh_func(NULL);
         }
     }
 }
@@ -4361,7 +3961,7 @@ void mainmenu_ui_last_save_refresh(TigRect* rect)
 // 0x5446A0
 void mainmenu_ui_create_single_player()
 {
-    dword_64C414 = 5;
+    mainmenu_ui_window_type = MM_WINDOW_SINGLE_PLAYER;
     mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
     if (tig_net_is_active()) {
@@ -4375,7 +3975,7 @@ void mainmenu_ui_create_single_player()
 void mainmenu_ui_pick_new_or_pregen_create()
 {
     dword_64C454 = CHAREDIT_MODE_CREATE;
-    dword_64C414 = 11;
+    mainmenu_ui_window_type = MM_WINDOW_PICK_NEW_OR_PREGEN;
     mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
 }
@@ -4386,7 +3986,7 @@ void mainmenu_ui_new_char_create()
     PlayerCreateInfo player_create_info;
 
     dword_64C458 = 0;
-    dword_64C414 = 12;
+    mainmenu_ui_window_type = MM_WINDOW_NEW_CHAR;
     multiplayer_lock();
 
     player_create_info_init(&player_create_info);
@@ -4610,7 +4210,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
     }
 
     pc_obj = player_get_local_pc_obj();
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     switch (index) {
     case 0:
@@ -4619,7 +4219,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
         }
 
         sub_5417A0(0);
-        dword_64C414 = 14;
+        mainmenu_ui_window_type = MM_WINDOW_CHAREDIT;
         sub_541740();
         return true;
     case 1:
@@ -4917,7 +4517,7 @@ void mainmenu_ui_new_char_mouse_idle(int x, int y)
 
     if (dword_64C458 != v1) {
         dword_64C458 = v1;
-        main_menu_window_info[dword_64C414]->refresh_func(&stru_5C5070);
+        main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C5070);
     }
 }
 
@@ -4953,7 +4553,7 @@ bool mainmenu_ui_new_char_execute(int btn)
 // 0x545870
 void mainmenu_ui_pregen_char_create()
 {
-    dword_64C414 = 13;
+    mainmenu_ui_window_type = MM_WINDOW_PREGEN_CHAR;
     mainmenu_ui_pregen_char_idx = 1;
     qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(16067)));
     mainmenu_ui_create_window();
@@ -5000,7 +4600,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
     }
 
     pc_obj = player_get_local_pc_obj();
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
     switch (index) {
     case 0:
@@ -5073,7 +4673,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 // 0x545C50
 void mainmenu_ui_charedit_create()
 {
-    dword_64C414 = 14;
+    mainmenu_ui_window_type = MM_WINDOW_CHAREDIT;
     mainmenu_ui_create_window();
 }
 
@@ -5121,7 +4721,7 @@ bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle)
             sub_5417A0(0);
             mainmenu_ui_create_multiplayer_hub();
             if (sub_541680()) {
-                sub_541810(sub_5496D0());
+                sub_541810(mainmenu_ui_window_type_get());
             }
 
             return false;
@@ -5156,7 +4756,7 @@ void mainmenu_ui_charedit_refresh(TigRect* rect)
 // 0x545E20
 void mainmenu_ui_shop_create()
 {
-    dword_64C414 = 15;
+    mainmenu_ui_window_type = MM_WINDOW_SHOP;
     mainmenu_ui_create_window();
 }
 
@@ -5238,7 +4838,7 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
 // 0x545F60
 void mainmenu_ui_multiplayer_create()
 {
-    dword_64C414 = 16;
+    mainmenu_ui_window_type = MM_WINDOW_MULTIPLAYER;
     mainmenu_ui_create_window();
 
     if (tig_net_is_active()) {
@@ -5259,7 +4859,7 @@ void sub_545FD0(int x, int y)
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (x >= stru_5C3FE0.x
         && y >= stru_5C3FE0.y
         && x < stru_5C3FE0.x + stru_5C3FE0.width
@@ -5280,7 +4880,7 @@ void sub_545FD0(int x, int y)
 void mainmenu_ui_create_multiplayer_select_char()
 {
     tig_art_interface_id_create(753, 0, 0, 0, &dword_64C2A4);
-    dword_64C414 = 22;
+    mainmenu_ui_window_type = MM_WINDOW_MP_SELECT_CHAR;
 
     stru_64C2B0.flags = 781;
     stru_64C2B0.scrollbar_rect.x = 287;
@@ -5408,7 +5008,7 @@ void mainmenu_ui_create_window_func(bool should_display)
         return;
     }
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     if (window->background_art_num != -1) {
         tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
         if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
@@ -5733,8 +5333,8 @@ void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str
             }
         }
 
-        if (main_menu_window_info[dword_64C414]->background_art_num != -1) {
-            tig_art_interface_id_create(main_menu_window_info[dword_64C414]->background_art_num, 0, 0, 0, &art_id);
+        if (main_menu_window_info[mainmenu_ui_window_type]->background_art_num != -1) {
+            tig_art_interface_id_create(main_menu_window_info[mainmenu_ui_window_type]->background_art_num, 0, 0, 0, &art_id);
             if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
                 src_rect.x = rect->x;
                 src_rect.y = rect->y;
@@ -5806,7 +5406,7 @@ void mainmenu_ui_create_shared_radio_buttons()
     MainMenuWindowInfo* info;
     tig_button_handle_t group[2];
 
-    info = main_menu_window_info[dword_64C414];
+    info = main_menu_window_info[mainmenu_ui_window_type];
     group[0] = info->buttons[4].button_handle;
     group[1] = info->buttons[5].button_handle;
     if (tig_button_radio_group_create(2, group, info->flags & 1) != TIG_OK) {
@@ -5834,9 +5434,9 @@ bool sub_546EE0(TigMessage* msg)
         msg->data.mouse.y -= rect.y;
     }
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
 
-    if (dword_64C414 == 17) {
+    if (mainmenu_ui_window_type == MM_WINDOW_SERVERLIST) {
         if (sub_5862D0(msg, dword_5C3624)) {
             return true;
         }
@@ -5859,7 +5459,7 @@ bool sub_546EE0(TigMessage* msg)
                 }
             }
 
-            if (dword_64C414 != 8
+            if (mainmenu_ui_window_type != MM_WINDOW_SAVE_GAME
                 || (msg->data.mouse.x < stru_5C3648.x
                     || msg->data.mouse.y < stru_5C3648.y
                     || msg->data.mouse.x >= stru_5C3648.x + stru_5C3648.width
@@ -5870,14 +5470,14 @@ bool sub_546EE0(TigMessage* msg)
 
         switch (msg->data.mouse.event) {
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
-            switch (dword_64C414) {
-            case 0:
-            case 1:
+            switch (mainmenu_ui_window_type) {
+            case MM_WINDOW_0:
+            case MM_WINDOW_1:
                 sub_5417A0(0);
-                dword_64C414 = 2;
+                mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
                 sub_541740();
                 return true;
-            case 6:
+            case MM_WINDOW_OPTIONS:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     if (stru_5C36B0[mainmenu_ui_type][0]) {
                         if (!options_ui_load_module()) {
@@ -5890,7 +5490,7 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 }
                 break;
-            case 7:
+            case MM_WINDOW_LOAD_GAME:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     if (dword_64C450) {
                         sub_5412D0();
@@ -5900,13 +5500,13 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 }
                 break;
-            case 8:
+            case MM_WINDOW_SAVE_GAME:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     sub_5412D0();
                     return true;
                 }
                 break;
-            case 17:
+            case MM_WINDOW_SERVERLIST:
                 if (msg->data.mouse.x >= stru_5C3FE0.x
                     && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FE0.y
                     && msg->data.mouse.x < stru_5C3FE0.x + stru_5C3FE0.width
@@ -5941,11 +5541,11 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
         case TIG_MESSAGE_MOUSE_MIDDLE_BUTTON_UP:
-            switch (dword_64C414) {
-            case 0:
-            case 1:
+            switch (mainmenu_ui_window_type) {
+            case MM_WINDOW_0:
+            case MM_WINDOW_1:
                 sub_5417A0(0);
-                dword_64C414 = 2;
+                mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
                 sub_541740();
                 return true;
             }
@@ -5984,7 +5584,7 @@ bool sub_546EE0(TigMessage* msg)
                         }
 
                         sub_5417A0(0);
-                        dword_64C414 = window->buttons[idx].field_10;
+                        mainmenu_ui_window_type = window->buttons[idx].field_10;
                         sub_541740();
                         return true;
                     }
@@ -5992,17 +5592,17 @@ bool sub_546EE0(TigMessage* msg)
                     if (window->buttons[idx].field_10 == 0) {
                         sub_5412D0();
                         if (stru_5C36B0[mainmenu_ui_type][1]
-                            || dword_64C414 == 2
-                            || dword_64C414 == 3 ) {
+                            || mainmenu_ui_window_type == MM_WINDOW_MAINMENU
+                            || mainmenu_ui_window_type == MM_WINDOW_MAINMENU_IN_PLAY ) {
                             mainmenu_ui_exit_game();
                         }
-                        dword_64C414 = 0;
+                        mainmenu_ui_window_type = MM_WINDOW_0;
                         return true;
                     }
 
                     if (window->buttons[idx].field_10 == -2) {
                         sub_5417A0(1);
-                        if (dword_64C414 == 0) {
+                        if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
                         }
                     }
@@ -6110,24 +5710,24 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         }
 
-        switch (dword_64C414) {
-        case 0:
+        switch (mainmenu_ui_window_type) {
+        case MM_WINDOW_0:
             return false;
-        case 1:
+        case MM_WINDOW_1:
             sub_5417A0(0);
-            dword_64C414 = 2;
+            mainmenu_ui_window_type = 2;
             sub_541740();
             return true;
-        case 2:
+        case MM_WINDOW_MAINMENU:
             if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE
                 && dword_64C43C > 1) {
                 gsound_play_sfx(0, 1);
                 sub_5412D0();
-                dword_64C414 = 0;
+                mainmenu_ui_window_type = 0;
                 mainmenu_ui_exit_game();
             }
             return false;
-        case 6:
+        case MM_WINDOW_OPTIONS:
             if (msg->data.keyboard.key == SDL_SCANCODE_O) {
                 if (!stru_5C36B0[mainmenu_ui_type][1]) {
                     sub_5412D0();
@@ -6135,12 +5735,12 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             }
             return false;
-        case 7:
+        case MM_WINDOW_LOAD_GAME:
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
-                if (dword_64C414 == 0) {
+                if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
                 return true;
@@ -6161,12 +5761,12 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             }
             return false;
-        case 8:
+        case MM_WINDOW_SAVE_GAME:
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
-                if (dword_64C414 == 0) {
+                if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
                 return true;
@@ -6187,23 +5787,23 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             }
             return false;
-        case 17:
+        case MM_WINDOW_SERVERLIST:
             if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE) {
                 gsound_play_sfx(0, 1);
                 tig_net_reset_connection();
                 sub_5417A0(1);
-                if (dword_64C414 == 0) {
+                if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
                 return true;
             }
             return false;
-        case 22:
+        case MM_WINDOW_MP_SELECT_CHAR:
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
                 sub_5417A0(1);
-                if (dword_64C414 == 0) {
+                if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
                 return true;
@@ -6292,7 +5892,7 @@ bool sub_546EE0(TigMessage* msg)
             return false;
         }
 
-        if ((dword_64C414 == 15 || dword_64C414 == 14)
+        if ((mainmenu_ui_window_type == MM_WINDOW_SHOP || mainmenu_ui_window_type == MM_WINDOW_CHAREDIT)
             && msg->data.character.ch == SDLK_RETURN
             && sub_552070() != 9) {
             gsound_play_sfx(0, 1);
@@ -6327,31 +5927,33 @@ bool sub_546EE0(TigMessage* msg)
             }
 
             sub_5417A0(0);
-            dword_64C414 = window->buttons[idx].field_10;
+            mainmenu_ui_window_type = window->buttons[idx].field_10;
             sub_541740();
             return true;
         }
 
         if (window->buttons[idx].field_10 == 0) {
             sub_5412D0();
-            if (stru_5C36B0[mainmenu_ui_type][1] || dword_64C414 == 2 || dword_64C414 == 3) {
+            if (stru_5C36B0[mainmenu_ui_type][1]
+                || mainmenu_ui_window_type == MM_WINDOW_MAINMENU
+                || mainmenu_ui_window_type == MM_WINDOW_MAINMENU_IN_PLAY) {
                 mainmenu_ui_exit_game();
             }
-            dword_64C414 = 0;
+            mainmenu_ui_window_type = MM_WINDOW_0;
             return true;
         }
 
         if (window->buttons[idx].field_10 == -2) {
             sub_5417A0(1);
-            if (dword_64C414 == 0) {
+            if (mainmenu_ui_window_type == MM_WINDOW_0) {
                 sub_5412D0();
             }
             return true;
         }
 
         if (window->buttons[idx].field_10 == -1) {
-            switch (dword_64C414) {
-            case 3:
+            switch (mainmenu_ui_window_type) {
+            case MM_WINDOW_MAINMENU_IN_PLAY:
                 switch (idx) {
                 case 3:
                     if (mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
@@ -6371,7 +5973,7 @@ bool sub_546EE0(TigMessage* msg)
                     if (!stru_5C36B0[mainmenu_ui_type][0]) {
                         sub_5417A0(1);
 
-                        if (!dword_64C414) {
+                        if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
                         }
                     }
@@ -6379,7 +5981,7 @@ bool sub_546EE0(TigMessage* msg)
                 }
 
                 return true;
-            case 4:
+            case MM_WINDOW_MAINMENU_IN_PLAY_LOCKED:
                 switch (idx) {
                 case 1:
                     if (mainmenu_ui_confirm_quit() == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
@@ -6399,7 +6001,7 @@ bool sub_546EE0(TigMessage* msg)
                     if (!stru_5C36B0[mainmenu_ui_type][0]) {
                         sub_5417A0(1);
 
-                        if (!dword_64C414) {
+                        if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
                         }
                     }
@@ -6427,7 +6029,7 @@ void mainmenu_ui_refresh_button_text(int btn, unsigned int flags)
     MesFileEntry mes_file_entry;
     TigRect rect;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     button = &(window->buttons[btn]);
 
     // FIXME: Result is not being checked.
@@ -6467,8 +6069,8 @@ void sub_547EF0()
             && art_anim_data.num_frames > 1) {
             stru_64B870[index].max_frame = art_anim_data.num_frames - 1;
             stru_64B870[index].fps = 1000 / art_anim_data.fps;
-            stru_64B870[index].x = main_menu_window_info[dword_64C414]->field_3C[index].x;
-            stru_64B870[index].y = main_menu_window_info[dword_64C414]->field_3C[index].y;
+            stru_64B870[index].x = main_menu_window_info[mainmenu_ui_window_type]->field_3C[index].x;
+            stru_64B870[index].y = main_menu_window_info[mainmenu_ui_window_type]->field_3C[index].y;
 
             timeevent.type = TIMEEVENT_TYPE_MAINMENU;
             timeevent.params[0].integer_value = index;
@@ -6533,7 +6135,7 @@ void sub_5480C0(int a1)
 {
     MainMenuWindowInfo* window;
 
-    window = main_menu_window_info[dword_64C414];
+    window = main_menu_window_info[mainmenu_ui_window_type];
     switch (a1) {
     case 0:
         sub_548FF0(window->top_index - 1);
@@ -6549,17 +6151,17 @@ void sub_5480C0(int a1)
             }
         }
         if (dword_64C384) {
-            if (dword_64C414 == 15) {
+            if (mainmenu_ui_window_type == MM_WINDOW_SHOP) {
                 sub_5412D0();
             } else {
                 sub_5417A0(0);
-                dword_64C414++;
+                mainmenu_ui_window_type++;
                 sub_541740();
             }
         }
         return;
     case 3:
-        if (dword_64C414 != 6 || options_ui_load_module()) {
+        if (mainmenu_ui_window_type != MM_WINDOW_OPTIONS || options_ui_load_module()) {
             sub_5417A0(1);
         }
         return;
@@ -6979,7 +6581,7 @@ void mmUIWinRefreshScrollBar()
     tig_art_id_t art_id;
     MainMenuWindowInfo* curr_window_info;
 
-    curr_window_info = main_menu_window_info[dword_64C414];
+    curr_window_info = main_menu_window_info[mainmenu_ui_window_type];
     if (curr_window_info->scrollbar_rect.width > 0) {
         tig_art_interface_id_create(316, 0, 0, 0, &art_id);
         if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -7011,7 +6613,7 @@ void sub_548FF0(int a1)
 {
     MainMenuWindowInfo* curr_window_info;
 
-    curr_window_info = main_menu_window_info[dword_64C414];
+    curr_window_info = main_menu_window_info[mainmenu_ui_window_type];
     if (a1 < 0) {
         a1 = 0;
     } else if (a1 > curr_window_info->max_top_index) {
@@ -7044,7 +6646,7 @@ bool mainmenu_ui_multiplayer_execute(int btn)
         sub_5417A0(0);
         mainmenu_ui_create_multiplayer_hub();
         if (dword_64C384 && !dword_64C38C) {
-            sub_541810(dword_64C414);
+            sub_541810(mainmenu_ui_window_type);
         }
         return false;
     case 1:
@@ -7100,7 +6702,7 @@ bool mainmenu_ui_multiplayer_execute(int btn)
                 return false;
             }
         }
-        sub_541810(dword_64C414);
+        sub_541810(mainmenu_ui_window_type);
         return false;
     case 2:
         settings_set_str_value(&settings, "won_password", "");
@@ -7109,7 +6711,7 @@ bool mainmenu_ui_multiplayer_execute(int btn)
         if (!dword_64C384 || dword_64C38C) {
             return false;
         }
-        sub_541810(dword_64C414);
+        sub_541810(mainmenu_ui_window_type);
         return false;
     default:
         return false;
@@ -7125,14 +6727,14 @@ bool mainmenu_ui_execute_multiplayer_select_char(int index)
         sub_5417A0(0);
         mainmenu_ui_create_multiplayer_hub();
         if (dword_64C384) {
-            sub_541810(dword_64C414);
+            sub_541810(mainmenu_ui_window_type);
         }
         break;
     case 1:
         sub_5417A0(0);
         mainmenu_ui_new_char_create();
         if (dword_64C384) {
-            sub_541810(dword_64C414);
+            sub_541810(mainmenu_ui_window_type);
         }
         break;
     default:
@@ -7152,7 +6754,7 @@ bool sub_549310(tig_button_handle_t button_handle)
 
     if (dword_64C384) {
         sub_5417A0(0);
-        dword_64C414 = 2;
+        mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
         dword_64C390 = 0;
         mainmenu_ui_type = !dword_5C4000 ? MM_TYPE_1 : MM_TYPE_DEFAULT;
         sub_541740();
@@ -7187,12 +6789,14 @@ void sub_5493C0(char* buffer, int size)
         }
 
         stru_5C4008.size = size;
-        stru_5C4008.flags = dword_64C414 == 8;
+        stru_5C4008.flags = mainmenu_ui_window_type == MM_WINDOW_SAVE_GAME
+            ? TEXTEDIT_0x01
+            : 0;
         stru_5C4008.buffer = buffer;
         textedit_ui_focus(&stru_5C4008);
         dword_64C428 = true;
 
-        curr_window_info = main_menu_window_info[dword_64C414];
+        curr_window_info = main_menu_window_info[mainmenu_ui_window_type];
         curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
         sub_549A40();
@@ -7211,7 +6815,7 @@ void sub_549450()
         textedit_ui_unfocus(&stru_5C4008);
         dword_64C428 = false;
 
-        curr_window_info = main_menu_window_info[dword_64C414];
+        curr_window_info = main_menu_window_info[mainmenu_ui_window_type];
         curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
         sub_549A50();
@@ -7223,7 +6827,7 @@ void sub_5494C0(TextEdit* textedit)
 {
     MesFileEntry mes_file_entry;
 
-    if (textedit->buffer[0] == '\0' && dword_64C414 != 8) {
+    if (textedit->buffer[0] == '\0' && mainmenu_ui_window_type != MM_WINDOW_SAVE_GAME) {
         mes_file_entry.num = 500; // "Choose Name"
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         strncpy(byte_64C2F8, mes_file_entry.str, 23);
@@ -7231,7 +6835,7 @@ void sub_5494C0(TextEdit* textedit)
 
     sub_549450();
 
-    if (dword_64C414 == 8) {
+    if (mainmenu_ui_window_type == MM_WINDOW_SAVE_GAME) {
         mainmenu_ui_save_game_execute(-1);
     }
 }
@@ -7249,10 +6853,10 @@ void sub_549540(TextEdit* textedit)
 
     (void)textedit;
 
-    curr_window_info = main_menu_window_info[dword_64C414];
+    curr_window_info = main_menu_window_info[mainmenu_ui_window_type];
     curr_window_info->refresh_func(&(curr_window_info->content_rect));
 
-    if (dword_64C414 == 8) {
+    if (mainmenu_ui_window_type == MM_WINDOW_SAVE_GAME) {
         scrollbar_ui_control_redraw(stru_64C220);
     }
 }
@@ -7276,8 +6880,8 @@ void mainmenu_ui_progressbar_init(int max_value)
     mainmenu_ui_progressbar_max_value = max_value;
 
     if (dword_64C384) {
-        if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
-            main_menu_window_info[dword_64C414]->refresh_func(&stru_5C4538);
+        if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
+            main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C4538);
         }
     }
 }
@@ -7288,8 +6892,8 @@ void mainmenu_ui_progressbar_update(int value)
     mainmenu_ui_progressbar_value = value;
 
     if (dword_64C384) {
-        if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
-            main_menu_window_info[dword_64C414]->refresh_func(&stru_5C4538);
+        if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
+            main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C4538);
         }
     }
 }
@@ -7319,9 +6923,9 @@ MainMenuWindowInfo* sub_5496C0(int index)
 }
 
 // 0x5496D0
-int sub_5496D0()
+MainMenuWindowType mainmenu_ui_window_type_get()
 {
-    return dword_64C414;
+    return mainmenu_ui_window_type;
 }
 
 // 0x5496E0
@@ -7377,9 +6981,9 @@ tig_window_handle_t sub_549820()
 }
 
 // 0x549830
-void sub_549830(int a1)
+void mainmenu_ui_window_type_set(MainMenuWindowType window_type)
 {
-    dword_64C414 = a1;
+    mainmenu_ui_window_type = window_type;
 }
 
 // 0x549840
@@ -7434,7 +7038,7 @@ void sub_549960()
 {
     int index;
 
-    for (index = 0; index < main_menu_window_info[dword_64C414]->num_buttons; index++) {
+    for (index = 0; index < main_menu_window_info[mainmenu_ui_window_type]->num_buttons; index++) {
         mainmenu_ui_refresh_button_text(index, 0);
     }
 }
@@ -7528,8 +7132,8 @@ void sub_549A80()
 void sub_549B10()
 {
     mainmenu_ui_mainmenu_window_info.num = 460;
-    mainmenu_ui_mainmenu_window_info.num_buttons = 4;
-    mainmenu_ui_mainmenu_window_info.buttons = stru_5C5818;
+    mainmenu_ui_mainmenu_window_info.num_buttons = SDL_arraysize(mainmenu_ui_mainmenu_no_multiplayer_buttons);
+    mainmenu_ui_mainmenu_window_info.buttons = mainmenu_ui_mainmenu_no_multiplayer_buttons;
 }
 
 // 0x549B30
