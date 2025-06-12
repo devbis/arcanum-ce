@@ -12,7 +12,7 @@
 static int monstergen_concurrent_get(int id);
 static void monstergen_update(GeneratorInfo* info);
 static int monstergen_concurrent_set(int id, int value);
-static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
+static int monstergen_generate(GeneratorInfo* generator_info, int cnt);
 
 // 0x5B5EC0
 static DateTime stru_5B5EC0[8] = {
@@ -265,7 +265,7 @@ bool monstergen_process(int64_t obj, DateTime* datetime)
             num_monsters_to_create = 1;
         }
 
-        num_monsters_created = sub_4BA910(&generator_info, num_monsters_to_create);
+        num_monsters_created = monstergen_generate(&generator_info, num_monsters_to_create);
         generator_info.cur_concurrent += num_monsters_created;
 
         if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
@@ -280,7 +280,7 @@ bool monstergen_process(int64_t obj, DateTime* datetime)
 }
 
 // 0x4BA910
-int sub_4BA910(GeneratorInfo* generator_info, int cnt)
+int monstergen_generate(GeneratorInfo* generator_info, int cnt)
 {
     int64_t loc;
     int64_t x;
@@ -290,7 +290,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
     int64_t target_y;
     tig_art_id_t art_id;
     int tile_type;
-    int gen_cnt;
+    int num_generated;
     int attempt;
     int distance;
     TigRect rect;
@@ -305,8 +305,8 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
     location_xy(loc, &x, &y);
     object_get_rect(generator_info->obj, 0x8, &rect);
 
-    gen_cnt = 0;
-    while (gen_cnt < cnt) {
+    num_generated = 0;
+    while (num_generated < cnt) {
         if (generator_info->max_concurrent == 1) {
             target_loc = loc;
         } else {
@@ -346,10 +346,10 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
         flags |= ONF_GENERATED;
         mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
 
-        gen_cnt++;
+        num_generated++;
     }
 
-    return gen_cnt;
+    return num_generated;
 }
 
 // 0x4BAB30
