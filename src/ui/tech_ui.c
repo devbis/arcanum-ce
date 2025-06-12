@@ -15,29 +15,31 @@ void tech_ui_inc_degree(int64_t obj, int tech)
     int points;
     bool is_pc;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()
-        || multiplayer_is_locked()) {
-        degree = tech_degree_get(obj, tech);
-        cost = tech_degree_cost_get(degree + 1);
-        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
-        is_pc = player_is_local_pc_obj(obj);
+    if (tig_net_is_active()
+        && !tig_net_is_host()
+        && !multiplayer_is_locked()) {
+        return;
+    }
 
-        if (cost > points) {
+    degree = tech_degree_get(obj, tech);
+    cost = tech_degree_cost_get(degree + 1);
+    points = stat_level_get(obj, STAT_UNSPENT_POINTS);
+    is_pc = player_is_local_pc_obj(obj);
+
+    if (cost > points) {
+        if (is_pc) {
+            charedit_error_not_enough_character_points();
+        }
+    } else {
+        if (tech_degree_inc(obj, tech) > degree) {
+            stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
             if (is_pc) {
-                charedit_error_not_enough_character_points();
+                charedit_refresh();
+                sub_550720();
             }
         } else {
-            if (tech_degree_inc(obj, tech) > degree) {
-                stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
-                if (is_pc) {
-                    charedit_refresh();
-                    sub_550720();
-                }
-            } else {
-                if (is_pc) {
-                    charedit_error_not_enough_intelligence();
-                }
+            if (is_pc) {
+                charedit_error_not_enough_intelligence();
             }
         }
     }
@@ -51,20 +53,22 @@ void tech_ui_dec_degree(int64_t obj, int tech)
     int points;
     bool is_pc;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()
-        || multiplayer_is_locked()) {
-        degree = tech_degree_get(obj, tech);
-        cost = tech_degree_cost_get(degree);
-        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
-        is_pc = player_is_local_pc_obj(obj);
+    if (tig_net_is_active()
+        && !tig_net_is_host()
+        && !multiplayer_is_locked()) {
+        return;
+    }
 
-        if (tech_degree_dec(obj, tech) < degree) {
-            stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
-            if (is_pc) {
-                charedit_refresh();
-                sub_550720();
-            }
+    degree = tech_degree_get(obj, tech);
+    cost = tech_degree_cost_get(degree);
+    points = stat_level_get(obj, STAT_UNSPENT_POINTS);
+    is_pc = player_is_local_pc_obj(obj);
+
+    if (tech_degree_dec(obj, tech) < degree) {
+        stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
+        if (is_pc) {
+            charedit_refresh();
+            sub_550720();
         }
     }
 }
