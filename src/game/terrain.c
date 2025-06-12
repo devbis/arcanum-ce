@@ -412,7 +412,7 @@ void terrain_sector_path(int64_t sector_id, char* path)
     }
 
     strcat(path, "\\");
-    _i64toa(v4, &(path[strlen(path)]), 10);
+    SDL_lltoa(v4, &(path[strlen(path)]), 10);
     strcat(path, ".sec");
 }
 
@@ -699,7 +699,7 @@ bool sub_4E8F40()
             strcpy(path, "terrain\\");
             strcat(path, msg.str);
             strcat(path, "\\");
-            _i64toa(sub_4E8E60(k), path + strlen(path), 10);
+            SDL_lltoa(sub_4E8E60(k), path + strlen(path), 10);
             strcat(path, ".sec");
 
             if (!tig_file_exists(path, NULL)) {
