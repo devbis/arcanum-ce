@@ -2196,7 +2196,7 @@ void MTComponentChargeNBranch_ProcFunc()
         && !sub_450420(dword_5E75F0->source_obj.obj, dword_5E761C->data.charge_branch.cost, true, dword_5E75F0->spell)) {
         if (dword_5E761C->data.charge_branch.branch != -1) {
             dword_5E7624 = true;
-            dword_5E6D90 = min(dword_5E761C->data.charge_branch.branch, dword_5E759C->cnt);
+            dword_5E6D90 = SDL_min(dword_5E761C->data.charge_branch.branch, dword_5E759C->cnt);
         } else {
             dword_5E7624 = true;
             dword_5E6D90 = dword_5E759C->cnt;

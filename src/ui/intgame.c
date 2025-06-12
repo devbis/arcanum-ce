@@ -5200,7 +5200,7 @@ void intgame_clock_refresh()
         if (v1 < width) {
             src_rect.x = v1;
             src_rect.y = 0;
-            src_rect.width = min(width - v1, dst_width);
+            src_rect.width = SDL_min(width - v1, dst_width);
             src_rect.height = stru_5C6F80.height;
 
             dst_rect.x = dst_x;
