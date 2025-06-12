@@ -1884,7 +1884,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
                 return;
             }
 
-            sub_43CBF0(proto_obj, summon_info->loc, summon_info->field_88, &obj);
+            object_create_ex(proto_obj, summon_info->loc, summon_info->field_88, &obj);
         }
     } else {
         if (!object_create(proto_obj, summon_info->loc, &obj)) {

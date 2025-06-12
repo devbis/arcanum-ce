@@ -100,7 +100,7 @@ static bool object_drop_success(void* userinfo);
 static bool object_drop_failure(void* userinfo);
 static bool object_pickup_success(void* userinfo);
 static bool object_pickup_failure(void* userinfo);
-static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
+static bool object_create_func(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
 static bool object_duplicate_func(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
 static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
@@ -1206,13 +1206,13 @@ bool object_create(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
     ObjectID oid;
 
     oid.type = OID_TYPE_BLOCKED;
-    return sub_442130(proto_obj, loc, obj_ptr, oid);
+    return object_create_func(proto_obj, loc, obj_ptr, oid);
 }
 
 // 0x43CBF0
-bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
+bool object_create_ex(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
 {
-    return sub_442130(proto_obj, loc, obj_ptr, oid);
+    return object_create_func(proto_obj, loc, obj_ptr, oid);
 }
 
 // 0x43CC30
@@ -4290,10 +4290,8 @@ bool sub_4420D0(uint8_t* data, int64_t* obj_ptr, int64_t loc)
     return true;
 }
 
-// NOTE: a4 passed by value.
-//
 // 0x442130
-bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid)
+bool object_create_func(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid)
 {
     if (oid.type == OID_TYPE_BLOCKED) {
         sub_4058E0(proto_obj, loc, obj_ptr);

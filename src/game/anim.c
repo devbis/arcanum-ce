@@ -4270,7 +4270,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
 
         if (tig_net_is_active()
             && !tig_net_is_host()) {
-            if (!sub_43CBF0(proto_obj, loc, oid, obj_ptr)) {
+            if (!object_create_ex(proto_obj, loc, oid, obj_ptr)) {
                 ASSERT(0); // 3085, "0"
                 exit(EXIT_FAILURE);
             }

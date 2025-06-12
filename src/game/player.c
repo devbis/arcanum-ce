@@ -251,7 +251,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
     if ((player_create_info->flags & PLAYER_CREATE_INFO_OBJ) != 0) {
         objid_id_to_str(str, player_create_info->oid);
         tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
-        if (!sub_43CBF0(player_pc_prototype_obj, loc, player_create_info->oid, &(player_create_info->obj))) {
+        if (!object_create_ex(player_pc_prototype_obj, loc, player_create_info->oid, &(player_create_info->obj))) {
             tig_debug_printf("player_obj_create_player: Error: failed to create player!\n");
             exit(EXIT_FAILURE);
         }

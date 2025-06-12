@@ -100,7 +100,7 @@ void sub_43C690(GameDrawInfo* draw_info);
 void object_invalidate_rect(TigRect* rect);
 void object_flush();
 bool object_create(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
-bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
+bool object_create_ex(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
 bool object_duplicate(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
 bool object_duplicate_ex(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr);
 void object_destroy(int64_t obj);
