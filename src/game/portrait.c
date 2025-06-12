@@ -445,19 +445,19 @@ bool portrait_is_valid(int64_t obj, const char* str)
             portrait_gender_specifiers[gender]);
 
         // Check if portrait file name starts with the race-gender specifiers.
-        if (strnicmp(buffer, str, 3) == 0) {
+        if (SDL_strncasecmp(buffer, str, 3) == 0) {
             return true;
         }
 
         // Special case - portraits prefixed with "ANY" are suitable for any
         // critter.
-        if (strnicmp("ANY", str, 3) == 0) {
+        if (SDL_strncasecmp("ANY", str, 3) == 0) {
             return true;
         }
 
         // Special case - portraits prefixed with "NPC" are suitable for NPCs.
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-            && strnicmp("NPC", str, 3) == 0) {
+            && SDL_strncasecmp("NPC", str, 3) == 0) {
             return true;
         }
     }

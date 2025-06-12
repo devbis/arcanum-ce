@@ -2281,7 +2281,7 @@ bool sub_416840(DialogState* a1, bool a2)
         sub_415BA0(a1, entry.actions, 0);
     }
 
-    if (strnicmp(entry.str, "g:", 2) == 0) {
+    if (SDL_strncasecmp(entry.str, "g:", 2) == 0) {
         sub_419260(a1, &(entry.str[2]));
 
         if (a1->field_17E8) {
@@ -2296,7 +2296,7 @@ bool sub_416840(DialogState* a1, bool a2)
         return true;
     }
 
-    if (strnicmp(entry.str, "m:", 2) == 0) {
+    if (SDL_strncasecmp(entry.str, "m:", 2) == 0) {
         char* pch;
         int v2;
         int v3;
@@ -2318,7 +2318,7 @@ bool sub_416840(DialogState* a1, bool a2)
         return false;
     }
 
-    if (strnicmp(entry.str, "r:", 2) == 0) {
+    if (SDL_strncasecmp(entry.str, "r:", 2) == 0) {
         char* pch;
         int cost;
         int cnt;
@@ -2419,11 +2419,11 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         }
         a3->field_17F0[a2] = 3;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strnicmp(entry.str, "c:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "c:", 2) == 0) {
         dialog_copy_pc_story_msg(a3->options[a2], a3);
         a3->field_17F0[a2] = 24;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strnicmp(entry.str, "d:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "d:", 2) == 0) {
         pch = strchr(entry.str, ',');
         cnt = dialog_parse_params(values, pch + 1);
         if (filter_unknown_areas(a3->pc_obj, values, cnt) == 0) {
@@ -2463,13 +2463,13 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strnicmp(entry.str, "q:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "q:", 2) == 0) {
         v4 = quest_dialog_line(a3->pc_obj, a3->npc_obj, atoi(entry.str + 2));
         if (v4 != -1) {
             return sub_416C10(v4, a2, a3);
         }
         return false;
-    } else if (strnicmp(entry.str, "r:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "r:", 2) == 0) {
         dialog_copy_pc_class_specific_msg(a3->options[a2], a3, 2000);
 
         pch = a3->options[a2];
@@ -2479,14 +2479,14 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (SDL_strcasecmp(entry.str, "s:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 200, 299);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(entry.str, "t:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "t:", 2) == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 500, 599);
 
         pch = a3->options[a2];
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 5;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strnicmp(entry.str, "u:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "u:", 2) == 0) {
         v4 = atoi(entry.str + 2);
         if (ai_check_use_skill(a3->npc_obj, a3->pc_obj, skill_supplementary_item(a3->npc_obj, v4), v4) != AI_USE_SKILL_OK) {
             return false;
@@ -2496,7 +2496,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (SDL_strcasecmp(entry.str, "w:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1800, 1899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(entry.str, "x:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "x:", 2) == 0) {
         pch = strchr(entry.str, ',');
         cnt = dialog_parse_params(values, pch + 1);
         if (filter_unknown_areas(a3->pc_obj, values, cnt) == 0) {
@@ -2512,7 +2512,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     } else if (SDL_strcasecmp(entry.str, "y:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1, 99);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strnicmp(entry.str, "z:", 2) == 0) {
+    } else if (SDL_strncasecmp(entry.str, "z:", 2) == 0) {
         dialog_build_use_spell_option(a2, atoi(entry.str + 2), entry.response_val, a3);
     } else {
         sub_416B00(a3->options[a2], entry.str, a3);

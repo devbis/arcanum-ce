@@ -1419,7 +1419,7 @@ int game_save_entry_compare_by_name(const void* va, const void* vb)
     const GameSaveEntry* a = (const GameSaveEntry*)va;
     const GameSaveEntry* b = (const GameSaveEntry*)vb;
 
-    return -strnicmp(a->path, b->path, 8);
+    return -SDL_strncasecmp(a->path, b->path, 8);
 }
 
 // 0x403DD0
