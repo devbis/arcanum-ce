@@ -1302,13 +1302,13 @@ bool sector_load_editor(int64_t id, Sector* sector)
     if (sector_check_demo_limits(id)) {
         strcpy(path, sector_save_path);
         strcat(path, "\\");
-        _ui64toa(id, &path[strlen(path)], 10);
+        SDL_ulltoa(id, &path[strlen(path)], 10);
         strcat(path, ".sec");
 
         if (!tig_file_exists(path, NULL)) {
             strcpy(path, sector_base_path);
             strcat(path, "\\");
-            _ui64toa(id, &path[strlen(path)], 10);
+            SDL_ulltoa(id, &path[strlen(path)], 10);
             strcat(path, ".sec");
 
             if (!tig_file_exists(path, NULL)) {
@@ -1447,7 +1447,7 @@ bool sector_load_game(int64_t id, Sector* sector)
     if (sector_check_demo_limits(id)) {
         strcpy(sec_path, sector_base_path);
         strcat(sec_path, "\\");
-        _ui64toa(id, &sec_path[strlen(sec_path)], 10);
+        SDL_ulltoa(id, &sec_path[strlen(sec_path)], 10);
         strcat(sec_path, ".sec");
 
         if (!tig_file_exists(sec_path, NULL)) {
@@ -1483,7 +1483,7 @@ bool sector_load_game(int64_t id, Sector* sector)
 
         strcpy(dif_path, sector_save_path);
         strcat(dif_path, "\\");
-        _ui64toa(id, &dif_path[strlen(dif_path)], 10);
+        SDL_ulltoa(id, &dif_path[strlen(dif_path)], 10);
         strcat(dif_path, ".dif");
 
         if (tig_file_exists(dif_path, NULL)) {
@@ -1759,7 +1759,7 @@ bool sector_save_editor(Sector* sector)
 
     strcpy(path, sector_save_path);
     strcat(path, "\\");
-    _ui64toa(sector->id, &(path[strlen(path)]), 10);
+    SDL_ulltoa(sector->id, &(path[strlen(path)]), 10);
 
     return sub_4D2460(sector, path);
 }
@@ -1952,7 +1952,7 @@ bool sector_save_game(Sector* sector)
 
     strcpy(path, sector_save_path);
     strcat(sector_save_path, "\\");
-    _ui64toa(sector->id, &(path[strlen(path)]), 10);
+    SDL_ulltoa(sector->id, &(path[strlen(path)]), 10);
     strcat(path, ".dif");
 
     stream = tig_file_fopen(path, "wb");
