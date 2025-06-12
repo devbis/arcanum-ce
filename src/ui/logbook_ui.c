@@ -1186,7 +1186,7 @@ void sub_5405C0(char* buffer, int index)
 
         // NOTE: Original code is slightly different but does the same thing.
         if (index == 0) {
-            itoa(dword_648940[LBK_TOTAL_KILLS], tmp, 10);
+            SDL_itoa(dword_648940[LBK_TOTAL_KILLS], tmp, 10);
             sprintf(buffer, "%s: %s", mes_file_entry.str, tmp);
         } else {
             switch (index) {

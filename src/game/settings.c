@@ -108,7 +108,7 @@ void settings_set_value(Settings* settings, const char* key, int value)
 {
     char buffer[48];
 
-    _itoa(value, buffer, 10);
+    SDL_itoa(value, buffer, 10);
     settings_set_str_value(settings, key, buffer);
 }
 
