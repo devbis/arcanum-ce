@@ -1117,7 +1117,7 @@ bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr)
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        ret = sub_43CC30(obj, loc, obj_ptr);
+        ret = object_duplicate(obj, loc, obj_ptr);
     }
 
     if (tig_net_is_active()

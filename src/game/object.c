@@ -101,7 +101,7 @@ static bool object_drop_failure(void* userinfo);
 static bool object_pickup_success(void* userinfo);
 static bool object_pickup_failure(void* userinfo);
 static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
-static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
+static bool object_duplicate_func(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr);
 static bool sub_442260(int64_t obj, int64_t loc);
 static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
 static void object_render_palette_clear(int64_t obj);
@@ -1216,18 +1216,18 @@ bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
 }
 
 // 0x43CC30
-bool sub_43CC30(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
+bool object_duplicate(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
 {
     ObjectID oid;
 
     oid.type = OID_TYPE_BLOCKED;
-    return sub_4421A0(proto_obj, loc, &oid, obj_ptr);
+    return object_duplicate_func(proto_obj, loc, &oid, obj_ptr);
 }
 
 // 0x43CC70
-bool sub_43CC70(int64_t proto_obj, int64_t loc, ObjectID* oid, int64_t* obj_ptr)
+bool object_duplicate_ex(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr)
 {
-    return sub_4421A0(proto_obj, loc, oid, obj_ptr);
+    return object_duplicate_func(proto_obj, loc, oids, obj_ptr);
 }
 
 // 0x43CCA0
@@ -4305,12 +4305,12 @@ bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid)
 }
 
 // 0x4421A0
-bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr)
+bool object_duplicate_func(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr)
 {
-    if (a3->type == OID_TYPE_BLOCKED) {
+    if (oids->type == OID_TYPE_BLOCKED) {
         obj_perm_dup(obj_ptr, proto_obj);
     } else {
-        sub_406210(obj_ptr, proto_obj, a3);
+        sub_406210(obj_ptr, proto_obj, oids);
     }
 
     if (!sub_442260(*obj_ptr, loc)) {
