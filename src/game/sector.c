@@ -2153,16 +2153,16 @@ void sector_load_demo_limits()
 
     do {
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        sector_demo_limits_min_x = _atoi64(buffer);
+        sector_demo_limits_min_x = SDL_strtoll(buffer, NULL, 10);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        sector_demo_limits_max_x = _atoi64(buffer);
+        sector_demo_limits_max_x = SDL_strtoll(buffer, NULL, 10);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        sector_demo_limits_min_y = _atoi64(buffer);
+        sector_demo_limits_min_y = SDL_strtoll(buffer, NULL, 10);
 
         if (tig_file_fgets(buffer, sizeof(buffer), stream) == NULL) break;
-        sector_demo_limits_max_y = _atoi64(buffer);
+        sector_demo_limits_max_y = SDL_strtoll(buffer, NULL, 10);
 
         sector_demo_limits_set = true;
     } while (0);

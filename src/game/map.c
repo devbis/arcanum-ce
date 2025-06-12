@@ -643,14 +643,14 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
             tig_debug_printf("Error reading map start location (x) file %s\n", path);
             return false;
         }
-        x = _atoi64(tmp);
+        x = SDL_strtoll(tmp, NULL, 10);
 
         if (tig_file_fgets(tmp, 80, stream) == NULL) {
             // FIXME: Leaking stream.
             tig_debug_printf("Error reading map start location (y) file %s\n", path);
             return false;
         }
-        y = _atoi64(tmp);
+        y = SDL_strtoll(tmp, NULL, 10);
 
         map_starting_loc = location_make(x, y);
 
@@ -1882,10 +1882,10 @@ void map_apply_obj_patch(int64_t obj, char* str)
             int64_t y;
 
             sub_411880(&str, value);
-            x = _atoi64(value);
+            x = SDL_strtoll(value, NULL, 10);
 
             sub_411880(&str, value);
-            y = _atoi64(value);
+            y = SDL_strtoll(value, NULL, 10);
 
             obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_DAY, LOCATION_MAKE(x, y));
         } else if (strcmpi(key, "nightstand") == 0) {
@@ -1893,10 +1893,10 @@ void map_apply_obj_patch(int64_t obj, char* str)
             int64_t y;
 
             sub_411880(&str, value);
-            x = _atoi64(value);
+            x = SDL_strtoll(value, NULL, 10);
 
             sub_411880(&str, value);
-            y = _atoi64(value);
+            y = SDL_strtoll(value, NULL, 10);
 
             obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_NIGHT, LOCATION_MAKE(x, y));
         } else if (strcmpi(key, "magic_tech_complexity") == 0) {
