@@ -33,7 +33,7 @@ bool monstergen_save(TigFile* stream);
 void monstergen_get(int64_t obj, GeneratorInfo* info);
 bool monstergen_set(GeneratorInfo* info);
 bool monstergen_remove(int64_t obj);
-bool sub_4BA790(int64_t obj, DateTime* datetime);
+bool monstergen_process(int64_t obj, DateTime* datetime);
 void monstergen_notify_killed(int64_t obj);
 bool monstergen_is_disabled(int id);
 void monstergen_enable(int id);

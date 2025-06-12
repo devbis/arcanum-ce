@@ -197,12 +197,12 @@ bool monstergen_remove(int64_t obj)
 }
 
 // 0x4BA790
-bool sub_4BA790(int64_t obj, DateTime* datetime)
+bool monstergen_process(int64_t obj, DateTime* datetime)
 {
     GeneratorInfo generator_info;
-    int v3;
-    int v2;
-    int v1;
+    int num_monsters_created;
+    int num_monsters_to_create;
+    int remaining;
     TigRect rect;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
@@ -215,10 +215,10 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
 
     monstergen_get(obj, &generator_info);
 
-    v2 = generator_info.max_concurrent - generator_info.cur_concurrent;
+    num_monsters_to_create = generator_info.max_concurrent - generator_info.cur_concurrent;
 
     do {
-        if (v2 <= 0) {
+        if (num_monsters_to_create <= 0) {
             break;
         }
 
@@ -247,30 +247,31 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
         }
 
         if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
-            v1 = generator_info.max_total - generator_info.cur_total;
-            if (v1 <= 0) {
+            remaining = generator_info.max_total - generator_info.cur_total;
+            if (remaining <= 0) {
                 break;
             }
 
-            if (v2 > v1) {
-                v2 = v1;
+            if (num_monsters_to_create > remaining) {
+                num_monsters_to_create = remaining;
             }
         }
 
-        if (v2 <= 0) {
+        if (num_monsters_to_create <= 0) {
             break;
         }
 
         if ((generator_info.flags & GENERATOR_SPAWN_ALL) == 0) {
-            v2 = 1;
+            num_monsters_to_create = 1;
         }
 
-        v3 = sub_4BA910(&generator_info, v2);
-        generator_info.cur_concurrent += v3;
+        num_monsters_created = sub_4BA910(&generator_info, num_monsters_to_create);
+        generator_info.cur_concurrent += num_monsters_created;
 
         if ((generator_info.flags & GENERATOR_IGNORE_TOTAL) == 0) {
-            generator_info.cur_total += v3;
+            generator_info.cur_total += num_monsters_created;
         }
+
         monstergen_update(&generator_info);
     } while (0);
 

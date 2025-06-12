@@ -2918,7 +2918,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
     if (!skip && sub_4AD420(obj)) {
         if (object_script_execute(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0)) {
             if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_GENERATOR) != 0) {
-                if (sub_4BA790(obj, &datetime)) {
+                if (monstergen_process(obj, &datetime)) {
                     sub_4AD730(obj, &datetime);
                     return true;
                 }
