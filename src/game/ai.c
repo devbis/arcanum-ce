@@ -296,17 +296,25 @@ void ai_process(int64_t obj)
 {
     Ai ai;
 
-    if (!map_is_clearing_objects()
-        && (!tig_net_is_active()
-            || tig_net_is_host())) {
-        sub_4A88D0(&ai, obj);
-        if (sub_4A8570(&ai)) {
-            if (!ai_heal(&ai) && !ai_look_for_item(&ai)) {
-                sub_4A92D0(&ai);
-            }
-            ai_action_perform(&ai);
-        }
+    if (map_is_clearing_objects()) {
+        return;
     }
+
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
+    }
+
+    sub_4A88D0(&ai, obj);
+
+    if (!sub_4A8570(&ai)) {
+        return;
+    }
+
+    if (!ai_heal(&ai) && !ai_look_for_item(&ai)) {
+        sub_4A92D0(&ai);
+    }
+
+    ai_action_perform(&ai);
 }
 
 // 0x4A8570
