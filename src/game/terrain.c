@@ -539,7 +539,7 @@ int terrain_match_base_name(const char* base_name)
     mes_file_entry.num = 0;
     if (mes_search(terrain_mes_file, &mes_file_entry)) {
         do {
-            if (_strcmpi(base_name, mes_file_entry.str) == 0) {
+            if (SDL_strcasecmp(base_name, mes_file_entry.str) == 0) {
                 return mes_file_entry.num;
             }
         } while (mes_find_next(terrain_mes_file, &mes_file_entry));

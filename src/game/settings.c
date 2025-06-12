@@ -194,7 +194,7 @@ SettingsEntry* settings_find(Settings* settings, const char* key)
 
     curr = settings->entries;
     while (curr != NULL) {
-        if (_strcmpi(curr->key, key) == 0) {
+        if (SDL_strcasecmp(curr->key, key) == 0) {
             return curr;
         }
         curr = curr->next;

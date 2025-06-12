@@ -657,7 +657,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         score = atoi(strtok(NULL, ","));
 
         for (index = 0; index < LEVEL_SCHEME_STATS_MAX; index++) {
-            if (strcmpi(tok, level_scheme_stats[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_stats[index]) == 0) {
                 if (sub_4A75E0(obj, index, score) == 1) {
                     return false;
                 }
@@ -667,7 +667,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         if (index < LEVEL_SCHEME_STATS_MAX) continue;
 
         for (index = 0; index < LEVEL_SCHEME_BASIC_SKILLS_MAX; index++) {
-            if (strcmpi(tok, level_scheme_basic_skills[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_basic_skills[index]) == 0) {
                 if (sub_4A76B0(obj, index, score) == 1) {
                     return false;
                 }
@@ -677,7 +677,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         if (index < LEVEL_SCHEME_BASIC_SKILLS_MAX) continue;
 
         for (index = 0; index < LEVEL_SCHEME_TECH_SKILLS_MAX; index++) {
-            if (strcmpi(tok, level_scheme_tech_skills[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_tech_skills[index]) == 0) {
                 if (sub_4A77A0(obj, index, score) == 1) {
                     return false;
                 }
@@ -687,7 +687,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         if (index < LEVEL_SCHEME_TECH_SKILLS_MAX) continue;
 
         for (index = 0; index < LEVEL_SCHEME_SPELLS_MAX; index++) {
-            if (strcmpi(tok, level_scheme_spells[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_spells[index]) == 0) {
                 if (sub_4A7890(obj, index, score) == 1) {
                     return false;
                 }
@@ -697,7 +697,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         if (index < LEVEL_SCHEME_SPELLS_MAX) continue;
 
         for (index = 0; index < LEVEL_SCHEME_TECH_MAX; index++) {
-            if (strcmpi(tok, level_scheme_tech[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_tech[index]) == 0) {
                 if (sub_4A79C0(obj, index, score) == 1) {
                     return false;
                 }
@@ -707,7 +707,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         if (index < LEVEL_SCHEME_TECH_MAX) continue;
 
         for (index = 0; index < LEVEL_SCHEME_MISC_MAX; index++) {
-            if (strcmpi(tok, level_scheme_misc[index]) == 0) {
+            if (SDL_strcasecmp(tok, level_scheme_misc[index]) == 0) {
                 if (sub_4A7AA0(obj, index, score) == 1) {
                     return false;
                 }

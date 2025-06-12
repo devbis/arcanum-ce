@@ -595,7 +595,7 @@ void gamelib_modlist_create(GameModuleList* module_list, int type)
         is_file = false;
         dot = strrchr(file_list.entries[file_index].path, '.');
         if (dot != NULL) {
-            if (strcmpi(dot, ".dat") == 0
+            if (SDL_strcasecmp(dot, ".dat") == 0
                 && (file_list.entries[file_index].attributes & TIG_FILE_ATTRIBUTE_SUBDIR) == 0) {
                 *dot = '\0';
                 is_file = true;
@@ -609,7 +609,7 @@ void gamelib_modlist_create(GameModuleList* module_list, int type)
             found = false;
             module_index = module_list->count;
             while (module_index > 0) {
-                if (strcmpi(file_list.entries[file_index].path, module_list->paths[module_index - 1]) == 0) {
+                if (SDL_strcasecmp(file_list.entries[file_index].path, module_list->paths[module_index - 1]) == 0) {
                     found = true;
                     break;
                 }
@@ -631,7 +631,7 @@ void gamelib_modlist_create(GameModuleList* module_list, int type)
                     module_list->paths = (char**)REALLOC(module_list->paths, sizeof(module_list->paths) * (module_list->count + 1));
                     module_list->paths[module_list->count] = STRDUP(file_list.entries[file_index].path);
 
-                    if (strcmpi(byte_5D0EA4, file_list.entries[file_index].path) == 0) {
+                    if (SDL_strcasecmp(byte_5D0EA4, file_list.entries[file_index].path) == 0) {
                         module_list->selected = module_list->count;
                     }
 
@@ -1196,7 +1196,7 @@ bool gamelib_delete(const char* name)
 {
     char path[TIG_MAX_PATH];
 
-    if (_strcmpi(name, "SlotAutoAuto-Save") == 0) {
+    if (SDL_strcasecmp(name, "SlotAutoAuto-Save") == 0) {
         return false;
     }
 
@@ -1278,7 +1278,7 @@ void gamelib_savlist_create(GameSaveList* save_list)
 
     for (index = 0; index < file_list.count; index++) {
         compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
-        if (strcmpi(ext, ".gsi") == 0) {
+        if (SDL_strcasecmp(ext, ".gsi") == 0) {
             save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
             save_list->paths[save_list->count++] = STRDUP(fname);
         }
@@ -1305,7 +1305,7 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
 
     for (index = 0; index < file_list.count; index++) {
         compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
-        if (strcmpi(ext, ".gsi") == 0) {
+        if (SDL_strcasecmp(ext, ".gsi") == 0) {
             save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
             save_list->paths[save_list->count++] = STRDUP(fname);
         }

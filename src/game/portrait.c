@@ -177,7 +177,7 @@ void portrait_draw_func(int64_t obj, int num, tig_window_handle_t window_handle,
         // requested and if so, fallback to normal size portrait.
         if (strlen(bmp.name) >= 6) {
             pch = &(bmp.name[strlen(bmp.name) - 6]);
-            if (strcmpi(pch, "_b.bmp") == 0) {
+            if (SDL_strcasecmp(pch, "_b.bmp") == 0) {
                 *pch = '\0';
                 strcat(bmp.name, ".bmp");
                 rc = tig_bmp_create(&bmp);

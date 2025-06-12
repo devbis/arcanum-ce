@@ -165,7 +165,7 @@ int broadcast_match_str_to_base_type(const char* str)
     int index;
 
     for (index = 0; index < BROADCAST_CMD_TYPE_COUNT; index++) {
-        if (strcmpi(str, broadcast_cmd_type_lookup[index]) == 0) {
+        if (SDL_strcasecmp(str, broadcast_cmd_type_lookup[index]) == 0) {
             return index;
         }
     }
@@ -219,7 +219,7 @@ int sub_4C3B40(const char* str)
     }
 
     for (index = 0; index < num_broadcast_commands; index++) {
-        if (strcmpi(str, broadcast_commands[index].str) == 0) {
+        if (SDL_strcasecmp(str, broadcast_commands[index].str) == 0) {
             return broadcast_commands[index].type;
         }
     }

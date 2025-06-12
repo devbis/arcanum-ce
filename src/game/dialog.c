@@ -1404,7 +1404,7 @@ bool sub_4150D0(DialogState* a1, char* a2)
 
         value = atoi(pch);
         for (cond = 0; cond < DIALOG_COND_COUNT; cond++) {
-            if (strcmpi(off_5A06BC[cond], code) == 0) {
+            if (SDL_strcasecmp(off_5A06BC[cond], code) == 0) {
                 break;
             }
         }
@@ -1900,7 +1900,7 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
 
         value = atoi(pch);
         for (act = 0; act < DIALOG_ACTION_COUNT; act++) {
-            if (strcmpi(off_5A0750[act], code) == 0) {
+            if (SDL_strcasecmp(off_5A0750[act], code) == 0) {
                 break;
             }
         }
@@ -2291,7 +2291,7 @@ bool sub_416840(DialogState* a1, bool a2)
         return true;
     }
 
-    if (strcmpi(entry.str, "i:") == 0) {
+    if (SDL_strcasecmp(entry.str, "i:") == 0) {
         dialog_copy_npc_race_specific_msg(a1->reply, a1, 1000);
         return true;
     }
@@ -2379,9 +2379,9 @@ void sub_416B00(char* dst, char* src, DialogState* a3)
         strcat(dst, remainder);
         end = strchr(start + 1, '@');
         *end = '\0';
-        if (strcmpi(start + 1, "pcname") == 0) {
+        if (SDL_strcasecmp(start + 1, "pcname") == 0) {
             object_examine(a3->pc_obj, OBJ_HANDLE_NULL, dst + strlen(dst));
-        } else if (strcmpi(start + 1, "npcname") == 0) {
+        } else if (SDL_strcasecmp(start + 1, "npcname") == 0) {
             object_examine(a3->pc_obj, a3->npc_obj, dst + strlen(dst));
         }
 
@@ -2408,10 +2408,10 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
     entry.num = a1;
     dialog_search(a3->dlg, &entry);
 
-    if (strcmpi(entry.str, "a:") == 0) {
+    if (SDL_strcasecmp(entry.str, "a:") == 0) {
         dialog_copy_pc_class_specific_msg(a3->options[a2], a3, 1000);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(entry.str, "b:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "b:") == 0) {
         if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
             dialog_copy_pc_generic_msg(a3->options[a2], a3, 1600, 1699);
         } else {
@@ -2436,30 +2436,30 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_17F0[a2] = 18;
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(entry.str, "e:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "e:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 400, 499);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(entry.str, "f:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "f:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 800, 899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(entry.str, "h:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "h:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 700, 799);
         a3->field_17F0[a2] = 11;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strcmpi(entry.str, "i:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "i:") == 0) {
         sub_417590(entry.response_val, &v2, &v3);
         dialog_build_pc_insult_option(a2, v2, v3, a3);
-    } else if (strcmpi(entry.str, "k:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "k:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1500, 1599);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(entry.str, "l:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "l:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 2300, 2399);
         a3->field_17F0[a2] = 30;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strcmpi(entry.str, "n:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "n:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 100, 199);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
-    } else if (strcmpi(entry.str, "p:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "p:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1900, 1999);
         a3->field_17F0[a2] = 25;
         a3->field_1804[a2] = entry.response_val;
@@ -2476,7 +2476,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         strcpy(&(pch[strlen(pch) + 1]), entry.str + 2);
         a3->field_17F0[a2] = 8;
         a3->field_1804[a2] = entry.response_val;
-    } else if (strcmpi(entry.str, "s:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "s:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 200, 299);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "t:", 2) == 0) {
@@ -2493,7 +2493,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         }
 
         dialog_build_use_skill_option(a2, v4, entry.response_val, a3);
-    } else if (strcmpi(entry.str, "w:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "w:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1800, 1899);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "x:", 2) == 0) {
@@ -2509,7 +2509,7 @@ bool sub_416C10(int a1, int a2, DialogState* a3)
         a3->field_17F0[a2] = 21;
         a3->field_1804[a2] = entry.response_val;
         a3->field_1818[a2] = 0;
-    } else if (strcmpi(entry.str, "y:") == 0) {
+    } else if (SDL_strcasecmp(entry.str, "y:") == 0) {
         dialog_copy_pc_generic_msg(a3->options[a2], a3, 1, 99);
         sub_417590(entry.response_val, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     } else if (strnicmp(entry.str, "z:", 2) == 0) {
@@ -2560,7 +2560,7 @@ bool find_dialog(const char* path, int* index_ptr)
     int index;
 
     for (index = 0; index < dialog_files_capacity; index++) {
-        if (strcmpi(path, dialog_files[index].path) == 0) {
+        if (SDL_strcasecmp(path, dialog_files[index].path) == 0) {
             *index_ptr = index;
             return true;
         }

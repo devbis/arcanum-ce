@@ -284,7 +284,7 @@ static void effect_parse(int num, char* text)
             switch (type) {
             case 0:
                 for (index = 0; index < STAT_COUNT; index++) {
-                    if (_strcmpi(tok, off_5B9BA8[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9BA8[index]) == 0) {
                         effect_info = &(effect_stat_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -293,7 +293,7 @@ static void effect_parse(int num, char* text)
                 break;
             case 1:
                 for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-                    if (_strcmpi(tok, off_5B9C18[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9C18[index]) == 0) {
                         effect_info = &(effect_basic_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -302,7 +302,7 @@ static void effect_parse(int num, char* text)
                 break;
             case 2:
                 for (index = 0; index < TECH_SKILL_COUNT; index++) {
-                    if (_strcmpi(tok, off_5B9C48[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9C48[index]) == 0) {
                         effect_info = &(effect_tech_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -311,7 +311,7 @@ static void effect_parse(int num, char* text)
                 break;
             case 3:
                 for (index = 0; index < 5; index++) {
-                    if (_strcmpi(tok, off_5B9C58[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9C58[index]) == 0) {
                         effect_info = &(effect_resistance_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -320,7 +320,7 @@ static void effect_parse(int num, char* text)
                 break;
             case 4:
                 for (index = 0; index < TECH_COUNT; index++) {
-                    if (_strcmpi(tok, off_5B9C6C[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9C6C[index]) == 0) {
                         effect_info = &(effect_tech_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -329,7 +329,7 @@ static void effect_parse(int num, char* text)
                 break;
             case 5:
                 for (index = 0; index < EFFECT_SPECIAL_COUNT; index++) {
-                    if (_strcmpi(tok, off_5B9C8C[index]) == 0) {
+                    if (SDL_strcasecmp(tok, off_5B9C8C[index]) == 0) {
                         effect_info = &(effect_special_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -345,7 +345,7 @@ static void effect_parse(int num, char* text)
         }
 
         tok = strtok(NULL, " ,");
-        if (_strcmpi(tok, "min") == 0 || _strcmpi(tok, "max") == 0) {
+        if (SDL_strcasecmp(tok, "min") == 0 || SDL_strcasecmp(tok, "max") == 0) {
             // FIXME: Case-sensitive compare to distinguish between min and max.
             if (tok[1] == 'i') {
                 effect_info->operators[effect_info->count] = EFFECT_OPERATOR_MIN;

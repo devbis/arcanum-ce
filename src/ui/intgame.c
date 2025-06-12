@@ -5307,7 +5307,7 @@ void sub_552770(UiMessage* ui_message)
         if (dword_64C6C0 != 0
             && (ui_message->type == 4
                 || ui_message->type == 5)) {
-            if (strcmpi(ui_message->str, stru_64C540[v1].str) == 0) {
+            if (SDL_strcasecmp(ui_message->str, stru_64C540[v1].str) == 0) {
                 dword_64C6C4 = v1;
                 dword_64C6C8 = v1;
                 sub_552960(1);

@@ -300,7 +300,7 @@ bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, 
         a4 -= 8;
     }
 
-    if (a3 == 15 || strcmpi(name1, name2) == 0) {
+    if (a3 == 15 || SDL_strcasecmp(name1, name2) == 0) {
         sprintf(fname,
             "art\\tile\\%sbse%c%c.art",
             name1,
@@ -391,28 +391,28 @@ bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr)
     int index;
 
     for (index = 0; index < num_outdoor_flippable_names; index++) {
-        if (strcmpi(outdoor_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(outdoor_flippable_tile_names[index], name) == 0) {
             tig_art_tile_id_create(index, index, 15, 0, 1, 1, 1, 0, art_id_ptr);
             return true;
         }
     }
 
     for (index = 0; index < num_outdoor_non_flippable_names; index++) {
-        if (strcmpi(outdoor_non_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(outdoor_non_flippable_tile_names[index], name) == 0) {
             tig_art_tile_id_create(index, index, 15, 0, 1, 0, 0, 0, art_id_ptr);
             return true;
         }
     }
 
     for (index = 0; index < num_indoor_flippable_names; index++) {
-        if (strcmpi(indoor_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(indoor_flippable_tile_names[index], name) == 0) {
             tig_art_tile_id_create(index, index, 15, 0, 0, 1, 1, 0, art_id_ptr);
             return true;
         }
     }
 
     for (index = 0; index < num_indoor_non_flippable_names; index++) {
-        if (strcmpi(indoor_non_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(indoor_non_flippable_tile_names[index], name) == 0) {
             tig_art_tile_id_create(index, index, 15, 0, 0, 0, 0, 0, art_id_ptr);
             return true;
         }
@@ -618,14 +618,14 @@ bool sub_4EB7D0(const char* name, int* index_ptr)
     int index = 0;
 
     for (index = 0; index < num_outdoor_flippable_names; index++) {
-        if (strcmpi(outdoor_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(outdoor_flippable_tile_names[index], name) == 0) {
             *index_ptr = index;
             return true;
         }
     }
 
     for (index = 0; index < num_outdoor_non_flippable_names; index++) {
-        if (strcmpi(outdoor_non_flippable_tile_names[index], name) == 0) {
+        if (SDL_strcasecmp(outdoor_non_flippable_tile_names[index], name) == 0) {
             *index_ptr = num_outdoor_flippable_names + index;
             return true;
         }
@@ -1346,7 +1346,7 @@ int sub_4EC940(const char* fname)
     mes_file_entry.num = 0;
     mes_get_msg(portal_mes_file, &mes_file_entry);
     do {
-        if (strcmpi(mes_file_entry.str, fname) == 0) {
+        if (SDL_strcasecmp(mes_file_entry.str, fname) == 0) {
             return mes_file_entry.num;
         }
     } while (mes_find_next(portal_mes_file, &mes_file_entry));
@@ -1741,7 +1741,7 @@ int sub_4ED030(const char* str)
     int index;
 
     for (index = 0; index < num_wall_file_names; index++) {
-        if (strcmpi(wall_file_names[index], str) == 0) {
+        if (SDL_strcasecmp(wall_file_names[index], str) == 0) {
             return index;
         }
     }
@@ -1792,14 +1792,14 @@ void sub_4ECD10(char* str, int index)
     wall_structures[index].field_C = sub_4ED030(tok);
 
     tok = strtok(NULL, " ");
-    if (strcmpi(tok, "nul") != 0) {
+    if (SDL_strcasecmp(tok, "nul") != 0) {
         sub_4EB160(tok, &(wall_structures[index].tile_art_id));
     } else {
         wall_structures[index].tile_art_id = TIG_ART_ID_INVALID;
     }
 
     tok = strtok(NULL, " ");
-    if (strcmpi(tok, "nul") != 0) {
+    if (SDL_strcasecmp(tok, "nul") != 0) {
         a_name_roof_fname_to_aid(tok, &(wall_structures[index].roof_art_id));
     } else {
         wall_structures[index].roof_art_id = TIG_ART_ID_INVALID;
@@ -1809,11 +1809,11 @@ void sub_4ECD10(char* str, int index)
 
     tok = strtok(NULL, " ");
     while (tok != NULL) {
-        if (strcmpi(tok, "/nowindows") == 0) {
+        if (SDL_strcasecmp(tok, "/nowindows") == 0) {
             wall_structures[index].flags |= WS_NOWINDOWS;
-        } else if (strcmpi(tok, "/nodoors") == 0) {
+        } else if (SDL_strcasecmp(tok, "/nodoors") == 0) {
             wall_structures[index].flags |= WS_NODOORS;
-        } else if (strcmpi(tok, "/fence") == 0) {
+        } else if (SDL_strcasecmp(tok, "/fence") == 0) {
             wall_structures[index].flags |= WS_FENCE;
         }
     }
@@ -1917,7 +1917,7 @@ bool a_name_roof_fname_to_aid(const char* fname, tig_art_id_t* aid_ptr)
     int index;
 
     for (index = 0; index < num_roof_file_names; index++) {
-        if (strcmpi(fname, roof_file_names[index]) == 0) {
+        if (SDL_strcasecmp(fname, roof_file_names[index]) == 0) {
             tig_art_roof_id_create(index, 0, 0, 0, aid_ptr);
             return true;
         }
