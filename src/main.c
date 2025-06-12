@@ -422,7 +422,7 @@ void main_loop()
                         break;
                     case SDL_SCANCODE_O:
                         if (!textedit_ui_is_focused()) {
-                            mainmenu_ui_start(MM_TYPE_5);
+                            mainmenu_ui_start(MM_TYPE_OPTIONS);
                             if (!mainmenu_ui_handle()) {
                                 return;
                             }
