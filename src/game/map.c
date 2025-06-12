@@ -1670,7 +1670,7 @@ void map_obfuscate_name(char* str)
         pch++;
     }
 
-    strrev(str);
+    SDL_strrev(str);
 }
 
 // 0x411880
