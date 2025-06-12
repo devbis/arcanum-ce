@@ -3,6 +3,8 @@
 
 #include <tig/tig.h>
 
+#include "net_compat.h"
+
 #define GAME 0
 #define EDITOR 1
 
