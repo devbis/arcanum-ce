@@ -3106,15 +3106,16 @@ void sub_4AD730(int64_t obj, DateTime* datetime)
 {
     TimeEvent timeevent;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()) {
-        sub_4AD7D0(obj);
-
-        timeevent.type = TIMEEVENT_TYPE_AI;
-        timeevent.params[0].object_value = obj;
-        timeevent.params[1].integer_value = 0;
-        sub_45B800(&timeevent, datetime);
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
     }
+
+    sub_4AD7D0(obj);
+
+    timeevent.type = TIMEEVENT_TYPE_AI;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = 0;
+    sub_45B800(&timeevent, datetime);
 }
 
 // 0x4AD790
