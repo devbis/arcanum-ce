@@ -1561,21 +1561,22 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
     int max_charisma;
     int charisma;
 
-    if (!tig_net_is_active()
-        || tig_net_is_host()) {
-        obj = timeevent->params[0].object_value;
-        leader_obj = critter_leader_get(obj);
-        if (leader_obj != OBJ_HANDLE_NULL) {
-            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-            flags &= ~ONF_AI_WAIT_HERE;
-            flags |= ONF_JILTED;
-            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return true;
+    }
 
-            max_charisma = stat_level_max(leader_obj, STAT_CHARISMA);
-            charisma = stat_level_get(leader_obj, STAT_CHARISMA);
-            reaction_adj(obj, leader_obj, 2 * (charisma - max_charisma));
-            critter_leader_set(obj, OBJ_HANDLE_NULL);
-        }
+    obj = timeevent->params[0].object_value;
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+        flags &= ~ONF_AI_WAIT_HERE;
+        flags |= ONF_JILTED;
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+
+        max_charisma = stat_level_max(leader_obj, STAT_CHARISMA);
+        charisma = stat_level_get(leader_obj, STAT_CHARISMA);
+        reaction_adj(obj, leader_obj, 2 * (charisma - max_charisma));
+        critter_leader_set(obj, OBJ_HANDLE_NULL);
     }
 
     return true;
