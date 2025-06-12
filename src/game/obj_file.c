@@ -159,7 +159,7 @@ bool handle_from_fname(int64_t* handle_ptr, const char* path)
     char fname[TIG_MAX_PATH];
     ObjectID oid;
 
-    _splitpath(path, NULL, NULL, fname, NULL);
+    compat_splitpath(path, NULL, NULL, fname, NULL);
 
     if (fname[0] == '\0') {
         tig_debug_printf("handle_from_fname found empty base_name infilename [%s]", path);

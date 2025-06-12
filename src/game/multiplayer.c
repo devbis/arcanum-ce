@@ -3015,14 +3015,14 @@ bool sub_4A6560(const char* a1, char* a2)
     };
 
     char path[TIG_MAX_PATH];
-    char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
+    char dir[COMPAT_MAX_DIR];
+    char fname[COMPAT_MAX_FNAME];
+    char ext[COMPAT_MAX_EXT];
     int pos;
     int idx;
 
     strncpy(path, a1, sizeof(path));
-    _splitpath(path, NULL, dir, fname, ext);
+    compat_splitpath(path, NULL, dir, fname, ext);
 
     pos = (int)strlen(fname);
     if (pos > 39) {
@@ -3034,7 +3034,7 @@ bool sub_4A6560(const char* a1, char* a2)
 
         if (a2 != NULL) {
             fname[pos] = '\0';
-            _makepath(a2, NULL, dir, fname, ext);
+            compat_makepath(a2, NULL, dir, fname, ext);
         }
 
         return true;

@@ -2934,7 +2934,7 @@ void mainmenu_ui_save_game_destroy()
 bool mainmenu_ui_save_game_execute(int btn)
 {
     int v1;
-    char fname[_MAX_FNAME];
+    char fname[COMPAT_MAX_FNAME];
     const char* name;
     MesFileEntry mes_file_entry;
     UiMessage ui_message;

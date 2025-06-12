@@ -1267,8 +1267,8 @@ void gamelib_savlist_create(GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
+    char fname[COMPAT_MAX_FNAME];
+    char ext[COMPAT_MAX_EXT];
 
     save_list->count = 0;
     save_list->paths = NULL;
@@ -1277,7 +1277,7 @@ void gamelib_savlist_create(GameSaveList* save_list)
     tig_file_list_create(&file_list, "save\\slot*.*");
 
     for (index = 0; index < file_list.count; index++) {
-        _splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
+        compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
         if (strcmpi(ext, ".gsi") == 0) {
             save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
             save_list->paths[save_list->count++] = STRDUP(fname);
@@ -1292,8 +1292,8 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
+    char fname[COMPAT_MAX_FNAME];
+    char ext[COMPAT_MAX_EXT];
     char path[TIG_MAX_PATH];
 
     save_list->count = 0;
@@ -1304,7 +1304,7 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
     tig_file_list_create(&file_list, path);
 
     for (index = 0; index < file_list.count; index++) {
-        _splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
+        compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
         if (strcmpi(ext, ".gsi") == 0) {
             save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
             save_list->paths[save_list->count++] = STRDUP(fname);

@@ -294,14 +294,14 @@ void terrain_map_close()
 // 0x4E7EF0
 void sub_4E7EF0()
 {
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
+    char drive[COMPAT_MAX_DRIVE];
+    char dir[COMPAT_MAX_DIR];
     char path1[TIG_MAX_PATH];
     char path2[TIG_MAX_PATH];
 
-    _splitpath(terrain_base_path, drive, dir, NULL, NULL);
+    compat_splitpath(terrain_base_path, drive, dir, NULL, NULL);
     sprintf(path1, "%s%s", drive, dir);
-    _splitpath(terrain_save_path, drive, dir, NULL, NULL);
+    compat_splitpath(terrain_save_path, drive, dir, NULL, NULL);
     sprintf(path2, "%s%s", drive, dir);
     terrain_map_close();
     terrain_open(path1, path2);
@@ -314,9 +314,9 @@ bool sub_4E7F90()
     TigVideoBuffer* vb;
     TigRect rect;
     TigVideoBufferSaveToBmpInfo vb_to_bmp_info;
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
+    char drive[COMPAT_MAX_DRIVE];
+    char dir[COMPAT_MAX_DIR];
+    char fname[COMPAT_MAX_FNAME];
 
     if (!terrain_editor) {
         return false;
@@ -342,9 +342,9 @@ bool sub_4E7F90()
 
     vb_to_bmp_info.flags = 0;
     vb_to_bmp_info.video_buffer = vb;
-    _splitpath(terrain_base_path, drive, dir, fname, NULL);
+    compat_splitpath(terrain_base_path, drive, dir, fname, NULL);
     // NOTE: Original is slightly different and looks wrong.
-    _makepath(vb_to_bmp_info.path, drive, dir, fname, "bmp");
+    compat_makepath(vb_to_bmp_info.path, drive, dir, fname, "bmp");
     vb_to_bmp_info.rect = NULL;
     if (tig_video_buffer_save_to_bmp(&vb_to_bmp_info) != TIG_OK) {
         // FIXME: Leaking `vb`.

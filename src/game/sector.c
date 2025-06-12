@@ -1777,7 +1777,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
     }
 
     if (dword_601820 != NULL) {
-        _splitpath(base_path, NULL, NULL, fname, NULL);
+        compat_splitpath(base_path, NULL, NULL, fname, NULL);
         sprintf(path, "%s_sec.loc", fname);
         if (!dword_601820(path)) {
             tig_debug_println("Trying to save a sector that we don't have write locked.");
