@@ -3006,7 +3006,6 @@ bool sub_4AD420(int64_t obj)
 bool sub_4AD4D0(int64_t obj)
 {
     int64_t pc_leader_obj;
-    int64_t v1;
 
     if (critter_is_dead(obj)) {
         return false;
@@ -3038,7 +3037,7 @@ bool sub_4AD4D0(int64_t obj)
     }
 
     if (tig_net_is_active()) {
-        v1 = sub_4C1110(obj);
+        int64_t v1 = sub_4C1110(obj);
         if (v1 != OBJ_HANDLE_NULL) {
             sub_460A20(v1, 0);
         }
