@@ -510,7 +510,7 @@ bool background_is_legal(int64_t obj, char* str)
             background_gender_specifiers[gender]);
 
         // Convert the condition string to uppercase for comparison.
-        str = strupr(str);
+        str = SDL_strupr(str);
 
         // Check race/gender spec, "ANY", or "NPC" (in case critter is NPC).
         if (strstr(str, buffer) == NULL

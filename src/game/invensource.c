@@ -321,7 +321,7 @@ bool sub_4BFAA0(MesFileEntry* mes_file_entry, char* str)
         return true;
     }
 
-    if (strcmp(strupr(tok), "ALL") == 0) {
+    if (strcmp(SDL_strupr(tok), "ALL") == 0) {
         named_set->set.buy_all = true;
         named_set->set.buy_cnt = 0;
         return true;
