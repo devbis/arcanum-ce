@@ -23,9 +23,6 @@
 #include "ui/inven_ui.h"
 #include "ui/item_ui.h"
 #include "ui/mainmenu_ui.h"
-#include "ui/mp_ctrl_ui.h"
-#include "ui/multiplayer_hub_ui.h"
-#include "ui/multiplayer_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/skill_ui.h"
 #include "ui/sleep_ui.h"
@@ -76,7 +73,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_0 = sub_57CAE0;
     callbacks.field_4 = sub_57CAF0;
     callbacks.update_inven = tb_inven_ui_update;
-    callbacks.field_C = sub_5704E0;
+    callbacks.field_C = NULL;
     callbacks.field_14 = sub_57CC10;
     callbacks.field_10 = sub_5571C0;
     callbacks.field_18 = sub_5570A0;
@@ -128,7 +125,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_EC = sub_5678D0;
     callbacks.field_F0 = sub_568880;
     callbacks.field_F4 = sub_568220;
-    callbacks.field_F8 = sub_569C70;
+    callbacks.field_F8 = NULL;
     callbacks.field_FC = sub_549310;
     callbacks.refresh_cursor = intgame_refresh_cursor;
     callbacks.field_104 = sub_57A6C0;
@@ -146,13 +143,13 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_138 = sub_572510;
     callbacks.field_13C = sub_572640;
     callbacks.field_140 = inven_ui_create;
-    callbacks.field_150 = sub_582670;
-    callbacks.field_144 = sub_582510;
-    callbacks.field_148 = sub_5825B0;
-    callbacks.field_14C = sub_582650;
-    callbacks.field_154 = sub_5826B0;
-    callbacks.field_158 = sub_582690;
-    callbacks.field_15C = sub_5826C0;
+    callbacks.field_150 = NULL;
+    callbacks.field_144 = NULL;
+    callbacks.field_148 = NULL;
+    callbacks.field_14C = NULL;
+    callbacks.field_154 = NULL;
+    callbacks.field_158 = NULL;
+    callbacks.field_15C = NULL;
     callbacks.show_inven_npc_identify = show_inven_npc_identify;
     callbacks.mp_charedit_cache_traits = mp_charedit_cache_traits;
     callbacks.mp_charedit_trait_inc = mp_charedit_trait_inc;

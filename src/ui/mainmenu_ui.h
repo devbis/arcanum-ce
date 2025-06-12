@@ -54,15 +54,6 @@ typedef enum MainMenuWindowType {
     MM_WINDOW_PREGEN_CHAR,
     MM_WINDOW_CHAREDIT,
     MM_WINDOW_SHOP,
-    MM_WINDOW_MULTIPLAYER,
-    MM_WINDOW_SERVERLIST,
-    MM_WINDOW_18,
-    MM_WINDOW_19,
-    MM_WINDOW_20,
-    MM_WINDOW_21,
-    MM_WINDOW_MP_SELECT_CHAR,
-    MM_WINDOW_23,
-    MM_WINDOW_24,
     MM_WINDOW_CREDITS,
     MM_WINDOW_26,
     MM_WINDOW_COUNT,
@@ -86,7 +77,6 @@ bool sub_543220();
 void mainmenu_ui_create_window();
 void mainmenu_ui_create_window_func(bool should_display);
 bool mainmenu_ui_process_callback(TimeEvent* timeevent);
-void sub_5482A0(TigRect* rect);
 bool sub_549310(tig_button_handle_t button_handle);
 void sub_5493C0(char* buffer, int size);
 char* sub_549520();
@@ -106,12 +96,9 @@ mes_file_handle_t mainmenu_ui_mes_file();
 tig_font_handle_t mainmenu_ui_font(MainMenuFont font, MainMenuColor color);
 void sub_549960();
 void sub_549990(int* a1, int num);
-bool sub_5499B0(const char* text);
 void sub_549A40();
 void sub_549A50();
 int sub_549A60();
 void sub_549A70();
-void sub_549B10();
-void sub_549B30();
 
 #endif /* ARCANUM_UI_MAINMENU_UI_H_ */

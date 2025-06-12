@@ -13,7 +13,6 @@
 #include "game/item.h"
 #include "game/map.h"
 #include "game/mes.h"
-#include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/obj.h"
 #include "game/object.h"
@@ -33,12 +32,9 @@
 #include "ui/inven_ui.h"
 #include "ui/iso.h"
 #include "ui/logbook_ui.h"
-#include "ui/multiplayer_hub_ui.h"
-#include "ui/multiplayer_ui.h"
 #include "ui/options_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
-#include "ui/server_list_ui.h"
 #include "ui/sleep_ui.h"
 #include "ui/slide_ui.h"
 #include "ui/spell_ui.h"
@@ -137,11 +133,6 @@ static void mainmenu_ui_shop_create();
 static void mainmenu_ui_shop_destroy();
 static bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle);
 static void mainmenu_ui_shop_refresh(TigRect* rect);
-static void mainmenu_ui_multiplayer_create();
-static void sub_545FD0(int x, int y);
-static void mainmenu_ui_create_multiplayer_select_char();
-static void mainmenu_ui_destroy_multiplayer_select_char();
-static void sub_546180(int a1);
 static bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height);
 static bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height, unsigned int flags);
 static void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str, TigRect* rect, unsigned int flags);
@@ -151,23 +142,14 @@ static bool sub_546EE0(TigMessage* msg);
 static void mainmenu_ui_refresh_button_text(int btn, unsigned int flags);
 static void sub_547EF0();
 static void sub_5480C0(int a1);
-static void sub_548210(int x, int y);
-static void sub_548B60(TigRect* rect);
-static void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect);
 static void mmUIWinRefreshScrollBar();
 static void sub_548FF0(int a1);
-static bool mainmenu_ui_multiplayer_execute(int btn);
-static bool mainmenu_ui_execute_multiplayer_select_char(int index);
 static void sub_549450();
 static void sub_5494C0(TextEdit* textedit);
 static void sub_549540(TextEdit* textedit);
-static void won_account_changed();
-static void won_password_changed();
-static void selected_char_id_changed();
 static void mainmenu_ui_feedback(int num);
 static void mainmenu_fonts_init();
 static void mainmenu_fonts_exit();
-static bool sub_549A10(TigWindowModalDialogChoice* choice_ptr);
 static void sub_549A80();
 
 // 0x5993D0
@@ -265,20 +247,6 @@ static MainMenuButtonInfo stru_5C3860[] = {
     { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
     { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
     { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 0, { 0 }, -1 },
-};
-
-// 0x5C3920
-static MainMenuButtonInfo mainmenu_ui_multiplayer_buttons[] = {
-    { 409, 122, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
-    { 409, 182, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
-    { 409, 242, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_20, 0, 0, { 0 }, -1 },
-    { 409, 302, -1, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, { 0 }, -1 },
-};
-
-// 0x5C39E0
-static MainMenuButtonInfo mainmenu_ui_mp_select_char_buttons[] = {
-    { 162, 43, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_21, 0, 0, { 0 }, -1 },
-    { 162, 84, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_NEW_CHAR, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C3AB0
@@ -417,142 +385,6 @@ static MainMenuWindowInfo mainmenu_ui_credits_window_info = {
     5,
 };
 
-// 0x5C3D10
-static MainMenuWindowInfo stru_5C3D10 = {
-    329,
-    sub_583A00,
-    sub_583A80,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    -1,
-    SDL_arraysize(stru_5CC520),
-    stru_5CC520,
-    0,
-    0,
-    0,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    sub_584150,
-    sub_5847D0,
-    { 293, 72, 198, 342 },
-    sub_583B20,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    16,
-};
-
-// 0x5C3DA8
-static MainMenuWindowInfo stru_5C3DA8 = {
-    329,
-    sub_583A90,
-    sub_583B10,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    -1,
-    SDL_arraysize(stru_5CC4C0),
-    stru_5CC4C0,
-    0,
-    0,
-    0,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    sub_583D90,
-    sub_5845E0,
-    { 293, 72, 198, 342 },
-    sub_583C80,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    16,
-};
-
-// 0x5C3E40
-static MainMenuWindowInfo stru_5C3E40 = {
-    759,
-    mainmenu_ui_create_multiplayer_hub,
-    mainmenu_ui_destroy_multiplayer_hub,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    240,
-    SDL_arraysize(stru_5CC278),
-    stru_5CC278,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    mainmenu_ui_refresh_multiplayer_hub,
-    mainmenu_ui_execute_multiplayer_hub,
-    { 0 },
-    NULL,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    16,
-};
-
-// 0x5C3ED8
-static MainMenuWindowInfo mainmenu_ui_mp_select_char_window_info = {
-    753,
-    mainmenu_ui_create_multiplayer_select_char,
-    mainmenu_ui_destroy_multiplayer_select_char,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    260,
-    SDL_arraysize(mainmenu_ui_mp_select_char_buttons),
-    mainmenu_ui_mp_select_char_buttons,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    mainmenu_ui_refresh_multiplayer_select_char,
-    mainmenu_ui_execute_multiplayer_select_char,
-    { 30, 206, 247, 340 },
-    sub_548210,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    21,
-};
-
 // 0x5C3FB4
 static mes_file_handle_t mainmenu_ui_mainmenu_mes_file = MES_FILE_HANDLE_INVALID;
 
@@ -592,9 +424,6 @@ static TextEdit stru_5C4008 = {
     NULL,
 };
 
-// 0x5C402C
-static mes_file_handle_t mainmenu_ui_multiplayer_mes_file = MES_FILE_HANDLE_INVALID;
-
 // 0x5C4030
 static int dword_5C4030[2] = {
     229,
@@ -631,13 +460,12 @@ static int dword_5C4070[3] = {
 // 0x5C407C
 static char off_5C407C[] = "...";
 
-// 0x5C4080
-static MainMenuButtonInfo mainmenu_ui_mainmenu_buttons[] = {
+// 0x5C5818
+static MainMenuButtonInfo mainmenu_ui_mainmenu_no_multiplayer_buttons[] = {
     { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SINGLE_PLAYER, 0, 0, { 0 }, -1 },
-    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_MULTIPLAYER, 0, 0, { 0 }, -1 },
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
-    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_CREDITS, 0, 0, { 0 }, -1 },
-    { 410, 343, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_0, 0, 0, { 0 }, -1 },
+    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
+    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_CREDITS, 0, 0, { 0 }, -1 },
+    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_0, 0, 0, { 0 }, -1 },
 };
 
 // 0x5C4170
@@ -651,9 +479,9 @@ static MainMenuWindowInfo mainmenu_ui_mainmenu_window_info = {
     NULL,
     NULL,
     NULL,
-    10,
-    SDL_arraysize(mainmenu_ui_mainmenu_buttons),
-    mainmenu_ui_mainmenu_buttons,
+    460,
+    SDL_arraysize(mainmenu_ui_mainmenu_no_multiplayer_buttons),
+    mainmenu_ui_mainmenu_no_multiplayer_buttons,
     0,
     0,
     0xD,
@@ -1404,187 +1232,6 @@ static MainMenuWindowInfo mainmenu_ui_shop_info = {
     0xE,
 };
 
-// 0x5C5500
-static MainMenuWindowInfo mainmenu_ui_multiplayer_window_info = {
-    330,
-    mainmenu_ui_multiplayer_create,
-    NULL,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    200,
-    SDL_arraysize(mainmenu_ui_multiplayer_buttons),
-    mainmenu_ui_multiplayer_buttons,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    NULL,
-    mainmenu_ui_multiplayer_execute,
-    { 0 },
-    NULL,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    2,
-};
-
-// 0x5C5598
-static MainMenuWindowInfo mainmenu_ui_serverlist_window_info = {
-    750,
-    mainmenu_ui_serverlist_create,
-    mainmenu_ui_serverlist_destroy,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    2110,
-    SDL_arraysize(mainmenu_ui_serverlist_buttons),
-    mainmenu_ui_serverlist_buttons,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    mainmenu_ui_serverlist_refresh,
-    mainmenu_ui_serverlist_execute,
-    { 30, 550, 263, 15 },
-    mainmenu_ui_serverlist_mouse_up,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    0x15,
-};
-
-// 0x5C5640
-static TigRect stru_5C5640 = { 30, 206, 247, 340 };
-
-// 0x5C5650
-static MainMenuWindowInfo stru_5C5650 = {
-    798,
-    sub_584AE0,
-    sub_584C00,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    400,
-    SDL_arraysize(stru_5CC6C8),
-    stru_5CC6C8,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    sub_584CB0,
-    sub_585270,
-    { 0, 0, 800, 600 },
-    sub_5850C0,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    0x15,
-};
-
-// 0x5C56E8
-static MainMenuWindowInfo stru_5C56E8 = {
-    754,
-    multiplayer_hub_ui_init,
-    multiplayer_hub_ui_exit,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    440,
-    SDL_arraysize(stru_5CC058),
-    stru_5CC058,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    sub_581910,
-    sub_5819D0,
-    { 77, 562, 166, 15 },
-    sub_581950,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    0x15,
-};
-
-// 0x5C5780
-static MainMenuWindowInfo stru_5C5780 = {
-    754,
-    multiplayer_hub_ui_create_chat,
-    multiplayer_hub_ui_destroy_chat,
-    0,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    440,
-    SDL_arraysize(stru_5CC0E8),
-    stru_5CC0E8,
-    0,
-    0,
-    0xD,
-    {
-        { -1, 0, 0 },
-        { -1, 0, 0 },
-    },
-    multiplayer_hub_ui_refresh_chat,
-    multiplayer_hub_ui_execute_chat,
-    { 0, 0, 800, 600 },
-    sub_581E60,
-    { 0 },
-    NULL,
-    0,
-    0,
-    0,
-    -1,
-    0x15,
-};
-
-// 0x5C5818
-static MainMenuButtonInfo mainmenu_ui_mainmenu_no_multiplayer_buttons[] = {
-    { 410, 143, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_SINGLE_PLAYER, 0, 0, { 0 }, -1 },
-    { 410, 193, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_OPTIONS, 0, 0, { 0 }, -1 },
-    { 410, 243, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_CREDITS, 0, 0, { 0 }, -1 },
-    { 410, 293, -1, TIG_BUTTON_HANDLE_INVALID, MM_WINDOW_0, 0, 0, { 0 }, -1 },
-};
-
 // 0x5C3A40
 static MainMenuWindowInfo *main_menu_window_info[MM_WINDOW_COUNT] = {
     /*                       MM_WINDOW_0 */ &stru_5C3AB0,
@@ -1603,15 +1250,6 @@ static MainMenuWindowInfo *main_menu_window_info[MM_WINDOW_COUNT] = {
     /*             MM_WINDOW_PREGEN_CHAR */ &mainmenu_ui_pregen_char_window_info,
     /*                MM_WINDOW_CHAREDIT */ &mainmenu_ui_charedit_info,
     /*                    MM_WINDOW_SHOP */ &mainmenu_ui_shop_info,
-    /*             MM_WINDOW_MULTIPLAYER */ &mainmenu_ui_multiplayer_window_info,
-    /*              MM_WINDOW_SERVERLIST */ &mainmenu_ui_serverlist_window_info,
-    /*                      MM_WINDOW_18 */ &stru_5C5650,
-    /*                      MM_WINDOW_19 */ &stru_5C3D10,
-    /*                      MM_WINDOW_20 */ &stru_5C3DA8,
-    /*                      MM_WINDOW_21 */ &stru_5C3E40,
-    /*          MM_WINDOW_MP_SELECT_CHAR */ &mainmenu_ui_mp_select_char_window_info,
-    /*                      MM_WINDOW_23 */ &stru_5C56E8,
-    /*                      MM_WINDOW_24 */ &stru_5C5780,
     /*                 MM_WINDOW_CREDITS */ &mainmenu_ui_credits_window_info,
     /*                      MM_WINDOW_26 */ &stru_5C4338,
 };
@@ -1640,9 +1278,6 @@ static MainMenuWindowType dword_64C004[50];
 // 0x64C0CC
 static tig_font_handle_t dword_64C0CC[2][3];
 
-// 0x64C0E8
-static MesFileEntry stru_64C0E8;
-
 // 0x64C0F0
 static char byte_64C0F0[128];
 
@@ -1667,20 +1302,8 @@ static tig_font_handle_t dword_64C240;
 // 0x64C244
 static MainMenuType mainmenu_ui_type;
 
-// 0x64C248
-static ObjectID stru_64C248;
-
 // 0x64C260
 static ScrollbarUiControlInfo stru_64C260;
-
-// 0x64C2A4
-static tig_art_id_t dword_64C2A4;
-
-// 0x64C2A8
-static ScrollbarId stru_64C2A8;
-
-// 0x64C2B0
-static ScrollbarUiControlInfo stru_64C2B0;
 
 // 0x64C2F4
 static mes_file_handle_t mainmenu_ui_rules_mainmenu_mes_file;
@@ -1782,21 +1405,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    if (!mes_load("mes\\multiplayer.mes", &mainmenu_ui_multiplayer_mes_file)) {
-        return false;
-    }
-
-    stru_64C0E8.num = 3000;
-    mes_get_msg(mainmenu_ui_multiplayer_mes_file, &stru_64C0E8);
-
-    settings_add(&settings, "won_account", "", won_account_changed);
-    settings_add(&settings, "won_password", "", won_password_changed);
     settings_add(&settings, "show version", "0", NULL);
-    won_account_changed();
-    won_password_changed();
-
-    settings_add(&settings, "selected_char_id", "", selected_char_id_changed);
-    selected_char_id_changed();
 
     mainmenu_fonts_init();
 
@@ -1878,8 +1487,6 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
 
     gamelib_thumbnail_size_set(468, 300);
     dword_64C418 = 0;
-    serverlist_ui_init();
-    stru_64C248.type = OID_TYPE_NULL;
     sub_549A80();
     dword_64C37C = NULL;
 
@@ -1892,8 +1499,6 @@ void mainmenu_ui_exit()
     int index;
 
     sub_5412E0(true);
-    settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
-    serverlist_ui_exit();
     mainmenu_fonts_exit();
 
     for (index = 0; index < 3; index++) {
@@ -1913,7 +1518,6 @@ void mainmenu_ui_exit()
     tig_font_destroy(dword_64C240);
     mes_unload(mainmenu_ui_rules_mainmenu_mes_file);
     mes_unload(mainmenu_ui_mainmenu_mes_file);
-    mes_unload(mainmenu_ui_multiplayer_mes_file);
 
     if (dword_64C41C != NULL) {
         FREE(dword_64C41C);
@@ -1944,14 +1548,13 @@ void mainmenu_ui_start(MainMenuType type)
     if (!dword_64C384) {
         dword_64C390 = 0;
 
-        if (type != MM_TYPE_OPTIONS && !tig_net_is_active()) {
+        if (type != MM_TYPE_OPTIONS) {
             sub_45B320();
         }
 
         tig_art_interface_id_create(0, 0, 0, 0, &art_id);
         tig_mouse_cursor_set_art_id(art_id);
         inven_ui_destroy();
-        sub_570130();
 
         if (type == MM_TYPE_DEFAULT && !dword_5C4000) {
             type = MM_TYPE_1;
@@ -2032,7 +1635,7 @@ void sub_5412E0(bool a1)
         }
 
         if (mainmenu_ui_window_type != MM_WINDOW_0 || !stru_5C36B0[mainmenu_ui_type][1]) {
-            if (!dword_64C418 || tig_net_is_active()) {
+            if (!dword_64C418) {
                 if (dword_5C4004) {
                     sub_40FED0();
                 }
@@ -2405,11 +2008,6 @@ bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
 
         tig_button_hide(button_handle);
 
-        if (tig_net_is_active()) {
-            sub_4A38B0(sub_549310, button_handle);
-            return false;
-        }
-
         return sub_549310(button_handle);
     }
 
@@ -2444,11 +2042,6 @@ bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle
         }
 
         tig_button_hide(button_handle);
-
-        if (tig_net_is_active()) {
-            sub_4A38B0(sub_549310, button_handle);
-            return false;
-        }
 
         return sub_549310(button_handle);
     }
@@ -2720,7 +2313,6 @@ void sub_5422A0(TigRect* rect)
 bool mainmenu_ui_load_game_execute(int btn)
 {
     int index;
-    MatchmakerRegisterInfo register_info;
     char name[256];
 
     (void)btn;
@@ -2733,35 +2325,7 @@ bool mainmenu_ui_load_game_execute(int btn)
     strncpy(name, stru_64BBF8.paths[index], 8);
     name[8] = '\0';
 
-    if (stru_64BBF8.module == NULL) {
-        return sub_5432B0(name);
-    }
-
-    sub_4A4270();
-    multiplayer_lock();
-    sub_4A3D00(1);
-    multiplayer_unlock();
-    sub_541710();
-    sub_4A4280();
-    sub_49CC50();
-
-    if (sub_49CC70(stru_64BBF8.module, name)) {
-        if (multiplayer_mm_is_active()) {
-            tig_net_local_server_get_name(register_info.name, sizeof(register_info.name));
-            sub_52B0C0(&(register_info.addr));
-            tig_net_inet_string(register_info.addr.sin_addr.s_addr, register_info.hostname);
-            sprintf(&(register_info.hostname[strlen(register_info.hostname)]), ":%d", 31435);
-            multiplayer_mm_register(0);
-            sub_5499B0(stru_64C0E8.str);
-        }
-        sub_5412D0();
-    } else {
-        sub_5280F0();
-        tig_net_start_client();
-        sub_549B30();
-    }
-
-    return true;
+    return sub_5432B0(name);
 }
 
 // 0x542420
@@ -3964,10 +3528,6 @@ void mainmenu_ui_create_single_player()
     mainmenu_ui_window_type = MM_WINDOW_SINGLE_PLAYER;
     mainmenu_ui_create_window();
     mainmenu_ui_draw_version();
-    if (tig_net_is_active()) {
-        multiplayer_end();
-        sub_5280F0();
-    }
     sub_5576B0();
 }
 
@@ -3987,7 +3547,6 @@ void mainmenu_ui_new_char_create()
 
     dword_64C458 = 0;
     mainmenu_ui_window_type = MM_WINDOW_NEW_CHAR;
-    multiplayer_lock();
 
     player_create_info_init(&player_create_info);
     player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
@@ -4689,44 +4248,6 @@ void mainmenu_ui_charedit_destroy()
 bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle)
 {
     if (button_handle == mainmenu_ui_charedit_buttons[0].button_handle) {
-        if (tig_net_is_active()) {
-            uint8_t* v1;
-            int v2;
-
-            multiplayer_unlock();
-            if (!sub_4A4320()) {
-                tig_debug_printf("MainMenu_UI: Could not save multiplayer character.\n");
-                return true;
-            }
-
-            settings_set_obj_value(&settings,
-                "selected_char_id",
-                obj_get_id(player_get_local_pc_obj()));
-
-            dword_5C3618 = -1;
-            if (dword_64C41C != NULL) {
-                FREE(dword_64C41C);
-                dword_64C41C = NULL;
-            }
-
-            sub_4A3D70(&dword_64C41C, &dword_64C420);
-            sub_442050(&v1, &v2, player_get_local_pc_obj());
-            sub_4A40F0(0,
-                obj_get_id(player_get_local_pc_obj()),
-                stat_level_get(player_get_local_pc_obj(), STAT_LEVEL),
-                v1,
-                v2);
-            FREE(v1);
-
-            sub_5417A0(0);
-            mainmenu_ui_create_multiplayer_hub();
-            if (sub_541680()) {
-                sub_541810(mainmenu_ui_window_type_get());
-            }
-
-            return false;
-        }
-
         sub_5480C0(2);
         return true;
     }
@@ -4833,81 +4354,6 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
         sub_5412D0();
         return;
     }
-}
-
-// 0x545F60
-void mainmenu_ui_multiplayer_create()
-{
-    mainmenu_ui_window_type = MM_WINDOW_MULTIPLAYER;
-    mainmenu_ui_create_window();
-
-    if (tig_net_is_active()) {
-        if (dword_64C41C != NULL) {
-            FREE(dword_64C41C);
-            dword_64C420 = 0;
-        }
-        multiplayer_end();
-    }
-
-    settings_set_value(&settings, "turn-based", 0);
-    multiplayer_start();
-    sub_4A3D70(&dword_64C41C, &dword_64C420);
-}
-
-// 0x545FD0
-void sub_545FD0(int x, int y)
-{
-    MainMenuWindowInfo* window;
-
-    window = main_menu_window_info[mainmenu_ui_window_type];
-    if (x >= stru_5C3FE0.x
-        && y >= stru_5C3FE0.y
-        && x < stru_5C3FE0.x + stru_5C3FE0.width
-        && y < stru_5C3FE0.y + stru_5C3FE0.height) {
-        sub_5493C0(byte_64C2F8, 23);
-    } else if (x >= stru_5C3FF0.x
-        && y >= stru_5C3FF0.y
-        && x < stru_5C3FF0.x + stru_5C3FF0.width
-        && y < stru_5C3FF0.y + stru_5C3FF0.height) {
-        window->selected_index = -1;
-        byte_64C394[0] = '\0';
-        sub_5493C0(byte_64C394, 23);
-    }
-    window->refresh_func(NULL);
-}
-
-// 0x5460A0
-void mainmenu_ui_create_multiplayer_select_char()
-{
-    tig_art_interface_id_create(753, 0, 0, 0, &dword_64C2A4);
-    mainmenu_ui_window_type = MM_WINDOW_MP_SELECT_CHAR;
-
-    stru_64C2B0.flags = 781;
-    stru_64C2B0.scrollbar_rect.x = 287;
-    stru_64C2B0.scrollbar_rect.y = 204;
-    stru_64C2B0.scrollbar_rect.width = 16;
-    stru_64C2B0.scrollbar_rect.height = 344;
-    stru_64C2B0.max_value = dword_64C420 > 17 ? dword_64C420 - 17 : 0;
-    stru_64C2B0.min_value = 0;
-    stru_64C2B0.field_40 = sub_548B60;
-    stru_64C2B0.field_3C = sub_546180;
-
-    mainmenu_ui_create_window();
-    scrollbar_ui_control_create(&stru_64C2A8, &stru_64C2B0, sub_549820());
-    scrollbar_ui_control_redraw(stru_64C2A8);
-}
-
-// 0x546160
-void mainmenu_ui_destroy_multiplayer_select_char()
-{
-    scrollbar_ui_control_destroy(stru_64C2A8);
-}
-
-// 0x546180
-void sub_546180(int a1)
-{
-    dword_64C378 = a1;
-    mainmenu_ui_refresh_multiplayer_select_char(&stru_5C5640);
 }
 
 // 0x5461A0
@@ -5436,12 +4882,6 @@ bool sub_546EE0(TigMessage* msg)
 
     window = main_menu_window_info[mainmenu_ui_window_type];
 
-    if (mainmenu_ui_window_type == MM_WINDOW_SERVERLIST) {
-        if (sub_5862D0(msg, dword_5C3624)) {
-            return true;
-        }
-    }
-
     if (slide_ui_is_active()) {
         return false;
     }
@@ -5503,25 +4943,6 @@ bool sub_546EE0(TigMessage* msg)
             case MM_WINDOW_SAVE_GAME:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     sub_5412D0();
-                    return true;
-                }
-                break;
-            case MM_WINDOW_SERVERLIST:
-                if (msg->data.mouse.x >= stru_5C3FE0.x
-                    && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FE0.y
-                    && msg->data.mouse.x < stru_5C3FE0.x + stru_5C3FE0.width
-                    && msg->data.mouse.y - stru_5C3628.y < stru_5C3FE0.y + stru_5C3FE0.height) {
-                    gsound_play_sfx(0, 1);
-                    sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
-                    return true;
-                }
-
-                if (msg->data.mouse.x >= stru_5C3FF0.x
-                    && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FF0.y
-                    && msg->data.mouse.x < stru_5C3FF0.x + stru_5C3FF0.width
-                    && msg->data.mouse.y - stru_5C3628.y < stru_5C3FF0.y + stru_5C3FF0.height) {
-                    gsound_play_sfx(0, 1);
-                    sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
                     return true;
                 }
                 break;
@@ -5787,101 +5208,6 @@ bool sub_546EE0(TigMessage* msg)
                 return true;
             }
             return false;
-        case MM_WINDOW_SERVERLIST:
-            if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE) {
-                gsound_play_sfx(0, 1);
-                tig_net_reset_connection();
-                sub_5417A0(1);
-                if (mainmenu_ui_window_type == MM_WINDOW_0) {
-                    sub_5412D0();
-                }
-                return true;
-            }
-            return false;
-        case MM_WINDOW_MP_SELECT_CHAR:
-            switch (msg->data.keyboard.key) {
-            case SDL_SCANCODE_ESCAPE:
-                gsound_play_sfx(0, 1);
-                sub_5417A0(1);
-                if (mainmenu_ui_window_type == MM_WINDOW_0) {
-                    sub_5412D0();
-                }
-                return true;
-            case SDL_SCANCODE_UP:
-                if (dword_5C3618 > 0 ) {
-                    dword_5C3618--;
-                    mainmenu_ui_refresh_multiplayer_select_char(0);
-                    scrollbar_ui_control_redraw(stru_64C2A8);
-                    return true;
-                }
-                return false;
-            case SDL_SCANCODE_DOWN:
-                if (dword_5C3618 < dword_64C420 - 1) {
-                    dword_5C3618++;
-                    mainmenu_ui_refresh_multiplayer_select_char(0);
-                    scrollbar_ui_control_redraw(stru_64C2A8);
-                    return true;
-                }
-                return false;
-            case SDL_SCANCODE_BACKSPACE:
-            case SDL_SCANCODE_DELETE:
-                if (dword_5C3618 >= 0 && dword_5C3618 < dword_64C420) {
-                    TigWindowModalDialogInfo modal_dialog_info;
-                    TigWindowModalDialogChoice choice;
-                    char str[MAX_STRING];
-                    char path[TIG_MAX_PATH];
-
-                    modal_dialog_info.x = 237;
-                    modal_dialog_info.y = 232;
-                    modal_dialog_info.process = NULL;
-                    modal_dialog_info.redraw = sub_4045A0;
-                    hrp_center(&(modal_dialog_info.x), &(modal_dialog_info.y));
-
-                    if (dword_64C41C[dword_5C3618] != OBJ_HANDLE_NULL) {
-                        mes_file_entry.num = 2050;
-                        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
-
-                        object_examine(dword_64C41C[dword_5C3618], dword_64C41C[dword_5C3618], str);
-                        snprintf(path, sizeof(path), mes_file_entry.str, str);
-
-                        modal_dialog_info.text = path;
-                        modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
-                        tig_window_modal_dialog(&modal_dialog_info, &choice);
-
-                        if (choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
-                            objid_id_to_str(str, obj_get_id(dword_64C41C[dword_5C3618]));
-                            snprintf(path, sizeof(path), "Players\\%s.mpc", str);
-                            tig_file_remove(path);
-                            snprintf(path, sizeof(path), "Players\\%s_b.bmp", str);
-                            tig_file_remove(path);
-                            snprintf(path, sizeof(path), "Players\\%s.bmp", str);
-                            tig_file_remove(path);
-
-                            dword_5C3618 = -1;
-
-                            if (dword_64C41C != NULL) {
-                                FREE(dword_64C41C);
-                                dword_64C420 = 0;
-                            }
-
-                            sub_4A3D70(&dword_64C41C, &dword_64C420);
-                        }
-                    } else {
-                        mes_file_entry.num = 2051;
-                        mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
-
-                        modal_dialog_info.text = mes_file_entry.str;
-                        modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
-                        tig_window_modal_dialog(&modal_dialog_info, &choice);
-                    }
-
-                    mainmenu_ui_refresh_multiplayer_select_char(0);
-                    scrollbar_ui_control_redraw(stru_64C2A8);
-                    return true;
-                }
-                return false;
-            }
-            return false;
         default:
             return false;
         }
@@ -5960,13 +5286,7 @@ bool sub_546EE0(TigMessage* msg)
                         // FIXME: Looks wrong.
                         tig_button_hide(3);
 
-                        if (!tig_net_is_active()) {
-                            // FIXME: Looks wrong.
-                            return sub_549310(3);
-                        }
-
-                        // FIXME: Looks wrong.
-                        sub_4A38B0(sub_549310, 3);
+                        return sub_549310(3);
                     }
                     return true;
                 case 4:
@@ -5988,13 +5308,7 @@ bool sub_546EE0(TigMessage* msg)
                         // FIXME: Looks wrong.
                         tig_button_hide(1);
 
-                        if (!tig_net_is_active()) {
-                            // FIXME: Looks wrong.
-                            return sub_549310(1);
-                        }
-
-                        // FIXME: Looks wrong.
-                        sub_4A38B0(sub_549310, 3);
+                        return sub_549310(1);
                     }
                     return true;
                 case 2:
@@ -6196,381 +5510,6 @@ void sub_5480C0(int a1)
     }
 }
 
-// 0x548210
-void sub_548210(int x, int y)
-{
-    (void)x;
-
-    dword_5C3618 = dword_64C378 + y / 20;
-    if (dword_5C3618 < dword_64C420) {
-        stru_64C248 = obj_get_id(dword_64C41C[dword_5C3618]);
-        mainmenu_ui_refresh_multiplayer_select_char(NULL);
-    } else {
-        dword_5C3618 = -1;
-        stru_64C248.type = OID_TYPE_NULL;
-        mainmenu_ui_refresh_multiplayer_select_char(NULL);
-    }
-}
-
-// 0x5482A0
-void sub_5482A0(TigRect* rect)
-{
-    TigArtBlitInfo art_blit_info;
-    TigRect text_rect;
-    MesFileEntry mes_file_entry1;
-    MesFileEntry mes_file_entry2;
-    TigFont font_desc;
-    char str[80];
-    int64_t obj;
-    int aptitude;
-    int portrait;
-    char* player_name;
-    char* copy;
-    size_t pos;
-
-    (void)rect;
-
-    text_rect.x = 384;
-    text_rect.y = 0;
-    text_rect.width = 416;
-    text_rect.height = 600;
-
-    art_blit_info.flags = 0;
-    art_blit_info.art_id = dword_64C2A4;
-    art_blit_info.dst_rect = &text_rect;
-    art_blit_info.src_rect = &text_rect;
-    tig_window_blit_art(dword_5C3624, &art_blit_info);
-
-    if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
-        if (stru_64C248.type != OID_TYPE_NULL) {
-            int index;
-
-            for (index = 0; index < dword_64C420; index++) {
-                if (objid_is_equal(stru_64C248, obj_get_id(dword_64C41C[index]))) {
-                    dword_5C3618 = index;
-                    break;
-                }
-            }
-        }
-
-        if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
-            dword_5C3618 = 0;
-            stru_64C248 = obj_get_id(dword_64C41C[dword_5C3618]);
-            settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
-        }
-    }
-
-    if (dword_5C3618 < 0 || dword_5C3618 >= dword_64C420) {
-        return;
-    }
-
-    obj = dword_64C41C[dword_5C3618];
-
-    portrait = portrait_get(obj);
-    if (portrait) {
-        portrait_draw_native(obj, portrait, dword_5C3624, 530, 117);
-    }
-
-    // Render name.
-    tig_font_push(mainmenu_ui_font(MM_FONT_MORPH15, MM_COLOR_GOLD));
-
-    obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &player_name);
-    copy = STRDUP(player_name);
-    pos = strlen(copy);
-    while (pos > 0) {
-        copy[pos] = '\0';
-        font_desc.width = 0;
-        font_desc.str = copy;
-        tig_font_measure(&font_desc);
-        if (font_desc.width <= 259) {
-            break;
-        }
-        pos--;
-    }
-    FREE(player_name);
-    // FIXME: Leaking `player_name`.
-
-    text_rect.x = 432 + (259 - font_desc.width) / 2;
-    text_rect.y = 190;
-    text_rect.width = font_desc.width;
-    text_rect.height = font_desc.height;
-    tig_window_text_write(dword_5C3624, copy, &text_rect);
-
-    tig_font_pop();
-
-    // Render primary stats.
-    tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_RED));
-
-    mes_file_entry1.num = 2020; // "ST: %02d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_STRENGTH));
-    text_rect.x = 475;
-    text_rect.y = 117;
-    text_rect.width = 54;
-    text_rect.height = 15;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2021; // "DX: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_DEXTERITY));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2022; // "CN: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_CONSTITUTION));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2023; // "BE: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_BEAUTY));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2024; // "IN: %02d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_INTELLIGENCE));
-    text_rect.x = 610;
-    text_rect.y = 117;
-    text_rect.width = 54;
-    text_rect.height = 15;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2025; // "PE: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_PERCEPTION));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2026; // "WP: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_WILLPOWER));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2027; // "CH: %02d"
-    text_rect.y += 16;
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_CHARISMA));
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    tig_font_pop();
-
-    // Render secondary stats.
-    tig_font_push(mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
-
-    mes_file_entry1.num = 2028; // "Level: %d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, 17));
-    font_desc.width = 0;
-    font_desc.str = str;
-    tig_font_measure(&font_desc);
-
-    text_rect.width = font_desc.width;
-    text_rect.height = font_desc.height;
-    text_rect.x = (260 - font_desc.width) / 2 + 432;
-    text_rect.y = 217;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2029; // "Alignment: %d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_ALIGNMENT) / 10);
-    font_desc.width = 0;
-    font_desc.str = str;
-    tig_font_measure(&font_desc);
-
-    text_rect.width = font_desc.width;
-    text_rect.y += 16;
-    text_rect.x = (260 - font_desc.width) / 2 + 432;
-    text_rect.height = font_desc.height;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2030; // "Aptitude: %s %d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-
-    aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
-    if (aptitude > 0) {
-        mes_file_entry2.num = 2033; // "Magick"
-    } else if (aptitude < 0) {
-        mes_file_entry2.num = 2034; // "Technology"
-        aptitude = -aptitude;
-    } else {
-        mes_file_entry2.num = 2035; // " "
-    }
-
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry2);
-    sprintf(str, mes_file_entry1.str, mes_file_entry2.str, aptitude);
-    font_desc.width = 0;
-    font_desc.str = str;
-    tig_font_measure(&font_desc);
-
-    text_rect.width = font_desc.width;
-    text_rect.x = (260 - font_desc.width) / 2 + 432;
-    text_rect.y += 16;
-    text_rect.height = font_desc.height;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2031; // "Total Attack: %d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, item_total_attack(obj));
-    font_desc.width = 0;
-    font_desc.str = str;
-    tig_font_measure(&font_desc);
-
-    text_rect.width = font_desc.width;
-    text_rect.y += 16;
-    text_rect.x = (260 - font_desc.width) / 2 + 432;
-    text_rect.height = font_desc.height;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    mes_file_entry1.num = 2032; // "Total Defense: %d"
-    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, item_total_defence(obj));
-    font_desc.width = 0;
-    font_desc.str = str;
-    tig_font_measure(&font_desc);
-
-    text_rect.width = font_desc.width;
-    text_rect.x = (260 - font_desc.width) / 2 + 432;
-    text_rect.height = font_desc.height;
-    text_rect.y += 16;
-    tig_window_text_write(dword_5C3624, str, &text_rect);
-
-    tig_font_pop();
-}
-
-// 0x548B60
-void sub_548B60(TigRect* rect)
-{
-    TigRect screen_rect;
-    TigArtBlitInfo blit_info;
-
-    screen_rect.x = 0;
-    screen_rect.y = 0;
-    screen_rect.width = 800;
-    screen_rect.height = 600;
-    tig_art_interface_id_create(753, 0, 0, 0, &(blit_info.art_id));
-
-    blit_info.flags = 0;
-    if (rect != NULL) {
-        blit_info.src_rect = rect;
-        blit_info.dst_rect = rect;
-    } else {
-        blit_info.src_rect = &screen_rect;
-        blit_info.dst_rect = &screen_rect;
-    }
-
-    tig_window_blit_art(sub_549820(), &blit_info);
-    sub_549960();
-}
-
-// 0x548BE0
-void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
-{
-    TigRect frame;
-    int index;
-    int y;
-    char* player_name;
-    char* copy;
-    size_t pos;
-    TigFont font_desc;
-    TigRect text_rect;
-    MesFileEntry mes_file_entry;
-    char str[80];
-
-    frame.x = 30;
-    frame.y = 206;
-    frame.width = 192;
-    frame.height = 238;
-
-    sub_548B60(rect);
-
-    if (rect == NULL
-        || (rect->x < frame.x + frame.width
-            && rect->y < frame.y + frame.height
-            && frame.x < rect->x + rect->width
-            && frame.y < rect->y + rect->height)) {
-        sub_548B60(&frame);
-
-        y = 206;
-        for (index = dword_64C378; index < dword_64C420 && y < 546; index++) {
-            tig_font_push(index == dword_5C3618
-                ? mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_GOLD)
-                : mainmenu_ui_font(MM_FONT_FLARE12, MM_COLOR_WHITE));
-
-            obj_field_string_get(dword_64C41C[index], OBJ_F_PC_PLAYER_NAME, &player_name);
-            copy = STRDUP(player_name);
-            pos = strlen(copy);
-            while (pos > 0) {
-                copy[pos] = '\0';
-                font_desc.width = 0;
-                font_desc.str = copy;
-                tig_font_measure(&font_desc);
-                if (font_desc.width <= 192) {
-                    break;
-                }
-                pos--;
-            }
-
-            text_rect.x = 30;
-            text_rect.y = y;
-            text_rect.width = font_desc.width;
-            text_rect.height = font_desc.height;
-            tig_window_text_write(dword_5C3624, copy, &text_rect);
-            FREE(copy);
-            // FIXME: Leaking `player_name`.
-
-            mes_file_entry.num = 2006; // "Level"
-            mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-            copy = STRDUP(mes_file_entry.str);
-            pos = strlen(copy);
-            while (pos > 0) {
-                copy[pos] = '\0';
-                font_desc.width = 0;
-                font_desc.str = copy;
-                tig_font_measure(&font_desc);
-                if (font_desc.width <= 35) {
-                    break;
-                }
-                pos--;
-            }
-
-            text_rect.x = 222;
-            text_rect.y = y;
-            text_rect.width = font_desc.width;
-            text_rect.height = font_desc.height;
-            tig_window_text_write(dword_5C3624, copy, &text_rect);
-            FREE(copy);
-
-            sprintf(str, "%d", stat_level_get(dword_64C41C[index], STAT_LEVEL));
-            font_desc.width = 0;
-            font_desc.str = str;
-            tig_font_measure(&font_desc);
-
-            text_rect.x = 277 - font_desc.width;
-            text_rect.y = y;
-            text_rect.width = font_desc.width;
-            text_rect.height = font_desc.height;
-            tig_window_text_write(dword_5C3624, str, &text_rect);
-
-            tig_font_pop();
-
-            y += 20;
-        }
-    }
-
-    sub_5482A0(rect);
-
-    if (rect == NULL
-        || (rect->x < stru_64C2B0.scrollbar_rect.x + stru_64C2B0.scrollbar_rect.width
-            && rect->y < stru_64C2B0.scrollbar_rect.y + stru_64C2B0.scrollbar_rect.height
-            && stru_64C2B0.scrollbar_rect.x < rect->x + rect->width
-            && stru_64C2B0.scrollbar_rect.y < rect->y + rect->height)) {
-        scrollbar_ui_control_redraw(stru_64C2A8);
-    }
-}
-
 // 0x548F10
 void mmUIWinRefreshScrollBar()
 {
@@ -6629,122 +5568,6 @@ void sub_548FF0(int a1)
     }
 }
 
-// 0x549040
-bool mainmenu_ui_multiplayer_execute(int btn)
-{
-    MatchmakerInitInfo mm_init_info;
-    MesFileEntry mes_file_entry;
-    TigWindowModalDialogInfo modal_dialog_info;
-    TigWindowModalDialogChoice choice;
-
-    switch (btn) {
-    case 0:
-        if (multiplayer_mm_is_active()) {
-            sub_581F10();
-            multiplayer_mm_exit();
-        }
-        sub_5417A0(0);
-        mainmenu_ui_create_multiplayer_hub();
-        if (dword_64C384 && !dword_64C38C) {
-            sub_541810(mainmenu_ui_window_type);
-        }
-        return false;
-    case 1:
-        multiplayer_mm_setup(&mm_init_info);
-        if (!multiplayer_mm_is_active()) {
-            if (!multiplayer_mm_init(&mm_init_info)) {
-                mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
-                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
-
-                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
-                modal_dialog_info.redraw = sub_4045A0;
-                modal_dialog_info.process = NULL;
-                modal_dialog_info.x = 237;
-                modal_dialog_info.y = 232;
-                modal_dialog_info.text = mes_file_entry.str;
-                hrp_center(&(modal_dialog_info.x), &(modal_dialog_info.y));
-                tig_debug_printf("MainMenu_UI: Could not initialize MatchMaker. Aborting.\n");
-                tig_window_modal_dialog(&modal_dialog_info, &choice);
-                multiplayer_mm_exit();
-                return false;
-            }
-
-            if (!sub_5499B0(stru_64C0E8.str)) {
-                mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
-                mes_get_msg(mainmenu_ui_mes_file(), &mes_file_entry);
-
-                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
-                modal_dialog_info.redraw = sub_4045A0;
-                modal_dialog_info.process = NULL;
-                modal_dialog_info.x = 237;
-                modal_dialog_info.y = 232;
-                modal_dialog_info.text = mes_file_entry.str;
-                // NOTE: Notice the typo in the message. It implies this code
-                // path is different from above even though it does the same.
-                tig_debug_printf("MainMenu_UI: Could not initialize Matchmaker. Aborting.\n");
-                tig_window_modal_dialog(&modal_dialog_info, &choice);
-                multiplayer_mm_exit();
-                return false;
-            }
-        }
-
-        if (multiplayer_mm_login(sub_584A80(), sub_584A90())
-            && sub_5499B0(stru_64C0E8.str)) {
-            sub_5417A0(0);
-            mainmenu_ui_create_multiplayer_hub();
-            if (!dword_64C384 || dword_64C38C) {
-                return false;
-            }
-        } else {
-            sub_5417A0(0);
-            sub_583A90();
-            if (!dword_64C384 || dword_64C38C) {
-                return false;
-            }
-        }
-        sub_541810(mainmenu_ui_window_type);
-        return false;
-    case 2:
-        settings_set_str_value(&settings, "won_password", "");
-        sub_5417A0(0);
-        sub_583A90();
-        if (!dword_64C384 || dword_64C38C) {
-            return false;
-        }
-        sub_541810(mainmenu_ui_window_type);
-        return false;
-    default:
-        return false;
-    }
-}
-
-// 0x549290
-bool mainmenu_ui_execute_multiplayer_select_char(int index)
-{
-    switch (index) {
-    case 0:
-        spell_ui_maintain_refresh();
-        sub_5417A0(0);
-        mainmenu_ui_create_multiplayer_hub();
-        if (dword_64C384) {
-            sub_541810(mainmenu_ui_window_type);
-        }
-        break;
-    case 1:
-        sub_5417A0(0);
-        mainmenu_ui_new_char_create();
-        if (dword_64C384) {
-            sub_541810(mainmenu_ui_window_type);
-        }
-        break;
-    default:
-        tig_debug_printf("MainMenuUI: mainmenu_ui_execute_multiplayer_select_char unknown button Idx %d.\n", index);
-        break;
-    }
-
-    return false;
-}
-
 // 0x549310
 bool sub_549310(tig_button_handle_t button_handle)
 {
@@ -6767,10 +5590,6 @@ bool sub_549310(tig_button_handle_t button_handle)
         tig_debug_printf("MainMenu: Unable to load default module %s.\n",
             gamelib_default_module_name_get());
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
-    }
-
-    if (tig_net_is_active()) {
-        tig_net_flags |= TIG_NET_RESET;
     }
 
     sub_541710();
@@ -6896,24 +5715,6 @@ void mainmenu_ui_progressbar_update(int value)
             main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C4538);
         }
     }
-}
-
-// 0x549650
-void won_account_changed()
-{
-    sub_584AA0(settings_get_str_value(&settings, "won_account"));
-}
-
-// 0x549670
-void won_password_changed()
-{
-    sub_584AC0(settings_get_str_value(&settings, "won_password"));
-}
-
-// 0x549690
-void selected_char_id_changed()
-{
-    stru_64C248 = settings_get_obj_value(&settings, "selected_char_id");
 }
 
 // 0x5496C0
@@ -7050,42 +5851,6 @@ void sub_549990(int* a1, int num)
     dword_64C390 = num + 1;
 }
 
-// 0x5499B0
-bool sub_5499B0(const char* text)
-{
-    TigWindowModalDialogInfo modal_info;
-    TigWindowModalDialogChoice choice;
-
-    modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_CANCEL;
-    modal_info.x = 237;
-    modal_info.y = 232;
-    modal_info.text = text;
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = ' ';
-    modal_info.process = sub_549A10;
-    modal_info.redraw = sub_4045A0;
-    hrp_center(&(modal_info.x), &(modal_info.y));
-    tig_window_modal_dialog(&modal_info, &choice);
-
-    return choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
-}
-
-// 0x549A10
-bool sub_549A10(TigWindowModalDialogChoice* choice_ptr)
-{
-    switch (multiplayer_mm_ping()) {
-    case 2:
-        return false;
-    case 1:
-        *choice_ptr = TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL;
-        break;
-    default:
-        *choice_ptr = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
-        break;
-    }
-
-    return true;
-}
-
 // 0x549A40
 void sub_549A40()
 {
@@ -7126,25 +5891,4 @@ void sub_549A80()
             dword_5C3620 = true;
         }
     }
-}
-
-// 0x549B10
-void sub_549B10()
-{
-    mainmenu_ui_mainmenu_window_info.num = 460;
-    mainmenu_ui_mainmenu_window_info.num_buttons = SDL_arraysize(mainmenu_ui_mainmenu_no_multiplayer_buttons);
-    mainmenu_ui_mainmenu_window_info.buttons = mainmenu_ui_mainmenu_no_multiplayer_buttons;
-}
-
-// 0x549B30
-void sub_549B30()
-{
-    dword_5C3618 = -1;
-
-    if (dword_64C41C != NULL) {
-        FREE(dword_64C41C);
-        dword_64C420 = 0;
-    }
-
-    sub_4A3D70(&dword_64C41C, &dword_64C420);
 }

@@ -3,7 +3,6 @@
 
 #include "game/context.h"
 #include "game/obj.h"
-#include "game/matchmaker.h"
 #include "game/timeevent.h"
 
 #define MULTIPLAYER_ALWAYS_RUN 0x0100u
@@ -55,31 +54,6 @@ bool multiplayer_notify_level_scheme_changed(int64_t obj);
 bool multiplayer_level_scheme_rule(int64_t obj, char* str);
 bool multiplayer_level_scheme_name(int64_t obj, char* str);
 bool multiplayer_portrait_path(int64_t obj, int size, char* path);
-void multiplayer_mm_setup(MatchmakerInitInfo* init_info);
-int multiplayer_mm_init(MatchmakerInitInfo* init_info);
-void multiplayer_mm_exit();
-int multiplayer_mm_is_active();
-int multiplayer_mm_ping();
-int multiplayer_mm_motd_get(char* a1, int a2, char* a3, int a4);
-int multiplayer_mm_login(const char* account, const char* password);
-int multiplayer_mm_create_account(const char* account, const char* password, const char* a3);
-int multiplayer_mm_version_needs_upgrade(const char* version);
-int multiplayer_mm_ad_rgb_get(uint8_t** rgb_ptr, int* width_ptr, int* height_ptr);
-int multiplayer_mm_ad_release();
-int multiplayer_mm_ad_clicked();
-int multiplayer_mm_register(int a1);
-int multiplayer_mm_gamelist_get(MatchmakerRegisterInfo** games, int* count);
-int multiplayer_mm_gamelist_free(MatchmakerRegisterInfo* games);
-int multiplayer_mm_chatserver_list_get(void** chatservers, int* count);
-int multiplayer_mm_chatserver_list_free(void* chatservers);
-int multiplayer_mm_chatserver_join(int a1);
-int multiplayer_mm_chatroom_list_get(MatchmakerChatroom** chatrooms, int* count);
-int multiplayer_mm_chatroom_list_free(MatchmakerChatroom* chatrooms);
-int multiplayer_mm_chatroom_join(MatchmakerChatroom* room, int a2);
-int multiplayer_mm_chatroom_members_get(MatchmakerChatroomMember** members, int* count);
-int multiplayer_mm_chatroom_members_free(MatchmakerChatroomMember* members);
-int multiplayer_mm_chatroom_create(const char* a1, const char* a2);
-int multiplayer_mm_chatroom_mesg(const char* msg);
 bool sub_4A50D0(int64_t pc_obj, int64_t item_obj);
 bool sub_4A51C0(int64_t pc_obj, int64_t item_obj);
 int sub_4A5460(int64_t a1);

@@ -50,8 +50,6 @@
 #include "ui/item_ui.h"
 #include "ui/logbook_ui.h"
 #include "ui/mainmenu_ui.h"
-#include "ui/mp_ctrl_ui.h"
-#include "ui/multiplayer_ui.h"
 #include "ui/roller_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
@@ -1218,8 +1216,6 @@ void iso_interface_create(tig_window_handle_t window_handle)
         tig_window_blit_art(dword_64C4F8[index], &art_blit_info);
     }
 
-    sub_569F20(dword_64C4F8[0]);
-
     for (index = 0; index < 5; index++) {
         intgame_button_create(&(stru_5C6E40[index]));
         tig_button_hide(stru_5C6E40[index].button_handle);
@@ -1981,11 +1977,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C6538.button_handle) {
-                if (tig_net_is_active()) {
-                    sub_5700C0();
-                } else {
-                    sleep_ui_toggle(OBJ_HANDLE_NULL);
-                }
+                sleep_ui_toggle(OBJ_HANDLE_NULL);
                 return true;
             }
 
@@ -2037,9 +2029,9 @@ bool sub_54B5D0(TigMessage* msg)
                 }
                 break;
             case 3:
-                return sub_570A10(msg);
+                break;
             case 10:
-                return sub_570BC0(msg);
+                break;
             case 8:
                 for (index = 0; index < 5; index++) {
                     if (stru_5C6C18[index].art_num != -1
@@ -3798,16 +3790,6 @@ bool sub_5501C0()
         button_create_no_art(&(stru_64C4A8[index]), stru_5C6D60[5].rect.width, stru_5C6D60[5].rect.y / 5);
     }
 
-    index = sub_551740(574, 506);
-    if (index != -1) {
-        sub_5708C0(dword_64C4F8[index], &(stru_5C6390[index]));
-    }
-
-    index = sub_551740(286, 524);
-    if (index != -1) {
-        sub_5701A0(dword_64C4F8[index], &(stru_5C6390[index]));
-    }
-
     for (index = 0; index < 6; index++) {
         intgame_button_create(&(stru_5C6CA8[index]));
     }
@@ -3899,7 +3881,6 @@ void iso_interface_window_disable(int window_type)
         }
         break;
     case 3:
-        sub_5709E0();
         break;
     case 4:
         break;
@@ -3924,7 +3905,6 @@ void iso_interface_window_disable(int window_type)
         }
         break;
     case 10:
-        sub_5703B0();
         break;
     default:
         tig_debug_printf("iso_interface_window_disable: ERROR: window type out of range!\n");
@@ -4491,10 +4471,6 @@ void iso_interface_window_enable(int window_type)
         }
         break;
     case 3:
-        index = sub_551740(219, 510);
-        if (index != -1) {
-            sub_570940(dword_64C4F8[index]);
-        }
         break;
     case 4:
         break;
@@ -4564,10 +4540,6 @@ void iso_interface_window_enable(int window_type)
         sub_553960();
         break;
     case 10:
-        index = sub_551740(286, 524);
-        if (index != -1) {
-            sub_570260(dword_64C4F8[index]);
-        }
         break;
     default:
         tig_debug_printf("iso_interface_window_enable: ERROR: window type out of range!");
