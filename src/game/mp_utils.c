@@ -1111,13 +1111,9 @@ void sub_4EF8B0(Packet118* pkt)
 }
 
 // 0x4EF920
-bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
+bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr)
 {
     bool ret = false;
-    ObjectID* oids;
-    int cnt;
-    Packet119* pkt;
-    int size;
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
@@ -1126,21 +1122,22 @@ bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
 
     if (tig_net_is_active()
         && tig_net_is_host()) {
+        ObjectID* oids;
+        int cnt;
+        PacketObjectDuplicate* pkt;
+        int size;
+
         sub_4063A0(*obj_ptr, &oids, &cnt);
         size = sizeof(*pkt) + sizeof(*oids) * cnt;
-        pkt = (Packet119*)MALLOC(size);
+        pkt = (PacketObjectDuplicate*)MALLOC(size);
         memcpy(pkt + 1, oids, sizeof(*oids) * cnt);
         FREE(oids);
-    }
 
-    // NOTE: Same condition?
-    if (tig_net_is_active()
-        && tig_net_is_host()) {
         pkt->type = 119;
         sub_4F0640(obj, &(pkt->oid));
         pkt->loc = loc;
         tig_net_send_app_all(pkt, size);
-        // FIXME: Leaking `pkt`.
+        FREE(pkt); // FIX: Memory leak.
     }
 
     return ret;

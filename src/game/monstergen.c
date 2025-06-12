@@ -336,7 +336,7 @@ int monstergen_generate(GeneratorInfo* generator_info, int cnt)
             }
         }
 
-        if (!sub_4EF920(generator_info->obj, target_loc, &obj)) {
+        if (!mp_object_duplicate(generator_info->obj, target_loc, &obj)) {
             break;
         }
 

@@ -1027,15 +1027,15 @@ typedef struct Packet118 {
 
 static_assert(sizeof(Packet118) == 0x38, "wrong size");
 
-typedef struct Packet119 {
+typedef struct PacketObjectDuplicate {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int64_t loc;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;
-} Packet119;
+} PacketObjectDuplicate;
 
-static_assert(sizeof(Packet119) == 0x30, "wrong size");
+static_assert(sizeof(PacketObjectDuplicate) == 0x30, "wrong size");
 
 typedef struct Packet120 {
     /* 0000 */ int type;
@@ -1256,7 +1256,7 @@ void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
 void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
 void sub_4EF830(int64_t a1, int64_t a2);
-bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr);
+bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr);
 void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);
