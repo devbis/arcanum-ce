@@ -1037,12 +1037,12 @@ typedef struct PacketObjectDuplicate {
 
 static_assert(sizeof(PacketObjectDuplicate) == 0x30, "wrong size");
 
-typedef struct Packet120 {
+typedef struct PacketStopAnimId {
     /* 0000 */ int type;
     /* 0004 */ AnimID anim_id;
-} Packet120;
+} PacketStopAnimId;
 
-static_assert(sizeof(Packet120) == 0x10, "wrong size");
+static_assert(sizeof(PacketStopAnimId) == 0x10, "wrong size");
 
 typedef struct Packet121 {
     /* 0000 */ int type;
@@ -1258,6 +1258,8 @@ void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
 void sub_4EF830(int64_t a1, int64_t a2);
 bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr);
 void mp_handle_object_duplicate(PacketObjectDuplicate* pkt);
+void mp_stop_anim_id(AnimID anim_id);
+void mp_handle_stop_anim_id(PacketStopAnimId* pkt);
 void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);

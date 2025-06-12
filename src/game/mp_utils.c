@@ -1159,9 +1159,9 @@ void mp_handle_object_duplicate(PacketObjectDuplicate* pkt)
 }
 
 // 0x4EFA70
-void sub_4EFA70(AnimID anim_id)
+void mp_stop_anim_id(AnimID anim_id)
 {
-    Packet120 pkt;
+    PacketStopAnimId pkt;
 
     pkt.type = 120;
     pkt.anim_id = anim_id;
@@ -1169,7 +1169,7 @@ void sub_4EFA70(AnimID anim_id)
 }
 
 // 0x4EFAB0
-void sub_4EFAB0(Packet120* pkt)
+void mp_handle_stop_anim_id(PacketStopAnimId* pkt)
 {
     sub_44E2C0(&(pkt->anim_id), 6);
 
