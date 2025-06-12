@@ -1257,6 +1257,7 @@ void mp_tb_remove(int64_t obj);
 void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
 void sub_4EF830(int64_t a1, int64_t a2);
 bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr);
+void mp_handle_object_duplicate(PacketObjectDuplicate* pkt);
 void sub_4EFAE0(int64_t obj, int a2);
 void sub_4EFBA0(int64_t obj);
 void mp_object_locked_set(int64_t obj, int a2);

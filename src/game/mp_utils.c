@@ -1144,9 +1144,18 @@ bool mp_object_duplicate(int64_t obj, int64_t loc, int64_t* obj_ptr)
 }
 
 // 0x4EFA10
-void sub_4EFA10()
+void mp_handle_object_duplicate(PacketObjectDuplicate* pkt)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t copy_obj;
+
+    sub_4F0690(pkt->oid, &obj);
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    object_duplicate_ex(obj, pkt->loc, (ObjectID*)(pkt + 1), &copy_obj);
 }
 
 // 0x4EFA70
