@@ -585,10 +585,10 @@ void terrain_color(int terrain_type, int* red, int* green, int* blue)
 // 0x4E8CE0
 void sub_4E8CE0(int a1, int a2, int a3, int a4, uint16_t* value)
 {
-    a1 = __min(__max(a1, 0), 31);
-    a2 = __min(__max(a2, 0), 31);
-    a3 = __min(__max(a3, 0), 15);
-    a4 = __min(__max(a4, 0), 3);
+    a1 = SDL_clamp(a1, 0, 31);
+    a2 = SDL_clamp(a2, 0, 31);
+    a3 = SDL_clamp(a3, 0, 15);
+    a4 = SDL_clamp(a4, 0, 3);
 
     // TODO: Check.
     *value = (uint16_t)(a4 | (a3 << 2) | (a2 << 4) | (a1 << 11));
