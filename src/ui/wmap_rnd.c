@@ -615,7 +615,7 @@ bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const
         wmap_rnd_encounter_chart_entry_parse(&str, &(chart->entries[index]));
 
         if (value_list != NULL) {
-            strlwr(str);
+            SDL_strlwr(str);
             tig_str_match_str_to_list(&str, value_list, 4, &(chart->entries[index].value));
         } else {
             tig_str_parse_value(&str, &(chart->entries[index].value));
