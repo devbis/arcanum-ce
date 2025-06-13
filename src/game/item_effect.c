@@ -2,16 +2,32 @@
 
 #include "game/mes.h"
 
-// 0x6018C0
-static int dword_6018C0;
+/**
+ * The maximum number of item effect description message.
+ *
+ * 0x6018C0
+ */
+static int item_effect_max_num;
 
-// 0x6018C4
+/**
+ * "gameitemeffect.mes"
+ *
+ * 0x6018C4
+ */
 static mes_file_handle_t game_item_effect_mes_file;
 
-// 0x6018C8
+/**
+ * "item_effect.mes"
+ *
+ * 0x6018C8
+ */
 static mes_file_handle_t item_effect_mes_file;
 
-// 0x4D3F60
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4D3F60
+ */
 bool item_effect_init(GameInitInfo* init_info)
 {
     int cnt;
@@ -19,16 +35,18 @@ bool item_effect_init(GameInitInfo* init_info)
 
     (void)init_info;
 
+    // Load system-wide item effect descriptions message file (required).
     if (!mes_load("mes\\item_effect.mes", &item_effect_mes_file)) {
         return false;
     }
 
+    // Retrieve the last message to determine the highest message number.
     cnt = mes_entries_count(item_effect_mes_file);
     if (cnt != 0) {
         mes_get_entry(item_effect_mes_file, cnt - 1, &mes_file_entry);
-        dword_6018C0 = mes_file_entry.num;
+        item_effect_max_num = mes_file_entry.num;
     } else {
-        dword_6018C0 = 0;
+        item_effect_max_num = 0;
     }
 
     game_item_effect_mes_file = MES_FILE_HANDLE_INVALID;
@@ -36,46 +54,65 @@ bool item_effect_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4D3FE0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4D3FE0
+ */
 void item_effect_exit()
 {
     mes_unload(item_effect_mes_file);
 }
 
-// 0x4D3FF0
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x4D3FF0
+ */
 bool item_effect_mod_load()
 {
     int cnt;
     MesFileEntry mes_file_entry;
 
+    // Load module-specific item effect descriptions message file (optional).
     if (mes_load("mes\\gameitemeffect.mes", &game_item_effect_mes_file)) {
+        // Retrieve the last message to determine the highest message number.
         cnt = mes_entries_count(game_item_effect_mes_file);
         if (cnt != 0) {
             mes_get_entry(game_item_effect_mes_file, cnt - 1, &mes_file_entry);
-            dword_6018C0 = mes_file_entry.num;
+            item_effect_max_num = mes_file_entry.num;
         }
     }
 
     return true;
 }
 
-// 0x4D4050
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x4D4050
+ */
 void item_effect_mod_unload()
 {
     mes_unload(game_item_effect_mes_file);
-    game_item_effect_mes_file = -1;
+    game_item_effect_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
-// 0x4D4080
-char* item_effect_get_text(int num)
+/**
+ * Retrieves the item effect description for a specified number.
+ *
+ * 0x4D4080
+ */
+char* item_effect_get(int num)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
 
-    if (num < 0 || num > dword_6018C0) {
+    if (num < 0 || num > item_effect_max_num) {
         return NULL;
     }
 
+    // Select system-wide vs. module-specific message file.
     if (num < 30000) {
         mes_file = item_effect_mes_file;
     } else {

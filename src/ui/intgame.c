@@ -6876,7 +6876,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
     switch (obj_type) {
     case OBJ_TYPE_WEAPON:
         mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
-        mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+        mes_file_entry.str = item_effect_get(mes_file_entry.num);
         if (mes_file_entry.str != NULL
             && *mes_file_entry.str != '\0'
             && (complexity <= 0 || is_identified)) {
@@ -6897,7 +6897,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         break;
     case OBJ_TYPE_ARMOR:
         mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
-        mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+        mes_file_entry.str = item_effect_get(mes_file_entry.num);
         if (mes_file_entry.str != NULL
             && *mes_file_entry.str != '\0'
             && (complexity <= 0 || is_identified)) {
@@ -6913,7 +6913,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         buffer[0] = '\0';
         if (complexity <= 0 || is_identified) {
             mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
-            mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+            mes_file_entry.str = item_effect_get(mes_file_entry.num);
             if (mes_file_entry.str != NULL) {
                 strcpy(buffer, mes_file_entry.str);
             }

@@ -7,6 +7,6 @@ bool item_effect_init(GameInitInfo* init_info);
 void item_effect_exit();
 bool item_effect_mod_load();
 void item_effect_mod_unload();
-char* item_effect_get_text(int num);
+char* item_effect_get(int num);
 
 #endif /* ARCANUM_GAME_ITEM_EFFECT_H_ */
