@@ -34,7 +34,6 @@ typedef struct Light {
     /* 0022 */ uint8_t g;
     /* 0024 */ tig_color_t tint_color;
     /* 0028 */ TigPalette palette;
-    /* 002C */ int field_2C;
 } Light;
 
 // See 0x4DDD20.

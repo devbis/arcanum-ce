@@ -23,6 +23,29 @@ typedef struct LightCreateInfo {
 
 typedef void(LightCreateFunc)(LightCreateInfo* create_info, Light** light_ptr);
 
+// NOTE: This structure represents light data as it is stored on disk. Its
+// memory layout is set in stone and should never change. The main difference
+// from `Light` is the type of the `palette` member. Originally, it is a
+// pointer, which breaks the memory layout on x64 platforms. This value is
+// always `0`, regardless of the pointer value. The engine always nullifies it
+// when it's read back.
+typedef struct LightSerializedData {
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t loc;
+    /* 0010 */ int offset_x;
+    /* 0014 */ int offset_y;
+    /* 0018 */ unsigned int flags;
+    /* 001C */ tig_art_id_t art_id;
+    /* 0020 */ uint8_t r;
+    /* 0021 */ uint8_t b;
+    /* 0022 */ uint8_t g;
+    /* 0024 */ tig_color_t tint_color;
+    /* 0028 */ int palette;
+} LightSerializedData;
+
+// Serializeable.
+static_assert(sizeof(LightSerializedData) == 0x30, "wrong size");
+
 static bool sub_4D89E0(int64_t loc, int a2, int a3, int a4, tig_color_t* color_ptr);
 static void sub_4D9310(LightCreateInfo* create_info, Light** light_ptr);
 static void sub_4D93B0(Light* light);
@@ -1884,14 +1907,28 @@ void light_set_custom_color(Light* light, uint8_t r, uint8_t g, uint8_t b)
 bool light_read(TigFile* stream, Light** light_ptr)
 {
     Light* light;
+    LightSerializedData serialized;
 
     light = (Light*)MALLOC(sizeof(*light));
-    if (tig_file_fread(light, sizeof(*light), 1, stream) != 1) {
+
+    if (tig_file_fread(&serialized, sizeof(serialized), 1, stream) != 1) {
         return false;
     }
 
+    light->obj = serialized.obj;
+    light->loc = serialized.loc;
+    light->offset_x = serialized.offset_x;
+    light->offset_y = serialized.offset_y;
+    light->flags = serialized.flags;
+    light->art_id = serialized.art_id;
+    light->r = serialized.r;
+    light->b = serialized.b;
+    light->g = serialized.g;
+    light->tint_color = serialized.tint_color;
     light->palette = NULL;
+
     sub_4DE390(light);
+
     *light_ptr = light;
 
     return true;
@@ -1900,7 +1937,21 @@ bool light_read(TigFile* stream, Light** light_ptr)
 // 0x4DDD70
 bool light_write(TigFile* stream, Light* light)
 {
-    return tig_file_fwrite(light, sizeof(*light), 1, stream) == 1;
+    LightSerializedData serialized;
+
+    memset(&serialized, 0, sizeof(serialized));
+    serialized.obj = light->obj;
+    serialized.loc = light->loc;
+    serialized.offset_x = light->offset_x;
+    serialized.offset_y = light->offset_y;
+    serialized.flags = light->flags;
+    serialized.art_id = light->art_id;
+    serialized.r = light->r;
+    serialized.b = light->b;
+    serialized.g = light->g;
+    serialized.tint_color = light->tint_color;
+
+    return tig_file_fwrite(&serialized, sizeof(serialized), 1, stream) == 1;
 }
 
 // 0x4DDD90
