@@ -121,7 +121,7 @@ bool text_filter_sleeping_init()
     while (mes_search(mes_file, &mes_file_entry)) {
         if (mes_file_entry.num > capacity - 1) {
             capacity *= 2;
-            text_filter_sleeping_strings = REALLOC(text_filter_sleeping_strings, 4 * capacity);
+            text_filter_sleeping_strings = (char**)REALLOC(text_filter_sleeping_strings, sizeof(*text_filter_sleeping_strings) * capacity);
         }
 
         mes_get_msg(mes_file, &mes_file_entry);
