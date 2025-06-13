@@ -3007,7 +3007,7 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
-    if (!objf_read(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
+    if (!objf_read(object->field_48, sizeof(*object->field_48) * sub_40C030(object->type), stream)) {
         obj_unlock(obj);
         obj_pool_deallocate(obj);
         return false;
