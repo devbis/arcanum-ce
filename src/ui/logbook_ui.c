@@ -1214,7 +1214,7 @@ void sub_5405C0(char* buffer, int index)
             }
 
             if (desc > 0) {
-                desc_str = description_get_name(desc);
+                desc_str = description_get(desc);
             } else {
                 desc_str = NULL;
             }
@@ -1235,7 +1235,7 @@ void sub_5405C0(char* buffer, int index)
         mes_file_entry.num = stru_6429D8[index].milliseconds + 34;
         mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
 
-        desc_str = description_get_name(dword_63FAE4[index]);
+        desc_str = description_get(dword_63FAE4[index]);
         if (desc_str != NULL) {
             sprintf(buffer, "%s %s", mes_file_entry.str, desc_str);
         }
@@ -1264,7 +1264,7 @@ void sub_540760(char* buffer, int index)
 // 0x5407B0
 void sub_5407B0(char* buffer, int index)
 {
-    strcpy(buffer, description_get_key_name(dword_63FAE4[index]));
+    strcpy(buffer, key_description_get(dword_63FAE4[index]));
 }
 
 // 0x5407F0

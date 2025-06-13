@@ -4047,7 +4047,7 @@ void object_examine(int64_t obj, int64_t pc_obj, char* buffer)
     // Special case for keys - key name is derived from key id and it is stored
     // in a separate file (gamekey.mes).
     if (type == OBJ_TYPE_KEY) {
-        name = description_get_key_name(obj_field_int32_get(obj, OBJ_F_KEY_KEY_ID));
+        name = key_description_get(obj_field_int32_get(obj, OBJ_F_KEY_KEY_ID));
         if (name != NULL) {
             strcpy(buffer, name);
         }
@@ -4070,14 +4070,14 @@ void object_examine(int64_t obj, int64_t pc_obj, char* buffer)
     // Special case for NPC - it's either description or unknown description
     // depending on who's asking.
     if (type == OBJ_TYPE_NPC) {
-        name = description_get_name(critter_description_get(obj, pc_obj));
+        name = description_get(critter_description_get(obj, pc_obj));
         if (name != NULL) {
             strcpy(buffer, name);
         }
         return;
     }
 
-    name = description_get_name(obj_field_int32_get(obj, OBJ_F_DESCRIPTION));
+    name = description_get(obj_field_int32_get(obj, OBJ_F_DESCRIPTION));
     if (name != NULL) {
         strcpy(buffer, name);
     }
