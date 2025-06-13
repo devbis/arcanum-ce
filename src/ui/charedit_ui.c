@@ -2384,8 +2384,7 @@ void charedit_refresh_tech_win()
     TigArtBlitInfo art_blit_info;
     TigRect rect;
     char str[7][80];
-    char v1[80];
-    char v2[80];
+    char components[2][80];
     int index;
     tig_art_id_t art_id;
     int degree;
@@ -2453,8 +2452,8 @@ void charedit_refresh_tech_win()
 
     for (index = 1; index - 1 < 7; index++) {
         stru_5C8850[index - 1].str = sub_56EA10(charedit_selected_tech, index);
-        sub_56EA30(charedit_selected_tech, index, v1, v2);
-        sprintf(str[index - 1], "[%s]+[%s]", v1, v2);
+        schematic_ui_components_get(charedit_selected_tech, index, components[0], components[1]);
+        sprintf(str[index - 1], "[%s]+[%s]", components[0], components[1]);
         stru_5C88C0[index - 1].str = str[index - 1];
     }
 

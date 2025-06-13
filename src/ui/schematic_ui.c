@@ -1199,16 +1199,16 @@ char* sub_56EA10(int a1, int a2)
 }
 
 // 0x56EA30
-void sub_56EA30(int a1, int a2, char* a3, char* a4)
+void schematic_ui_components_get(int tech, int degree, char* item1, char* item2)
 {
     SchematicInfo schematic_info;
     int64_t obj;
 
-    sub_56DBD0(tech_schematic_get(a1, a2), &schematic_info);
+    sub_56DBD0(tech_schematic_get(tech, degree), &schematic_info);
 
     obj = sub_4685A0(schematic_info.item1[0]);
-    object_examine(obj, obj, a3);
+    object_examine(obj, obj, item1);
 
     obj = sub_4685A0(schematic_info.item2[0]);
-    object_examine(obj, obj, a4);
+    object_examine(obj, obj, item2);
 }
