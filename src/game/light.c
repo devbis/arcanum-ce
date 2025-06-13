@@ -404,7 +404,7 @@ void light_start_animating(Light* light)
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK
             && art_anim_data.num_frames > 1) {
             timeevent.type = TIMEEVENT_TYPE_LIGHT;
-            timeevent.params[0].integer_value = (int)light; // TODO: x64
+            timeevent.params[0].pointer_value = light;
             timeevent.params[1].integer_value = 1000 / art_anim_data.fps;
 
             sub_45A950(&datetime, 1000 / art_anim_data.fps);
@@ -431,7 +431,7 @@ bool light_timeevent_process(TimeEvent* timeevent)
     DateTime datetime;
     TimeEvent next_timeevent;
 
-    light_inc_frame((Light*)timeevent->params[0].integer_value); // TODO: x64
+    light_inc_frame((Light*)timeevent->params[0].pointer_value);
 
     next_timeevent = *timeevent;
     sub_45A950(&datetime, next_timeevent.params[1].integer_value);
@@ -2346,7 +2346,7 @@ void sub_4DE7F0()
 // 0x4DE820
 bool sub_4DE820(TimeEvent* timeevent)
 {
-    return (Light*)timeevent->params[0].integer_value == dword_603400; // TODO: x64
+    return (Light*)timeevent->params[0].pointer_value == dword_603400;
 }
 
 // 0x4DE870

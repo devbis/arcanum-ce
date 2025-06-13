@@ -82,6 +82,7 @@ typedef union TimeEventParam {
     int64_t object_value;
     int64_t location_value;
     float float_value;
+    void* pointer_value;
 } TimeEventParam;
 
 // Max number of params timeevent params.
