@@ -172,8 +172,8 @@ bool light_scheme_load(GameLoadInfo* load_info)
     int light_scheme;
     int hour;
 
-    if (tig_file_fread(&light_scheme, sizeof(&light_scheme), 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&hour, sizeof(&hour), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&light_scheme, sizeof(light_scheme), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&hour, sizeof(hour), 1, load_info->stream) != 1) return false;
 
     light_scheme_set(light_scheme, hour);
 
