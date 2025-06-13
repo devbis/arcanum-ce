@@ -1193,9 +1193,9 @@ char* sub_56E9D0(int schematic)
 }
 
 // 0x56EA10
-char* sub_56EA10(int a1, int a2)
+char* schematic_ui_product_get(int tech, int degree)
 {
-    return sub_56E9D0(tech_schematic_get(a1, a2));
+    return sub_56E9D0(tech_schematic_get(tech, degree));
 }
 
 // 0x56EA30
