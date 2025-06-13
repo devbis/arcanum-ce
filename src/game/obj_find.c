@@ -103,7 +103,7 @@ void obj_find_add(int64_t obj)
     find_node->obj = obj;
     obj_find_sector_allocate(sec, &find_sector);
     obj_find_node_attach(find_sector, find_node);
-    obj_field_int32_set(obj, OBJ_F_FIND_NODE, (int)find_node); // TODO: x64
+    obj_field_ptr_set(obj, OBJ_F_FIND_NODE, find_node);
 }
 
 // 0x4E39F0
@@ -111,7 +111,7 @@ void obj_find_remove(int64_t obj)
 {
     FindNode* find_node;
 
-    find_node = (FindNode*)obj_field_int32_get(obj, OBJ_F_FIND_NODE); // TODO: x64
+    find_node = (FindNode*)obj_field_ptr_get(obj, OBJ_F_FIND_NODE);
     if ((find_node->flags & 0x02) == 0) {
         tig_debug_println("Error: Node already released in obj_find_remove.");
         return;
@@ -124,7 +124,7 @@ void obj_find_remove(int64_t obj)
 
     obj_find_node_detach(find_node);
     obj_find_node_deallocate(find_node);
-    obj_field_int32_set(obj, OBJ_F_FIND_NODE, (int)NULL); // TODO: x64.
+    obj_field_ptr_set(obj, OBJ_F_FIND_NODE, NULL);
 }
 
 // 0x4E3A70
@@ -137,7 +137,7 @@ void obj_find_move(int64_t obj)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     sec = sector_id_from_loc(loc);
-    find_node = (FindNode*)obj_field_int32_get(obj, OBJ_F_FIND_NODE); // TODO: x64
+    find_node = (FindNode*)obj_field_ptr_get(obj, OBJ_F_FIND_NODE);
     if (find_node == NULL) {
         return;
     }

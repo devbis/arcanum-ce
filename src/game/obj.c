@@ -14,6 +14,11 @@
 
 #define OBJ_FILE_VERSION 119
 
+// TODO: Replace with proper SA type.
+#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_X64) || defined(_M_AMD64)
+#define OBJ_CPU_X64 1
+#endif
+
 typedef struct ObjectFieldInfo {
     /* 0000 */ int simple_array_idx;
     /* 0004 */ int complex_array_idx;
@@ -800,7 +805,7 @@ void obj_create_proto(int type, int64_t* obj_ptr)
     }
 
     object->num_fields = object_fields_count_per_type[type];
-    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
+    object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     obj_enumerate_fields(object, sub_40C6B0);
@@ -978,7 +983,7 @@ void sub_405D60(int64_t* new_obj_ptr, int64_t obj)
     new_object->prototype_oid = object->prototype_oid;
     new_object->modified = object->modified;
     new_object->num_fields = object->num_fields;
-    new_object->data = (int*)CALLOC(4 * object->num_fields, 1);
+    new_object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*new_object->data));
 
     if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         sub_40C5C0(new_object, object);
@@ -1041,7 +1046,7 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
     copy_object->field_40 = 0;
     copy_object->num_fields = existing_object->num_fields;
     copy_object->modified = false;
-    copy_object->data = (int*)CALLOC(copy_object->num_fields, sizeof(*copy_object->data));
+    copy_object->data = (intptr_t*)CALLOC(copy_object->num_fields, sizeof(*copy_object->data));
     sub_40C5C0(copy_object, existing_object);
     memset(copy_object->field_4C, 0, 4 * sub_40C030(copy_object->type));
 
@@ -2907,7 +2912,7 @@ bool obj_proto_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->field_40 = 0;
     object->modified = false;
     object->num_fields = object_fields_count_per_type[object->type];
-    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
+    object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     dword_5D110C = stream;
@@ -3005,7 +3010,7 @@ bool obj_inst_read_file(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->modified = false;
     sub_40C580(object);
 
-    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
+    object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*object->data));
 
     if (!objf_read(object->field_48, sizeof(*object->field_48) * sub_40C030(object->type), stream)) {
         obj_unlock(obj);
@@ -3074,7 +3079,7 @@ bool obj_proto_read_mem(uint8_t* data, int64_t* obj_ptr)
     object->field_40 = 0;
     object->modified = false;
     object->num_fields = object_fields_count_per_type[object->type];
-    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
+    object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     dword_5D111C = data;
@@ -3132,7 +3137,7 @@ bool obj_inst_read_mem(uint8_t* data, int64_t* obj_ptr)
     object->modified = false;
     sub_40C580(object);
 
-    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
+    object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*object->data));
     sub_4E4C50(object->field_48, 4 * sub_40C030(object->type), &data);
 
     dword_5D111C = data;
@@ -3826,6 +3831,19 @@ void sub_40A8A0()
     object_fields[OBJ_F_FIND_NODE].type = SA_TYPE_INT32;
     object_fields[OBJ_F_TYPE].type = SA_TYPE_INT32;
     object_fields[OBJ_F_PROTOTYPE_HANDLE].type = SA_TYPE_HANDLE;
+
+    // NOTE: Temporary solution - on x64 platforms use int64_t to store pointers
+    // and arrays of pointers.
+#if OBJ_CPU_X64
+    object_fields[OBJ_F_RENDER_COLORS].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_RENDER_PALETTE].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_PALETTE].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_COLORS].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_LIGHT_HANDLE].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_OVERLAY_LIGHT_HANDLES].type = SA_TYPE_INT64_ARRAY;
+    object_fields[OBJ_F_SHADOW_HANDLES].type = SA_TYPE_INT64_ARRAY;
+    object_fields[OBJ_F_FIND_NODE].type = SA_TYPE_INT64;
+#endif
 }
 
 // 0x40B8E0
@@ -4988,7 +5006,7 @@ void sub_40D470(Object* object, int fld)
     int index;
 
     object->num_fields++;
-    object->data = (int*)REALLOC(object->data, sizeof(int) * object->num_fields);
+    object->data = (intptr_t*)REALLOC(object->data, sizeof(*object->data) * object->num_fields);
 
     for (index = object->num_fields - 1; index > fld; index--) {
         object->data[index] = object->data[index - 1];
@@ -5014,7 +5032,7 @@ void sub_40D4D0(Object* object, int fld)
     }
 
     object->num_fields--;
-    object->data = (int*)REALLOC(object->data, sizeof(int) * object->num_fields);
+    object->data = (intptr_t*)REALLOC(object->data, sizeof(*object->data) * object->num_fields);
 }
 
 // 0x40D560
@@ -5080,4 +5098,40 @@ bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info)
         tig_debug_printf("\t #%d", field_info - object_fields);
     }
     return true;
+}
+
+void* obj_field_ptr_get(int64_t obj, int fld)
+{
+#if OBJ_CPU_X64
+    return (void*)obj_field_int64_get(obj, fld);
+#else
+    return (void*)obj_field_int32_get(obj, fld);
+#endif
+}
+
+void obj_field_ptr_set(int64_t obj, int fld, void* value)
+{
+#if OBJ_CPU_X64
+    obj_field_int64_set(obj, fld, (int64_t)value);
+#else
+    obj_field_int32_set(obj, fld, (int)value);
+#endif
+}
+
+void* obj_arrayfield_ptr_get(int64_t obj, int fld, int index)
+{
+#if OBJ_CPU_X64
+    return (void*)obj_arrayfield_int64_get(obj, fld, index);
+#else
+    return (void*)obj_arrayfield_int32_get(obj, fld, index);
+#endif
+}
+
+void obj_arrayfield_ptr_set(int64_t obj, int fld, int index, void* value)
+{
+#if OBJ_CPU_X64
+    obj_arrayfield_int64_set(obj, fld, index, (int64_t)value);
+#else
+    obj_arrayfield_int32_set(obj, fld, index, (int)value);
+#endif
 }

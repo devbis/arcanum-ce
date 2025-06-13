@@ -438,13 +438,13 @@ void sector_light_list_fold(SectorLightList* list, int64_t sector_id, SectorTile
 
                 if (add) {
                     sub_4D9590(obj, false);
-                    light = (Light*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE); // TODO: x64
+                    light = (Light*)obj_field_ptr_get(obj, OBJ_F_LIGHT_HANDLE);
                     if (light != NULL) {
                         sector_light_list_add(list, light);
                     }
 
                     for (overlay = 0; overlay < 4; overlay++) {
-                        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay); // TODO: x64
+                        light = (Light*)obj_arrayfield_ptr_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay);
                         if (light != NULL) {
                             sector_light_list_add(list, light);
                         }

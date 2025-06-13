@@ -737,7 +737,7 @@ void object_draw(GameDrawInfo* draw_info)
 
                                                         if ((render_flags & ORF_10000000) != 0) {
                                                             for (idx = 0; idx < SHADOW_HANDLE_MAX; idx++) {
-                                                                Shadow* shadow = (Shadow*)obj_arrayfield_int32_get(obj_node->obj, OBJ_F_SHADOW_HANDLES, idx); // TODO: x64
+                                                                Shadow* shadow = (Shadow*)obj_arrayfield_ptr_get(obj_node->obj, OBJ_F_SHADOW_HANDLES, idx);
                                                                 if (shadow == NULL) {
                                                                     break;
                                                                 }
@@ -2162,7 +2162,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
 
             if ((render_flags & ORF_10000000) != 0) {
                 for (idx = 0; idx < SHADOW_HANDLE_MAX; idx++) {
-                    Shadow* shadow = (Shadow*)obj_arrayfield_int32_get(obj, OBJ_F_SHADOW_HANDLES, idx); // TODO: x64
+                    Shadow* shadow = (Shadow*)obj_arrayfield_ptr_get(obj, OBJ_F_SHADOW_HANDLES, idx);
                     if (shadow == NULL) {
                         break;
                     }
@@ -2340,7 +2340,7 @@ void object_set_light(int64_t obj, unsigned int flags, tig_art_id_t aid, tig_col
     Light* light;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light = (Light*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE); // TODO: x64
+        light = (Light*)obj_field_ptr_get(obj, OBJ_F_LIGHT_HANDLE);
         if (light != NULL) {
             light_stop_animating(light);
         }
@@ -2413,7 +2413,7 @@ void object_set_overlay_light(int64_t obj, int index, unsigned int flags, tig_ar
     Light* light;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+        light = (Light*)obj_arrayfield_ptr_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light != NULL) {
             light_stop_animating(light);
         }
@@ -2920,7 +2920,7 @@ void object_overlay_light_frame_inc(int64_t obj, int index)
 {
     Light* light;
 
-    light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    light = (Light*)obj_arrayfield_ptr_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
     if (light != NULL) {
         light_inc_frame(light);
     }
@@ -2931,7 +2931,7 @@ void object_overlay_light_frame_dec(int64_t obj, int index)
 {
     Light* light;
 
-    light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    light = (Light*)obj_arrayfield_ptr_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
     if (light != NULL) {
         light_dec_frame(light);
     }
@@ -4566,10 +4566,10 @@ void object_render_palette_clear(int64_t obj)
 {
     TigPalette palette;
 
-    palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
+    palette = (TigPalette)obj_field_ptr_get(obj, OBJ_F_RENDER_PALETTE);
     if (palette != NULL) {
         tig_palette_destroy(palette);
-        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, 0); // TODO: x64
+        obj_field_ptr_set(obj, OBJ_F_RENDER_PALETTE, NULL);
     }
 }
 
@@ -4642,10 +4642,10 @@ TigPalette object_render_palette_get(int64_t obj)
 {
     TigPalette palette;
 
-    palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
+    palette = (TigPalette)obj_field_ptr_get(obj, OBJ_F_RENDER_PALETTE);
     if (palette == NULL) {
         palette = tig_palette_create();
-        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, (int)palette); // TODO: x64
+        obj_field_ptr_set(obj, OBJ_F_RENDER_PALETTE, palette);
     }
 
     return palette;
@@ -4659,10 +4659,10 @@ void object_render_colors_set(int64_t obj, ObjectRenderColors* colors)
     TigArtFrameData art_frame_data;
     tig_color_t color;
 
-    render_colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    render_colors = (ObjectRenderColors*)obj_field_ptr_get(obj, OBJ_F_RENDER_COLORS);
     if (render_colors == NULL) {
         render_colors = render_color_array_alloc();
-        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, (int)render_colors); // TODO: x64
+        obj_field_ptr_set(obj, OBJ_F_RENDER_COLORS, render_colors);
     }
 
     memcpy(render_colors, colors, sizeof(ObjectRenderColors));
@@ -4682,10 +4682,10 @@ void object_render_colors_clear(int64_t obj)
 {
     ObjectRenderColors* colors;
 
-    colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    colors = (ObjectRenderColors*)obj_field_ptr_get(obj, OBJ_F_RENDER_COLORS);
     if (colors != NULL) {
         render_color_array_free(colors);
-        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, 0);
+        obj_field_ptr_set(obj, OBJ_F_RENDER_COLORS, NULL);
     }
 }
 
@@ -4830,11 +4830,11 @@ void object_setup_blit(int64_t obj, TigArtBlitInfo* blit_info)
     }
 
     if ((blit_info->flags & TIG_ART_BLT_PALETTE_OVERRIDE) != 0) {
-        blit_info->palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
+        blit_info->palette = (TigPalette)obj_field_ptr_get(obj, OBJ_F_RENDER_PALETTE);
     }
 
     if ((blit_info->flags & TIG_ART_BLT_BLEND_COLOR_ARRAY) != 0) {
-        blit_info->field_14 = (uint32_t*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+        blit_info->field_14 = (uint32_t*)obj_field_ptr_get(obj, OBJ_F_RENDER_COLORS);
     }
 
     if ((blit_info->flags & TIG_ART_BLT_BLEND_COLOR_CONST) != 0) {

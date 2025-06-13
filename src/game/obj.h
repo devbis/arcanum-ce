@@ -372,6 +372,9 @@ typedef enum ObjectType {
     OBJ_TYPE_COUNT,
 } ObjectType;
 
+// CE: The type of `data` and `transient_properties` is changed to `intptr_t` to
+// handle complex fields (virtually everything besides plain integers is stored
+// as pointers).
 typedef struct Object {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
@@ -382,8 +385,8 @@ typedef struct Object {
     /* 0046 */ int16_t num_fields;
     /* 0048 */ int* field_48;
     /* 004C */ int* field_4C;
-    /* 0050 */ int* data;
-    /* 0054 */ int transient_properties[19];
+    /* 0050 */ intptr_t* data;
+    /* 0054 */ intptr_t transient_properties[19];
 } Object;
 
 static_assert(sizeof(Object) == 0xA0, "wrong size");
@@ -455,6 +458,11 @@ int sub_40C030(ObjectType object_type);
 bool object_field_valid(int type, int fld);
 bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback);
 int64_t obj_get_prototype_handle(Object* object);
+
+void* obj_field_ptr_get(int64_t obj, int field);
+void obj_field_ptr_set(int64_t obj, int field, void* value);
+void* obj_arrayfield_ptr_get(int64_t obj, int fld, int index);
+void obj_arrayfield_ptr_set(int64_t obj, int fld, int index, void* value);
 
 // NOTE: Seen in some assertions in `anim.c`.
 static inline bool obj_type_is_critter(int type)
