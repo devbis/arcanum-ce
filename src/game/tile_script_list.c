@@ -1,5 +1,19 @@
 #include "game/tile_script_list.h"
 
+// NOTE: This structure represents tile script list item data as it is stored on
+// disk. Its memory layout is set in stone and should never change. The main
+// difference from `TileScriptListNode` is the type of the `next` member.
+// Originally, it is a pointer, which breaks the memory layout on x64 platforms.
+// This value is always `0`.
+typedef struct TileScriptListNodeSerializedData {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ unsigned int id;
+    /* 0008 */ Script scr;
+    /* 0014 */ int next;
+} TileScriptListNodeSerializedData;
+
+static_assert(sizeof(TileScriptListNodeSerializedData) == 0x18, "wrong size");
+
 static void sub_4F6380();
 
 // 0x603DD0
@@ -183,6 +197,7 @@ bool tile_script_list_load(TileScriptList* list, TigFile* stream)
     int index;
     TileScriptListNode* prev;
     TileScriptListNode* node;
+    TileScriptListNodeSerializedData serialized;
 
     prev = NULL;
     cnt = 0;
@@ -192,9 +207,14 @@ bool tile_script_list_load(TileScriptList* list, TigFile* stream)
 
     for (index = 0; index < cnt; index++) {
         node = tile_script_node_create();
-        if (tig_file_fread(node, sizeof(*node), 1, stream) != 1) {
+
+        if (tig_file_fread(&serialized, sizeof(serialized), 1, stream) != 1) {
             return false;
         }
+
+        node->flags = serialized.flags;
+        node->id = serialized.id;
+        node->scr = serialized.scr;
 
         if (prev != NULL) {
             prev->next = node;
@@ -212,6 +232,7 @@ bool tile_script_list_save(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     TileScriptListNode* node;
+    TileScriptListNodeSerializedData serialized;
 
     cnt = 0;
     node = list->head;
@@ -226,7 +247,12 @@ bool tile_script_list_save(TileScriptList* list, TigFile* stream)
 
     node = list->head;
     while (node != NULL) {
-        if (tig_file_fwrite(node, sizeof(*node), 1, stream) != 1) {
+        serialized.flags = node->flags;
+        serialized.id = node->id;
+        serialized.scr = node->scr;
+        serialized.next = 0;
+
+        if (tig_file_fwrite(&serialized, sizeof(serialized), 1, stream) != 1) {
             return false;
         }
         node = node->next;
@@ -248,18 +274,18 @@ bool tile_script_list_load_with_dif(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     int index;
-    TileScriptListNode node;
+    TileScriptListNodeSerializedData serialized;
 
     if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
     for (index = 0; index < cnt; index++) {
-        if (tig_file_fread(&node, sizeof(node), 1, stream) != 1) {
+        if (tig_file_fread(&serialized, sizeof(serialized), 1, stream) != 1) {
             return false;
         }
 
-        tile_script_list_set(list, node.id, &(node.scr));
+        tile_script_list_set(list, serialized.id, &(serialized.scr));
     }
 
     return true;
@@ -270,6 +296,7 @@ bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     TileScriptListNode* node;
+    TileScriptListNodeSerializedData serialized;
 
     cnt = 0;
     node = list->head;
@@ -287,7 +314,12 @@ bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
     node = list->head;
     while (node != NULL) {
         if ((node->flags & TILE_SCRIPT_LIST_NODE_MODIFIED) != 0) {
-            if (tig_file_fwrite(node, sizeof(*node), 1, stream) != 1) {
+            serialized.flags = node->flags;
+            serialized.id = node->id;
+            serialized.scr = node->scr;
+            serialized.next = 0;
+
+            if (tig_file_fwrite(&serialized, sizeof(serialized), 1, stream) != 1) {
                 return false;
             }
         }
