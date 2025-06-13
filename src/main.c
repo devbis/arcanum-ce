@@ -143,14 +143,6 @@ int main(int argc, char** argv)
         }
     }
 
-    if (strstr(lpCmdLine, "-mpautojoin") != NULL) {
-        tig_net_auto_join_enable();
-    }
-
-    if (strstr(lpCmdLine, "-mpnobcast") != NULL) {
-        tig_net_no_broadcast_enable();
-    }
-
     if (strstr(lpCmdLine, "-fullscreen") != NULL) {
         intgame_set_fullscreen();
         intgame_toggle_interface();
@@ -477,11 +469,6 @@ void main_loop()
                             sub_551160();
                             intgame_draw_bar(INTGAME_BAR_HEALTH);
                             intgame_draw_bar(INTGAME_BAR_FATIGUE);
-                        }
-                        break;
-                    case SDL_SCANCODE_J:
-                        for (index = 0; index < 8; index++) {
-                            sub_526D20(index);
                         }
                         break;
                     }

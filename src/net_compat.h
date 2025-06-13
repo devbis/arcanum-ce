@@ -12,8 +12,6 @@
 
 #define tig_net_is_active() 0
 #define tig_net_is_host() 0
-#define tig_net_auto_join_enable()
-#define tig_net_no_broadcast_enable()
 #define tig_net_send_app_all(a, b)
 #define tig_net_send_app(a, b, c)
 #define tig_net_send_app_except(a, b, c)
@@ -45,6 +43,5 @@
 #define sub_52A530() 0
 #define sub_52A900() 0
 #define tig_net_client_info_get_name(a) 0
-#define sub_526D20(a) 1
 
 #endif /* ARCANUM_NET_COMPAT_H_ */
