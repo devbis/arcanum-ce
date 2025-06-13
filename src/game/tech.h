@@ -46,6 +46,6 @@ int tech_degree_level_get(int64_t obj, int tech);
 int tech_degree_min_intelligence_get(int degree);
 void tech_learn_schematic(int64_t pc_obj, int64_t written_obj);
 bool tech_check_intelligence(int64_t obj, int intelligence);
-int tech_schematic_base_lineno(int tech, int schematic);
+int tech_schematic_get(int tech, int schematic);
 
 #endif /* ARCANUM_GAME_TECH_H_ */

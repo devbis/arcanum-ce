@@ -1195,7 +1195,7 @@ char* sub_56E9D0(int schematic)
 // 0x56EA10
 char* sub_56EA10(int a1, int a2)
 {
-    return sub_56E9D0(tech_schematic_base_lineno(a1, a2));
+    return sub_56E9D0(tech_schematic_get(a1, a2));
 }
 
 // 0x56EA30
@@ -1204,7 +1204,7 @@ void sub_56EA30(int a1, int a2, char* a3, char* a4)
     SchematicInfo schematic_info;
     int64_t obj;
 
-    sub_56DBD0(tech_schematic_base_lineno(a1, a2), &schematic_info);
+    sub_56DBD0(tech_schematic_get(a1, a2), &schematic_info);
 
     obj = sub_4685A0(schematic_info.item1[0]);
     object_examine(obj, obj, a3);

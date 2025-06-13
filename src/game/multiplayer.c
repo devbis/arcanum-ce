@@ -2818,7 +2818,7 @@ bool sub_4A5EE0(int64_t obj)
     for (tech = 0; tech < TECH_COUNT; tech++) {
         degree = tech_degree_get(obj, tech);
         if (degree > 0) {
-            schematic = tech_schematic_base_lineno(tech, degree);
+            schematic = tech_schematic_get(tech, degree);
             sub_460C00(schematic, &schematic_info);
 
             for (idx = 0; idx < 3; idx++) {
