@@ -136,8 +136,7 @@ int main(int argc, char** argv)
 
     pch = strstr(lpCmdLine, "-pathtimelimit");
     if (pch != NULL) {
-        // FIXME: Length is wrong, should be 14.
-        value = atoi(pch + 10);
+        value = atoi(pch + 14); // FIX: Length was wrong (10).
         if (value > 0) {
             path_set_time_limit(value);
         }
