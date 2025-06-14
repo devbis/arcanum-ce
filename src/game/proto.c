@@ -131,18 +131,18 @@ static int dword_5B384C[OBJ_TYPE_COUNT] = {
 };
 
 // 0x5B389C
-static int dword_5B389C[RACE_COUNT] = {
-    /*     RACE_HUMAN */ 0,
-    /*     RACE_DWARF */ 1,
-    /*       RACE_ELF */ 4,
-    /*  RACE_HALF_ELF */ 4,
-    /*     RACE_GNOME */ 2,
-    /*  RACE_HALFLING */ 2,
-    /*  RACE_HALF_ORC */ 0,
-    /* RACE_HALF_OGRE */ 3,
-    /*  RACE_DARK_ELF */ 4,
-    /*      RACE_OGRE */ 3,
-    /*       RACE_ORC */ 0,
+static int race_to_body_type_tbl[RACE_COUNT] = {
+    /*     RACE_HUMAN */ TIG_ART_CRITTER_RACE_HUMAN,
+    /*     RACE_DWARF */ TIG_ART_CRITTER_RACE_DWARF,
+    /*       RACE_ELF */ TIG_ART_CRITTER_RACE_ELF,
+    /*  RACE_HALF_ELF */ TIG_ART_CRITTER_RACE_ELF,
+    /*     RACE_GNOME */ TIG_ART_CRITTER_RACE_HALFLING,
+    /*  RACE_HALFLING */ TIG_ART_CRITTER_RACE_HALFLING,
+    /*  RACE_HALF_ORC */ TIG_ART_CRITTER_RACE_HUMAN,
+    /* RACE_HALF_OGRE */ TIG_ART_CRITTER_RACE_HALF_OGRE,
+    /*  RACE_DARK_ELF */ TIG_ART_CRITTER_RACE_ELF,
+    /*      RACE_OGRE */ TIG_ART_CRITTER_RACE_HALF_OGRE,
+    /*       RACE_ORC */ TIG_ART_CRITTER_RACE_HUMAN,
 };
 
 // 0x5B38C8
@@ -16109,7 +16109,7 @@ void sub_49B340(int64_t obj, int description)
             if (race == RACE_ORC) {
                 tig_art_monster_id_create(2, 0, 0, 0, 4, 0, 0, 0, &art_id);
             } else {
-                tig_art_critter_id_create(gender, dword_5B389C[race], 0, 0, 0, 4, 0, 0, 0, &art_id);
+                tig_art_critter_id_create(gender, race_to_body_type_tbl[race], 0, 0, 0, 4, 0, 0, 0, &art_id);
             }
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
