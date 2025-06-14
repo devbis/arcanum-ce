@@ -3,11 +3,6 @@
 
 #include "game/context.h"
 
-#define DESCRIPTION_JUNK_PILE 3023
-
-#define DESCRIPTION_FIRST_CRITTER_NAME 17067
-#define DESCRIPTION_LAST_CRITTER_NAME 17316
-
 bool description_init(GameInitInfo* init_info);
 void description_exit();
 bool description_mod_load();

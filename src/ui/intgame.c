@@ -9,6 +9,7 @@
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/curse.h"
+#include "game/descriptions.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/hrp.h"
@@ -6136,29 +6137,29 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         return false;
     case OBJ_TYPE_CONTAINER:
         switch (sub_49B290(a2)) {
-        case 3023:
+        case BP_JUNK_PILE:
             *portrait_ptr = 832; // cont_junk.art
             break;
-        case 3033:
-        case 3034:
+        case BP_SAFE_1:
+        case BP_SAFE_2:
             *portrait_ptr = 834; // cont_safe.art
             break;
-        case 3055:
+        case BP_RUBBISH_BIN:
             *portrait_ptr = 835; // cont_trash.art
             break;
-        case 3056:
+        case BP_BODY:
             *portrait_ptr = 833; // cont_body.art
             break;
-        case 3057:
+        case BP_ALTAR_GOOD:
             *portrait_ptr = 837; // cont_altar_good.art
             break;
-        case 3058:
+        case BP_ALTAR_NEUTRAL:
             *portrait_ptr = 838; // cont_altar_neutral.art
             break;
-        case 3059:
+        case BP_ALTAR_EVIL:
             *portrait_ptr = 839; // cont_altar_evil.art
             break;
-        case 3060:
+        case BP_PLANT_CONTAINER:
             *portrait_ptr = 836; // cont_trash.art
             break;
         default:

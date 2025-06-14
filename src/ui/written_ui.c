@@ -1,6 +1,7 @@
 #include "ui/written_ui.h"
 
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/gsound.h"
 #include "game/hrp.h"
 #include "game/location.h"
@@ -254,7 +255,7 @@ void written_ui_start_obj(int64_t written_obj, int64_t pc_obj)
     if (subtype == WRITTEN_TYPE_SCHEMATIC) {
         tech_learn_schematic(pc_obj, written_obj);
     } else {
-        written_ui_is_vendigroth_times = sub_49B290(written_obj) == 14072;
+        written_ui_is_vendigroth_times = sub_49B290(written_obj) == BP_VENDIGROTH_NEWSPAPER;
         mp_ui_written_start_type(pc_obj, subtype, start);
     }
 }

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/level.h"
 #include "game/light.h"
 #include "game/magictech.h"
@@ -510,35 +511,35 @@ void sub_468930(int64_t obj, int description)
     switch (sub_4685D0(description)) {
     case OBJ_TYPE_WALL:
         switch (description) {
-        case 1000:
+        case BP_RED_BRICK_WALL:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             break;
-        case 1001:
+        case BP_GREY_BRICK_WALL:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             break;
-        case 1002:
+        case BP_SOLID_ROCK_WALL:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             break;
-        case 1003:
+        case BP_LIGHT_WOOD_WALL:
             sub_49B240(obj, OBJ_F_HP_PTS, -50);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             break;
-        case 1004:
+        case BP_HEAVY_WOOD_WALL:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             break;
-        case 1005:
+        case BP_WOOD_FENCE:
             sub_49B240(obj, OBJ_F_HP_PTS, -60);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             break;
-        case 1006:
+        case BP_METAL_FENCE:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             break;
-        case 1007:
+        case BP_FACADE_WALL:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_WALL_FLAGS, obj_field_int32_get(obj, OBJ_F_WALL_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x800);
@@ -548,49 +549,49 @@ void sub_468930(int64_t obj, int description)
     case OBJ_TYPE_PORTAL:
         obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 9);
         switch (description) {
-        case 2008:
+        case BP_LIGHT_WOOD_DOOR:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8060);
             break;
-        case 2009:
+        case BP_HEAVY_WOOD_DOOR:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8065);
             break;
-        case 2010:
+        case BP_METAL_GATE:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8055);
             break;
-        case 2011:
+        case BP_METAL_DOOR:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8075);
             break;
-        case 2012:
+        case BP_GLASS_DOOR:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8060);
             break;
-        case 2013:
+        case BP_STONE_DOOR:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8070);
             break;
-        case 2014:
+        case BP_ROCK_CAVE_IN:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8070);
             break;
-        case 2015:
+        case BP_WINDOW:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
-        case 2016:
+        case BP_NON_OPENING_WINDOW:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
@@ -598,36 +599,36 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
-        case 2017:
+        case BP_CURTAINS:
             sub_49B240(obj, OBJ_F_HP_PTS, -90);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x420);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
-        case 2018:
+        case BP_BARRED_WINDOWS:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
-        case 2019:
+        case BP_WOODEN_SHUTTERS:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8110);
             break;
-        case 2020:
+        case BP_METAL_SHUTTERS:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8105);
             break;
-        case 2021:
+        case BP_STAINED_GLASS:
             sub_49B240(obj, OBJ_F_HP_PTS, -50);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
-        case 2022:
+        case BP_BOARDED_UP_WINDOW:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8110);
@@ -636,7 +637,7 @@ void sub_468930(int64_t obj, int description)
     case OBJ_TYPE_CONTAINER:
         obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, 9);
         switch (description) {
-        case 3023:
+        case BP_JUNK_PILE:
             tig_art_container_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -644,7 +645,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8025);
             break;
-        case 3024:
+        case BP_WOOD_CHEST_1:
             tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -654,7 +655,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 3025:
+        case BP_BARREL:
             tig_art_container_id_create(0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -662,7 +663,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8015);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 3026:
+        case BP_BLACK_CHEST_1:
             tig_art_container_id_create(1, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -671,7 +672,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3027:
+        case BP_CHEST_1:
             tig_art_container_id_create(2, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -680,7 +681,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3028:
+        case BP_CHEST_2:
             tig_art_container_id_create(4, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -689,7 +690,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3029:
+        case BP_FANCY_CHEST_1:
             tig_art_container_id_create(6, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -698,7 +699,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3030:
+        case BP_FANCY_CHEST_2:
             tig_art_container_id_create(8, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -707,7 +708,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3031:
+        case BP_WOOD_CHEST_2:
             tig_art_container_id_create(0xCu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -716,7 +717,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3032:
+        case BP_BLACK_CHEST_2:
             tig_art_container_id_create(0xEu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -725,7 +726,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
-        case 3033:
+        case BP_SAFE_1:
             tig_art_container_id_create(1, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -735,7 +736,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8020);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 3034:
+        case BP_SAFE_2:
             tig_art_container_id_create(3, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -744,7 +745,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8020);
             break;
-        case 3035:
+        case BP_MAGICK_CHEST_1:
             tig_art_container_id_create(6, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -756,7 +757,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 3036:
+        case BP_MYSTIC_CHEST_1:
             tig_art_container_id_create(6, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -768,7 +769,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 3037:
+        case BP_ARCANE_CHEST_1:
             tig_art_container_id_create(6, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -780,7 +781,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 3038:
+        case BP_MAGICK_CHEST_2:
             tig_art_container_id_create(8, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -791,7 +792,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
             break;
-        case 3039:
+        case BP_MYSTIC_CHEST_2:
             tig_art_container_id_create(8, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -802,7 +803,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
             break;
-        case 3040:
+        case BP_ARCANE_CHEST_2:
             tig_art_container_id_create(8, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -813,7 +814,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
             break;
-        case 3041:
+        case BP_FACTORY_DISCARDS_1:
             tig_art_container_id_create(0x2Cu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -825,7 +826,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 3042:
+        case BP_PARTS_CRATE_1:
             tig_art_container_id_create(0x2Cu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -837,7 +838,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 3043:
+        case BP_SHIPPING_CRATE_1:
             tig_art_container_id_create(0x2Bu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -849,7 +850,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 3044:
+        case BP_STORAGE_CRATE_1:
             tig_art_container_id_create(0x2Bu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -861,7 +862,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 3045:
+        case BP_PACKAGED_COMPONENTS_1:
             tig_art_container_id_create(0x2Au, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -873,7 +874,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 3046:
+        case BP_INDUSTRIAL_SALVAGE_1:
             tig_art_container_id_create(0x29, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -885,7 +886,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 3047:
+        case BP_FACTORY_DISCARDS_2:
             tig_art_container_id_create(0x30, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -896,7 +897,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
             break;
-        case 3048:
+        case BP_PARTS_CRATE_2:
             tig_art_container_id_create(0x30, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -907,7 +908,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
             break;
-        case 3049:
+        case BP_SHIPPING_CRATE_2:
             tig_art_container_id_create(0x2Fu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -918,7 +919,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
             break;
-        case 3050:
+        case BP_STORAGE_CRATE_2:
             tig_art_container_id_create(0x2Fu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -929,7 +930,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
             break;
-        case 3051:
+        case BP_PACKAGED_COMPONENTS_2:
             tig_art_container_id_create(0x2Eu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -940,7 +941,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
             break;
-        case 3052:
+        case BP_INDUSTRIAL_SALVAGE_2:
             tig_art_container_id_create(0x2Du, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -951,7 +952,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
             break;
-        case 3053:
+        case BP_DWARVEN_CHEST_1:
             tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -962,7 +963,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
             break;
-        case 3054:
+        case BP_DWARVEN_CHEST_2:
             tig_art_container_id_create(0xCu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -973,7 +974,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | OCOF_INVEN_SPAWN_ONCE);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
             break;
-        case 3055:
+        case BP_RUBBISH_BIN:
             tig_art_container_id_create(0x33, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -985,7 +986,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 3056:
+        case BP_BODY:
             tig_art_container_id_create(0x32, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -995,7 +996,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8025);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 14);
             break;
-        case 3057:
+        case BP_ALTAR_GOOD:
             tig_art_container_id_create(0x20, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1004,7 +1005,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8035);
             break;
-        case 3058:
+        case BP_ALTAR_NEUTRAL:
             tig_art_container_id_create(0x1Du, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1013,7 +1014,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8040);
             break;
-        case 3059:
+        case BP_ALTAR_EVIL:
             tig_art_container_id_create(0x1Bu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1022,7 +1023,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8045);
             break;
-        case 3060:
+        case BP_PLANT_CONTAINER:
             tig_art_container_id_create(0x34, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1037,7 +1038,7 @@ void sub_468930(int64_t obj, int description)
         break;
     case OBJ_TYPE_SCENERY:
         switch (description) {
-        case 4006:
+        case BP_BIG_TREE:
             tig_art_scenery_id_create(0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1052,7 +1053,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, 18);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 4007:
+        case BP_TREE:
             tig_art_scenery_id_create(0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1067,7 +1068,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, 18);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 4008:
+        case BP_SMALL_TREE:
             tig_art_scenery_id_create(0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1080,7 +1081,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 4009:
+        case BP_DEAD_TREE:
             tig_art_scenery_id_create(0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1092,7 +1093,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 4010:
+        case BP_PLANT_SCENERY:
             tig_art_scenery_id_create(0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1102,7 +1103,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400C00);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 4011:
+        case BP_SMALL_METAL_OBJECT:
             tig_art_scenery_id_create(0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1115,7 +1116,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 4012:
+        case BP_METAL_OBJECT:
             tig_art_scenery_id_create(0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1127,7 +1128,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 4013:
+        case BP_BIG_METAL_OBJECT:
             tig_art_scenery_id_create(0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1140,7 +1141,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 14);
             break;
-        case 4014:
+        case BP_SMALL_STONE:
             tig_art_scenery_id_create(0, 9, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1153,7 +1154,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 4015:
+        case BP_STONE:
             tig_art_scenery_id_create(0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1166,7 +1167,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 4016:
+        case BP_BIG_STONE:
             tig_art_scenery_id_create(0, 11, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1179,7 +1180,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 4017:
+        case BP_SMALL_WOODEN_OBJECT:
             tig_art_scenery_id_create(0, 12, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1191,7 +1192,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 4018:
+        case BP_WOODEN_OBJECT:
             tig_art_scenery_id_create(0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1203,7 +1204,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 4019:
+        case BP_BIG_WOODEN_OBJECT:
             tig_art_scenery_id_create(0, 14, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1215,7 +1216,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 4020:
+        case BP_SOMETHING_SMALL:
             tig_art_scenery_id_create(0, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1225,7 +1226,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 17);
             break;
-        case 4021:
+        case BP_SOMETHING_MID_SIZED:
             tig_art_scenery_id_create(0, 16, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1234,7 +1235,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 16);
             break;
-        case 4022:
+        case BP_SOMETHING_BIG:
             tig_art_scenery_id_create(0, 17, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1244,7 +1245,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 18);
             break;
-        case 4023:
+        case BP_BIG_MACHINE:
             tig_art_scenery_id_create(0, 18, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1259,7 +1260,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 15);
             break;
-        case 4024:
+        case BP_MACHINE:
             tig_art_scenery_id_create(0, 19, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1273,7 +1274,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 15);
             break;
-        case 4025:
+        case BP_BED:
             tig_art_scenery_id_create(0, 22, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1286,7 +1287,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x800 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 20);
             break;
-        case 4026:
+        case BP_LIGHT_1:
             tig_art_scenery_id_create(0, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1296,7 +1297,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 21);
             break;
-        case 4027:
+        case BP_PASSAGE:
             tig_art_scenery_id_create(0, 20, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1311,7 +1312,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 19);
             break;
-        case 4028:
+        case BP_POOL_OF_BLOOD:
             tig_art_scenery_id_create(0, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1320,15 +1321,15 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x201);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             break;
-        case 4029:
-        case 4034:
+        case BP_STINKING_CLOUD:
+        case BP_ICE_STORM:
             tig_art_scenery_id_create(0xBu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GAS);
             break;
-        case 4030:
+        case BP_WALL_OF_FORCE:
             tig_art_scenery_id_create(0x66, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1336,7 +1337,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FORCE);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             break;
-        case 4031:
+        case BP_WALL_OF_FIRE:
             tig_art_scenery_id_create(0x65, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1345,20 +1346,20 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x10);
             break;
-        case 4032:
+        case BP_WALL_OF_STONE:
             tig_art_scenery_id_create(0x64, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             break;
-        case 4033:
+        case BP_FOG_CLOUD:
             tig_art_scenery_id_create(0xBu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GAS);
             break;
-        case 4035:
+        case BP_LIGHT_2:
             tig_art_scenery_id_create(0, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1372,7 +1373,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4036:
+        case BP_LIGHT_3:
             tig_art_scenery_id_create(4, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1386,7 +1387,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4037:
+        case BP_LIGHT_4:
             tig_art_scenery_id_create(4, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1400,7 +1401,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4038:
+        case BP_LIGHT_5:
             tig_art_scenery_id_create(1, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1414,7 +1415,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4039:
+        case BP_LIGHT_6:
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1428,7 +1429,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4040:
+        case BP_LIGHT_7:
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1442,7 +1443,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4041:
+        case BP_LIGHT_8:
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1456,7 +1457,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4042:
+        case BP_LIGHT_9:
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1470,7 +1471,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4043:
+        case BP_LIGHT_10:
             tig_art_scenery_id_create(4, 16, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1485,7 +1486,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x10);
             break;
-        case 4044:
+        case BP_LIGHT_11:
             tig_art_scenery_id_create(7, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1499,7 +1500,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4045:
+        case BP_LIGHT_12:
             tig_art_scenery_id_create(8, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1513,7 +1514,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4046:
+        case BP_LIGHT_13:
             tig_art_scenery_id_create(9, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1527,7 +1528,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
-        case 4047:
+        case BP_LIT_DYNAMITE:
             tig_art_scenery_id_create(0x4Bu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1537,7 +1538,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             break;
-        case 4048:
+        case BP_SMOKE:
             tig_art_scenery_id_create(0x1Du, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1546,7 +1547,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100C00);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 64);
             break;
-        case 4049:
+        case BP_TICKING_TIME_BOMB:
             tig_art_scenery_id_create(0x61, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1556,7 +1557,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             break;
-        case 4050:
+        case BP_TORCH_FLAME:
             tig_art_scenery_id_create(0xBu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1575,7 +1576,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         switch (description) {
-        case 6029:
+        case BP_DAGGER:
             tig_art_item_id_create(4, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1604,7 +1605,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6030:
+        case BP_SWORD:
             tig_art_item_id_create(12, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1632,7 +1633,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6031:
+        case BP_AXE:
             tig_art_item_id_create(1, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1660,7 +1661,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6032:
+        case BP_MACE:
             tig_art_item_id_create(1, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1688,7 +1689,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6033:
+        case BP_REVOLVER:
             tig_art_item_id_create(6, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1719,7 +1720,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6034:
+        case BP_BROADSWORD:
             tig_art_item_id_create(0, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1748,7 +1749,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6035:
+        case BP_BOW:
             tig_art_item_id_create(0, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1778,7 +1779,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6036:
+        case BP_SHOTGUN:
             tig_art_item_id_create(1, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1809,7 +1810,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6037:
+        case BP_STAFF:
             tig_art_item_id_create(2, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1838,7 +1839,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6038:
+        case BP_ENVENOMED_SWORD:
             tig_art_item_id_create(19, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1870,7 +1871,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             break;
-        case 6039:
+        case BP_ELEPHANT_GUN:
             tig_art_item_id_create(4, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1901,7 +1902,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6040:
+        case BP_TESLA_ROD:
             tig_art_item_id_create(4, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1931,7 +1932,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6041:
+        case BP_FLAME_THROWER:
             tig_art_item_id_create(13, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1961,7 +1962,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6042:
+        case BP_ENCHANTED_SWORD:
             tig_art_item_id_create(14, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -1992,7 +1993,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6043:
+        case BP_UNUSED:
             tig_art_item_id_create(0, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2022,7 +2023,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 29006;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             break;
-        case 6044:
+        case BP_FINE_REVOLVER:
             tig_art_item_id_create(8, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2054,7 +2055,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6045:
+        case BP_REPEATER_RIFLE:
             tig_art_item_id_create(10, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2086,7 +2087,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6046:
+        case BP_HUNTING_RIFLE:
             tig_art_item_id_create(11, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2117,7 +2118,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6047:
+        case BP_RAILROAD_SPIKE:
             tig_art_item_id_create(10, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2146,7 +2147,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6048:
+        case BP_BALANCED_SWORD:
             tig_art_item_id_create(4, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2176,7 +2177,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6049:
+        case BP_BRONWYCKS_GUN:
             tig_art_item_id_create(3, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2209,7 +2210,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 32);
             break;
-        case 6050:
+        case BP_RUSTY_DAGGER:
             tig_art_item_id_create(5, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2236,7 +2237,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6051:
+        case BP_FINE_STEEL_DAGGER:
             tig_art_item_id_create(2, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2265,7 +2266,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6052:
+        case BP_THROWING_DAGGER:
             tig_art_item_id_create(8, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2295,7 +2296,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6053:
+        case BP_MECHANICAL_DAGGER:
             tig_art_item_id_create(16, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2326,7 +2327,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6054:
+        case BP_MAGES_DAGGER:
             tig_art_item_id_create(7, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2358,7 +2359,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29688);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6055:
+        case BP_DAGGER_OF_SPEED:
             tig_art_item_id_create(6, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2391,7 +2392,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29688);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6056:
+        case BP_RUSTY_SWORD:
             tig_art_item_id_create(12, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2420,7 +2421,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6057:
+        case BP_QUALITY_SWORD:
             tig_art_item_id_create(3, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2449,7 +2450,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6058:
+        case BP_CALADON_ELITE_SWORD:
             tig_art_item_id_create(3, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2474,7 +2475,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             goto LABEL_252;
-        case 6059:
+        case BP_RAPIER:
             tig_art_item_id_create(9, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2503,7 +2504,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6060:
+        case BP_SHORT_SWORD:
             tig_art_item_id_create(8, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2532,7 +2533,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 65);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6061:
+        case BP_SCIMITAR:
             tig_art_item_id_create(17, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2561,7 +2562,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6062:
+        case BP_KATANA:
             tig_art_item_id_create(16, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2590,7 +2591,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6063:
+        case BP_FALCHION:
             tig_art_item_id_create(15, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2620,7 +2621,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6064:
+        case BP_SWORD_OF_DEFENSE:
             tig_art_item_id_create(13, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2655,7 +2656,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6065:
+        case BP_STILLWATER_BLADE:
             tig_art_item_id_create(14, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2688,7 +2689,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6066:
+        case BP_RUSTY_AXE:
             tig_art_item_id_create(5, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2716,7 +2717,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6067:
+        case BP_QUALITY_AXE:
             tig_art_item_id_create(3, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2744,7 +2745,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6068:
+        case BP_POWER_AXE:
             tig_art_item_id_create(0, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2774,7 +2775,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6069:
+        case BP_FEATHER_WEIGHT_AXE:
             tig_art_item_id_create(4, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2804,7 +2805,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6070:
+        case BP_REAPERS_AXE:
             tig_art_item_id_create(6, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2837,7 +2838,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 2027);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6071:
+        case BP_AXE_OF_STRENGTH:
             tig_art_item_id_create(7, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2871,7 +2872,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6072:
+        case BP_RUSTY_MACE:
             tig_art_item_id_create(2, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2899,7 +2900,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6073:
+        case BP_QUALITY_MACE:
             tig_art_item_id_create(8, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2927,7 +2928,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6074:
+        case BP_HAMMER:
             tig_art_item_id_create(0, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2955,7 +2956,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 85);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6075:
+        case BP_RUSTY_HAMMER:
             tig_art_item_id_create(5, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -2983,7 +2984,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6076:
+        case BP_QUALITY_HAMMER:
             tig_art_item_id_create(7, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3011,7 +3012,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6077:
+        case BP_MACHINED_HAMMER:
             tig_art_item_id_create(10, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3041,7 +3042,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6078:
+        case BP_CRUSHING_HAMMER:
             tig_art_item_id_create(6, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3072,7 +3073,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29691);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6079:
+        case BP_INFERNO_HAMMER:
             tig_art_item_id_create(9, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3104,7 +3105,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29691);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 6080:
+        case BP_OLD_REVOLVER:
             tig_art_item_id_create(9, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3136,7 +3137,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6081:
+        case BP_FLINTLOCK_PISTOL:
             tig_art_item_id_create(11, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3168,7 +3169,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6082:
+        case BP_OLD_FLINTLOCK_PISTOL:
             tig_art_item_id_create(0, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3198,7 +3199,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6083:
+        case BP_QUALITY_REVOLVER:
             tig_art_item_id_create(8, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3229,7 +3230,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6084:
+        case BP_HUSHED_PISTOL:
             tig_art_item_id_create(7, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3260,7 +3261,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 5080);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6085:
+        case BP_HIGH_VELOCITY_PISTOL:
             tig_art_item_id_create(0, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3291,7 +3292,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6086:
+        case BP_FANCY_PISTOL:
             tig_art_item_id_create(1, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3322,7 +3323,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6087:
+        case BP_SCHRECKS_PISTOL:
             tig_art_item_id_create(2, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3352,7 +3353,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             break;
-        case 6088:
+        case BP_LONG_RANGE_PISTOL:
             tig_art_item_id_create(5, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3383,7 +3384,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6089:
+        case BP_QUALITY_BROADSWORD:
             tig_art_item_id_create(3, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3412,7 +3413,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 280);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6090:
+        case BP_RUSTY_BROADSWORD:
             tig_art_item_id_create(4, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3441,7 +3442,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6091:
+        case BP_CLAYMORE:
             tig_art_item_id_create(5, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3470,7 +3471,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6092:
+        case BP_FLAMBERGE:
             tig_art_item_id_create(8, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3499,7 +3500,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6093:
+        case BP_BARBARIANS_HEAVY_BLADE:
             tig_art_item_id_create(6, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3528,7 +3529,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6094:
+        case BP_SWORD_OF_AIR:
             tig_art_item_id_create(1, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3560,7 +3561,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6095:
+        case BP_SWORD_OF_SICKNESS:
             tig_art_item_id_create(2, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3593,7 +3594,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6096:
+        case BP_COMPOUND_BOW:
             tig_art_item_id_create(1, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3625,7 +3626,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6097:
+        case BP_SHORT_BOW:
             tig_art_item_id_create(4, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3655,7 +3656,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6098:
+        case BP_LONG_BOW:
             tig_art_item_id_create(3, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3685,7 +3686,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6099:
+        case BP_ELVEN_HUNTERS_BOW:
             tig_art_item_id_create(2, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3718,7 +3719,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6100:
+        case BP_BOW_OF_TERROR:
             tig_art_item_id_create(5, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3752,7 +3753,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6101:
+        case BP_FOLDING_RIFLE:
             tig_art_item_id_create(5, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3782,7 +3783,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             break;
-        case 6102:
+        case BP_REPEATER_RIFLE_VARIANT_1:
             tig_art_item_id_create(3, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3813,7 +3814,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5678);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             break;
-        case 6103:
+        case BP_REPEATER_RIFLE_VARIANT_2:
             tig_art_item_id_create(0, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3844,7 +3845,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             break;
-        case 6104:
+        case BP_MECHANIZED_GUN:
             tig_art_item_id_create(8, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3875,7 +3876,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6105:
+        case BP_LOOKING_GLASS_RIFLE:
             tig_art_item_id_create(7, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3907,7 +3908,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6106:
+        case BP_MARKSMAN_RIFLE:
             tig_art_item_id_create(9, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3938,7 +3939,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6107:
+        case BP_LEVERED_MACHINE_GUN:
             tig_art_item_id_create(2, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -3969,7 +3970,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6108:
+        case BP_RIFLE:
             tig_art_item_id_create(6, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4000,7 +4001,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6109:
+        case BP_RUSTED_RIFLE:
             tig_art_item_id_create(12, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4032,7 +4033,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6110:
+        case BP_SHOCKING_STAFF:
             tig_art_item_id_create(3, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4064,7 +4065,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6111:
+        case BP_QUALITY_STAFF:
             tig_art_item_id_create(1, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4093,7 +4094,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6112:
+        case BP_STAFF_OF_HEALING:
             tig_art_item_id_create(2, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4126,7 +4127,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6113:
+        case BP_SHAMANS_STAFF:
             tig_art_item_id_create(2, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4161,7 +4162,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6114:
+        case BP_MAGES_STAFF:
             tig_art_item_id_create(2, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4196,7 +4197,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6115:
+        case BP_HUSHED_REVOLVER:
             tig_art_item_id_create(12, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4226,7 +4227,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6116:
+        case BP_HAND_CRAFTED_FLINTLOCK:
             tig_art_item_id_create(13, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4258,7 +4259,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 18);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6117:
+        case BP_LARGE_PIPE:
             tig_art_item_id_create(11, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4286,7 +4287,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6118:
+        case BP_HAND_CANNON:
             tig_art_item_id_create(14, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4317,7 +4318,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 6119:
+        case BP_CLARINGTON_RIFLE:
             tig_art_item_id_create(5, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4349,7 +4350,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6120:
+        case BP_FILAMENT_SWORD:
             tig_art_item_id_create(1, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4383,7 +4384,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6121:
+        case BP_FINELY_CRAFTED_DAGGER:
             tig_art_item_id_create(14, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4414,7 +4415,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6122:
+        case BP_CHARMED_DAGGER:
             tig_art_item_id_create(12, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4447,7 +4448,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29688);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6123:
+        case BP_MAGICK_DAGGER:
             tig_art_item_id_create(17, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4481,7 +4482,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29688);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6124:
+        case BP_MYSTIC_DAGGER:
             tig_art_item_id_create(3, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4515,7 +4516,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29688);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6125:
+        case BP_ARCANE_DAGGER:
             tig_art_item_id_create(11, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4550,7 +4551,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 2027);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6126:
+        case BP_CHARGED_SWORD:
             tig_art_item_id_create(2, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4582,7 +4583,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6127:
+        case BP_CHARMED_SWORD:
             tig_art_item_id_create(7, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4613,7 +4614,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6128:
+        case BP_MAGICK_SWORD:
             tig_art_item_id_create(14, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4646,7 +4647,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6129:
+        case BP_MYSTIC_SWORD:
             tig_art_item_id_create(7, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4679,7 +4680,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6130:
+        case BP_ARCANE_SWORD:
             tig_art_item_id_create(0, 0, 0, 0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4712,7 +4713,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 6131:
+        case BP_ENVENOMED_AXE:
             tig_art_item_id_create(8, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4744,7 +4745,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             break;
-        case 6132:
+        case BP_CHARGED_AXE:
             tig_art_item_id_create(10, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4776,7 +4777,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             break;
-        case 6133:
+        case BP_PYROTECHNIC_AXE:
             tig_art_item_id_create(9, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4808,7 +4809,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -75);
             break;
-        case 6134:
+        case BP_CHARMED_AXE:
             tig_art_item_id_create(11, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4840,7 +4841,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6135:
+        case BP_MAGICK_AXE:
             tig_art_item_id_create(12, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4873,7 +4874,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6136:
+        case BP_MYSTIC_AXE:
             tig_art_item_id_create(13, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4907,7 +4908,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6137:
+        case BP_ARCANE_AXE:
             tig_art_item_id_create(14, 0, 0, 0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4941,7 +4942,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 6138:
+        case BP_CHARMED_MACE:
             tig_art_item_id_create(13, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -4975,7 +4976,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29690);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6139:
+        case BP_MAGICK_MACE:
             tig_art_item_id_create(16, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5009,7 +5010,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29690);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6140:
+        case BP_MYSTIC_MACE:
             tig_art_item_id_create(14, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5042,7 +5043,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29690);
             break;
-        case 6141:
+        case BP_ARCANE_MACE:
             tig_art_item_id_create(17, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5076,7 +5077,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29690);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6142:
+        case BP_CHARMED_GREAT_SWORD:
             tig_art_item_id_create(7, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5111,7 +5112,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6143:
+        case BP_MAGICK_GREAT_SWORD:
             tig_art_item_id_create(12, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5146,7 +5147,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6144:
+        case BP_MYSTIC_GREAT_SWORD:
             tig_art_item_id_create(13, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5181,7 +5182,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6145:
+        case BP_ARCANE_GREAT_SWORD:
             tig_art_item_id_create(11, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5216,7 +5217,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 6146:
+        case BP_PYROTECHNIC_BOW:
             tig_art_item_id_create(6, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5250,7 +5251,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6147:
+        case BP_ENVENOMED_BOW:
             tig_art_item_id_create(7, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5284,7 +5285,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6148:
+        case BP_CHARMED_BOW:
             tig_art_item_id_create(9, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5317,7 +5318,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6149:
+        case BP_MAGICK_BOW:
             tig_art_item_id_create(8, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5350,7 +5351,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6150:
+        case BP_MYSTIC_BOW:
             tig_art_item_id_create(11, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5383,7 +5384,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6151:
+        case BP_ARCANE_BOW:
             tig_art_item_id_create(10, 0, 0, 0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5416,7 +5417,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 6152:
+        case BP_RIFLED_CANNON:
             tig_art_item_id_create(21, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5447,7 +5448,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6153:
+        case BP_ACID_GUN:
             tig_art_item_id_create(16, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5478,7 +5479,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6154:
+        case BP_TESLA_GUN:
             tig_art_item_id_create(14, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5508,7 +5509,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6155:
+        case BP_GRENADE_LAUNCHER:
             tig_art_item_id_create(15, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5540,7 +5541,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6156:
+        case BP_CHARGED_ACCELERATOR_GUN:
             tig_art_item_id_create(17, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5573,7 +5574,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6157:
+        case BP_BLADE_LAUNCHER:
             tig_art_item_id_create(19, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5605,7 +5606,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6158:
+        case BP_PYROTECHNIC_GUN:
             tig_art_item_id_create(18, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5638,7 +5639,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6159:
+        case BP_TRANQUILIZER_GUN:
             tig_art_item_id_create(20, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5669,7 +5670,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 6160:
+        case BP_CHARMED_STAFF:
             tig_art_item_id_create(8, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5702,7 +5703,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6161:
+        case BP_MAGICK_STAFF:
             tig_art_item_id_create(9, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5735,7 +5736,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6162:
+        case BP_MYSTIC_STAFF:
             tig_art_item_id_create(10, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5768,7 +5769,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6163:
+        case BP_ARCANE_STAFF:
             tig_art_item_id_create(11, 0, 0, 0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5801,7 +5802,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
-        case 6164:
+        case BP_BOOMERANG:
             tig_art_item_id_create(0, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5831,7 +5832,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29694);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6165:
+        case BP_BLADED_BOOMERANG:
             tig_art_item_id_create(1, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5863,7 +5864,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29694);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6166:
+        case BP_BALANCED_BOOMERANG:
             tig_art_item_id_create(2, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5896,7 +5897,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29694);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6167:
+        case BP_CHAKRAM:
             tig_art_item_id_create(3, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5927,7 +5928,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6168:
+        case BP_SERRATED_CHAKRAM:
             tig_art_item_id_create(4, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5960,7 +5961,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6169:
+        case BP_MYSTICAL_CHAKRAM:
             tig_art_item_id_create(5, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -5993,7 +5994,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
-        case 6170:
+        case BP_AZRAMS_STAR:
             tig_art_item_id_create(6, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6026,7 +6027,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
             break;
-        case 6171:
+        case BP_AERIAL_DECAPITATOR:
             tig_art_item_id_create(7, 0, 0, 0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6057,7 +6058,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2486;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
-        case 6172:
+        case BP_VOID_SWORD:
             tig_art_item_id_create(10, 0, 0, 0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6086,7 +6087,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             break;
-        case 6173:
+        case BP_DROCHS_WARBRINGER:
             tig_art_item_id_create(15, 0, 0, 0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6118,7 +6119,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             break;
-        case 6174:
+        case BP_LARGE_BORE_VENDIGROTHIAN_RIFLE:
             tig_art_item_id_create(22, 0, 0, 0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6148,7 +6149,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             break;
-        case 6175:
+        case BP_OAK_AXE_HANDLE_WEAPON:
             tig_art_item_id_create(12, 0, 0, 0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6176,7 +6177,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 6176:
+        case BP_STILETTO:
             tig_art_item_id_create(13, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6205,7 +6206,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6177:
+        case BP_BONE_DAGGER:
             tig_art_item_id_create(15, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6235,7 +6236,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 2027);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 6178:
+        case BP_KITE_SWORD:
             tig_art_item_id_create(18, 0, 0, 0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6274,7 +6275,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         switch (description) {
-        case 7038:
+        case BP_ARROW:
             tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6288,7 +6289,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 7039:
+        case BP_BULLET:
             tig_art_item_id_create(0, 0, 0, 0, 1, 1, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6304,7 +6305,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
-        case 7040:
+        case BP_BATTERY:
             tig_art_item_id_create(0, 0, 0, 0, 2, 1, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6320,7 +6321,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 7041:
+        case BP_FUEL:
             tig_art_item_id_create(0, 0, 0, 0, 3, 1, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6342,9 +6343,9 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         switch (description) {
-        case 8042:
-        case 8058:
-        case 8066:
+        case BP_HEAVY_WOOL_CLOTHES:
+        case BP_SMALL_HEAVY_WOOL_CLOTHES:
+        case BP_LARGE_HEAVY_WOOL_CLOTHES:
             tig_art_item_id_create(9, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6364,7 +6365,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8058:
+            case BP_SMALL_HEAVY_WOOL_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(10, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6374,7 +6375,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(10, 2, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8066:
+            case BP_LARGE_HEAVY_WOOL_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(11, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6386,9 +6387,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8043:
-        case 8059:
-        case 8067:
+        case BP_GUARD_LEATHER:
+        case BP_SMALL_GUARD_LEATHER:
+        case BP_LARGE_GUARD_LEATHER:
             tig_art_item_id_create(0, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6408,7 +6409,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8059:
+            case BP_SMALL_GUARD_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6420,7 +6421,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 145);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
                 break;
-            case 8067:
+            case BP_LARGE_GUARD_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(2, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6434,7 +6435,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8044:
+        case BP_CHAINMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6457,8 +6458,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8045:
-        case 8061:
+        case BP_MACHINED_PLATEMAIL:
+        case BP_SMALL_MACHINED_PLATEMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6492,7 +6493,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 28005;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
-            case 8061:
+            case BP_SMALL_MACHINED_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6506,8 +6507,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8046:
-        case 8062:
+        case BP_PRIEST_ROBES:
+        case BP_SMALL_PRIEST_ROBES:
             tig_art_item_id_create(2, 0, 0, 0, 5, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6528,7 +6529,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8062:
+            case BP_SMALL_PRIEST_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(3, 0, 0, 0, 5, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6540,9 +6541,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8047:
-        case 8063:
-        case 8068:
+        case BP_MITHRIL_PLATEMAIL:
+        case BP_SMALL_MITHRIL_PLATEMAIL:
+        case BP_LARGE_MITHRIL_PLATEMAIL:
             tig_art_item_id_create(13, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6573,7 +6574,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8063:
+            case BP_SMALL_MITHRIL_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(14, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6586,7 +6587,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8068:
+            case BP_LARGE_MITHRIL_PLATEMAIL:
                  obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(15, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6601,8 +6602,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8048:
-        case 8064:
+        case BP_DREAD_ARMOUR:
+        case BP_SMALL_DREAD_ARMOUR:
             tig_art_item_id_create(3, 0, 0, 0, 7, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6632,14 +6633,14 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
-            case 8064:
+            case BP_SMALL_DREAD_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 break;
             }
             break;
-        case 8049:
-        case 8065:
-        case 8069:
+        case BP_NICE_SUIT:
+        case BP_SMALL_NICE_SUIT:
+        case BP_LARGE_NICE_SUIT:
             tig_art_item_id_create(0, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6658,7 +6659,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8065:
+            case BP_SMALL_NICE_SUIT:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 9);
                 tig_art_item_id_create(1, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6668,7 +6669,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8069:
+            case BP_LARGE_NICE_SUIT:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 12);
                 tig_art_item_id_create(2, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6683,7 +6684,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8050:
+        case BP_BATTERED_WOODEN_SHIELD:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6700,7 +6701,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8051:
+        case BP_HELMET:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6723,7 +6724,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8052:
+        case BP_GAUNTLETS:
             tig_art_item_id_create(2, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6750,7 +6751,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8053:
+        case BP_BOOTS:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6767,7 +6768,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8054:
+        case BP_FANCY_RING:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6785,7 +6786,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8055:
+        case BP_MEDALLION:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6803,7 +6804,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8056:
+        case BP_LEATHER_GLOVES:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6820,7 +6821,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8057:
+        case BP_CHARGED_RING:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6846,7 +6847,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8060:
+        case BP_SMALL_CHAINMAIL:
             tig_art_item_id_create(1, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6870,9 +6871,9 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8070:
-        case 8078:
-        case 8086:
+        case BP_SUEDE_JACKET:
+        case BP_SMALL_SUEDE_JACKET:
+        case BP_HEAVY_RAGS:
             tig_art_item_id_create(0, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6892,7 +6893,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8078:
+            case BP_SMALL_SUEDE_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6902,7 +6903,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8086:
+            case BP_HEAVY_RAGS:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(2, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6914,9 +6915,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8071:
-        case 8079:
-        case 8087:
+        case BP_OILED_THIEVES_LEATHER:
+        case BP_SMALL_OILED_THIEVES_LEATHER:
+        case BP_LARGE_OILED_THIEVES_LEATHER:
             tig_art_item_id_create(3, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -6940,7 +6941,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8079:
+            case BP_SMALL_OILED_THIEVES_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(4, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6954,7 +6955,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 5);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8087:
+            case BP_LARGE_OILED_THIEVES_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(4, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -6970,8 +6971,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8072:
-        case 8080:
+        case BP_MITHRIL_CHAINMAIL:
+        case BP_SMALL_MITHRIL_CHAINMAIL:
             tig_art_item_id_create(8, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7001,7 +7002,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8080:
+            case BP_SMALL_MITHRIL_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(9, 0, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7016,9 +7017,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8073:
-        case 8081:
-        case 8291:
+        case BP_MACHINED_PLATE:
+        case BP_SMALL_MACHINED_PLATE:
+        case BP_LARGE_MACHINED_PLATEMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7054,7 +7055,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 28005;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
-            case 8081:
+            case BP_SMALL_MACHINED_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7066,7 +7067,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
                 break;
-            case 8291:
+            case BP_LARGE_MACHINED_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(2, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7082,8 +7083,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8074:
-        case 8082:
+        case BP_SHADOWING_ROBES:
+        case BP_SMALL_ROBE_OF_THE_CHAMELEON:
             tig_art_item_id_create(2, 0, 0, 0, 5, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7110,7 +7111,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8082:
+            case BP_SMALL_ROBE_OF_THE_CHAMELEON:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(2, 0, 0, 0, 5, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7123,8 +7124,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8075:
-        case 8088:
+        case BP_BASIC_PLATEMAIL:
+        case BP_LARGE_BASIC_PLATEMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7147,7 +7148,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8083:
+            case BP_SMALL_BASIC_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7159,7 +7160,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
                 break;
-            case 8088:
+            case BP_LARGE_BASIC_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(2, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7173,8 +7174,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8076:
-        case 8084:
+        case BP_BRONZE_BARBARIAN_CLOTHES:
+        case BP_SMALL_BRONZE_BARBARIAN_CLOTHES:
             tig_art_item_id_create(4, 0, 0, 0, 7, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7205,14 +7206,14 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
-            case 8084:
+            case BP_SMALL_BRONZE_BARBARIAN_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 break;
             }
             break;
-        case 8077:
-        case 8085:
-        case 8089:
+        case BP_SMOKING_JACKET:
+        case BP_SMALL_SMOKING_JACKET:
+        case BP_LARGE_SMOKING_JACKET:
             tig_art_item_id_create(10, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7235,7 +7236,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8085:
+            case BP_SMALL_SMOKING_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 9);
                 tig_art_item_id_create(11, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7245,7 +7246,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(11, 2, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8089:
+            case BP_LARGE_SMOKING_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 12);
                 tig_art_item_id_create(12, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7260,7 +7261,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8083:
+        case BP_SMALL_BASIC_PLATEMAIL:
             tig_art_item_id_create(1, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7284,9 +7285,9 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 8090:
-        case 8098:
-        case 8106:
+        case BP_WOOL_JACKET:
+        case BP_SMALL_WOOL_JACKET:
+        case BP_LARGE_WOOL_JACKET:
             tig_art_item_id_create(3, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7306,7 +7307,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 340);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8098:
+            case BP_SMALL_WOOL_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(4, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7316,7 +7317,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8106:
+            case BP_LARGE_WOOL_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(5, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7328,9 +7329,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8091:
-        case 8099:
-        case 8107:
+        case BP_LEATHER_ARMOUR:
+        case BP_SMALL_LEATHER_ARMOUR:
+        case BP_LARGE_LEATHER_ARMOUR:
             tig_art_item_id_create(0, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7350,7 +7351,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8099:
+            case BP_SMALL_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7362,7 +7363,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 140);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 break;
-            case 8107:
+            case BP_LARGE_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(2, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7376,7 +7377,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8092:
+        case BP_OILED_CHAINMAIL:
             tig_art_item_id_create(10, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7399,8 +7400,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 680);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8093:
-        case 8101:
+        case BP_BASIC_MACHINED_PLATE:
+        case BP_SMALL_BASIC_MACHINED_PLATEMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7423,7 +7424,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8101:
+            case BP_SMALL_BASIC_MACHINED_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7437,8 +7438,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8094:
-        case 8102:
+        case BP_ROBES:
+        case BP_SMALL_ROBES:
             tig_art_item_id_create(0, 0, 0, 0, 5, 2, 0, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7458,7 +7459,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8102:
+            case BP_SMALL_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 5, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7470,9 +7471,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8095:
-        case 8103:
-        case 8108:
+        case BP_BRONZED_PLATE:
+        case BP_SMALL_BRONZED_PLATE:
+        case BP_LARGE_BRONZED_PLATE:
             tig_art_item_id_create(3, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7495,7 +7496,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 930);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8103:
+            case BP_SMALL_BRONZED_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(4, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7507,7 +7508,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 break;
-            case 8108:
+            case BP_LARGE_BRONZED_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(5, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7521,8 +7522,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8096:
-        case 8104:
+        case BP_DARK_BARBARIAN_CLOTHES:
+        case BP_SMALL_DARK_BARBARIAN_CLOTHES:
             tig_art_item_id_create(1, 0, 0, 0, 7, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7547,14 +7548,14 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
-            case 8104:
+            case BP_SMALL_DARK_BARBARIAN_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 break;
             }
             break;
-        case 8097:
-        case 8105:
-        case 8109:
+        case BP_SERVANTS_CLOTHES:
+        case BP_SMALL_MANSERVANTS_CLOTHES:
+        case BP_LARGE_MANSERVANTS_UNIFORM:
             tig_art_item_id_create(13, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7574,7 +7575,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 2805);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8105:
+            case BP_SMALL_MANSERVANTS_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 9);
                 tig_art_item_id_create(14, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7584,7 +7585,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(14, 2, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8109:
+            case BP_LARGE_MANSERVANTS_UNIFORM:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 12);
                 tig_art_item_id_create(15, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7599,7 +7600,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8100:
+        case BP_SMALL_OILED_CHAINMAIL:
             tig_art_item_id_create(11, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7623,9 +7624,9 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8110:
-        case 8118:
-        case 8126:
+        case BP_JACKET:
+        case BP_SMALL_JACKET:
+        case BP_LARGE_JACKET:
             tig_art_item_id_create(6, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7645,7 +7646,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8118:
+            case BP_SMALL_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7655,7 +7656,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8126:
+            case BP_LARGE_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(8, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7667,9 +7668,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8111:
-        case 8119:
-        case 8127:
+        case BP_STUDDED_LEATHER:
+        case BP_SMALL_STUDDED_LEATHER:
+        case BP_LARGE_STUDDED_LEATHER:
             tig_art_item_id_create(6, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7689,7 +7690,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 540);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8119:
+            case BP_SMALL_STUDDED_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7701,7 +7702,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 480);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
                 break;
-            case 8127:
+            case BP_LARGE_STUDDED_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(8, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7715,8 +7716,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8112:
-        case 8120:
+        case BP_GUARD_CHAINMAIL:
+        case BP_SMALL_GUARD_CHAINMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 3, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7739,7 +7740,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8120:
+            case BP_SMALL_GUARD_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 3, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7753,8 +7754,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8113:
-        case 8121:
+        case BP_GUARD_PLATE:
+        case BP_SMALL_GUARD_PLATE:
             tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7776,7 +7777,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             switch (description) {
-            case 8121:
+            case BP_SMALL_GUARD_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7790,8 +7791,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8114:
-        case 8122:
+        case BP_MAGICK_ROBES_1:
+        case BP_SMALL_MAGICK_ROBES_1:
             tig_art_item_id_create(2, 0, 0, 0, 5, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7818,7 +7819,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8122:
+            case BP_SMALL_MAGICK_ROBES_1:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(3, 0, 0, 0, 5, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7831,9 +7832,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8115:
-        case 8123:
-        case 8128:
+        case BP_ELITE_PLATE:
+        case BP_SMALL_ELITE_PLATE:
+        case BP_LARGE_ELITE_PLATE:
             tig_art_item_id_create(17, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7855,7 +7856,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8123:
+            case BP_SMALL_ELITE_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(18, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7867,7 +7868,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 600);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 35);
                 break;
-            case 8128:
+            case BP_LARGE_ELITE_PLATE:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(19, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7881,8 +7882,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8116:
-        case 8124:
+        case BP_RED_BARBARIAN_CLOTHES:
+        case BP_SMALL_RED_BARBARIAN_CLOTHES:
             tig_art_item_id_create(2, 0, 0, 0, 7, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7909,14 +7910,14 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
-            case 8124:
+            case BP_SMALL_RED_BARBARIAN_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 break;
             }
             break;
-        case 8117:
-        case 8125:
-        case 8129:
+        case BP_RUSTIC_FINERY:
+        case BP_SMALL_RUSTIC_FINERY:
+        case BP_LARGE_RUSTIC_FINERY:
             tig_art_item_id_create(3, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7935,7 +7936,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8125:
+            case BP_SMALL_RUSTIC_FINERY:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 9);
                 tig_art_item_id_create(8, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7945,7 +7946,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(8, 2, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8129:
+            case BP_LARGE_RUSTIC_FINERY:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 12);
                 tig_art_item_id_create(9, 0, 0, 0, 8, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7960,9 +7961,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8130:
-        case 8131:
-        case 8292:
+        case BP_FEATHER_WEIGHT_CHAIN:
+        case BP_SMALL_FEATHER_WEIGHT_CHAIN:
+        case BP_LARGE_FEATHER_WEIGHT_CHAIN:
             tig_art_item_id_create(3, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -7986,7 +7987,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8131:
+            case BP_SMALL_FEATHER_WEIGHT_CHAIN:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(4, 0, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -7998,7 +7999,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
                 break;
-            case 8292:
+            case BP_LARGE_FEATHER_WEIGHT_CHAIN:
                 tig_art_item_id_create(3, 2, 0, 0, 6, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -8014,7 +8015,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8132:
+        case BP_COPPER_RING:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8034,9 +8035,9 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8133:
-        case 8134:
-        case 8135:
+        case BP_PLAIN_DRESS:
+        case BP_SMALL_LADIES_CITY_DWELLER_CLOTHES:
+        case BP_LARGE_LADIES_CITY_DWELLER_CLOTHES:
             tig_art_item_id_create(5, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8055,11 +8056,11 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8134:
+            case BP_SMALL_LADIES_CITY_DWELLER_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 17);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 8135:
+            case BP_LARGE_LADIES_CITY_DWELLER_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 20);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
@@ -8068,9 +8069,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8136:
-        case 8137:
-        case 8138:
+        case BP_ELEGANT_DRESS:
+        case BP_SMALL_LADIES_SMOKING_JACKET:
+        case BP_LARGE_LADIES_SMOKING_JACKET:
             tig_art_item_id_create(7, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8093,11 +8094,11 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8137:
+            case BP_SMALL_LADIES_SMOKING_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 17);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 8138:
+            case BP_LARGE_LADIES_SMOKING_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 20);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
@@ -8106,9 +8107,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8139:
-        case 8140:
-        case 8141:
+        case BP_SERVANTS_DRESS:
+        case BP_SMALL_LADYSERVANTS_CLOTHES:
+        case BP_LARGE_LADYSERVANTS_CLOTHES:
             tig_art_item_id_create(4, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8127,11 +8128,11 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8140:
+            case BP_SMALL_LADYSERVANTS_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 17);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 8141:
+            case BP_LARGE_LADYSERVANTS_CLOTHES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 20);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
@@ -8140,9 +8141,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8142:
-        case 8143:
-        case 8144:
+        case BP_RUSTIC_DRESS:
+        case BP_SMALL_LADIES_RUSTIC_FINERY:
+        case BP_LARGE_LADIES_RUSTIC_FINERY:
             tig_art_item_id_create(6, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8161,11 +8162,11 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8143:
+            case BP_SMALL_LADIES_RUSTIC_FINERY:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 17);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 8144:
+            case BP_LARGE_LADIES_RUSTIC_FINERY:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 20);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
@@ -8174,9 +8175,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8145:
-        case 8146:
-        case 8147:
+        case BP_VENOM_SHIELDED_GARMENT:
+        case BP_SMALL_VENOM_SHIELDED_GARMENT:
+        case BP_LARGE_VENOM_SHIELDED_GARMENT:
             tig_art_item_id_create(9, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8199,7 +8200,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29701);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8146:
+            case BP_SMALL_VENOM_SHIELDED_GARMENT:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(10, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8210,7 +8211,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29718);
                 break;
-            case 8147:
+            case BP_LARGE_VENOM_SHIELDED_GARMENT:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(11, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8223,9 +8224,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8148:
-        case 8149:
-        case 8150:
+        case BP_REGENERATIVE_JACKET:
+        case BP_SMALL_REGENERATIVE_JACKET:
+        case BP_LARGE_REGENERATIVE_JACKET:
             tig_art_item_id_create(15, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8248,7 +8249,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 168);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             switch (description) {
-            case 8149:
+            case BP_SMALL_REGENERATIVE_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(16, 0, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8258,7 +8259,7 @@ void sub_468930(int64_t obj, int description)
                 tig_art_item_id_create(16, 2, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 break;
-            case 8150:
+            case BP_LARGE_REGENERATIVE_JACKET:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(17, 0, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8270,9 +8271,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8151:
-        case 8152:
-        case 8153:
+        case BP_DRAGON_SKIN_LEATHER:
+        case BP_SMALL_DRAGON_SKIN_LEATHER:
+        case BP_LARGE_DRAGON_SKIN_LEATHER:
             tig_art_item_id_create(9, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8296,7 +8297,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8152:
+            case BP_SMALL_DRAGON_SKIN_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(10, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8309,7 +8310,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8153:
+            case BP_LARGE_DRAGON_SKIN_LEATHER:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(11, 0, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -8324,7 +8325,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8154:
+        case BP_CREEP_ARMOUR:
             tig_art_item_id_create(18, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8352,7 +8353,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
-        case 8155:
+        case BP_CALADON_ELITE_GUARD_CHAINMAIL:
             tig_art_item_id_create(14, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8374,7 +8375,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 735);
             break;
-        case 8156:
+        case BP_DWARVEN_CHAINMAIL:
             tig_art_item_id_create(13, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8398,7 +8399,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8157:
+        case BP_ELVEN_CHAINMAIL:
             tig_art_item_id_create(2, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8424,7 +8425,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8158:
+        case BP_GNOMISH_CHAINMAIL:
             tig_art_item_id_create(12, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8450,7 +8451,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 8159:
+        case BP_MOLOCHEAN_HAND_AMULET:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8471,7 +8472,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8160:
+        case BP_MEDALLION_OF_BEAUTY:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8495,7 +8496,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8161:
+        case BP_DORIAN_AMULET:
             tig_art_item_id_create(2, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8516,7 +8517,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29708);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8162:
+        case BP_DECENT_GOLD_RING:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8532,7 +8533,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8163:
+        case BP_GILBERT_BATES_RING:
             tig_art_item_id_create(2, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8548,7 +8549,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8164:
+        case BP_RING_OF_PROTECTION:
             tig_art_item_id_create(4, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8566,7 +8567,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8165:
+        case BP_FATED_RING:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8590,7 +8591,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8166:
+        case BP_METAL_BOOTS:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8609,7 +8610,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8167:
+        case BP_FINE_STOUT_BOOTS:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8626,7 +8627,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8168:
+        case BP_SHOES:
             tig_art_item_id_create(8, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8643,7 +8644,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8169:
+        case BP_WORN_SHOES:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8660,7 +8661,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8170:
+        case BP_WORN_BOOTS:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8677,7 +8678,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8171:
+        case BP_LADIES_FANCY_BOOTS:
             tig_art_item_id_create(6, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8695,7 +8696,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8172:
+        case BP_WORN_LADIES_BOOTS:
             tig_art_item_id_create(6, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8713,7 +8714,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8173:
+        case BP_ELVEN_BOOTS:
             tig_art_item_id_create(4, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8733,7 +8734,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29711);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8174:
+        case BP_ENCHANTED_WAR_BOOTS:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 4, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8759,7 +8760,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
-        case 8175:
+        case BP_DWARVEN_GAUNTLETS:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8786,7 +8787,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8176:
+        case BP_MACHINED_GAUNTLETS:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8813,7 +8814,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8177:
+        case BP_WAR_GAUNTLETS:
             tig_art_item_id_create(6, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8840,7 +8841,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8178:
+        case BP_CHAIN_GLOVES:
             tig_art_item_id_create(4, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8867,7 +8868,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8179:
+        case BP_LIGHT_FINGERED_GAUNTLETS:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8892,7 +8893,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8180:
+        case BP_GLOVES_OF_DEXTERITY:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8917,7 +8918,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8181:
+        case BP_FINE_HELMET:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8940,7 +8941,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8182:
+        case BP_PIG_FACE_BASSET:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8963,7 +8964,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8183:
+        case BP_EYE_GEAR:
             tig_art_item_id_create(4, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -8988,7 +8989,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8184:
+        case BP_EYE_GLASSES:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9011,7 +9012,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 8185:
+        case BP_TOP_HAT:
             tig_art_item_id_create(6, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9029,7 +9030,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case OBJ_F_KEY_KEY_ID:
+        case BP_HELMET_OF_VISION:
             tig_art_item_id_create(19, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9049,7 +9050,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8187:
+        case BP_CHAPEAU_OF_MAGNETIC_INVERSION:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9071,7 +9072,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 8188:
+        case BP_HELM_OF_LIGHT:
             tig_art_item_id_create(2, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9096,7 +9097,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8189:
+        case BP_GELEAMS_HELM:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9121,7 +9122,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8190:
+        case BP_WOODEN_SHIELD:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9138,7 +9139,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 220);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8191:
+        case BP_DENTED_IRON_SHIELD:
             tig_art_item_id_create(2, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9155,7 +9156,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8192:
+        case BP_QUALITY_IRON_SHIELD:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9172,7 +9173,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 550);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8193:
+        case BP_KITE_SHIELD:
             tig_art_item_id_create(4, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9189,7 +9190,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 360);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8194:
+        case BP_FLOW_SPECKTROMETER:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9210,7 +9211,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 29016;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
-        case 8195:
+        case BP_SHIELD_OF_FORCE:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9231,7 +9232,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8196:
+        case BP_SHADOW_SHIELD:
             tig_art_item_id_create(6, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9250,7 +9251,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8197:
+        case BP_DWARVEN_PLATEMAIL:
             tig_art_item_id_create(16, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9274,7 +9275,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 8198:
+        case BP_MINUTE_PLATEMAIL_OF_REGENERATION:
             tig_art_item_id_create(9, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9307,7 +9308,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
-        case 8199:
+        case BP_GREAT_HELM:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9330,7 +9331,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8200:
+        case BP_SUNDAYS_BEST_DRESS:
             tig_art_item_id_create(7, 0, 0, 0, 8, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9353,8 +9354,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 18);
             break;
-        case 8201:
-        case 8202:
+        case BP_OFFICERS_UNIFORM:
+        case BP_SMALL_OFFICERS_UNIFORM:
             tig_art_item_id_create(12, 0, 0, 0, 1, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9375,7 +9376,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 2849);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
-            case 8202:
+            case BP_SMALL_OFFICERS_UNIFORM:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(13, 0, 0, 0, 1, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -9387,7 +9388,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8203:
+        case BP_AMULET_OF_LEADERSHIP:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9414,7 +9415,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8204:
+        case BP_DARK_HELM:
             tig_art_item_id_create(0, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9441,7 +9442,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8205:
+        case BP_TEAMSTER_GLOVES:
             tig_art_item_id_create(3, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9467,7 +9468,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8206:
+        case BP_SERPENTINE_NECKLACE:
             tig_art_item_id_create(21, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9494,7 +9495,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8207:
+        case BP_WHEEL_CLAN_SPECTACLES:
             tig_art_item_id_create(12, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9517,9 +9518,9 @@ void sub_468930(int64_t obj, int description)
             scr.num = 30292;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
-        case 8208:
-        case 8209:
-        case 8210:
+        case BP_CHARMED_LEATHER_ARMOUR:
+        case BP_SMALL_CHARMED_LEATHER_ARMOUR:
+        case BP_LARGE_CHARMED_LEATHER_ARMOUR:
             tig_art_item_id_create(12, 0, 0, 0, 2, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9548,7 +9549,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8209:
+            case BP_SMALL_CHARMED_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
                 tig_art_item_id_create(13, 0, 0, 0, 2, 2, 0, 1, &art_id);
@@ -9561,7 +9562,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8210:
+            case BP_LARGE_CHARMED_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 180);
                 tig_art_item_id_create(14, 0, 0, 0, 2, 2, 0, 1, &art_id);
@@ -9576,9 +9577,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8211:
-        case 8212:
-        case 8213:
+        case BP_MAGICK_LEATHER_ARMOUR:
+        case BP_SMALL_MAGICK_LEATHER_ARMOUR:
+        case BP_LARGE_MAGICK_LEATHER_ARMOUR:
             tig_art_item_id_create(12, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9607,7 +9608,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8212:
+            case BP_SMALL_MAGICK_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
                 tig_art_item_id_create(13, 0, 0, 0, 2, 2, 0, 0, &art_id);
@@ -9620,7 +9621,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8213:
+            case BP_LARGE_MAGICK_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 180);
                 tig_art_item_id_create(14, 0, 0, 0, 2, 2, 0, 0, &art_id);
@@ -9635,9 +9636,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8214:
-        case 8215:
-        case 8216:
+        case BP_MYSTIC_LEATHER_ARMOUR:
+        case BP_SMALL_MYSTIC_LEATHER_ARMOUR:
+        case BP_LARGE_MYSTIC_LEATHER_ARMOUR:
             tig_art_item_id_create(15, 0, 0, 0, 2, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9666,7 +9667,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8215:
+            case BP_SMALL_MYSTIC_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
                 tig_art_item_id_create(16, 0, 0, 0, 2, 2, 0, 1, &art_id);
@@ -9679,7 +9680,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8216:
+            case BP_LARGE_MYSTIC_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 180);
                 tig_art_item_id_create(17, 0, 0, 0, 2, 2, 0, 1, &art_id);
@@ -9694,9 +9695,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8217:
-        case 8218:
-        case 8219:
+        case BP_ARCANE_LEATHER_ARMOUR:
+        case BP_SMALL_ARCANE_LEATHER_ARMOUR:
+        case BP_LARGE_ARCANE_LEATHER_ARMOUR:
             tig_art_item_id_create(15, 0, 0, 0, 2, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9725,7 +9726,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
-            case 8218:
+            case BP_SMALL_ARCANE_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
                 tig_art_item_id_create(16, 0, 0, 0, 2, 2, 0, 0, &art_id);
@@ -9738,7 +9739,7 @@ void sub_468930(int64_t obj, int description)
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
-            case 8219:
+            case BP_LARGE_ARCANE_LEATHER_ARMOUR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 180);
                 tig_art_item_id_create(17, 0, 0, 0, 2, 2, 0, 0, &art_id);
@@ -9753,7 +9754,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8220:
+        case BP_QINTARRA_CHAINMAIL:
             tig_art_item_id_create(0, 0, 0, 0, 3, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9778,8 +9779,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             break;
-        case 8221:
-        case 8222:
+        case BP_CHARMED_CHAINMAIL:
+        case BP_SMALL_CHARMED_CHAINMAIL:
             tig_art_item_id_create(6, 0, 0, 0, 3, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9809,7 +9810,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8222:
+            case BP_SMALL_CHARMED_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -9824,8 +9825,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8223:
-        case 8224:
+        case BP_MAGICK_CHAINMAIL:
+        case BP_SMALL_MAGICK_CHAINMAIL:
             tig_art_item_id_create(6, 0, 0, 0, 3, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9855,7 +9856,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8224:
+            case BP_SMALL_MAGICK_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 3, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -9870,8 +9871,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8225:
-        case 8226:
+        case BP_MYSTIC_CHAINMAIL:
+        case BP_SMALL_MYSTIC_CHAINMAIL:
             tig_art_item_id_create(6, 0, 0, 0, 3, 2, 0, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9901,7 +9902,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8226:
+            case BP_SMALL_MYSTIC_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 3, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -9916,8 +9917,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8227:
-        case 8228:
+        case BP_ARCANE_CHAINMAIL:
+        case BP_SMALL_ARCANE_CHAINMAIL:
             tig_art_item_id_create(6, 0, 0, 0, 3, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9947,7 +9948,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             switch (description) {
-            case 8228:
+            case BP_SMALL_ARCANE_CHAINMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 3, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -9962,9 +9963,9 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8229:
-        case 8230:
-        case 8231:
+        case BP_ELECTRO_ARMOR:
+        case BP_SMALL_ELECTRO_ARMOR:
+        case BP_LARGE_ELECTRO_ARMOR:
             tig_art_item_id_create(3, 0, 0, 0, 4, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -9994,7 +9995,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             switch (description) {
-            case 8230:
+            case BP_SMALL_ELECTRO_ARMOR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(4, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10006,7 +10007,7 @@ void sub_468930(int64_t obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
                 obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
                 break;
-            case 8231:
+            case BP_LARGE_ELECTRO_ARMOR:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
                 tig_art_item_id_create(5, 0, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10022,8 +10023,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8232:
-        case 8233:
+        case BP_CHARMED_ROBES:
+        case BP_SMALL_CHARMED_ROBES:
             tig_art_item_id_create(4, 0, 0, 0, 5, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10052,7 +10053,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8233:
+            case BP_SMALL_CHARMED_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(5, 0, 0, 0, 5, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10065,8 +10066,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8234:
-        case 8235:
+        case BP_MAGICK_ROBES_2:
+        case BP_SMALL_MAGICK_ROBES_2:
             tig_art_item_id_create(4, 0, 0, 0, 5, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10095,7 +10096,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8235:
+            case BP_SMALL_MAGICK_ROBES_2:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(5, 0, 0, 0, 5, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10108,8 +10109,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8236:
-        case 8237:
+        case BP_MYSTIC_ROBES:
+        case BP_SMALL_MYSTIC_ROBES:
             tig_art_item_id_create(4, 0, 0, 0, 5, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10138,7 +10139,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8237:
+            case BP_SMALL_MYSTIC_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(5, 0, 0, 0, 5, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10151,8 +10152,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8238:
-        case 8239:
+        case BP_ARCANE_ROBES:
+        case BP_SMALL_ARCANE_ROBES:
             tig_art_item_id_create(4, 0, 0, 0, 5, 2, 0, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10181,7 +10182,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8239:
+            case BP_SMALL_ARCANE_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(5, 0, 0, 0, 5, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10194,8 +10195,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8240:
-        case 8241:
+        case BP_CHARMED_TRAVELERS_CLOAK:
+        case BP_SMALL_CHARMED_TRAVELERS_CLOAK:
             tig_art_item_id_create(6, 0, 0, 0, 5, 2, 0, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10224,7 +10225,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8241:
+            case BP_SMALL_CHARMED_TRAVELERS_CLOAK:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 5, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10237,8 +10238,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8242:
-        case 8243:
+        case BP_MAGICK_TRAVELERS_CLOAK:
+        case BP_SMALL_MAGICK_TRAVELERS_CLOAK:
             tig_art_item_id_create(6, 0, 0, 0, 5, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10267,7 +10268,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8243:
+            case BP_SMALL_MAGICK_TRAVELERS_CLOAK:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 5, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10280,8 +10281,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8244:
-        case 8245:
+        case BP_MYSTIC_TRAVELERS_CLOAK:
+        case BP_SMALL_MYSTIC_TRAVELERS_CLOAK:
             tig_art_item_id_create(6, 0, 0, 0, 5, 2, 0, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10310,7 +10311,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8245:
+            case BP_SMALL_MYSTIC_TRAVELERS_CLOAK:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 5, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10323,8 +10324,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8246:
-        case 8247:
+        case BP_ARCANE_TRAVELERS_CLOAK:
+        case BP_SMALL_ARCANE_TRAVELERS_CLOAK:
             tig_art_item_id_create(6, 0, 0, 0, 5, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10353,7 +10354,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8247:
+            case BP_SMALL_ARCANE_TRAVELERS_CLOAK:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 5, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10366,8 +10367,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8248:
-        case 8249:
+        case BP_QUALITY_ROBES:
+        case BP_SMALL_QUALITY_ROBES:
             tig_art_item_id_create(0, 0, 0, 0, 5, 2, 0, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10387,7 +10388,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
-            case 8249:
+            case BP_SMALL_QUALITY_ROBES:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(1, 0, 0, 0, 5, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10399,8 +10400,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8250:
-        case 8251:
+        case BP_CHARMED_PLATEMAIL:
+        case BP_SMALL_CHARMED_PLATEMAIL:
             tig_art_item_id_create(6, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10430,7 +10431,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8251:
+            case BP_SMALL_CHARMED_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(7, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10445,8 +10446,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8252:
-        case 8253:
+        case BP_MAGICK_PLATEMAIL:
+        case BP_SMALL_MAGICK_PLATEMAIL:
             tig_art_item_id_create(8, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10476,7 +10477,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8253:
+            case BP_SMALL_MAGICK_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(9, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10491,8 +10492,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8254:
-        case 8255:
+        case BP_MYSTIC_PLATEMAIL:
+        case BP_SMALL_MYSTIC_PLATEMAIL:
             tig_art_item_id_create(10, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10522,7 +10523,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8255:
+            case BP_SMALL_MYSTIC_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(11, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10537,8 +10538,8 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8256:
-        case 8257:
+        case BP_ARCANE_PLATEMAIL:
+        case BP_SMALL_ARCANE_PLATEMAIL:
             tig_art_item_id_create(13, 0, 0, 0, 6, 2, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10568,7 +10569,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             switch (description) {
-            case 8257:
+            case BP_SMALL_ARCANE_PLATEMAIL:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
                 tig_art_item_id_create(14, 0, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -10583,7 +10584,7 @@ void sub_468930(int64_t obj, int description)
                 break;
             }
             break;
-        case 8258:
+        case BP_FLOW_DISRUPTOR_SHIELD:
             tig_art_item_id_create(8, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10605,7 +10606,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8259:
+        case BP_CHARMED_SHIELD:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10627,7 +10628,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8260:
+        case BP_MAGICK_SHIELD:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10649,7 +10650,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8261:
+        case BP_MYSTIC_SHIELD:
             tig_art_item_id_create(11, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10671,7 +10672,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8262:
+        case BP_ARCANE_SHIELD:
             tig_art_item_id_create(12, 0, 0, 0, 0, 2, 1, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10693,7 +10694,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
-        case 8263:
+        case BP_MINERS_HELMET:
             tig_art_item_id_create(14, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10715,7 +10716,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             break;
-        case 8264:
+        case BP_CHARMED_HELMET:
             tig_art_item_id_create(15, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10741,7 +10742,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8265:
+        case BP_MAGICK_HELMET:
             tig_art_item_id_create(16, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10767,7 +10768,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8266:
+        case BP_MYSTIC_HELMET:
             tig_art_item_id_create(17, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10792,7 +10793,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8267:
+        case BP_ARCANE_HELMET:
             tig_art_item_id_create(18, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10817,7 +10818,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
-        case 8268:
+        case BP_CHARMED_GAUNTLETS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10839,7 +10840,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8269:
+        case BP_MAGICK_GAUNTLETS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10861,7 +10862,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8270:
+        case BP_MYSTIC_GAUNTLETS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10883,7 +10884,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8271:
+        case BP_ARCANE_GAUNTLETS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10905,7 +10906,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
-        case 8272:
+        case BP_CHARMED_RING:
             tig_art_item_id_create(8, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10926,7 +10927,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8273:
+        case BP_MAGICK_RING:
             tig_art_item_id_create(8, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10947,7 +10948,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8274:
+        case BP_MYSTIC_RING:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10968,7 +10969,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8275:
+        case BP_ARCANE_RING:
             tig_art_item_id_create(10, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -10989,7 +10990,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8276:
+        case BP_VENDIGROTHIAN_PADDED_LEATHER_GLOVES:
             tig_art_item_id_create(9, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11005,7 +11006,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 2);
             break;
-        case 8277:
+        case BP_VENDIGROTHIAN_WAR_GAUNTLETS:
             tig_art_item_id_create(8, 0, 0, 0, 0, 2, 3, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11030,7 +11031,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 28015;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
-        case 8278:
+        case BP_VOID_RING:
             tig_art_item_id_create(14, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11045,7 +11046,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 2857);
             break;
-        case 8279:
+        case BP_EMERALD_RING:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 5, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11060,7 +11061,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8280:
+        case BP_RUBY_RING:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 5, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11076,7 +11077,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8281:
+        case BP_SAPPHIRE_RING:
             tig_art_item_id_create(7, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11091,7 +11092,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 350);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8282:
+        case BP_DIAMOND_RING:
             tig_art_item_id_create(13, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11106,7 +11107,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8283:
+        case BP_WOODEN_RING:
             tig_art_item_id_create(11, 0, 0, 0, 0, 2, 5, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11121,7 +11122,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8284:
+        case BP_SILVER_RING:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 5, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11136,7 +11137,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8285:
+        case BP_MITHRIL_RING:
             tig_art_item_id_create(1, 0, 0, 0, 0, 2, 5, 3, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11151,7 +11152,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
-        case 8286:
+        case BP_EMERALD_NECKLACE:
             tig_art_item_id_create(24, 0, 0, 0, 0, 2, 6, 1, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11166,7 +11167,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 600);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8287:
+        case BP_RUBY_NECKLACE:
             tig_art_item_id_create(24, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11182,7 +11183,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8288:
+        case BP_SAPPHIRE_NECKLACE:
             tig_art_item_id_create(24, 0, 0, 0, 0, 2, 6, 2, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11197,7 +11198,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8289:
+        case BP_DIAMOND_NECKLACE:
             tig_art_item_id_create(25, 0, 0, 0, 0, 2, 6, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11212,7 +11213,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
-        case 8290:
+        case BP_GOGGLED_HELMET:
             tig_art_item_id_create(13, 0, 0, 0, 0, 2, 2, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11257,7 +11258,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 0x180);
         switch (description) {
-        case 10057:
+        case BP_BREAD:
             tig_art_item_id_create(88, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11267,7 +11268,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10058:
+        case BP_WATER:
             tig_art_item_id_create(51, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11279,7 +11280,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10059:
+        case BP_HEALING_SALVE:
             tig_art_item_id_create(11, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11295,7 +11296,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10060:
+        case BP_FATIGUE_RESTORER:
             tig_art_item_id_create(9, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11311,7 +11312,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10061:
+        case BP_GINKA_ROOT:
             tig_art_item_id_create(12, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11325,7 +11326,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10062:
+        case BP_KADURA_STEM:
             tig_art_item_id_create(13, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11339,7 +11340,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10063:
+        case BP_COCA_LEAVES:
             tig_art_item_id_create(5, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11353,7 +11354,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10064:
+        case BP_TOBACCO_LEAVES:
             tig_art_item_id_create(17, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11367,7 +11368,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10065:
+        case BP_POISON:
             tig_art_item_id_create(4, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11383,7 +11384,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10066:
+        case BP_ELECTROLYTE_SOLUTION:
             tig_art_item_id_create(25, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11397,7 +11398,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10067:
+        case BP_VARHAMS_AQUA_VITAE:
             tig_art_item_id_create(32, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11413,7 +11414,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10068:
+        case BP_MONROES_CLEANER:
             tig_art_item_id_create(27, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11429,7 +11430,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10069:
+        case BP_POTION_OF_PERSUASION:
             tig_art_item_id_create(42, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11445,7 +11446,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10070:
+        case BP_ELIXIR_OF_PHYSICAL_PROWESS:
             tig_art_item_id_create(49, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11461,7 +11462,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10071:
+        case BP_SPIRIT_OF_CAMPHOR:
             tig_art_item_id_create(48, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11475,7 +11476,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10072:
+        case BP_FAMOUS_BLOOD_PILLS:
             tig_art_item_id_create(36, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11489,7 +11490,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10073:
+        case BP_AMMONIA:
             tig_art_item_id_create(43, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11503,7 +11504,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10074:
+        case BP_HEAL_LESSER_WOUNDS:
             tig_art_item_id_create(79, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11522,7 +11523,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10075:
+        case BP_STRONG_POISON:
             tig_art_item_id_create(29, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11538,7 +11539,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10076:
+        case BP_CURE_ALL:
             tig_art_item_id_create(6, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11554,7 +11555,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10077:
+        case BP_CURE_POISON:
             tig_art_item_id_create(7, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11570,7 +11571,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10078:
+        case BP_FATIGUE_LIMITER:
             tig_art_item_id_create(8, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11586,7 +11587,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10079:
+        case BP_ACCELERATE_HEALING:
             tig_art_item_id_create(10, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11602,7 +11603,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10080:
+        case BP_WITCHBANE:
             tig_art_item_id_create(14, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11616,7 +11617,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10081:
+        case BP_POPPY_FLOWERS:
             tig_art_item_id_create(15, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11630,7 +11631,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10082:
+        case BP_BIG_CHIEF_SNAKE_OIL:
             tig_art_item_id_create(16, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11644,7 +11645,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10083:
+        case BP_VENOM:
             tig_art_item_id_create(18, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11660,7 +11661,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10084:
+        case BP_WONDER_DRUG:
             tig_art_item_id_create(19, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11676,7 +11677,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10085:
+        case BP_CORROSIVE_ACID:
             tig_art_item_id_create(20, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11693,7 +11694,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10086:
+        case BP_ANIMAL_LURE:
             tig_art_item_id_create(21, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11709,7 +11710,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10087:
+        case BP_ANIMAL_SCENT:
             tig_art_item_id_create(22, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11725,7 +11726,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10088:
+        case BP_BREWERS_YEAST:
             tig_art_item_id_create(23, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11739,7 +11740,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10089:
+        case BP_PETES_CARBOLIC_ACID:
             tig_art_item_id_create(24, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11753,7 +11754,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10090:
+        case BP_HALLUCINITE:
             tig_art_item_id_create(26, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11770,7 +11771,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10091:
+        case BP_MUSHROOMS:
             tig_art_item_id_create(28, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11784,7 +11785,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10092:
+        case BP_SULPHUR_PILLS:
             tig_art_item_id_create(30, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11798,7 +11799,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10093:
+        case BP_WINE:
             tig_art_item_id_create(31, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11815,7 +11816,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3608);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10094:
+        case BP_MORNING_STAR_PERFUME:
             tig_art_item_id_create(33, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11829,7 +11830,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10095:
+        case BP_DRAGON_COLOGNE:
             tig_art_item_id_create(34, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11843,7 +11844,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10096:
+        case BP_LINGHAMS_BELLADONNA:
             tig_art_item_id_create(35, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11857,7 +11858,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10097:
+        case BP_REVITALIZER:
             tig_art_item_id_create(37, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11873,7 +11874,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10098:
+        case BP_MIND_MARVEL:
             tig_art_item_id_create(38, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11889,7 +11890,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10099:
+        case BP_TONIC_OF_INCREASED_REFLEXES:
             tig_art_item_id_create(39, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11905,7 +11906,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10100:
+        case BP_ENERGIZER:
             tig_art_item_id_create(40, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11921,7 +11922,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10101:
+        case BP_DOOLITTLES_GLYCERIDE:
             tig_art_item_id_create(41, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11935,7 +11936,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10102:
+        case BP_NERVE_PILLS:
             tig_art_item_id_create(44, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11949,7 +11950,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10103:
+        case BP_LIQUID_OF_AWARENESS:
             tig_art_item_id_create(45, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11965,7 +11966,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10104:
+        case BP_NIMMS_PHOSPHOROUS_TINCTURE:
             tig_art_item_id_create(46, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11979,7 +11980,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10105:
+        case BP_QUININE:
             tig_art_item_id_create(47, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -11993,7 +11994,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10106:
+        case BP_WITCH_HAZEL_EXTRACT:
             tig_art_item_id_create(50, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12007,7 +12008,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10107:
+        case BP_RHEUMATISM_CURE:
             tig_art_item_id_create(52, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12021,7 +12022,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10108:
+        case BP_MIGRAINE_CURE:
             tig_art_item_id_create(53, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12035,7 +12036,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10109:
+        case BP_TINCTURE_OF_ARNICA:
             tig_art_item_id_create(54, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12049,7 +12050,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10110:
+        case BP_CK_SUGAR:
             tig_art_item_id_create(55, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12063,7 +12064,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10111:
+        case BP_ELIXIR_OF_HYPNOTIC_SUGGESTION:
             tig_art_item_id_create(64, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12079,7 +12080,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10112:
+        case BP_BRAIN_BUILDER:
             tig_art_item_id_create(65, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12095,7 +12096,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10113:
+        case BP_MUSCLE_MAKER:
             tig_art_item_id_create(66, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12111,7 +12112,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10114:
+        case BP_INVIGORATOR:
             tig_art_item_id_create(56, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12127,7 +12128,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10115:
+        case BP_REANIMATOR:
             tig_art_item_id_create(57, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12143,7 +12144,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10116:
+        case BP_MIRACLE_CURE:
             tig_art_item_id_create(58, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12159,7 +12160,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10117:
+        case BP_MENTAL_INHIBITOR:
             tig_art_item_id_create(59, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12175,7 +12176,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10118:
+        case BP_NECROMIZER:
             tig_art_item_id_create(60, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12191,7 +12192,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10119:
+        case BP_FORTIFIER:
             tig_art_item_id_create(61, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12207,7 +12208,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10120:
+        case BP_ANAESTHISIZER:
             tig_art_item_id_create(62, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12222,7 +12223,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 196);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             break;
-        case 10121:
+        case BP_PARALYZER:
             tig_art_item_id_create(63, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12238,7 +12239,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10122:
+        case BP_LEMON:
             tig_art_item_id_create(68, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12252,7 +12253,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10123:
+        case BP_POTATO:
             tig_art_item_id_create(69, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12266,7 +12267,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10124:
+        case BP_VIAL_OF_DRAGONS_BLOOD:
             tig_art_item_id_create(70, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12282,7 +12283,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x100000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10125:
+        case BP_PASSION_ROOT:
             tig_art_item_id_create(67, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12295,7 +12296,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3609);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10126:
+        case BP_CHATEAU_DE_BERON_BRANDY:
             tig_art_item_id_create(71, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12308,7 +12309,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3613);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10127:
+        case BP_DWARVEN_SNUFF:
             tig_art_item_id_create(72, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12321,7 +12322,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3614);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10128:
+        case BP_ELVEN_SPRING_WATER:
             tig_art_item_id_create(73, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12334,7 +12335,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3615);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10129:
+        case BP_EARL_GREY_TEA:
             tig_art_item_id_create(74, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12347,7 +12348,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3616);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10130:
+        case BP_ABSINTHE:
             tig_art_item_id_create(75, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12360,7 +12361,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3617);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10131:
+        case BP_SWEET_CAKES:
             tig_art_item_id_create(76, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12373,7 +12374,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 3618);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 10132:
+        case BP_VENDIGROTHIAN_ELIXIR:
             tig_art_item_id_create(77, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12388,7 +12389,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 161);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             break;
-        case 10133:
+        case BP_VIVIFIER:
             tig_art_item_id_create(78, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12403,7 +12404,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 206);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
             break;
-        case 10134:
+        case BP_GREATER_HEALING:
             tig_art_item_id_create(80, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12422,7 +12423,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10135:
+        case BP_LIGHT_FATIGUE_RESTORE:
             tig_art_item_id_create(81, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12441,7 +12442,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10136:
+        case BP_GREATER_FATIGUE_RESTORE:
             tig_art_item_id_create(82, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12460,7 +12461,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10137:
+        case BP_HEAL_POISON:
             tig_art_item_id_create(83, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12479,7 +12480,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10138:
+        case BP_MORGANAS_TEARS:
             tig_art_item_id_create(84, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12498,7 +12499,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10139:
+        case BP_FATIGUE_SLOWER:
             tig_art_item_id_create(86, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12514,7 +12515,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10140:
+        case BP_ESSENCE_OF_INTELLECT:
             tig_art_item_id_create(2, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12530,7 +12531,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10141:
+        case BP_POTION_OF_HASTE:
             tig_art_item_id_create(1, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12546,7 +12547,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10142:
+        case BP_LIQUID_OF_SKIN_THICKENING:
             tig_art_item_id_create(87, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12562,7 +12563,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10143:
+        case BP_KALISPIS_VENOM:
             tig_art_item_id_create(85, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12578,7 +12579,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
-        case 10144:
+        case BP_RESTORE_LIFE:
             tig_art_item_id_create(57, 0, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12609,8 +12610,8 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
         obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
-        if (description < 11139) {
-            int spl = description - 11059;
+        if (description < BP_KERGHANS_DEATH_SCROLL) {
+            int spl = description - BP_SCROLL_OF_DISARM;
             int complexity = spl % 5;
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, description);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 4 * (5 * complexity + 5));
@@ -12621,24 +12622,24 @@ void sub_468930(int64_t obj, int description)
             }
         } else {
             switch (description) {
-            case 11139:
+            case BP_KERGHANS_DEATH_SCROLL:
                 obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 207);
                 obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
                 obj_field_int32_set(obj, OBJ_F_NAME, 4004);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 11140:
+            case BP_KERGHANS_ATTACK_SCROLL:
                 obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 208);
                 obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
                 obj_field_int32_set(obj, OBJ_F_NAME, 4005);
                 obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
                 break;
-            case 11141:
+            case BP_SCROLL_OF_EXITING:
                 obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 218);
                 obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 30);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
                 break;
-            case 11142:
+            case BP_MED_SPIDER_HEAL:
                 obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 191);
                 obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
                 obj_field_int32_set(obj, OBJ_F_NAME, 4006);
@@ -12656,7 +12657,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
         obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
         switch (description) {
-        case 12060:
+        case BP_KEY:
             tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12664,7 +12665,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 12061:
+        case BP_IRON_CLAN_KEY:
             tig_art_item_id_create(2, 0, 0, 0, 0, 6, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12674,7 +12675,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_KEY_KEY_ID, 62);
             break;
-        case 12062:
+        case BP_VORMAN_MANOR_KEY:
             tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12706,7 +12707,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 128);
         obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
         switch (description) {
-        case 14062:
+        case BP_BOOK:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
@@ -12718,7 +12719,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(2, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14063:
+        case BP_NOTE:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12730,7 +12731,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(8, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14064:
+        case BP_TARANT_NEWSPAPER:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
@@ -12742,7 +12743,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(6, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14065:
+        case BP_TELEGRAM:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12754,7 +12755,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(9, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14066:
+        case BP_GORADS_NOTE:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 1);
             obj_field_int32_set(obj, OBJ_F_NAME, 5212);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1030);
@@ -12771,7 +12772,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(8, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14067:
+        case BP_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12783,7 +12784,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14068:
+        case BP_IMAGE:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12794,7 +12795,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(8, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14069:
+        case BP_PAMPHLET:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12807,7 +12808,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(2, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14070:
+        case BP_THE_LEGEND_OF_TERRE_D_VNT:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 0);
             obj_field_int32_set(obj, OBJ_F_NAME, 5229);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1020);
@@ -12822,7 +12823,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(2, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14071:
+        case BP_PROFESSOR_EAKINS_TELEGRAM:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 3);
             obj_field_int32_set(obj, OBJ_F_NAME, 5246);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1050);
@@ -12835,7 +12836,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(9, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14072:
+        case BP_VENDIGROTH_NEWSPAPER:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
@@ -12846,7 +12847,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(6, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14073:
+        case BP_INVIGORATOR_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12859,7 +12860,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14074:
+        case BP_REANIMATOR_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12872,7 +12873,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14075:
+        case BP_CLOCKWORK_PHYSICIAN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12885,7 +12886,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14076:
+        case BP_MIRACLE_CURE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12898,7 +12899,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14077:
+        case BP_MENTAL_INHIBITOR_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12911,7 +12912,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14078:
+        case BP_NECROMIZER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12924,7 +12925,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14079:
+        case BP_FORTIFIER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12937,7 +12938,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14080:
+        case BP_FUEL_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12949,7 +12950,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14081:
+        case BP_POTION_OF_PARALYSIS_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12962,7 +12963,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14082:
+        case BP_LEMON_AND_POTATO_CHARGES_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12975,7 +12976,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14083:
+        case BP_CHARGED_SWORD_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -12988,7 +12989,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14084:
+        case BP_FLOW_DISRUPTOR_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13001,7 +13002,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14085:
+        case BP_TESLA_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13014,7 +13015,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14086:
+        case BP_BELLRINGER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13027,7 +13028,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14087:
+        case BP_ELECTRO_ARMOUR_MEDIUM_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13040,7 +13041,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14088:
+        case BP_PYROTECHNIC_BOW_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13053,7 +13054,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14089:
+        case BP_KNOCK_OUT_GAS_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13066,7 +13067,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14090:
+        case BP_HALLUCINATION_GRENADE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13079,7 +13080,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14091:
+        case BP_ELECTROCUTION_GRENADE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13092,7 +13093,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14092:
+        case BP_GRENADE_LAUNCHER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13105,7 +13106,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14093:
+        case BP_TIME_BOMB_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13118,7 +13119,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14094:
+        case BP_CONCUSSION_GRENADE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13131,7 +13132,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14095:
+        case BP_PARALYSIS_GRENADE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13144,7 +13145,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14096:
+        case BP_MUSTARD_GAS_GRENADE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13157,7 +13158,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14097:
+        case BP_PLASTIQUE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13170,7 +13171,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14098:
+        case BP_DETONATOR_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13183,7 +13184,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14099:
+        case BP_FLAME_THROWER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13196,7 +13197,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14100:
+        case BP_MECHANIZED_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13209,7 +13210,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14101:
+        case BP_ACID_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13222,7 +13223,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14102:
+        case BP_ACCELERATOR_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13235,7 +13236,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14103:
+        case BP_PYROTECHNIC_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13248,7 +13249,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14104:
+        case BP_BLADE_LAUNCHER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13261,7 +13262,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14105:
+        case BP_HIGH_VELOCITY_PISTOL_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13274,7 +13275,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14106:
+        case BP_SCHRECKS_MULTI_BARRELED_PISTOL_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13287,7 +13288,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14107:
+        case BP_LONG_RANGE_PISTOL_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13300,7 +13301,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14108:
+        case BP_TRANQUILIZER_GUN_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13313,7 +13314,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14109:
+        case BP_POISON_ARACHNID_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13326,7 +13327,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14110:
+        case BP_AUTOMATON_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13339,7 +13340,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14111:
+        case BP_COMPOUND_BOW_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13352,7 +13353,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14112:
+        case BP_ENVENOMED_BOW_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13365,7 +13366,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14113:
+        case BP_MEDICAL_ARACHNID_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13378,7 +13379,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14114:
+        case BP_ILLUMINATED_DECOY_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13390,7 +13391,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14115:
+        case BP_EXPLOSIVE_DECOY_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13402,7 +13403,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14116:
+        case BP_AUTOMATON_GUNNER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13414,7 +13415,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14117:
+        case BP_GOGGLED_HELMET_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13427,7 +13428,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14118:
+        case BP_MACHINED_PLATEMAIL_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13440,7 +13441,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14119:
+        case BP_WHEEL_CLAN_SPECTACLES_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13452,7 +13453,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14120:
+        case BP_ENVENOMED_SWORD_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13465,7 +13466,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14121:
+        case BP_ENVENOMED_AXE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13478,7 +13479,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14122:
+        case BP_MINERS_HELMET_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13491,7 +13492,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14123:
+        case BP_PYROTECHNIC_AXE_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13504,7 +13505,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14124:
+        case BP_RIFLED_CANNON_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13517,7 +13518,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14125:
+        case BP_MECHANICAL_DAGGER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13530,7 +13531,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14126:
+        case BP_ELIXIR_OF_HYPNOTIC_SUGGESTION_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13543,7 +13544,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14127:
+        case BP_BRAIN_BUILDER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13556,7 +13557,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14128:
+        case BP_MUSCLE_MAKER_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13569,7 +13570,7 @@ void sub_468930(int64_t obj, int description)
             tig_art_item_id_create(7, 1, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             break;
-        case 14129:
+        case BP_BULLETS_SCHEMATIC:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
@@ -13595,7 +13596,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         switch (description) {
-        case 15066:
+        case BP_MECHANIZED_ARACHNID:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13614,7 +13615,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15067:
+        case BP_STILLWATER_TRAP_EMPTY:
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             tig_art_item_id_create(69, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -13627,7 +13628,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15068:
+        case BP_STILLWATER_TRAP_FULL:
             tig_art_item_id_create(70, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13640,7 +13641,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15069:
+        case BP_METAL_PLATES:
             tig_art_item_id_create(28, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13653,7 +13654,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15070:
+        case BP_ELECTRIC_LIGHT:
             tig_art_item_id_create(31, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13668,7 +13669,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 4096);
             break;
-        case 15071:
+        case BP_FILAMENT:
             tig_art_item_id_create(32, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13681,7 +13682,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             break;
-        case 15072:
+        case BP_LANTERN:
             tig_art_item_id_create(52, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13696,7 +13697,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2048);
             break;
-        case 15073:
+        case BP_CAPACITOR:
             tig_art_item_id_create(29, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13709,7 +13710,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             break;
-        case 15074:
+        case BP_POTASSIUM_NITRATE:
             tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13722,7 +13723,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15075:
+        case BP_COAL:
             tig_art_item_id_create(93, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13735,7 +13736,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case 15076:
+        case BP_MAGNESIUM:
             tig_art_item_id_create(43, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13748,7 +13749,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15077:
+        case BP_METAL_SHAVINGS:
             tig_art_item_id_create(54, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13761,7 +13762,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case 15078:
+        case BP_GUN_CHASSIS:
             tig_art_item_id_create(45, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13774,7 +13775,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             break;
-        case 15079:
+        case BP_REVOLVER_CHAMBER:
             tig_art_item_id_create(46, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13787,7 +13788,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15080:
+        case BP_SPIKE_TRAP:
             tig_art_item_id_create(15, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13806,7 +13807,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
-        case 15081:
+        case BP_AUTO_SKELETON_KEY:
             tig_art_item_id_create(192, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13822,7 +13823,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x2);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x180);
             break;
-        case 15082:
+        case BP_LARGE_SPRING:
             tig_art_item_id_create(9, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13835,7 +13836,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15083:
+        case BP_SMALL_SPRING:
             tig_art_item_id_create(13, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13848,7 +13849,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             break;
-        case 15084:
+        case BP_LOCKPICKS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13864,7 +13865,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x2);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x180);
             break;
-        case 15085:
+        case BP_PURE_ORE:
             tig_art_item_id_create(63, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13878,7 +13879,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             obj_field_int32_set(obj, OBJ_F_NAME, 5622);
             break;
-        case 15086:
+        case BP_IRON_ORE:
             tig_art_item_id_create(61, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13891,7 +13892,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15087:
+        case BP_STEEL:
             tig_art_item_id_create(65, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13904,7 +13905,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15088:
+        case BP_FINE_HILT_AND_GUARD:
             tig_art_item_id_create(59, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13917,7 +13918,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15089:
+        case BP_THERMOMETER:
             tig_art_item_id_create(66, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13930,7 +13931,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             break;
-        case 15090:
+        case BP_SMALL_STEAM_ENGINE:
             tig_art_item_id_create(7, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13943,7 +13944,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             break;
-        case 15091:
+        case BP_LARGE_GEARS:
             tig_art_item_id_create(8, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13956,7 +13957,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 250);
             break;
-        case 15092:
+        case BP_MECHANIZED_ARACHNID_POISON:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13975,7 +13976,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15093:
+        case BP_ANCIENT_GUN_CHASSIS:
             tig_art_item_id_create(92, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -13988,7 +13989,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             break;
-        case 15094:
+        case BP_MITHRIL_ORE:
             tig_art_item_id_create(58, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14002,7 +14003,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_NAME, 5638);
             break;
-        case 15095:
+        case BP_WINE_GLASS:
             tig_art_item_id_create(89, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14018,7 +14019,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5639);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
-        case 15096:
+        case BP_EMPTY_VIAL:
             tig_art_item_id_create(87, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14034,7 +14035,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5641);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
-        case 15097:
+        case BP_CRASH_SITE_CAMERA:
             tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14048,7 +14049,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15098:
+        case BP_SMALL_STATUETTE:
             tig_art_item_id_create(2, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14060,7 +14061,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15099:
+        case BP_CHEST_OF_GOLD:
             tig_art_item_id_create(4, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14072,7 +14073,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 6000);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3000);
             break;
-        case 15100:
+        case BP_BEAR_TRAP:
             tig_art_item_id_create(5, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14091,7 +14092,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
-        case 15101:
+        case BP_METAL_CLAMP:
             tig_art_item_id_create(6, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14104,7 +14105,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             break;
-        case 15102:
+        case BP_TRAP_SPRINGER:
             tig_art_item_id_create(19, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14120,7 +14121,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             break;
-        case 15103:
+        case BP_POCKET_WATCH_PARTS:
             tig_art_item_id_create(20, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14133,7 +14134,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3);
             break;
-        case 15104:
+        case BP_VASE:
             tig_art_item_id_create(21, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14145,7 +14146,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15105:
+        case BP_MUSIC_BOX:
             tig_art_item_id_create(22, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14158,7 +14159,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15106:
+        case BP_CANDLE_STICK:
             tig_art_item_id_create(23, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14170,7 +14171,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15107:
+        case BP_OLD_GEARS:
             tig_art_item_id_create(27, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14183,7 +14184,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 130);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             break;
-        case 15108:
+        case BP_ELECTRICAL_HARNESS:
             tig_art_item_id_create(30, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14196,7 +14197,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             break;
-        case 15109:
+        case BP_LARGE_CAPACITOR:
             tig_art_item_id_create(35, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14209,7 +14210,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15110:
+        case BP_TESLA_COIL:
             tig_art_item_id_create(38, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14222,7 +14223,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             break;
-        case 15111:
+        case BP_BLACK_POWDER:
             tig_art_item_id_create(41, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14235,7 +14236,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             break;
-        case 15112:
+        case BP_FIRE_OBSTRUCTION_1:
             tig_art_item_id_create(42, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14251,7 +14252,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             break;
-        case 15113:
+        case BP_BREACH_LOADING_CHAMBER:
             tig_art_item_id_create(44, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14264,7 +14265,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             break;
-        case 15114:
+        case BP_AUTO_LOADING_CHAMBER:
             tig_art_item_id_create(47, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14277,7 +14278,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             break;
-        case 15115:
+        case BP_CLOCK_PARTS:
             tig_art_item_id_create(48, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14290,7 +14291,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15116:
+        case BP_CLOCKWORK_DECOY_ITEM:
             tig_art_item_id_create(49, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14308,7 +14309,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             break;
-        case 15117:
+        case BP_POCKET_WATCH:
             tig_art_item_id_create(50, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14321,7 +14322,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15118:
+        case BP_SMALL_METAL_TUBE:
             tig_art_item_id_create(112, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14334,7 +14335,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15119:
+        case BP_LEATHER_STRAPS:
             tig_art_item_id_create(53, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14347,7 +14348,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             break;
-        case 15120:
+        case BP_ELECTRICAL_COMPONENT:
             tig_art_item_id_create(55, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14360,7 +14361,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             break;
-        case 15121:
+        case BP_LOOKING_GLASS:
             tig_art_item_id_create(56, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14373,7 +14374,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15122:
+        case BP_DWARVEN_ORE:
             tig_art_item_id_create(57, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14386,7 +14387,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             break;
-        case 15123:
+        case BP_SPOOL_OF_HEAVY_WIRE:
             tig_art_item_id_create(60, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14399,7 +14400,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15124:
+        case BP_OAK_AXE_HANDLE_GENERIC:
             tig_art_item_id_create(62, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14412,7 +14413,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15125:
+        case BP_SHEET_METAL:
             tig_art_item_id_create(64, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14425,7 +14426,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 300);
             break;
-        case 15126:
+        case BP_SHOVEL:
             tig_art_item_id_create(73, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14442,7 +14443,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2942;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15127:
+        case BP_CRYSTAL_BALL:
             tig_art_item_id_create(82, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14457,7 +14458,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2947;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
-        case 15128:
+        case BP_ROUGH_CUT_SAPPHIRE:
             tig_art_item_id_create(83, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14469,7 +14470,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15129:
+        case BP_ROUGH_CUT_EMERALD:
             tig_art_item_id_create(84, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14481,7 +14482,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15130:
+        case BP_ROUGH_CUT_DIAMOND:
             tig_art_item_id_create(85, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14493,7 +14494,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15131:
+        case BP_ROUGH_CUT_RUBY:
             tig_art_item_id_create(86, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14507,7 +14508,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             break;
-        case 15132:
+        case BP_EXPLOSIVE_GRENADE:
             tig_art_item_id_create(119, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14524,7 +14525,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15133:
+        case BP_AUTOMATON_NPC:
             tig_art_item_id_create(96, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14543,7 +14544,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15134:
+        case BP_DYNAMITE:
             tig_art_item_id_create(25, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14559,7 +14560,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
-        case 15135:
+        case BP_BROMIDE:
             tig_art_item_id_create(98, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14572,7 +14573,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15136:
+        case BP_POTASSIUM_CHLORIDE:
             tig_art_item_id_create(99, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14585,7 +14586,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15137:
+        case BP_SMALL_ELECTRICAL_PARTS:
             tig_art_item_id_create(55, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14598,7 +14599,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15138:
+        case BP_SALTPETER:
             tig_art_item_id_create(101, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14611,7 +14612,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             break;
-        case 15139:
+        case BP_NITROGLYCERIN:
             tig_art_item_id_create(103, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14624,7 +14625,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case 15140:
+        case BP_ELECTRICAL_COIL:
             tig_art_item_id_create(104, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14637,7 +14638,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15141:
+        case BP_METAL_CAN:
             tig_art_item_id_create(106, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14650,7 +14651,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15142:
+        case BP_ENGINE_MUFFLER:
             tig_art_item_id_create(108, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14663,7 +14664,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15143:
+        case BP_METAL_CASING:
             tig_art_item_id_create(109, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14676,7 +14677,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15144:
+        case BP_CHARCOAL:
             tig_art_item_id_create(111, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14689,7 +14690,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15145:
+        case BP_TOMS_FERTILIZER:
             tig_art_item_id_create(114, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14702,7 +14703,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15146:
+        case BP_STEARIC_ACID:
             tig_art_item_id_create(115, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14715,7 +14716,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15147:
+        case BP_LIQUID_SOAP:
             tig_art_item_id_create(116, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14728,7 +14729,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15148:
+        case BP_BROKEN_FLINTLOCK_PISTOL:
             tig_art_item_id_create(117, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14741,7 +14742,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15149:
+        case BP_COMPASS:
             tig_art_item_id_create(113, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14754,7 +14755,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15150:
+        case BP_FLASH_GRENADE:
             tig_art_item_id_create(118, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14771,7 +14772,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15151:
+        case BP_SMOKE_GRENADE:
             tig_art_item_id_create(120, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14788,7 +14789,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15152:
+        case BP_STUN_GRENADE:
             tig_art_item_id_create(121, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14805,7 +14806,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15153:
+        case BP_FIRE_OBSTRUCTION_2:
             tig_art_item_id_create(122, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14822,7 +14823,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15154:
+        case BP_REVOLVER_PARTS:
             tig_art_item_id_create(117, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14835,7 +14836,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15155:
+        case BP_DWARVEN_STEEL:
             tig_art_item_id_create(64, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14848,7 +14849,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 300);
             break;
-        case 15156:
+        case BP_CAMERA:
             tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14862,7 +14863,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15157:
+        case BP_COMPONENT_1:
             tig_art_item_id_create(128, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14873,7 +14874,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15158:
+        case BP_COMPONENT_2:
             tig_art_item_id_create(129, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14884,7 +14885,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15159:
+        case BP_JADE_WIZARD_STATUETTE:
             tig_art_item_id_create(2, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14901,7 +14902,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 3);
             break;
-        case 15160:
+        case BP_KATHORN_CRYSTAL:
             tig_art_item_id_create(130, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14913,7 +14914,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5693);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15161:
+        case BP_KNOCK_OUT_GAS_GRENADE:
             tig_art_item_id_create(136, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14930,7 +14931,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15162:
+        case BP_HALLUCINATION_GRENADE:
             tig_art_item_id_create(137, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14947,7 +14948,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15163:
+        case BP_ELECTROCUTION_GRENADE:
             tig_art_item_id_create(138, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14964,7 +14965,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15164:
+        case BP_CONCUSSION_GRENADE:
             tig_art_item_id_create(140, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14981,7 +14982,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15165:
+        case BP_PARALYSIS_GRENADE:
             tig_art_item_id_create(141, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -14998,7 +14999,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15166:
+        case BP_MUSTARD_GAS_GRENADE:
             tig_art_item_id_create(142, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15015,7 +15016,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 16);
             break;
-        case 15167:
+        case BP_BOAT_RIGGING:
             tig_art_item_id_create(147, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15028,7 +15029,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             break;
-        case 15168:
+        case BP_NOISE_MAKER_DECOY:
             tig_art_item_id_create(135, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15041,7 +15042,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             break;
-        case 15169:
+        case BP_CLOCKWORK_PHYSICIAN:
             tig_art_item_id_create(49, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15054,8 +15055,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             break;
-        case 15170:
-        case 15171:
+        case BP_ILLUMINATED_DECOY:
+        case BP_EXPLOSIVE_DECOY:
             tig_art_item_id_create(49, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15069,7 +15070,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15172:
+        case BP_AUTOMATON_GUNNER:
             tig_art_item_id_create(96, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15088,7 +15089,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15173:
+        case BP_TIME_BOMB:
             tig_art_item_id_create(139, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15104,7 +15105,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
-        case 15174:
+        case BP_PLASTIQUE:
             tig_art_item_id_create(143, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15118,7 +15119,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_NAME, 5699);
             break;
-        case 15175:
+        case BP_DETONATOR:
             tig_art_item_id_create(144, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15134,7 +15135,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 29019;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15176:
+        case BP_MEDICAL_ARACHNID_NPC:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15148,7 +15149,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15177:
+        case BP_MINUTE_STEAM_WORKS:
             tig_art_item_id_create(148, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15161,7 +15162,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             break;
-        case 15178:
+        case BP_CRUDE_LOCKPICKS:
             tig_art_item_id_create(10, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15177,7 +15178,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x2);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x180);
             break;
-        case 15179:
+        case BP_BANDAGES:
             tig_art_item_id_create(176, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15192,7 +15193,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x180);
             break;
-        case 15180:
+        case BP_DEED_TO_THE_BESSIE_TOONE_MINE:
             tig_art_item_id_create(156, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15208,7 +15209,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
-        case 15181:
+        case BP_LITANI:
             tig_art_item_id_create(158, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15220,7 +15221,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5682);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case 15182:
+        case BP_HEARTSTONE:
             tig_art_item_id_create(151, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15232,7 +15233,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5683);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15183:
+        case BP_MNURA_COIN:
             tig_art_item_id_create(157, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15244,7 +15245,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5691);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15184:
+        case BP_LAVA_ROCK:
             tig_art_item_id_create(152, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15256,7 +15257,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5685);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 8);
             break;
-        case 15185:
+        case BP_OLIVE_BRANCH:
             tig_art_item_id_create(153, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15268,7 +15269,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5686);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case OBJ_F_KEY_KEY_ID:
+        case BP_GEODE:
             tig_art_item_id_create(150, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15280,7 +15281,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5688);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             break;
-        case 15187:
+        case BP_BLACK_DIAMOND:
             tig_art_item_id_create(149, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15292,7 +15293,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5687);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3);
             break;
-        case 15188:
+        case BP_CHEMISTRY_MANUALS:
             tig_art_item_id_create(159, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15312,7 +15313,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2914;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15189:
+        case BP_EXPLOSIVES_MANUALS:
             tig_art_item_id_create(160, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15332,7 +15333,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2916;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15190:
+        case BP_HERBOLOGY_MANUALS:
             tig_art_item_id_create(162, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15352,7 +15353,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2913;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15191:
+        case BP_ELECTRICAL_MANUALS:
             tig_art_item_id_create(166, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15372,7 +15373,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2915;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15192:
+        case BP_THERAPEUTICS_MANUALS:
             tig_art_item_id_create(161, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15392,7 +15393,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2920;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15193:
+        case BP_MECHANICAL_MANUALS:
             tig_art_item_id_create(165, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15412,7 +15413,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2918;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15194:
+        case BP_SMITHY_MANUALS:
             tig_art_item_id_create(163, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15432,7 +15433,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2919;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15195:
+        case BP_GUNSMITHY_MANUALS:
             tig_art_item_id_create(164, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15452,7 +15453,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 2917;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
-        case 15196:
+        case BP_VENDIGROTHIAN_SHEET_METAL:
             tig_art_item_id_create(169, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15465,7 +15466,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             break;
-        case 15197:
+        case BP_UNKNOWN_CHEMICAL_COMPOUND:
             tig_art_item_id_create(170, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15478,7 +15479,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             break;
-        case 15198:
+        case BP_VOID_ANIMAL_CARCASS:
             tig_art_item_id_create(191, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15492,7 +15493,7 @@ void sub_468930(int64_t obj, int description)
             scr.num = 30283;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
-        case 15199:
+        case BP_AUTHENTIC_STILLWATER_GIANT_PELT:
             tig_art_item_id_create(71, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15504,7 +15505,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_NAME, 5613);
             break;
-        case 15200:
+        case BP_EMERALD:
             tig_art_item_id_create(179, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15515,7 +15516,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15201:
+        case BP_RUBY:
             tig_art_item_id_create(180, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15527,7 +15528,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             break;
-        case 15202:
+        case BP_SAPPHIRE:
             tig_art_item_id_create(181, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15538,7 +15539,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15203:
+        case BP_DIAMOND:
             tig_art_item_id_create(178, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15549,7 +15550,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15204:
+        case BP_STAR_RUBY:
             tig_art_item_id_create(182, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15561,7 +15562,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             break;
-        case 15205:
+        case BP_STAR_SAPPHIRE:
             tig_art_item_id_create(183, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15572,7 +15573,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             break;
-        case 15206:
+        case BP_MEDICAL_KIT:
             tig_art_item_id_create(177, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15587,7 +15588,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x180);
             break;
-        case 15207:
+        case BP_KEROSENE:
             tig_art_item_id_create(185, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15600,7 +15601,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             break;
-        case 15208:
+        case BP_RAG:
             tig_art_item_id_create(OBJ_F_KEY_KEY_ID, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15611,7 +15612,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             break;
-        case 15209:
+        case BP_MOLOTOV_COCKTAIL:
             tig_art_item_id_create(184, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15627,7 +15628,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 65664);
             break;
-        case 15210:
+        case BP_WISP_ESSENCE:
             tig_art_item_id_create(188, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15642,7 +15643,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15211:
+        case BP_VOLARS_WISP_ESSENCE:
             tig_art_item_id_create(187, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15657,7 +15658,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             break;
-        case 15212:
+        case BP_MEDICAL_ARACHINID:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15684,13 +15685,13 @@ void sub_468930(int64_t obj, int description)
         tig_art_light_id_create(6, 0, 0, 1, &rgb);
         obj_field_int32_set(obj, OBJ_F_SHADOW, rgb);
         switch (description) {
-        case 16066:
+        case BP_GENERIC_PC:
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
             obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, "none");
             obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, 1005);
             object_hp_damage_set(obj, 0);
             break;
-        case 16067:
+        case BP_MERWIN_TUMBLEBROOK:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 76);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_HALFLING);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15703,7 +15704,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1039);
             object_hp_damage_set(obj, 0);
             break;
-        case 16068:
+        case BP_GODFREY_CASTLEBURGER:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 77);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALFLING, GENDER_MALE, RACE_GNOME);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15716,7 +15717,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1040);
             object_hp_damage_set(obj, 0);
             break;
-        case 16069:
+        case BP_HORACE_MCGINLEY:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 78);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15729,7 +15730,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1041);
             object_hp_damage_set(obj, 0);
             break;
-        case 16070:
+        case BP_MUCK_EVIL_EYE:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 79);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HALF_OGRE, GENDER_MALE, RACE_HALF_OGRE);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15742,7 +15743,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1042);
             object_hp_damage_set(obj, 0);
             break;
-        case 16071:
+        case BP_DREN_LELOR:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 80);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_MALE, RACE_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15755,7 +15756,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1043);
             object_hp_damage_set(obj, 0);
             break;
-        case 16072:
+        case BP_SOLOMON_DOONE:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 81);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HUMAN);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15768,7 +15769,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1044);
             object_hp_damage_set(obj, 0);
             break;
-        case 16073:
+        case BP_MERIK_LUGGERTON:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 82);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_MALE, RACE_HALF_ORC);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15781,7 +15782,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1045);
             object_hp_damage_set(obj, 0);
             break;
-        case 16074:
+        case BP_LUGARD_BLOODSTONE:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 83);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_DWARF, GENDER_MALE, RACE_DWARF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15794,7 +15795,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1046);
             object_hp_damage_set(obj, 0);
             break;
-        case 16075:
+        case BP_VICTORIA_WARRINGTON:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 84);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HUMAN);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15807,7 +15808,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1047);
             object_hp_damage_set(obj, 0);
             break;
-        case 16076:
+        case BP_BELAN_TSERAA:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 85);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_ELF, GENDER_FEMALE, RACE_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15820,7 +15821,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1048);
             object_hp_damage_set(obj, 0);
             break;
-        case 16077:
+        case BP_CLARISSE_VORAK:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 86);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ORC);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15833,7 +15834,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1049);
             object_hp_damage_set(obj, 0);
             break;
-        case 16078:
+        case BP_KEREE_MELANGE:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 87);
             object_set_gender_and_race(obj, TIG_ART_CRITTER_RACE_HUMAN, GENDER_FEMALE, RACE_HALF_ELF);
             str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
@@ -15852,9 +15853,9 @@ void sub_468930(int64_t obj, int description)
         }
         break;
     case OBJ_TYPE_NPC:
-        if (description >= 27309 && description < 27394) {
+        if (description >= BP_UNIQUE_NPC_BEGIN && description < BP_UNIQUE_NPC_END) {
             sub_49B010(obj, description);
-        } else if (description >= 28310 && description < 28472) {
+        } else if (description >= BP_MONSTER_BEGIN && description < BP_MONSTER_END) {
             sub_49B220(obj, description);
         } else {
             sub_49AFF0(obj, description);
@@ -15866,7 +15867,7 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
         obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100);
         switch (description) {
-        case 26000:
+        case BP_MAGICKAL_TRAP:
             tig_art_eye_candy_id_create(0x163, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15876,7 +15877,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26001:
+        case BP_MECHANICAL_TRAP:
             tig_art_eye_candy_id_create(0x164, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15886,7 +15887,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26002:
+        case BP_ARROW_TRAP:
             tig_art_eye_candy_id_create(0x15Fu, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15896,7 +15897,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26003:
+        case BP_BULLET_TRAP:
             tig_art_eye_candy_id_create(0x162, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15906,7 +15907,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26004:
+        case BP_FIRE_TRAP:
             tig_art_eye_candy_id_create(0x161, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15916,7 +15917,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26005:
+        case BP_ELECTRICAL_TRAP:
             tig_art_eye_candy_id_create(0x160, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15926,7 +15927,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26006:
+        case BP_POISON_TRAP:
             tig_art_eye_candy_id_create(0x165, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
@@ -15936,7 +15937,7 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
-        case 26007:
+        case BP_SOURCE_TRAP:
             tig_art_scenery_id_create(0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -15966,21 +15967,21 @@ void sub_49B010(int64_t obj, int description)
     obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
 
     switch (description) {
-    case 27309:
+    case BP_BASIC_FEMALE_NPC:
         sub_49AFF0(obj, 17081);
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27309);
         tig_art_unique_npc_id_create(11, 0, 0, 4, 0, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_AID, art_id);
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         break;
-    case 27310:
+    case BP_BASIC_MALE_NPC:
         sub_49AFF0(obj, 17082);
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27310);
         tig_art_unique_npc_id_create(2, 0, 0, 4, 0, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_AID, art_id);
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         break;
-    case 27311:
+    case BP_PAPERBOY:
         sub_49AFF0(obj, 17082);
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27311);
         scr.num = 1498;
@@ -15988,14 +15989,14 @@ void sub_49B010(int64_t obj, int description)
         scr.num = 1499;
         obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_FIRST_HEARTBEAT, &scr);
         break;
-    case 27319:
+    case BP_SOUL_SLAVE:
         sub_49AFF0(obj, 17082);
         scr.num = 30117;
         obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
         scr.num = 30118;
         obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
         break;
-    case 27320:
+    case BP_PALADIN_SLAVE:
         sub_49AFF0(obj, 17082);
         scr.num = 30119;
         obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
@@ -16065,15 +16066,13 @@ void sub_49B340(int64_t obj, int description)
     int gender;
     int race;
 
-    if (description >= 28310 && description < 28472) {
-        // FIXME: Probably wrong, the 28310-28472 range is for UNIQUE NPC.
+    if (description >= BP_MONSTER_BEGIN && description < BP_MONSTER_END) {
         stream = tig_file_fopen("rules\\monster.txt", "rt");
         type = 2;
-    } else if (description >= 27309 && description < 27394) {
-        // FIXME: Probably wrong, the 27309-27394 range is for MONSTER.
+    } else if (description >= BP_UNIQUE_NPC_BEGIN && description < BP_UNIQUE_NPC_END) {
         stream = tig_file_fopen("rules\\unique.txt", "rt");
         type = 1;
-    } else if (description >= 17067 && description < 17317) {
+    } else if (description >= BP_NPC_BEGIN && description < BP_NPC_END) {
         stream = tig_file_fopen("rules\\npc.txt", "rt");
         type = 0;
     } else {

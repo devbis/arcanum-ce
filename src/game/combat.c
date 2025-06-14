@@ -9,6 +9,7 @@
 #include "game/animfx.h"
 #include "game/ci.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/effect.h"
 #include "game/fate.h"
 #include "game/gamelib.h"
@@ -443,7 +444,7 @@ void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t
     unsigned int weapon_flags;
     unsigned int critter_flags2;
 
-    if (mp_object_create(5028, loc, &missile_obj)) {
+    if (mp_object_create(BP_PROJECTILE, loc, &missile_obj)) {
         mp_obj_field_int32_set(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE, combat->dam_flags);
         if ((combat->flags & 0x100) != 0) {
             hit_loc = combat->dam[DAMAGE_TYPE_NORMAL];

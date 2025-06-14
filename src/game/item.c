@@ -4,6 +4,7 @@
 #include "game/background.h"
 #include "game/critter.h"
 #include "game/description.h"
+#include "game/descriptions.h"
 #include "game/invensource.h"
 #include "game/magictech.h"
 #include "game/mes.h"
@@ -80,18 +81,18 @@ static bool item_decay_timeevent_check(TimeEvent* timeevent);
 
 // 0x5B32A0
 static int dword_5B32A0[TIG_ART_AMMO_TYPE_COUNT] = {
-    OBJ_F_CRITTER_ARROWS,
-    OBJ_F_CRITTER_BULLETS,
-    OBJ_F_CRITTER_POWER_CELLS,
-    OBJ_F_CRITTER_FUEL,
+    /*  TIG_ART_AMMO_TYPE_ARROW */ OBJ_F_CRITTER_ARROWS,
+    /* TIG_ART_AMMO_TYPE_BULLET */ OBJ_F_CRITTER_BULLETS,
+    /* TIG_ART_AMMO_TYPE_CHARGE */ OBJ_F_CRITTER_POWER_CELLS,
+    /*   TIG_ART_AMMO_TYPE_FUEL */ OBJ_F_CRITTER_FUEL,
 };
 
 // 0x5B32B0
 static int dword_5B32B0[TIG_ART_AMMO_TYPE_COUNT] = {
-    7038,
-    7039,
-    7040,
-    7041,
+    /*  TIG_ART_AMMO_TYPE_ARROW */ BP_ARROW,
+    /* TIG_ART_AMMO_TYPE_BULLET */ BP_BULLET,
+    /* TIG_ART_AMMO_TYPE_CHARGE */ BP_BATTERY,
+    /*   TIG_ART_AMMO_TYPE_FUEL */ BP_FUEL,
 };
 
 // 0x5B32C0
@@ -251,15 +252,15 @@ void item_generate_inventory(int64_t critter_obj)
             switch (item_armor_size(race)) {
             case OARF_SIZE_SMALL:
                 // "Small Ladies City Dweller Clothes"
-                proto_obj = sub_4685A0(8134);
+                proto_obj = sub_4685A0(BP_SMALL_LADIES_CITY_DWELLER_CLOTHES);
                 break;
             case OARF_SIZE_MEDIUM:
                 // "Plain Dress"
-                proto_obj = sub_4685A0(8133);
+                proto_obj = sub_4685A0(BP_PLAIN_DRESS);
                 break;
             case OARF_SIZE_LARGE:
                 // "Small Ladies City Dweller Clothes""
-                proto_obj = sub_4685A0(8135);
+                proto_obj = sub_4685A0(BP_LARGE_LADIES_CITY_DWELLER_CLOTHES);
                 break;
             default:
                 // Should be unreachable.
@@ -269,15 +270,15 @@ void item_generate_inventory(int64_t critter_obj)
             switch (item_armor_size(race)) {
             case OARF_SIZE_SMALL:
                 // "Small Nice Suit"
-                proto_obj = sub_4685A0(8065);
+                proto_obj = sub_4685A0(BP_SMALL_NICE_SUIT);
                 break;
             case OARF_SIZE_MEDIUM:
                 // "Nice Suit"
-                proto_obj = sub_4685A0(8049);
+                proto_obj = sub_4685A0(BP_NICE_SUIT);
                 break;
             case OARF_SIZE_LARGE:
                 // "Large Nice Suit"
-                proto_obj = sub_4685A0(8069);
+                proto_obj = sub_4685A0(BP_LARGE_NICE_SUIT);
                 break;
             default:
                 // Should be unreachable.
@@ -294,15 +295,15 @@ void item_generate_inventory(int64_t critter_obj)
                 switch (item_armor_size(race)) {
                 case OARF_SIZE_SMALL:
                     // "Small Jacket"
-                    proto_obj = sub_4685A0(8118);
+                    proto_obj = sub_4685A0(BP_SMALL_JACKET);
                     break;
                 case OARF_SIZE_MEDIUM:
                     // "Jacket"
-                    proto_obj = sub_4685A0(8110);
+                    proto_obj = sub_4685A0(BP_JACKET);
                     break;
                 case OARF_SIZE_LARGE:
                     // "Rags"
-                    proto_obj = sub_4685A0(8126);
+                    proto_obj = sub_4685A0(BP_LARGE_JACKET);
                     break;
                 default:
                     // Should be unreachable.
@@ -318,7 +319,7 @@ void item_generate_inventory(int64_t critter_obj)
 
     if (tech_skill_points_get(critter_obj, TECH_SKILL_PICK_LOCKS) > 0) {
         // "Crude Lockpicks"
-        proto_obj = sub_4685A0(15178);
+        proto_obj = sub_4685A0(BP_CRUDE_LOCKPICKS);
         if (object_create(proto_obj, loc, &item_obj)) {
             item_transfer(item_obj, critter_obj);
         }
@@ -326,7 +327,7 @@ void item_generate_inventory(int64_t critter_obj)
 
     if (basic_skill_points_get(critter_obj, BASIC_SKILL_HEAL) > 0) {
         // "Bandages"
-        proto_obj = sub_4685A0(15179);
+        proto_obj = sub_4685A0(BP_BANDAGES);
         if (object_create(proto_obj, loc, &item_obj)) {
             item_transfer(item_obj, critter_obj);
         }
@@ -1315,7 +1316,7 @@ int64_t item_find_first_matching_prototype(int64_t parent_obj, int64_t existing_
     int64_t prototype_obj;
     int64_t item_obj;
 
-    if (sub_49B290(existing_item_obj) == 15065) {
+    if (sub_49B290(existing_item_obj) == BP_GENERIC_ITEM_1A) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -1352,7 +1353,7 @@ int64_t sub_462A30(int64_t obj, int64_t a2)
     int64_t item_obj;
     int inventory_location;
 
-    if (sub_49B290(a2) == 15065) {
+    if (sub_49B290(a2) == BP_GENERIC_ITEM_1A) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -1392,7 +1393,7 @@ int item_count_items_matching_prototype(int64_t obj, int64_t a2)
     int64_t item_obj;
     int ret = 1;
 
-    if (sub_49B290(a2) == 15065) {
+    if (sub_49B290(a2) == BP_GENERIC_ITEM_1A) {
         return ret;
     }
 
@@ -1786,7 +1787,7 @@ bool sub_463540(int64_t container_obj)
     }
 
     dword_5E8824 = true;
-    if (sub_49B290(container_obj) == 3023) {
+    if (sub_49B290(container_obj) == BP_JUNK_PILE) {
         cnt = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_INVENTORY_NUM);
         if (cnt == 0) {
             object_destroy(container_obj);
@@ -1947,7 +1948,7 @@ void sub_4639E0(int64_t obj, bool a2)
     int64_t loc;
     int64_t item_obj;
 
-    if (sub_49B290(obj) == 3023) {
+    if (sub_49B290(obj) == BP_JUNK_PILE) {
         return;
     }
 
@@ -2540,7 +2541,7 @@ int64_t item_gold_create(int amount, int64_t loc)
 {
     int64_t gold_obj;
 
-    if (mp_object_create(9056, loc, &gold_obj)) {
+    if (mp_object_create(BP_GOLD, loc, &gold_obj)) {
         mp_obj_field_int32_set(gold_obj, OBJ_F_GOLD_QUANTITY, amount);
     }
 
@@ -4030,7 +4031,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     object_list_location(loc, OBJ_TM_CONTAINER, &objects);
     node = objects.head;
     while (node != NULL) {
-        if (sub_49B290(node->obj) == 3023) {
+        if (sub_49B290(node->obj) == BP_JUNK_PILE) {
             inventory_location = item_find_free_inv_loc_for_insertion(obj, node->obj);
             if (inventory_location != -1) {
                 item_insert(obj, node->obj, inventory_location);
@@ -4047,7 +4048,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     node = objects.head;
     while (node != NULL) {
         if (new_container_obj == OBJ_HANDLE_NULL) {
-            if (!mp_object_create(3023, loc, &new_container_obj)) {
+            if (!mp_object_create(BP_JUNK_PILE, loc, &new_container_obj)) {
                 if (!tig_net_is_active()
                     || tig_net_is_host()) {
                     rc = false;
@@ -4695,7 +4696,7 @@ bool item_can_decay(int64_t obj)
     }
 
     return !item_parent(obj, &owner_obj)
-        || sub_49B290(owner_obj) == DESCRIPTION_JUNK_PILE;
+        || sub_49B290(owner_obj) == BP_JUNK_PILE;
 }
 
 // 0x468090

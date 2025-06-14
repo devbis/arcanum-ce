@@ -5,6 +5,7 @@
 #include "game/ai.h"
 #include "game/animfx.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
@@ -4266,7 +4267,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
     ASSERT(obj_ptr != NULL); // 3074, "obj != NULL"
 
     if (multiplayer_is_locked() || tig_net_is_host()) {
-        proto_obj = sub_4685A0(5028);
+        proto_obj = sub_4685A0(BP_PROJECTILE);
 
         if (tig_net_is_active()
             && !tig_net_is_host()) {
@@ -7928,7 +7929,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
     }
 
     if (item_parent(target_obj, &parent_obj)) {
-        if (parent_obj == OBJ_HANDLE_NULL || sub_49B290(parent_obj) != 3023) {
+        if (parent_obj == OBJ_HANDLE_NULL || sub_49B290(parent_obj) != BP_JUNK_PILE) {
             return false;
         }
     }
@@ -13066,7 +13067,7 @@ void sub_432D90(int64_t obj)
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
-    object_create(sub_4685A0(4028), loc, &blood_obj);
+    object_create(sub_4685A0(BP_POOL_OF_BLOOD), loc, &blood_obj);
     blood_art_id = obj_field_int32_get(blood_obj, OBJ_F_CURRENT_AID);
 
     // FIXME: Useless.

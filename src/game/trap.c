@@ -4,6 +4,7 @@
 #include "game/animfx.h"
 #include "game/combat.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/mes.h"
@@ -412,10 +413,10 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         switch (spl) {
         case 176:
             ai_notify_explosion_dynamite(pc_obj);
-            prototype_handle = sub_4685A0(4047);
+            prototype_handle = sub_4685A0(BP_LIT_DYNAMITE);
             break;
         case 220:
-            prototype_handle = sub_4685A0(4049);
+            prototype_handle = sub_4685A0(BP_TICKING_TIME_BOMB);
             break;
         default:
             prototype_handle = OBJ_HANDLE_NULL;
@@ -449,7 +450,9 @@ bool trap_use_at_loc(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
     if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
         name = dword_5B5F60[scr.num - TRAP_SCRIPT_FIRST];
     } else {
-        name = trap_type_from_scr(&scr) == TRAP_TYPE_MAGICAL ? 26000 : 26001;
+        name = trap_type_from_scr(&scr) == TRAP_TYPE_MAGICAL
+            ? BP_MAGICKAL_TRAP
+            : BP_MECHANICAL_TRAP;
     }
 
     prototype_handle = sub_4685A0(name);
@@ -564,7 +567,9 @@ bool get_disarm_item_name(int64_t trap_obj, int* name_ptr)
     }
 
     if ((obj_field_int32_get(trap_obj, OBJ_F_FLAGS) & OF_TRAP_PC) != 0) {
-        *name_ptr = ((scr.hdr.counters >> 24) & 0xFF) != 0 ? 15101 : 6047;
+        *name_ptr = ((scr.hdr.counters >> 24) & 0xFF) != 0
+            ? BP_METAL_CLAMP
+            : BP_RAILROAD_SPIKE;
         return true;
     }
 

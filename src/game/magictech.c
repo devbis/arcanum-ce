@@ -10,6 +10,7 @@
 #include "game/area.h"
 #include "game/combat.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/effect.h"
 #include "game/fate.h"
 #include "game/gsound.h"
@@ -473,65 +474,65 @@ static int dword_5B0DE0[] = {
 };
 
 // 0x5B0DF8
-static MagicTechSummonTableEntry stru_5B0DF8[6] = {
-    { 20, 28319 },
-    { 1, 28360 },
-    { 19, 28329 },
-    { 20, 28330 },
-    { 20, 28332 },
-    { 20, 28334 },
+static MagicTechSummonTableEntry stru_5B0DF8[] = {
+    { 20, BP_WOLF },
+    { 1, BP_VORPAL_BUNNY },
+    { 19, BP_FOREST_APE },
+    { 20, BP_GRIZZLY_BEAR },
+    { 20, BP_COUGAR },
+    { 20, BP_TIGER },
 };
 
 // 0x5B0E28
-static MagicTechSummonTableEntry stru_5B0E28[6] = {
-    { 20, 28324 },
-    { 20, 28333 },
-    { 20, 28331 },
-    { 20, 28333 },
-    { 20, 28335 },
-    { 20, 28336 },
+static MagicTechSummonTableEntry stru_5B0E28[] = {
+    { 20, BP_BUNNY },
+    { 20, BP_SHEEP },
+    { 20, BP_CHICKEN },
+    { 20, BP_SHEEP },
+    { 20, BP_PIG },
+    { 20, BP_COW },
 };
 
 // 0x5B0E58
-static MagicTechSummonTableEntry stru_5B0E58[2] = {
-    { 99, 28343 },
-    { 1, 28360 },
+static MagicTechSummonTableEntry stru_5B0E58[] = {
+    { 99, BP_PATRIARCH_WOLF },
+    { 1, BP_VORPAL_BUNNY },
 };
 
 // 0x5B0E68
-static MagicTechSummonTableEntry stru_5B0E68[4] = {
-    { 25, 27371 },
-    { 50, 27372 },
-    { 75, 27373 },
-    { 1000, 27374 },
+static MagicTechSummonTableEntry stru_5B0E68[] = {
+    { 25, BP_FAMILIAR_UNDERLING },
+    { 50, BP_FAMILIAR },
+    { 75, BP_FAMILIAR_SLASHER },
+    { 1000, BP_FAMILIAR_BLOOD_CLAW },
 };
 
 // 0x5B0E88
-static MagicTechSummonTableEntry stru_5B0E88[6] = {
-    { 20, 28319 },
-    { 40, 28332 },
-    { 55, 28334 },
-    { 70, 28330 },
-    { 95, 28329 },
-    { 1000, 28360 },
+static MagicTechSummonTableEntry stru_5B0E88[] = {
+    { 20, BP_WOLF },
+    { 40, BP_COUGAR },
+    { 55, BP_TIGER },
+    { 70, BP_GRIZZLY_BEAR },
+    { 95, BP_FOREST_APE },
+    { 1000, BP_VORPAL_BUNNY },
 };
 
 // 0x5B0EB8
-static MagicTechSummonTableEntry stru_5B0EB8[4] = {
-    { 20, 28468 },
-    { 60, 28469 },
-    { 85, 28470 },
-    { 1000, 28471 },
+static MagicTechSummonTableEntry stru_5B0EB8[] = {
+    { 20, BP_DECAYED_SOLDIER },
+    { 60, BP_RAGGED_FIGHTER },
+    { 85, BP_SKELETON_WARRIOR },
+    { 1000, BP_UNDEAD_CHAMPION },
 };
 
 // 0x5B0ED8
 static MagicTechSummonTable stru_5B0ED8[6] = {
-    { 6, stru_5B0DF8, 0 },
-    { 6, stru_5B0E28, 0 },
-    { 2, stru_5B0E58, 0 },
-    { 4, stru_5B0E68, 1 },
-    { 6, stru_5B0E88, 1 },
-    { 4, stru_5B0EB8, 1 },
+    { SDL_arraysize(stru_5B0DF8), stru_5B0DF8, 0 },
+    { SDL_arraysize(stru_5B0E28), stru_5B0E28, 0 },
+    { SDL_arraysize(stru_5B0E58), stru_5B0E58, 0 },
+    { SDL_arraysize(stru_5B0E68), stru_5B0E68, 1 },
+    { SDL_arraysize(stru_5B0E88), stru_5B0E88, 1 },
+    { SDL_arraysize(stru_5B0EB8), stru_5B0EB8, 1 },
 };
 
 // 0x5B0F20
@@ -6741,7 +6742,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
         }
     }
 
-    if (sub_49B290(obj) == 27369 && !combat->total_dam) {
+    if (sub_49B290(obj) == BP_KERGHAN_3 && !combat->total_dam) {
         sub_4CCD20(&spell_eye_candies, &node, obj, -1, 1259);
         node.animate = true;
         animfx_add(&node);

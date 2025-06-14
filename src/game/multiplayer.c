@@ -4,6 +4,7 @@
 
 #include "game/anim.h"
 #include "game/background.h"
+#include "game/descriptions.h"
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/effect.h"
@@ -2547,7 +2548,7 @@ int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
     money_amt = atoi(mes_file_entry.str);
     money_amt = background_adjust_money(money_amt, background_get(obj));
     if (money_amt > 0) {
-        mp_object_create(9056, location, &money_obj);
+        mp_object_create(BP_GOLD, location, &money_obj);
         mp_obj_field_int32_set(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
         item_transfer(money_obj, obj);
     }

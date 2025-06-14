@@ -50,6 +50,7 @@ set(SRCS
     "src/game/curse.h"
     "src/game/description.c"
     "src/game/description.h"
+    "src/game/descriptions.h"
     "src/game/dialog.c"
     "src/game/dialog.h"
     "src/game/effect.c"

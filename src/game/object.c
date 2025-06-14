@@ -6,6 +6,7 @@
 #include "game/anim.h"
 #include "game/critter.h"
 #include "game/description.h"
+#include "game/descriptions.h"
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
@@ -2559,7 +2560,7 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
         portal_bust(obj, triggerer_obj);
         break;
     case OBJ_TYPE_CONTAINER:
-        if (sub_49B290(obj) == 3023) {
+        if (sub_49B290(obj) == BP_JUNK_PILE) {
             object_hp_damage_set(obj, 0);
         } else {
             sub_463730(obj, true);
@@ -4104,7 +4105,7 @@ bool object_is_lockable(int64_t obj)
 {
     int type;
 
-    if (sub_49B290(obj) == 3023) {
+    if (sub_49B290(obj) == BP_JUNK_PILE) {
         return false;
     }
 

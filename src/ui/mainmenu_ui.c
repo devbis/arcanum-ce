@@ -5,6 +5,7 @@
 #include "game/area.h"
 #include "game/background.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/gamelib.h"
 #include "game/gfade.h"
 #include "game/gmovie.h"
@@ -4114,7 +4115,7 @@ void mainmenu_ui_pregen_char_create()
 {
     mainmenu_ui_window_type = MM_WINDOW_PREGEN_CHAR;
     mainmenu_ui_pregen_char_idx = 1;
-    qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(16067)));
+    qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(BP_MERWIN_TUMBLEBROOK)));
     mainmenu_ui_create_window();
 }
 
@@ -4177,7 +4178,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         } else {
             mainmenu_ui_pregen_char_idx = mainmenu_ui_pregen_char_cnt - 1;
         }
-        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + 16066)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + BP_GENERIC_PC)));
         window->refresh_func(NULL);
         return true;
     case 3:
@@ -4186,7 +4187,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         } else {
             mainmenu_ui_pregen_char_idx = 1;
         }
-        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + 16066)));
+        qword_64C460 = objp_perm_lookup(obj_get_id(sub_4685A0(mainmenu_ui_pregen_char_idx + BP_GENERIC_PC)));
         window->refresh_func(NULL);
         return true;
     default:
@@ -4208,7 +4209,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 
     player_create_info_init(&player_create_info);
     player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
-    player_create_info.basic_prototype = mainmenu_ui_pregen_char_idx + 16066;
+    player_create_info.basic_prototype = mainmenu_ui_pregen_char_idx + BP_GENERIC_PC;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mmUIPregenCharExecuteFunc: ERROR: Player Creation Failed!\n");
         exit(EXIT_FAILURE);
@@ -5881,7 +5882,7 @@ void sub_549A80()
     int64_t obj;
 
     if (!dword_5C3620) {
-        obj = objp_perm_lookup(obj_get_id(sub_4685A0(16075)));
+        obj = objp_perm_lookup(obj_get_id(sub_4685A0(BP_VICTORIA_WARRINGTON)));
         if (obj != OBJ_HANDLE_NULL
             && tig_art_exists(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
             dword_5C3620 = false;
