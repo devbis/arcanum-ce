@@ -159,6 +159,9 @@ static bool sleep_ui_initialized;
  */
 static bool sleep_ui_active;
 
+static IsoInvalidateRectFunc* sleep_ui_invalidate_rect;
+static IsoRedrawFunc* sleep_ui_redraw;
+
 /**
  * Called when the game is initialized.
  *
@@ -168,7 +171,9 @@ bool sleep_ui_init(GameInitInfo* init_info)
 {
     TigFont font;
 
-    (void)init_info;
+    // CE: Keep invalidate/redraw functions for proper wake up.
+    sleep_ui_invalidate_rect = init_info->invalidate_rect_func;
+    sleep_ui_redraw = init_info->redraw_func;
 
     // Load sleep option labels (required).
     if (!mes_load("mes\\sleepUI.mes", &sleep_ui_mes_file)) {
@@ -700,6 +705,12 @@ void sleep_ui_wake_up()
 
     // Re-enable ambient lighting updates.
     ambient_lighting_enable();
+
+    // CE: Update iso content while window is still faded. Once the fade is
+    // removed, the world will appear updated, particularly ambient lighting.
+    sleep_ui_invalidate_rect(NULL);
+    sleep_ui_redraw();
+    tig_window_display();
 
     // Set up and run fade-in effect.
     fade_data.flags = FADE_IN;
