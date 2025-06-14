@@ -1801,7 +1801,7 @@ void charedit_refresh_stat(int stat)
     default:
         value = charedit_stat_value_get(charedit_obj, stat);
         base_value = charedit_stat_value_get(charedit_obj, stat - 1);
-        effective_value = sub_4EA930(charedit_obj, charedit_stat_map_to_critter_stat(stat), base_value);
+        effective_value = effect_adjust_stat_level_no_innate(charedit_obj, charedit_stat_map_to_critter_stat(stat), base_value);
         if (effective_value > base_value) {
             font = dword_64C7A0;
         } else if (effective_value < base_value) {

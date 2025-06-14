@@ -5914,7 +5914,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
                 component_info->data.effect.count = 1;
             }
 
-            if (tig_str_match_named_str_to_list(&str, "Cause:", off_5B9CB4, 10, &value)) {
+            if (tig_str_match_named_str_to_list(&str, "Cause:", effect_cause_lookup_tbl, 10, &value)) {
                 component_info->data.effect.cause = value;
             } else {
                 component_info->data.effect.cause = 6;

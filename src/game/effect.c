@@ -10,6 +10,9 @@
 #include "game/stat.h"
 #include "game/tech.h"
 
+/**
+ * Defines the maximum number of effects per effect type.
+ */
 #define EFFECT_LIST_CAPACITY 400
 
 typedef enum EffectSpecial {
@@ -35,11 +38,45 @@ typedef enum EffectOperator {
     EFFECT_OPERATOR_PERCENT,
 } EffectOperator;
 
+/**
+ * Defines the maximum number of changes a single effect is allowed to have
+ * per attribute collection.
+ *
+ * NOTE: Here is a (misleading) explanation `effect.mes`:
+ *
+ * "WARNING: Each effect has a constraint of a maximum of *FIVE* changes per
+ * *type* of change (so you could have 5 changes to stats *and* 5 changes to
+ * skills, but not 6 changes to stats)".
+ *
+ * This message states that 5 is the max, however the memory layout indicates it
+ * has 7 elements.
+ *
+ * This value can be safely increased.
+ */
+#define MAX_CHANGE_COUNT 7
+
+/**
+ * This structure represents changes that should be made to appropriate
+ * attributes when the effect applies.
+ *
+ * Each effect describes up to `MAX_CHANGE_COUNT` changes made to the attributes
+ * of the same group. The attribute IDs depends on the parent collection - it's
+ * members of `Stat` enum in `effect_stat_effects`, `BasicSkill` - in
+ * `effect_basic_skill_effects` and so on.
+ *
+ * See:
+ *  - `effect_stat_effects`
+ *  - `effect_basic_skill_effects`
+ *  - `effect_tech_skill_effects`
+ *  - `effect_resistance_effects`
+ *  - `effect_tech_effects`
+ *  - `effect_special_effects`
+ */
 typedef struct Effect {
     int count;
-    int ids[7];
-    int params[7];
-    int operators[7];
+    int ids[MAX_CHANGE_COUNT];
+    int params[MAX_CHANGE_COUNT];
+    int operators[MAX_CHANGE_COUNT];
 } Effect;
 
 // See 0x4E99F0.
@@ -47,150 +84,181 @@ static_assert(sizeof(Effect) == 0x58, "wrong size");
 
 static void effect_parse(int num, char* text);
 static void effect_remove_internal(int64_t obj, int index);
-static int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5);
+static int effect_adjust_func(int64_t obj, int id, int value, Effect* tbl, bool ignore_innate_effects);
 
-// 0x5B9BA8
-static const char* off_5B9BA8[] = {
-    "st",
-    "dx",
-    "cn",
-    "be",
-    "in",
-    "pe",
-    "wp",
-    "ch",
-    "carry",
-    "damage",
-    "ac",
-    "speed",
-    "healrate",
-    "poisonrate",
-    "beautyreaction",
-    "maxfollowers",
-    "aptitude",
-    "level",
-    "xpsUNUSED",
-    "alignment",
-    "fateUNUSED",
-    "unspentUNUSED",
-    "magicpts",
-    "techpts",
-    "poisonlevel",
-    "age",
-    "gender",
-    "race",
+/**
+ * 0x5B9BA8
+ */
+static const char* effect_stat_lookup_tbl[STAT_COUNT] = {
+    /*             STAT_STRENGTH */ "st",
+    /*            STAT_DEXTERITY */ "dx",
+    /*         STAT_CONSTITUTION */ "cn",
+    /*               STAT_BEAUTY */ "be",
+    /*         STAT_INTELLIGENCE */ "in",
+    /*           STAT_PERCEPTION */ "pe",
+    /*            STAT_WILLPOWER */ "wp",
+    /*             STAT_CHARISMA */ "ch",
+    /*         STAT_CARRY_WEIGHT */ "carry",
+    /*         STAT_DAMAGE_BONUS */ "damage",
+    /*        STAT_AC_ADJUSTMENT */ "ac",
+    /*                STAT_SPEED */ "speed",
+    /*            STAT_HEAL_RATE */ "healrate",
+    /*      STAT_POISON_RECOVERY */ "poisonrate",
+    /*    STAT_REACTION_MODIFIER */ "beautyreaction",
+    /*        STAT_MAX_FOLLOWERS */ "maxfollowers",
+    /* STAT_MAGICK_TECH_APTITUDE */ "aptitude",
+    /*                STAT_LEVEL */ "level",
+    /*    STAT_EXPERIENCE_POINTS */ "xpsUNUSED",
+    /*            STAT_ALIGNMENT */ "alignment",
+    /*          STAT_FATE_POINTS */ "fateUNUSED",
+    /*       STAT_UNSPENT_POINTS */ "unspentUNUSED",
+    /*        STAT_MAGICK_POINTS */ "magicpts",
+    /*          STAT_TECH_POINTS */ "techpts",
+    /*         STAT_POISON_LEVEL */ "poisonlevel",
+    /*                  STAT_AGE */ "age",
+    /*               STAT_GENDER */ "gender",
+    /*                 STAT_RACE */ "race",
 };
 
-static_assert(sizeof(off_5B9BA8) / sizeof(off_5B9BA8[0]) == STAT_COUNT, "wrong size");
-
-// 0x5B9C18
-static const char* off_5B9C18[] = {
-    "bow",
-    "dodge",
-    "melee",
-    "throwing",
-    "backstab",
-    "pickpocket",
-    "prowling",
-    "spottrap",
-    "gambling",
-    "haggle",
-    "heal",
-    "persuasion",
+/**
+ * 0x5B9C18
+ */
+static const char* effect_basic_skill_lookup_tbl[BASIC_SKILL_COUNT] = {
+    /*         BASIC_SKILL_BOW */ "bow",
+    /*       BASIC_SKILL_DODGE */ "dodge",
+    /*       BASIC_SKILL_MELEE */ "melee",
+    /*    BASIC_SKILL_THROWING */ "throwing",
+    /*    BASIC_SKILL_BACKSTAB */ "backstab",
+    /* BASIC_SKILL_PICK_POCKET */ "pickpocket",
+    /*    BASIC_SKILL_PROWLING */ "prowling",
+    /*   BASIC_SKILL_SPOT_TRAP */ "spottrap",
+    /*    BASIC_SKILL_GAMBLING */ "gambling",
+    /*      BASIC_SKILL_HAGGLE */ "haggle",
+    /*        BASIC_SKILL_HEAL */ "heal",
+    /*  BASIC_SKILL_PERSUATION */ "persuasion",
 };
 
-static_assert(sizeof(off_5B9C18) / sizeof(off_5B9C18[0]) == BASIC_SKILL_COUNT, "wrong size");
-
-// 0x5B9C48
-static const char* off_5B9C48[] = {
-    "repair",
-    "firearms",
-    "picklock",
-    "armtrap",
+/**
+ * 0x5B9C48
+ */
+static const char* effect_tech_skill_lookup_tbl[TECH_SKILL_COUNT] = {
+    /*       TECH_SKILL_REPAIR */ "repair",
+    /*     TECH_SKILL_FIREARMS */ "firearms",
+    /*   TECH_SKILL_PICK_LOCKS */ "picklock",
+    /* TECH_SKILL_DISARM_TRAPS */ "armtrap",
 };
 
-static_assert(sizeof(off_5B9C48) / sizeof(off_5B9C48[0]) == TECH_SKILL_COUNT, "wrong size");
-
-// 0x5B9C58
-static const char* off_5B9C58[] = {
-    "resistdamage",
-    "resistfire",
-    "resistelectrical",
-    "resistpoison",
-    "resistmagic",
+/**
+ * 0x5B9C58
+ */
+static const char* effect_resistance_lookup_tbl[RESISTANCE_TYPE_COUNT] = {
+    /*     RESISTANCE_TYPE_NORMAL */ "resistdamage",
+    /*       RESISTANCE_TYPE_FIRE */ "resistfire",
+    /* RESISTANCE_TYPE_ELECTRICAL */ "resistelectrical",
+    /*     RESISTANCE_TYPE_POISON */ "resistpoison",
+    /*      RESISTANCE_TYPE_MAGIC */ "resistmagic",
 };
 
-static_assert(sizeof(off_5B9C58) / sizeof(off_5B9C58[0]) == RESISTANCE_TYPE_COUNT, "wrong size");
-
-// 0x5B9C6C
-static const char* off_5B9C6C[] = {
-    "expertiseanatomical",
-    "expertisechemistry",
-    "expertiseelectric",
-    "expertiseexplosives",
-    "expertisegun_smithy",
-    "expertisemechanical",
-    "expertisesmithy",
-    "expertisetherapeutics",
+/**
+ * 0x5B9C6C
+ */
+static const char* effect_tech_discipline_lookup_tbl[TECH_COUNT] = {
+    /*    TECH_HERBOLOGY */ "expertiseanatomical",
+    /*    TECH_CHEMISTRY */ "expertisechemistry",
+    /*     TECH_ELECTRIC */ "expertiseelectric",
+    /*   TECH_EXPLOSIVES */ "expertiseexplosives",
+    /*          TECH_GUN */ "expertisegun_smithy",
+    /*   TECH_MECHANICAL */ "expertisemechanical",
+    /*       TECH_SMITHY */ "expertisesmithy",
+    /* TECH_THERAPEUTICS */ "expertisetherapeutics",
 };
 
-static_assert(sizeof(off_5B9C6C) / sizeof(off_5B9C6C[0]) == TECH_COUNT, "wrong size");
-
-// 0x5B9C8C
-static const char* off_5B9C8C[] = {
-    "maxhps",
-    "maxfatigue",
-    "reaction",
-    "crithitchance",
-    "crithiteffect",
-    "critfailchance",
-    "critfaileffect",
-    "badreactionadj",
-    "goodreactionadj",
-    "xpgain",
+/**
+ * 0x5B9C8C
+ */
+static const char* effect_special_attributes_lookup_tbl[EFFECT_SPECIAL_COUNT] = {
+    /*           EFFECT_SPECIAL_MAX_HIT_POINTS */ "maxhps",
+    /*              EFFECT_SPECIAL_MAX_FATIGUE */ "maxfatigue",
+    /*                 EFFECT_SPECIAL_REACTION */ "reaction",
+    /*          EFFECT_SPECIAL_CRIT_HIT_CHANCE */ "crithitchance",
+    /*          EFFECT_SPECIAL_CRIT_HIT_EFFECT */ "crithiteffect",
+    /*         EFFECT_SPECIAL_CRIT_FAIL_CHANCE */ "critfailchance",
+    /*         EFFECT_SPECIAL_CRIT_FAIL_EFFECT */ "critfaileffect",
+    /*  EFFECT_SPECIAL_BAD_REACTION_ADJUSTMENT */ "badreactionadj",
+    /* EFFECT_SPECIAL_GOOD_REACTION_ADJUSTMENT */ "goodreactionadj",
+    /*                  EFFECT_SPECIAL_XP_GAIN */ "xpgain",
 };
 
-// TODO: Figure out proper enum.
-static_assert(sizeof(off_5B9C8C) / sizeof(off_5B9C8C[0]) == EFFECT_SPECIAL_COUNT, "wrong size");
-
-// 0x5B9CB4
-const char* off_5B9CB4[EFFECT_CAUSE_COUNT] = {
-    "Race",
-    "Background",
-    "Class",
-    "Bless",
-    "Curse",
-    "Item",
-    "Spell",
-    "Injury",
-    "Tech",
-    "Gender",
+/**
+ * 0x5B9CB4
+ */
+const char* effect_cause_lookup_tbl[EFFECT_CAUSE_COUNT] = {
+    /*       EFFECT_CAUSE_RACE */ "Race",
+    /* EFFECT_CAUSE_BACKGROUND */ "Background",
+    /*      EFFECT_CAUSE_CLASS */ "Class",
+    /*      EFFECT_CAUSE_BLESS */ "Bless",
+    /*      EFFECT_CAUSE_CURSE */ "Curse",
+    /*       EFFECT_CAUSE_ITEM */ "Item",
+    /*      EFFECT_CAUSE_SPELL */ "Spell",
+    /*     EFFECT_CAUSE_INJURY */ "Injury",
+    /*       EFFECT_CAUSE_TECH */ "Tech",
+    /*     EFFECT_CAUSE_GENDER */ "Gender",
 };
 
-static_assert(sizeof(off_5B9CB4) / sizeof(off_5B9CB4[0]) == EFFECT_CAUSE_COUNT, "wrong size");
-
-// 0x603ADC
+/**
+ * Flag indicating whether the effect system is initialized.
+ *
+ * 0x603ADC
+ */
 static bool effect_initialized;
 
-// 0x603AC4
+/**
+ * Array of changes modifying resistances.
+ *
+ * 0x603AC4
+ */
 static Effect* effect_resistance_effects;
 
-// 0x603AC8
+/**
+ * Array of changes modifying critter stats.
+ *
+ * 0x603AC8
+ */
 static Effect* effect_stat_effects;
 
-// 0x603ACC
+/**
+ * Array of changes modifying tech disciplines.
+ *
+ * 0x603ACC
+ */
 static Effect* effect_tech_effects;
 
-// 0x603AD0
+/**
+ * Array of changes modifying tech skill levels.
+ *
+ * 0x603AD0
+ */
 static Effect* effect_tech_skill_effects;
 
-// 0x603AD4
+/**
+ * Array of changes modifying basic skill levels.
+ *
+ * 0x603AD4
+ */
 static Effect* effect_basic_skill_effects;
 
-// 0x603AD8
+/**
+ * Array of changes modifying special attributes.
+ *
+ * 0x603AD8
+ */
 static Effect* effect_special_effects;
 
-// 0x4E99F0
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4E99F0
+ */
 bool effect_init(GameInitInfo* init_info)
 {
     mes_file_handle_t mes_file;
@@ -198,10 +266,12 @@ bool effect_init(GameInitInfo* init_info)
 
     (void)init_info;
 
+    // Load engine-wide effects message file (required).
     if (!mes_load("rules\\effect.mes", &mes_file)) {
         return false;
     }
 
+    // Allocate memory for typed effect arrays.
     effect_stat_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_stat_effects));
     effect_basic_skill_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_basic_skill_effects));
     effect_tech_skill_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_skill_effects));
@@ -209,19 +279,26 @@ bool effect_init(GameInitInfo* init_info)
     effect_tech_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_effects));
     effect_special_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_special_effects));
 
+    // Parse effects from engine-wide range (50-400).
     for (mes_file_entry.num = 50; mes_file_entry.num < 400; mes_file_entry.num++) {
         if (mes_search(mes_file, &mes_file_entry)) {
             effect_parse(mes_file_entry.num, mes_file_entry.str);
         }
     }
 
+    // Clean up.
     mes_unload(mes_file);
+
     effect_initialized = true;
 
     return true;
 }
 
-// 0x4E9AE0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4E9AE0
+ */
 void effect_exit()
 {
     FREE(effect_stat_effects);
@@ -233,30 +310,42 @@ void effect_exit()
     effect_initialized = false;
 }
 
-// 0x004E9B40
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x004E9B40
+ */
 bool effect_mod_load()
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
 
+    // Load module-specific effects message file (optional).
     if (mes_load("rules\\gameeffect.mes", &mes_file)) {
+        // Parse effects from module-specific range (0-50).
         for (mes_file_entry.num = 0; mes_file_entry.num < 50; mes_file_entry.num++) {
             if (mes_search(mes_file, &mes_file_entry)) {
                 effect_parse(mes_file_entry.num, mes_file_entry.str);
             }
         }
 
+        // Clean up.
         mes_unload(mes_file);
     }
 
     return true;
 }
 
-// 0x4E9BB0
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x4E9BB0
+ */
 void effect_mod_unload()
 {
     int index;
 
+    // Clear module-specific effects.
     for (index = 0; index < 50; index++) {
         effect_stat_effects[index].count = 0;
         effect_basic_skill_effects[index].count = 0;
@@ -267,7 +356,12 @@ void effect_mod_unload()
     }
 }
 
-// 0x4E9C20
+/**
+ * Parses an effect specification from a message file entry into the appropriate
+ * effect array.
+ *
+ * 0x4E9C20
+ */
 static void effect_parse(int num, char* text)
 {
     char* tok;
@@ -280,11 +374,18 @@ static void effect_parse(int num, char* text)
         // NOTE: Original code is different. Probably uses an inlined routine or
         // a tree of loops.
         effect_info = NULL;
+
+        // The first token designates type of effect by specifying affected
+        // attribute. This attribute could be one of stat, basic skill, tech
+        // skill, resistance type, tech discipline, or one of the special
+        // attributes. Loop through all supported types and check if the
+        // modified attribute belongs to the appropriate collection.
         for (type = 0; type < 6 && effect_info == NULL; type++) {
             switch (type) {
             case 0:
+                // Check stats.
                 for (index = 0; index < STAT_COUNT; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9BA8[index]) == 0) {
+                    if (SDL_strcasecmp(tok, effect_stat_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_stat_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -292,8 +393,9 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 1:
+                // Check basic skills.
                 for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9C18[index]) == 0) {
+                    if (SDL_strcasecmp(tok, effect_basic_skill_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_basic_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -301,8 +403,9 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 2:
+                // Check tech skills.
                 for (index = 0; index < TECH_SKILL_COUNT; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9C48[index]) == 0) {
+                    if (SDL_strcasecmp(tok, effect_tech_skill_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_tech_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -310,8 +413,9 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 3:
-                for (index = 0; index < 5; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9C58[index]) == 0) {
+                // Check resistance types.
+                for (index = 0; index < RESISTANCE_TYPE_COUNT; index++) {
+                    if (SDL_strcasecmp(tok, effect_resistance_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_resistance_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -319,8 +423,9 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 4:
+                // Check tech disciplines.
                 for (index = 0; index < TECH_COUNT; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9C6C[index]) == 0) {
+                    if (SDL_strcasecmp(tok, effect_tech_discipline_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_tech_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -328,8 +433,9 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 5:
+                // Check special attributes.
                 for (index = 0; index < EFFECT_SPECIAL_COUNT; index++) {
-                    if (SDL_strcasecmp(tok, off_5B9C8C[index]) == 0) {
+                    if (SDL_strcasecmp(tok, effect_special_attributes_lookup_tbl[index]) == 0) {
                         effect_info = &(effect_special_effects[num]);
                         effect_info->ids[effect_info->count] = index;
                         break;
@@ -339,15 +445,17 @@ static void effect_parse(int num, char* text)
             }
         }
 
+        // Ensure effect type was identified.
         if (effect_info == NULL) {
             tig_debug_printf("Effect: ERROR: Invalid symbol: %s.\n", tok);
             return;
         }
 
+        // Parse operator and associated parameter.
         tok = strtok(NULL, " ,");
         if (SDL_strcasecmp(tok, "min") == 0 || SDL_strcasecmp(tok, "max") == 0) {
-            // FIXME: Case-sensitive compare to distinguish between min and max.
-            if (tok[1] == 'i') {
+            // FIX: Force lowercase.
+            if (SDL_tolower(tok[1]) == 'i') {
                 effect_info->operators[effect_info->count] = EFFECT_OPERATOR_MIN;
             } else {
                 effect_info->operators[effect_info->count] = EFFECT_OPERATOR_MAX;
@@ -377,13 +485,17 @@ static void effect_parse(int num, char* text)
     }
 }
 
-// 0x4E9F70
+/**
+ * Adds an effect to a critter object.
+ *
+ * 0x4E9F70
+ */
 void effect_add(int64_t obj, int effect, int cause)
 {
     int strength;
     int encumbrance_level;
-    int v1;
-    int v2;
+    int hp_max;
+    int fatigue_max;
     int diff;
 
     if (tig_net_is_active()) {
@@ -403,15 +515,18 @@ void effect_add(int64_t obj, int effect, int cause)
         }
     }
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Retrieve current state.
     strength = stat_level_get(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
-    v1 = object_hp_max(obj);
-    v2 = critter_fatigue_max(obj);
+    hp_max = object_hp_max(obj);
+    fatigue_max = critter_fatigue_max(obj);
 
+    // Add effect and cause to critter's effect arrays.
     obj_arrayfield_uint32_set(obj,
         OBJ_F_CRITTER_EFFECTS_IDX,
         obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX),
@@ -421,16 +536,19 @@ void effect_add(int64_t obj, int effect, int cause)
         obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX),
         cause);
 
+    // Recalculate encumbrance level if strength changed.
     if (strength != stat_level_get(obj, STAT_STRENGTH)) {
         critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
-    diff = object_hp_max(obj) - v1;
+    // Adjust hit points if max HP changed.
+    diff = object_hp_max(obj) - hp_max;
     if (diff != 0) {
         object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
-    diff = critter_fatigue_max(obj) - v2;
+    // Adjust fatigue if max fatigue changed.
+    diff = critter_fatigue_max(obj) - fatigue_max;
     if (diff != 0) {
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }
@@ -438,7 +556,11 @@ void effect_add(int64_t obj, int effect, int cause)
     anim_speed_recalc(obj);
 }
 
-// 0x4EA100
+/**
+ * Removes one instance of a specific effect from a critter.
+ *
+ * 0x4EA100
+ */
 void effect_remove_one_typed(int64_t obj, int effect)
 {
     int cnt;
@@ -460,10 +582,12 @@ void effect_remove_one_typed(int64_t obj, int effect)
         }
     }
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Search for the first matching effect and remove it.
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
@@ -475,7 +599,11 @@ void effect_remove_one_typed(int64_t obj, int effect)
     anim_speed_recalc(obj);
 }
 
-// 0x4EA200
+/**
+ * Removes all instances of a specific effect from a critter.
+ *
+ * 0x4EA200
+ */
 void effect_remove_all_typed(int64_t obj, int effect)
 {
     int cnt;
@@ -497,10 +625,12 @@ void effect_remove_all_typed(int64_t obj, int effect)
         }
     }
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Remove all matching effects.
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
@@ -511,7 +641,11 @@ void effect_remove_all_typed(int64_t obj, int effect)
     }
 }
 
-// 0x4EA2E0
+/**
+ * Removes one effect caused by a specific cause from a critter.
+ *
+ * 0x4EA2E0
+ */
 void effect_remove_one_caused_by(int64_t obj, int cause)
 {
     int cnt;
@@ -533,10 +667,12 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
         }
     }
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Search for the first matching effect and remove it.
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
@@ -546,7 +682,11 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
     }
 }
 
-// 0x4EA3C0
+/**
+ * Removes all effects caused by a specific cause from a critter.
+ *
+ * 0x4EA3C0
+ */
 void effect_remove_all_caused_by(int64_t obj, int cause)
 {
     int cnt;
@@ -568,10 +708,12 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
         }
     }
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Remove all matching effects.
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
         if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
@@ -582,27 +724,37 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
     }
 }
 
-// 0x4EA4A0
+/**
+ * Counts the number of times the specified effect applied to a critter.
+ *
+ * 0x4EA4A0
+ */
 int effect_count_effects_of_type(int64_t obj, int effect)
 {
     int effect_count = 0;
     int index;
     int cnt;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
-        for (index = 0; index < cnt; index++) {
-            if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
-                effect_count++;
-            }
+    // Ensure the object is a critter.
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
+            effect_count++;
         }
     }
 
     return effect_count;
 }
 
-// 0x4EA520
+/**
+ * Internal helper function to remove an effect at a specific index.
+ *
+ * 0x4EA520
+ */
 void effect_remove_internal(int64_t obj, int index)
 {
     int strength;
@@ -613,15 +765,18 @@ void effect_remove_internal(int64_t obj, int index)
     unsigned int data;
     int diff;
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return;
     }
 
+    // Retrieve current state.
     strength = stat_level_get(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
     hp_max = object_hp_max(obj);
     fatigue_max = critter_fatigue_max(obj);
 
+    // Shift subsequent effects up.
     end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
     while (index < end) {
         data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index + 1);
@@ -633,32 +788,44 @@ void effect_remove_internal(int64_t obj, int index)
         index++;
     }
 
+    // Decrease the length of the effect arrays.
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, end);
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, end);
 
+    // Recalculate encumbrance level if strength changed.
     if (strength != stat_level_get(obj, STAT_STRENGTH)) {
         critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
+    // Adjust hit points if max HP changed.
     diff = object_hp_max(obj) - hp_max;
     if (diff != 0) {
         object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
+    // Adjust fatigue if max fatigue changed.
     diff = critter_fatigue_max(obj) - fatigue_max;
     if (diff != 0) {
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }
 }
 
-// 0x4EA690
+/**
+ * Adjusts a critter's stat level based on applied effects.
+ *
+ * 0x4EA690
+ */
 int effect_adjust_stat_level(int64_t obj, int stat, int value)
 {
-    return sub_4EA6C0(obj, stat, value, effect_stat_effects, false);
+    return effect_adjust_func(obj, stat, value, effect_stat_effects, false);
 }
 
-// 0x4EA6C0
-int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
+/**
+ * The main function to adjust a value based on effects in a specified table.
+ *
+ * 0x4EA6C0
+ */
+int effect_adjust_func(int64_t obj, int id, int value, Effect* tbl, bool ignore_innate_effects)
 {
     int cnt;
     int index;
@@ -673,18 +840,23 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
     int max = -1;
     int percents = 0;
 
+    // Ensure the object is a critter.
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
+    // Retrieve the number of effects applied to the critter.
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     if (cnt <= 0) {
         return value;
     }
 
+    // Process each effect.
     for (index = 0; index < cnt; index++) {
         effect = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index);
-        if (a5) {
+
+        // Filter out innate effects.
+        if (ignore_innate_effects) {
             cause = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index);
             switch (cause) {
             case EFFECT_CAUSE_RACE:
@@ -695,7 +867,11 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
             }
         }
 
+        // Get the effect metadata.
         meta = &(tbl[effect]);
+
+        // Loop through all bonuses and penalties granted by the effect and
+        // stack them in specific variables associated with each change type.
         for (change = 0; change < meta->count; change++) {
             if (meta->ids[change] == id) {
                 switch (meta->operators[change]) {
@@ -726,26 +902,32 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
         }
     }
 
+    // 1. Percentage.
     if (percents != 0) {
         value = value * (percents + 100) / 100;
     }
 
+    // 2. Multiply.
     if (mults != 1) {
         value *= mults;
     }
 
+    // 3. Divide.
     if (divs != 1) {
         value /= divs;
     }
 
+    // 4. Sum.
     if (adds != 0) {
         value += adds;
     }
 
+    // 5. Min.
     if (min != -1 && value < min) {
         value = min;
     }
 
+    // 6. Max
     if (max != -1 && value > max) {
         value = max;
     }
@@ -753,111 +935,180 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
     return value;
 }
 
-// 0x4EA930
-int sub_4EA930(int64_t obj, int stat, int value)
+/**
+ * Adjusts a critter's stat level based on applied effects.
+ *
+ * This function ignores effects caused by innate reasons (race, background,
+ * class, and gender).
+ *
+ * 0x4EA930
+ */
+int effect_adjust_stat_level_no_innate(int64_t obj, int stat, int value)
 {
-    return sub_4EA6C0(obj, stat, value, effect_stat_effects, true);
+    return effect_adjust_func(obj, stat, value, effect_stat_effects, true);
 }
 
-// 0x4EA960
+/**
+ * Adjusts a critter's basic skill level based on applied effects.
+ *
+ * 0x4EA960
+ */
 int effect_adjust_basic_skill_level(int64_t obj, int skill, int value)
 {
-    return sub_4EA6C0(obj, skill, value, effect_basic_skill_effects, false);
+    return effect_adjust_func(obj, skill, value, effect_basic_skill_effects, false);
 }
 
-// 0x4EA990
+/**
+ * Adjusts a critter's tech skill level based on applied effects.
+ *
+ * 0x4EA990
+ */
 int effect_adjust_tech_skill_level(int64_t obj, int skill, int value)
 {
-    return sub_4EA6C0(obj, skill, value, effect_tech_skill_effects, false);
+    return effect_adjust_func(obj, skill, value, effect_tech_skill_effects, false);
 }
 
-// 0x4EA9C0
+/**
+ * Adjusts a critter's resistance level based on applied effects.
+ *
+ * 0x4EA9C0
+ */
 int effect_adjust_resistance(int64_t obj, int resistance, int value)
 {
-    return sub_4EA6C0(obj, resistance, value, effect_resistance_effects, false);
+    return effect_adjust_func(obj, resistance, value, effect_resistance_effects, false);
 }
 
-// 0x4EA9F0
+/**
+ * Adjusts a critter's tech effective level based on applied effects.
+ *
+ * 0x4EA9F0
+ */
 int effect_adjust_tech_level(int64_t obj, int tech, int value)
 {
-    return sub_4EA6C0(obj, tech, value, effect_tech_effects, false);
+    return effect_adjust_func(obj, tech, value, effect_tech_effects, false);
 }
 
-// 0x4EAA20
+/**
+ * Adjusts a critter's maximum hit points based on applied effects.
+ *
+ * 0x4EAA20
+ */
 int effect_adjust_max_hit_points(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_MAX_HIT_POINTS, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_MAX_HIT_POINTS, value, effect_special_effects, false);
 }
 
-// 0x4EAA50
+/**
+ * Adjusts a critter's maximum fatigue based on applied effects.
+ *
+ * 0x4EAA50
+ */
 int effect_adjust_max_fatigue(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_MAX_FATIGUE, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_MAX_FATIGUE, value, effect_special_effects, false);
 }
 
-// 0x4EAA80
+/**
+ * Adjusts a critter's reaction based on applied effects.
+ *
+ * 0x4EAA80
+ */
 int effect_adjust_reaction(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_REACTION, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_REACTION, value, effect_special_effects, false);
 }
 
-// 0x4EAAB0
+/**
+ * Adjusts a critter's good/bad reaction adjustment based on applied effects.
+ *
+ * 0x4EAAB0
+ */
 int effect_adjust_good_bad_reaction(int64_t obj, int value)
 {
     if (value < 0) {
-        return sub_4EA6C0(obj, EFFECT_SPECIAL_BAD_REACTION_ADJUSTMENT, value, effect_special_effects, false);
+        return effect_adjust_func(obj, EFFECT_SPECIAL_BAD_REACTION_ADJUSTMENT, value, effect_special_effects, false);
     } else if (value > 0) {
-        return sub_4EA6C0(obj, EFFECT_SPECIAL_GOOD_REACTION_ADJUSTMENT, value, effect_special_effects, false);
+        return effect_adjust_func(obj, EFFECT_SPECIAL_GOOD_REACTION_ADJUSTMENT, value, effect_special_effects, false);
     } else {
         return 0;
     }
 }
 
-// 0x4EAB00
+/**
+ * Adjusts a critter's critical hit chance based on applied effects.
+ *
+ * 0x4EAB00
+ */
 int effect_adjust_crit_hit_chance(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_HIT_CHANCE, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_CRIT_HIT_CHANCE, value, effect_special_effects, false);
 }
 
-// 0x4EAB30
+/**
+ * Adjusts a critter's critical hit effect based on applied effects.
+ *
+ * 0x4EAB30
+ */
 int effect_adjust_crit_hit_effect(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_HIT_EFFECT, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_CRIT_HIT_EFFECT, value, effect_special_effects, false);
 }
 
-// 0x4EAB60
+/**
+ * Adjusts a critter's critical fail chance based on applied effects.
+ *
+ * 0x4EAB60
+ */
 int effect_adjust_crit_fail_chance(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_FAIL_CHANCE, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_CRIT_FAIL_CHANCE, value, effect_special_effects, false);
 }
 
-// 0x4EAB90
+/**
+ * Adjusts a critter's critical fail effect based on applied effects.
+ *
+ * 0x4EAB90
+ */
 int effect_adjust_crit_fail_effect(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_CRIT_FAIL_EFFECT, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_CRIT_FAIL_EFFECT, value, effect_special_effects, false);
 }
 
-// 0x4EABC0
+/**
+ * Adjusts a critter's XP gain based on applied effects.
+ *
+ * 0x4EABC0
+ */
 int effect_adjust_xp_gain(int64_t obj, int value)
 {
-    return sub_4EA6C0(obj, EFFECT_SPECIAL_XP_GAIN, value, effect_special_effects, false);
+    return effect_adjust_func(obj, EFFECT_SPECIAL_XP_GAIN, value, effect_special_effects, false);
 }
 
-// 0x4EABF0
+/**
+ * Prints the effects applied to a critter objects.
+ *
+ * 0x4EABF0
+ */
 void effect_debug_obj(int64_t obj)
 {
     int cnt;
     int index;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
-        tig_debug_println("\tEffect Debug Obj:\n");
-        tig_debug_printf("\tEffect Count: %d\n", cnt);
+    // Ensure object is a critter.
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
 
-        for (index = 0; index < cnt; index++) {
-            tig_debug_printf("\t\tEffect %d: ID: %d\n",
-                index,
-                obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index));
-        }
+    // Retrieve the number of effects.
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+
+    tig_debug_println("\tEffect Debug Obj:\n");
+    tig_debug_printf("\tEffect Count: %d\n", cnt);
+
+    // Log effect IDs.
+    for (index = 0; index < cnt; index++) {
+        tig_debug_printf("\t\tEffect %d: ID: %d\n",
+            index,
+            obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index));
     }
 }
