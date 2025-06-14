@@ -304,7 +304,7 @@ bool object_init(GameInitInfo* init_info)
 
     tig_video_get_bpp(&object_bpp);
 
-    settings_add(&settings, "object lighting", "1", object_lighting_changed);
+    settings_register(&settings, "object lighting", "1", object_lighting_changed);
     object_lighting_changed();
 
     return true;

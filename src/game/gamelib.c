@@ -327,7 +327,7 @@ bool gamelib_init(GameInitInfo* init_info)
 
     settings_load(&settings);
 
-    settings_add(&settings, DIFFICULTY_KEY, "1", difficulty_changed);
+    settings_register(&settings, DIFFICULTY_KEY, "1", difficulty_changed);
     difficulty_changed();
 
     gamelib_mod_loaded = false;
@@ -1758,7 +1758,7 @@ void gamelib_splash(tig_window_handle_t window_handle)
     TigRect src_rect;
     TigRect dst_rect;
 
-    settings_add(&settings, SPLASH_KEY, "0", NULL);
+    settings_register(&settings, SPLASH_KEY, "0", NULL);
     splash = settings_get_value(&settings, SPLASH_KEY);
 
     tig_file_list_create(&file_list, "art\\splash\\*.bmp");

@@ -358,7 +358,7 @@ bool skill_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    settings_add(&settings, FOLLOWER_SKILLS_KEY, "1", NULL);
+    settings_register(&settings, FOLLOWER_SKILLS_KEY, "1", NULL);
 
     // Reset callbacks.
     skill_callbacks.field_0 = NULL;

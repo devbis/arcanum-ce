@@ -222,14 +222,14 @@ bool combat_init(GameInitInfo* init_info)
         }
     }
 
-    settings_add(&settings, "turn-based", "0", turn_based_changed);
+    settings_register(&settings, "turn-based", "0", turn_based_changed);
     combat_turn_based = settings_get_value(&settings, "turn-based");
 
-    settings_add(&settings, "fast turn-based", "0", fast_turn_based_changed);
+    settings_register(&settings, "fast turn-based", "0", fast_turn_based_changed);
     combat_fast_turn_based = settings_get_value(&settings, "fast turn-based");
 
-    settings_add(&settings, "auto attack", "0", NULL);
-    settings_add(&settings, "combat taunts", "0", NULL);
+    settings_register(&settings, "auto attack", "0", NULL);
+    settings_register(&settings, "combat taunts", "0", NULL);
 
     return true;
 }

@@ -19,7 +19,7 @@ bool brightness_init(GameInitInfo* init_info)
     (void)init_info;
 
     // Register `brightness` setting and initialize it.
-    settings_add(&settings, BRIGHTNESS_KEY, "0", brightness_changed);
+    settings_register(&settings, BRIGHTNESS_KEY, "0", brightness_changed);
     brightness_changed();
 
     return true;

@@ -242,11 +242,11 @@ bool tf_init(GameInitInfo* init_info)
     tf_entry_content_rect.height = tf_line_height;
 
     // Register `text floaters` setting and initialize it.
-    settings_add(&settings, TEXT_FLOATERS_KEY, "1", tf_level_changed);
+    settings_register(&settings, TEXT_FLOATERS_KEY, "1", tf_level_changed);
     tf_level_changed();
 
     // Register `float speed` setting and initialize it.
-    settings_add(&settings, FLOAT_SPEED_KEY, "2", tf_float_speed_changed);
+    settings_register(&settings, FLOAT_SPEED_KEY, "2", tf_float_speed_changed);
     tf_float_speed_changed();
 
     return true;

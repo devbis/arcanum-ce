@@ -244,7 +244,7 @@ bool tb_init(GameInitInfo* init_info)
     }
 
     // Register `text duration` setting and initialize it.
-    settings_add(&settings, TEXT_DURATION_KEY, "6", tb_text_duration_changed);
+    settings_register(&settings, TEXT_DURATION_KEY, "6", tb_text_duration_changed);
     tb_text_duration_changed();
 
     return true;

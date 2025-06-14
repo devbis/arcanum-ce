@@ -339,9 +339,9 @@ bool gsound_init(GameInitInfo* init_info)
         mes_unload(tmp_mes_file);
     }
 
-    settings_add(&settings, EFFECTS_VOLUME_KEY, "5", gsound_effects_volume_changed);
-    settings_add(&settings, VOICE_VOLUME_KEY, "5", gsound_voice_volume_changed);
-    settings_add(&settings, MUSIC_VOLUME_KEY, "5", gsound_music_volume_changed);
+    settings_register(&settings, EFFECTS_VOLUME_KEY, "5", gsound_effects_volume_changed);
+    settings_register(&settings, VOICE_VOLUME_KEY, "5", gsound_voice_volume_changed);
+    settings_register(&settings, MUSIC_VOLUME_KEY, "5", gsound_music_volume_changed);
     gsound_effects_volume_changed();
     gsound_voice_volume_changed();
     gsound_music_volume_changed();

@@ -2748,9 +2748,9 @@ bool anim_init(GameInitInfo* init_info)
         }
     }
 
-    settings_add(&settings, "violence filter", "0", violence_filter_changed);
+    settings_register(&settings, "violence filter", "0", violence_filter_changed);
     violence_filter = settings_get_value(&settings, "violence filter");
-    settings_add(&settings, "always run", "0", NULL);
+    settings_register(&settings, "always run", "0", NULL);
 
     return true;
 }

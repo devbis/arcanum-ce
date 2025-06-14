@@ -234,7 +234,7 @@ bool light_init(GameInitInfo* init_info)
 
     dword_60340C = tig_video_3d_check_initialized() == TIG_OK;
 
-    settings_add(&settings, SHADOWS_KEY, "0", shadows_changed);
+    settings_register(&settings, SHADOWS_KEY, "0", shadows_changed);
     light_shadows_enabled = settings_get_value(&settings, SHADOWS_KEY);
 
     if (!sub_4DDF50()) {

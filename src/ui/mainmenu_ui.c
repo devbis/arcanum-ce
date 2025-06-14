@@ -1405,7 +1405,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    settings_add(&settings, "show version", "0", NULL);
+    settings_register(&settings, "show version", "0", NULL);
 
     mainmenu_fonts_init();
 
