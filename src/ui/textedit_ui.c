@@ -1,28 +1,56 @@
 #include "ui/textedit_ui.h"
 
-static bool sub_5671E0(char ch);
+static bool textedit_ui_validate(char ch);
 
-// 0x66DAA4
-static int dword_66DAA4;
+/**
+ * Flag indicating whether a text edit control is currently focused.
+ *
+ * 0x66DAA4
+ */
+static int textedit_ui_focused;
 
-// NOTE: Odd buffer size.
-//
-// 0x66D9D8
-static char byte_66D9D8[204];
+/**
+ * Buffer to store the initial value of the text edit control.
+ *
+ * NOTE: Odd buffer size.
+ *
+ * 0x66D9D8
+ */
+static char textedit_ui_backup[204];
 
-// 0x66DAA8
+/**
+ * Pointer to the currently focused text edit control.
+ *
+ * 0x66DAA8
+ */
 static TextEdit* textedit_ui_current_textedit;
 
-// 0x66DAAC
-static int dword_66DAAC;
+/**
+ * Current cursor position within the text edit buffer.
+ *
+ * 0x66DAAC
+ */
+static int textedit_ui_pos;
 
-// 0x66DAB0
-static int dword_66DAB0;
+/**
+ * Flag indicating whether a text edit control in overwrite mode.
+ *
+ * 0x66DAB0
+ */
+static int textedit_ui_overwrite_mode;
 
-// 0x66DAB
-static int dword_66DAB4;
+/**
+ * Length of the text in the current text edit buffer.
+ *
+ * 0x66DAB
+ */
+static int textedit_ui_len;
 
-// 0x566E20
+/**
+ * Called when the game is initialized.
+ *
+ * 0x566E20
+ */
 bool textedit_ui_init(GameInitInfo* init_info)
 {
     (void)init_info;
@@ -30,52 +58,76 @@ bool textedit_ui_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x566E30
+/**
+ * Called when the game is being reset.
+ *
+ * 0x566E30
+ */
 void textedit_ui_reset()
 {
 }
 
-// 0x566E40
+/**
+ * Called when the game shuts down.
+ *
+ * 0x566E40
+ */
 void textedit_ui_exit()
 {
 }
 
-// 0x566E50
+/**
+ * Sets focus to a specified text edit control.
+ *
+ * 0x566E50
+ */
 void textedit_ui_focus(TextEdit* textedit)
 {
     textedit_ui_current_textedit = textedit;
 
     if (*textedit->buffer != '\0') {
-        dword_66DAAC = strlen(textedit->buffer);
-        dword_66DAB4 = dword_66DAAC;
+        textedit_ui_pos = strlen(textedit->buffer);
+        textedit_ui_len = textedit_ui_pos;
     } else {
-        dword_66DAAC = 0;
-        dword_66DAB4 = 0;
+        textedit_ui_pos = 0;
+        textedit_ui_len = 0;
     }
 
-    dword_66DAB0 = 0;
+    textedit_ui_overwrite_mode = 0;
 
-    strcpy(byte_66D9D8, textedit->buffer);
-    dword_66DAA4 = true;
+    strcpy(textedit_ui_backup, textedit->buffer);
+    textedit_ui_focused = true;
 }
 
-// 0x566ED0
+/**
+ * Removes focus from a specified text edit control.
+ *
+ * 0x566ED0
+ */
 void textedit_ui_unfocus(TextEdit* textedit)
 {
     (void)textedit;
 
     textedit_ui_current_textedit = NULL;
-    dword_66DAAC = 0;
-    dword_66DAA4 = false;
+    textedit_ui_pos = 0;
+    textedit_ui_focused = false;
 }
 
-// 0x566EF0
+/**
+ * Checks if a text edit control is currently focused.
+ *
+ * 0x566EF0
+ */
 bool textedit_ui_is_focused()
 {
-    return dword_66DAA4;
+    return textedit_ui_focused;
 }
 
-// 0x566F00
+/**
+ * Processes input for the focused text edit control.
+ *
+ * 0x566F00
+ */
 bool textedit_ui_process_message(TigMessage* msg)
 {
     if (textedit_ui_current_textedit == NULL) {
@@ -86,59 +138,71 @@ bool textedit_ui_process_message(TigMessage* msg)
         if (msg->data.keyboard.pressed == 1) {
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_HOME:
-                dword_66DAAC = 0;
+                // Move cursor to beginning of the string.
+                textedit_ui_pos = 0;
                 break;
             case SDL_SCANCODE_UP:
-                if (dword_66DAAC - 40 >= 0) {
-                    dword_66DAAC -= 40;
+                // Move cursor one "page" left.
+                if (textedit_ui_pos - 40 >= 0) {
+                    textedit_ui_pos -= 40;
                 }
                 break;
             case SDL_SCANCODE_LEFT:
-                if (dword_66DAAC > 0) {
-                    dword_66DAAC--;
+                // Move cursor left.
+                if (textedit_ui_pos > 0) {
+                    textedit_ui_pos--;
                 }
                 break;
             case SDL_SCANCODE_RIGHT:
-                if (dword_66DAAC < dword_66DAB4) {
-                    dword_66DAAC++;
+                // Move cursor right.
+                if (textedit_ui_pos < textedit_ui_len) {
+                    textedit_ui_pos++;
                 }
                 break;
             case SDL_SCANCODE_DOWN:
-                if (dword_66DAAC + 40 < dword_66DAB4) {
-                    dword_66DAAC += 40;
+                // Move cursor one "page" right.
+                if (textedit_ui_pos + 40 < textedit_ui_len) {
+                    textedit_ui_pos += 40;
                 }
                 break;
             case SDL_SCANCODE_INSERT:
-                dword_66DAB0 = !dword_66DAB0;
+                // Toggle insert/overwrite mode.
+                textedit_ui_overwrite_mode = !textedit_ui_overwrite_mode;
                 break;
             case SDL_SCANCODE_DELETE:
-                memcpy(&(textedit_ui_current_textedit->buffer[dword_66DAAC]),
-                    &(textedit_ui_current_textedit->buffer[dword_66DAAC + 1]),
-                    dword_66DAB4 - dword_66DAAC);
-                textedit_ui_current_textedit->buffer[dword_66DAB4--] = '\0';
+                // Delete character after cursor.
+                memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
+                    &(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
+                    textedit_ui_len - textedit_ui_pos);
+                textedit_ui_current_textedit->buffer[textedit_ui_len--] = '\0';
                 break;
             default:
                 return false;
             }
 
+            // Trigger the change callback.
             if (textedit_ui_current_textedit->on_change != NULL) {
                 textedit_ui_current_textedit->on_change(textedit_ui_current_textedit);
             }
 
             return true;
         }
+
+        return false;
     }
 
     if (msg->type == TIG_MESSAGE_CHAR) {
         if (msg->data.character.ch == SDLK_BACKSPACE) {
-            if (dword_66DAAC > 0) {
-                dword_66DAAC--;
-                memcpy(&(textedit_ui_current_textedit->buffer[dword_66DAAC]),
-                    &(textedit_ui_current_textedit->buffer[dword_66DAAC + 1]),
-                    dword_66DAB4 - dword_66DAAC);
-                textedit_ui_current_textedit->buffer[dword_66DAB4--] = '\0';
+            // Delete character before cursor.
+            if (textedit_ui_pos > 0) {
+                textedit_ui_pos--;
+                memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
+                    &(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
+                    textedit_ui_len - textedit_ui_pos);
+                textedit_ui_current_textedit->buffer[textedit_ui_len--] = '\0';
             }
 
+            // Trigger the change callback.
             if (textedit_ui_current_textedit->on_change != NULL) {
                 textedit_ui_current_textedit->on_change(textedit_ui_current_textedit);
             }
@@ -147,6 +211,7 @@ bool textedit_ui_process_message(TigMessage* msg)
         }
 
         if (msg->data.character.ch == SDLK_TAB) {
+            // Handle tab key with callback.
             if (textedit_ui_current_textedit->on_tab != NULL) {
                 textedit_ui_current_textedit->on_tab(textedit_ui_current_textedit);
             }
@@ -155,35 +220,42 @@ bool textedit_ui_process_message(TigMessage* msg)
         }
 
         if (msg->data.character.ch == SDLK_RETURN) {
+            // Handle enter key with callback.
             textedit_ui_current_textedit->on_enter(textedit_ui_current_textedit);
             return true;
         }
 
+        // Validate character input.
         if ((msg->data.character.ch >= '\0' && msg->data.character.ch < ' ')
-            || dword_66DAAC >= textedit_ui_current_textedit->size - 1
-            || !sub_5671E0(msg->data.character.ch)) {
+            || textedit_ui_pos >= textedit_ui_current_textedit->size - 1
+            || !textedit_ui_validate(msg->data.character.ch)) {
             return false;
         }
 
-        if (!dword_66DAB0) {
-            if (dword_66DAB4 > textedit_ui_current_textedit->size - 1) {
+        if (!textedit_ui_overwrite_mode) {
+            // Check max string size.
+            if (textedit_ui_len > textedit_ui_current_textedit->size - 1) {
                 return true;
             }
 
-            dword_66DAB4++;
+            textedit_ui_len++;
 
-            memcpy(&(textedit_ui_current_textedit->buffer[dword_66DAAC + 1]),
-                &(textedit_ui_current_textedit->buffer[dword_66DAAC]),
-                dword_66DAB4 - dword_66DAAC);
+            // Shift characters to the right to make a room a new character.
+            memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
+                &(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
+                textedit_ui_len - textedit_ui_pos);
         }
 
-        textedit_ui_current_textedit->buffer[dword_66DAAC] = msg->data.character.ch;
+        // Write character at cursor.
+        textedit_ui_current_textedit->buffer[textedit_ui_pos] = msg->data.character.ch;
 
-        if (++dword_66DAAC > dword_66DAB4) {
-            dword_66DAB4 = dword_66DAAC;
-            textedit_ui_current_textedit->buffer[dword_66DAAC] = '\0';
+        // Update cursor and string length.
+        if (++textedit_ui_pos > textedit_ui_len) {
+            textedit_ui_len = textedit_ui_pos;
+            textedit_ui_current_textedit->buffer[textedit_ui_pos] = '\0';
         }
 
+        // Trigger the change callback.
         if (textedit_ui_current_textedit->on_change != NULL) {
             textedit_ui_current_textedit->on_change(textedit_ui_current_textedit);
         }
@@ -194,10 +266,14 @@ bool textedit_ui_process_message(TigMessage* msg)
     return false;
 }
 
-// 0x5671E0
-bool sub_5671E0(char ch)
+/**
+ * Validates a character based on text edit control flags.
+ *
+ * 0x5671E0
+ */
+bool textedit_ui_validate(char ch)
 {
-    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x01) != 0) {
+    if ((textedit_ui_current_textedit->flags & TEXTEDIT_PATH_SAFE) != 0) {
         switch (ch) {
         case '"':
         case '\'':
@@ -213,7 +289,7 @@ bool sub_5671E0(char ch)
         }
     }
 
-    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x02) != 0) {
+    if ((textedit_ui_current_textedit->flags & TEXTEDIT_NO_ALPHA) != 0) {
         if (ch >= 'A' && ch <= 'Z') {
             return false;
         }
@@ -226,11 +302,15 @@ bool sub_5671E0(char ch)
     return true;
 }
 
-// 0x5672A0
+/**
+ * Clears the content of the focused text edit control.
+ *
+ * 0x5672A0
+ */
 void textedit_ui_clear()
 {
-    dword_66DAAC = 0;
-    dword_66DAB4 = 0;
+    textedit_ui_pos = 0;
+    textedit_ui_len = 0;
 
     if (textedit_ui_current_textedit != NULL) {
         *textedit_ui_current_textedit->buffer = '\0';
@@ -240,19 +320,27 @@ void textedit_ui_clear()
     }
 }
 
-// 0x5672D0
+/**
+ * Restores the content of the focused text edit control from the backup buffer.
+ *
+ * 0x5672D0
+ */
 void textedit_ui_restore()
 {
     if (textedit_ui_current_textedit != NULL) {
-        strcpy(textedit_ui_current_textedit->buffer, byte_66D9D8);
+        strcpy(textedit_ui_current_textedit->buffer, textedit_ui_backup);
         if (textedit_ui_current_textedit != NULL) {
             textedit_ui_current_textedit->on_change(textedit_ui_current_textedit);
         }
     }
 }
 
-// 0x567320
-void textedit_ui_commit()
+/**
+ * Submits the content of the focused text edit control.
+ *
+ * 0x567320
+ */
+void textedit_ui_submit()
 {
     if (textedit_ui_current_textedit != NULL) {
         textedit_ui_current_textedit->on_enter(textedit_ui_current_textedit);

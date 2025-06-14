@@ -3,15 +3,17 @@
 
 #include "game/context.h"
 
-#define TEXTEDIT_0x01 0x01
-#define TEXTEDIT_0x02 0x02
+typedef unsigned int TextEditFlags;
+
+#define TEXTEDIT_PATH_SAFE 0x01
+#define TEXTEDIT_NO_ALPHA 0x02
 
 struct TextEdit;
 
 typedef void(TextEditCallback)(struct TextEdit* textedit);
 
 typedef struct TextEdit {
-    /* 0000 */ unsigned int flags;
+    /* 0000 */ TextEditFlags flags;
     /* 0004 */ char* buffer;
     /* 0008 */ int size;
     /* 000C */ TextEditCallback* on_enter;
@@ -30,6 +32,6 @@ bool textedit_ui_is_focused();
 bool textedit_ui_process_message(TigMessage* msg);
 void textedit_ui_clear();
 void textedit_ui_restore();
-void textedit_ui_commit();
+void textedit_ui_submit();
 
 #endif /* ARCANUM_UI_TEXTEDIT_UI_H_ */

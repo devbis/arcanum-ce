@@ -2053,7 +2053,7 @@ bool sub_54B5D0(TigMessage* msg)
                 }
 
                 if (msg->data.button.button_handle == stru_5C6CA8[2].button_handle) {
-                    textedit_ui_commit();
+                    textedit_ui_submit();
                     return true;
                 }
                 break;

@@ -5609,7 +5609,7 @@ void sub_5493C0(char* buffer, int size)
 
         stru_5C4008.size = size;
         stru_5C4008.flags = mainmenu_ui_window_type == MM_WINDOW_SAVE_GAME
-            ? TEXTEDIT_0x01
+            ? TEXTEDIT_PATH_SAFE
             : 0;
         stru_5C4008.buffer = buffer;
         textedit_ui_focus(&stru_5C4008);
