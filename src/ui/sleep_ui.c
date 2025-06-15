@@ -208,7 +208,11 @@ void sleep_ui_exit()
     sleep_ui_wait_mode = false;
 }
 
-// 0x57B170
+/**
+ * Called when the game is being reset.
+ *
+ * 0x57B170
+ */
 void sleep_ui_reset()
 {
     if (sleep_ui_active) {
