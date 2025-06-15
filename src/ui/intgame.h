@@ -56,7 +56,7 @@ void sub_550750(UiMessage* ui_message);
 void sub_550770(int a1, char* str);
 void sub_5507D0(void(*func)(UiMessage* ui_message));
 void sub_5507E0(int spl);
-void sub_550860(int college);
+void intgame_message_window_display_college(int college);
 void sub_5508C0(int value);
 void intgame_message_window_clear();
 void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens);

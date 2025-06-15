@@ -2238,7 +2238,7 @@ bool sub_54B5D0(TigMessage* msg)
             case 1:
                 for (index = 0; index < 16; index++) {
                     if (msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
-                        sub_550860(index);
+                        intgame_message_window_display_college(index);
                         return true;
                     }
                 }
@@ -4004,7 +4004,7 @@ void sub_5507E0(int spl)
 }
 
 // 0x550860
-void sub_550860(int college)
+void intgame_message_window_display_college(int college)
 {
     UiMessage ui_message;
 
