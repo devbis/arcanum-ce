@@ -81,6 +81,15 @@ typedef enum IntgamePrimaryButton {
     INTGAME_PRIMARY_BUTTON_COUNT,
 } IntgamePrimaryButton;
 
+typedef enum IntgameQuantityButton {
+    INTGAME_QUANTITY_BUTTON_TAKE_ALL,
+    INTGAME_QUANTITY_BUTTON_PLUS,
+    INTGAME_QUANTITY_BUTTON_MINUS,
+    INTGAME_QUANTITY_BUTTON_OK,
+    INTGAME_QUANTITY_BUTTON_CANCEL,
+    INTGAME_QUANTITY_BUTTON_COUNT,
+} IntgameQuantityButton;
+
 typedef enum IntgamePenalty {
     INTGAME_PENALTY_MSR,
     INTGAME_PENALTY_RANGE,
@@ -412,7 +421,7 @@ static UiButtonInfo stru_5C6CA8[] = {
 };
 
 // 0x5C6D08
-static UiButtonInfo stru_5C6D08[] = {
+static UiButtonInfo intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_COUNT] = {
     { 364, 548, 299, TIG_BUTTON_HANDLE_INVALID },
     { 479, 547, 805, TIG_BUTTON_HANDLE_INVALID },
     { 479, 559, 804, TIG_BUTTON_HANDLE_INVALID },
@@ -2059,19 +2068,19 @@ bool sub_54B5D0(TigMessage* msg)
                 }
                 break;
             case 9:
-                if (msg->data.button.button_handle == stru_5C6D08[0].button_handle) {
+                if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_TAKE_ALL].button_handle) {
                     dword_64C678 = dword_64C478;
                     sub_553960();
                     return true;
                 }
 
-                if (msg->data.button.button_handle == stru_5C6D08[3].button_handle) {
+                if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_OK].button_handle) {
                     sub_578B80(dword_64C678);
                     sub_551A80(0);
                     return true;
                 }
 
-                if (msg->data.button.button_handle == stru_5C6D08[4].button_handle) {
+                if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_CANCEL].button_handle) {
                     sub_551A80(0);
                     return true;
                 }
@@ -2127,14 +2136,14 @@ bool sub_54B5D0(TigMessage* msg)
                 }
                 break;
             case 9:
-                if (msg->data.button.button_handle == stru_5C6D08[1].button_handle) {
+                if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_PLUS].button_handle) {
                     if (dword_64C678 < dword_64C478) {
                         dword_64C678++;
                         sub_553960();
                     }
                     return true;
                 }
-                if (msg->data.button.button_handle == stru_5C6D08[2].button_handle) {
+                if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_MINUS].button_handle) {
                     if (dword_64C678 > 0) {
                         dword_64C678--;
                         sub_553960();
@@ -3800,8 +3809,8 @@ bool sub_5501C0()
     }
     tig_button_radio_group_create(3, group, 0);
 
-    for (index = 0; index < 5; index++) {
-        intgame_button_create(&(stru_5C6D08[index]));
+    for (index = 0; index < INTGAME_QUANTITY_BUTTON_COUNT; index++) {
+        intgame_button_create(&(intgame_quantity_buttons[index]));
     }
 
     for (index = 1; index < 11; index++) {
@@ -3901,8 +3910,8 @@ void iso_interface_window_disable(int window_type)
         sub_550D60();
         break;
     case 9:
-        for (index = 0; index < 5; index++) {
-            tig_button_hide(stru_5C6D08[index].button_handle);
+        for (index = 0; index < INTGAME_QUANTITY_BUTTON_COUNT; index++) {
+            tig_button_hide(intgame_quantity_buttons[index].button_handle);
         }
         break;
     case 10:
@@ -4491,8 +4500,8 @@ void iso_interface_window_enable(int window_type)
         sub_551660();
         break;
     case 9:
-        for (index = 0; index < 5; index++) {
-            tig_button_show(stru_5C6D08[index].button_handle);
+        for (index = 0; index < INTGAME_QUANTITY_BUTTON_COUNT; index++) {
+            tig_button_show(intgame_quantity_buttons[index].button_handle);
         }
 
         dword_64C678 = 0;
