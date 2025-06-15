@@ -2260,7 +2260,7 @@ bool sub_54B5D0(TigMessage* msg)
             case 2:
                 for (index = 0; index < 4; index++) {
                     if (msg->data.button.button_handle == stru_5C6C68[index].button_handle) {
-                        sub_5508C0(index);
+                        intgame_message_window_display_skill(index);
                         return true;
                     }
                 }
@@ -3747,7 +3747,7 @@ void sub_550150(Hotkey* hotkey)
         sub_57CCF0(player_get_local_pc_obj(), hotkey->item_obj.obj);
         break;
     case HOTKEY_SKILL:
-        sub_5508C0(hotkey->data);
+        intgame_message_window_display_skill(hotkey->data);
         break;
     case HOTKEY_SPELL:
     case HOTKEY_ITEM_SPELL:
@@ -4019,7 +4019,7 @@ void intgame_message_window_display_college(int college)
 }
 
 // 0x5508C0
-void sub_5508C0(int value)
+void intgame_message_window_display_skill(int value)
 {
     UiMessage ui_message;
 
