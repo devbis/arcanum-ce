@@ -459,7 +459,7 @@ void spell_ui_maintain_hover(int slot)
         }
     }
 
-    sub_5507E0(run_info->spell);
+    intgame_message_window_display_spell(run_info->spell);
 
     if (obj != OBJ_HANDLE_NULL) {
         object_hover_obj_set(obj);

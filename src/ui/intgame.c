@@ -2244,7 +2244,7 @@ bool sub_54B5D0(TigMessage* msg)
                 }
                 for (index = 0; index < 5; index++) {
                     if (msg->data.button.button_handle == intgame_spell_buttons[5 * dword_64C530 + index].button_handle) {
-                        sub_5507E0(5 * dword_64C530 + index);
+                        intgame_message_window_display_spell(5 * dword_64C530 + index);
                         return true;
                     }
                 }
@@ -2252,7 +2252,7 @@ bool sub_54B5D0(TigMessage* msg)
             case 8:
                 for (index = 0; index < 5; index++) {
                     if (msg->data.button.button_handle == stru_5C6C18[index].button_handle) {
-                        sub_5507E0(mt_item_spell(qword_64C688, index));
+                        intgame_message_window_display_spell(mt_item_spell(qword_64C688, index));
                         return true;
                     }
                 }
@@ -3751,7 +3751,7 @@ void sub_550150(Hotkey* hotkey)
         break;
     case HOTKEY_SPELL:
     case HOTKEY_ITEM_SPELL:
-        sub_5507E0(hotkey->data);
+        intgame_message_window_display_spell(hotkey->data);
         break;
     }
 }
@@ -3987,7 +3987,7 @@ void sub_5507D0(void(*func)(UiMessage* ui_message))
 }
 
 // 0x5507E0
-void sub_5507E0(int spl)
+void intgame_message_window_display_spell(int spl)
 {
     UiMessage ui_message;
 
