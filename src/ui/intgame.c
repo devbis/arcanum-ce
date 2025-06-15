@@ -162,7 +162,7 @@ static void sub_552960(bool play_sound);
 static void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
 static void intgame_spell_maintain_art_set_func(UiButtonInfo* button, int slot, tig_art_id_t art_id, tig_window_handle_t window_handle);
 static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int slot, bool active, tig_window_handle_t window_handle);
-static void sub_553960();
+static void intgame_refresh_quantity();
 static void sub_553A70(TigMessage* msg);
 static void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str);
 static void intgame_message_window_draw_image(tig_window_handle_t window_handle, int num);
@@ -805,7 +805,7 @@ static tig_font_handle_t dword_64C470;
 static TigVideoBuffer* dword_64C474;
 
 // 0x64C478
-static int dword_64C478;
+static int intgame_max_quantity;
 
 // 0x64C47C
 static int dword_64C47C[2];
@@ -874,7 +874,7 @@ static tig_font_handle_t dword_64C670;
 static int dword_64C674;
 
 // 0x64C678
-static int dword_64C678;
+static int intgame_quantity;
 
 // 0x64C67C
 static bool intgame_compact_interface;
@@ -2070,13 +2070,13 @@ bool sub_54B5D0(TigMessage* msg)
                 break;
             case 9:
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_TAKE_ALL].button_handle) {
-                    dword_64C678 = dword_64C478;
-                    sub_553960();
+                    intgame_quantity = intgame_max_quantity;
+                    intgame_refresh_quantity();
                     return true;
                 }
 
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_OK].button_handle) {
-                    sub_578B80(dword_64C678);
+                    sub_578B80(intgame_quantity);
                     sub_551A80(0);
                     return true;
                 }
@@ -2138,16 +2138,16 @@ bool sub_54B5D0(TigMessage* msg)
                 break;
             case 9:
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_PLUS].button_handle) {
-                    if (dword_64C678 < dword_64C478) {
-                        dword_64C678++;
-                        sub_553960();
+                    if (intgame_quantity < intgame_max_quantity) {
+                        intgame_quantity++;
+                        intgame_refresh_quantity();
                     }
                     return true;
                 }
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_MINUS].button_handle) {
-                    if (dword_64C678 > 0) {
-                        dword_64C678--;
-                        sub_553960();
+                    if (intgame_quantity > 0) {
+                        intgame_quantity--;
+                        intgame_refresh_quantity();
                     }
                     return true;
                 }
@@ -2330,8 +2330,8 @@ bool sub_54B5D0(TigMessage* msg)
             case SDL_SCANCODE_BACKSPACE:
             case SDL_SCANCODE_DELETE:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 /= 10;
-                    sub_553960();
+                    intgame_quantity /= 10;
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_COMMA:
@@ -2341,92 +2341,92 @@ bool sub_54B5D0(TigMessage* msg)
                 return false;
             case SDL_SCANCODE_KP_7:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 7;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 7;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_8:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 8;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 8;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_9:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 9;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 9;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_4:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 4;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 4;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_5:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 5;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 5;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_6:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 6;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 6;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_1:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 1;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 1;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_2:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 2;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 2;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_3:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678 + 3;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity + 3;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             case SDL_SCANCODE_KP_0:
                 if (intgame_iso_window_type == 9) {
-                    dword_64C678 = 10 * dword_64C678;
-                    if (dword_64C678 > dword_64C478) {
-                        dword_64C678 = dword_64C478;
+                    intgame_quantity = 10 * intgame_quantity;
+                    if (intgame_quantity > intgame_max_quantity) {
+                        intgame_quantity = intgame_max_quantity;
                     }
-                    sub_553960();
+                    intgame_refresh_quantity();
                 }
                 return true;
             }
@@ -2467,7 +2467,7 @@ bool sub_54B5D0(TigMessage* msg)
         v2 = false;
         if (msg->data.character.ch == SDLK_RETURN) {
             if (intgame_iso_window_type == 9) {
-                sub_578B80(dword_64C678);
+                sub_578B80(intgame_quantity);
                 sub_551A80(0);
                 v2 = true;
             } else if (!sub_541680()) {
@@ -4505,12 +4505,12 @@ void iso_interface_window_enable(int window_type)
             tig_button_show(intgame_quantity_buttons[index].button_handle);
         }
 
-        dword_64C678 = 0;
+        intgame_quantity = 0;
 
         obj = sub_579760();
         fld = sub_462410(obj, &qty_fld);
         if (fld != -1) {
-            dword_64C478 = obj_field_int32_get(obj, qty_fld);
+            intgame_max_quantity = obj_field_int32_get(obj, qty_fld);
             switch (fld) {
             case OBJ_F_CRITTER_GOLD:
                 tig_art_item_id_create(0, 2, 0, 0, 0, 3, 0, 0, &(blit_info.art_id));
@@ -4546,9 +4546,9 @@ void iso_interface_window_enable(int window_type)
             blit_info.dst_rect = &dst_rect;
             tig_window_blit_art(dword_64C4F8[1], &blit_info);
         } else {
-            dword_64C478 = 1;
+            intgame_max_quantity = 1;
         }
-        sub_553960();
+        intgame_refresh_quantity();
         break;
     case 10:
         break;
@@ -5989,9 +5989,9 @@ void intgame_spell_maintain_refresh(int slot, bool active)
 }
 
 // 0x553960
-void sub_553960()
+void intgame_refresh_quantity()
 {
-    roller_ui_draw(dword_64C678, dword_64C4F8[1], 404, 104, 6, 0);
+    roller_ui_draw(intgame_quantity, dword_64C4F8[1], 404, 104, 6, 0);
 }
 
 // 0x553990
