@@ -1095,17 +1095,17 @@ static int dword_5C5130[] = {
 
 // 0x5C5170
 static struct {
-    int racial_type;
+    int body_type;
     bool available_for_female;
 } stru_5C5170[] = {
-    /*     RACE_HUMAN */ { TIG_ART_CRITTER_RACE_HUMAN, true },
-    /*     RACE_DWARF */ { TIG_ART_CRITTER_RACE_DWARF, false },
-    /*       RACE_ELF */ { TIG_ART_CRITTER_RACE_ELF, true },
-    /*  RACE_HALF_ELF */ { TIG_ART_CRITTER_RACE_HUMAN, true },
-    /*     RACE_GNOME */ { TIG_ART_CRITTER_RACE_HALFLING, false },
-    /*  RACE_HALFLING */ { TIG_ART_CRITTER_RACE_HALFLING, false },
-    /*  RACE_HALF_ORC */ { TIG_ART_CRITTER_RACE_HUMAN, true },
-    /* RACE_HALF_OGRE */ { TIG_ART_CRITTER_RACE_HALF_OGRE, false },
+    /*     RACE_HUMAN */ { TIG_ART_CRITTER_BODY_TYPE_HUMAN, true },
+    /*     RACE_DWARF */ { TIG_ART_CRITTER_BODY_TYPE_DWARF, false },
+    /*       RACE_ELF */ { TIG_ART_CRITTER_BODY_TYPE_ELF, true },
+    /*  RACE_HALF_ELF */ { TIG_ART_CRITTER_BODY_TYPE_HUMAN, true },
+    /*     RACE_GNOME */ { TIG_ART_CRITTER_BODY_TYPE_HALFLING, false },
+    /*  RACE_HALFLING */ { TIG_ART_CRITTER_BODY_TYPE_HALFLING, false },
+    /*  RACE_HALF_ORC */ { TIG_ART_CRITTER_BODY_TYPE_HUMAN, true },
+    /* RACE_HALF_OGRE */ { TIG_ART_CRITTER_BODY_TYPE_HALF_OGRE, false },
 };
 
 // 0x5C51B0
@@ -3897,7 +3897,7 @@ bool mainmenu_ui_new_char_set_gender(int64_t obj, int gender)
         return false;
     }
 
-    object_set_gender_and_race(obj, stru_5C5170[race].racial_type, gender, race);
+    object_set_gender_and_race(obj, stru_5C5170[race].body_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {
@@ -3981,7 +3981,7 @@ void mainmenu_ui_new_char_set_race(int64_t obj, int race)
             : GENDER_FEMALE;
     }
 
-    object_set_gender_and_race(obj, stru_5C5170[race].racial_type, gender, race);
+    object_set_gender_and_race(obj, stru_5C5170[race].body_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {

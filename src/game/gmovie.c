@@ -102,8 +102,8 @@ void gmovie_play_path(const char* path, GameMovieFlags flags, int sound_track)
         movie_flags |= TIG_MOVIE_IGNORE_KEYBOARD;
     }
 
-    if ((flags & GAME_MOVIE_BLACK_OUT) != 0) {
-        movie_flags |= TIG_MOVIE_BLACK_OUT;
+    if ((flags & GAME_MOVIE_NO_FINAL_FLIP) != 0) {
+        movie_flags |= TIG_MOVIE_NO_FINAL_FLIP;
     }
 
     // Play the movie. This is a blocking call, which will return when movie

@@ -15400,7 +15400,7 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
     int fps;
     int art_type;
     int v1;
-    int race;
+    int body_type;
     int anim;
     int weapon_type;
     int v12;
@@ -15426,9 +15426,9 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 
     v1 = 0;
     if (art_type == TIG_ART_TYPE_CRITTER) {
-        race = tig_art_critter_id_race_get(art_id);
-        if (race == TIG_ART_CRITTER_RACE_DWARF
-            || race == TIG_ART_CRITTER_RACE_HALFLING) {
+        body_type = tig_art_critter_id_body_type_get(art_id);
+        if (body_type == TIG_ART_CRITTER_BODY_TYPE_DWARF
+            || body_type == TIG_ART_CRITTER_BODY_TYPE_HALFLING) {
             v1 = 4;
         }
     }

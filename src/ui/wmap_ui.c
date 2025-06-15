@@ -4590,7 +4590,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     dirty_rect.y = rect->y +  stru_5C9B08.y;
     dirty_rect.width = rect->width;
     dirty_rect.height = rect->height;
-    tig_window_set_needs_display_in_rect(&dirty_rect);
+    tig_window_invalidate_rect(&dirty_rect);
 
     dirty_rect.x = rect->x;
     dirty_rect.y = rect->y;

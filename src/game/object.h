@@ -166,7 +166,7 @@ bool object_script_execute(int64_t triggerer_obj, int64_t attachee_obj, int64_t 
 int64_t object_dist(int64_t a, int64_t b);
 int object_rot(int64_t a, int64_t b);
 void object_examine(int64_t obj, int64_t pc_obj, char* buffer);
-void object_set_gender_and_race(int64_t obj, int racial_type, int gender, int race);
+void object_set_gender_and_race(int64_t obj, int body_type, int gender, int race);
 bool object_is_lockable(int64_t obj);
 bool object_locked_get(int64_t obj);
 bool object_locked_set(int64_t obj, bool locked);

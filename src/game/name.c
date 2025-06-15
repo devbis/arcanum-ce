@@ -649,35 +649,35 @@ tig_art_id_t name_normalize_aid(tig_art_id_t aid)
         break;
     case TIG_ART_TYPE_CRITTER: {
         int armor;
-        int race;
+        int body_type;
         int gender;
         int shield;
         int anim;
         int weapon;
 
         armor = tig_art_critter_id_armor_get(aid);
-        race = tig_art_critter_id_race_get(aid);
+        body_type = tig_art_critter_id_body_type_get(aid);
         gender = tig_art_critter_id_gender_get(aid);
         shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
         weapon = tig_art_critter_id_weapon_get(aid);
 
-        if (race == TIG_ART_CRITTER_RACE_ELF
+        if (body_type == TIG_ART_CRITTER_BODY_TYPE_ELF
             && gender == TIG_ART_CRITTER_GENDER_FEMALE) {
-            race = TIG_ART_CRITTER_RACE_HUMAN;
+            body_type = TIG_ART_CRITTER_BODY_TYPE_HUMAN;
         }
 
         if (armor == TIG_ART_ARMOR_TYPE_PLATE
             || armor == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
             gender = TIG_ART_CRITTER_GENDER_MALE;
-            if (race == TIG_ART_CRITTER_RACE_ELF) {
-                race = TIG_ART_CRITTER_RACE_HUMAN;
-            } else if (race == TIG_ART_CRITTER_RACE_HALFLING) {
-                race = TIG_ART_CRITTER_RACE_DWARF;
+            if (body_type == TIG_ART_CRITTER_BODY_TYPE_ELF) {
+                body_type = TIG_ART_CRITTER_BODY_TYPE_HUMAN;
+            } else if (body_type == TIG_ART_CRITTER_BODY_TYPE_HALFLING) {
+                body_type = TIG_ART_CRITTER_BODY_TYPE_DWARF;
             }
         }
 
-        fix_missing_art(gender + 2 * race, num_critter_art, missing_critter_art, &anim, &weapon);
+        fix_missing_art(gender + 2 * body_type, num_critter_art, missing_critter_art, &anim, &weapon);
 
         if (anim == 24) {
             armor = 0;
@@ -698,7 +698,7 @@ tig_art_id_t name_normalize_aid(tig_art_id_t aid)
             }
         }
 
-        tig_art_critter_id_create(gender, race, armor, shield, 0, 0, anim, weapon, 0, &aid);
+        tig_art_critter_id_create(gender, body_type, armor, shield, 0, 0, anim, weapon, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_PORTAL:
@@ -869,7 +869,7 @@ int name_resolve_path(tig_art_id_t aid, char* path)
         return TIG_OK;
     case TIG_ART_TYPE_CRITTER: {
         int armor;
-        int race;
+        int body_type;
         char v3;
         int anim;
         const char* v5;
@@ -884,7 +884,7 @@ int name_resolve_path(tig_art_id_t aid, char* path)
             return TIG_ERR_GENERIC;
         }
 
-        race = tig_art_critter_id_race_get(aid);
+        body_type = tig_art_critter_id_body_type_get(aid);
         if (armor == TIG_ART_ARMOR_TYPE_PLATE
             || armor == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
             v3 = byte_5A11A0[2];
@@ -892,7 +892,7 @@ int name_resolve_path(tig_art_id_t aid, char* path)
             v3 = byte_5A11A0[tig_art_critter_id_gender_get(aid)];
         }
         anim = tig_art_id_anim_get(aid);
-        v5 = off_5A11A4[race];
+        v5 = off_5A11A4[body_type];
         if (anim == 24) {
             v6 = "XX";
             v3 = byte_5A11A0[2];
@@ -1231,18 +1231,18 @@ tig_art_id_t sub_41E200(tig_art_id_t art_id)
         case TIG_ART_TYPE_CRITTER: {
             int palette = tig_art_id_palette_get(art_id);
             int gender = tig_art_critter_id_gender_get(art_id);
-            int race = tig_art_critter_id_race_get(art_id);
+            int body_type = tig_art_critter_id_body_type_get(art_id);
             int armor = tig_art_critter_id_armor_get(art_id);
 
-            if (tig_art_critter_id_create(gender, race, armor, 0, 0, 3, 0, 0, palette + 1, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(gender, body_type, armor, 0, 0, 3, 0, 0, palette + 1, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_critter_id_create(gender + 1, race, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(gender + 1, body_type, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_critter_id_create(0, race + 1, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(0, body_type + 1, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 

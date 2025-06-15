@@ -265,7 +265,7 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
     }
 
-    gmovie_play(8, GAME_MOVIE_BLACK_OUT, 0);
+    gmovie_play(8, GAME_MOVIE_NO_FINAL_FLIP, 0);
 
     if (!mainmenu_ui_handle()) {
         gameuilib_exit();

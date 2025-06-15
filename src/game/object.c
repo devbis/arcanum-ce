@@ -4085,7 +4085,7 @@ void object_examine(int64_t obj, int64_t pc_obj, char* buffer)
 }
 
 // 0x441C70
-void object_set_gender_and_race(int64_t obj, int racial_type, int gender, int race)
+void object_set_gender_and_race(int64_t obj, int body_type, int gender, int race)
 {
     tig_art_id_t aid;
 
@@ -4093,7 +4093,7 @@ void object_set_gender_and_race(int64_t obj, int racial_type, int gender, int ra
     stat_base_set(obj, STAT_GENDER, gender);
 
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    aid = tig_art_critter_id_race_set(aid, racial_type);
+    aid = tig_art_critter_id_body_type_set(aid, body_type);
     aid = tig_art_critter_id_gender_set(aid, gender);
     obj_field_int32_set(obj, OBJ_F_AID, aid);
     obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);

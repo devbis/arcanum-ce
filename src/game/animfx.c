@@ -339,16 +339,16 @@ bool animfx_add(AnimFxNode* node)
                 art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
                 switch (tig_art_type(art_id)) {
                 case TIG_ART_TYPE_CRITTER:
-                    switch (tig_art_critter_id_race_get(art_id)) {
-                    case TIG_ART_CRITTER_RACE_HUMAN:
-                    case TIG_ART_CRITTER_RACE_ELF:
+                    switch (tig_art_critter_id_body_type_get(art_id)) {
+                    case TIG_ART_CRITTER_BODY_TYPE_HUMAN:
+                    case TIG_ART_CRITTER_BODY_TYPE_ELF:
                         scale = 3;
                         break;
-                    case TIG_ART_CRITTER_RACE_DWARF:
-                    case TIG_ART_CRITTER_RACE_HALFLING:
+                    case TIG_ART_CRITTER_BODY_TYPE_DWARF:
+                    case TIG_ART_CRITTER_BODY_TYPE_HALFLING:
                         scale = 1;
                         break;
-                    case TIG_ART_CRITTER_RACE_HALF_OGRE:
+                    case TIG_ART_CRITTER_BODY_TYPE_HALF_OGRE:
                         scale = 4;
                         break;
                     default:

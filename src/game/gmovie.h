@@ -9,7 +9,7 @@ typedef unsigned int GameMovieFlags;
 #define GAME_MOVIE_FADE_IN 0x1u
 #define GAME_MOVIE_FADE_OUT 0x2u
 #define GAME_MOVIE_IGNORE_KEYBOARD 0x4u
-#define GAME_MOVIE_BLACK_OUT 0x8u
+#define GAME_MOVIE_NO_FINAL_FLIP 0x8u
 
 bool gmovie_mod_load();
 void gmovie_mod_unload();

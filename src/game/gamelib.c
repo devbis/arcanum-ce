@@ -873,7 +873,7 @@ bool gamelib_redraw()
             rect = node->rect;
             rect.x += dword_5D0D78;
             rect.y += dword_5D0D7C;
-            tig_window_set_needs_display_in_rect(&rect);
+            tig_window_invalidate_rect(&rect);
             tig_rect_node_destroy(node);
             node = next;
         }
@@ -1627,7 +1627,7 @@ void sub_4045A0()
     ci_redraw();
     gamelib_invalidate_rect(NULL);
     gamelib_redraw();
-    tig_window_set_needs_display_in_rect(NULL);
+    tig_window_invalidate_rect(NULL);
 }
 
 // 0x4045D0
@@ -1792,7 +1792,7 @@ void gamelib_splash(tig_window_handle_t window_handle)
             tig_video_buffer_destroy(video_buffer);
         }
 
-        tig_window_set_needs_display_in_rect(NULL);
+        tig_window_invalidate_rect(NULL);
         tig_window_display();
 
         settings_set_value(&settings, SPLASH_KEY, value + 1);
