@@ -1300,7 +1300,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
     if (msg->data.button.button_handle == inven_ui_total_attack_image_btn
         || msg->data.button.button_handle == inven_ui_total_attack_value_btn) {
         sub_5506C0(0);
-        sub_556220(inven_ui_pc_obj);
+        intgame_message_window_display_attack(inven_ui_pc_obj);
         return true;
     }
 
@@ -1313,7 +1313,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 
     if (msg->data.button.button_handle == inven_ui_target_total_attack_btn) {
         sub_5506C0(0);
-        sub_556220(qword_682C78);
+        intgame_message_window_display_attack(qword_682C78);
         return true;
     }
 
@@ -1363,7 +1363,7 @@ static inline bool inven_ui_message_filter_handle_button_released(TigMessage* ms
 static inline bool inven_ui_mssage_filter_handle_button_hovered(TigMessage* msg)
 {
     if (msg->data.button.button_handle == inven_ui_total_attack_image_btn || msg->data.button.button_handle == inven_ui_total_attack_value_btn) {
-        sub_556220(inven_ui_pc_obj);
+        intgame_message_window_display_attack(inven_ui_pc_obj);
         return true;
     }
 
@@ -1373,7 +1373,7 @@ static inline bool inven_ui_mssage_filter_handle_button_hovered(TigMessage* msg)
     }
 
     if (msg->data.button.button_handle == inven_ui_target_total_attack_btn) {
-        sub_556220(qword_682C78);
+        intgame_message_window_display_attack(qword_682C78);
         return true;
     }
 

@@ -7448,7 +7448,7 @@ void intgame_draw_portrait(int64_t obj, int portrait, tig_window_handle_t window
 }
 
 // 0x556220
-void sub_556220(int64_t obj)
+void intgame_message_window_display_attack(int64_t obj)
 {
     MesFileEntry mes_file_entry;
     char str[MAX_STRING];
