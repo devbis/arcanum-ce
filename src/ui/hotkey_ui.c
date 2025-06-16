@@ -592,7 +592,7 @@ void intgame_hotkey_refresh(int index)
         if (hotkey->count != -1) {
             // NOTE: Fixed unbalanced `tig_font_pop` in some code paths.
             if (hotkey->count < 10000) {
-                tig_font_push(dword_739F88);
+                tig_font_push(intgame_morph15_white_font);
                 SDL_itoa(hotkey->count, badge, 10);
                 dst_rect.x = hotkey->info.x + 2;
                 dst_rect.y = 0;

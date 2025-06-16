@@ -799,7 +799,7 @@ static int intgame_iso_window_height = 600;
 static tig_window_handle_t intgame_iso_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x64C470
-static tig_font_handle_t dword_64C470;
+static tig_font_handle_t intgame_morph15_blue_font;
 
 // 0x64C474
 static TigVideoBuffer* dword_64C474;
@@ -814,13 +814,13 @@ static int dword_64C47C[2];
 static int intgame_ui_primary_button_icons[UI_PRIMARY_BUTTON_COUNT];
 
 // 0x64C498
-static tig_font_handle_t dword_64C498;
+static tig_font_handle_t intgame_flare12_white_font;
 
 // 0x64C49C
-static tig_font_handle_t dword_64C49C;
+static tig_font_handle_t intgame_flare12_red_font;
 
 // 0x64C4A0
-static tig_font_handle_t dword_64C4A0;
+static tig_font_handle_t intgame_flare14_white_font;
 
 // 0x64C4A8
 static UiButtonInfo stru_64C4A8[5];
@@ -829,7 +829,7 @@ static UiButtonInfo stru_64C4A8[5];
 static tig_window_handle_t dword_64C4F8[2];
 
 // 0x64C500
-static tig_font_handle_t dword_64C500;
+static tig_font_handle_t intgame_flare12_blue_font;
 
 // 0x64C504
 static mes_file_handle_t intgame_mes_file;
@@ -853,7 +853,7 @@ static int dword_64C530;
 static UiPrimaryButton intgame_map_button;
 
 // 0x64C538
-static tig_font_handle_t dword_64C538;
+static tig_font_handle_t intgame_morph15_orange_font;
 
 // 0x64C540
 static UiMessage stru_64C540[10];
@@ -946,7 +946,7 @@ static bool dword_64C6E8;
 static unsigned int intgame_iso_window_flags;
 
 // 0x739F88
-tig_font_handle_t dword_739F88;
+tig_font_handle_t intgame_morph15_white_font;
 
 // 0x549B70
 bool intgame_init(GameInitInfo* init_info)
@@ -968,43 +968,43 @@ bool intgame_init(GameInitInfo* init_info)
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font, &dword_739F88);
+    tig_font_create(&font, &intgame_morph15_white_font);
 
     font.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(100, 100, 255);
-    tig_font_create(&font, &dword_64C470);
+    tig_font_create(&font, &intgame_morph15_blue_font);
 
     font.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 114, 0);
-    tig_font_create(&font, &dword_64C538);
+    tig_font_create(&font, &intgame_morph15_orange_font);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font, &dword_64C498);
+    tig_font_create(&font, &intgame_flare12_white_font);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 0, 0);
-    tig_font_create(&font, &dword_64C49C);
+    tig_font_create(&font, &intgame_flare12_red_font);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(0, 0, 255);
-    tig_font_create(&font, &dword_64C500);
+    tig_font_create(&font, &intgame_flare12_blue_font);
 
     font.flags = 0;
     tig_art_interface_id_create(230, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font, &dword_64C4A0);
+    tig_font_create(&font, &intgame_flare14_white_font);
 
     memcpy(intgame_ui_primary_button_icons, intgame_ui_primary_button_normal_icons, sizeof(intgame_ui_primary_button_icons));
     intgame_map_button = UI_PRIMARY_BUTTON_TOWNMAP;
@@ -1093,13 +1093,13 @@ void intgame_resize(GameResizeInfo* resize_info)
 // 0x54A130
 void intgame_exit()
 {
-    tig_font_destroy(dword_739F88);
-    tig_font_destroy(dword_64C470);
-    tig_font_destroy(dword_64C538);
-    tig_font_destroy(dword_64C498);
-    tig_font_destroy(dword_64C49C);
-    tig_font_destroy(dword_64C500);
-    tig_font_destroy(dword_64C4A0);
+    tig_font_destroy(intgame_morph15_white_font);
+    tig_font_destroy(intgame_morph15_blue_font);
+    tig_font_destroy(intgame_morph15_orange_font);
+    tig_font_destroy(intgame_flare12_white_font);
+    tig_font_destroy(intgame_flare12_red_font);
+    tig_font_destroy(intgame_flare12_blue_font);
+    tig_font_destroy(intgame_flare14_white_font);
     intgame_big_window_destroy();
     mes_unload(intgame_mes_file);
 }
@@ -4065,7 +4065,7 @@ void intgame_message_window_write_text_centered(char* str, TigRect* rect)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         rect,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_CENTER | MSG_TEXT_VALIGN_CENTER);
 }
 
@@ -5404,7 +5404,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             mes_file_entry1.str,
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         mes_file_entry1.num = 11; // "Congratulations! You are now level %d."
@@ -5413,7 +5413,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C70D8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         if (ui_message->field_C != -1) {
@@ -5423,13 +5423,13 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             intgame_message_window_write_text(window_handle,
                 str,
                 &stru_5C70E8,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
         } else {
             intgame_message_window_write_text(window_handle,
                 ui_message->str,
                 &stru_5C7128,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
         }
 
@@ -5442,7 +5442,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         mes_file_entry1.num = 13; // "You have absorbed %d unit(s) of poison."
@@ -5451,7 +5451,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C70D8,
-            dword_64C49C,
+            intgame_flare12_red_font,
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
@@ -5463,14 +5463,14 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         curse_copy_description(ui_message->field_8, str);
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
@@ -5482,14 +5482,14 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         bless_copy_description(ui_message->field_8, str);
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
@@ -5517,16 +5517,16 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             intgame_message_window_write_text(window_handle,
                 ui_message->str,
                 &stru_5C70C8,
-                dword_739F88,
+                intgame_morph15_white_font,
                 MSG_TEXT_HALIGN_LEFT);
             rc = intgame_message_window_write_text(window_handle,
                 ui_message->str + pos + 1,
                 &stru_5C7138,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
             ui_message->str[pos] = '\n';
         } else {
-            rc = intgame_message_window_write_text(window_handle, ui_message->str, &stru_5C7108, dword_64C498, 1);
+            rc = intgame_message_window_write_text(window_handle, ui_message->str, &stru_5C7108, intgame_flare12_white_font, 1);
         }
 
         if (!rc) {
@@ -5535,19 +5535,19 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
                 ui_message->str[pos] = '\0';
                 intgame_message_window_write_text(window_handle, ui_message->str,
                     &stru_5C7148,
-                    dword_739F88,
+                    intgame_morph15_white_font,
                     MSG_TEXT_HALIGN_LEFT | MSG_TEXT_TRUNCATE);
                 intgame_message_window_write_text(window_handle,
                     ui_message->str + pos + 1,
                     &stru_5C7168,
-                    dword_64C498,
+                    intgame_flare12_white_font,
                     MSG_TEXT_HALIGN_LEFT | MSG_TEXT_TRUNCATE);
                 ui_message->str[pos] = '\n';
             } else {
                 intgame_message_window_write_text(window_handle,
                     ui_message->str,
                     &stru_5C7158,
-                    dword_64C498,
+                    intgame_flare12_white_font,
                     MSG_TEXT_HALIGN_LEFT | MSG_TEXT_TRUNCATE);
             }
         }
@@ -5560,14 +5560,14 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
                 ? tech_skill_name(GET_TECH_SKILL(ui_message->field_8))
                 : basic_skill_name(GET_BASIC_SKILL(ui_message->field_8)),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
             IS_TECH_SKILL(ui_message->field_8)
                 ? tech_skill_description(GET_TECH_SKILL(ui_message->field_8))
                 : basic_skill_description(GET_BASIC_SKILL(ui_message->field_8)),
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         if (ui_message->field_C != 0) {
@@ -5579,7 +5579,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             intgame_message_window_write_text(window_handle,
                 str,
                 &stru_5C70C8,
-                dword_64C49C,
+                intgame_flare12_red_font,
                 MSG_TEXT_HALIGN_RIGHT);
         }
         break;
@@ -5588,7 +5588,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             spell_name(ui_message->field_8),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         mes_file_entry1.num = 73; // "Bonus to Heal skill"
@@ -5597,7 +5597,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C70D8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         mes_file_entry1.num = 59; // "Damage"
@@ -5634,13 +5634,13 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C70D8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_RIGHT);
 
         intgame_message_window_write_text(window_handle,
             spell_description(ui_message->field_8),
             &stru_5C7128,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
         break;
     }
@@ -5649,12 +5649,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             spell_college_name(ui_message->field_8),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
             spell_college_description(ui_message->field_8),
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
         break;
     case UI_MSG_TYPE_TECH:
@@ -5662,12 +5662,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             tech_discipline_name_get(ui_message->field_8),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
             tech_discipline_description_get(ui_message->field_8),
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
         break;
     case UI_MSG_TYPE_DEGREE:
@@ -5675,7 +5675,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             tech_degree_name_get(ui_message->field_8 % 8),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
 
         mes_file_entry1.num = 17;
@@ -5687,13 +5687,13 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             str,
             &stru_5C70C8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_RIGHT);
 
         intgame_message_window_write_text(window_handle,
             tech_degree_description_get(ui_message->field_8 % 8, ui_message->field_8 / 8),
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
         break;
     case UI_MSG_TYPE_STAT: {
@@ -5710,19 +5710,19 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             intgame_message_window_write_text(window_handle,
                 ui_message->str,
                 &stru_5C70C8,
-                dword_739F88,
+                intgame_morph15_white_font,
                 MSG_TEXT_HALIGN_LEFT);
             intgame_message_window_write_text(window_handle,
                 ui_message->str + pos + 1,
                 &stru_5C7138,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
             ui_message->str[pos] = '\n';
         } else {
             intgame_message_window_write_text(window_handle,
                 ui_message->str,
                 &stru_5C7108,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
         }
         break;
@@ -5732,12 +5732,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         intgame_message_window_write_text(window_handle,
             sub_56E9D0(ui_message->field_8),
             &stru_5C70C8,
-            dword_739F88,
+            intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C7138,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
         break;
     }
@@ -6279,7 +6279,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70C8,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     if (critter_is_dead(critter_obj)) {
@@ -6288,7 +6288,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             mes_file_entry.str,
             &stru_5C70D8,
-            dword_64C49C,
+            intgame_flare12_red_font,
             MSG_TEXT_HALIGN_LEFT);
         return;
     }
@@ -6358,7 +6358,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70D8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
     }
 
@@ -6369,7 +6369,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70D8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_RIGHT);
 
     int cur_hp = object_hp_current(critter_obj);
@@ -6389,7 +6389,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70E8,
-        dword_64C49C,
+        intgame_flare12_red_font,
         MSG_TEXT_HALIGN_RIGHT);
 
     int cur_fatigue = critter_fatigue_current(critter_obj);
@@ -6405,7 +6405,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70F8,
-        dword_64C500,
+        intgame_flare12_blue_font,
         MSG_TEXT_HALIGN_RIGHT);
 }
 
@@ -6589,7 +6589,7 @@ void sub_554830(int64_t a1, int64_t a2)
         intgame_message_window_write_text(window_handle,
             str,
             &rect,
-            dword_64C4A0,
+            intgame_flare14_white_font,
             MSG_TEXT_HALIGN_CENTER);
 
         slot = 0;
@@ -6618,7 +6618,7 @@ void sub_554830(int64_t a1, int64_t a2)
         intgame_message_window_write_text(window_handle,
             mes_file_entry.str,
             &rect,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_CENTER);
 
         sprintf(str, "%d%%", effectiveness);
@@ -6626,7 +6626,7 @@ void sub_554830(int64_t a1, int64_t a2)
         intgame_message_window_write_text(window_handle,
             str,
             &rect,
-            dword_64C4A0,
+            intgame_flare14_white_font,
             MSG_TEXT_HALIGN_CENTER);
     }
 }
@@ -6860,13 +6860,13 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             str,
             &stru_5C70C8,
-            dword_64C538,
+            intgame_morph15_orange_font,
             MSG_TEXT_HALIGN_LEFT);
     } else {
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             str,
             &stru_5C70C8,
-            complexity > 0 ? dword_64C470 : dword_739F88,
+            complexity > 0 ? intgame_morph15_blue_font : intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
     }
 
@@ -6880,7 +6880,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70C8,
-            dword_64C49C,
+            intgame_flare12_red_font,
             MSG_TEXT_HALIGN_RIGHT);
     }
 
@@ -6965,7 +6965,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70D8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_LEFT);
     }
 
@@ -6983,7 +6983,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
             intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
                 buffer,
                 &stru_5C70E8,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
         } else if (complexity < 0) {
             value = item_aptitude_crit_failure_chance(item_obj, pc_obj);
@@ -6995,7 +6995,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
             intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
                 buffer,
                 &stru_5C70E8,
-                dword_64C498,
+                intgame_flare12_white_font,
                 MSG_TEXT_HALIGN_LEFT);
         }
     }
@@ -7049,7 +7049,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70E8,
-            dword_64C498,
+            intgame_flare12_white_font,
             MSG_TEXT_HALIGN_RIGHT);
     }
 
@@ -7062,7 +7062,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70F8,
-        dword_64C49C,
+        intgame_flare12_red_font,
         MSG_TEXT_HALIGN_LEFT);
 
     if (tig_art_item_id_destroyed_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID)) == 0) {
@@ -7077,7 +7077,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
             intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
                 buffer,
                 &stru_5C70F8,
-                dword_64C49C,
+                intgame_flare12_red_font,
                 MSG_TEXT_HALIGN_RIGHT);
         }
     }
@@ -7304,7 +7304,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C7118,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     if ((obj_field_int32_get(scenery_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
@@ -7312,7 +7312,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70F8,
-            dword_64C49C,
+            intgame_flare12_red_font,
             MSG_TEXT_HALIGN_RIGHT);
     }
 
@@ -7340,7 +7340,7 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70C8,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     portal_flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
@@ -7357,14 +7357,14 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         mes_file_entry.str,
         &stru_5C70F8,
-        dword_64C49C,
+        intgame_flare12_red_font,
         MSG_TEXT_HALIGN_LEFT);
 
     sprintf(buffer, "%d/%d", object_hp_current(portal_obj), object_hp_max(portal_obj));
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70F8,
-        dword_64C49C,
+        intgame_flare12_red_font,
         MSG_TEXT_HALIGN_RIGHT);
 }
 
@@ -7387,7 +7387,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70C8,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     container_flags = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_FLAGS);
@@ -7404,7 +7404,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         mes_file_entry.str,
         &stru_5C70F8,
-        dword_64C49C,
+        intgame_flare12_red_font,
         MSG_TEXT_HALIGN_LEFT);
 
     if ((obj_field_int32_get(container_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
@@ -7412,7 +7412,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
         intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
             buffer,
             &stru_5C70F8,
-            dword_64C49C,
+            intgame_flare12_red_font,
             MSG_TEXT_HALIGN_RIGHT);
     }
 }
@@ -7456,7 +7456,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70C8,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
@@ -7475,7 +7475,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70D8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     mes_file_entry.num = 59; // "Fatigue"
@@ -7490,7 +7490,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70E8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     mes_file_entry.num = 61; // "Fire Damage"
@@ -7505,7 +7505,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70F8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     mes_file_entry.num = 58; // "Damage"
@@ -7520,7 +7520,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70D8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
     mes_file_entry.num = 60; // "Electrical Damage"
@@ -7535,7 +7535,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70E8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
     mes_file_entry.num = 62; // "Poison"
@@ -7550,7 +7550,7 @@ void sub_556220(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70F8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 }
 
@@ -7581,7 +7581,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70C8,
-        dword_739F88,
+        intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     // Total AC
@@ -7601,7 +7601,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70D8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     // Magic Resistance
@@ -7621,7 +7621,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70E8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     // Fire Resistance
@@ -7641,7 +7641,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70F8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
     // Damage Resistance
@@ -7661,7 +7661,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70D8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
     // Electrical Resistance
@@ -7681,7 +7681,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70E8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
     // Poison Resistance
@@ -7701,7 +7701,7 @@ void sub_5566B0(int64_t obj)
     intgame_message_window_write_text(stru_5C6D60[intgame_iso_window_type].window_handle,
         buffer,
         &stru_5C70F8,
-        dword_64C498,
+        intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 }
 

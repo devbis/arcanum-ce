@@ -26,7 +26,7 @@ typedef enum IntgameBar {
     INTGAME_BAR_COUNT,
 } IntgameBar;
 
-extern tig_font_handle_t dword_739F88;
+extern tig_font_handle_t intgame_morph15_white_font;
 
 bool intgame_init(GameInitInfo* init_info);
 void intgame_reset();
