@@ -87,7 +87,7 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str);
 bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr);
 tig_art_id_t sub_554BE0(int64_t obj);
 void intgame_message_window_display_attack(int64_t obj);
-void sub_5566B0(int64_t obj);
+void intgame_message_window_display_defense(int64_t obj);
 void intgame_toggle_primary_button(UiPrimaryButton btn, bool on);
 void intgame_set_map_button(UiPrimaryButton btn);
 void sub_556E60();

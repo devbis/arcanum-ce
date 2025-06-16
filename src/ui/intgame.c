@@ -7573,14 +7573,13 @@ void intgame_message_window_display_attack(int64_t obj)
 }
 
 // 0x5566B0
-void sub_5566B0(int64_t obj)
+void intgame_message_window_display_defense(int64_t obj)
 {
     MesFileEntry mes_file_entry;
     char buffer[MAX_STRING];
     int value;
 
-    // Total Defense
-    mes_file_entry.num = 63;
+    mes_file_entry.num = 63; // "Total Defense"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = item_total_defence(obj);
     sprintf(buffer,
@@ -7602,8 +7601,7 @@ void sub_5566B0(int64_t obj)
         intgame_morph15_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
-    // Total AC
-    mes_file_entry.num = 70;
+    mes_file_entry.num = 70; // "Total AC"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_ac(obj, 1);
     if (value != 0) {
@@ -7622,8 +7620,7 @@ void sub_5566B0(int64_t obj)
         intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
-    // Magic Resistance
-    mes_file_entry.num = 65;
+    mes_file_entry.num = 65; // "Magic Resistance"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_resistance(obj, RESISTANCE_TYPE_MAGIC, true);
     if (value != 0) {
@@ -7642,8 +7639,7 @@ void sub_5566B0(int64_t obj)
         intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
-    // Fire Resistance
-    mes_file_entry.num = 67;
+    mes_file_entry.num = 67; // "Fire Resistance"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_resistance(obj, RESISTANCE_TYPE_FIRE, true);
     if (value != 0) {
@@ -7662,8 +7658,7 @@ void sub_5566B0(int64_t obj)
         intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT);
 
-    // Damage Resistance
-    mes_file_entry.num = 64;
+    mes_file_entry.num = 64; // "Damage Resistance"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_resistance(obj, RESISTANCE_TYPE_NORMAL, true);
     if (value != 0) {
@@ -7682,8 +7677,7 @@ void sub_5566B0(int64_t obj)
         intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
-    // Electrical Resistance
-    mes_file_entry.num = 66;
+    mes_file_entry.num = 66; // "Electrical Resistance"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_resistance(obj, RESISTANCE_TYPE_ELECTRICAL, true);
     if (value != 0) {
@@ -7702,8 +7696,7 @@ void sub_5566B0(int64_t obj)
         intgame_flare12_white_font,
         MSG_TEXT_HALIGN_LEFT | MSG_TEXT_SECONDARY);
 
-    // Poison Resistance
-    mes_file_entry.num = 68;
+    mes_file_entry.num = 68; // "Poison Resistance"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     value = object_get_resistance(obj, RESISTANCE_TYPE_POISON, true);
     if (value != 0) {
