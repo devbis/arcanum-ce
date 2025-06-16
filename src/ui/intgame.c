@@ -687,7 +687,7 @@ static UiButtonInfo stru_5C7270 = { 216, 47, 772, TIG_BUTTON_HANDLE_INVALID };
 static uint64_t qword_5C7280 = Tgt_Object;
 
 // 0x5C7288
-static tig_window_handle_t dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
+static tig_window_handle_t intgame_fs_hotkey_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5C728C
 static int dword_5C728C[] = {
@@ -1043,9 +1043,9 @@ void intgame_resize(GameResizeInfo* resize_info)
     sub_57DA50();
     dword_64C52C = resize_info->window_handle;
 
-    if (dword_5C7288 != TIG_WINDOW_HANDLE_INVALID) {
-        tig_window_destroy(dword_5C7288);
-        dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
+    if (intgame_fs_hotkey_window != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_destroy(intgame_fs_hotkey_window);
+        intgame_fs_hotkey_window = TIG_WINDOW_HANDLE_INVALID;
     }
 
     if (!intgame_compact_interface) {
@@ -1063,7 +1063,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         window_data.color_key = tig_color_make(5, 5, 5);
         hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_BOTTOM);
 
-        if (tig_window_create(&window_data, &dword_5C7288) != TIG_OK) {
+        if (tig_window_create(&window_data, &intgame_fs_hotkey_window) != TIG_OK) {
             tig_debug_printf("intgame_resize: ERROR: couldn't create window!");
             tig_exit();
         }
@@ -1072,7 +1072,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         rect.y = 0;
         rect.width = window_data.rect.width;
         rect.height = window_data.rect.height;
-        tig_window_fill(dword_5C7288,
+        tig_window_fill(intgame_fs_hotkey_window,
             &rect,
             tig_color_make(5, 5, 5));
 
@@ -1080,7 +1080,7 @@ void intgame_resize(GameResizeInfo* resize_info)
         rect.y = 563;
         rect.width = 411;
         rect.height = 37;
-        hotkey_ui_start(dword_5C7288, &rect, TIG_WINDOW_HANDLE_INVALID, true);
+        hotkey_ui_start(intgame_fs_hotkey_window, &rect, TIG_WINDOW_HANDLE_INVALID, true);
 
         for (index = 0; index < 5; index++) {
             if (spell_ui_maintain_has(index)) {
