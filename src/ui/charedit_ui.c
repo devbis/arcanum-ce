@@ -995,7 +995,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
 
     sub_55A240();
 
-    if (sub_553D10(pc_obj, charedit_obj, &portrait)) {
+    if (intgame_examine_portrait(pc_obj, charedit_obj, &portrait)) {
         portrait_draw_native(charedit_obj, portrait, charedit_window_handle, stru_5C89A8[0].x, stru_5C89A8[0].y);
     } else {
         tig_art_interface_id_create(portrait, 0, 0, 0, &art_id);

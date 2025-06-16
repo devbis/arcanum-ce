@@ -667,7 +667,7 @@ void follower_ui_update()
 
         follower_ui_draw(follower_ui_windows[index], 503, 0, 0, 100, 100);
 
-        if (sub_553D10(pc_obj, follower_obj, &portrait)) {
+        if (intgame_examine_portrait(pc_obj, follower_obj, &portrait)) {
             portrait_draw_32x32(follower_obj,
                 portrait,
                 follower_ui_windows[index],

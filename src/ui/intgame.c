@@ -169,7 +169,7 @@ static void intgame_message_window_draw_image(tig_window_handle_t window_handle,
 static void sub_554640(int a1, int a2, TigRect* rect, int value);
 static void sub_554830(int64_t a1, int64_t a2);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
-static int sub_554C20(int64_t item_obj);
+static int intgame_item_icon_get(int64_t item_obj);
 static void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
@@ -502,18 +502,18 @@ static TigRect stru_5C6F80 = { 648, 5, 128, 30 };
 static UiButtonInfo stru_5C6F90 = { 0, 0, -1, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6FA0
-static int dword_5C6FA0[RACE_COUNT] = {
-    375, // racehumanicon.art
-    378, // racehelficon.art
-    376, // raceelficon.art
-    377, // racehelficon.art
-    379, // racegnomeicon.art
-    380, // racehalflingicon.art
-    381, // racehorcicon.art
-    382, // racehogreicon.art
-    376, // raceelficon.art
-    382, // racehogreicon.art
-    381, // racehorcicon.art
+static int intgame_race_icons[RACE_COUNT] = {
+    /*     RACE_HUMAN */ 375, // racehumanicon.art
+    /*     RACE_DWARF */ 378, // racehelficon.art
+    /*       RACE_ELF */ 376, // raceelficon.art
+    /*  RACE_HALF_ELF */ 377, // racehelficon.art
+    /*     RACE_GNOME */ 379, // racegnomeicon.art
+    /*  RACE_HALFLING */ 380, // racehalflingicon.art
+    /*  RACE_HALF_ORC */ 381, // racehorcicon.art
+    /* RACE_HALF_OGRE */ 382, // racehogreicon.art
+    /*  RACE_DARK_ELF */ 376, // raceelficon.art
+    /*      RACE_OGRE */ 382, // racehogreicon.art
+    /*       RACE_ORC */ 381, // racehorcicon.art
 };
 
 // 0x5C6FCC
@@ -6151,20 +6151,20 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
 }
 
 // 0x553D10
-bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
+bool intgame_examine_portrait(int64_t pc_obj, int64_t target_obj, int* portrait_ptr)
 {
     unsigned int critter_flags;
 
     *portrait_ptr = 432; // levelupicon.art
 
-    switch (obj_field_int32_get(a2, OBJ_F_TYPE)) {
+    switch (obj_field_int32_get(target_obj, OBJ_F_TYPE)) {
     case OBJ_TYPE_PORTAL:
-        *portrait_ptr = tig_art_portal_id_type_get(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) == TIG_ART_PORTAL_TYPE_WINDOW
+        *portrait_ptr = tig_art_portal_id_type_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == TIG_ART_PORTAL_TYPE_WINDOW
             ? 786 // iconwindow.art
             : 436; // door_icon.art
         return false;
     case OBJ_TYPE_CONTAINER:
-        switch (sub_49B290(a2)) {
+        switch (sub_49B290(target_obj)) {
         case BP_JUNK_PILE:
             *portrait_ptr = 832; // cont_junk.art
             break;
@@ -6196,7 +6196,7 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         }
         return false;
     case OBJ_TYPE_SCENERY:
-        *portrait_ptr = 437;
+        *portrait_ptr = 437; // levelupicon.art
         return false;
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
@@ -6208,21 +6208,21 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
     case OBJ_TYPE_KEY_RING:
     case OBJ_TYPE_WRITTEN:
     case OBJ_TYPE_GENERIC:
-        *portrait_ptr = sub_554C20(a2);
+        *portrait_ptr = intgame_item_icon_get(target_obj);
         return false;
     case OBJ_TYPE_PC:
-        *portrait_ptr = portrait_get(a2);
+        *portrait_ptr = portrait_get(target_obj);
         return true;
     case OBJ_TYPE_NPC:
-        if (critter_pc_leader_get(a2) == a1) {
-            int portrait = portrait_get(a2);
+        if (critter_pc_leader_get(target_obj) == pc_obj) {
+            int portrait = portrait_get(target_obj);
             if (portrait != 0) {
                 *portrait_ptr = portrait;
                 return true;
             }
         }
 
-        critter_flags = obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS);
+        critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
         if ((critter_flags & OCF_UNDEAD) != 0) {
             *portrait_ptr = 384; // undead.art
             return false;
@@ -6244,7 +6244,7 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         }
 
         // Generic race-specific icon.
-        *portrait_ptr = dword_5C6FA0[stat_level_get(a2, STAT_RACE)];
+        *portrait_ptr = intgame_race_icons[stat_level_get(target_obj, STAT_RACE)];
         return false;
     default:
         return false;
@@ -6286,7 +6286,7 @@ void intgame_examine_critter(int64_t pc_obj, int64_t critter_obj, char* str)
         } else {
             int portrait;
 
-            if (sub_553D10(pc_obj, critter_obj, &portrait)) {
+            if (intgame_examine_portrait(pc_obj, critter_obj, &portrait)) {
                 intgame_draw_portrait(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
             } else {
                 intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
@@ -6693,7 +6693,7 @@ tig_art_id_t sub_554BE0(int64_t obj)
     int art_num;
 
     if (obj != OBJ_HANDLE_NULL) {
-        art_num = sub_554C20(obj);
+        art_num = intgame_item_icon_get(obj);
         tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
     }
 
@@ -6701,7 +6701,7 @@ tig_art_id_t sub_554BE0(int64_t obj)
 }
 
 // 0x554C20
-int sub_554C20(int64_t item_obj)
+int intgame_item_icon_get(int64_t item_obj)
 {
     int obj_type;
     int complexity;
@@ -6868,7 +6868,7 @@ void intgame_examine_item(int64_t pc_obj, int64_t item_obj, char* str)
     }
 
     intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle,
-        sub_554C20(item_obj));
+        intgame_item_icon_get(item_obj));
 
     is_identified = item_is_identified(item_obj);
     complexity = obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
@@ -7313,7 +7313,7 @@ void intgame_examine_scenery(int64_t pc_obj, int64_t scenery_obj, char* str)
 
     intgame_message_window_clear();
 
-    if (sub_553D10(pc_obj, scenery_obj, &portrait)) {
+    if (intgame_examine_portrait(pc_obj, scenery_obj, &portrait)) {
         intgame_draw_portrait(scenery_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
@@ -7349,7 +7349,7 @@ void intgame_examine_portal(int64_t pc_obj, int64_t portal_obj, char* str)
 
     intgame_message_window_clear();
 
-    if (sub_553D10(pc_obj, portal_obj, &portrait)) {
+    if (intgame_examine_portrait(pc_obj, portal_obj, &portrait)) {
         intgame_draw_portrait(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
@@ -7396,7 +7396,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
 
     intgame_message_window_clear();
 
-    if (sub_553D10(pc_obj, container_obj, &portrait)) {
+    if (intgame_examine_portrait(pc_obj, container_obj, &portrait)) {
         intgame_draw_portrait(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
     } else {
         intgame_message_window_draw_image(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);

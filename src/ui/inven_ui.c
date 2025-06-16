@@ -2798,7 +2798,7 @@ void redraw_inven(bool a1)
     // 0x5765A5
     switch (inven_ui_mode) {
     case INVEN_UI_MODE_BARTER:
-        if (sub_553D10(inven_ui_pc_obj, qword_682C78, &portrait)) {
+        if (intgame_examine_portrait(inven_ui_pc_obj, qword_682C78, &portrait)) {
             portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, 183, 33);
         } else {
             tig_art_interface_id_create(portrait, 0, 0, 0, &(art_blit_info.art_id));
@@ -2882,7 +2882,7 @@ void redraw_inven(bool a1)
     case INVEN_UI_MODE_LOOT:
     case INVEN_UI_MODE_STEAL:
     case INVEN_UI_MODE_IDENTIFY:
-        if (sub_553D10(inven_ui_pc_obj, qword_682C78, &portrait)) {
+        if (intgame_examine_portrait(inven_ui_pc_obj, qword_682C78, &portrait)) {
             portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, inven_ui_loot_target_portrait_rect.x, inven_ui_loot_target_portrait_rect.y);
         } else {
             tig_art_interface_id_create(portrait, 0, 0, 0, &(art_blit_info.art_id));
@@ -2906,7 +2906,7 @@ void redraw_inven(bool a1)
         break;
     case INVEN_UI_MODE_NPC_IDENTIFY:
     case INVEN_UI_MODE_NPC_REPAIR:
-        if (sub_553D10(inven_ui_pc_obj, qword_682C78, &portrait)) {
+        if (intgame_examine_portrait(inven_ui_pc_obj, qword_682C78, &portrait)) {
             portrait_draw_32x32(qword_682C78, portrait, inven_ui_window_handle, 141, 36);
         } else {
             tig_art_interface_id_create(portrait, 0, 0, 0, &(art_blit_info.art_id));
