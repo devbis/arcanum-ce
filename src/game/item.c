@@ -1464,7 +1464,7 @@ void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
     if (target_obj == OBJ_HANDLE_NULL
         && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_NEEDS_TARGET) != 0) {
-        sub_4EE060(source_obj, item_obj);
+        mp_item_activate(source_obj, item_obj);
         return;
     }
 
@@ -1564,7 +1564,7 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
 
     if (loc == 0
         && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_NEEDS_TARGET) != 0) {
-        sub_4EE060(obj, item_obj);
+        mp_item_activate(obj, item_obj);
         return;
     }
 

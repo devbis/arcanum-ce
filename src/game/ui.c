@@ -347,10 +347,10 @@ void ui_written_start_type(WrittenType written_type, int num)
 }
 
 // 0x460740
-void sub_460740(int64_t a1, int64_t a2)
+void ui_item_activate(int64_t owner_obj, int64_t item_obj)
 {
-    if (ui_callbacks.field_94 != NULL) {
-        ui_callbacks.field_94(a1, a2);
+    if (ui_callbacks.item_activate != NULL) {
+        ui_callbacks.item_activate(owner_obj, item_obj);
     }
 }
 

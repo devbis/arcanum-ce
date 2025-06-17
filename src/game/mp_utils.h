@@ -1233,7 +1233,7 @@ void sub_4EDDE0(int64_t obj);
 void mp_item_arrange_inventory(int64_t obj, bool vertical);
 void mp_handle_item_arrange_inventory(PacketArrangeInventory* pkt);
 void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7);
-void sub_4EE060(int64_t a1, int64_t a2);
+void mp_item_activate(int64_t owner_obj, int64_t item_obj);
 void sub_4EE0F0(int a1, int64_t a2, int64_t a3);
 void mp_ui_follower_refresh();
 void sub_4EE1D0(int64_t obj);

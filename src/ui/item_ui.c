@@ -69,18 +69,18 @@ void sub_5719F0(int64_t item_obj, uint64_t** tgt_ptr)
 }
 
 // 0x571AA0
-void sub_571AA0(int64_t a1, int64_t a2)
+void item_ui_activate(int64_t owner_obj, int64_t item_obj)
 {
     uint64_t* tgt_ptr;
     S4F2810 v1;
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    if ((obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_OFF) != 0
-        && !critter_is_dead(a1)
-        && !critter_is_unconscious(a1)) {
+    if ((obj_field_int32_get(owner_obj, OBJ_F_FLAGS) & OF_OFF) != 0
+        && !critter_is_dead(owner_obj)
+        && !critter_is_unconscious(owner_obj)) {
         return;
     }
 
@@ -88,9 +88,9 @@ void sub_571AA0(int64_t a1, int64_t a2)
         sub_571C80();
     }
 
-    qword_6810D8 = a2;
+    qword_6810D8 = item_obj;
 
-    sub_5719F0(a2, &tgt_ptr);
+    sub_5719F0(item_obj, &tgt_ptr);
 
     if ((*tgt_ptr & (Tgt_Obj_Inven & ~Tgt_Object)) == 0) {
         inven_ui_destroy();
@@ -105,12 +105,12 @@ void sub_571AA0(int64_t a1, int64_t a2)
         || ((*tgt_ptr & Tgt_Self) != 0
             && (*tgt_ptr & Tgt_Tile) == 0)
         || *tgt_ptr == Tgt_Obj_Radius) {
-        sub_4F27F0(&v1, obj_field_int64_get(a1, OBJ_F_LOCATION));
+        sub_4F27F0(&v1, obj_field_int64_get(owner_obj, OBJ_F_LOCATION));
         spell_ui_apply(&v1);
         return;
     }
 
-    if (sub_4B7790(a1, 4)) {
+    if (sub_4B7790(owner_obj, 4)) {
         sub_4F25B0(*tgt_ptr);
         if (sub_551A80(16)) {
             sub_4F25B0(*tgt_ptr);

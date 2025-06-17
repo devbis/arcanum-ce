@@ -100,7 +100,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_84 = sub_557730;
     callbacks.written_start_obj = written_ui_start_obj;
     callbacks.written_start_type = written_ui_start_type;
-    callbacks.field_94 = sub_571AA0;
+    callbacks.item_activate = item_ui_activate;
     callbacks.follower_refresh = follower_ui_refresh;
     callbacks.follower_update = follower_ui_update;
     callbacks.toggle_primary_button = intgame_toggle_primary_button;

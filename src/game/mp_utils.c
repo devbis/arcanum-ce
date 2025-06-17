@@ -365,12 +365,12 @@ void sub_4EDFF0(Packet99* pkt)
 }
 
 // 0x4EE060
-void sub_4EE060(int64_t a1, int64_t a2)
+void mp_item_activate(int64_t owner_obj, int64_t item_obj)
 {
     Packet100 pkt;
 
-    if (player_is_local_pc_obj(a1)) {
-        sub_460740(a1, a2);
+    if (player_is_local_pc_obj(owner_obj)) {
+        ui_item_activate(owner_obj, item_obj);
         return;
     }
 
@@ -378,8 +378,8 @@ void sub_4EE060(int64_t a1, int64_t a2)
         && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 5;
-        sub_4F0640(a1, &(pkt.d.s.field_8));
-        sub_4F0640(a2, &(pkt.d.s.field_20));
+        sub_4F0640(owner_obj, &(pkt.d.s.field_8));
+        sub_4F0640(item_obj, &(pkt.d.s.field_20));
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -599,7 +599,7 @@ void sub_4EE5E0(Packet100* pkt)
         sub_4F0690(pkt->d.s.field_20, &v2);
         sub_4F0690(pkt->d.s.field_8, &v1);
         if (player_is_local_pc_obj(v1)) {
-            sub_460740(v1, v2);
+            ui_item_activate(v1, v2);
         }
         break;
     case 6:
