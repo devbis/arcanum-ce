@@ -6,7 +6,7 @@
 #define SECTOR_ROOF_LIST_SIZE 256
 
 typedef struct SectorRoofList {
-    int field_0;
+    int empty;
     tig_art_id_t art_ids[SECTOR_ROOF_LIST_SIZE];
 } SectorRoofList;
 

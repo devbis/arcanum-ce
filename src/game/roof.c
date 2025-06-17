@@ -428,7 +428,7 @@ bool roof_art_id_set(int64_t loc, tig_art_id_t aid)
 
     old_aid = sector->roofs.art_ids[roof_id_from_loc(loc)];
     sector->roofs.art_ids[roof_id_from_loc(loc)] = aid;
-    sector->roofs.field_0 = 0;
+    sector->roofs.empty = 0;
 
     sector_unlock(sec);
 
