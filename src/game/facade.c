@@ -170,7 +170,7 @@ void sub_4CA0F0(int a1, int a2, int a3)
 
     sub_4CA240();
 
-    if (sub_4F6CF0(a1, &dword_5FF5A0, &dword_5FF574, &dword_5FF570)) {
+    if (walkmask_load(a1, &dword_5FF5A0, &dword_5FF574, &dword_5FF570)) {
         dword_5FF588 = a1;
         qword_5FF578 = location_make(a2 - dword_5FF574 / 2, a3 - dword_5FF570 / 2);
 

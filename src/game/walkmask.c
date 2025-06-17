@@ -2,42 +2,42 @@
 
 #include <stdio.h>
 
-static void sub_4F6E60(int a1, char* buffer);
-static bool sub_4F6E90(TigFile* stream, int* a2, int* a3, int* a4, int* a5, int* a6, int* a7);
-static bool sub_4F6F60(TigFile* stream);
-static tig_art_id_t* sub_4F6FC0(int width, int height);
-static bool sub_4F7020(TigFile* stream, tig_art_id_t* ids, int a3, int a4, int width, int height, int a7, int a8, int a9);
+static void walkmask_build_path(int facade, char* buffer);
+static bool walkmask_read_hdr(TigFile* stream, int* cnt, int* width, int* height, int* tile, int* outdoor, int* flippable);
+static bool walkmask_read_signature(TigFile* stream);
+static tig_art_id_t* walkmask_allocate(int width, int height);
+static bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt, int width, int height, int tile, int outdoor, int flippable);
 
 // 0x5BCFCC
-static const char* off_5BCFCC = "FacWalk V101  ";
+static const char* walkmask_signature = "FacWalk V101  ";
 
 // 0x4F6CF0
-bool sub_4F6CF0(int a1, tig_art_id_t** ids_ptr, int* width_ptr, int* height_ptr)
+bool walkmask_load(int facade, tig_art_id_t** ids_ptr, int* width_ptr, int* height_ptr)
 {
     char path[100];
     TigFile* stream;
     tig_art_id_t* ids;
-    int v1;
+    int cnt;
     int width;
     int height;
-    int v2;
-    int v3;
-    int v4;
+    int tile;
+    int outdoor;
+    int flippable;
 
-    sub_4F6E60(a1, path);
+    walkmask_build_path(facade, path);
 
     stream = tig_file_fopen(path, "rb");
     if (stream == NULL) {
         return false;
     }
 
-    if (!sub_4F6E90(stream, &v1, &width, &height, &v2, &v3, &v4)) {
+    if (!walkmask_read_hdr(stream, &cnt, &width, &height, &tile, &outdoor, &flippable)) {
         tig_file_fclose(stream);
         return false;
     }
 
-    ids = sub_4F6FC0(width, height);
-    if (!sub_4F7020(stream, ids, a1, v1, width, height, v2, v3, v4)) {
+    ids = walkmask_allocate(width, height);
+    if (!walkmask_read_data(stream, ids, facade, cnt, width, height, tile, outdoor, flippable)) {
         FREE(ids);
         tig_file_fclose(stream);
         return false;
@@ -53,43 +53,43 @@ bool sub_4F6CF0(int a1, tig_art_id_t** ids_ptr, int* width_ptr, int* height_ptr)
 }
 
 // 0x4F6E60
-void sub_4F6E60(int a1, char* buffer)
+void walkmask_build_path(int facade, char* buffer)
 {
-    if (a1 >= 0 && a1 < 512) {
-        sprintf(buffer, "art\\Facade\\facwalk.%02X", a1);
+    if (facade >= 0 && facade < 512) {
+        sprintf(buffer, "art\\Facade\\facwalk.%02X", facade);
     } else {
         buffer[0] = '\0';
     }
 }
 
 // 0x4F6E90
-bool sub_4F6E90(TigFile* stream, int* a2, int* a3, int* a4, int* a5, int* a6, int* a7)
+bool walkmask_read_hdr(TigFile* stream, int* cnt, int* width, int* height, int* tile, int* outdoor, int* flippable)
 {
-    if (!sub_4F6F60(stream)) return false;
-    if (tig_file_fread(a5, sizeof(*a5), 1, stream) != 1) return false;
-    if (tig_file_fread(a6, sizeof(*a6), 1, stream) != 1) return false;
-    if (tig_file_fread(a7, sizeof(*a7), 1, stream) != 1) return false;
-    if (tig_file_fread(a3, sizeof(*a3), 1, stream) != 1) return false;
-    if (tig_file_fread(a4, sizeof(*a4), 1, stream) != 1) return false;
-    if (tig_file_fread(a2, sizeof(*a2), 1, stream) != 1) return false;
-    if (*a2 > 1024) return false;
+    if (!walkmask_read_signature(stream)) return false;
+    if (tig_file_fread(tile, sizeof(*tile), 1, stream) != 1) return false;
+    if (tig_file_fread(outdoor, sizeof(*outdoor), 1, stream) != 1) return false;
+    if (tig_file_fread(flippable, sizeof(*flippable), 1, stream) != 1) return false;
+    if (tig_file_fread(width, sizeof(*width), 1, stream) != 1) return false;
+    if (tig_file_fread(height, sizeof(*height), 1, stream) != 1) return false;
+    if (tig_file_fread(cnt, sizeof(*cnt), 1, stream) != 1) return false;
+    if (*cnt > 1024) return false;
 
     return true;
 }
 
 // 0x4F6F60
-bool sub_4F6F60(TigFile* stream)
+bool walkmask_read_signature(TigFile* stream)
 {
-    char str[100];
+    char signature[100];
 
-    if (tig_file_fread(str, strlen(off_5BCFCC), 1, stream) != 1) return false;
-    if (strncmp(str, off_5BCFCC, strlen(off_5BCFCC)) != 0) return false;
+    if (tig_file_fread(signature, strlen(walkmask_signature), 1, stream) != 1) return false;
+    if (strncmp(signature, walkmask_signature, strlen(walkmask_signature)) != 0) return false;
 
     return true;
 }
 
 // 0x4F6FC0
-tig_art_id_t* sub_4F6FC0(int width, int height)
+tig_art_id_t* walkmask_allocate(int width, int height)
 {
     int x;
     int y;
@@ -101,7 +101,7 @@ tig_art_id_t* sub_4F6FC0(int width, int height)
     index = 0;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            ids[index] = TIG_ART_ID_INVALID;
+            ids[index++] = TIG_ART_ID_INVALID;
         }
     }
 
@@ -109,14 +109,15 @@ tig_art_id_t* sub_4F6FC0(int width, int height)
 }
 
 // 0x4F7020
-bool sub_4F7020(TigFile* stream, tig_art_id_t* ids, int a3, int a4, int width, int height, int a7, int a8, int a9)
+bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt, int width, int height, int tile, int outdoor, int flippable)
 {
     tig_art_id_t art_id;
+    int frame;
     int x;
     int y;
-    int v3;
+    int walkable;
 
-    for (x = 0; x < a4; x++) {
+    for (frame = 0; frame < cnt; frame++) {
         if (tig_file_fread(&x, sizeof(x), 1, stream) != 1) {
             return false;
         }
@@ -133,11 +134,11 @@ bool sub_4F7020(TigFile* stream, tig_art_id_t* ids, int a3, int a4, int width, i
             return false;
         }
 
-        if (tig_file_fread(&v3, sizeof(v3), 1, stream) != 1) {
+        if (tig_file_fread(&walkable, sizeof(walkable), 1, stream) != 1) {
             return false;
         }
 
-        if (tig_art_facade_id_create(a3, a7, a8, a9, x, v3, &art_id) != TIG_OK) {
+        if (tig_art_facade_id_create(facade, tile, outdoor, flippable, frame, walkable, &art_id) != TIG_OK) {
             return false;
         }
 
