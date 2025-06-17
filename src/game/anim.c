@@ -6660,7 +6660,7 @@ bool sub_428A10(AnimRunInfo* run_info)
             sub_424070(source_obj, 2, false, false);
         }
         if (tig_art_scenery_id_type_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == TIG_ART_SCENERY_TYPE_BEDS) {
-            sub_460820(target_obj);
+            ui_sleep_toggle(target_obj);
             return true;
         }
         if (!object_script_execute(source_obj, target_obj, source_obj, SAP_USE, 0)) {

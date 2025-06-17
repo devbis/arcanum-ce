@@ -403,10 +403,10 @@ void ui_written_newspaper_headline(int newspaper, char* str)
 }
 
 // 0x460820
-void sub_460820(int64_t obj)
+void ui_sleep_toggle(int64_t bed_obj)
 {
-    if (ui_callbacks.field_B0 != NULL) {
-        ui_callbacks.field_B0(obj);
+    if (ui_callbacks.sleep_toggle != NULL) {
+        ui_callbacks.sleep_toggle(bed_obj);
     }
 }
 
