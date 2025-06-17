@@ -85,7 +85,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
     }
 
     if (sub_551A00() == 16) {
-        sub_571C80();
+        item_ui_deactivate();
     }
 
     qword_6810D8 = item_obj;
@@ -129,7 +129,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
 }
 
 // 0x571C80
-void sub_571C80()
+void item_ui_deactivate()
 {
     sub_551A80(0);
     qword_6810D8 = OBJ_HANDLE_NULL;
@@ -183,7 +183,7 @@ void sub_571CB0(S4F2810* a1)
                     skill_invocation.target.obj,
                     SKILL_PICK_LOCKS,
                     0);
-                sub_571C80();
+                item_ui_deactivate();
                 return;
             }
         }
@@ -223,7 +223,7 @@ void sub_571CB0(S4F2810* a1)
                 && range != -1
                 && (item_flags & OIF_NO_RANGED_USE) == 0)) {
             item_use(pc_obj, item_obj, a1->obj);
-            sub_571C80();
+            item_ui_deactivate();
             return;
         }
 
@@ -232,7 +232,7 @@ void sub_571CB0(S4F2810* a1)
         anim_goal_use_item_on_obj(pc_obj, a1->obj, item_obj, 0);
         if (tig_kb_get_modifier(SDL_KMOD_LSHIFT)) {
             sub_436C80();
-            sub_571C80();
+            item_ui_deactivate();
             return;
         }
 
@@ -240,10 +240,10 @@ void sub_571CB0(S4F2810* a1)
             || !tig_kb_get_modifier(SDL_KMOD_NUM)
             || (get_always_run(pc_obj) && !tig_kb_get_modifier(SDL_KMOD_LCTRL))) {
             sub_436C20();
-            sub_571C80();
+            item_ui_deactivate();
             return;
         }
     }
 
-    sub_571C80();
+    item_ui_deactivate();
 }

@@ -2922,7 +2922,7 @@ void intgame_process_event(TigMessage* msg)
                 }
                 break;
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
-                sub_571C80();
+                item_ui_deactivate();
                 break;
             case TIG_MESSAGE_MOUSE_IDLE:
                 sub_551910(msg);
@@ -4885,7 +4885,7 @@ bool sub_551A80(int a1)
             intgame_unforce_fullscreen();
             break;
         case 16:
-            sub_571C80();
+            item_ui_deactivate();
             if (sub_573620()) {
                 sub_575770();
                 intgame_refresh_cursor();
