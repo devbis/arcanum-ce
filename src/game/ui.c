@@ -123,10 +123,10 @@ void sub_460330(int64_t obj, int tech, int action)
 }
 
 // 0x460360
-void sub_460360(int64_t obj, int type)
+void ui_skill_preprocess(int64_t obj, int type)
 {
-    if (ui_callbacks.field_2C != NULL) {
-        ui_callbacks.field_2C(obj, type);
+    if (ui_callbacks.skill_preprocess != NULL) {
+        ui_callbacks.skill_preprocess(obj, type);
     }
 }
 
