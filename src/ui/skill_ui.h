@@ -14,7 +14,7 @@ void sub_579FA0(int64_t obj, int type);
 void skill_ui_preprocess(int64_t obj, int type);
 void sub_57A1A0();
 void sub_57A1F0(S4F2810* a1);
-void sub_57A320(S4F2810 *a1, int64_t obj, int a3);
+void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3);
 int sub_57A6A0(int index);
 int sub_57A6C0(int a1, S4F2810* a2);
 char* sub_57A700(int index);

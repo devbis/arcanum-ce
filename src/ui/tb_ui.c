@@ -82,7 +82,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.show_inven_identify = show_inven_identify;
     callbacks.field_28 = tech_ui_adjust_degree;
     callbacks.skill_preprocess = skill_ui_preprocess;
-    callbacks.field_30 = sub_57A320;
+    callbacks.skill_activate = skill_ui_activate;
     callbacks.adjust_skill = skill_ui_adjust_skill;
     callbacks.set_skill_training = skill_ui_set_training;
     callbacks.field_3C = sub_57CC70;

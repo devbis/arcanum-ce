@@ -131,10 +131,10 @@ void ui_skill_preprocess(int64_t obj, int type)
 }
 
 // 0x460380
-void sub_460380(S4F2810 *a1, int64_t obj, int a3)
+void ui_skill_activate(S4F2810 *a1, int64_t obj, int a3)
 {
-    if (ui_callbacks.field_30 != NULL) {
-        ui_callbacks.field_30(a1, obj, a3);
+    if (ui_callbacks.skill_activate != NULL) {
+        ui_callbacks.skill_activate(a1, obj, a3);
     }
 }
 

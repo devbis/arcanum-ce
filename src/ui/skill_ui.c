@@ -257,12 +257,12 @@ void sub_57A1F0(S4F2810* a1)
 
     if ((pc_obj == qword_683490 || !critter_is_unconscious(pc_obj))
         && !critter_is_unconscious(qword_683490)) {
-        sub_57A320(a1, qword_683490, dword_5CB270);
+        skill_ui_activate(a1, qword_683490, dword_5CB270);
     }
 }
 
 // 0x57A320
-void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
+void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3)
 {
     bool is_pc;
     int skill;
