@@ -4,6 +4,18 @@
 #include "game/context.h"
 #include "game/timeevent.h"
 
+typedef enum GeneratorRate {
+    GENERATOR_RATE_SECOND,
+    GENERATOR_RATE_HALF_MINUTE,
+    GENERATOR_RATE_MINUTE,
+    GENERATOR_RATE_HOUR,
+    GENERATOR_RATE_DAY,
+    GENERATOR_RATE_WEEK,
+    GENERATOR_RATE_MONTH,
+    GENERATOR_RATE_YEAR,
+    GENERATOR_RATE_COUNT,
+} GeneratorRate;
+
 typedef unsigned int GeneratorFlags;
 
 #define GENERATOR_DAY 0x01u
@@ -18,7 +30,7 @@ typedef struct GeneratorInfo {
     /* 0010 */ int id;
     /* 0014 */ int max_concurrent;
     /* 0018 */ int max_total;
-    /* 001C */ int rate;
+    /* 001C */ GeneratorRate rate;
     /* 0020 */ bool enabled;
     /* 0024 */ int cur_concurrent;
     /* 0028 */ int cur_total;
