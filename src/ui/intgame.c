@@ -2916,7 +2916,7 @@ void intgame_process_event(TigMessage* msg)
             switch (msg->data.mouse.event) {
             case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
                 if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
-                    sub_571CB0(&v1);
+                    item_ui_apply(&v1);
                 } else if (sub_4F2D10() == 0x100000) {
                     spell_ui_error_target_not_damaged();
                 }
@@ -3021,7 +3021,7 @@ void sub_54EA80(S4F2810* a1)
             break;
         case 16:
             if (sub_4F2680(&v1)) {
-                sub_571CB0(a1);
+                item_ui_apply(a1);
             }
             break;
         default:

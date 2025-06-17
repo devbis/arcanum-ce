@@ -122,7 +122,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
             if ((*tgt_ptr & Tgt_Object) != 0
                 && tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                 sub_4F2810(&v1, player_get_local_pc_obj());
-                sub_571CB0(&v1);
+                item_ui_apply(&v1);
             }
         }
     }
@@ -139,7 +139,7 @@ void item_ui_deactivate()
 // TODO: Review.
 //
 // 0x571CB0
-void sub_571CB0(S4F2810* a1)
+void item_ui_apply(S4F2810* a1)
 {
     int64_t pc_obj;
     SkillInvocation skill_invocation;
