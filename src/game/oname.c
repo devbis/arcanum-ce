@@ -2,24 +2,42 @@
 
 #include "game/mes.h"
 
-// 0x60372C
+/**
+ * "oname.mes"
+ *
+ * 0x60372C
+ */
 static mes_file_handle_t o_name_oname_mes_file;
 
-// 0x603730
+/**
+ * "faction.mes"
+ *
+ * 0x603730
+ */
 static mes_file_handle_t o_name_faction_mes_file;
 
-// 0x603734
+/**
+ * Flag indicating whether the oname system has been initialized.
+ *
+ * 0x603734
+ */
 static bool o_name_initialized;
 
-// 0x4E72B0
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4E72B0
+ */
 bool o_name_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
+    // Load engine-wide object names (required).
     if (!mes_load("oemes\\oname.mes", &o_name_oname_mes_file)) {
         return false;
     }
 
+    // Load engine-wide factions (required).
     if (!mes_load("oemes\\faction.mes", &o_name_faction_mes_file)) {
         return false;
     }
@@ -29,7 +47,11 @@ bool o_name_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4E72F0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4E72F0
+ */
 void o_name_exit()
 {
     if (o_name_initialized) {
@@ -39,16 +61,22 @@ void o_name_exit()
     }
 }
 
-// 0x4E7320
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x4E7320
+ */
 bool o_name_mod_load()
 {
-    int msg_file;
+    mes_file_handle_t msg_file;
 
+    // Load module-specific internal object name file (optional).
     if (mes_load("oemes\\gameoname.mes", &msg_file)) {
         mes_merge(o_name_oname_mes_file, msg_file);
         mes_unload(msg_file);
     }
 
+    // Load module-specific faction names (optional).
     if (mes_load("oemes\\gamefaction.mes", &msg_file)) {
         mes_merge(o_name_faction_mes_file, msg_file);
         mes_unload(msg_file);
@@ -57,7 +85,11 @@ bool o_name_mod_load()
     return true;
 }
 
-// 0x4E7390
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x4E7390
+ */
 void o_name_mod_unload()
 {
     mes_unload(o_name_oname_mes_file);
@@ -71,13 +103,21 @@ void o_name_mod_unload()
     }
 }
 
-// 0x4E73F0
+/**
+ * Returns the number of entries in the object names message file.
+ *
+ * 0x4E73F0
+ */
 int o_name_count()
 {
     return mes_entries_count(o_name_oname_mes_file);
 }
 
-// 0x4E7400
+/**
+ * Retrieves the internal object name.
+ *
+ * 0x4E7400
+ */
 const char* o_name_get(int oname)
 {
     MesFileEntry mes_file_entry;
