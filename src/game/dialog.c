@@ -4237,7 +4237,7 @@ void dialog_offer_today_newspaper(int response_val, DialogState* state)
     size_t pos;
 
     newspaper = newspaper_get(NEWSPAPER_CURRENT);
-    sub_460800(newspaper, state->reply);
+    ui_written_newspaper_headline(newspaper, state->reply);
 
     pos = strlen(state->reply);
     if (pos > 0) {
@@ -4291,7 +4291,7 @@ void dialog_offer_older_newspaper(int response_val, DialogState* state)
 
         // PC: Each option is a newspaper headline.
         for (index = 0; index < cnt; index++) {
-            sub_460800(newspapers[index], state->options[index]);
+            ui_written_newspaper_headline(newspapers[index], state->options[index]);
             state->field_17F0[index] = 28;
             state->field_1804[index] = newspapers[index];
         }

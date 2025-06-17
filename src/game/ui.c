@@ -395,10 +395,10 @@ void ui_notify_sector_changed(int64_t sec, int64_t obj)
 }
 
 // 0x460800
-void sub_460800(int a1, char* str)
+void ui_written_newspaper_headline(int newspaper, char* str)
 {
-    if (ui_callbacks.field_AC != NULL) {
-        ui_callbacks.field_AC(a1, str);
+    if (ui_callbacks.written_newspaper_headline != NULL) {
+        ui_callbacks.written_newspaper_headline(newspaper, str);
     }
 }
 

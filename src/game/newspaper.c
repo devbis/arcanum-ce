@@ -296,7 +296,7 @@ int pick_random_generic_newspaper()
     do {
         cnt++;
         num += 10;
-        sub_460800(num, str);
+        ui_written_newspaper_headline(num, str);
     } while (str[0] != '\0');
 
     // Select a random number from the valid range.

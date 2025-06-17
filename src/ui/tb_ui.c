@@ -106,7 +106,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.toggle_primary_button = intgame_toggle_primary_button;
     callbacks.set_map_button = intgame_set_map_button;
     callbacks.notify_sector_changed = handle_sector_changed;
-    callbacks.field_AC = written_ui_newspaper_headline;
+    callbacks.written_newspaper_headline = written_ui_newspaper_headline;
     callbacks.field_B0 = sleep_ui_toggle;
     callbacks.field_B4 = ui_charedit_error_msg;
     callbacks.charedit_refresh = charedit_refresh;
