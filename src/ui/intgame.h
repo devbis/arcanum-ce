@@ -61,6 +61,7 @@ void intgame_message_window_display_skill(int value);
 void intgame_message_window_clear();
 void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens);
 bool intgame_pc_lens_check_pt(int x, int y);
+bool intgame_pc_lens_check_pt_unscale(int x, int y);
 void intgame_pc_lens_redraw();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);

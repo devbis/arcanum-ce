@@ -1784,7 +1784,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
     int64_t v2;
 
     dword_68346C = 0;
-    if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
+    if (intgame_pc_lens_check_pt_unscale(msg->data.mouse.x, msg->data.mouse.y)) {
         if (!sub_541680()) {
             if (qword_6810E0 != OBJ_HANDLE_NULL) {
                 if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {

@@ -1916,7 +1916,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 break;
             }
 
-            if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
+            if (intgame_pc_lens_check_pt_unscale(msg->data.mouse.x, msg->data.mouse.y)) {
                 wmap_ui_close();
                 return true;
             }

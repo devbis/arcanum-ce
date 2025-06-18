@@ -4375,6 +4375,15 @@ bool intgame_pc_lens_check_pt(int x, int y)
         && y < window_data.rect.y + intgame_pc_lens.rect->y + intgame_pc_lens.rect->height;
 }
 
+// CE: Super ugly wrapper around `intgame_pc_lens_check_pt` that converts
+// specified coordinates from old "fullscreen" 800x600 window to screen
+// coordinates before delegating actual work to `intgame_pc_lens_check_pt`.
+bool intgame_pc_lens_check_pt_unscale(int x, int y)
+{
+    hrp_center(&x, &y);
+    return intgame_pc_lens_check_pt(x, y);
+}
+
 // 0x551080
 void intgame_pc_lens_redraw()
 {
