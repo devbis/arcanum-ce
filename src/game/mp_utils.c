@@ -1050,7 +1050,7 @@ void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
     if (!tig_net_is_active()
         || tig_net_is_host()) {
-        item_use(source_obj, item_obj, target_obj);
+        item_use_on_obj(source_obj, item_obj, target_obj);
         return;
     }
 
@@ -1076,7 +1076,7 @@ void mp_handle_item_use(PacketItemUse* pkt)
         sub_4F0690(pkt->source_oid, &source_obj);
         sub_4F0690(pkt->item_oid, &item_obj);
         sub_4F0690(pkt->target_oid, &target_obj);
-        item_use(source_obj, item_obj, target_obj);
+        item_use_on_obj(source_obj, item_obj, target_obj);
     }
 }
 

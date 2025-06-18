@@ -1648,9 +1648,9 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             if (!combat_turn_based_is_active()
                 || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
                 if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
-                    item_use(inven_ui_pc_obj, v3, inven_ui_pc_obj);
+                    item_use_on_obj(inven_ui_pc_obj, v3, inven_ui_pc_obj);
                 } else {
-                    item_use(inven_ui_pc_obj, v3, OBJ_HANDLE_NULL);
+                    item_use_on_obj(inven_ui_pc_obj, v3, OBJ_HANDLE_NULL);
                 }
             }
 
@@ -1891,9 +1891,9 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 if (!combat_turn_based_is_active()
                     || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
                     if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
-                        item_use(inven_ui_pc_obj, item_obj, inven_ui_pc_obj);
+                        item_use_on_obj(inven_ui_pc_obj, item_obj, inven_ui_pc_obj);
                     } else {
-                        item_use(inven_ui_pc_obj, item_obj, OBJ_HANDLE_NULL);
+                        item_use_on_obj(inven_ui_pc_obj, item_obj, OBJ_HANDLE_NULL);
                     }
                 }
                 if (!inven_ui_created) {
@@ -2039,7 +2039,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
                 && sub_462C30(inven_ui_pc_obj, v1) == ITEM_CANNOT_OK) {
                 if (!combat_turn_based_is_active()
                     || combat_turn_based_whos_turn_get() == inven_ui_pc_obj) {
-                    item_use(inven_ui_pc_obj, v1, inven_ui_pc_obj);
+                    item_use_on_obj(inven_ui_pc_obj, v1, inven_ui_pc_obj);
                 }
 
                 if (!inven_ui_created) {

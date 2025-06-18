@@ -1431,7 +1431,7 @@ int sub_462C30(int64_t a1, int64_t a2)
 }
 
 // 0x462CC0
-void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
+void item_use_on_obj(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 {
     int64_t parent_obj;
     int item_type;

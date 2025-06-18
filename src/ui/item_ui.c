@@ -220,7 +220,7 @@ void item_ui_apply(S4F2810* a1)
             || ((item_flags & OIF_IS_MAGICAL) != 0
                 && range != -1
                 && (item_flags & OIF_NO_RANGED_USE) == 0)) {
-            item_use(pc_obj, item_obj, a1->obj);
+            item_use_on_obj(pc_obj, item_obj, a1->obj);
             item_ui_deactivate();
             return;
         }

@@ -2318,7 +2318,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
         }
 
         if (entry->spell == -1) {
-            item_use(ai->obj, entry->item_obj, obj);
+            item_use_on_obj(ai->obj, entry->item_obj, obj);
             return true;
         }
 

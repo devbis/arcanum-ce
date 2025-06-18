@@ -6723,7 +6723,7 @@ bool sub_428CD0(AnimRunInfo* run_info)
         return false;
     }
 
-    item_use(source_obj, item_obj, target_obj);
+    item_use_on_obj(source_obj, item_obj, target_obj);
 
     return true;
 }

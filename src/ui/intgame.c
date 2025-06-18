@@ -3651,9 +3651,9 @@ void sub_54FCF0(Hotkey* hotkey)
                     break;
                 }
             } else if (tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
-                item_use(pc_obj, v2, pc_obj);
+                item_use_on_obj(pc_obj, v2, pc_obj);
             } else {
-                item_use(pc_obj, v2, OBJ_HANDLE_NULL);
+                item_use_on_obj(pc_obj, v2, OBJ_HANDLE_NULL);
             }
         }
         break;

@@ -81,7 +81,7 @@ int64_t item_find_first_matching_prototype(int64_t parent_obj, int64_t existing_
 int64_t sub_462A30(int64_t obj, int64_t a2);
 int item_count_items_matching_prototype(int64_t obj, int64_t a2);
 int sub_462C30(int64_t a1, int64_t a2);
-void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
+void item_use_on_obj(int64_t source_obj, int64_t item_obj, int64_t target_obj);
 void item_use_on_loc(int64_t obj, int64_t item_obj, int64_t target_loc);
 int item_get_keys(int64_t obj, int* key_ids);
 bool sub_463370(int64_t obj, int key_id);
