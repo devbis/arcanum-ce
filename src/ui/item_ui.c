@@ -196,7 +196,7 @@ void item_ui_apply(S4F2810* a1)
 
     if (a1->is_loc) {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
-            sub_462FC0(pc_obj, item_obj, a1->loc);
+            item_use_on_loc(pc_obj, item_obj, a1->loc);
         } else if (trap_is_trap_device(item_obj)) {
             anim_goal_use_item_on_loc(pc_obj, a1->loc, item_obj, 0);
         } else {

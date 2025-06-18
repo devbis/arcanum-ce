@@ -6818,7 +6818,7 @@ bool sub_429040(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_462FC0(source_obj, item_obj, target_loc);
+    item_use_on_loc(source_obj, item_obj, target_loc);
 
     return true;
 }

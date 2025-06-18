@@ -1548,7 +1548,7 @@ void item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 }
 
 // 0x462FC0
-void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
+void item_use_on_loc(int64_t obj, int64_t item_obj, int64_t target_loc)
 {
     int64_t parent_obj;
     int mana_store;
@@ -1562,14 +1562,14 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
 
     item_parent(item_obj, &parent_obj);
 
-    if (loc == 0
+    if (target_loc == 0
         && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_NEEDS_TARGET) != 0) {
         mp_item_activate(obj, item_obj);
         return;
     }
 
     if (trap_is_trap_device(item_obj)) {
-        trap_use_at_loc(obj, item_obj, loc);
+        trap_use_at_loc(obj, item_obj, target_loc);
         return;
     }
 
@@ -1577,7 +1577,7 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
     obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
     item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
     if (mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
-        sub_4F27F0(&v1, loc);
+        sub_4F27F0(&v1, target_loc);
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
         sub_4CBF70(item_obj, 0);
     } else {
