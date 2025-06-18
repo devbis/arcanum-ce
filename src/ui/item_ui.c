@@ -136,8 +136,6 @@ void item_ui_deactivate()
     sub_553A60(21);
 }
 
-// TODO: Review.
-//
 // 0x571CB0
 void item_ui_apply(S4F2810* a1)
 {
@@ -226,8 +224,6 @@ void item_ui_apply(S4F2810* a1)
             item_ui_deactivate();
             return;
         }
-
-        if ((item_flags & OIF_IS_MAGICAL))
 
         anim_goal_use_item_on_obj(pc_obj, a1->obj, item_obj, 0);
         if (tig_kb_get_modifier(SDL_KMOD_LSHIFT)) {
