@@ -3493,8 +3493,12 @@ void redraw_inven(bool a1)
                         src_rect.width = art_frame_data.width;
                         src_rect.height = art_frame_data.height;
 
-                        dst_rect.x = text_rects[inventory_location - 1000].x;
-                        dst_rect.y = text_rects[inventory_location - 1000].y;
+                        dst_rect.width = art_frame_data.width * 2 / 3;
+                        dst_rect.height = art_frame_data.height * 2 / 3;
+                        dst_rect.x = text_rects[inventory_location - 1000].x + (text_rects[inventory_location - 1000].width - dst_rect.width) / 2;
+                        dst_rect.y = text_rects[inventory_location - 1000].y + (text_rects[inventory_location - 1000].height - dst_rect.height) / 2;
+
+                        tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
                         if (weapon_too_heavy) {
                             mes_file_entry1.num = 8;
