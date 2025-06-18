@@ -219,7 +219,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         wmap_ui_encounter_end();
         break;
     case ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI:
-        sub_568F20();
+        compact_ui_message_window_hide();
         break;
     default:
         tig_debug_printf("AnimUI: anim_ui_bkg_process_callback: ERROR: Failed to match event type!\n");

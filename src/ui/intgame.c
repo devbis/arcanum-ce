@@ -4047,8 +4047,8 @@ void intgame_message_window_clear()
     }
 
     if (intgame_is_compact_interface()) {
-        sub_568D20();
-        sub_568F40();
+        compact_ui_message_window_acquire();
+        compact_ui_message_window_release();
     } else {
         tig_window_fill(stru_5C6D60[intgame_iso_window_type].window_handle,
             &(stru_5C6D60[intgame_iso_window_type].rect),
@@ -4138,7 +4138,7 @@ bool intgame_message_window_write_text(tig_window_handle_t window_handle, char* 
             return true;
         }
 
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
     }
 
     rc = tig_window_text_write(window_handle, str, &text_rect);
@@ -4908,7 +4908,7 @@ bool sub_551A80(int a1)
             sub_5517F0();
             break;
         case 3:
-            sub_568F20();
+            compact_ui_message_window_hide();
             if (!v18) {
                 sub_567A60(player_get_local_pc_obj());
             }
@@ -5402,7 +5402,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     char str[MAX_STRING];
 
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
     }
 
     switch (ui_message->type) {
@@ -6095,7 +6095,7 @@ void sub_553A70(TigMessage* msg)
         } else {
             if (intgame_iso_window_type != 3) {
                 sub_550770(-1, "");
-                sub_568F40();
+                compact_ui_message_window_release();
             }
             object_hover_obj_set(OBJ_HANDLE_NULL);
         }
@@ -6437,7 +6437,7 @@ void intgame_message_window_draw_image(tig_window_handle_t window_handle, int nu
     TigRect dst_rect;
 
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
     }
 
     tig_art_interface_id_create(num, 0, 0, 0, &art_id);
@@ -6477,7 +6477,7 @@ void sub_554640(int a1, int a2, TigRect* rect, int value)
 
     window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
     }
 
     if (value < 0) {
@@ -6561,7 +6561,7 @@ void sub_554830(int64_t a1, int64_t a2)
 
     window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
     }
 
     sub_554B00(window_handle, 582, 207, 57);
@@ -6659,7 +6659,7 @@ void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y)
     TigRect dst_rect;
 
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
         x -= 210;
         y -= 59;
     }
@@ -6683,7 +6683,7 @@ void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y)
     blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(window_handle, &blit_info);
 
-    sub_568E70();
+    compact_ui_message_window_box();
 }
 
 // 0x554BE0
@@ -7439,7 +7439,7 @@ void intgame_examine_container(int64_t pc_obj, int64_t container_obj, char* str)
 void intgame_draw_portrait(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y)
 {
     if (intgame_is_compact_interface()) {
-        window_handle = sub_568D20();
+        window_handle = compact_ui_message_window_acquire();
         x -= 211;
         y -= 59;
     }

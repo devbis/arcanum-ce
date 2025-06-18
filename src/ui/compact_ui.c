@@ -218,7 +218,7 @@ void compact_ui_draw()
 }
 
 // 0x568D20
-tig_window_handle_t sub_568D20()
+tig_window_handle_t compact_ui_message_window_acquire()
 {
     TigRect rect;
 
@@ -249,7 +249,7 @@ tig_window_handle_t sub_568D20()
 }
 
 // 0x568E70
-void sub_568E70()
+void compact_ui_message_window_box()
 {
     TigRect rect;
 
@@ -269,7 +269,7 @@ void sub_568E70()
 }
 
 // 0x568F20
-void sub_568F20()
+void compact_ui_message_window_hide()
 {
     if (compact_ui_message_window_handle != TIG_WINDOW_HANDLE_INVALID) {
         tig_window_hide(compact_ui_message_window_handle);
@@ -277,7 +277,7 @@ void sub_568F20()
 }
 
 // 0x568F40
-void sub_568F40()
+void compact_ui_message_window_release()
 {
     TigRect rect;
 
@@ -292,7 +292,7 @@ void sub_568F40()
     }
 
     anim_ui_event_remove(14, -1);
-    sub_568F20();
+    compact_ui_message_window_hide();
 }
 
 // 0x569040
