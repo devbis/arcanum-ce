@@ -155,7 +155,7 @@ static TigRect written_ui_newspaper_content_rects[5] = {
 };
 
 // 0x67BC68
-static int dword_67BC68;
+static int written_ui_num_filler_newspaper_articles;
 
 // 0x67BC6C
 static int written_ui_num;
@@ -211,9 +211,9 @@ bool written_ui_mod_load()
     written_ui_is_vendigroth_times = false;
 
     if (written_ui_mes_files[WRITTEN_MES_NEWSPAPER] != MES_FILE_HANDLE_INVALID) {
-        dword_67BC68 = mes_entries_count_in_range(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], 10, 999);
+        written_ui_num_filler_newspaper_articles = mes_entries_count_in_range(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], 10, 999);
     } else {
-        dword_67BC68 = 0;
+        written_ui_num_filler_newspaper_articles = 0;
     }
 
     return true;
@@ -548,7 +548,7 @@ void written_ui_refresh()
 
             if (index < 5) {
                 mes_file_entry.num = written_ui_num / 10 + 10;
-                if (mes_file_entry.num >= dword_67BC68 + 10) {
+                if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + 10) {
                     mes_file_entry.num = 10;
                 }
 
@@ -567,7 +567,7 @@ void written_ui_refresh()
                         }
 
                         mes_file_entry.num++;
-                        if (mes_file_entry.num >= dword_67BC68 + 10) {
+                        if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + 10) {
                             mes_file_entry.num = 10;
                         }
 
