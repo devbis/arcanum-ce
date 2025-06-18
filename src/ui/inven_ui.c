@@ -2766,7 +2766,7 @@ void redraw_inven(bool a1)
     int portrait;
     size_t pos;
     int index;
-    bool v1[9];
+    bool filled_inv_slots[9];
     int inventory_cnt;
     int64_t item_obj;
     int item_type;
@@ -3171,11 +3171,11 @@ void redraw_inven(bool a1)
         || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
         || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         text_rects = inven_ui_inventory_paperdoll_inv_slot_rects;
-        memset(v1, 0, sizeof(v1));
+        memset(filled_inv_slots, 0, sizeof(filled_inv_slots));
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
             text_rects = inven_ui_barter_pc_paperdoll_inv_slot_rects;
-            memset(v1, 0, sizeof(v1));
+            memset(filled_inv_slots, 0, sizeof(filled_inv_slots));
         } else {
             text_rects = NULL;
         }
@@ -3267,7 +3267,7 @@ void redraw_inven(bool a1)
                     }
                 }
 
-                v1[inventory_location - 1000] = true;
+                filled_inv_slots[inventory_location - 1000] = true;
             }
 
             continue;
@@ -3337,7 +3337,7 @@ void redraw_inven(bool a1)
     art_blit_info.flags = 0;
     if (text_rects != NULL) {
         for (index = 0; index < 9; index++) {
-            if (!v1[index]) {
+            if (!filled_inv_slots[index]) {
                 tig_art_interface_id_create(item_ui_item_silhouette_nums[index], 0, 0, 0, &(art_blit_info.art_id));
 
                 dst_rect.x = text_rects[index].x;
@@ -3365,7 +3365,7 @@ void redraw_inven(bool a1)
 
         if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             target_obj = qword_682C78;
-            memset(v1, 9, sizeof(v1));
+            memset(filled_inv_slots, 0, sizeof(filled_inv_slots));
 
             if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 tig_art_interface_id_create(337, 0, 0, 0, &(art_blit_info.art_id));
@@ -3514,7 +3514,7 @@ void redraw_inven(bool a1)
                             tig_font_pop();
                         }
 
-                        v1[inventory_location - 1000] = true;
+                        filled_inv_slots[inventory_location - 1000] = true;
                     }
                 }
 
@@ -3593,7 +3593,7 @@ void redraw_inven(bool a1)
         art_blit_info.flags = 0;
         if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             for (index = 0; index < 9; index++) {
-                if (!v1[index]) {
+                if (!filled_inv_slots[index]) {
                     tig_art_interface_id_create(item_ui_item_silhouette_nums[index], 0, 0, 0, &(art_blit_info.art_id));
 
                     dst_rect.x = text_rects[index].x;
