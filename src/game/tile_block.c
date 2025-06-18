@@ -4,30 +4,62 @@
 #include "game/sector.h"
 #include "game/tile.h"
 
-static void tileblock_get_rect_internal(int64_t sector_id, int tile, TigRect* rect);
+static void tileblock_get_rect_internal(int64_t sec, int tile, TigRect* rect);
 
-// 0x5FC370
+/**
+ * Art ID for the top-down view tile block graphic.
+ *
+ * 0x5FC370
+ */
 static tig_art_id_t tileblock_td_aid;
 
-// 0x5FC374
+/**
+ * Flag indicating whether the tile block system is in editor mode.
+ *
+ * 0x5FC374
+ */
 static bool tileblock_editor;
 
-// 0x5FC378
+/**
+ * Art ID for the isometric view tile block graphic.
+ *
+ * 0x5FC378
+ */
 static tig_art_id_t tileblock_iso_aid;
 
-// 0x5FC37C
+/**
+ * Function pointer to invalidate a rectangle in the parent window.
+ *
+ * 0x5FC37C
+ */
 static IsoInvalidateRectFunc* tileblock_invalidate_rect;
 
-// 0x5FC380
-static bool tileblock_visible;
+/**
+ * Flag indicating whether tile block rendering is enabled.
+ *
+ * 0x5FC380
+ */
+static bool tileblock_enabled;
 
-// 0x5FC388
+/**
+ * Editor view options.
+ *
+ * 0x5FC388
+ */
 static ViewOptions tileblock_view_options;
 
-// 0x5FC390
+/**
+ * Handle to the parent window.
+ *
+ * 0x5FC390
+ */
 static tig_window_handle_t tileblock_iso_window;
 
-// 0x4BAFF0
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4BAFF0
+ */
 bool tileblock_init(GameInitInfo* init_info)
 {
     tileblock_iso_window = init_info->iso_window_handle;
@@ -35,44 +67,76 @@ bool tileblock_init(GameInitInfo* init_info)
     tileblock_editor = init_info->editor;
     tileblock_view_options.type = VIEW_TYPE_ISOMETRIC;
 
+    // Initialize art IDs for isometric and top-down views. These only make
+    // sense in the editor.
     tig_art_interface_id_create(614, 0, 0, 0, &tileblock_iso_aid);
     tig_art_interface_id_create(615, 0, 0, 0, &tileblock_td_aid);
 
-    tileblock_visible = true;
+    tileblock_enabled = true;
 
     return true;
 }
 
-// 0x4BB050
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4BB050
+ */
 void tileblock_exit()
 {
 }
 
-// 0x4BB060
+/**
+ * Called when view settings have changed.
+ *
+ * 0x4BB060
+ */
 void tileblock_update_view(ViewOptions* view_info)
 {
     tileblock_view_options = *view_info;
 }
 
-// 0x4BB080
+/**
+ * Called when the window size has changed.
+ *
+ * 0x4BB080
+ */
 void tileblock_resize(GameResizeInfo* resize_info)
 {
     tileblock_iso_window = resize_info->window_handle;
 }
 
-// 0x4BB090
-bool tileblock_is_visible()
+/**
+ * Checks if tile block rendering is enabled.
+ *
+ * The game does not render tile blocks, this function only makes sense in the
+ * editor.
+ *
+ * 0x4BB090
+ */
+bool tileblock_is_enabled()
 {
-    return tileblock_visible;
+    return tileblock_enabled;
 }
 
-// 0x4BB0A0
+/**
+ * Toggles the rendering of tile blocks.
+ *
+ * The game does not render tile blocks, this function only makes sense in the
+ * editor.
+ *
+ * 0x4BB0A0
+ */
 void tileblock_toggle()
 {
-    tileblock_visible = !tileblock_visible;
+    tileblock_enabled = !tileblock_enabled;
 }
 
-// 0x4BB0C0
+/**
+ * Renders all tile blocks to the window based on the current view options.
+ *
+ * 0x4BB0C0
+ */
 void tileblock_draw(GameDrawInfo* draw_info)
 {
     TigArtBlitInfo art_blit_info;
@@ -88,12 +152,14 @@ void tileblock_draw(GameDrawInfo* draw_info)
     TigRectListNode* rect_node;
     ObjectNode* obj_node;
     int obj_type;
-    bool occupied;
+    bool blocked;
 
-    if (!tileblock_visible) {
+    // // Skip rendering if tile blocks are disabled.
+    if (!tileblock_enabled) {
         return;
     }
 
+    // Select the appropriate art ID based on the view type.
     switch (tileblock_view_options.type) {
     case VIEW_TYPE_ISOMETRIC:
         art_blit_info.art_id = tileblock_iso_aid;
@@ -111,73 +177,119 @@ void tileblock_draw(GameDrawInfo* draw_info)
         return;
     }
 
+    // Set up art blit info for rendering.
     art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
+    // Iterate through all affected sectors.
     sector_node = draw_info->sectors;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->sec, &sector)) {
+            // Iterate through all sector tiles (64x64).
             for (tile = 0; tile < 4096; tile++) {
-                occupied = false;
                 tb_rect_calculated = false;
 
+                // Check generated blocking.
+                //
+                // NOTE: Here is good explanation of generated blocking from
+                // the WorldEd manual:
+                //
+                // "Generated blocking tiles are ones that are built into
+                // certain facades and tilesets. Generated blocking tiles cannot
+                // be edited. They will always be blocked. An example of a
+                // generated blocking tile is the deep water tileset. If you
+                // select deep water and spray it down in the editor window, you
+                // will notice a dark red-hatched tilesize piece of art appear
+                // on top of the water. This is indicating that the player will
+                // not be able to walk on these tiles. Generated blocked tiles
+                // are also very common on facades and scenery.""
+                blocked = false;
+
+                // Retrieve and check tile art ID - it's guaranteed to be either
+                // tile or facade. The tile blocking configuration is specified
+                // in `tilename.mes` with `/b` flag. The facade blocking
+                // configuration is stored in the appropriate `facwalk` file.
                 aid = sector->tiles.art_ids[tile];
                 if ((tig_art_type(aid) == TIG_ART_TYPE_FACADE
                         && !tig_art_facade_id_walkable_get(aid))
                     || a_name_tile_is_blocking(aid)) {
-                    occupied = true;
-                } else {
+                    blocked = true;
+                }
+
+                if (!blocked) {
+                    // Check if there is at least one object on this tile that
+                    // does not have `OF_NO_BLOCK` flag.
+                    //
+                    // Walls are always considered blocking and portals are
+                    // non-blocking. There is no point in marking them
+                    // specifically since their "walkability" is obvious.
                     obj_node = sector->objects.heads[tile];
                     while (obj_node != NULL) {
                         obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
                         if (obj_type != OBJ_TYPE_WALL
                             && obj_type != OBJ_TYPE_PORTAL
                             && (obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {
-                            occupied = true;
+                            blocked = true;
                             break;
                         }
                         obj_node = obj_node->next;
                     }
                 }
 
-                if (occupied) {
+                if (blocked) {
+                    // Use darker red for generated blocking tiles.
                     art_blit_info.color = tig_color_make(128, 0, 0);
 
+                    // Retrieve screen rect of the tile.
                     tileblock_get_rect_internal(sector_node->sec, tile, &tb_rect);
                     tb_rect_calculated = true;
 
+                    // Iterate through dirty rects to check if tile block needs
+                    // to be rendered at all.
                     rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                            // Adjust source rectangle for isometric view.
                             if (tileblock_view_options.type != VIEW_TYPE_TOP_DOWN) {
                                 src_rect.x = dst_rect.x - tb_rect.x;
                                 src_rect.width = dst_rect.width;
                                 src_rect.y = dst_rect.y - tb_rect.y;
                                 src_rect.height = dst_rect.height;
                             }
+
+                            // Blit the affected tile block rect to the window.
                             tig_window_blit_art(tileblock_iso_window, &art_blit_info);
                         }
                         rect_node = rect_node->next;
                     }
                 }
 
+                // Check placed blocking. The configuration is stored in bit
+                // array.
                 if ((sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0) {
+                    // Use bright red for placed blocking tiles.
                     art_blit_info.color = tig_color_make(255, 0, 0);
 
+                    // Reuse tile block rect if it was already calculated.
                     if (!tb_rect_calculated) {
                         tileblock_get_rect_internal(sector_node->sec, tile, &tb_rect);
                     }
 
+                    // Iterate through dirty rects to check if tile block needs
+                    // to be rendered at all.
                     rect_node = *draw_info->rects;
                     while (rect_node != NULL) {
                         if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                            // Adjust source rectangle for isometric view.
                             if (tileblock_view_options.type != VIEW_TYPE_TOP_DOWN) {
                                 src_rect.x = dst_rect.x - tb_rect.x;
                                 src_rect.width = dst_rect.width;
                                 src_rect.y = dst_rect.y - tb_rect.y;
                                 src_rect.height = dst_rect.height;
                             }
+
+                            // Blit the affected tile block rect to the window.
                             tig_window_blit_art(tileblock_iso_window, &art_blit_info);
                         }
                         rect_node = rect_node->next;
@@ -191,50 +303,65 @@ void tileblock_draw(GameDrawInfo* draw_info)
     }
 }
 
-// 0x4BB410
+/**
+ * Checks if a tile is explicitly blocked.
+ *
+ * 0x4BB410
+ */
 bool tileblock_is_tile_blocked(int64_t loc)
 {
-    int64_t sector_id;
+    int64_t sec;
     Sector* sector;
     int tile;
     bool blocked;
 
-    sector_id = sector_id_from_loc(loc);
-    if (sector_lock(sector_id, &sector)) {
-        tile = tile_id_from_loc(loc);
-        blocked = (sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0;
-        sector_unlock(sector_id);
-        return blocked;
+    sec = sector_id_from_loc(loc);
+    if (!sector_lock(sec, &sector)) {
+        return false;
     }
 
-    return false;
+    tile = tile_id_from_loc(loc);
+    blocked = (sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0;
+    sector_unlock(sec);
+
+    return blocked;
 }
 
-// 0x4BB490
+/**
+ * Sets or clears the blocked state of a tile.
+ *
+ * 0x4BB490
+ */
 void tileblock_set_tile_blocked(int64_t loc, bool blocked)
 {
-    int64_t sector_id;
+    int64_t sec;
     Sector* sector;
     int tile;
     TigRect rect;
 
-    sector_id = sector_id_from_loc(loc);
+    sec = sector_id_from_loc(loc);
     tile = tile_id_from_loc(loc);
-    if (sector_lock(sector_id, &sector)) {
+    if (sector_lock(sec, &sector)) {
         if (blocked) {
             sector->blocks.mask[tile / 32] |= 1 << (tile % 32);
         } else {
             sector->blocks.mask[tile / 32] &= ~(1 << (tile % 32));
         }
         sector->blocks.modified = true;
-        sector_unlock(sector_id);
+        sector_unlock(sec);
     }
 
-    tileblock_get_rect_internal(sector_id, tile, &rect);
+    // Mark the tile block screen area as dirty.
+    tileblock_get_rect_internal(sec, tile, &rect);
     tileblock_invalidate_rect(&rect);
 }
 
-// 0x4BB550
+/**
+ * Computes the screen rect for a tile script based on its location and view
+ * options.
+ *
+ * 0x4BB550
+ */
 void tileblock_get_rect(int64_t loc, TigRect* rect)
 {
     tileblock_get_rect_internal(sector_id_from_loc(loc),
@@ -242,19 +369,27 @@ void tileblock_get_rect(int64_t loc, TigRect* rect)
         rect);
 }
 
-// 0x4BB590
-void tileblock_get_rect_internal(int64_t sector_id, int tile, TigRect* rect)
+/**
+ * Internal helper function that computes screen rect from sector/tile pair
+ * rather than the location.
+ *
+ * 0x4BB590
+ */
+void tileblock_get_rect_internal(int64_t sec, int tile, TigRect* rect)
 {
     int64_t loc;
     int64_t x;
     int64_t y;
     TigArtFrameData art_frame_data;
 
-    loc = location_make(SECTOR_X(sector_id) + TILE_X(tile), SECTOR_Y(sector_id) + TILE_Y(tile));
+    // Retrieve position on screen.
+    loc = location_make(SECTOR_X(sec) + TILE_X(tile),
+        SECTOR_Y(sec) + TILE_Y(tile));
     location_xy(loc, &x, &y);
 
     if (x > INT_MIN && x < INT_MAX
         && y > INT_MIN && y < INT_MAX) {
+        // Handle top-down view: use zoom level as rect size.
         if (tileblock_view_options.type == VIEW_TYPE_TOP_DOWN) {
             rect->x = (int)x;
             rect->y = (int)y;
@@ -263,6 +398,8 @@ void tileblock_get_rect_internal(int64_t sector_id, int tile, TigRect* rect)
             return;
         }
 
+        // Handle isometric view: retrieve art data for rect size and position
+        // adjustment.
         if (tig_art_frame_data(tileblock_iso_aid, &art_frame_data) == TIG_OK) {
             rect->x = (int)x - art_frame_data.hot_x + 40;
             rect->y = (int)y - ((40 - art_frame_data.height) / 2) - art_frame_data.hot_y + 40;
@@ -272,7 +409,8 @@ void tileblock_get_rect_internal(int64_t sector_id, int tile, TigRect* rect)
         }
     }
 
-    // Something's wrong, nullify rect.
+    // Fallback - return an empty rect for invalid coordinates or failed art
+    // data retrieval.
     rect->x = 0;
     rect->y = 0;
     rect->width = 0;
