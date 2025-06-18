@@ -2393,6 +2393,7 @@ bool sub_5755A0(void* userinfo)
     S5754C0* entry = (S5754C0*)userinfo;
     tig_art_id_t art_id;
     int sound_id;
+    TigArtFrameData art_frame_data;
 
     qword_6810E0 = entry->field_8;
     sub_4A50D0(player_get_local_pc_obj(), entry->field_8);
@@ -2409,20 +2410,58 @@ bool sub_5755A0(void* userinfo)
             entry->y -= 49 + 32 * (entry->field_24 / 10);
         } else if (entry->mode == 1) {
             entry->x -= 8 + 32 * (entry->field_24 % 10);
-            entry->y -= 209 + 32 * (entry->field_28 - entry->field_24 / 10);
+            entry->y -= 209 - 32 * (entry->field_28 - entry->field_24 / 10);
         } else {
             entry->x -= 8 + 32 * (entry->field_24 % 10);
-            entry->y -= 177 + 32 * (entry->field_28 - entry->field_24 / 10);
+            entry->y -= 177 - 32 * (entry->field_28 - entry->field_24 / 10);
         }
     }
 
-    entry->x += 2;
-    entry->y += 2;
+    // CE: Fix item dragging visual glitches by maintaining both item icon
+    // position (which is now perfectly aligned to the occupied slots), and
+    // arrow cursor position (which now stays intact). That makes dragging
+    // within the inventories more predicable.
+    if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+        int width;
+        int height;
+
+        // Retrieve icon size and scale it to slot size.
+        item_inv_icon_size(entry->field_8, &width, &height);
+        width *= 32;
+        height *= 32;
+
+        // Adjust position to the center of the occupied slots.
+        entry->x -= (width - art_frame_data.width) / 2;
+        entry->y -= (height - art_frame_data.height) / 2;
+
+        // Slightly move icon to the top and left, which gives the illusion of
+        // depth.
+        entry->x += 4;
+        entry->y += 4;
+    } else {
+        // NOTE: This should not normally happen, but if it is, here is the
+        // fallback (original approach).
+        entry->x += 2;
+        entry->y += 2;
+    }
 
     tig_mouse_hide();
     tig_mouse_cursor_set_art_id(art_id);
     tig_art_interface_id_create(0, 0, 0, 0, &art_id);
-    tig_mouse_cursor_overlay(art_id, entry->x, entry->y);
+
+    // CE: Maintain cursor position. Without adjustment for hot point the cursor
+    // jumps down when button is pressed down.
+    if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+        entry->x -= art_frame_data.hot_x;
+        entry->y -= art_frame_data.hot_y;
+        tig_mouse_cursor_overlay(art_id, entry->x, entry->y);
+        entry->x += art_frame_data.hot_x;
+        entry->y += art_frame_data.hot_y;
+    } else {
+        // NOTE: This should not normally happen.
+        tig_mouse_cursor_overlay(art_id, entry->x, entry->y);
+    }
+
     tig_mouse_cursor_set_offset(entry->x, entry->y);
     tig_mouse_show();
 
