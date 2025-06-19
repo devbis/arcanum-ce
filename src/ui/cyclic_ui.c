@@ -1,6 +1,7 @@
 #include "ui/cyclic_ui.h"
 
 #include "game/mes.h"
+#include "game/snd.h"
 
 #define MAX_CONTROLS 32
 
@@ -551,8 +552,8 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = ctrl->info.window_handle;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 

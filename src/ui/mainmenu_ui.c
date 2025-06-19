@@ -22,6 +22,7 @@
 #include "game/proto.h"
 #include "game/reaction.h"
 #include "game/script.h"
+#include "game/snd.h"
 #include "game/stat.h"
 #include "game/teleport.h"
 #include "game/timeevent.h"
@@ -4410,11 +4411,11 @@ bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height,
     button_data.mouse_exit_snd_id = -1;
 
     if (info->art_num != -1) {
-        button_data.mouse_down_snd_id = 3000;
-        button_data.mouse_up_snd_id = 3001;
+        button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+        button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     } else {
-        button_data.mouse_down_snd_id = 3027;
-        button_data.mouse_enter_snd_id = 3026;
+        button_data.mouse_down_snd_id = SND_INTERFACE_MORPHTEXT_CLICK;
+        button_data.mouse_enter_snd_id = SND_INTERFACE_MORPHTEXT_HOVER;
     }
 
     return tig_button_create(&button_data, &(info->button_handle)) == TIG_OK;
@@ -5240,7 +5241,7 @@ bool sub_546EE0(TigMessage* msg)
         }
 
         if (window->buttons[idx].art_num == -1) {
-            gsound_play_sfx(3027, 1);
+            gsound_play_sfx(SND_INTERFACE_MORPHTEXT_CLICK, 1);
         } else {
             gsound_play_sfx(0, 1);
         }

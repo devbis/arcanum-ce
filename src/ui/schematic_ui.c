@@ -12,6 +12,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/proto.h"
+#include "game/snd.h"
 #include "game/tech.h"
 #include "ui/intgame.h"
 #include "ui/tb_ui.h"
@@ -419,7 +420,7 @@ void schematic_ui_create()
     tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
-    gsound_play_sfx(3008, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_OPEN, 1);
     schematic_ui_created = true;
 }
 
@@ -433,7 +434,7 @@ void schematic_ui_destroy()
         if (schematic_ui_num_found_schematics > 0) {
             free(schematic_ui_found_schematics);
         }
-        gsound_play_sfx(3009, 1);
+        gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
         schematic_ui_created = false;
     }
 }
@@ -533,7 +534,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     dword_680E6C = tech;
                     dword_680E58 = 0;
                     sub_56DDC0();
-                    gsound_play_sfx(3010, 1);
+                    gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                     return true;
                 }
             }
@@ -541,14 +542,14 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[0].button_handle) {
                 dword_680E58--;
                 sub_56DDC0();
-                gsound_play_sfx(3010, 1);
+                gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
             if (msg->data.button.button_handle == stru_5CA850[1].button_handle) {
                 dword_680E58++;
                 sub_56DDC0();
-                gsound_play_sfx(3010, 1);
+                gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
@@ -565,7 +566,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     dword_680E40 = 0;
                     tig_button_state_change(stru_5CA8A0[dword_680E30].button_handle, 0);
                     sub_56DDC0();
-                    gsound_play_sfx(3011, 1);
+                    gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
                 return true;
             }
@@ -583,7 +584,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     dword_680E40 = 1;
                     tig_button_state_change(stru_5CA8A0[dword_680E80].button_handle, 0);
                     sub_56DDC0();
-                    gsound_play_sfx(3011, 1);
+                    gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
                 return true;
             }
@@ -1174,7 +1175,7 @@ bool sub_56E950(int a1, int64_t a2, int64_t obj)
         ui_message.str = mes_file_entry.str;
         sub_550750(&ui_message);
         sub_56DDC0();
-        gsound_play_sfx(dword_680E6C + 3018, 1);
+        gsound_play_sfx(dword_680E6C + SND_INTERFACE_COM_HERBAL, 1);
     }
     return true;
 }

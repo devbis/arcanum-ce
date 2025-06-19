@@ -8,6 +8,7 @@
 #include "game/party.h"
 #include "game/player.h"
 #include "game/reaction.h"
+#include "game/snd.h"
 #include "game/stat.h"
 #include "game/ui.h"
 
@@ -492,7 +493,7 @@ int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj
             stat_base_get(pc_obj, STAT_ALIGNMENT) + quests[quest_num_to_idx(num)].alignment_adjustment);
 
         // Play quest completed sound.
-        tig_sound_quick_play(3028);
+        tig_sound_quick_play(SND_INTERFACE_QUESTCOMPLETE);
     }
 
     // Adjust NPC reaction based on quest state.
@@ -567,7 +568,7 @@ int quest_unbotch(int64_t obj, int num)
     if (player_is_local_pc_obj(obj)) {
         if (pc_quest_state.state == QUEST_STATE_COMPLETED) {
             // Play quest completed sound.
-            tig_sound_quick_play(3028);
+            tig_sound_quick_play(SND_INTERFACE_QUESTCOMPLETE);
         }
 
         if (pc_quest_state.state != QUEST_STATE_UNKNOWN) {

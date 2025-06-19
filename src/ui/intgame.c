@@ -31,6 +31,7 @@
 #include "game/scroll.h"
 #include "game/sfx.h"
 #include "game/skill.h"
+#include "game/snd.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/target.h"
@@ -1408,10 +1409,10 @@ bool intgame_button_create_ex(tig_window_handle_t window_handle, TigRect* rect, 
     button_data.x = button_info->x - rect->x;
     button_data.y = button_info->y - rect->y;
     tig_art_interface_id_create(button_info->art_num, 0, 0, 0, &(button_data.art_id));
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
-    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
-    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
     return tig_button_create(&button_data, &(button_info->button_handle)) == TIG_OK;
 }
 
@@ -1459,10 +1460,10 @@ bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
     button_data.height = height;
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.art_id = TIG_ART_ID_INVALID;
-    button_data.mouse_down_snd_id = TIG_SOUND_HANDLE_INVALID;
-    button_data.mouse_up_snd_id = TIG_SOUND_HANDLE_INVALID;
-    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
-    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
     return tig_button_create(&button_data, &(button_info->button_handle)) == TIG_OK;
 }
 
@@ -5453,7 +5454,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
 
         if (play_sound) {
-            gsound_play_sfx(3005, 1);
+            gsound_play_sfx(SND_INTERFACE_LEVEL_UP, 1);
         }
         break;
     case UI_MSG_TYPE_POISON:
@@ -5474,7 +5475,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
-            gsound_play_sfx(3006, 1);
+            gsound_play_sfx(SND_INTERFACE_POISONED, 1);
         }
         break;
     case UI_MSG_TYPE_CURSE:
@@ -5493,7 +5494,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
-            gsound_play_sfx(3003, 1);
+            gsound_play_sfx(SND_INTERFACE_CURSED, 1);
         }
         break;
     case UI_MSG_TYPE_BLESS:
@@ -5512,12 +5513,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_LEFT);
 
         if (play_sound) {
-            gsound_play_sfx(3002, 1);
+            gsound_play_sfx(SND_INTERFACE_BLESS, 1);
         }
         break;
     case UI_MSG_TYPE_EXCLAMATION:
         if (play_sound) {
-            gsound_play_sfx(3004, 1);
+            gsound_play_sfx(SND_INTERFACE_EXCLAMATION, 1);
         }
         // FALLTHROUGH
     case UI_MSG_TYPE_QUESTION:

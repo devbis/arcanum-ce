@@ -1,6 +1,7 @@
 #include "ui/scrollbar_ui.h"
 
 #include "game/random.h"
+#include "game/snd.h"
 
 #define MAX_CONTROLS 8
 
@@ -176,8 +177,8 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
     button_data.y = ctrl->info.scrollbar_rect.y;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
-    button_data.mouse_down_snd_id = 3014;
-    button_data.mouse_up_snd_id = 3015;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_LOW;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_LOW_RELEASE;
     tig_button_create(&button_data, &(ctrl->button_up));
 
     if (tig_art_interface_id_create(318, 0, 0, 0, &(button_data.art_id)) != TIG_OK) {

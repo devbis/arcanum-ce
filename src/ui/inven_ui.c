@@ -21,6 +21,7 @@
 #include "game/script.h"
 #include "game/sfx.h"
 #include "game/skill.h"
+#include "game/snd.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/target.h"
@@ -691,7 +692,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
             }
         } else {
             if (mode == INVEN_UI_MODE_LOOT) {
-                gsound_play_sfx(3007, 1);
+                gsound_play_sfx(SND_INTERFACE_ITEM_DROP, 1);
             }
         }
     }
@@ -723,8 +724,8 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = inven_ui_window_handle;
     tig_art_interface_id_create(340, 0, 0, 0, &(button_data.art_id));
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
     button_data.x = 763;
@@ -794,8 +795,8 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             return false;
         }
 
-        button_data.mouse_down_snd_id = 3000;
-        button_data.mouse_up_snd_id = 3001;
+        button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+        button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     } else {
         button_data.flags = TIG_BUTTON_FLAG_HIDDEN;
         button_data.mouse_down_snd_id = -1;
@@ -841,8 +842,8 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         }
 
         button_data.flags = TIG_BUTTON_FLAG_0x01;
-        button_data.mouse_down_snd_id = 3000;
-        button_data.mouse_up_snd_id = 3001;
+        button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+        button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
         if (inven_ui_mode == INVEN_UI_MODE_LOOT) {
             tig_art_interface_id_create(808, 0, 0, 0, &(button_data.art_id));
             button_data.x = 301;

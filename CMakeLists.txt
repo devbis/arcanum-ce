@@ -193,6 +193,7 @@ set(SRCS
     "src/game/sfx.h"
     "src/game/skill.c"
     "src/game/skill.h"
+    "src/game/snd.h"
     "src/game/spell.c"
     "src/game/spell.h"
     "src/game/stat.c"

@@ -17,6 +17,7 @@
 #include "game/quest.h"
 #include "game/reputation.h"
 #include "game/rumor.h"
+#include "game/snd.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 #include "ui/intgame.h"
@@ -379,7 +380,7 @@ void logbook_ui_create()
         logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
         dword_648798 = 1;
         dword_648980 = 1;
-        gsound_play_sfx(3002, 1);
+        gsound_play_sfx(SND_INTERFACE_BLESS, 1);
     }
 
     src_rect.x = 0;
@@ -422,7 +423,7 @@ void logbook_ui_create()
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     sub_53F490(261, 1);
     ui_toggle_primary_button(UI_PRIMARY_BUTTON_LOGBOOK, false);
-    gsound_play_sfx(3008, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_OPEN, 1);
 
     logbook_ui_created = true;
 }
@@ -437,7 +438,7 @@ void logbook_ui_destroy()
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     intgame_big_window_unlock();
     logbook_ui_window = TIG_WINDOW_HANDLE_INVALID;
-    gsound_play_sfx(3009, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
     logbook_ui_created = false;
 
     if (dword_648980) {
@@ -563,7 +564,7 @@ void sub_53F490(int a1, int a2)
         }
     }
 
-    gsound_play_sfx(3011, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
     sub_53F5F0(selected_button_index, a2);
 }
 
@@ -583,7 +584,7 @@ void sub_53F5F0(int tab, int a2)
 
     sub_53FBB0();
     sub_53F6E0();
-    gsound_play_sfx(3010, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
 }
 
 // 0x53F640
@@ -594,7 +595,7 @@ void sub_53F640()
         dword_648798 += 2;
         dword_64879C[(dword_648798 - 1) / 2] = dword_648974 + 1;
         sub_53F6E0();
-        gsound_play_sfx(3010, 1);
+        gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
     }
 }
 
@@ -604,7 +605,7 @@ void sub_53F6A0()
     if (dword_64879C[(dword_648798 - 1) / 2] > 0) {
         dword_648798 -= 2;
         sub_53F6E0();
-        gsound_play_sfx(3010, 1);
+        gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
     }
 }
 

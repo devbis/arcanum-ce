@@ -10,6 +10,7 @@
 #include "game/obj.h"
 #include "game/player.h"
 #include "game/proto.h"
+#include "game/snd.h"
 #include "game/tech.h"
 #include "ui/intgame.h"
 #include "ui/types.h"
@@ -387,7 +388,7 @@ void written_ui_create()
     }
 
     written_ui_refresh();
-    gsound_play_sfx(3008, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_OPEN, 1);
     written_ui_created = true;
 }
 
@@ -405,7 +406,7 @@ void written_ui_destroy()
         written_ui_window = TIG_WINDOW_HANDLE_INVALID;
     }
 
-    gsound_play_sfx(3009, 1);
+    gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
     written_ui_created = false;
 }
 
@@ -425,14 +426,14 @@ bool written_ui_message_filter(TigMessage* msg)
             if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 -= 2;
                 written_ui_refresh();
-                gsound_play_sfx(3010, 1);
+                gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
             if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle == msg->data.button.button_handle) {
                 dword_680DD0 += 2;
                 written_ui_refresh();
-                gsound_play_sfx(3010, 1);
+                gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
         }

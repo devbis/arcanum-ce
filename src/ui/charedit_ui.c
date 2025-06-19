@@ -17,6 +17,7 @@
 #include "game/portrait.h"
 #include "game/resistance.h"
 #include "game/skill.h"
+#include "game/snd.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/tech.h"
@@ -958,8 +959,8 @@ bool charedit_open(int64_t obj, ChareditMode mode)
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = charedit_window_handle;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -1021,8 +1022,8 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = charedit_window_handle;
     tig_art_interface_id_create(34, 0, 0, 0, &(button_data.art_id));
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -1084,8 +1085,8 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     } else {
         button_data.flags = 1;
         button_data.window_handle = charedit_window_handle;
-        button_data.mouse_down_snd_id = 3000;
-        button_data.mouse_up_snd_id = 3001;
+        button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+        button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
         button_data.mouse_enter_snd_id = -1;
         button_data.mouse_exit_snd_id = -1;
 
@@ -2072,8 +2073,8 @@ bool charedit_create_skills_win()
 
     button_data.flags = TIG_BUTTON_FLAG_0x01 | TIG_BUTTON_FLAG_HIDDEN;
     button_data.window_handle = charedit_skills_win;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -2322,8 +2323,8 @@ bool charedit_create_tech_win()
 
     button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
     button_data.window_handle = charedit_tech_win;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -2477,8 +2478,8 @@ void charedit_refresh_tech_win()
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = charedit_tech_win;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -2559,8 +2560,8 @@ bool charedit_create_spells_win()
 
     button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
     button_data.window_handle = charedit_spells_win;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
@@ -2752,8 +2753,8 @@ void charedit_refresh_spells_win()
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = charedit_spells_win;
-    button_data.mouse_down_snd_id = 3000;
-    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
+    button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
