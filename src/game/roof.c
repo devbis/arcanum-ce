@@ -19,79 +19,92 @@ static void roof_fill(int64_t loc, bool fill, int a3);
 static unsigned int roof_blit_flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
 
 // 0x5A53A4
-static char byte_5A53A4[13][4][4] = {
+static char byte_5A53A4[TIG_ART_ROOF_PIECE_COUNT][4][4] = {
+    /* TIG_ART_ROOF_PIECE_NORTH_WEST_OUTSIDE */
     {
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_WEST */
     {
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_NORTH */
     {
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_NORTH_WEST_INSIDE */
     {
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_SOUTH_WEST_OUTSIDE */
     {
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
         { 1, 1, 1, 0 },
         { 0, 0, 0, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_SOUTH_WEST_INSIDE */
     {
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_NORTH_EAST_INSIDE */
     {
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_NORTH_EAST_OUTSIDE */
     {
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_CENTER */
     {
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_SOUTH_EAST_OUTSIDE */
     {
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
         { 0, 0, 0, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_SOUTH */
     {
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
         { 0, 0, 0, 0 },
     },
+    /* TIG_ART_ROOF_PIECE_EAST */
     {
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
         { 0, 0, 1, 1 },
     },
+    /* TIG_ART_ROOF_PIECE_SOUTH_EAST_INSIDE */
     {
         { 1, 1, 1, 1 },
         { 1, 1, 1, 1 },
@@ -260,80 +273,80 @@ void roof_draw(GameDrawInfo* draw_info)
                                 if (roof_blit_flags == TIG_ART_BLT_BLEND_ALPHA_CONST) {
                                     art_blit_info.flags |= TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH;
 
-                                    switch (sub_504840(aid)) {
-                                    case 0:
+                                    switch (tig_art_roof_id_piece_get(aid)) {
+                                    case TIG_ART_ROOF_PIECE_NORTH_WEST_OUTSIDE:
                                         art_blit_info.alpha[0] = roof_full_transparency;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
                                         art_blit_info.alpha[3] = roof_full_transparency;
                                         break;
-                                    case 1:
+                                    case TIG_ART_ROOF_PIECE_WEST:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_full_opacity;
                                         art_blit_info.alpha[3] = roof_full_transparency;
                                         break;
-                                    case 2:
+                                    case TIG_ART_ROOF_PIECE_NORTH:
                                         art_blit_info.alpha[0] = roof_full_transparency;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_full_opacity;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 3:
+                                    case TIG_ART_ROOF_PIECE_NORTH_WEST_INSIDE:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_full_opacity;
                                         art_blit_info.alpha[2] = roof_full_opacity;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 4:
+                                    case TIG_ART_ROOF_PIECE_SOUTH_WEST_OUTSIDE:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_full_transparency;
                                         art_blit_info.alpha[3] = roof_full_transparency;
                                         break;
-                                    case 5:
+                                    case TIG_ART_ROOF_PIECE_SOUTH_WEST_INSIDE:
                                         art_blit_info.alpha[0] = roof_full_opacity;
                                         art_blit_info.alpha[1] = roof_full_opacity;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 6:
+                                    case TIG_ART_ROOF_PIECE_NORTH_EAST_INSIDE:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_full_opacity;
                                         art_blit_info.alpha[3] = roof_full_opacity;
                                         break;
-                                    case 7:
+                                    case TIG_ART_ROOF_PIECE_NORTH_EAST_OUTSIDE:
                                         art_blit_info.alpha[0] = roof_full_transparency;
                                         art_blit_info.alpha[1] = roof_full_transparency;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 8:
+                                    case TIG_ART_ROOF_PIECE_CENTER:
                                         art_blit_info.alpha[0] = roof_full_opacity;
                                         art_blit_info.alpha[1] = roof_full_opacity;
                                         art_blit_info.alpha[2] = roof_full_opacity;
                                         art_blit_info.alpha[3] = roof_full_opacity;
                                         break;
-                                    case 9:
+                                    case TIG_ART_ROOF_PIECE_SOUTH_EAST_OUTSIDE:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_full_transparency;
                                         art_blit_info.alpha[2] = roof_full_transparency;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 10:
+                                    case TIG_ART_ROOF_PIECE_SOUTH:
                                         art_blit_info.alpha[0] = roof_full_opacity;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_full_transparency;
                                         art_blit_info.alpha[3] = roof_partial_opacity;
                                         break;
-                                    case 11:
+                                    case TIG_ART_ROOF_PIECE_EAST:
                                         art_blit_info.alpha[0] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
                                         art_blit_info.alpha[1] = roof_full_transparency;
                                         art_blit_info.alpha[3] = roof_full_opacity;
                                         break;
-                                    case 12:
+                                    case TIG_ART_ROOF_PIECE_SOUTH_EAST_INSIDE:
                                         art_blit_info.alpha[0] = roof_full_opacity;
                                         art_blit_info.alpha[1] = roof_partial_opacity;
                                         art_blit_info.alpha[2] = roof_partial_opacity;
@@ -491,7 +504,7 @@ bool sub_439890(int x, int y)
 void roof_recalc(int64_t loc)
 {
     tig_art_id_t aid;
-    int v1;
+    int piece;
     int tile;
     int v5;
     int v6;
@@ -502,29 +515,29 @@ void roof_recalc(int64_t loc)
         return;
     }
 
-    v1 = sub_504840(aid);
+    piece = tig_art_roof_id_piece_get(aid);
     tile = tile_id_from_loc(loc);
     v5 = tile & 3;
     v6 = (tile >> 6) % 4;
 
-    switch (v1) {
-    case 0:
+    switch (piece) {
+    case TIG_ART_ROOF_PIECE_NORTH_WEST_OUTSIDE:
         fill = v6 > 1 && v5 < 3;
         break;
-    case 1:
+    case TIG_ART_ROOF_PIECE_WEST:
         fill = v5 < 3;
         break;
-    case 2:
+    case TIG_ART_ROOF_PIECE_NORTH:
         fill = v6 > 1;
         break;
-    case 3:
+    case TIG_ART_ROOF_PIECE_NORTH_WEST_INSIDE:
         if (v5 >= 3 && v6 <= 1) {
             fill = false;
         } else {
             fill = true;
         }
         break;
-    case 4:
+    case TIG_ART_ROOF_PIECE_SOUTH_WEST_OUTSIDE:
         if (v5 >= 3) {
             fill = false;
         } else {
@@ -535,7 +548,7 @@ void roof_recalc(int64_t loc)
             }
         }
         break;
-    case 5:
+    case TIG_ART_ROOF_PIECE_SOUTH_WEST_INSIDE:
         if (v5 >= 3) {
             if (v6 < 3) {
                 fill = true;
@@ -546,20 +559,20 @@ void roof_recalc(int64_t loc)
             fill = true;
         }
         break;
-    case 6:
+    case TIG_ART_ROOF_PIECE_NORTH_EAST_INSIDE:
         fill = v5 > 1 || v6 > 1;
         break;
-    case 7:
+    case TIG_ART_ROOF_PIECE_NORTH_EAST_OUTSIDE:
         if (v5 <= 1 || v6 <= 1) {
             fill = false;
         } else {
             fill = true;
         }
         break;
-    case 8:
+    case TIG_ART_ROOF_PIECE_CENTER:
         fill = true;
         break;
-    case 9:
+    case TIG_ART_ROOF_PIECE_SOUTH_EAST_OUTSIDE:
         if (v5 <= 1) {
             fill = false;
         } else {
@@ -570,13 +583,13 @@ void roof_recalc(int64_t loc)
             }
         }
         break;
-    case 10:
+    case TIG_ART_ROOF_PIECE_SOUTH:
         fill = v6 < 3;
         break;
-    case 11:
+    case TIG_ART_ROOF_PIECE_EAST:
         fill = v5 > 1;
         break;
-    case 12:
+    case TIG_ART_ROOF_PIECE_SOUTH_EAST_INSIDE:
         fill = v5 > 1 || v6 < 3;
         break;
     default:
@@ -655,6 +668,9 @@ bool sub_439FF0(int64_t x, int64_t y, int a3)
 bool sub_43A030(int64_t loc, int a2)
 {
     tig_art_id_t aid;
+    int piece;
+    int row;
+    int col;
 
     if (!roof_enabled) {
         return false;
@@ -674,7 +690,10 @@ bool sub_43A030(int64_t loc, int a2)
         return false;
     }
 
-    if (!byte_5A53A4[sub_504840(aid)][(location_get_y(loc) + 3) % 4][(location_get_x(loc) + 3) % 4]) {
+    piece = tig_art_roof_id_piece_get(aid);
+    row = (location_get_y(loc) + 3) % 4;
+    col = (location_get_x(loc) + 3) % 4;
+    if (!byte_5A53A4[piece][row][col]) {
         return false;
     }
 
@@ -726,7 +745,7 @@ void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect)
 void roof_fill(int64_t loc, bool fill, int a3)
 {
     tig_art_id_t aid;
-    int v1;
+    int piece;
 
     aid = roof_art_id_get(loc);
     if (aid == TIG_ART_ID_INVALID) {
@@ -738,37 +757,37 @@ void roof_fill(int64_t loc, bool fill, int a3)
     }
 
     if (a3 != -1) {
-        v1 = sub_504840(aid);
+        piece = tig_art_roof_id_piece_get(aid);
         switch (a3) {
         case 1:
-            switch (v1) {
-            case 0:
-            case 1:
-            case 4:
+            switch (piece) {
+            case TIG_ART_ROOF_PIECE_NORTH_WEST_OUTSIDE:
+            case TIG_ART_ROOF_PIECE_WEST:
+            case TIG_ART_ROOF_PIECE_SOUTH_WEST_OUTSIDE:
                 return;
             };
             break;
         case 3:
-            switch (v1) {
-            case 0:
-            case 2:
-            case 7:
+            switch (piece) {
+            case TIG_ART_ROOF_PIECE_NORTH_WEST_OUTSIDE:
+            case TIG_ART_ROOF_PIECE_NORTH:
+            case TIG_ART_ROOF_PIECE_NORTH_EAST_OUTSIDE:
                 return;
             }
             break;
         case 5:
-            switch (v1) {
-            case 9:
-            case 7:
-            case 11:
+            switch (piece) {
+            case TIG_ART_ROOF_PIECE_SOUTH_EAST_OUTSIDE:
+            case TIG_ART_ROOF_PIECE_EAST:
+            case TIG_ART_ROOF_PIECE_NORTH_EAST_OUTSIDE:
                 return;
             }
             break;
         case 7:
-            switch (v1) {
-            case 4:
-            case 9:
-            case 10:
+            switch (piece) {
+            case TIG_ART_ROOF_PIECE_SOUTH_WEST_OUTSIDE:
+            case TIG_ART_ROOF_PIECE_SOUTH:
+            case TIG_ART_ROOF_PIECE_SOUTH_EAST_OUTSIDE:
                 return;
             }
             break;

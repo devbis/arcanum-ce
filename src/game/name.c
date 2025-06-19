@@ -732,7 +732,7 @@ tig_art_id_t name_normalize_aid(tig_art_id_t aid)
         }
         break;
     case TIG_ART_TYPE_ROOF:
-        aid = sub_504880(aid, 0);
+        aid = tig_art_roof_id_piece_set(aid, 0);
         aid = tig_art_id_palette_set(aid, 0);
         aid = tig_art_roof_id_fill_set(aid, 0);
         aid = tig_art_roof_id_fade_set(aid, 0);
