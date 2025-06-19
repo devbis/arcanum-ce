@@ -17,6 +17,8 @@
 
 #define TEN 10
 
+#define HUNDRED 100
+
 typedef enum WrittenMes {
     WRITTEN_MES_BOOK,
     WRITTEN_MES_NOTE,
@@ -52,11 +54,11 @@ static bool written_ui_message_filter(TigMessage* msg);
 static void written_ui_refresh();
 static void written_ui_draw_background(int num, int x, int y);
 static void written_ui_draw_element(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment);
-static void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect);
-static bool written_ui_draw_multiline(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
+static void written_ui_draw_string(const char* str, int font_num, TigRect* rect);
+static bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* rect, int* offset_ptr);
 static void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr);
-static void sub_56CAA0(int a1, int* a2, int* a3);
-static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
+static void written_ui_draw_book_side(int side, int* num_ptr, int* offset_ptr);
+static int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr);
 
 // 0x5CA478
 static tig_window_handle_t written_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -121,7 +123,7 @@ static WrittenUiElement written_ui_telegram_elements[] = {
 };
 
 // 0x5CA618
-static TigRect stru_5CA618[2] = {
+static TigRect written_ui_book_content_rects[2] = {
     { 227, 57, 200, 290 },
     { 476, 57, 200, 290 },
 };
@@ -162,13 +164,13 @@ static int written_ui_num_filler_newspaper_articles;
 static int written_ui_num;
 
 // 0x67BC70
-static int dword_67BC70[100];
+static int written_ui_book_contents[HUNDRED];
 
 // 0x67BE00
-static char written_ui_text[20000];
+static char written_ui_text[TEN * MAX_STRING];
 
 // 0x680C20
-static int dword_680C20[100];
+static int written_ui_book_offsets[HUNDRED];
 
 // 0x680DB0
 static bool written_ui_is_vendigroth_times;
@@ -183,10 +185,10 @@ static mes_file_handle_t written_ui_mes_files[WRITTEN_MES_COUNT];
 static WrittenType written_ui_type;
 
 // 0x680DD0
-static int dword_680DD0;
+static int written_ui_book_cur_page;
 
 // 0x680DD4
-static int dword_680DD4;
+static int written_ui_book_max_page;
 
 // 0x680DD8
 static bool written_ui_mod_loaded;
@@ -357,10 +359,10 @@ void written_ui_create()
                 &(written_ui_book_buttons[index]),
                 TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
         }
-        dword_680DD0 = 0;
-        dword_680DD4 = 0;
-        dword_67BC70[0] = written_ui_num;
-        dword_680C20[0] = 0;
+        written_ui_book_cur_page = 0;
+        written_ui_book_max_page = 0;
+        written_ui_book_contents[0] = written_ui_num;
+        written_ui_book_offsets[0] = 0;
         break;
     case WRITTEN_TYPE_NOTE:
         for (index = 0; index < TEN; index++) {
@@ -424,14 +426,14 @@ bool written_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
             if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle == msg->data.button.button_handle) {
-                dword_680DD0 -= 2;
+                written_ui_book_cur_page -= 2;
                 written_ui_refresh();
                 gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
             if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle == msg->data.button.button_handle) {
-                dword_680DD0 += 2;
+                written_ui_book_cur_page += 2;
                 written_ui_refresh();
                 gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
@@ -447,14 +449,12 @@ bool written_ui_message_filter(TigMessage* msg)
 void written_ui_refresh()
 {
     int art_num;
-    int v2;
-    int v3;
+    int num;
+    int offset;
     WrittenUiElement* elements;
     int cnt;
     MesFileEntry mes_file_entry;
     int index;
-    int width;
-    int height;
     int font_num;
     int centered;
     char* str;
@@ -477,19 +477,19 @@ void written_ui_refresh()
 
     switch (written_ui_type) {
     case WRITTEN_TYPE_BOOK:
-        v2 = dword_67BC70[dword_680DD0];
-        v3 = dword_680C20[dword_680DD0];
-        sub_56CAA0(0, &v2, &v3);
-        sub_56CAA0(1, &v2, &v3);
-        if (dword_680DD0 > 0) {
+        num = written_ui_book_contents[written_ui_book_cur_page];
+        offset = written_ui_book_offsets[written_ui_book_cur_page];
+        written_ui_draw_book_side(0, &num, &offset);
+        written_ui_draw_book_side(1, &num, &offset);
+        if (written_ui_book_cur_page > 0) {
             tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle);
         }
-        if (dword_680DD0 < dword_680DD4 - 1 && dword_680DD4 < 100) {
+        if (written_ui_book_cur_page < written_ui_book_max_page - 1 && written_ui_book_max_page < HUNDRED) {
             tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle);
         }
         break;
     case WRITTEN_TYPE_NOTE:
-        written_ui_draw_paragraph(written_ui_text, 497, &written_ui_note_content_rect);
+        written_ui_draw_string(written_ui_text, 497, &written_ui_note_content_rect);
         break;
     case WRITTEN_TYPE_NEWSPAPER:
         if (written_ui_is_vendigroth_times) {
@@ -512,7 +512,7 @@ void written_ui_refresh()
         mes_file_entry.num = written_ui_num;
         if (mes_search(written_ui_mes_file, &mes_file_entry)) {
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-            written_ui_draw_multiline(str, font_num, centered, &(written_ui_newspaper_content_rects[0]), &height);
+            written_ui_draw_paragraph(str, font_num, centered, &(written_ui_newspaper_content_rects[0]), &offset);
         }
 
         mes_file_entry.num++;
@@ -522,18 +522,18 @@ void written_ui_refresh()
             index = 1;
             rect = written_ui_newspaper_content_rects[index];
             while (true) {
-                while (!written_ui_draw_multiline(str, font_num, centered, &rect, &height)) {
+                while (!written_ui_draw_paragraph(str, font_num, centered, &rect, &offset)) {
                     index++;
                     if (index >= 5) {
                         return;
                     }
 
                     rect = written_ui_newspaper_content_rects[index];
-                    str += height;
+                    str += offset;
                 }
 
-                rect.height -= height;
-                rect.y += height;
+                rect.height -= offset;
+                rect.y += offset;
 
                 mes_file_entry.num++;
                 if (mes_file_entry.num >= written_ui_num + 10) {
@@ -548,28 +548,28 @@ void written_ui_refresh()
             }
 
             if (index < 5) {
-                mes_file_entry.num = written_ui_num / 10 + 10;
-                if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + 10) {
-                    mes_file_entry.num = 10;
+                mes_file_entry.num = written_ui_num / TEN + TEN;
+                if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + TEN) {
+                    mes_file_entry.num = TEN;
                 }
 
                 if (mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
                     written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
                     while (true) {
-                        while (!written_ui_draw_multiline(str, font_num, centered, &rect, &height)) {
+                        while (!written_ui_draw_paragraph(str, font_num, centered, &rect, &offset)) {
                             index++;
                             if (index >= 5) {
                                 return;
                             }
 
                             rect = written_ui_newspaper_content_rects[index];
-                            str += height;
+                            str += offset;
                         }
 
                         mes_file_entry.num++;
-                        if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + 10) {
-                            mes_file_entry.num = 10;
+                        if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + TEN) {
+                            mes_file_entry.num = TEN;
                         }
 
                         if (!mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
@@ -577,8 +577,8 @@ void written_ui_refresh()
                         }
 
                         written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-                        rect.height -= height;
-                        rect.y += height;
+                        rect.height -= offset;
+                        rect.y += offset;
                     }
                 }
             }
@@ -598,13 +598,13 @@ void written_ui_refresh()
 
         mes_file_entry.num = 1011;
         mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
-        written_ui_draw_paragraph(mes_file_entry.str, 481, &written_ui_telegram_disclaimer_rect);
-        written_ui_draw_paragraph(written_ui_text, 480, &written_ui_telegram_content_rect);
+        written_ui_draw_string(mes_file_entry.str, 481, &written_ui_telegram_disclaimer_rect);
+        written_ui_draw_string(written_ui_text, 480, &written_ui_telegram_content_rect);
         break;
     case WRITTEN_TYPE_PLAQUE:
-        width = written_ui_num;
-        height = 0;
-        sub_56CB60(&written_ui_plaque_content_rect, &width, &height);
+        num = written_ui_num;
+        offset = 0;
+        written_ui_draw_page_like(&written_ui_plaque_content_rect, &num, &offset);
         break;
     }
 }
@@ -673,7 +673,7 @@ void written_ui_draw_element(const char* str, int font_num, int x, int y, Writte
 }
 
 // 0x56C750
-void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect)
+void written_ui_draw_string(const char* str, int font_num, TigRect* rect)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
@@ -690,7 +690,7 @@ void written_ui_draw_paragraph(const char* str, int font_num, TigRect* rect)
 }
 
 // 0x56C800
-bool written_ui_draw_multiline(char* str, int font_num, int centered, TigRect* rect, int* height_ptr)
+bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* rect, int* offset_ptr)
 {
     TigFont font_desc;
     tig_font_handle_t font;
@@ -742,11 +742,11 @@ bool written_ui_draw_multiline(char* str, int font_num, int centered, TigRect* r
             str[truncate_pos] = ch;
         }
 
-        *height_ptr = (int)truncate_pos;
+        *offset_ptr = (int)truncate_pos;
         rc = false;
     } else {
         tig_window_text_write(written_ui_window, str, rect);
-        *height_ptr = font_desc.height;
+        *offset_ptr = font_desc.height;
         rc = true;
     }
 
@@ -778,40 +778,40 @@ void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** st
 }
 
 // 0x56CAA0
-void sub_56CAA0(int a1, int* a2, int* a3)
+void written_ui_draw_book_side(int side, int* num_ptr, int* offset_ptr)
 {
     TigRect rect;
     int v1;
     MesFileEntry mes_file_entry;
 
-    rect = stru_5CA618[a1];
-    v1 = sub_56CB60(&rect, a2, a3);
+    rect = written_ui_book_content_rects[side];
+    v1 = written_ui_draw_page_like(&rect, num_ptr, offset_ptr);
     if (v1 != -1) {
-        *a3 += v1;
-        mes_file_entry.num = *a2;
-        if (mes_file_entry.num < written_ui_num + 10
+        *offset_ptr += v1;
+        mes_file_entry.num = *num_ptr;
+        if (mes_file_entry.num < written_ui_num + TEN
             && mes_search(written_ui_mes_file, &mes_file_entry)) {
-            dword_67BC70[dword_680DD0 + a1 + 1] = mes_file_entry.num;
-            dword_680C20[dword_680DD0 + a1 + 1] = *a3;
-            if (dword_680DD4 == dword_680DD0 + a1) {
-                dword_680DD4++;
+            written_ui_book_contents[written_ui_book_cur_page + side + 1] = mes_file_entry.num;
+            written_ui_book_offsets[written_ui_book_cur_page + side + 1] = *offset_ptr;
+            if (written_ui_book_max_page == written_ui_book_cur_page + side) {
+                written_ui_book_max_page++;
             }
         }
     }
 }
 
 // 0x56CB60
-int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
+int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr)
 {
     MesFileEntry mes_file_entry;
     int font_num;
     int centered;
     char* str;
-    TigRect v4;
-    int v1;
+    TigRect tmp_rect;
+    int offset;
 
     mes_file_entry.num = *num_ptr;
-    if (mes_file_entry.num >= written_ui_num + 10) {
+    if (mes_file_entry.num >= written_ui_num + TEN) {
         return -1;
     }
 
@@ -821,16 +821,17 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
 
     written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
-    v1 = *height_ptr;
-    str += *height_ptr;
-    v4 = *rect;
-    if (written_ui_draw_multiline(str, font_num, centered, &v4, height_ptr)) {
-        v1 = 0;
+    offset = *offset_ptr;
+    str += *offset_ptr;
+    tmp_rect = *rect;
+    if (written_ui_draw_paragraph(str, font_num, centered, &tmp_rect, offset_ptr)) {
+        offset = 0;
         do {
-            v4.y += *height_ptr;
-            v4.height -= *height_ptr;
+            tmp_rect.y += *offset_ptr;
+            tmp_rect.height -= *offset_ptr;
+
             mes_file_entry.num++;
-            if (mes_file_entry.num >= written_ui_num + 10) {
+            if (mes_file_entry.num >= written_ui_num + TEN) {
                 break;
             }
 
@@ -839,11 +840,11 @@ int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
             }
 
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
-        } while (written_ui_draw_multiline(str, font_num, centered, &v4, height_ptr));
+        } while (written_ui_draw_paragraph(str, font_num, centered, &tmp_rect, offset_ptr));
     }
 
     *num_ptr = mes_file_entry.num;
-    return v1;
+    return offset;
 }
 
 // 0x56CCA0
