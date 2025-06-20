@@ -25,6 +25,27 @@
 #define SCHEMATIC_F_PROD 5
 #define SCHEMATIC_F_QTY 6
 
+typedef enum SchematicUiButton {
+    SCHEMATIC_UI_BUTTON_PREV,
+    SCHEMATIC_UI_BUTTON_NEXT,
+    SCHEMATIC_UI_BUTTON_COMBINE,
+    SCHEMATIC_UI_BUTTON_LEARNED,
+    SCHEMATIC_UI_BUTTON_FOUND,
+    SCHEMATIC_UI_BUTTON_COUNT,
+} SchematicUiButton;
+
+typedef enum SchematicUiView {
+    SCHEMATIC_UI_VIEW_LEARNED,
+    SCHEMATIC_UI_VIEW_FOUND,
+} SchematicUiView;
+
+typedef enum SchematicUiReadiness {
+    SCHEMATIC_UI_READINESS_OK,
+    SCHEMATIC_UI_READINESS_NO_ITEMS,
+    SCHEMATIC_UI_READINESS_NO_EXPERTISE,
+    SCHEMATIC_UI_READINESS_COUNT,
+} SchematicUiReadiness;
+
 static void sub_56D0D0();
 static void schematic_ui_create();
 static void schematic_ui_destroy();
@@ -39,53 +60,53 @@ static void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* 
 static tig_window_handle_t schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CA820
-static TigRect stru_5CA820 = { 0, 41, 800, 400 };
+static TigRect schematic_ui_window_rect = { 0, 41, 800, 400 };
 
 // 0x5CA830
-static int dword_5CA830[3] = {
-    360,
-    359,
-    358,
+static int schematic_ui_combine_indicator_icons[SCHEMATIC_UI_READINESS_COUNT] = {
+    /*           SCHEMATIC_UI_READINESS_OK */ 360,
+    /*     SCHEMATIC_UI_READINESS_NO_ITEMS */ 359,
+    /* SCHEMATIC_UI_READINESS_NO_EXPERTISE */ 358,
 };
 
 // 0x5CA840
-static TigRect stru_5CA840 = { 50, 26, 89, 89 };
+static TigRect schematic_ui_pc_lens_rect = { 50, 26, 89, 89 };
 
 // 0x5CA850
-static UiButtonInfo stru_5CA850[5] = {
-    { 204, 57, 372, TIG_BUTTON_HANDLE_INVALID },
-    { 687, 57, 373, TIG_BUTTON_HANDLE_INVALID },
-    { 76, 365, 357, TIG_BUTTON_HANDLE_INVALID },
-    { 29, 201, 6, TIG_BUTTON_HANDLE_INVALID },
-    { 29, 289, 6, TIG_BUTTON_HANDLE_INVALID },
+static UiButtonInfo schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COUNT] = {
+    /*    SCHEMATIC_UI_BUTTON_PREV */ { 204, 57, 372, TIG_BUTTON_HANDLE_INVALID },
+    /*    SCHEMATIC_UI_BUTTON_NEXT */ { 687, 57, 373, TIG_BUTTON_HANDLE_INVALID },
+    /* SCHEMATIC_UI_BUTTON_COMBINE */ { 76, 365, 357, TIG_BUTTON_HANDLE_INVALID },
+    /* SCHEMATIC_UI_BUTTON_LEARNED */ { 29, 201, 6, TIG_BUTTON_HANDLE_INVALID },
+    /*   SCHEMATIC_UI_BUTTON_FOUND */ { 29, 289, 6, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5CA8A0
-static UiButtonInfo stru_5CA8A0[TECH_COUNT] = {
-    { 707, 58, 355, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 103, 356, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 148, 361, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 193, 362, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 238, 363, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 283, 364, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 328, 368, TIG_BUTTON_HANDLE_INVALID },
-    { 707, 373, 369, TIG_BUTTON_HANDLE_INVALID },
+static UiButtonInfo schematic_ui_tabs[TECH_COUNT] = {
+    /*    TECH_HERBOLOGY */ { 707, 58, 355, TIG_BUTTON_HANDLE_INVALID },
+    /*    TECH_CHEMISTRY */ { 707, 103, 356, TIG_BUTTON_HANDLE_INVALID },
+    /*     TECH_ELECTRIC */ { 707, 148, 361, TIG_BUTTON_HANDLE_INVALID },
+    /*   TECH_EXPLOSIVES */ { 707, 193, 362, TIG_BUTTON_HANDLE_INVALID },
+    /*          TECH_GUN */ { 707, 238, 363, TIG_BUTTON_HANDLE_INVALID },
+    /*   TECH_MECHANICAL */ { 707, 283, 364, TIG_BUTTON_HANDLE_INVALID },
+    /*       TECH_SMITHY */ { 707, 328, 368, TIG_BUTTON_HANDLE_INVALID },
+    /* TECH_THERAPEUTICS */ { 707, 373, 369, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5CA920
-static TigRect stru_5CA920[] = {
+static TigRect schematic_ui_component_rects[] = {
     { 579, 181, 99, 67 },
     { 579, 277, 99, 67 },
 };
 
 // 0x5CA940
-static TigRect stru_5CA940[] = {
+static TigRect schematic_ui_component_icon_rects[] = {
     { 583, 182, 50, 50 },
     { 583, 278, 50, 50 },
 };
 
 // 0x5CA960
-static TigRect stru_5CA960[] = {
+static TigRect schematic_ui_component_complexity_rects[] = {
     { 658, 232, 50, 50 },
     { 658, 328, 50, 50 },
 };
@@ -93,22 +114,22 @@ static TigRect stru_5CA960[] = {
 // FIXME: Should be initialized with `TIG_BUTTON_HANDLE_INVALID`.
 //
 // 0x680DE0
-static tig_button_handle_t dword_680DE0;
+static tig_button_handle_t schematic_ui_component1_button;
 
 // 0x680DE4
-static int dword_680DE4[TECH_COUNT];
+static int schematic_ui_num_learned_schematics_by_tech[TECH_COUNT];
 
 // 0x680E04
-static int schematic_ui_num_found_schematics_by_tech[8];
+static int schematic_ui_num_found_schematics_by_tech[TECH_COUNT];
 
 // 0x680E24
-static int dword_680E24;
+static int schematic_ui_learned_page;
 
 // 0x680E28
 static int64_t qword_680E28;
 
 // 0x680E30
-static int dword_680E30;
+static int schematic_ui_learned_tech;
 
 // 0x680E34
 static tig_font_handle_t schematic_ui_name_font;
@@ -117,40 +138,40 @@ static tig_font_handle_t schematic_ui_name_font;
 static tig_font_handle_t schematic_ui_description_font;
 
 // 0x680E3C
-static tig_button_handle_t dword_680E3C;
+static tig_button_handle_t schematic_ui_component2_button;
 
 // 0x680E40
-static bool dword_680E40;
+static SchematicUiView schematic_ui_view;
 
 // 0x680E44
 static mes_file_handle_t schematic_ui_rules_mes_file;
 
 // 0x680E48
-static int dword_680E48;
+static int schematic_ui_cur_num_schematics;
 
 // 0x680E4C
-static int* dword_680E4C;
+static int* schematic_ui_cur_num_schematics_by_tech;
 
 // 0x680E50
 static int* schematic_ui_found_schematics;
 
 // 0x680E54
-static int dword_680E54;
+static int schematic_ui_num_learned_schematics;
 
 // 0x680E58
-static int dword_680E58;
+static int schematic_ui_cur_page;
 
 // 0x680E5C
-static int* dword_680E5C;
+static int* schematic_ui_cur_schematics;
 
 // 0x680E60
 static int64_t qword_680E60;
 
 // 0x680E68
-static int dword_680E68;
+static int schematic_ui_found_page;
 
 // 0x680E6C
-static int dword_680E6C;
+static int schematic_ui_cur_tech;
 
 // 0x680E70
 static int64_t qword_680E70;
@@ -159,25 +180,25 @@ static int64_t qword_680E70;
 static int schematic_ui_text_mes_file;
 
 // 0x680E7C
-static int dword_680E7C;
+static SchematicUiReadiness schematic_ui_readiness;
 
 // 0x680E80
-static int dword_680E80;
+static int schematic_ui_found_tech;
 
 // 0x680E84
 static int schematic_ui_num_found_schematics;
 
 // 0x680E88
-static tig_font_handle_t dword_680E88;
+static tig_font_handle_t schematic_ui_icons17_font;
 
 // 0x680E8C
-static tig_font_handle_t dword_680E8C;
+static tig_font_handle_t schematic_ui_icons32_font;
 
 // 0x680E90
 static int64_t qword_680E90;
 
 // 0x680E98
-static int* dword_680E98;
+static int* schematic_ui_learned_schematics;
 
 // 0x680E9C
 static bool schematic_ui_initialized;
@@ -206,20 +227,20 @@ bool schematic_ui_init(GameInitInfo* init_info)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        dword_680DE4[tech] = 0;
+        schematic_ui_num_learned_schematics_by_tech[tech] = 0;
     }
 
-    dword_680E54 = mes_entries_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
-    if (dword_680E54 > 0) {
-        dword_680E98 = (int*)MALLOC(sizeof(int) * dword_680E54);
+    schematic_ui_num_learned_schematics = mes_entries_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
+    if (schematic_ui_num_learned_schematics > 0) {
+        schematic_ui_learned_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_learned_schematics);
         idx = 0;
         for (num = 2000; num < 3999; num += 10) {
             mes_file_entry.num = num;
             if (mes_search(schematic_ui_rules_mes_file, &mes_file_entry)) {
-                dword_680E98[idx] = num;
+                schematic_ui_learned_schematics[idx] = num;
 
                 tech = sub_56DB00(num);
-                dword_680DE4[tech]++;
+                schematic_ui_num_learned_schematics_by_tech[tech]++;
 
                 idx++;
             }
@@ -236,13 +257,13 @@ bool schematic_ui_init(GameInitInfo* init_info)
     tig_art_interface_id_create(300, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(0, 0, 0);
-    tig_font_create(&font, &dword_680E88);
+    tig_font_create(&font, &schematic_ui_icons17_font);
 
     font.flags = 0;
     tig_art_interface_id_create(370, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(0, 0, 0);
-    tig_font_create(&font, &dword_680E8C);
+    tig_font_create(&font, &schematic_ui_icons32_font);
 
     font.flags = 0;
     tig_art_interface_id_create(371, 0, 0, 0, &(font.art_id));
@@ -264,11 +285,11 @@ void schematic_ui_exit()
     mes_unload(schematic_ui_rules_mes_file);
     mes_unload(schematic_ui_text_mes_file);
     tig_font_destroy(schematic_ui_description_font);
-    tig_font_destroy(dword_680E88);
-    tig_font_destroy(dword_680E8C);
+    tig_font_destroy(schematic_ui_icons17_font);
+    tig_font_destroy(schematic_ui_icons32_font);
     tig_font_destroy(schematic_ui_name_font);
-    if (dword_680E54 > 0) {
-        FREE(dword_680E98);
+    if (schematic_ui_num_learned_schematics > 0) {
+        FREE(schematic_ui_learned_schematics);
     }
     schematic_ui_initialized = false;
 }
@@ -284,17 +305,17 @@ void schematic_ui_reset()
 // 0x56D0D0
 void sub_56D0D0()
 {
-    dword_680E7C = 1;
-    dword_680E6C = 0;
-    dword_680E80 = 0;
-    dword_680E30 = 0;
-    dword_680E58 = 0;
-    dword_680E68 = 0;
-    dword_680E24 = 0;
-    dword_680E48 = dword_680E54;
-    dword_680E4C = dword_680DE4;
-    dword_680E5C = dword_680E98;
-    dword_680E40 = 0;
+    schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_ITEMS;
+    schematic_ui_cur_tech = 0;
+    schematic_ui_found_tech = 0;
+    schematic_ui_learned_tech = 0;
+    schematic_ui_cur_page = 0;
+    schematic_ui_found_page = 0;
+    schematic_ui_learned_page = 0;
+    schematic_ui_cur_num_schematics = schematic_ui_num_learned_schematics;
+    schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_learned_schematics_by_tech;
+    schematic_ui_cur_schematics = schematic_ui_learned_schematics;
+    schematic_ui_view = SCHEMATIC_UI_VIEW_LEARNED;
 }
 
 // 0x56D130
@@ -325,7 +346,7 @@ void sub_56D130(int64_t a1, int64_t a2)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        dword_680DE4[tech] = tech_degree_get(a1, tech);
+        schematic_ui_num_learned_schematics_by_tech[tech] = tech_degree_get(a1, tech);
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 
@@ -344,10 +365,10 @@ void sub_56D130(int64_t a1, int64_t a2)
         schematic_ui_num_found_schematics = 0;
     }
 
-    if (dword_680E40 == 1) {
-        dword_680E4C = schematic_ui_num_found_schematics_by_tech;
-        dword_680E5C = schematic_ui_found_schematics;
-        dword_680E48 = schematic_ui_num_found_schematics;
+    if (schematic_ui_view == SCHEMATIC_UI_VIEW_FOUND) {
+        schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_found_schematics_by_tech;
+        schematic_ui_cur_schematics = schematic_ui_found_schematics;
+        schematic_ui_cur_num_schematics = schematic_ui_num_found_schematics;
     }
 
     schematic_ui_create();
@@ -358,8 +379,8 @@ void schematic_ui_close()
 {
     if (schematic_ui_created && sub_551A80(0)) {
         schematic_ui_destroy();
-        qword_680E70 = 0;
-        qword_680E60 = 0;
+        qword_680E70 = OBJ_HANDLE_NULL;
+        qword_680E60 = OBJ_HANDLE_NULL;
     }
 }
 
@@ -380,16 +401,16 @@ void schematic_ui_create()
         exit(0);
     }
 
-    for (index = 0; index < 5; index++) {
-        intgame_button_create_ex(schematic_ui_window, &stru_5CA820, &(stru_5CA850[index]), 1);
+    for (index = 0; index < SCHEMATIC_UI_BUTTON_COUNT; index++) {
+        intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_buttons[index]), 1);
     }
 
     for (index = 0; index < TECH_COUNT; index++) {
-        intgame_button_create_ex(schematic_ui_window, &stru_5CA820, &(stru_5CA8A0[index]), 1);
-        buttons[index] = stru_5CA8A0[index].button_handle;
+        intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_tabs[index]), 1);
+        buttons[index] = schematic_ui_tabs[index].button_handle;
     }
 
-    tig_button_radio_group_create(TECH_COUNT, buttons, dword_680E6C);
+    tig_button_radio_group_create(TECH_COUNT, buttons, schematic_ui_cur_tech);
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = schematic_ui_window;
@@ -399,24 +420,24 @@ void schematic_ui_create()
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
-    button_data.x = stru_5CA920[0].x;
-    button_data.y = stru_5CA920[0].y;
-    button_data.width = stru_5CA920[0].width;
-    button_data.height = stru_5CA920[0].height;
-    tig_button_create(&button_data, &dword_680DE0);
+    button_data.x = schematic_ui_component_rects[0].x;
+    button_data.y = schematic_ui_component_rects[0].y;
+    button_data.width = schematic_ui_component_rects[0].width;
+    button_data.height = schematic_ui_component_rects[0].height;
+    tig_button_create(&button_data, &schematic_ui_component1_button);
 
-    button_data.x = stru_5CA920[1].x;
-    button_data.y = stru_5CA920[1].y;
-    button_data.width = stru_5CA920[1].width;
-    button_data.height = stru_5CA920[1].height;
-    tig_button_create(&button_data, &dword_680E3C);
+    button_data.x = schematic_ui_component_rects[1].x;
+    button_data.y = schematic_ui_component_rects[1].y;
+    button_data.width = schematic_ui_component_rects[1].width;
+    button_data.height = schematic_ui_component_rects[1].height;
+    tig_button_create(&button_data, &schematic_ui_component2_button);
 
     sub_56DDC0();
 
     location_origin_set(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
 
     pc_lens.window_handle = schematic_ui_window;
-    pc_lens.rect = &stru_5CA840;
+    pc_lens.rect = &schematic_ui_pc_lens_rect;
     tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
@@ -451,7 +472,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
-                schematic_ui_close();
+            schematic_ui_close();
             return true;
         }
 
@@ -459,21 +480,21 @@ bool schematic_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            if (msg->data.button.button_handle == dword_680DE0) {
-                if (qword_680E90 != 0) {
+            if (msg->data.button.button_handle == schematic_ui_component1_button) {
+                if (qword_680E90 != OBJ_HANDLE_NULL) {
                     sub_57CCF0(qword_680E60, qword_680E90);
                 }
                 return true;
             }
 
-            if (msg->data.button.button_handle == dword_680E3C) {
+            if (msg->data.button.button_handle == schematic_ui_component2_button) {
                 if (qword_680E28 != OBJ_HANDLE_NULL) {
                     sub_57CCF0(qword_680E60, qword_680E28);
                 }
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle) {
                 mes_file_entry.num = 3;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 ui_message.type = UI_MSG_TYPE_FEEDBACK;
@@ -482,7 +503,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[3].button_handle) {
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle) {
                 mes_file_entry.num = 4;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 ui_message.type = UI_MSG_TYPE_FEEDBACK;
@@ -491,7 +512,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[4].button_handle) {
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle) {
                 mes_file_entry.num = 5;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 ui_message.type = UI_MSG_TYPE_FEEDBACK;
@@ -501,7 +522,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             }
 
             for (tech = 0; tech < TECH_COUNT; tech++) {
-                if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
+                if (msg->data.button.button_handle == schematic_ui_tabs[tech].button_handle) {
                     ui_message.type = UI_MSG_TYPE_TECH;
                     ui_message.field_8 = tech;
                     sub_550750(&ui_message);
@@ -511,17 +532,17 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             break;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
-            if (msg->data.button.button_handle == dword_680DE0
-                || msg->data.button.button_handle == dword_680E3C
-                || msg->data.button.button_handle == stru_5CA850[2].button_handle
-                || msg->data.button.button_handle == stru_5CA850[3].button_handle
-                || msg->data.button.button_handle == stru_5CA850[4].button_handle) {
+            if (msg->data.button.button_handle == schematic_ui_component1_button
+                || msg->data.button.button_handle == schematic_ui_component2_button
+                || msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle
+                || msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle
+                || msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle) {
                 sub_550720();
                 return true;
             }
 
             for (tech = 0; tech < TECH_COUNT; tech++) {
-                if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
+                if (msg->data.button.button_handle == schematic_ui_tabs[tech].button_handle) {
                     sub_550720();
                     return true;
                 }
@@ -530,59 +551,67 @@ bool schematic_ui_message_filter(TigMessage* msg)
             break;
         case TIG_BUTTON_STATE_PRESSED:
             for (tech = 0; tech < TECH_COUNT; tech++) {
-                if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
-                    dword_680E6C = tech;
-                    dword_680E58 = 0;
+                if (msg->data.button.button_handle == schematic_ui_tabs[tech].button_handle) {
+                    schematic_ui_cur_tech = tech;
+                    schematic_ui_cur_page = 0;
                     sub_56DDC0();
                     gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                     return true;
                 }
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[0].button_handle) {
-                dword_680E58--;
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_PREV].button_handle) {
+                schematic_ui_cur_page--;
                 sub_56DDC0();
                 gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[1].button_handle) {
-                dword_680E58++;
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_NEXT].button_handle) {
+                schematic_ui_cur_page++;
                 sub_56DDC0();
                 gsound_play_sfx(SND_INTERFACE_BOOK_PAGE_TURN, 1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[3].button_handle) {
-                if (dword_680E40 == 1) {
-                    tig_button_state_change(stru_5CA8A0[dword_680E6C].button_handle, 1);
-                    dword_680E68 = dword_680E58;
-                    dword_680E80 = dword_680E6C;
-                    dword_680E58 = dword_680E24;
-                    dword_680E6C = dword_680E30;
-                    dword_680E48 = dword_680E54;
-                    dword_680E4C = dword_680DE4;
-                    dword_680E5C = dword_680E98;
-                    dword_680E40 = 0;
-                    tig_button_state_change(stru_5CA8A0[dword_680E30].button_handle, 0);
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle) {
+                if (schematic_ui_view == SCHEMATIC_UI_VIEW_FOUND) {
+                    tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_RELEASED);
+
+                    schematic_ui_found_page = schematic_ui_cur_page;
+                    schematic_ui_found_tech = schematic_ui_cur_tech;
+
+                    schematic_ui_cur_page = schematic_ui_learned_page;
+                    schematic_ui_cur_tech = schematic_ui_learned_tech;
+
+                    schematic_ui_cur_num_schematics = schematic_ui_num_learned_schematics;
+                    schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_learned_schematics_by_tech;
+                    schematic_ui_cur_schematics = schematic_ui_learned_schematics;
+                    schematic_ui_view = SCHEMATIC_UI_VIEW_LEARNED;
+
+                    tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_PRESSED);
                     sub_56DDC0();
                     gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5CA850[4].button_handle) {
-                if (dword_680E40 == 0) {
-                    tig_button_state_change(stru_5CA8A0[dword_680E6C].button_handle, 1);
-                    dword_680E24 = dword_680E58;
-                    dword_680E30 = dword_680E6C;
-                    dword_680E58 = dword_680E68;
-                    dword_680E6C = dword_680E80;
-                    dword_680E48 = schematic_ui_num_found_schematics;
-                    dword_680E4C = schematic_ui_num_found_schematics_by_tech;
-                    dword_680E5C = schematic_ui_found_schematics;
-                    dword_680E40 = 1;
-                    tig_button_state_change(stru_5CA8A0[dword_680E80].button_handle, 0);
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle) {
+                if (schematic_ui_view == SCHEMATIC_UI_VIEW_LEARNED) {
+                    tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_RELEASED);
+
+                    schematic_ui_learned_page = schematic_ui_cur_page;
+                    schematic_ui_learned_tech = schematic_ui_cur_tech;
+
+                    schematic_ui_cur_page = schematic_ui_found_page;
+                    schematic_ui_cur_tech = schematic_ui_found_tech;
+
+                    schematic_ui_cur_num_schematics = schematic_ui_num_found_schematics;
+                    schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_found_schematics_by_tech;
+                    schematic_ui_cur_schematics = schematic_ui_found_schematics;
+                    schematic_ui_view = SCHEMATIC_UI_VIEW_FOUND;
+
+                    tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_PRESSED);
                     sub_56DDC0();
                     gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
@@ -591,9 +620,9 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             break;
         case TIG_BUTTON_STATE_RELEASED:
-            if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
-                switch (dword_680E7C) {
-                case 0:
+            if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle) {
+                switch (schematic_ui_readiness) {
+                case SCHEMATIC_UI_READINESS_OK:
                     if (tig_net_is_active() && !tig_net_is_host()) {
                         pkt.type = 79;
                         pkt.field_4 = sub_56DB60();
@@ -606,15 +635,15 @@ bool schematic_ui_message_filter(TigMessage* msg)
                         sub_56DDC0();
                     }
                     break;
-                case 1:
-                    mes_file_entry.num = 0;
+                case SCHEMATIC_UI_READINESS_NO_ITEMS:
+                    mes_file_entry.num = 0; // "You are missing required item(s)."
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                     ui_message.type = UI_MSG_TYPE_EXCLAMATION;
                     ui_message.str = mes_file_entry.str;
                     sub_550750(&ui_message);
                     break;
-                case 2:
-                    mes_file_entry.num = 1;
+                case SCHEMATIC_UI_READINESS_NO_EXPERTISE:
+                    mes_file_entry.num = 1; // "You lack the expertise to combine these items."
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                     ui_message.type = UI_MSG_TYPE_EXCLAMATION;
                     ui_message.str = mes_file_entry.str;
@@ -656,15 +685,15 @@ int sub_56DB60()
     int index;
     int v1;
 
-    if (dword_680E4C[dword_680E6C] == 0) {
+    if (schematic_ui_cur_num_schematics_by_tech[schematic_ui_cur_tech] == 0) {
         return -1;
     }
 
     v1 = 0;
-    for (index = 0; index < dword_680E48; index++) {
-        if (sub_56DB00(dword_680E5C[index]) == dword_680E6C) {
-            if (v1 == dword_680E58) {
-                return dword_680E5C[index];
+    for (index = 0; index < schematic_ui_cur_num_schematics; index++) {
+        if (sub_56DB00(schematic_ui_cur_schematics[index]) == schematic_ui_cur_tech) {
+            if (v1 == schematic_ui_cur_page) {
+                return schematic_ui_cur_schematics[index];
             }
             v1++;
         }
@@ -679,7 +708,7 @@ void sub_56DBD0(int schematic, SchematicInfo* schematic_info)
     MesFileEntry mes_file_entry;
 
     if (schematic == -1) {
-        schematic = 2 * (5 * dword_680E6C + 3000);
+        schematic = 2 * (5 * schematic_ui_cur_tech + 3000);
     }
 
     mes_file_entry.num = schematic + SCHEMATIC_F_NAME;
@@ -761,16 +790,16 @@ void sub_56DDC0()
     bool v3;
     bool v4;
 
-    if (dword_680E58 != 0) {
-        tig_button_show(stru_5CA850[0].button_handle);
+    if (schematic_ui_cur_page != 0) {
+        tig_button_show(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_PREV].button_handle);
     } else {
-        tig_button_hide(stru_5CA850[0].button_handle);
+        tig_button_hide(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_PREV].button_handle);
     }
 
-    if (dword_680E58 < dword_680E4C[dword_680E6C] - 1) {
-        tig_button_show(stru_5CA850[1].button_handle);
+    if (schematic_ui_cur_page < schematic_ui_cur_num_schematics_by_tech[schematic_ui_cur_tech] - 1) {
+        tig_button_show(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_NEXT].button_handle);
     } else {
-        tig_button_hide(stru_5CA850[1].button_handle);
+        tig_button_hide(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_NEXT].button_handle);
     }
 
     // Render background.
@@ -779,8 +808,8 @@ void sub_56DDC0()
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = stru_5CA820.width;
-    src_rect.height = stru_5CA820.height;
+    src_rect.width = schematic_ui_window_rect.width;
+    src_rect.height = schematic_ui_window_rect.height;
     blit_info.src_rect = &src_rect;
 
     dst_rect = src_rect;
@@ -850,7 +879,7 @@ void sub_56DDC0()
     icon[0] = (char)obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
     icon[1] = '\0';
 
-    tig_font_push(dword_680E8C);
+    tig_font_push(schematic_ui_icons32_font);
 
     src_rect.x = 222;
     src_rect.y = 32;
@@ -865,16 +894,16 @@ void sub_56DDC0()
     sub_56E190(1, &schematic_info, &v3, &v4);
 
     if (!v2 || !v4) {
-        dword_680E7C = 2;
+        schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_EXPERTISE;
     } else if (!v1 || !v3) {
-        dword_680E7C = 1;
+        schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_ITEMS;
     } else {
-        dword_680E7C = 0;
+        schematic_ui_readiness = SCHEMATIC_UI_READINESS_OK;
     }
 
-    //
+    // Draw indicator.
     blit_info.flags = 0;
-    tig_art_interface_id_create(dword_5CA830[dword_680E7C], 0, 0, 0, &(blit_info.art_id));
+    tig_art_interface_id_create(schematic_ui_combine_indicator_icons[schematic_ui_readiness], 0, 0, 0, &(blit_info.art_id));
     tig_art_frame_data(blit_info.art_id, &art_frame_data);
 
     src_rect.x = 0;
@@ -965,8 +994,8 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
         src_rect.width = art_frame_data.width;
         src_rect.height = art_frame_data.height;
 
-        dst_rect.y = stru_5CA920[ingr].y;
-        dst_rect.x = stru_5CA920[ingr].x;
+        dst_rect.y = schematic_ui_component_rects[ingr].y;
+        dst_rect.x = schematic_ui_component_rects[ingr].x;
         dst_rect.width = art_frame_data.width;
         dst_rect.height = art_frame_data.height;
 
@@ -1009,22 +1038,22 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     src_rect.width = art_frame_data.width;
     src_rect.height = art_frame_data.height;
 
-    dst_rect = stru_5CA920[ingr];
+    dst_rect = schematic_ui_component_rects[ingr];
 
-    width_ratio = (float)art_frame_data.width / (float)stru_5CA920[ingr].width;
-    height_ratio = (float)art_frame_data.height / (float)stru_5CA920[ingr].height;
+    width_ratio = (float)art_frame_data.width / (float)schematic_ui_component_rects[ingr].width;
+    height_ratio = (float)art_frame_data.height / (float)schematic_ui_component_rects[ingr].height;
 
     if (width_ratio > height_ratio && width_ratio > 1.0f) {
         dst_rect.height = (int)(art_frame_data.height / width_ratio);
-        dst_rect.y += (stru_5CA920[ingr].height - dst_rect.height) / 2;
+        dst_rect.y += (schematic_ui_component_rects[ingr].height - dst_rect.height) / 2;
     } else if (height_ratio > width_ratio && height_ratio > 1.0f) {
         dst_rect.width = (int)(art_frame_data.width / height_ratio);
-        dst_rect.x += (stru_5CA920[ingr].width - dst_rect.width) / 2;
+        dst_rect.x += (schematic_ui_component_rects[ingr].width - dst_rect.width) / 2;
     } else {
         dst_rect.width = art_frame_data.width;
-        dst_rect.x += (stru_5CA920[ingr].width - art_frame_data.width) / 2;
+        dst_rect.x += (schematic_ui_component_rects[ingr].width - art_frame_data.width) / 2;
         dst_rect.height = art_frame_data.height;
-        dst_rect.y += (stru_5CA920[ingr].height - art_frame_data.height) / 2;
+        dst_rect.y += (schematic_ui_component_rects[ingr].height - art_frame_data.height) / 2;
     }
 
     art_blit_info.src_rect = &src_rect;
@@ -1058,13 +1087,13 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     if (complexity > 0) {
         str[0] = (char)(discipline + '1');
         str[1] = '\0';
-        tig_font_push(dword_680E88);
-        tig_window_text_write(schematic_ui_window, str, &(stru_5CA940[ingr]));
+        tig_font_push(schematic_ui_icons17_font);
+        tig_window_text_write(schematic_ui_window, str, &(schematic_ui_component_icon_rects[ingr]));
         tig_font_pop();
 
         sprintf(str, "%d", complexity);
         tig_font_push(schematic_ui_description_font);
-        tig_window_text_write(schematic_ui_window, str, &stru_5CA960[ingr]);
+        tig_window_text_write(schematic_ui_window, str, &schematic_ui_component_complexity_rects[ingr]);
         tig_font_pop();
     }
 }
@@ -1169,13 +1198,13 @@ bool sub_56E950(int a1, int64_t a2, int64_t obj)
     (void)a2;
 
     if (a1 && player_is_local_pc_obj(obj)) {
-        mes_file_entry.num = 2;
+        mes_file_entry.num = 2; // "You have successfully combined the items into a new item."
         mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
         ui_message.type = UI_MSG_TYPE_EXCLAMATION;
         ui_message.str = mes_file_entry.str;
         sub_550750(&ui_message);
         sub_56DDC0();
-        gsound_play_sfx(dword_680E6C + SND_INTERFACE_COM_HERBAL, 1);
+        gsound_play_sfx(schematic_ui_cur_tech + SND_INTERFACE_COM_HERBAL, 1);
     }
     return true;
 }
