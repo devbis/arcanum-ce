@@ -405,6 +405,13 @@ void schematic_ui_create()
         intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_buttons[index]), 1);
     }
 
+    // CE: There are two buttons in the interface to switch learned vs. found
+    // schematics, but there is no way to tell what we're currently looking at.
+    // Improve it by arranging learned/found buttons into a radio group.
+    buttons[0] = schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle;
+    buttons[1] = schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle;
+    tig_button_radio_group_create(2, buttons, schematic_ui_view);
+
     for (index = 0; index < TECH_COUNT; index++) {
         intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_tabs[index]), 1);
         buttons[index] = schematic_ui_tabs[index].button_handle;
