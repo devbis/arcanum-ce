@@ -127,7 +127,7 @@ static TimeEventTypeInfo stru_5B2188[TIMEEVENT_TYPE_COUNT] = {
     { "Fade", true, P2_FLOAT | P3_INT | P1_INT | P0_INT, TIME_TYPE_GAME_TIME, gfade_timeevent_process, NULL, NULL },
     { "MP Ctrl UI", false, 0, TIME_TYPE_REAL_TIME, NULL, NULL, NULL },
     { "UI", false, P1_INT | P0_INT, TIME_TYPE_REAL_TIME, ui_timeevent_process },
-    { "Teleported", false, P0_OBJ, TIME_TYPE_GAME_TIME, sub_43EAC0 },
+    { "Teleported", false, P0_OBJ, TIME_TYPE_GAME_TIME, object_teleported_timeevent_process },
     { "Scenery Respawn", true, P0_OBJ, TIME_TYPE_GAME_TIME, object_scenery_respawn_timeevent_process },
     { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME, ui_wmap_rnd_timeevent_process },
 };

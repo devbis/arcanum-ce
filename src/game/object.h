@@ -123,7 +123,7 @@ bool object_is_static(int64_t obj);
 bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags);
 void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect);
 void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y);
-bool sub_43EAC0(TimeEvent* timeevent);
+bool object_teleported_timeevent_process(TimeEvent* timeevent);
 void object_set_offset(int64_t obj, int offset_x, int offset_y);
 void object_set_current_aid(int64_t obj, tig_art_id_t aid);
 void object_set_light(int64_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color);

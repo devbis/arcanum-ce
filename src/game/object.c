@@ -2297,7 +2297,7 @@ void sub_43EA20(int64_t a1, int64_t a2)
 }
 
 // 0x43EAC0
-bool sub_43EAC0(TimeEvent* timeevent)
+bool object_teleported_timeevent_process(TimeEvent* timeevent)
 {
     if (timeevent->params[0].object_value == OBJ_HANDLE_NULL) {
         return false;
