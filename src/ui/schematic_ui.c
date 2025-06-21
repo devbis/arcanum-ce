@@ -674,7 +674,7 @@ int tech_from_schematic(int schematic)
     int64_t obj;
 
     if (schematic >= 4000) {
-        sub_56DBD0(schematic, &schematic_info);
+        schematic_ui_info_get(schematic, &schematic_info);
         obj = sub_4685A0(schematic_info.prod[0]);
         return obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE);
     }
@@ -710,12 +710,13 @@ int sub_56DB60()
 }
 
 // 0x56DBD0
-void sub_56DBD0(int schematic, SchematicInfo* schematic_info)
+void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
 {
     MesFileEntry mes_file_entry;
 
     if (schematic == -1) {
-        schematic = 2 * (5 * schematic_ui_cur_tech + 3000);
+        // Schematic title page.
+        schematic = 10 * schematic_ui_cur_tech + 6000;
     }
 
     mes_file_entry.num = schematic + SCHEMATIC_F_NAME;
@@ -826,7 +827,7 @@ void sub_56DDC0()
 
     // Obtain current schematic info.
     schematic = sub_56DB60();
-    sub_56DBD0(schematic, &schematic_info);
+    schematic_ui_info_get(schematic, &schematic_info);
 
     // Render schematic image.
     blit_info.flags = 0;
@@ -1129,7 +1130,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
         return false;
     }
 
-    sub_56DBD0(schematic, &info);
+    schematic_ui_info_get(schematic, &info);
 
     for (ingridient1 = 0; ingridient1 < 3; ingridient1++) {
         obj = sub_4685A0(info.item1[ingridient1]);
@@ -1222,7 +1223,7 @@ char* sub_56E9D0(int schematic)
     SchematicInfo schematic_info;
     MesFileEntry mes_file_entry;
 
-    sub_56DBD0(schematic, &schematic_info);
+    schematic_ui_info_get(schematic, &schematic_info);
 
     mes_file_entry.num = schematic_info.name;
     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
@@ -1241,7 +1242,7 @@ void schematic_ui_components_get(int tech, int degree, char* item1, char* item2)
     SchematicInfo schematic_info;
     int64_t obj;
 
-    sub_56DBD0(tech_schematic_get(tech, degree), &schematic_info);
+    schematic_ui_info_get(tech_schematic_get(tech, degree), &schematic_info);
 
     obj = sub_4685A0(schematic_info.item1[0]);
     object_examine(obj, obj, item1);

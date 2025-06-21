@@ -2820,7 +2820,7 @@ bool sub_4A5EE0(int64_t obj)
         degree = tech_degree_get(obj, tech);
         if (degree > 0) {
             schematic = tech_schematic_get(tech, degree);
-            sub_460C00(schematic, &schematic_info);
+            ui_schematic_info_get(schematic, &schematic_info);
 
             for (idx = 0; idx < 3; idx++) {
                 prod_basic_proto = schematic_info.prod[idx];

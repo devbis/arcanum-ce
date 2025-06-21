@@ -9,7 +9,7 @@ void schematic_ui_exit();
 void schematic_ui_reset();
 void sub_56D130(int64_t a1, int64_t a2);
 void schematic_ui_close();
-void sub_56DBD0(int schematic, SchematicInfo* schematic_info);
+void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info);
 bool sub_56E720(int schematic, int64_t a2, int64_t a3);
 bool sub_56E950(int a1, int64_t a2, int64_t obj);
 char* sub_56E9D0(int schematic);

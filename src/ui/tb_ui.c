@@ -136,7 +136,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_11C = sub_57CFB0;
     callbacks.field_120 = sub_57D080;
     callbacks.field_124 = sub_57D150;
-    callbacks.field_128 = sub_56DBD0;
+    callbacks.schematic_info_get = schematic_ui_info_get;
     callbacks.field_12C = sub_573600;
     callbacks.field_130 = sub_557790;
     callbacks.field_134 = sub_572370;

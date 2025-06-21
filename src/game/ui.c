@@ -632,10 +632,10 @@ int sub_460BE0(const char* a1, const char* a2)
 }
 
 // 0x460C00
-void sub_460C00(int schematic, SchematicInfo* schematic_info)
+void ui_schematic_info_get(int schematic, SchematicInfo* schematic_info)
 {
-    if (ui_callbacks.field_128 != NULL) {
-        ui_callbacks.field_128(schematic, schematic_info);
+    if (ui_callbacks.schematic_info_get != NULL) {
+        ui_callbacks.schematic_info_get(schematic, schematic_info);
     }
 }
 
