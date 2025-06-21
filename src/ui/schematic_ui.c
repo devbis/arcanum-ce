@@ -52,7 +52,7 @@ static void schematic_ui_destroy();
 static bool schematic_ui_message_filter(TigMessage* msg);
 static int tech_from_schematic(int schematic);
 static int sub_56DB60();
-static void sub_56DD20(const char* str, int* items);
+static void schematic_ui_parse_items(const char* str, int* items);
 static void schematic_ui_redraw();
 static void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4);
 
@@ -733,7 +733,7 @@ void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
 
     mes_file_entry.num = schematic + SCHEMATIC_F_ITEM_1;
     mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.str, schematic_info->item1);
+    schematic_ui_parse_items(mes_file_entry.str, schematic_info->item1);
 
     tig_debug_printf("Read line schematic.mes line %d: %d %d %d\n",
         mes_file_entry.num,
@@ -743,11 +743,11 @@ void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
 
     mes_file_entry.num = schematic + SCHEMATIC_F_ITEM_2;
     mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.str, schematic_info->item2);
+    schematic_ui_parse_items(mes_file_entry.str, schematic_info->item2);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_PROD;
     mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.str, schematic_info->prod);
+    schematic_ui_parse_items(mes_file_entry.str, schematic_info->prod);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_QTY;
     mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
@@ -755,9 +755,9 @@ void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
 }
 
 // 0x56DD20
-void sub_56DD20(const char* str, int* items)
+void schematic_ui_parse_items(const char* str, int* items)
 {
-    char mut_str[2000];
+    char mut_str[MAX_STRING];
     char* pch;
     int cnt;
 
