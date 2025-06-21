@@ -50,7 +50,7 @@ static void sub_56D0D0();
 static void schematic_ui_create();
 static void schematic_ui_destroy();
 static bool schematic_ui_message_filter(TigMessage* msg);
-static int sub_56DB00(int schematic);
+static int tech_from_schematic(int schematic);
 static int sub_56DB60();
 static void sub_56DD20(const char* str, int* items);
 static void sub_56DDC0();
@@ -239,7 +239,7 @@ bool schematic_ui_init(GameInitInfo* init_info)
             if (mes_search(schematic_ui_rules_mes_file, &mes_file_entry)) {
                 schematic_ui_learned_schematics[idx] = num;
 
-                tech = sub_56DB00(num);
+                tech = tech_from_schematic(num);
                 schematic_ui_num_learned_schematics_by_tech[tech]++;
 
                 idx++;
@@ -357,7 +357,7 @@ void sub_56D130(int64_t a1, int64_t a2)
             for (index = 0; index < schematic_ui_num_found_schematics; index++) {
                 schematic_ui_found_schematics[index] = obj_arrayfield_uint32_get(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
 
-                tech = sub_56DB00(schematic_ui_found_schematics[index]);
+                tech = tech_from_schematic(schematic_ui_found_schematics[index]);
                 schematic_ui_num_found_schematics_by_tech[tech]++;
             }
         }
@@ -668,7 +668,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 }
 
 // 0x56DB00
-int sub_56DB00(int schematic)
+int tech_from_schematic(int schematic)
 {
     SchematicInfo schematic_info;
     int64_t obj;
@@ -698,7 +698,7 @@ int sub_56DB60()
 
     v1 = 0;
     for (index = 0; index < schematic_ui_cur_num_schematics; index++) {
-        if (sub_56DB00(schematic_ui_cur_schematics[index]) == schematic_ui_cur_tech) {
+        if (tech_from_schematic(schematic_ui_cur_schematics[index]) == schematic_ui_cur_tech) {
             if (v1 == schematic_ui_cur_page) {
                 return schematic_ui_cur_schematics[index];
             }
