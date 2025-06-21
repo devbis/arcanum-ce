@@ -165,7 +165,7 @@ static int schematic_ui_cur_page;
 static int* schematic_ui_cur_schematics;
 
 // 0x680E60
-static int64_t qword_680E60;
+static int64_t schematic_ui_secondary_obj;
 
 // 0x680E68
 static int schematic_ui_found_page;
@@ -174,7 +174,7 @@ static int schematic_ui_found_page;
 static int schematic_ui_cur_tech;
 
 // 0x680E70
-static int64_t qword_680E70;
+static int64_t schematic_ui_primary_obj;
 
 // 0x680E78
 static int schematic_ui_text_mes_file;
@@ -272,8 +272,8 @@ bool schematic_ui_init(GameInitInfo* init_info)
     tig_font_create(&font, &schematic_ui_name_font);
 
     schematic_ui_initialized = true;
-    qword_680E70 = 0;
-    qword_680E60 = 0;
+    schematic_ui_primary_obj = OBJ_HANDLE_NULL;
+    schematic_ui_secondary_obj = OBJ_HANDLE_NULL;
     sub_56D0D0();
 
     return true;
@@ -297,8 +297,8 @@ void schematic_ui_exit()
 // 0x56D0B0
 void schematic_ui_reset()
 {
-    qword_680E70 = 0;
-    qword_680E60 = 0;
+    schematic_ui_primary_obj = OBJ_HANDLE_NULL;
+    schematic_ui_secondary_obj = OBJ_HANDLE_NULL;
     sub_56D0D0();
 }
 
@@ -319,7 +319,7 @@ void sub_56D0D0()
 }
 
 // 0x56D130
-void sub_56D130(int64_t a1, int64_t a2)
+void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
 {
     int tech;
     int index;
@@ -329,33 +329,33 @@ void sub_56D130(int64_t a1, int64_t a2)
         return;
     }
 
-    if (a1 == OBJ_HANDLE_NULL
-        || a2 == OBJ_HANDLE_NULL
-        || critter_is_dead(a1)
-        || critter_is_dead(a2)
+    if (primary_obj == OBJ_HANDLE_NULL
+        || secondary_obj == OBJ_HANDLE_NULL
+        || critter_is_dead(primary_obj)
+        || critter_is_dead(secondary_obj)
         || !sub_551A80(0)
         || !sub_551A80(14)) {
         return;
     }
 
-    qword_680E70 = a1;
-    qword_680E60 = a2;
+    schematic_ui_primary_obj = primary_obj;
+    schematic_ui_secondary_obj = secondary_obj;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(primary_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_56D0D0();
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        schematic_ui_num_learned_schematics_by_tech[tech] = tech_degree_get(a1, tech);
+        schematic_ui_num_learned_schematics_by_tech[tech] = tech_degree_get(primary_obj, tech);
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        schematic_ui_num_found_schematics = obj_arrayfield_length_get(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
+    if (obj_field_int32_get(primary_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        schematic_ui_num_found_schematics = obj_arrayfield_length_get(primary_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
         if (schematic_ui_num_found_schematics > 0) {
             schematic_ui_found_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_found_schematics);
             for (index = 0; index < schematic_ui_num_found_schematics; index++) {
-                schematic_ui_found_schematics[index] = obj_arrayfield_uint32_get(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
+                schematic_ui_found_schematics[index] = obj_arrayfield_uint32_get(primary_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
 
                 tech = tech_from_schematic(schematic_ui_found_schematics[index]);
                 schematic_ui_num_found_schematics_by_tech[tech]++;
@@ -379,8 +379,8 @@ void schematic_ui_close()
 {
     if (schematic_ui_created && sub_551A80(0)) {
         schematic_ui_destroy();
-        qword_680E70 = OBJ_HANDLE_NULL;
-        qword_680E60 = OBJ_HANDLE_NULL;
+        schematic_ui_primary_obj = OBJ_HANDLE_NULL;
+        schematic_ui_secondary_obj = OBJ_HANDLE_NULL;
     }
 }
 
@@ -441,7 +441,7 @@ void schematic_ui_create()
 
     schematic_ui_redraw();
 
-    location_origin_set(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(schematic_ui_primary_obj, OBJ_F_LOCATION));
 
     pc_lens.window_handle = schematic_ui_window;
     pc_lens.rect = &schematic_ui_pc_lens_rect;
@@ -489,14 +489,14 @@ bool schematic_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             if (msg->data.button.button_handle == schematic_ui_component1_button) {
                 if (qword_680E90 != OBJ_HANDLE_NULL) {
-                    sub_57CCF0(qword_680E60, qword_680E90);
+                    sub_57CCF0(schematic_ui_secondary_obj, qword_680E90);
                 }
                 return true;
             }
 
             if (msg->data.button.button_handle == schematic_ui_component2_button) {
                 if (qword_680E28 != OBJ_HANDLE_NULL) {
-                    sub_57CCF0(qword_680E60, qword_680E28);
+                    sub_57CCF0(schematic_ui_secondary_obj, qword_680E28);
                 }
                 return true;
             }
@@ -633,12 +633,12 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     if (tig_net_is_active() && !tig_net_is_host()) {
                         pkt.type = 79;
                         pkt.field_4 = sub_56DB60();
-                        pkt.field_8 = obj_get_id(qword_680E70);
-                        pkt.field_20 = obj_get_id(qword_680E60);
+                        pkt.field_8 = obj_get_id(schematic_ui_primary_obj);
+                        pkt.field_20 = obj_get_id(schematic_ui_secondary_obj);
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                         schematic_ui_redraw();
                     } else {
-                        sub_56E720(sub_56DB60(), qword_680E70, qword_680E60);
+                        sub_56E720(sub_56DB60(), schematic_ui_primary_obj, schematic_ui_secondary_obj);
                         schematic_ui_redraw();
                     }
                     break;
@@ -950,7 +950,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     if (ingr == 0) {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item1[index]);
-            if (sub_462540(qword_680E70, item_obj, 0x7) != OBJ_HANDLE_NULL) {
+            if (sub_462540(schematic_ui_primary_obj, item_obj, 0x7) != OBJ_HANDLE_NULL) {
                 break;
             }
         }
@@ -966,7 +966,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     } else {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item2[index]);
-            if (sub_462540(qword_680E70, item_obj, 0x7) != OBJ_HANDLE_NULL) {
+            if (sub_462540(schematic_ui_primary_obj, item_obj, 0x7) != OBJ_HANDLE_NULL) {
                 break;
             }
         }
@@ -983,7 +983,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 
     discipline = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
     complexity = -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
-    *a4 = tech_degree_level_get(qword_680E70, discipline) >= complexity;
+    *a4 = tech_degree_level_get(schematic_ui_primary_obj, discipline) >= complexity;
 
     if (*a4) {
         if (*a3) {

@@ -1959,7 +1959,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C6480[3].button_handle) {
-                sub_56D130(player_get_local_pc_obj(), player_get_local_pc_obj());
+                schematic_ui_toggle(player_get_local_pc_obj(), player_get_local_pc_obj());
                 return true;
             }
 
@@ -2507,7 +2507,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'T':
         case 't':
-            sub_56D130(player_get_local_pc_obj(), player_get_local_pc_obj());
+            schematic_ui_toggle(player_get_local_pc_obj(), player_get_local_pc_obj());
             break;
         case 'W':
         case 'w':

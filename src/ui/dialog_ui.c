@@ -514,7 +514,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 7:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_56D130(entry->state.npc_obj, entry->state.pc_obj);
+            schematic_ui_toggle(entry->state.npc_obj, entry->state.pc_obj);
         }
         break;
     case 8:
@@ -652,7 +652,7 @@ bool sub_568280(DialogUiEntry *a1)
     case 7:
         if (is_pc) {
             intgame_dialog_clear();
-            sub_56D130(a1->state.npc_obj, a1->state.pc_obj);
+            schematic_ui_toggle(a1->state.npc_obj, a1->state.pc_obj);
         }
         break;
     case 8:
