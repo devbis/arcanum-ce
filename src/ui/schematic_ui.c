@@ -1192,26 +1192,29 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
         item_transfer(prod_obj, primary_obj);
     }
 
-    sub_4EE0F0(1, primary_obj, secondary_obj);
+    mp_ui_schematic_feedback(true, primary_obj, secondary_obj);
 
     return true;
 }
 
 // 0x56E950
-bool sub_56E950(int a1, int64_t a2, int64_t obj)
+bool schematic_ui_feedback(bool success, int64_t primary_obj, int64_t secondary_obj)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    (void)a2;
+    (void)primary_obj;
 
-    if (a1 && player_is_local_pc_obj(obj)) {
+    if (success && player_is_local_pc_obj(secondary_obj)) {
         mes_file_entry.num = 2; // "You have successfully combined the items into a new item."
         mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
+
         ui_message.type = UI_MSG_TYPE_EXCLAMATION;
         ui_message.str = mes_file_entry.str;
         sub_550750(&ui_message);
+
         schematic_ui_redraw();
+
         gsound_play_sfx(schematic_ui_cur_tech + SND_INTERFACE_COM_HERBAL, 1);
     }
     return true;

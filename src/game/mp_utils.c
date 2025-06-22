@@ -385,19 +385,19 @@ void mp_item_activate(int64_t owner_obj, int64_t item_obj)
 }
 
 // 0x4EE0F0
-void sub_4EE0F0(int a1, int64_t a2, int64_t a3)
+void mp_ui_schematic_feedback(bool success, int64_t primary_obj, int64_t secondary_obj)
 {
     Packet100 pkt;
 
-    sub_460900(a1, a2, a3);
+    ui_schematic_feedback(success, primary_obj, secondary_obj);
 
     if (tig_net_is_active()
         && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 4;
-        pkt.d.c.field_8 = a1;
-        pkt.d.c.field_10 = obj_get_id(a2);
-        pkt.d.c.field_28 = obj_get_id(a3);
+        pkt.d.c.field_8 = success;
+        pkt.d.c.field_10 = obj_get_id(primary_obj);
+        pkt.d.c.field_28 = obj_get_id(secondary_obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -591,7 +591,7 @@ void sub_4EE5E0(Packet100* pkt)
         ui_toggle_primary_button(pkt->d.a.field_8, pkt->d.a.field_C);
         break;
     case 4:
-        sub_460900(pkt->d.c.field_8,
+        ui_schematic_feedback(pkt->d.c.field_8,
             objp_perm_lookup(pkt->d.c.field_10),
             objp_perm_lookup(pkt->d.c.field_28));
         break;
