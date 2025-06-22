@@ -638,7 +638,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                         schematic_ui_redraw();
                     } else {
-                        sub_56E720(sub_56DB60(), schematic_ui_primary_obj, schematic_ui_secondary_obj);
+                        schematic_ui_process(sub_56DB60(), schematic_ui_primary_obj, schematic_ui_secondary_obj);
                         schematic_ui_redraw();
                     }
                     break;
@@ -1107,7 +1107,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 }
 
 // 0x56E720
-bool sub_56E720(int schematic, int64_t a2, int64_t a3)
+bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_obj)
 {
     SchematicInfo info;
     int64_t obj;
@@ -1134,7 +1134,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 
     for (ingridient1 = 0; ingridient1 < 3; ingridient1++) {
         obj = sub_4685A0(info.item1[ingridient1]);
-        ingridient1_obj = sub_462540(a2, obj, 0x7);
+        ingridient1_obj = sub_462540(primary_obj, obj, 0x7);
         if (ingridient1_obj != OBJ_HANDLE_NULL) {
             break;
         }
@@ -1146,7 +1146,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 
     for (ingridient2 = 0; ingridient2 < 3; ingridient2++) {
         obj = sub_4685A0(info.item2[ingridient2]);
-        ingridient2_obj = sub_462540(a2, obj, 0x7);
+        ingridient2_obj = sub_462540(primary_obj, obj, 0x7);
         if (ingridient2_obj != OBJ_HANDLE_NULL) {
             break;
         }
@@ -1162,10 +1162,10 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
         prod = info.prod[ingridient2];
     }
 
-    loc = obj_field_int64_get(a2, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(primary_obj, OBJ_F_LOCATION);
 
     if (obj_field_int32_get(ingridient1_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
-        item_ammo_transfer(a2,
+        item_ammo_transfer(primary_obj,
             OBJ_HANDLE_NULL,
             1,
             obj_field_int32_get(ingridient1_obj, OBJ_F_AMMO_QUANTITY),
@@ -1175,7 +1175,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
     }
 
     if (obj_field_int32_get(ingridient2_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
-        item_ammo_transfer(a2,
+        item_ammo_transfer(primary_obj,
             OBJ_HANDLE_NULL,
             1,
             obj_field_int32_get(ingridient2_obj, OBJ_F_AMMO_QUANTITY),
@@ -1189,10 +1189,10 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
             return false;
         }
 
-        item_transfer(prod_obj, a2);
+        item_transfer(prod_obj, primary_obj);
     }
 
-    sub_4EE0F0(1, a2, a3);
+    sub_4EE0F0(1, primary_obj, secondary_obj);
 
     return true;
 }

@@ -451,10 +451,10 @@ void sub_4608B0(int64_t a1, int a2)
 }
 
 // 0x4608D0
-void sub_4608D0(int a1, int64_t a2, int64_t a3)
+void ui_schematic_process(int schematic, int64_t primary_obj, int64_t secondary_obj)
 {
-    if (ui_callbacks.field_C8 != NULL) {
-        ui_callbacks.field_C8(a1, a2, a3);
+    if (ui_callbacks.schematic_process != NULL) {
+        ui_callbacks.schematic_process(schematic, primary_obj, secondary_obj);
     }
 }
 
