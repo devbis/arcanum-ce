@@ -54,7 +54,7 @@ static int tech_from_schematic(int schematic);
 static int sub_56DB60();
 static void schematic_ui_parse_items(const char* str, int* items);
 static void schematic_ui_redraw();
-static void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4);
+static void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4);
 
 // 0x5CA818
 static tig_window_handle_t schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -126,7 +126,7 @@ static int schematic_ui_num_found_schematics_by_tech[TECH_COUNT];
 static int schematic_ui_learned_page;
 
 // 0x680E28
-static int64_t qword_680E28;
+static int64_t schematic_ui_component2_obj;
 
 // 0x680E30
 static int schematic_ui_learned_tech;
@@ -195,7 +195,7 @@ static tig_font_handle_t schematic_ui_icons17_font;
 static tig_font_handle_t schematic_ui_icons32_font;
 
 // 0x680E90
-static int64_t qword_680E90;
+static int64_t schematic_ui_component1_obj;
 
 // 0x680E98
 static int* schematic_ui_learned_schematics;
@@ -488,15 +488,15 @@ bool schematic_ui_message_filter(TigMessage* msg)
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             if (msg->data.button.button_handle == schematic_ui_component1_button) {
-                if (qword_680E90 != OBJ_HANDLE_NULL) {
-                    sub_57CCF0(schematic_ui_secondary_obj, qword_680E90);
+                if (schematic_ui_component1_obj != OBJ_HANDLE_NULL) {
+                    sub_57CCF0(schematic_ui_secondary_obj, schematic_ui_component1_obj);
                 }
                 return true;
             }
 
             if (msg->data.button.button_handle == schematic_ui_component2_button) {
-                if (qword_680E28 != OBJ_HANDLE_NULL) {
-                    sub_57CCF0(schematic_ui_secondary_obj, qword_680E28);
+                if (schematic_ui_component2_obj != OBJ_HANDLE_NULL) {
+                    sub_57CCF0(schematic_ui_secondary_obj, schematic_ui_component2_obj);
                 }
                 return true;
             }
@@ -793,9 +793,9 @@ void schematic_ui_redraw()
     SchematicInfo schematic_info;
     int64_t obj;
     char icon[2];
-    bool have_comp1;
+    bool have_item1;
     bool have_expertise1;
-    bool have_comp2;
+    bool have_item2;
     bool have_expertise2;
 
     if (schematic_ui_cur_page != 0) {
@@ -897,13 +897,13 @@ void schematic_ui_redraw()
     tig_window_text_write(schematic_ui_window, icon, &src_rect);
     tig_font_pop();
 
-    //
-    sub_56E190(0, &schematic_info, &have_comp1, &have_expertise1);
-    sub_56E190(1, &schematic_info, &have_comp2, &have_expertise2);
+    // Draw components.
+    schematic_ui_draw_component(0, &schematic_info, &have_item1, &have_expertise1);
+    schematic_ui_draw_component(1, &schematic_info, &have_item2, &have_expertise2);
 
     if (!have_expertise1 || !have_expertise2) {
         schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_EXPERTISE;
-    } else if (!have_comp1 || !have_comp2) {
+    } else if (!have_item1 || !have_item2) {
         schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_ITEMS;
     } else {
         schematic_ui_readiness = SCHEMATIC_UI_READINESS_OK;
@@ -930,7 +930,7 @@ void schematic_ui_redraw()
 }
 
 // 0x56E190
-void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
+void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* have_item, bool* have_expertise)
 {
     int index;
     TigArtAnimData art_anim_data;
@@ -939,7 +939,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     TigRect dst_rect;
     TigRect src_rect;
     int64_t item_obj;
-    int discipline;
+    int tech;
     int complexity;
     TigPalette palette;
     TigPaletteModifyInfo palette_modify_info;
@@ -957,12 +957,12 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 
         if (index == 3) {
             item_obj = sub_4685A0(schematic_info->item1[0]);
-            *a3 = false;
+            *have_item = false;
         } else {
-            *a3 = true;
+            *have_item = true;
         }
 
-        qword_680E90 = item_obj;
+        schematic_ui_component1_obj = item_obj;
     } else {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item2[index]);
@@ -973,20 +973,20 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 
         if (index == 3) {
             item_obj = sub_4685A0(schematic_info->item2[0]);
-            *a3 = false;
+            *have_item = false;
         } else {
-            *a3 = true;
+            *have_item = true;
         }
 
-        qword_680E28 = item_obj;
+        schematic_ui_component2_obj = item_obj;
     }
 
-    discipline = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
+    tech = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
     complexity = -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
-    *a4 = tech_degree_level_get(schematic_ui_primary_obj, discipline) >= complexity;
+    *have_expertise = tech_degree_level_get(schematic_ui_primary_obj, tech) >= complexity;
 
-    if (*a4) {
-        if (*a3) {
+    if (*have_expertise) {
+        if (*have_item) {
             tig_art_interface_id_create(831, 0, 0, 0, &(art_blit_info.art_id));
         } else {
             tig_art_interface_id_create(830, 0, 0, 0, &(art_blit_info.art_id));
@@ -1067,7 +1067,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    if (!*a4 && tig_art_anim_data(art_blit_info.art_id, &art_anim_data) == TIG_OK) {
+    if (!*have_expertise && tig_art_anim_data(art_blit_info.art_id, &art_anim_data) == TIG_OK) {
         palette = tig_palette_create();
 
         palette_modify_info.flags = TIG_PALETTE_MODIFY_GRAYSCALE;
@@ -1093,7 +1093,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     }
 
     if (complexity > 0) {
-        str[0] = (char)(discipline + '1');
+        str[0] = (char)(tech + '1');
         str[1] = '\0';
         tig_font_push(schematic_ui_icons17_font);
         tig_window_text_write(schematic_ui_window, str, &(schematic_ui_component_icon_rects[ingr]));
