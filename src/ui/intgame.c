@@ -2776,7 +2776,6 @@ void intgame_process_event(TigMessage* msg)
                 fake_mouse_move.data.mouse.x = mouse_state.x;
                 fake_mouse_move.data.mouse.y = mouse_state.y;
                 fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
-                fake_mouse_move.data.mouse.z = mouse_state.z;
                 sub_553A70(&fake_mouse_move);
             }
             break;
@@ -2843,7 +2842,6 @@ void intgame_process_event(TigMessage* msg)
                 fake_mouse_move.data.mouse.x = mouse_state.x;
                 fake_mouse_move.data.mouse.y = mouse_state.y;
                 fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
-                fake_mouse_move.data.mouse.z = mouse_state.z;
                 sub_553A70(&fake_mouse_move);
             }
             break;
@@ -2905,7 +2903,6 @@ void intgame_process_event(TigMessage* msg)
                 fake_mouse_move.data.mouse.x = mouse_state.x;
                 fake_mouse_move.data.mouse.y = mouse_state.y;
                 fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
-                fake_mouse_move.data.mouse.z = mouse_state.z;
                 sub_553A70(&fake_mouse_move);
             }
             break;
@@ -2937,7 +2934,6 @@ void intgame_process_event(TigMessage* msg)
                 fake_mouse_move.data.mouse.x = mouse_state.x;
                 fake_mouse_move.data.mouse.y = mouse_state.y;
                 fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
-                fake_mouse_move.data.mouse.z = mouse_state.z;
                 sub_553A70(&fake_mouse_move);
             }
             break;
@@ -2986,7 +2982,6 @@ void intgame_process_event(TigMessage* msg)
                 fake_mouse_move.data.mouse.x = mouse_state.x;
                 fake_mouse_move.data.mouse.y = mouse_state.y;
                 fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
-                fake_mouse_move.data.mouse.z = mouse_state.z;
                 sub_553A70(&fake_mouse_move);
             }
             break;

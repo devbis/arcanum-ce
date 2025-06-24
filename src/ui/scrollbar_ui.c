@@ -511,7 +511,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                 if ((ctrl->flags & SB_IN_USE) != 0
                     && (ctrl->flags & SB_HIDDEN) == 0
                     && sub_5814E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
-                    if (msg->data.mouse.z > 0) {
+                    if (msg->data.mouse.dy > 0) {
                         ctrl->info.value -= ctrl->info.field_34;
                         if (ctrl->info.value < ctrl->info.min_value) {
                             ctrl->info.value = ctrl->info.min_value;
@@ -521,7 +521,7 @@ bool scrollbar_ui_process_event(TigMessage* msg)
                         }
                         scrollbar_ui_control_redraw(ctrl->id);
                         return true;
-                    } else if (msg->data.mouse.z < 0) {
+                    } else if (msg->data.mouse.dy < 0) {
                         ctrl->info.value += ctrl->info.field_34;
                         if (ctrl->info.value > ctrl->info.max_value) {
                             ctrl->info.value = ctrl->info.max_value;
