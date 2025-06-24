@@ -12,60 +12,62 @@
 #include "ui/cyclic_ui.h"
 #include "ui/gameuilib.h"
 
-typedef void(OptionsUiControlValueGetter)(int* value_ptr, unsigned char* enabled_ptr);
+#define MAX_CONTROLS 8
+
+typedef void(OptionsUiControlValueGetter)(int* value_ptr, bool* enabled_ptr);
 typedef void(OptionsUiControlValueSetter)(int value);
 
 typedef struct OptionsUiControlInfo {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ const char* name;
+    /* 0000 */ bool active;
+    /* 0004 */ int type;
+    /* 0008 */ int max_value;
+    /* 000C */ const char* debug_name;
     /* 0010 */ const char* mes;
     /* 0014 */ OptionsUiControlValueGetter* getter;
     /* 0018 */ OptionsUiControlValueSetter* setter;
 } OptionsUiControlInfo;
 
-static_assert(sizeof(OptionsUiControlInfo) == 0x1C, "wrong size");
-
 typedef struct OptionsUiControlData {
-    int id;
-    bool initialized;
+    /* 0000 */ int id;
+    /* 0004 */ bool initialized;
 } OptionsUiControlData;
 
-static void options_ui_module_get(int* value_ptr, unsigned char* enabled_ptr);
-static void options_ui_difficulty_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_module_get(int* value_ptr, bool* enabled_ptr);
+static void options_ui_difficulty_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_difficutly_set(int value);
-static void options_ui_violence_filter_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_violence_filter_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_violence_filter_set(int value);
-static void options_ui_combat_mode_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_combat_mode_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_combat_mode_set(int value);
-static void options_ui_auto_attack_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_auto_attack_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_auto_attack_set(int value);
-static void options_ui_auto_switch_weapons_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_auto_switch_weapons_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_auto_switch_weapons_set(int value);
-static void options_ui_awlays_run_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_awlays_run_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_always_run_set(int value);
-static void options_ui_follower_skills_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_follower_skills_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_follower_skills_set(int value);
-static void options_ui_brightness_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_brightness_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_brightness_set(int value);
-static void options_ui_text_duration_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_text_duration_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_text_duration_set(int value);
-static void options_ui_floats_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_floats_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_floats_set(int value);
-static void options_ui_float_speed_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_float_speed_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_float_speed_set(int value);
-static void options_ui_combat_taunts_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_combat_taunts_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_combat_taunts_set(int value);
-static void options_ui_effects_volume_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_effects_volume_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_effects_volume_set(int value);
-static void options_ui_voice_volume_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_voice_volume_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_voice_volume_set(int value);
-static void options_ui_music_volume_get(int* value_ptr, unsigned char* enabled_ptr);
+static void options_ui_music_volume_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_music_volume_set(int value);
 
-// 0x5CCD38
-static int dword_5CCD38[8] = {
+/**
+ * 0x5CCD38
+ */
+static int options_ui_controls_x[MAX_CONTROLS] = {
     261,
     261,
     261,
@@ -76,8 +78,10 @@ static int dword_5CCD38[8] = {
     531,
 };
 
-// 0x5CCD58
-static int dword_5CCD58[8] = {
+/**
+ * 0x5CCD58
+ */
+static int options_ui_controls_y[MAX_CONTROLS] = {
     122,
     197,
     272,
@@ -88,60 +92,100 @@ static int dword_5CCD58[8] = {
     347,
 };
 
-// 0x5CCD78
-static OptionsUiControlInfo stru_5CCD78[3][8] = {
+/**
+ * Defines controls metadata.
+ *
+ * 0x5CCD78
+ */
+static OptionsUiControlInfo options_ui_tab_controls_meta[OPTIONS_UI_TAB_COUNT][MAX_CONTROLS] = {
     {
-        { 1, 2, 0, "Module", "", options_ui_module_get, NULL },
-        { 1, 1, 0, "Difficulty", "mes\\OptionsDifficulty.mes", options_ui_difficulty_get, options_ui_difficutly_set },
-        { 1, 1, 0, "Violence Filter", "mes\\OptionsOffOn.mes", options_ui_violence_filter_get, options_ui_violence_filter_set },
-        { 1, 1, 0, "Default Combat Mode", "mes\\OptionsCombatMode.mes", options_ui_combat_mode_get, options_ui_combat_mode_set },
-        { 1, 1, 0, "Auto Attack", "mes\\OptionsOffOn.mes", options_ui_auto_attack_get, options_ui_auto_attack_set },
-        { 1, 1, 0, "Auto Switch Weapons", "mes\\OptionsOffOn.mes", options_ui_auto_switch_weapons_get, options_ui_auto_switch_weapons_set },
-        { 1, 1, 0, "Always Run", "mes\\OptionsOffOn.mes", options_ui_awlays_run_get, options_ui_always_run_set },
-        { 1, 1, 0, "Follower Skills", "mes\\OptionsOffOn.mes", options_ui_follower_skills_get, options_ui_follower_skills_set },
+        { true, 2, 0, "Module", "", options_ui_module_get, NULL },
+        { true, 1, 0, "Difficulty", "mes\\OptionsDifficulty.mes", options_ui_difficulty_get, options_ui_difficutly_set },
+        { true, 1, 0, "Violence Filter", "mes\\OptionsOffOn.mes", options_ui_violence_filter_get, options_ui_violence_filter_set },
+        { true, 1, 0, "Default Combat Mode", "mes\\OptionsCombatMode.mes", options_ui_combat_mode_get, options_ui_combat_mode_set },
+        { true, 1, 0, "Auto Attack", "mes\\OptionsOffOn.mes", options_ui_auto_attack_get, options_ui_auto_attack_set },
+        { true, 1, 0, "Auto Switch Weapons", "mes\\OptionsOffOn.mes", options_ui_auto_switch_weapons_get, options_ui_auto_switch_weapons_set },
+        { true, 1, 0, "Always Run", "mes\\OptionsOffOn.mes", options_ui_awlays_run_get, options_ui_always_run_set },
+        { true, 1, 0, "Follower Skills", "mes\\OptionsOffOn.mes", options_ui_follower_skills_get, options_ui_follower_skills_set },
     },
     {
-        { 1, 0, 9, "Brightness", "", options_ui_brightness_get, options_ui_brightness_set },
-        { 1, 0, 0, "Text Duration", "", options_ui_text_duration_get, options_ui_text_duration_set },
-        { 1, 1, 0, "Floats", "mes\\OptionsFloats.mes", options_ui_floats_get, options_ui_floats_set },
-        { 1, 0, 0, "Float Speed", "", options_ui_float_speed_get, options_ui_float_speed_set },
-        { 1, 1, 0, "Combat Taunts", "mes\\OptionsOffOn.mes", options_ui_combat_taunts_get, options_ui_combat_taunts_set },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
+        { true, 0, 9, "Brightness", "", options_ui_brightness_get, options_ui_brightness_set },
+        { true, 0, 0, "Text Duration", "", options_ui_text_duration_get, options_ui_text_duration_set },
+        { true, 1, 0, "Floats", "mes\\OptionsFloats.mes", options_ui_floats_get, options_ui_floats_set },
+        { true, 0, 0, "Float Speed", "", options_ui_float_speed_get, options_ui_float_speed_set },
+        { true, 1, 0, "Combat Taunts", "mes\\OptionsOffOn.mes", options_ui_combat_taunts_get, options_ui_combat_taunts_set },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
     },
     {
-        { 1, 0, 0, "Effects", "", options_ui_effects_volume_get, options_ui_effects_volume_set },
-        { 1, 0, 0, "Voice", "", options_ui_voice_volume_get, options_ui_voice_volume_set },
-        { 1, 0, 0, "Music", "", options_ui_music_volume_get, options_ui_music_volume_set },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
-        { 0, 0, 0, "", "", NULL, NULL },
+        { true, 0, 0, "Effects", "", options_ui_effects_volume_get, options_ui_effects_volume_set },
+        { true, 0, 0, "Voice", "", options_ui_voice_volume_get, options_ui_voice_volume_set },
+        { true, 0, 0, "Music", "", options_ui_music_volume_get, options_ui_music_volume_set },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
+        { false, 0, 0, "", "", NULL, NULL },
     },
 };
 
-// 0x687260
-static bool dword_687260;
+/**
+ * Flag indicating if the options UI is displayed in-game.
+ *
+ * This flag controls availability of the "Module" control.
+ *
+ * 0x687260
+ */
+static bool options_ui_in_play;
 
-// 0x687268
+/**
+ * List of available game modules.
+ *
+ * 0x687268
+ */
 static GameModuleList options_ui_modlist;
 
-// 0x687274
+/**
+ * "options_ui.mes"
+ *
+ * 0x687274
+ */
 static mes_file_handle_t options_ui_mes_file;
 
-// 0x687278
-static OptionsUiControlData stru_687278[8];
+/**
+ * Runtime data for controls.
+ *
+ * 0x687278
+ */
+static OptionsUiControlData options_ui_controls[MAX_CONTROLS];
 
-// 0x6872B8
-static bool options_ui_initialized;
+/**
+ * Flag indicating whether the options UI has been started.
+ *
+ * 0x6872B8
+ */
+static bool options_ui_started;
 
-// 0x6872BC
+/**
+ * Flag indicating if the module list is initialized.
+ *
+ * 0x6872BC
+ */
 static bool options_ui_modlist_initialized;
 
-// 0x589280
-void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
+/**
+ * Opens the options UI at a specified tab.
+ *
+ * NOTE: This function and entire module is a little bit strange, it's
+ * implementation does not match other UI modules. This function does not create
+ * its own window to display options, instead the window handle is passed by the
+ * caller. The caller is responsible for drawing the background. This function
+ * only deals with controls.
+ *
+ * 0x589280
+ */
+void options_ui_start(OptionsUiTab tab, tig_window_handle_t window_handle, bool in_play)
 {
     int index;
     CyclicUiControlInfo control_info;
@@ -149,48 +193,59 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
     MesFileEntry mes_file_entry;
     int value;
 
-    if (options_ui_initialized) {
-        options_ui_exit();
+    // Close fate UI if it's currently visible.
+    if (options_ui_started) {
+        options_ui_close();
     }
 
-    dword_687260 = a3;
+    options_ui_in_play = in_play;
 
+    // Load control titles.
     mes_load("mes\\options_ui.mes", &options_ui_mes_file);
 
-    for (index = 0; index < 8; index++) {
-        meta = &(stru_5CCD78[type][index]);
-        if (!meta->field_0) {
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        meta = &(options_ui_tab_controls_meta[tab][index]);
+        if (!meta->active) {
             continue;
         }
 
+        // Initialize cyclic UI control.
         cyclic_ui_control_init(&control_info);
 
-        if (type == 0 && index == 0) {
-            if (dword_687260) {
+        // Special case - the "Module" control must be turned off when options
+        // are opened in the middle of the game.
+        if (tab == OPTIONS_UI_TAB_GAME && index == 0) {
+            if (options_ui_in_play) {
                 options_ui_modlist_initialized = false;
                 continue;
             }
 
+            // Load available modules and configure control appropriately.
             gamelib_modlist_create(&options_ui_modlist, 0);
             control_info.text_array = options_ui_modlist.paths;
             control_info.text_array_size = options_ui_modlist.count;
+
             options_ui_modlist_initialized = true;
         }
 
-        control_info.type = meta->field_4;
+        // Set up control.
+        control_info.type = meta->type;
         control_info.window_handle = window_handle;
-        control_info.max_value = meta->field_8;
+        control_info.max_value = meta->max_value;
 
-        mes_file_entry.num = index + 20 * (5 * type + 5);
+        // Load control title from the message file.
+        mes_file_entry.num = index + 100 * (tab + 1);
         control_info.text = mes_search(options_ui_mes_file, &mes_file_entry)
             ? mes_file_entry.str
             : NULL;
 
+        // Finish control set up.
         control_info.mes_file_path = meta->mes;
         control_info.value_changed_callback = meta->setter;
-        control_info.x = dword_5CCD38[index];
-        control_info.y = dword_5CCD58[index];
+        control_info.x = options_ui_controls_x[index];
+        control_info.y = options_ui_controls_y[index];
 
+        // Query initial value.
         if (meta->getter != NULL) {
             meta->getter(&value, &(control_info.enabled));
         } else {
@@ -198,33 +253,40 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
             control_info.enabled = false;
         }
 
-        if (cyclic_ui_control_create(&control_info, &(stru_687278[index].id))) {
-            stru_687278[index].initialized = true;
-            cyclic_ui_control_set(stru_687278[index].id, value);
+        // Create the control and set its initial value.
+        if (cyclic_ui_control_create(&control_info, &(options_ui_controls[index].id))) {
+            options_ui_controls[index].initialized = true;
+            cyclic_ui_control_set(options_ui_controls[index].id, value);
         } else {
-            stru_687278[index].initialized = false;
+            options_ui_controls[index].initialized = false;
         }
     }
 
-    if (dword_687260) {
+    // Special case - when options are opened in the middle of the game, center
+    // viewport on the player, so that PC lens displays correct surroundings.
+    if (options_ui_in_play) {
         location_origin_set(obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION));
     }
 
-    options_ui_initialized = true;
+    options_ui_started = true;
 }
 
-// 0x589430
+/**
+ * Loads the selected game module.
+ *
+ * 0x589430
+ */
 bool options_ui_load_module()
 {
     unsigned int selected;
 
-    if (!options_ui_initialized
+    if (!options_ui_started
         || !options_ui_modlist_initialized
-        || dword_687260) {
+        || options_ui_in_play) {
         return true;
     }
 
-    selected = cyclic_ui_control_get(stru_687278[0].id);
+    selected = cyclic_ui_control_get(options_ui_controls[0].id);
     if (selected == options_ui_modlist.selected) {
         return true;
     }
@@ -238,22 +300,28 @@ bool options_ui_load_module()
     return true;
 }
 
-// 0x5894C0
-void options_ui_exit()
+/**
+ * Closes the options UI.
+ *
+ * 0x5894C0
+ */
+void options_ui_close()
 {
     int index;
 
-    if (!options_ui_initialized) {
+    if (!options_ui_started) {
         return;
     }
 
-    for (index = 0; index < 8; index++) {
-        if (stru_687278[index].initialized) {
-            cyclic_ui_control_destroy(stru_687278[index].id, false);
-            stru_687278[index].initialized = false;
+    // Destroy initialized controls.
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        if (options_ui_controls[index].initialized) {
+            cyclic_ui_control_destroy(options_ui_controls[index].id, false);
+            options_ui_controls[index].initialized = false;
         }
     }
 
+    // Destroy module list.
     if (options_ui_modlist_initialized) {
         gamelib_modlist_destroy(&options_ui_modlist);
         options_ui_modlist_initialized = false;
@@ -261,50 +329,83 @@ void options_ui_exit()
 
     mes_unload(options_ui_mes_file);
 
-    options_ui_initialized = false;
+    options_ui_started = false;
 }
 
-// 0x589530
-int options_ui_handle_button_pressed(tig_button_handle_t button_handle)
+/**
+ * Handles button press event for the options UI.
+ *
+ * This function delegates handling to the cyclic UI system. Returns `true`
+ * if the specified button is one of left/right buttons (in this case the
+ * event should be considered as processed), `false` otherwise.
+ *
+ * 0x589530
+ */
+bool options_ui_handle_button_pressed(tig_button_handle_t button_handle)
 {
+    // Delegate button handling to the cyclic UI system.
     return cyclic_ui_handle_button_pressed(button_handle);
 }
 
-// 0x589540
-void options_ui_module_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Module".
+ *
+ * 0x589540
+ */
+void options_ui_module_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = options_ui_modlist.selected;
-    *enabled_ptr = !dword_687260;
+    *enabled_ptr = !options_ui_in_play;
 }
 
-// 0x589560
-void options_ui_difficulty_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Difficulty".
+ *
+ * 0x589560
+ */
+void options_ui_difficulty_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "difficulty");
     *enabled_ptr = true;
 }
 
-// 0x589580
+/**
+ * Called when the value of "Difficulty" is changed.
+ *
+ * 0x589580
+ */
 void options_ui_difficutly_set(int value)
 {
     settings_set_value(&settings, "difficulty", value);
 }
 
-// 0x5895A0
-void options_ui_violence_filter_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Violence Filter".
+ *
+ * 0x5895A0
+ */
+void options_ui_violence_filter_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "violence filter");
     *enabled_ptr = true;
 }
 
-// 0x5895D0
+/**
+ * Called when the value of "Violence Filter" is changed.
+ *
+ * 0x5895D0
+ */
 void options_ui_violence_filter_set(int value)
 {
-    settings_set_value(&settings, "difficulty", value ? 1 : 0);
+    settings_set_value(&settings, "violence filter", value ? 1 : 0);
 }
 
-// 0x589610
-void options_ui_combat_mode_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Combat Mode".
+ *
+ * 0x589610
+ */
+void options_ui_combat_mode_get(int* value_ptr, bool* enabled_ptr)
 {
     if (tig_net_is_active()) {
         if (combat_is_turn_based()) {
@@ -324,7 +425,11 @@ void options_ui_combat_mode_get(int* value_ptr, unsigned char* enabled_ptr)
     }
 }
 
-// 0x5896A0
+/**
+ * Called when the value of "Combat Mode" is changed.
+ *
+ * 0x5896A0
+ */
 void options_ui_combat_mode_set(int value)
 {
     if (!tig_net_is_active()) {
@@ -345,92 +450,148 @@ void options_ui_combat_mode_set(int value)
     }
 }
 
-// 0x589710
-void options_ui_auto_attack_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Auto Attack".
+ *
+ * 0x589710
+ */
+void options_ui_auto_attack_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = combat_auto_attack_get(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
-// 0x589740
+/**
+ * Called when the value of "Auto Attack" is changed.
+ *
+ * 0x589740
+ */
 void options_ui_auto_attack_set(int value)
 {
     combat_auto_attack_set(value);
 }
 
-// 0x589750
-void options_ui_auto_switch_weapons_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Auto Switch Weapons".
+ *
+ * 0x589750
+ */
+void options_ui_auto_switch_weapons_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = combat_auto_switch_weapons_get(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
-// 0x589780
+/**
+ * Called when the value of "Auto Switch Weapons" is changed.
+ *
+ * 0x589780
+ */
 void options_ui_auto_switch_weapons_set(int value)
 {
     combat_auto_switch_weapons_set(value);
 }
 
-// 0x589790
-void options_ui_awlays_run_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Always Run".
+ *
+ * 0x589790
+ */
+void options_ui_awlays_run_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = get_always_run(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
-// 0x5897C0
+/**
+ * Called when the value of "Always Run" is changed.
+ *
+ * 0x5897C0
+ */
 void options_ui_always_run_set(int value)
 {
     set_always_run(value);
 }
 
-// 0x5897D0
-void options_ui_follower_skills_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Follower Skills".
+ *
+ * 0x5897D0
+ */
+void options_ui_follower_skills_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = get_follower_skills(player_get_local_pc_obj());
     *enabled_ptr = true;
 }
 
-// 0x589800
+/**
+ * Called when the value of "Follower Skills" is changed.
+ *
+ * 0x589800
+ */
 void options_ui_follower_skills_set(int value)
 {
     set_follower_skills(value);
 }
 
-// 0x589810
-void options_ui_brightness_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Brightness".
+ *
+ * 0x589810
+ */
+void options_ui_brightness_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "brightness");
     *enabled_ptr = tig_video_check_gamma_control() == TIG_OK;
 }
 
-// 0x589840
+/**
+ * Called when the value of "Brightness" is changed.
+ *
+ * 0x589840
+ */
 void options_ui_brightness_set(int value)
 {
     settings_set_value(&settings, "brightness", value);
 }
 
-// 0x589860
-void options_ui_text_duration_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Text Duration".
+ *
+ * 0x589860
+ */
+void options_ui_text_duration_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "text duration");
     *enabled_ptr = true;
 }
 
-// 0x589880
+/**
+ * Called when the value of "Text Duration" is changed.
+ *
+ * 0x589880
+ */
 void options_ui_text_duration_set(int value)
 {
     settings_set_value(&settings, "text duration", value);
 }
 
-// 0x5898A0
-void options_ui_floats_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Floats".
+ *
+ * 0x5898A0
+ */
+void options_ui_floats_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = tf_level_get();
     *enabled_ptr = true;
 }
 
-// 0x5898C0
+/**
+ * Called when the value of "Floats" is changed.
+ *
+ * 0x5898C0
+ */
 void options_ui_floats_set(int value)
 {
     if (tf_level_get() != value) {
@@ -438,66 +599,106 @@ void options_ui_floats_set(int value)
     }
 }
 
-// 0x5898E0
-void options_ui_float_speed_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Float Speed".
+ *
+ * 0x5898E0
+ */
+void options_ui_float_speed_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "float speed");
     *enabled_ptr = true;
 }
 
-// 0x589900
+/**
+ * Called when the value of "Float Speed" is changed.
+ *
+ * 0x589900
+ */
 void options_ui_float_speed_set(int value)
 {
     settings_set_value(&settings, "float speed", value);
 }
 
-// 0x589920
-void options_ui_combat_taunts_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Combat Taunts".
+ *
+ * 0x589920
+ */
+void options_ui_combat_taunts_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "combat taunts");
     *enabled_ptr = true;
 }
 
-// 0x589940
+/**
+ * Called when the value of "Combat Taunts" is changed.
+ *
+ * 0x589940
+ */
 void options_ui_combat_taunts_set(int value)
 {
     settings_set_value(&settings, "combat taunts", value);
 }
 
-// 0x589960
-void options_ui_effects_volume_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Effects".
+ *
+ * 0x589960
+ */
+void options_ui_effects_volume_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "effects volume");
     *enabled_ptr = true;
 }
 
-// 0x589980
+/**
+ * Called when the value of "Effects" is changed.
+ *
+ * 0x589980
+ */
 void options_ui_effects_volume_set(int value)
 {
     settings_set_value(&settings, "effects volume", value);
 }
 
-// 0x5899A0
-void options_ui_voice_volume_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Voice".
+ *
+ * 0x5899A0
+ */
+void options_ui_voice_volume_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "voice volume");
     *enabled_ptr = true;
 }
 
-// 0x5899C0
+/**
+ * Called when the value of "Voice" is changed.
+ *
+ * 0x5899C0
+ */
 void options_ui_voice_volume_set(int value)
 {
     settings_set_value(&settings, "voice volume", value);
 }
 
-// 0x5899E0
-void options_ui_music_volume_get(int* value_ptr, unsigned char* enabled_ptr)
+/**
+ * Called to retrieve the initial value and state of "Music".
+ *
+ * 0x5899E0
+ */
+void options_ui_music_volume_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "music volume");
     *enabled_ptr = true;
 }
 
-// 0x589A00
+/**
+ * Called when the value of "Music" is changed.
+ *
+ * 0x589A00
+ */
 void options_ui_music_volume_set(int value)
 {
     settings_set_value(&settings, "music volume", value);

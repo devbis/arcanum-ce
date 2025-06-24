@@ -2078,7 +2078,7 @@ void mainmenu_ui_create_options()
     mainmenu_ui_window_type = MM_WINDOW_OPTIONS;
     mainmenu_ui_create_window_func(false);
     dword_64C440 = 0;
-    options_ui_init(0, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
+    options_ui_start(OPTIONS_UI_TAB_GAME, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
     mainmenu_ui_draw_version();
 
     pc_lens.window_handle = dword_5C3624;
@@ -2111,7 +2111,7 @@ void sub_541D40()
 // 0x541D70
 void mainmenu_ui_destroy_options()
 {
-    options_ui_exit();
+    options_ui_close();
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 }
 
@@ -2157,18 +2157,18 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
 void sub_541E20(int a1)
 {
     if (dword_64C440 != a1 && options_ui_load_module()) {
-        options_ui_exit();
+        options_ui_close();
 
         dword_64C440 = a1;
         switch (dword_64C440) {
         case 0:
-            options_ui_init(0, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
+            options_ui_start(OPTIONS_UI_TAB_GAME, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
             break;
         case 1:
-            options_ui_init(1, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
+            options_ui_start(OPTIONS_UI_TAB_VIDEO, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
             break;
         case 2:
-            options_ui_init(2, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
+            options_ui_start(OPTIONS_UI_TAB_AUDIO, dword_5C3624, stru_5C36B0[mainmenu_ui_type][1] == 0);
             break;
         }
     }
