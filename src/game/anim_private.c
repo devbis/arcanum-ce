@@ -15,9 +15,9 @@
 static bool anim_allocate_this_run_index(AnimID* anim_id);
 static bool sub_44D240(int index);
 static bool sub_44E2A0(TimeEvent* timeevent);
-static void sub_44EC30(AnimPath* path);
-static void sub_44ED90(AnimGoalData* goal_data);
-static void anim_stat(AnimRunInfo* run_info);
+static void anim_path_debug(AnimPath* path);
+static void anim_goal_data_debug(AnimGoalData* goal_data);
+static void anim_run_info_debug(AnimRunInfo* run_info);
 
 // 0x5A164C
 const char* off_5A164C[] = {
@@ -342,7 +342,7 @@ bool anim_goal_restart(AnimID* anim_id)
     if (run_info->current_goal == -1) {
         run_info->current_goal = 0;
         run_info->current_state = 0;
-        run_info->field_14 = -1;
+        run_info->path_attached_to_stack_index = -1;
     }
 
     stru_5E3000 = run_info->id;
@@ -352,7 +352,7 @@ bool anim_goal_restart(AnimID* anim_id)
     timeevent.params[0].integer_value = run_info->id.slot_num;
     timeevent.params[1].integer_value = run_info->id.field_4;
     timeevent.params[2].integer_value = 2222;
-    return sub_45B860(&timeevent, &(run_info->field_18));
+    return sub_45B860(&timeevent, &(run_info->next_ping_time));
 }
 
 // 0x44CCB0
@@ -386,8 +386,8 @@ bool sub_44CCB0(AnimID* anim_id)
 
     run_info->anim_obj = 0;
     run_info->cur_stack_data = NULL;
-    run_info->field_18.days = 0;
-    run_info->field_18.milliseconds = 0;
+    run_info->next_ping_time.days = 0;
+    run_info->next_ping_time.milliseconds = 0;
     run_info->goals[0].params[AGDATA_SELF_OBJ].obj = OBJ_HANDLE_NULL;
     run_info->goals[0].params[AGDATA_TARGET_OBJ].obj = OBJ_HANDLE_NULL;
     run_info->goals[0].params[AGDATA_BLOCK_OBJ].obj = OBJ_HANDLE_NULL;
@@ -811,7 +811,7 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
     run_info = &(anim_run_info[new_anim_id.slot_num]);
     run_info->current_goal = 0;
     run_info->current_state = 0;
-    run_info->field_14 = -1;
+    run_info->path_attached_to_stack_index = -1;
     run_info->anim_obj = goal_data->params[AGDATA_SELF_OBJ].obj;
     run_info->flags |= flags;
     run_info->goals[0] = *goal_data;
@@ -885,8 +885,8 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
         sub_443EB0(run_info->goals[0].params[idx].obj, &(run_info->goals[0].field_B0[idx]));
     }
 
-    if (run_info->field_14 != -1) {
-        run_info->field_14++;
+    if (run_info->path_attached_to_stack_index != -1) {
+        run_info->path_attached_to_stack_index++;
     }
 
     sub_44C840(run_info, anim_goal_nodes[goal_data->type]);
@@ -1571,7 +1571,7 @@ void sub_44EBF0(AnimRunInfo* run_info)
 }
 
 // 0x44EC30
-void sub_44EC30(AnimPath* path)
+void anim_path_debug(AnimPath* path)
 {
     int idx;
 
@@ -1617,7 +1617,7 @@ void sub_44EC30(AnimPath* path)
 }
 
 // 0x44ED90
-void sub_44ED90(AnimGoalData* goal_data)
+void anim_goal_data_debug(AnimGoalData* goal_data)
 {
     int idx;
     char str[256];
@@ -1653,20 +1653,69 @@ void sub_44ED90(AnimGoalData* goal_data)
 }
 
 // 0x44EEB0
-void anim_stat(AnimRunInfo* run_info)
+void anim_run_info_debug(AnimRunInfo* run_info)
 {
+    char str[ANIM_ID_STR_SIZE];
+    char temp[256];
     int goal;
 
-    // NOTE: Original code does nothing.
-    for (goal = 0; goal <= run_info->current_goal; goal++) {
-        sub_44ED90(&(run_info->goals[goal]));
+    if (run_info == NULL) {
+        tig_debug_printf("Anim: anim_run_info_debug: input is NULL\n");
+        return;
     }
+
+    anim_id_to_str(&(run_info->id), str);
+    tig_debug_printf("BEGIN animID:%s\n", str);
+    tig_debug_printf("flags(0x%0X): %s\n", run_info->flags, "");
+    tig_debug_printf("current_state: %d\n", run_info->current_state);
+    tig_debug_printf("pathAttachedToStackIndex: %d\n", run_info->path_attached_to_stack_index);
+    tig_debug_printf("nextPingTime: %d ticks, %d days\n", run_info->next_ping_time.milliseconds, run_info->next_ping_time.days);
+
+    if (run_info->anim_obj != OBJ_HANDLE_NULL && obj_handle_is_valid(run_info->anim_obj)) {
+        int64_t loc = obj_field_int64_get(run_info->anim_obj, OBJ_F_LOCATION);
+        object_examine(run_info->anim_obj, run_info->anim_obj, temp);
+        tig_debug_printf("animObj: %s @(x:%d,y:%d)\n",
+            temp,
+            (int)location_get_x(loc),
+            (int)location_get_y(loc));
+    } else {
+        tig_debug_printf("animObj: OBJ_HANDLE_NULL\n");
+    }
+
+    tig_debug_printf("extraTargetTile: X:%d, Y:%d\n",
+        (int)location_get_x(run_info->extra_target_tile),
+        (int)location_get_y(run_info->extra_target_tile));
+
+    tig_debug_printf("current_goal: %d\n", run_info->current_goal);
+
+    if (run_info->cur_stack_data != NULL) {
+        tig_debug_printf("goal_stack[ %d ] == curStackPtr -->\n", run_info->current_goal);
+        anim_goal_data_debug(run_info->cur_stack_data);
+    } else {
+        tig_debug_printf("ERROR: pCurStackData == NULL!\n");
+    }
+
+    for (goal = run_info->current_goal - 1; goal >= 0; goal--) {
+        tig_debug_printf("goal_stack[ %d ] -->\n", goal);
+        anim_goal_data_debug(&(run_info->goals[goal]));
+    }
+
+    tig_debug_printf("PATH:\n");
+    anim_path_debug(&(run_info->path));
+
+    tig_debug_printf("pauseTime: %d ticks %d days\n",
+        run_info->pause_time.milliseconds,
+        run_info->pause_time.days);
+
+    // TODO: Incomplete - params.
+
+    tig_debug_printf("END animID:%s\n", str);
 }
 
 // 0x44EEC0
-void sub_44EEC0(int index)
+void anim_run_index_debug(int index)
 {
-    anim_stat(&(anim_run_info[index]));
+    anim_run_info_debug(&(anim_run_info[index]));
 }
 
 // 0x44EEE0
@@ -1680,7 +1729,7 @@ void anim_stats()
     for (index = 0; index < 216; index++) {
         if (anim_run_info[index].flags != 0) {
             tig_debug_printf("In Slot %d:\n", index);
-            anim_stat(&(anim_run_info[index]));
+            anim_run_info_debug(&(anim_run_info[index]));
             tig_debug_printf("------------------------------------------------\n");
         }
     }

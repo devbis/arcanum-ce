@@ -2948,9 +2948,9 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->id.field_8), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->flags), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_state), 4, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->field_14), 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->path_attached_to_stack_index), 4, 1, stream) != 1) return false;
     if (!object_save_obj_handle_safe(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
-    if (tig_file_fwrite(&(run_info->field_28), 8, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->extra_target_tile), 8, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
     for (idx = 0; idx <= run_info->current_goal; idx++) {
@@ -2961,7 +2961,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
 
     if (tig_file_fwrite(&(run_info->path), sizeof(run_info->path), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->pause_time), sizeof(run_info->pause_time), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->field_18), sizeof(run_info->field_18), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->next_ping_time), sizeof(run_info->next_ping_time), 1, stream) != 1) return false;
 
     return true;
 }
@@ -3115,9 +3115,9 @@ bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fread(&(run_info->id.field_8), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->flags), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->current_state), 4, 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->field_14), 4, 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->path_attached_to_stack_index), 4, 1, stream) != 1) return false;
     if (!object_load_obj_handle_safe(&(run_info->anim_obj), 0, stream) ) return false;
-    if (tig_file_fread(&(run_info->field_28), 8, 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->extra_target_tile), 8, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
     for (index = 0; index <= run_info->current_goal; index++) {
@@ -3128,7 +3128,7 @@ bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
 
     if (tig_file_fread(&(run_info->path), sizeof(run_info->path), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->pause_time), sizeof(run_info->pause_time), 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->field_18), sizeof(run_info->field_18), 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->next_ping_time), sizeof(run_info->next_ping_time), 1, stream) != 1) return false;
 
     if (run_info->current_goal >= 0) {
         run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
@@ -3758,7 +3758,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
                 }
 
                 run_info->current_state = 0;
-                run_info->field_14 = -1;
+                run_info->path_attached_to_stack_index = -1;
                 run_info->path.flags |= 0x01;
 
                 err = true;
@@ -3844,9 +3844,9 @@ bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay)
     timeevent.params[2].integer_value = 1111;
 
     if (anim_catch_up) {
-        return sub_45BA30(&timeevent, &datetime, a2, &(run_info->field_18));
+        return sub_45BA30(&timeevent, &datetime, a2, &(run_info->next_ping_time));
     } else {
-        return sub_45B880(&timeevent, &datetime, &(run_info->field_18));
+        return sub_45B880(&timeevent, &datetime, &(run_info->next_ping_time));
     }
 }
 
@@ -4830,7 +4830,7 @@ bool sub_425930(AnimRunInfo* run_info)
     y += random_between(-range, range);
     target_loc = location_make(x, y);
 
-    run_info->field_14 = run_info->current_goal + 1;
+    run_info->path_attached_to_stack_index = run_info->current_goal + 1;
 
     path_create_info.obj = obj;
     path_create_info.max_rotations = sub_426320(&(run_info->path), loc, target_loc, obj);
@@ -4955,7 +4955,7 @@ bool sub_425D60(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_14 = run_info->current_goal + 1;
+    run_info->path_attached_to_stack_index = run_info->current_goal + 1;
 
     path_create_info.obj = obj;
     path_create_info.max_rotations = sub_426320(&(run_info->path), loc, target_loc, obj);
@@ -5016,7 +5016,7 @@ bool sub_426040(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if (tig_net_is_active()
         && !tig_net_is_host()) {
@@ -5285,7 +5285,7 @@ bool sub_426840(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if (target_loc == 0) {
         return false;
@@ -5323,7 +5323,7 @@ bool sub_4268F0(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if (target_loc == 0) {
         return false;
@@ -5354,7 +5354,7 @@ bool sub_4269D0(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if (run_info->params[1].loc == 0
         || run_info->params[1].loc == -1) {
@@ -5430,7 +5430,7 @@ bool sub_426A80(AnimRunInfo* run_info)
     }
 
     run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     v1 = sub_426320(&(run_info->path), source_loc, target_loc, source_obj);
 
@@ -5907,7 +5907,7 @@ bool sub_427730(AnimRunInfo* run_info)
         return true;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
     target_loc = run_info->params[1].loc;
     source_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
 
@@ -5995,7 +5995,7 @@ bool sub_427990(AnimRunInfo* run_info)
         return true;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
@@ -6224,7 +6224,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         return true;
     }
 
-    run_info->field_14 = run_info->current_goal;
+    run_info->path_attached_to_stack_index = run_info->current_goal;
 
     if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
@@ -10518,9 +10518,9 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     }
 
     if ((run_info->path.rotations[0] & 1) != 0) {
-        run_info->field_28 = 0;
+        run_info->extra_target_tile = 0;
     } else {
-        run_info->field_28 = next_loc;
+        run_info->extra_target_tile = next_loc;
     }
 
     if ((run_info->flags & 0x400) != 0) {
@@ -10738,8 +10738,8 @@ bool sub_42F140(AnimRunInfo* run_info)
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     rot = run_info->path.rotations[run_info->path.curr];
     if ((rot & 0x1) != 0) {
-        run_info->field_28 = 0;
-    } else if (!location_in_dir(loc, rot, &(run_info->field_28))) {
+        run_info->extra_target_tile = 0;
+    } else if (!location_in_dir(loc, rot, &(run_info->extra_target_tile))) {
         run_info->path.curr = run_info->path.max + 1;
     }
 
@@ -11544,7 +11544,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
     if ((run_info->path.flags & 0x02) != 0) {
         if (sub_42EF60(rot, offset_x, offset_y)) {
-            if (run_info->field_28 == 0 || run_info->field_28 == new_loc) {
+            if (run_info->extra_target_tile == 0 || run_info->extra_target_tile == new_loc) {
                 run_info->path.flags &= ~0x02;
                 run_info->path.curr++;
 
@@ -11552,8 +11552,8 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
                 rot = run_info->path.rotations[run_info->path.curr];
                 if ((rot & 1) != 0) {
-                    run_info->field_28 = 0;
-                } else if (!location_in_dir(loc, rot, &(run_info->field_28))) {
+                    run_info->extra_target_tile = 0;
+                } else if (!location_in_dir(loc, rot, &(run_info->extra_target_tile))) {
                     run_info->path.curr = run_info->path.max + 1;
                 }
 
@@ -11714,8 +11714,8 @@ bool sub_430F20(AnimRunInfo* run_info)
     art_id = tig_art_id_anim_set(art_id, 0);
     tig_art_id_frame_set(art_id, 0);
 
-    if (run_info->field_14 == run_info->current_goal
-        || run_info->field_14 == run_info->current_goal - 1) {
+    if (run_info->path_attached_to_stack_index == run_info->current_goal
+        || run_info->path_attached_to_stack_index == run_info->current_goal - 1) {
         run_info->path.flags |= 0x01;
     }
 
@@ -13618,7 +13618,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
         pkt.modify_data.field_14 = 5;
         pkt.modify_data.loc = loc;
         pkt.modify_data.path_curr = run_info->path.curr;
-        pkt.field_40 = run_info->field_28;
+        pkt.field_40 = run_info->extra_target_tile;
         pkt.modify_data.location = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(self_obj, OBJ_F_OFFSET_X);
@@ -13732,7 +13732,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
         pkt.type = 8;
         pkt.modify_data.field_14 = 5;
         pkt.modify_data.loc = target_loc;
-        pkt.field_40 = run_info->field_28;
+        pkt.field_40 = run_info->extra_target_tile;
         pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -13811,7 +13811,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
         pkt.type = 8;
         pkt.modify_data.field_14 = 5;
         pkt.modify_data.loc = target_loc;
-        pkt.field_40 = run_info->field_28;
+        pkt.field_40 = run_info->extra_target_tile;
         pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -15107,7 +15107,7 @@ void turn_on_running(AnimID anim_id)
             pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
             pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
             pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
-            pkt.field_40 = run_info->field_28;
+            pkt.field_40 = run_info->extra_target_tile;
 
             if (tig_net_is_host()) {
                 run_info->id.field_8++;
@@ -15197,7 +15197,7 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
-        pkt.field_40 = run_info->field_28;
+        pkt.field_40 = run_info->extra_target_tile;
 
         if (tig_net_is_host()) {
             run_info->id.field_8++;

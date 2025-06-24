@@ -218,10 +218,10 @@ typedef struct AnimRunInfo {
     /* 0000 */ AnimID id;
     /* 000C */ unsigned int flags;
     /* 0010 */ int current_state;
-    /* 0014 */ int field_14;
-    /* 0018 */ DateTime field_18;
+    /* 0014 */ int path_attached_to_stack_index;
+    /* 0018 */ DateTime next_ping_time;
     /* 0020 */ int64_t anim_obj;
-    /* 0028 */ int64_t field_28;
+    /* 0028 */ int64_t extra_target_tile;
     /* 0030 */ int current_goal;
     /* 0038 */ AnimGoalData goals[8];
     /* 0BF0 */ AnimGoalData* cur_stack_data;
@@ -291,7 +291,7 @@ bool sub_44EB40(int64_t obj, int64_t from, int64_t to);
 void sub_44EBD0(AnimPath* path);
 void sub_44EBE0(AnimPath* path);
 void sub_44EBF0(AnimRunInfo* run_info);
-void sub_44EEC0(int index);
+void anim_run_index_debug(int index);
 void anim_stats();
 
 #endif /* ARCANUM_GAME_ANIM_PRIVATE_H_ */
