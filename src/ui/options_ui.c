@@ -365,7 +365,7 @@ void options_ui_module_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_difficulty_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "difficulty");
+    *value_ptr = settings_get_value(&settings, DIFFICULTY_KEY);
     *enabled_ptr = true;
 }
 
@@ -376,7 +376,7 @@ void options_ui_difficulty_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_difficutly_set(int value)
 {
-    settings_set_value(&settings, "difficulty", value);
+    settings_set_value(&settings, DIFFICULTY_KEY, value);
 }
 
 /**
@@ -386,7 +386,7 @@ void options_ui_difficutly_set(int value)
  */
 void options_ui_violence_filter_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "violence filter");
+    *value_ptr = settings_get_value(&settings, VIOLENCE_FILTER_KEY);
     *enabled_ptr = true;
 }
 
@@ -397,7 +397,7 @@ void options_ui_violence_filter_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_violence_filter_set(int value)
 {
-    settings_set_value(&settings, "violence filter", value ? 1 : 0);
+    settings_set_value(&settings, VIOLENCE_FILTER_KEY, value ? 1 : 0);
 }
 
 /**
@@ -409,15 +409,15 @@ void options_ui_combat_mode_get(int* value_ptr, bool* enabled_ptr)
 {
     if (tig_net_is_active()) {
         if (combat_is_turn_based()) {
-            settings_set_value(&settings, "turn-based", 0);
-            settings_set_value(&settings, "fast turn-based", 0);
+            settings_set_value(&settings, TURN_BASED_KEY, 0);
+            settings_set_value(&settings, FAST_TURN_BASED_KEY, 0);
         }
 
         *value_ptr = 0;
         *enabled_ptr = false;
     } else {
         if (combat_is_turn_based()) {
-            *value_ptr = settings_get_value(&settings, "fast turn-based") ? 2 : 1;
+            *value_ptr = settings_get_value(&settings, FAST_TURN_BASED_KEY) ? 2 : 1;
         } else {
             *value_ptr = 0;
         }
@@ -435,16 +435,16 @@ void options_ui_combat_mode_set(int value)
     if (!tig_net_is_active()) {
         switch (value) {
         case 0:
-            settings_set_value(&settings, "turn-based", 0);
-            settings_set_value(&settings, "fast turn-based", 0);
+            settings_set_value(&settings, TURN_BASED_KEY, 0);
+            settings_set_value(&settings, FAST_TURN_BASED_KEY, 0);
             break;
         case 1:
-            settings_set_value(&settings, "turn-based", 1);
-            settings_set_value(&settings, "fast turn-based", 0);
+            settings_set_value(&settings, TURN_BASED_KEY, 1);
+            settings_set_value(&settings, FAST_TURN_BASED_KEY, 0);
             break;
         case 2:
-            settings_set_value(&settings, "turn-based", 1);
-            settings_set_value(&settings, "fast turn-based", 1);
+            settings_set_value(&settings, TURN_BASED_KEY, 1);
+            settings_set_value(&settings, FAST_TURN_BASED_KEY, 1);
             break;
         }
     }
@@ -541,7 +541,7 @@ void options_ui_follower_skills_set(int value)
  */
 void options_ui_brightness_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "brightness");
+    *value_ptr = settings_get_value(&settings, BRIGHTNESS_KEY);
     *enabled_ptr = tig_video_check_gamma_control() == TIG_OK;
 }
 
@@ -552,7 +552,7 @@ void options_ui_brightness_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_brightness_set(int value)
 {
-    settings_set_value(&settings, "brightness", value);
+    settings_set_value(&settings, BRIGHTNESS_KEY, value);
 }
 
 /**
@@ -562,7 +562,7 @@ void options_ui_brightness_set(int value)
  */
 void options_ui_text_duration_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "text duration");
+    *value_ptr = settings_get_value(&settings, TEXT_DURATION_KEY);
     *enabled_ptr = true;
 }
 
@@ -573,7 +573,7 @@ void options_ui_text_duration_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_text_duration_set(int value)
 {
-    settings_set_value(&settings, "text duration", value);
+    settings_set_value(&settings, TEXT_DURATION_KEY, value);
 }
 
 /**
@@ -606,7 +606,7 @@ void options_ui_floats_set(int value)
  */
 void options_ui_float_speed_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "float speed");
+    *value_ptr = settings_get_value(&settings, FLOAT_SPEED_KEY);
     *enabled_ptr = true;
 }
 
@@ -617,7 +617,7 @@ void options_ui_float_speed_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_float_speed_set(int value)
 {
-    settings_set_value(&settings, "float speed", value);
+    settings_set_value(&settings, FLOAT_SPEED_KEY, value);
 }
 
 /**
@@ -627,7 +627,7 @@ void options_ui_float_speed_set(int value)
  */
 void options_ui_combat_taunts_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "combat taunts");
+    *value_ptr = settings_get_value(&settings, COMBAT_TAUNTS_KEY);
     *enabled_ptr = true;
 }
 
@@ -638,7 +638,7 @@ void options_ui_combat_taunts_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_combat_taunts_set(int value)
 {
-    settings_set_value(&settings, "combat taunts", value);
+    settings_set_value(&settings, COMBAT_TAUNTS_KEY, value);
 }
 
 /**
@@ -648,7 +648,7 @@ void options_ui_combat_taunts_set(int value)
  */
 void options_ui_effects_volume_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "effects volume");
+    *value_ptr = settings_get_value(&settings, EFFECTS_VOLUME_KEY);
     *enabled_ptr = true;
 }
 
@@ -659,7 +659,7 @@ void options_ui_effects_volume_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_effects_volume_set(int value)
 {
-    settings_set_value(&settings, "effects volume", value);
+    settings_set_value(&settings, EFFECTS_VOLUME_KEY, value);
 }
 
 /**
@@ -669,7 +669,7 @@ void options_ui_effects_volume_set(int value)
  */
 void options_ui_voice_volume_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "voice volume");
+    *value_ptr = settings_get_value(&settings, VOICE_VOLUME_KEY);
     *enabled_ptr = true;
 }
 
@@ -680,7 +680,7 @@ void options_ui_voice_volume_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_voice_volume_set(int value)
 {
-    settings_set_value(&settings, "voice volume", value);
+    settings_set_value(&settings, VOICE_VOLUME_KEY, value);
 }
 
 /**
@@ -690,7 +690,7 @@ void options_ui_voice_volume_set(int value)
  */
 void options_ui_music_volume_get(int* value_ptr, bool* enabled_ptr)
 {
-    *value_ptr = settings_get_value(&settings, "music volume");
+    *value_ptr = settings_get_value(&settings, MUSIC_VOLUME_KEY);
     *enabled_ptr = true;
 }
 
@@ -701,5 +701,5 @@ void options_ui_music_volume_get(int* value_ptr, bool* enabled_ptr)
  */
 void options_ui_music_volume_set(int value)
 {
-    settings_set_value(&settings, "music volume", value);
+    settings_set_value(&settings, MUSIC_VOLUME_KEY, value);
 }

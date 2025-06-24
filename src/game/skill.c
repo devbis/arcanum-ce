@@ -17,12 +17,6 @@
 #include "game/stat.h"
 #include "game/trap.h"
 
-/**
- * Settings key for storing boolean value indicating whether follower skills are
- * enabled or not.
- */
-#define FOLLOWER_SKILLS_KEY "follower skills"
-
 #define FIRST_BASIC_SKILL_NAME_ID 0
 #define FIRST_TECH_SKILL_NAME_ID (FIRST_BASIC_SKILL_NAME_ID + BASIC_SKILL_COUNT)
 #define FIRST_TRAINING_NAME_ID (FIRST_TECH_SKILL_NAME_ID + TECH_SKILL_COUNT)

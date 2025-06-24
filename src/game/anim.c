@@ -2749,9 +2749,10 @@ bool anim_init(GameInitInfo* init_info)
         }
     }
 
-    settings_register(&settings, "violence filter", "0", violence_filter_changed);
-    violence_filter = settings_get_value(&settings, "violence filter");
-    settings_register(&settings, "always run", "0", NULL);
+    settings_register(&settings, VIOLENCE_FILTER_KEY, "0", violence_filter_changed);
+    violence_filter_changed();
+
+    settings_register(&settings, ALWAYS_RUN_KEY, "0", NULL);
 
     return true;
 }
@@ -2930,7 +2931,7 @@ bool anim_save(TigFile* stream)
 // 0x4221A0
 void violence_filter_changed()
 {
-    violence_filter = settings_get_value(&settings, "violence filter");
+    violence_filter = settings_get_value(&settings, VIOLENCE_FILTER_KEY);
 }
 
 // 0x4221C0
@@ -11385,7 +11386,7 @@ bool get_always_run(int64_t obj)
         return false;
     }
 
-    always_run = settings_get_value(&settings, "always run");
+    always_run = settings_get_value(&settings, ALWAYS_RUN_KEY);
 
     if (player_is_local_pc_obj(obj)) {
         if (always_run) {
@@ -11419,7 +11420,7 @@ void set_always_run(bool value)
         }
     }
 
-    settings_set_value(&settings, "always run", value);
+    settings_set_value(&settings, ALWAYS_RUN_KEY, value);
 }
 
 // 0x4305D0

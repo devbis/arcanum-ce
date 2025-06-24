@@ -223,14 +223,14 @@ bool combat_init(GameInitInfo* init_info)
         }
     }
 
-    settings_register(&settings, "turn-based", "0", turn_based_changed);
-    combat_turn_based = settings_get_value(&settings, "turn-based");
+    settings_register(&settings, TURN_BASED_KEY, "0", turn_based_changed);
+    combat_turn_based = settings_get_value(&settings, TURN_BASED_KEY);
 
-    settings_register(&settings, "fast turn-based", "0", fast_turn_based_changed);
-    combat_fast_turn_based = settings_get_value(&settings, "fast turn-based");
+    settings_register(&settings, FAST_TURN_BASED_KEY, "0", fast_turn_based_changed);
+    combat_fast_turn_based = settings_get_value(&settings, FAST_TURN_BASED_KEY);
 
-    settings_register(&settings, "auto attack", "0", NULL);
-    settings_register(&settings, "combat taunts", "0", NULL);
+    settings_register(&settings, AUTO_ATTACK_KEY, "0", NULL);
+    settings_register(&settings, COMBAT_TAUNTS_KEY, "0", NULL);
 
     return true;
 }
@@ -422,9 +422,9 @@ void turn_based_changed()
 {
     int value;
 
-    value = settings_get_value(&settings, "turn-based");
+    value = settings_get_value(&settings, TURN_BASED_KEY);
     if (value && tig_net_is_active()) {
-        settings_set_value(&settings, "turn-based", 0);
+        settings_set_value(&settings, TURN_BASED_KEY, 0);
     } else {
         sub_4B6C90(value);
     }
@@ -433,7 +433,7 @@ void turn_based_changed()
 // 0x4B2410
 void fast_turn_based_changed()
 {
-    combat_fast_turn_based = settings_get_value(&settings, "fast turn-based");
+    combat_fast_turn_based = settings_get_value(&settings, FAST_TURN_BASED_KEY);
 }
 
 // 0x4B24F0
@@ -2994,10 +2994,10 @@ bool sub_4B6C90(bool turn_based)
 void combat_turn_based_toggle()
 {
     if (combat_is_turn_based()) {
-        settings_set_value(&settings, "turn-based", 0);
+        settings_set_value(&settings, TURN_BASED_KEY, 0);
     } else {
         if (critter_is_active(player_get_local_pc_obj())) {
-            settings_set_value(&settings, "turn-based", 1);
+            settings_set_value(&settings, TURN_BASED_KEY, 1);
         }
     }
 }
@@ -3085,7 +3085,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
 
             if (dword_5FC240 == NULL) {
                 tig_debug_printf("Combat: TB: ERROR: Couldn't change to 'Who's' Turn AFTER inserting them in list...DISABLING TB-COMBAT!\n");
-                settings_set_value(&settings, "turn-based", 0);
+                settings_set_value(&settings, TURN_BASED_KEY, 0);
                 return;
             }
         }
@@ -3942,7 +3942,7 @@ bool combat_auto_attack_get(int64_t obj)
     }
 
     if (!tig_net_is_active()) {
-        return settings_get_value(&settings, "auto attack");
+        return settings_get_value(&settings, AUTO_ATTACK_KEY);
     }
 
     player = multiplayer_find_slot_from_obj(obj);
@@ -3958,7 +3958,7 @@ void combat_auto_attack_set(bool value)
 {
     int player;
 
-    settings_set_value(&settings, "auto attack", value);
+    settings_set_value(&settings, AUTO_ATTACK_KEY, value);
 
     if (tig_net_is_active()) {
         player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());
@@ -3976,7 +3976,7 @@ void combat_auto_attack_set(bool value)
 bool combat_taunts_get()
 {
     if (!tig_net_is_active()) {
-        return settings_get_value(&settings, "combat taunts");
+        return settings_get_value(&settings, COMBAT_TAUNTS_KEY);
     } else {
         return false;
     }
@@ -3986,7 +3986,7 @@ bool combat_taunts_get()
 void combat_taunts_set(bool value)
 {
     if (!tig_net_is_active()) {
-        settings_set_value(&settings, "combat taunts", value);
+        settings_set_value(&settings, COMBAT_TAUNTS_KEY, value);
     }
 }
 
@@ -3996,7 +3996,7 @@ bool combat_auto_switch_weapons_get(int64_t obj)
     int player;
 
     if (!tig_net_is_active()) {
-        return settings_get_value(&settings, "auto switch");
+        return settings_get_value(&settings, AUTO_SWITCH_WEAPON_KEY);
     }
 
     player = multiplayer_find_slot_from_obj(obj);
@@ -4012,7 +4012,7 @@ void combat_auto_switch_weapons_set(bool value)
 {
     int player;
 
-    settings_set_value(&settings, "auto switch", value);
+    settings_set_value(&settings, AUTO_SWITCH_WEAPON_KEY, value);
 
     if (tig_net_is_active()) {
         player = multiplayer_find_slot_from_obj(player_get_local_pc_obj());

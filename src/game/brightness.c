@@ -2,11 +2,6 @@
 
 #include "game/gamelib.h"
 
-/**
- * Settings key for brightness value.
- */
-#define BRIGHTNESS_KEY "brightness"
-
 static void brightness_changed();
 
 /**

@@ -5,16 +5,14 @@
 
 #include "game/gamelib.h"
 #include "game/hrp.h"
+#include "game/location.h"
 #include "game/mes.h"
 #include "game/player.h"
 #include "game/random.h"
+#include "game/timeevent.h"
 
 #define TWO 2
 #define TWENTY_FIVE 25
-
-#define EFFECTS_VOLUME_KEY "effects volume"
-#define VOICE_VOLUME_KEY "voice volume"
-#define MUSIC_VOLUME_KEY "music volume"
 
 typedef struct Sound {
     /* 0000 */ bool song;

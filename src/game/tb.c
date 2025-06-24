@@ -4,11 +4,6 @@
 #include "game/object.h"
 
 /**
- * The default duration (in seconds) of the text bubble.
- */
-#define TEXT_DURATION_KEY "text duration"
-
-/**
  * The maximum number of text bubbles that can be active simultaneously.
  */
 #define MAX_TEXT_BUBBLES 8

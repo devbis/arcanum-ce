@@ -305,7 +305,7 @@ bool object_init(GameInitInfo* init_info)
 
     tig_video_get_bpp(&object_bpp);
 
-    settings_register(&settings, "object lighting", "1", object_lighting_changed);
+    settings_register(&settings, OBJECT_LIGHTING_KEY, "1", object_lighting_changed);
     object_lighting_changed();
 
     return true;
@@ -5455,7 +5455,7 @@ void object_lighting_changed()
 {
     int value;
 
-    value = settings_get_value(&settings, "object lighting");
+    value = settings_get_value(&settings, OBJECT_LIGHTING_KEY);
     if (value < 0) {
         object_lighting = false;
     } else if (value > 1) {

@@ -2676,7 +2676,7 @@ void intgame_process_event(TigMessage* msg)
                             && !tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                             if ((tig_kb_get_modifier(SDL_KMOD_CTRL)
                                     || tig_kb_get_modifier(SDL_KMOD_NUM))
-                                && !settings_get_value(&settings, "always run")) {
+                                && !settings_get_value(&settings, ALWAYS_RUN_KEY)) {
                                 sub_433C80(pc_obj, v1.loc);
                             } else {
                                 sub_433640(pc_obj, v1.loc);
@@ -2877,7 +2877,7 @@ void intgame_process_event(TigMessage* msg)
                     && !tig_kb_get_modifier(SDL_KMOD_SHIFT)) {
                     if ((tig_kb_get_modifier(SDL_KMOD_CTRL)
                             || tig_kb_get_modifier(SDL_KMOD_NUM))
-                        && !settings_get_value(&settings, "always run")) {
+                        && !settings_get_value(&settings, ALWAYS_RUN_KEY)) {
                         sub_433C80(pc_obj, v1.loc);
                     } else {
                         sub_433640(pc_obj, v1.loc);

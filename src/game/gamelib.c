@@ -81,8 +81,6 @@
 #define VERSION_MINOR 0
 #define VERSION_PATCH 7
 #define VERSION_BUILD 4
-#define SPLASH_KEY "splash"
-#define DIFFICULTY_KEY "difficulty"
 
 #define TEN 10
 

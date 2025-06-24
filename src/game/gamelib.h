@@ -5,6 +5,30 @@
 #include "game/settings.h"
 #include "game/timeevent.h"
 
+#define DIFFICULTY_KEY "difficulty"
+#define VIOLENCE_FILTER_KEY "violence filter"
+#define TURN_BASED_KEY "turn-based"
+#define FAST_TURN_BASED_KEY "fast turn-based"
+#define AUTO_ATTACK_KEY "auto attack"
+#define AUTO_SWITCH_WEAPON_KEY "auto switch"
+#define ALWAYS_RUN_KEY "always run"
+#define FOLLOWER_SKILLS_KEY "follower skills"
+
+#define BRIGHTNESS_KEY "brightness"
+#define TEXT_DURATION_KEY "text duration"
+#define TEXT_FLOATERS_KEY "text floaters"
+#define FLOAT_SPEED_KEY "float speed"
+#define COMBAT_TAUNTS_KEY "combat taunts"
+
+#define EFFECTS_VOLUME_KEY "effects volume"
+#define VOICE_VOLUME_KEY "voice volume"
+#define MUSIC_VOLUME_KEY "music volume"
+
+#define SPLASH_KEY "splash"
+#define SHOW_VERSION_KEY "show version"
+#define OBJECT_LIGHTING_KEY "object lighting"
+#define SHADOWS_KEY "shadows"
+
 typedef bool(GameExtraSaveFunc)();
 typedef bool(GameExtraLoadFunc)();
 

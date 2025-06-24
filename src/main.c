@@ -602,7 +602,7 @@ void main_loop()
                                 }
                                 break;
                             case SDL_SCANCODE_APOSTROPHE:
-                                settings_set_value(&settings, "shadows", 1 - settings_get_value(&settings, "shadows"));
+                                settings_set_value(&settings, SHADOWS_KEY, 1 - settings_get_value(&settings, SHADOWS_KEY));
                                 break;
                             case SDL_SCANCODE_BACKSLASH:
                                 wallcheck_set_enabled(!wallcheck_is_enabled());

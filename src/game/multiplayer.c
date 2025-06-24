@@ -2502,10 +2502,10 @@ void sub_4A5600(int a1)
 // 0x4A5610
 void sub_4A5610()
 {
-    set_always_run(settings_get_value(&settings, "always run"));
-    combat_auto_attack_set(settings_get_value(&settings, "auto attack"));
-    combat_auto_switch_weapons_set(settings_get_value(&settings, "auto switch"));
-    set_follower_skills(settings_get_value(&settings, "follower skills"));
+    set_always_run(settings_get_value(&settings, ALWAYS_RUN_KEY));
+    combat_auto_attack_set(settings_get_value(&settings, AUTO_ATTACK_KEY));
+    combat_auto_switch_weapons_set(settings_get_value(&settings, AUTO_SWITCH_WEAPON_KEY));
+    set_follower_skills(settings_get_value(&settings, FOLLOWER_SKILLS_KEY));
 }
 
 // 0x4A5670

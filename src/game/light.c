@@ -7,8 +7,6 @@
 #include "game/sector_block_list.h"
 #include "game/tile.h"
 
-#define SHADOWS_KEY "shadows"
-
 typedef struct LightCreateInfo {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t loc;

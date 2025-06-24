@@ -4,16 +4,6 @@
 #include "game/object.h"
 
 /**
- * Settings key for the text floaters level of details.
- */
-#define TEXT_FLOATERS_KEY "text floaters"
-
-/**
- * Settings key for the floating speed of text floaters.
- */
-#define FLOAT_SPEED_KEY "float speed"
-
-/**
  * The width of text floater rectangle.
  */
 #define TEXT_FLOATER_WIDTH 200

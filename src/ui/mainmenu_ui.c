@@ -1977,7 +1977,7 @@ void mainmenu_ui_draw_version()
     TigRect rect;
     char version[40];
 
-    if (settings_get_value(&settings, "show version") == 0) {
+    if (settings_get_value(&settings, SHOW_VERSION_KEY) == 0) {
         return;
     }
 
