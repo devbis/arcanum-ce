@@ -8,10 +8,25 @@ static bool walkmask_read_signature(TigFile* stream);
 static tig_art_id_t* walkmask_allocate(int width, int height);
 static bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt, int width, int height, int tile, int outdoor, int flippable);
 
-// 0x5BCFCC
+/**
+ * Signature string for facade/walkmask files.
+ *
+ * 0x5BCFCC
+ */
 static const char* walkmask_signature = "FacWalk V101  ";
 
-// 0x4F6CF0
+/**
+ * Loads a facade/walkmask file.
+ *
+ * Returns `true` if facade/walkmask file is loaded successfully, `false`
+ * otherwise.
+ *
+ * On success provides the size of facade (in number of tiles) and allocates and
+ * populates array of facade art IDs. The size of array is `width` * `height`.
+ * The caller is responsible to free the array.
+ *
+ * 0x4F6CF0
+ */
 bool walkmask_load(int facade, tig_art_id_t** ids_ptr, int* width_ptr, int* height_ptr)
 {
     char path[100];
@@ -31,12 +46,15 @@ bool walkmask_load(int facade, tig_art_id_t** ids_ptr, int* width_ptr, int* heig
         return false;
     }
 
+    // Read facade header.
     if (!walkmask_read_hdr(stream, &cnt, &width, &height, &tile, &outdoor, &flippable)) {
         tig_file_fclose(stream);
         return false;
     }
 
     ids = walkmask_allocate(width, height);
+
+    // Read facade entries.
     if (!walkmask_read_data(stream, ids, facade, cnt, width, height, tile, outdoor, flippable)) {
         FREE(ids);
         tig_file_fclose(stream);
@@ -52,7 +70,11 @@ bool walkmask_load(int facade, tig_art_id_t** ids_ptr, int* width_ptr, int* heig
     return true;
 }
 
-// 0x4F6E60
+/**
+ * Builds the file path for a facade/walkmask based on the facade number.
+ *
+ * 0x4F6E60
+ */
 void walkmask_build_path(int facade, char* buffer)
 {
     if (facade >= 0 && facade < 512) {
@@ -62,7 +84,16 @@ void walkmask_build_path(int facade, char* buffer)
     }
 }
 
-// 0x4F6E90
+/**
+ * Reads the header of a facade/walkmask file.
+ *
+ * The header contains meta about facade itself - tile, outdoor/indoor type,
+ * size, and number of entries in the table.
+ *
+ * Returns `true` if the header is read successfully, `false` otherwise.
+ *
+ * 0x4F6E90
+ */
 bool walkmask_read_hdr(TigFile* stream, int* cnt, int* width, int* height, int* tile, int* outdoor, int* flippable)
 {
     if (!walkmask_read_signature(stream)) return false;
@@ -77,7 +108,13 @@ bool walkmask_read_hdr(TigFile* stream, int* cnt, int* width, int* height, int* 
     return true;
 }
 
-// 0x4F6F60
+/**
+ * Reads and verifies the signature of a facade/walkmask file.
+ *
+ * Returns `true` if the signature matches, `false` otherwise.
+ *
+ * 0x4F6F60
+ */
 bool walkmask_read_signature(TigFile* stream)
 {
     char signature[100];
@@ -88,7 +125,11 @@ bool walkmask_read_signature(TigFile* stream)
     return true;
 }
 
-// 0x4F6FC0
+/**
+ * Allocates memory for facade art ID array.
+ *
+ * 0x4F6FC0
+ */
 tig_art_id_t* walkmask_allocate(int width, int height)
 {
     int x;
@@ -108,7 +149,17 @@ tig_art_id_t* walkmask_allocate(int width, int height)
     return ids;
 }
 
-// 0x4F7020
+/**
+ * Reads walkmask data from a file and populates the art ID array.
+ *
+ * The number of entries is stored in the header. Each entry contains
+ * `x` and `y` coordinates (row/column in the facade grid) and a walkability
+ * flag.
+ *
+ * Returns `true` if data is read successfully, `false` otherwise.
+ *
+ * 0x4F7020
+ */
 bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt, int width, int height, int tile, int outdoor, int flippable)
 {
     tig_art_id_t art_id;
@@ -118,6 +169,7 @@ bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt,
     int walkable;
 
     for (frame = 0; frame < cnt; frame++) {
+        // Read and validate `x` coordinate.
         if (tig_file_fread(&x, sizeof(x), 1, stream) != 1) {
             return false;
         }
@@ -126,6 +178,7 @@ bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt,
             return false;
         }
 
+        // Read and validate `y` coordinate.
         if (tig_file_fread(&y, sizeof(y), 1, stream) != 1) {
             return false;
         }
@@ -134,10 +187,12 @@ bool walkmask_read_data(TigFile* stream, tig_art_id_t* ids, int facade, int cnt,
             return false;
         }
 
+        // Read walkability flag.
         if (tig_file_fread(&walkable, sizeof(walkable), 1, stream) != 1) {
             return false;
         }
 
+        // Create facade art ID and store it in the array.
         if (tig_art_facade_id_create(facade, tile, outdoor, flippable, frame, walkable, &art_id) != TIG_OK) {
             return false;
         }
