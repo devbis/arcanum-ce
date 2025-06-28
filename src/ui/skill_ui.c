@@ -161,7 +161,7 @@ void sub_579FA0(int64_t obj, int type)
         }
     }
 
-    if (sub_551A00() == 2) {
+    if (intgame_mode_get() == 2) {
         sub_57A1A0();
     }
 

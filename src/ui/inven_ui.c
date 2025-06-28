@@ -1127,7 +1127,7 @@ void inven_ui_destroy()
     inven_ui_target_inventory_scrollbar_destroy();
     intgame_big_window_unlock();
     sub_551160();
-    v2 = sub_551A00();
+    v2 = intgame_mode_get();
     if (v2 != 8
         && v2 != 10
         && v2 != 11
@@ -1521,7 +1521,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_down(TigMessage*
     int64_t v2;
     S4F2810 v3;
 
-    switch (sub_551A00()) {
+    switch (intgame_mode_get()) {
     case 8:
     case 10:
     case 11:
@@ -2189,7 +2189,7 @@ bool inven_ui_message_filter(TigMessage* msg)
 
     if (inven_ui_mode == INVEN_UI_MODE_BARTER
         && qword_6810E0 == OBJ_HANDLE_NULL
-        && sub_551A00() != 13
+        && intgame_mode_get() != 13
         && (critter_is_sleeping(qword_682C78) || !critter_is_active(qword_682C78))) {
         v45 = true;
     }

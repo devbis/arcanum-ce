@@ -158,7 +158,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
         return SPELL_UI_ACTIVATE_ERR;
     }
 
-    if (sub_551A00() == 1) {
+    if (intgame_mode_get() == 1) {
         spell_ui_cancel();
     }
 
@@ -180,7 +180,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     }
 
     if ((tgt & (Tgt_Obj_Inven & ~Tgt_Object)) != 0) {
-        if (sub_551A00() == 4 || sub_551A00() == 11) {
+        if (intgame_mode_get() == 4 || intgame_mode_get() == 11) {
             inven_ui_destroy();
         }
 

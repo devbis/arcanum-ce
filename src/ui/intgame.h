@@ -66,7 +66,7 @@ void intgame_pc_lens_redraw();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
 bool intgame_get_location_under_cursor(int64_t* loc_ptr);
-int sub_551A00();
+int intgame_mode_get();
 bool sub_551A80(int a1);
 bool intgame_mode_supports_scrolling(int mode);
 int sub_552070();

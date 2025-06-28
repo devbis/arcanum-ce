@@ -84,7 +84,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
         return;
     }
 
-    if (sub_551A00() == 16) {
+    if (intgame_mode_get() == 16) {
         item_ui_deactivate();
     }
 

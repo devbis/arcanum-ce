@@ -1897,7 +1897,7 @@ bool sub_54B5D0(TigMessage* msg)
                 return false;
             }
 
-            switch (sub_551A00()) {
+            switch (intgame_mode_get()) {
             case 5:
             case 7:
             case 9:
@@ -2642,7 +2642,7 @@ void intgame_process_event(TigMessage* msg)
         sub_57F1D0(msg->data.keyboard.key - SDL_SCANCODE_1);
     }
 
-    switch (sub_551A00()) {
+    switch (intgame_mode_get()) {
     case 0:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
@@ -3004,7 +3004,7 @@ void sub_54EA80(S4F2810* a1)
         v1.field_8 = pc_obj;
         v1.field_10 = a1;
 
-        switch (sub_551A00()) {
+        switch (intgame_mode_get()) {
         case 1:
             if (sub_4F2680(&v1)) {
                 spell_ui_apply(a1);
@@ -4708,7 +4708,7 @@ void sub_551910(TigMessage* msg)
             } else if (combat_turn_based_is_active()
                 && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
                 && v1.is_loc
-                && sub_551A00() == 0) {
+                && intgame_mode_get() == 0) {
                 sub_4B7830(player_get_local_pc_obj(), v1.loc);
             }
         }
@@ -4716,7 +4716,7 @@ void sub_551910(TigMessage* msg)
 }
 
 // 0x551A00
-int sub_551A00()
+int intgame_mode_get()
 {
     return dword_64C634[dword_64C6B8];
 }
@@ -5005,7 +5005,7 @@ void sub_551F80()
 
     pc_obj = player_get_local_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL) {
-        if (sub_551A00()) {
+        if (intgame_mode_get()) {
             qword_5C7280 = Tgt_Object;
             return;
         }
@@ -6037,7 +6037,7 @@ void intgame_refresh_cursor()
         // FIXME: Meaningless.
         tig_mouse_cursor_get_art_id();
 
-        art_num = dword_5C7178[sub_551A00()];
+        art_num = dword_5C7178[intgame_mode_get()];
         if (art_num == -1) {
             if (have_weapon) {
                 if (tig_kb_is_key_pressed(SDL_SCANCODE_COMMA)) {
@@ -8105,7 +8105,7 @@ void sub_557370(int64_t a1, int64_t a2)
 
     // NOTE: The code below omit some unused checks from the original code. I'm
     // not sure if it's a bug or not.
-    switch (sub_551A00()) {
+    switch (intgame_mode_get()) {
     case 0:
         if (sub_573620() == OBJ_HANDLE_NULL) {
             switch (obj_type) {

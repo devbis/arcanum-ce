@@ -155,7 +155,7 @@ void dialog_ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int
         return;
     }
 
-    if (player_is_local_pc_obj(pc_obj) && sub_551A00() == 3) {
+    if (player_is_local_pc_obj(pc_obj) && intgame_mode_get() == 3) {
         return;
     }
 
