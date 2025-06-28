@@ -383,7 +383,7 @@ void main_loop()
                 }
             }
 
-            if (sub_551F70(sub_551A00())) {
+            if (intgame_mode_supports_scrolling(sub_551A00())) {
                 handle_keyboard_scroll();
             }
 
@@ -651,7 +651,7 @@ void main_loop()
             }
         }
 
-        if (sub_551F70(sub_551A00())) {
+        if (intgame_mode_supports_scrolling(sub_551A00())) {
             handle_mouse_scroll();
         }
     }

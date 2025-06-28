@@ -707,28 +707,28 @@ static int dword_5C728C[] = {
 static int dword_5C72B0 = 1;
 
 // 0x5C72B4
-static int dword_5C72B4[] = {
-    1,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
+static bool intgame_mode_scrolling[] = {
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
 };
 
 // 0x5C7308
@@ -4993,9 +4993,9 @@ void intgame_unforce_fullscreen()
 }
 
 // 0x551F70
-int sub_551F70(int a1)
+bool intgame_mode_supports_scrolling(int mode)
 {
-    return dword_5C72B4[a1];
+    return intgame_mode_scrolling[mode];
 }
 
 // 0x551F80

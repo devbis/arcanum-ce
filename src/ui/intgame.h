@@ -68,7 +68,7 @@ bool sub_5517A0(TigMessage* msg);
 bool intgame_get_location_under_cursor(int64_t* loc_ptr);
 int sub_551A00();
 bool sub_551A80(int a1);
-int sub_551F70(int a1);
+bool intgame_mode_supports_scrolling(int mode);
 int sub_552070();
 void sub_552080(int window_type);
 void intgame_text_edit_refresh(const char* str, tig_font_handle_t font);
