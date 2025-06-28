@@ -1906,11 +1906,11 @@ bool sub_54B5D0(TigMessage* msg)
                 if (tig_window_data(dword_64C52C, &window_data) == TIG_OK) {
                     if (msg->data.mouse.x < window_data.rect.x
                         || msg->data.mouse.x - window_data.rect.x > window_data.rect.width) {
-                        sub_551A80(0);
+                        intgame_mode_set(0);
                     }
                     if (msg->data.mouse.y < window_data.rect.y
                         || msg->data.mouse.y - window_data.rect.y > window_data.rect.height) {
-                        sub_551A80(0);
+                        intgame_mode_set(0);
                     }
                 }
                 break;
@@ -2078,12 +2078,12 @@ bool sub_54B5D0(TigMessage* msg)
 
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_OK].button_handle) {
                     sub_578B80(intgame_quantity);
-                    sub_551A80(0);
+                    intgame_mode_set(0);
                     return true;
                 }
 
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_CANCEL].button_handle) {
-                    sub_551A80(0);
+                    intgame_mode_set(0);
                     return true;
                 }
                 break;
@@ -2469,7 +2469,7 @@ bool sub_54B5D0(TigMessage* msg)
         if (msg->data.character.ch == SDLK_RETURN) {
             if (intgame_iso_window_type == 9) {
                 sub_578B80(intgame_quantity);
-                sub_551A80(0);
+                intgame_mode_set(0);
                 v2 = true;
             } else if (!sub_541680()) {
                 broadcast_ui_open();
@@ -3610,7 +3610,7 @@ void sub_54FCF0(Hotkey* hotkey)
 
     switch (hotkey->type) {
     case HOTKEY_ITEM:
-        sub_551A80(0);
+        intgame_mode_set(0);
         sub_444130(&(hotkey->item_obj));
         if (obj_field_handle_get(hotkey->item_obj.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
             v2 = hotkey->item_obj.obj;
@@ -3926,7 +3926,7 @@ void sub_5506C0(int window_type)
 {
     broadcast_ui_close();
     if (intgame_iso_window_type == 9) {
-        sub_551A80(0);
+        intgame_mode_set(0);
     }
 
     dword_5C6F78 = 6;
@@ -4739,7 +4739,7 @@ void sub_551A10(int64_t obj)
 }
 
 // 0x551A80
-bool sub_551A80(int a1)
+bool intgame_mode_set(int mode)
 {
     int64_t pc_obj;
     int64_t obj;
@@ -4758,12 +4758,12 @@ bool sub_551A80(int a1)
         pc_obj = player_get_local_pc_obj();
         v19 = dword_64C634[dword_64C6B8];
 
-        if (a1 != 0) {
+        if (mode != 0) {
             dword_64C6B8++;
             v18 = true;
         } else {
             if (dword_64C6B8 > 0) {
-                a1 = dword_64C634[--dword_64C6B8];
+                mode = dword_64C634[--dword_64C6B8];
                 v2 = true;
             }
             if (!sub_573620()) {
@@ -4799,11 +4799,11 @@ bool sub_551A80(int a1)
             }
             break;
         case 4:
-            if (a1 != 13) {
+            if (mode != 13) {
                 inven_ui_destroy();
             }
             v1 = true;
-            if (a1 != 13) {
+            if (mode != 13) {
                 intgame_unforce_fullscreen();
             }
             break;
@@ -4826,7 +4826,7 @@ bool sub_551A80(int a1)
             intgame_unforce_fullscreen();
             break;
         case 8:
-            switch (a1) {
+            switch (mode) {
             case 1:
             case 2:
             case 13:
@@ -4839,7 +4839,7 @@ bool sub_551A80(int a1)
                 break;
             }
 
-            if (a1 != 13) {
+            if (mode != 13) {
                 intgame_unforce_fullscreen();
             }
             break;
@@ -4849,17 +4849,17 @@ bool sub_551A80(int a1)
             intgame_unforce_fullscreen();
             break;
         case 10:
-            if (a1 == 1
-                || a1 == 2) {
-                if (a1 != 13) {
+            if (mode == 1
+                || mode == 2) {
+                if (mode != 13) {
                     intgame_unforce_fullscreen();
                 }
-            } else if (a1 != 13) {
+            } else if (mode != 13) {
                 inven_ui_destroy();
             }
             break;
         case 11:
-            if (a1 != 13) {
+            if (mode != 13) {
                 inven_ui_destroy();
                 intgame_unforce_fullscreen();
             }
@@ -4898,7 +4898,7 @@ bool sub_551A80(int a1)
             break;
         case 19:
         case 20:
-            if (a1 != 13) {
+            if (mode != 13) {
                 inven_ui_destroy();
             }
             v1 = true;
@@ -4906,7 +4906,7 @@ bool sub_551A80(int a1)
             break;
         }
 
-        switch (a1) {
+        switch (mode) {
         case 0:
         case 1:
         case 2:
@@ -4955,7 +4955,7 @@ bool sub_551A80(int a1)
             }
         }
 
-        dword_64C634[dword_64C6B8] = a1;
+        dword_64C634[dword_64C6B8] = mode;
         intgame_refresh_cursor();
 
         v1 = false;
@@ -4965,7 +4965,7 @@ bool sub_551A80(int a1)
             return true;
         }
 
-        a1 = 0;
+        mode = 0;
         v18 = false;
         v2 = false;
         v17 = false;
@@ -5763,8 +5763,8 @@ bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
 {
     dword_64C6CC = func;
     tc_show();
-    sub_551A80(0);
-    sub_551A80(3);
+    intgame_mode_set(0);
+    intgame_mode_set(3);
 
     return true;
 }
@@ -5774,7 +5774,7 @@ void intgame_dialog_end()
 {
     dword_64C6CC = NULL;
     tc_hide();
-    sub_551A80(0);
+    intgame_mode_set(0);
 }
 
 // 0x553370

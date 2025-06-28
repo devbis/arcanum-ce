@@ -1190,11 +1190,11 @@ void wmap_ui_open_internal()
         return;
     }
 
-    if (!sub_551A80(0)) {
+    if (!intgame_mode_set(0)) {
         return;
     }
 
-    if (!sub_551A80(5)) {
+    if (!intgame_mode_set(5)) {
         return;
     }
 
@@ -1202,7 +1202,7 @@ void wmap_ui_open_internal()
 
     if (!wmap_ui_create()) {
         wmap_ui_close();
-        sub_551A80(0);
+        intgame_mode_set(0);
 
         if (dword_66D9C8) {
             sub_452650(pc_obj);
@@ -1387,7 +1387,7 @@ void wmap_ui_close()
         sub_4AA580(pc_obj);
     }
 
-    if (sub_551A80(false) && wmap_ui_created) {
+    if (intgame_mode_set(false) && wmap_ui_created) {
         sub_564070(false);
         sub_5615D0(0);
         intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);

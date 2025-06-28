@@ -190,7 +190,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
             inven_ui_open(qword_6834F8, OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
         }
     } else {
-        if (!sub_551A80(0)) {
+        if (!intgame_mode_set(0)) {
             dword_683508 = false;
             return SPELL_UI_ACTIVATE_ERR;
         }
@@ -213,7 +213,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     }
 
     sub_4F25B0(tgt);
-    if (sub_551A80(1)) {
+    if (intgame_mode_set(1)) {
         sub_4F25B0(tgt);
         dword_68350C = sub_500560();
         if (!dword_68350C) {
@@ -249,7 +249,7 @@ void spell_ui_cancel()
         sub_500570();
     }
 
-    sub_551A80(0);
+    intgame_mode_set(0);
 
     if (!dword_683508) {
         dword_5CB3A0 = 10000;

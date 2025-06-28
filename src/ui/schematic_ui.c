@@ -333,8 +333,8 @@ void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
         || secondary_obj == OBJ_HANDLE_NULL
         || critter_is_dead(primary_obj)
         || critter_is_dead(secondary_obj)
-        || !sub_551A80(0)
-        || !sub_551A80(14)) {
+        || !intgame_mode_set(0)
+        || !intgame_mode_set(14)) {
         return;
     }
 
@@ -377,7 +377,7 @@ void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
 // 0x56D2D0
 void schematic_ui_close()
 {
-    if (schematic_ui_created && sub_551A80(0)) {
+    if (schematic_ui_created && intgame_mode_set(0)) {
         schematic_ui_destroy();
         schematic_ui_primary_obj = OBJ_HANDLE_NULL;
         schematic_ui_secondary_obj = OBJ_HANDLE_NULL;

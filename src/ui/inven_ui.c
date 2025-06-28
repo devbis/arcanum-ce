@@ -592,18 +592,18 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
 // 0x572510
 bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
 {
-    if (!sub_551A80(0)) {
+    if (!intgame_mode_set(0)) {
         return false;
     }
 
     switch (mode) {
     case INVEN_UI_MODE_INVENTORY:
-        if (!sub_551A80(8)) {
+        if (!intgame_mode_set(8)) {
             return false;
         }
         return true;
     case INVEN_UI_MODE_BARTER:
-        if (!sub_551A80(4)) {
+        if (!intgame_mode_set(4)) {
             return false;
         }
         if (pc_obj == target_obj) {
@@ -612,7 +612,7 @@ bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
         return true;
     case INVEN_UI_MODE_LOOT:
     case INVEN_UI_MODE_IDENTIFY:
-        if (!sub_551A80(10)) {
+        if (!intgame_mode_set(10)) {
             return false;
         }
         if (pc_obj == target_obj) {
@@ -620,7 +620,7 @@ bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
         }
         return true;
     case INVEN_UI_MODE_STEAL:
-        if (!sub_551A80(11)) {
+        if (!intgame_mode_set(11)) {
             return false;
         }
         if (pc_obj == target_obj) {
@@ -628,7 +628,7 @@ bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
         }
         return true;
     case INVEN_UI_MODE_NPC_IDENTIFY:
-        if (!sub_551A80(19)) {
+        if (!intgame_mode_set(19)) {
             return false;
         }
         if (pc_obj == target_obj) {
@@ -636,7 +636,7 @@ bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
         }
         return true;
     case INVEN_UI_MODE_NPC_REPAIR:
-        if (!sub_551A80(20)) {
+        if (!intgame_mode_set(20)) {
             return false;
         }
         if (pc_obj == target_obj) {
@@ -717,7 +717,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     inven_ui_panel = INVEN_UI_PANEL_INVENTORY;
 
     if (!intgame_big_window_lock(inven_ui_message_filter, &inven_ui_window_handle)) {
-        sub_551A80(0);
+        intgame_mode_set(0);
         return false;
     }
 
@@ -732,7 +732,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     button_data.y = 197;
     if (tig_button_create(&button_data, &inven_ui_arrange_items_btn) != TIG_OK) {
         intgame_big_window_unlock();
-        sub_551A80(0);
+        intgame_mode_set(0);
         return false;
     }
 
@@ -760,7 +760,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 318;
         if (tig_button_create(&button_data, &inven_ui_total_attack_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -769,7 +769,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 319;
         if (tig_button_create(&button_data, &inven_ui_total_defence_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -780,7 +780,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.height = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_ATTACK].height;
         if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn)) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -791,7 +791,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.height = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].height;
         if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -806,7 +806,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 318;
         if (tig_button_create(&button_data, &inven_ui_total_attack_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -815,7 +815,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 319;
         if (tig_button_create(&button_data, &inven_ui_total_defence_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -826,7 +826,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.height = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].height;
         if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -837,7 +837,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.height = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].height;
         if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -850,7 +850,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_data.y = 47;
             if (tig_button_create(&button_data, &inven_ui_take_all_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
         }
@@ -861,7 +861,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 37;
         if (tig_button_create(&button_data, &inven_ui_paperdoll_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -870,7 +870,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.y = 37;
         if (tig_button_create(&button_data, &inven_ui_inventory_btn) != TIG_OK) {
             intgame_big_window_unlock();
-            sub_551A80(0);
+            intgame_mode_set(0);
             return false;
         }
 
@@ -890,7 +890,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             }
             if (tig_button_create(&button_data, &inven_ui_target_paperdoll_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
 
@@ -904,7 +904,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             }
             if (tig_button_create(&button_data, &inven_ui_target_inventory_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
 
@@ -922,7 +922,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_data.height = 40;
             if (tig_button_create(&button_data, &inven_ui_target_total_attack_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
 
@@ -933,7 +933,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_data.height = 40;
             if (tig_button_create(&button_data, &inven_ui_target_total_defence_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
         }
@@ -1005,7 +1005,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_data.y = 55;
             if (tig_button_create(&button_data, &inven_ui_cycle_left_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
 
@@ -1014,7 +1014,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_data.y = 55;
             if (tig_button_create(&button_data, &inven_ui_cycle_right_btn) != TIG_OK) {
                 intgame_big_window_unlock();
-                sub_551A80(0);
+                intgame_mode_set(0);
                 return false;
             }
         }
@@ -1134,9 +1134,9 @@ void inven_ui_destroy()
         && v2 != 4
         && v2 != 19
         && v2 != 20) {
-      sub_551A80(0);
+      intgame_mode_set(0);
     }
-    sub_551A80(0);
+    intgame_mode_set(0);
 }
 
 // 0x573590
@@ -3874,7 +3874,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
                     || (a4 & 0x20) != 0) {
                     sub_578B80(qty);
                 } else {
-                    sub_551A80(13);
+                    intgame_mode_set(13);
                     sub_5506C0(9);
                     intgame_refresh_cursor();
                 }

@@ -319,8 +319,8 @@ void sub_57CE00()
 void sub_57CE10()
 {
     intgame_hotkeys_recover();
-    sub_551A80(0);
-    sub_551A80(0);
+    intgame_mode_set(0);
+    intgame_mode_set(0);
 
     if (object_hover_obj != OBJ_HANDLE_NULL) {
         dword_5E2E94 = false;

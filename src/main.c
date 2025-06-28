@@ -432,8 +432,8 @@ void main_loop()
 
                             if (!combat_turn_based_is_active() || player_get_local_pc_obj() == combat_turn_based_whos_turn_get()) {
                                 if (!tig_net_is_active()) {
-                                    sub_551A80(0);
-                                    sub_551A80(0);
+                                    intgame_mode_set(0);
+                                    intgame_mode_set(0);
                                     mainmenu_ui_feedback_saving();
                                     gamelib_save("SlotAuto", "Auto-Save");
                                     mainmenu_ui_feedback_saving_completed();
