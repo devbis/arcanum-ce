@@ -20,7 +20,7 @@ typedef struct GameInitInfo {
     bool editor;
     tig_window_handle_t iso_window_handle;
     IsoInvalidateRectFunc* invalidate_rect_func;
-    IsoRedrawFunc* redraw_func;
+    IsoRedrawFunc* draw_func;
 } GameInitInfo;
 
 static_assert(sizeof(GameInitInfo) == 0x10, "wrong size");

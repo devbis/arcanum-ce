@@ -15,7 +15,7 @@ static TigVideoBuffer* fade_iso_video_buffer;
 static tig_font_handle_t dword_5FC4B8;
 
 // 0x5FC4BC
-static IsoRedrawFunc* gfade_iso_redraw;
+static IsoRedrawFunc* gfade_iso_draw;
 
 // 0x5FC4C0
 static int gfade_iso_window_handle;
@@ -27,7 +27,7 @@ bool gfade_init(GameInitInfo* init_info)
 
     gfade_iso_window_handle = init_info->iso_window_handle;
     gfade_iso_invalidate_rect = init_info->invalidate_rect_func;
-    gfade_iso_redraw = init_info->redraw_func;
+    gfade_iso_draw = init_info->draw_func;
 
     if (tig_window_vbid_get(gfade_iso_window_handle, &fade_iso_video_buffer) != TIG_OK) {
         return false;
@@ -94,7 +94,7 @@ bool gfade_timeevent_process(TimeEvent* timeevent)
 
     if ((fade_data.flags & FADE_IN) != 0) {
         gfade_iso_invalidate_rect(NULL);
-        gfade_iso_redraw();
+        gfade_iso_draw();
         tig_window_display();
         sub_4BBC00();
     }

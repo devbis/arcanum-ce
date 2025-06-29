@@ -119,8 +119,8 @@ typedef struct GameSaveEntry {
 static int game_save_entry_compare_by_date(const void* va, const void* vb);
 static int game_save_entry_compare_by_name(const void* va, const void* vb);
 static void difficulty_changed();
-static void gamelib_render_game(GameDrawInfo* draw_info);
-static void gamelib_render_editor(GameDrawInfo* draw_info);
+static void gamelib_draw_game(GameDrawInfo* draw_info);
+static void gamelib_draw_editor(GameDrawInfo* draw_info);
 static void gamelib_logo();
 static void gamelib_splash(tig_window_handle_t window_handle);
 static void sub_404A20();
@@ -235,7 +235,7 @@ static char byte_5D0B58[TIG_MAX_PATH];
 static TigRect gamelib_iso_content_rect_ex;
 
 // 0x5D0D74
-static bool in_redraw;
+static bool in_draw;
 
 // 0x5D0D78
 static int dword_5D0D78;
@@ -265,7 +265,7 @@ static char byte_5D0EA4[TIG_MAX_PATH];
 static char byte_5D0FA8[TIG_MAX_PATH];
 
 // 0x5D10AC
-static void(*gamelib_render_func)(GameDrawInfo* draw_info);
+static void(*gamelib_draw_func)(GameDrawInfo* draw_info);
 
 // 0x5D10B0
 static TigGuid stru_5D10B0;
@@ -337,7 +337,7 @@ bool gamelib_init(GameInitInfo* init_info)
     }
 
     init_info->invalidate_rect_func = gamelib_invalidate_rect;
-    init_info->redraw_func = gamelib_redraw;
+    init_info->draw_func = gamelib_draw;
 
     stru_5D0E88 = *init_info;
 
@@ -368,9 +368,9 @@ bool gamelib_init(GameInitInfo* init_info)
     }
 
     if (init_info->editor) {
-        gamelib_render_func = gamelib_render_editor;
+        gamelib_draw_func = gamelib_draw_editor;
     } else {
-        gamelib_render_func = gamelib_render_game;
+        gamelib_draw_func = gamelib_draw_game;
     }
 
     gamelib_view_options.type = VIEW_TYPE_ISOMETRIC;
@@ -810,7 +810,7 @@ void gamelib_invalidate_rect(TigRect* rect)
         dirty_rect = gamelib_iso_content_rect;
     }
 
-    if (in_redraw) {
+    if (in_draw) {
         if (gamelib_pending_dirty_rects_head != NULL) {
             sub_52D480(&gamelib_pending_dirty_rects_head, &dirty_rect);
         } else {
@@ -830,7 +830,7 @@ void gamelib_invalidate_rect(TigRect* rect)
 }
 
 // 0x402E50
-bool gamelib_redraw()
+bool gamelib_draw()
 {
     bool ret = false;
     TigRectListNode* node;
@@ -849,7 +849,7 @@ bool gamelib_redraw()
         return false;
     }
 
-    in_redraw = true;
+    in_draw = true;
 
     if (sub_4B9130(&gamelib_iso_content_rect_ex, &loc_rect)) {
         if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
@@ -862,7 +862,7 @@ bool gamelib_redraw()
         draw_info.field_8 = &v2;
         draw_info.sectors = sectors;
         draw_info.rects = &gamelib_dirty_rects_head;
-        gamelib_render_func(&draw_info);
+        gamelib_draw_func(&draw_info);
         sector_list_destroy(sectors);
 
         node = gamelib_dirty_rects_head;
@@ -885,7 +885,7 @@ bool gamelib_redraw()
         gamelib_dirty = false;
     }
 
-    in_redraw = false;
+    in_draw = false;
 
     return ret;
 }
@@ -1624,7 +1624,7 @@ void sub_4045A0()
     li_redraw();
     ci_redraw();
     gamelib_invalidate_rect(NULL);
-    gamelib_redraw();
+    gamelib_draw();
     tig_window_invalidate_rect(NULL);
 }
 
@@ -1690,7 +1690,7 @@ const char* gamelib_get_locale()
 }
 
 // 0x4046F0
-void gamelib_render_game(GameDrawInfo* draw_info)
+void gamelib_draw_game(GameDrawInfo* draw_info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
         light_draw(draw_info);
@@ -1706,7 +1706,7 @@ void gamelib_render_game(GameDrawInfo* draw_info)
 }
 
 // 0x404740
-void gamelib_render_editor(GameDrawInfo* draw_info)
+void gamelib_draw_editor(GameDrawInfo* draw_info)
 {
     TigRectListNode* node;
     tig_color_t color;

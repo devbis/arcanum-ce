@@ -55,7 +55,7 @@ static IsoInvalidateRectFunc* teleport_iso_window_invalidate_rect;
 static bool teleport_processing;
 
 // 0x601850
-static IsoRedrawFunc* teleport_iso_window_redraw;
+static IsoRedrawFunc* teleport_iso_window_draw;
 
 // 0x601858
 static TeleportData current_teleport_data;
@@ -70,7 +70,7 @@ static bool teleport_is_teleporting_pc;
 bool teleport_init(GameInitInfo* init_info)
 {
     teleport_iso_window_invalidate_rect = init_info->invalidate_rect_func;
-    teleport_iso_window_redraw = init_info->redraw_func;
+    teleport_iso_window_draw = init_info->draw_func;
     teleport_pending = false;
 
     return true;
@@ -270,7 +270,7 @@ bool teleport_process(TeleportData* teleport_data)
     if (!tig_net_is_active()) {
         if ((teleport_data->flags & TELEPORT_FADE_IN) != 0) {
             teleport_iso_window_invalidate_rect(NULL);
-            teleport_iso_window_redraw();
+            teleport_iso_window_draw();
             tig_window_display();
             gfade_run(&(teleport_data->fade_in));
         }

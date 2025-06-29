@@ -132,7 +132,7 @@ static AnimFxList script_eye_candies;
 static bool script_editor;
 
 // 0x5E2FE0
-static IsoRedrawFunc* script_iso_window_redraw;
+static IsoRedrawFunc* script_iso_window_draw;
 
 // 0x5E2FE4
 static int dword_5E2FE4;
@@ -176,7 +176,7 @@ bool script_init(GameInitInfo* init_info)
     }
 
     script_iso_invalidate_rect = init_info->invalidate_rect_func;
-    script_iso_window_redraw = init_info->redraw_func;
+    script_iso_window_draw = init_info->draw_func;
 
     if (!script_editor) {
         if (!animfx_list_init(&script_eye_candies)) {
@@ -2543,7 +2543,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
                 teleport_data.fade_in.duration = 2.0f;
                 teleport_data.fade_in.steps = 48;
                 script_iso_invalidate_rect(NULL);
-                script_iso_window_redraw();
+                script_iso_window_draw();
                 tig_window_display();
                 gfade_run(&(teleport_data.fade_in));
             }

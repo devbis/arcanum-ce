@@ -328,7 +328,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     int64_t new_origin_y;
     TigRect rect;
 
-    scroll_init_info.redraw_func();
+    scroll_init_info.draw_func();
 
     location_origin_get(&old_origin_x, &old_origin_y);
     location_origin_scroll(dx, dy);
@@ -354,7 +354,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     }
 
     if (dx != 0 && dy != 0) {
-        scroll_init_info.redraw_func();
+        scroll_init_info.draw_func();
     }
 
     if (dy < 0) {

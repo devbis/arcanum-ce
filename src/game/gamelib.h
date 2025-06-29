@@ -100,7 +100,7 @@ bool gamelib_in_reset();
 int gamelib_cheat_level_get();
 void gamelib_cheat_level_set(int level);
 void gamelib_invalidate_rect(TigRect* rect);
-bool gamelib_redraw();
+bool gamelib_draw();
 void gamelib_renderlock_acquire();
 void gamelib_renderlock_release();
 void sub_402FC0();

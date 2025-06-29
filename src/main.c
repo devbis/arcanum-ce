@@ -201,7 +201,7 @@ int main(int argc, char** argv)
 
     game_init_info.editor = false;
     game_init_info.invalidate_rect_func = iso_invalidate_rect;
-    game_init_info.redraw_func = iso_redraw;
+    game_init_info.draw_func = iso_redraw;
 
     if (!gamelib_init(&game_init_info)) {
         tig_window_destroy(game_init_info.iso_window_handle);
