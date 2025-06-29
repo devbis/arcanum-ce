@@ -440,7 +440,7 @@ bool sub_57CFB0()
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
     modal_info.x = 237;
     modal_info.y = 232;
-    modal_info.redraw = sub_4045A0;
+    modal_info.redraw = gamelib_redraw;
     hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
@@ -475,7 +475,7 @@ bool sub_57D080()
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
     modal_info.x = 237;
     modal_info.y = 232;
-    modal_info.redraw = sub_4045A0;
+    modal_info.redraw = gamelib_redraw;
     hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 
@@ -514,7 +514,7 @@ bool sub_57D150(const char* name, const char* a2)
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
     modal_info.x = 237;
     modal_info.y = 232;
-    modal_info.redraw = sub_4045A0;
+    modal_info.redraw = gamelib_redraw;
     hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 

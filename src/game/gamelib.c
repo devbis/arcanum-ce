@@ -1619,7 +1619,7 @@ int gamelib_game_difficulty_get()
 }
 
 // 0x4045A0
-void sub_4045A0()
+void gamelib_redraw()
 {
     li_redraw();
     ci_redraw();

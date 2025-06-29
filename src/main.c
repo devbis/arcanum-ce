@@ -371,7 +371,7 @@ void main_loop()
             }
 
             if (message.type == TIG_MESSAGE_REDRAW) {
-                sub_4045A0();
+                gamelib_redraw();
             }
 
             intgame_process_event(&message);

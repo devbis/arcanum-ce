@@ -1745,7 +1745,7 @@ bool mainmenu_ui_handle()
                 }
                 break;
             case TIG_MESSAGE_REDRAW:
-                sub_4045A0();
+                gamelib_redraw();
                 break;
             }
         }
@@ -1785,7 +1785,7 @@ TigWindowModalDialogChoice mainmenu_ui_confirm(int num)
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = 'y';
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = 'n';
     modal_info.process = NULL;
-    modal_info.redraw = sub_4045A0;
+    modal_info.redraw = gamelib_redraw;
     hrp_center(&(modal_info.x), &(modal_info.y));
     tig_window_modal_dialog(&modal_info, &choice);
 

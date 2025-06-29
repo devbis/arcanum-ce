@@ -686,7 +686,7 @@ bool sub_49CC70(const char* a1, const char* a2)
     modal_dialog_info.x = 237;
     modal_dialog_info.y = 232;
     modal_dialog_info.process = NULL;
-    modal_dialog_info.redraw = sub_4045A0;
+    modal_dialog_info.redraw = gamelib_redraw;
 
     mes_load("mes\\MultiPlayer.mes", &mes_file);
 
@@ -813,7 +813,7 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
     modal_dialog_info.x = 237;
     modal_dialog_info.y = 232;
     modal_dialog_info.process = NULL;
-    modal_dialog_info.redraw = sub_4045A0;
+    modal_dialog_info.redraw = gamelib_redraw;
 
     if (sub_4A40D0(0)) {
         if (!sub_4420D0(sub_4A4180(0), &(player_create_info->obj), player_create_info->loc)) {

@@ -225,7 +225,7 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
             // Clear initial message queue.
             while (tig_message_dequeue(&msg) == TIG_OK) {
                 if (msg.type == TIG_MESSAGE_REDRAW) {
-                    sub_4045A0();
+                    gamelib_redraw();
                 }
             }
 
@@ -274,7 +274,7 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
                             stop = true;
                         }
                     } else if (msg.type == TIG_MESSAGE_REDRAW) {
-                        sub_4045A0();
+                        gamelib_redraw();
                     }
                 }
 
@@ -290,7 +290,7 @@ bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
         // Clear remaining message queue.
         while (tig_message_dequeue(&msg) == TIG_OK) {
             if (msg.type == TIG_MESSAGE_REDRAW) {
-                sub_4045A0();
+                gamelib_redraw();
             }
         }
 
