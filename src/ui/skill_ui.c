@@ -161,7 +161,7 @@ void sub_579FA0(int64_t obj, int type)
         }
     }
 
-    if (intgame_mode_get() == 2) {
+    if (intgame_mode_get() == INTGAME_MODE_SKILL) {
         sub_57A1A0();
     }
 
@@ -169,7 +169,7 @@ void sub_579FA0(int64_t obj, int type)
     dword_5CB270 = type;
 
     if ((qword_5CB250[type] & 0x2000000) != 0
-        || intgame_mode_set(0)) {
+        || intgame_mode_set(INTGAME_MODE_MAIN)) {
         if (!multiplayer_is_locked()) {
             pkt.type = 30;
             sub_4440E0(pc_obj, &(pkt.field_8));
@@ -220,7 +220,7 @@ void skill_ui_preprocess(int64_t obj, int type)
     }
 
     if (is_pc && tgt != Tgt_None && tgt != Tgt_Self) {
-        if (intgame_mode_set(2)) {
+        if (intgame_mode_set(INTGAME_MODE_SKILL)) {
             sub_4F25B0(tgt);
         }
     }
@@ -229,7 +229,7 @@ void skill_ui_preprocess(int64_t obj, int type)
 // 0x57A1A0
 void sub_57A1A0()
 {
-    intgame_mode_set(0);
+    intgame_mode_set(INTGAME_MODE_MAIN);
     qword_683490 = 0;
 }
 

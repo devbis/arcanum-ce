@@ -286,11 +286,11 @@ void written_ui_start_type(WrittenType written_type, int num)
         return;
     }
 
-    if (!intgame_mode_set(0)) {
+    if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
         return;
     }
 
-    if (!intgame_mode_set(15)) {
+    if (!intgame_mode_set(INTGAME_MODE_WRITTEN)) {
         return;
     }
 
@@ -307,7 +307,7 @@ void written_ui_close()
         return;
     }
 
-    if (!intgame_mode_set(0)) {
+    if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
         return;
     }
 

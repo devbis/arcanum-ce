@@ -914,7 +914,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     }
 
     pc_obj = player_get_local_pc_obj();
-    if (critter_is_dead(pc_obj) || !intgame_mode_set(0) || !intgame_mode_set(9)) {
+    if (critter_is_dead(pc_obj) || !intgame_mode_set(INTGAME_MODE_MAIN) || !intgame_mode_set(INTGAME_MODE_CHAREDIT)) {
         return false;
     }
 
@@ -1220,7 +1220,7 @@ void charedit_close()
         tig_window_hide(dword_64CA60);
         charedit_obj = OBJ_HANDLE_NULL;
         sub_551160();
-        intgame_mode_set(0);
+        intgame_mode_set(INTGAME_MODE_MAIN);
         sub_55EFB0();
         if (dword_64E02C) {
             combat_auto_attack_set(true);

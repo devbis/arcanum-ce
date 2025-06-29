@@ -344,12 +344,12 @@ void sleep_ui_toggle(int64_t bed_obj)
     halt = true;
     do {
         // TODO: Unclear.
-        if (!intgame_mode_set(0)) {
+        if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
             break;
         }
 
         // TODO: Unclear.
-        if (!intgame_mode_set(6)) {
+        if (!intgame_mode_set(INTGAME_MODE_SLEEP)) {
             break;
         }
 
@@ -393,7 +393,7 @@ void sleep_ui_close()
         return;
     }
 
-    if (intgame_mode_set(0)) {
+    if (intgame_mode_set(INTGAME_MODE_MAIN)) {
         timeevent_clear_all_typed(TIMEEVENT_TYPE_SLEEPING);
         sleep_ui_wake_up();
         sleep_ui_destroy();

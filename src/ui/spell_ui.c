@@ -158,7 +158,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
         return SPELL_UI_ACTIVATE_ERR;
     }
 
-    if (intgame_mode_get() == 1) {
+    if (intgame_mode_get() == INTGAME_MODE_SPELL) {
         spell_ui_cancel();
     }
 
@@ -180,7 +180,8 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     }
 
     if ((tgt & (Tgt_Obj_Inven & ~Tgt_Object)) != 0) {
-        if (intgame_mode_get() == 4 || intgame_mode_get() == 11) {
+        if (intgame_mode_get() == INTGAME_MODE_BARTER
+            || intgame_mode_get() == INTGAME_MODE_STEAL) {
             inven_ui_destroy();
         }
 
@@ -190,7 +191,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
             inven_ui_open(qword_6834F8, OBJ_HANDLE_NULL, INVEN_UI_MODE_INVENTORY);
         }
     } else {
-        if (!intgame_mode_set(0)) {
+        if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
             dword_683508 = false;
             return SPELL_UI_ACTIVATE_ERR;
         }
@@ -213,7 +214,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
     }
 
     sub_4F25B0(tgt);
-    if (intgame_mode_set(1)) {
+    if (intgame_mode_set(INTGAME_MODE_SPELL)) {
         sub_4F25B0(tgt);
         dword_68350C = sub_500560();
         if (!dword_68350C) {
@@ -249,7 +250,7 @@ void spell_ui_cancel()
         sub_500570();
     }
 
-    intgame_mode_set(0);
+    intgame_mode_set(INTGAME_MODE_MAIN);
 
     if (!dword_683508) {
         dword_5CB3A0 = 10000;

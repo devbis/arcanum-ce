@@ -329,11 +329,11 @@ void logbook_ui_open(int64_t obj)
         return;
     }
 
-    if (!intgame_mode_set(0)) {
+    if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
         return;
     }
 
-    if (!intgame_mode_set(7)) {
+    if (!intgame_mode_set(INTGAME_MODE_LOGBOOK)) {
         return;
     }
 
@@ -345,7 +345,7 @@ void logbook_ui_open(int64_t obj)
 void logbook_ui_close()
 {
     if (logbook_ui_created
-        && intgame_mode_set(0)) {
+        && intgame_mode_set(INTGAME_MODE_MAIN)) {
         logbook_ui_destroy();
         logbook_ui_obj = OBJ_HANDLE_NULL;
     }

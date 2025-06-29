@@ -84,7 +84,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
         return;
     }
 
-    if (intgame_mode_get() == 16) {
+    if (intgame_mode_get() == INTGAME_MODE_ITEM) {
         item_ui_deactivate();
     }
 
@@ -95,7 +95,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
     if ((*tgt_ptr & (Tgt_Obj_Inven & ~Tgt_Object)) == 0) {
         inven_ui_destroy();
 
-        if (!intgame_mode_set(0)) {
+        if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
             return;
         }
     }
@@ -112,7 +112,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
 
     if (sub_4B7790(owner_obj, 4)) {
         sub_4F25B0(*tgt_ptr);
-        if (intgame_mode_set(16)) {
+        if (intgame_mode_set(INTGAME_MODE_ITEM)) {
             sub_4F25B0(*tgt_ptr);
             if (obj_field_int32_get(qword_6810D8, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) < 0) {
                 sub_553A60(620);
@@ -131,7 +131,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
 // 0x571C80
 void item_ui_deactivate()
 {
-    intgame_mode_set(0);
+    intgame_mode_set(INTGAME_MODE_MAIN);
     qword_6810D8 = OBJ_HANDLE_NULL;
     sub_553A60(21);
 }

@@ -26,6 +26,31 @@ typedef enum IntgameBar {
     INTGAME_BAR_COUNT,
 } IntgameBar;
 
+typedef enum IntgameMode {
+    INTGAME_MODE_MAIN,
+    INTGAME_MODE_SPELL,
+    INTGAME_MODE_SKILL,
+    INTGAME_MODE_DIALOG,
+    INTGAME_MODE_BARTER,
+    INTGAME_MODE_WMAP,
+    INTGAME_MODE_SLEEP,
+    INTGAME_MODE_LOGBOOK,
+    INTGAME_MODE_INVEN,
+    INTGAME_MODE_CHAREDIT,
+    INTGAME_MODE_LOOT,
+    INTGAME_MODE_STEAL,
+    INTGAME_MODE_12,
+    INTGAME_MODE_QUANTITY,
+    INTGAME_MODE_SCHEMATIC,
+    INTGAME_MODE_WRITTEN,
+    INTGAME_MODE_ITEM,
+    INTGAME_MODE_17,
+    INTGAME_MODE_FOLLOWER,
+    INTGAME_MODE_NPC_IDENTIFY,
+    INTGAME_MODE_NPC_REPAIR,
+    INTGAME_MODE_COUNT,
+} IntgameMode;
+
 extern tig_font_handle_t intgame_morph15_white_font;
 
 bool intgame_init(GameInitInfo* init_info);
@@ -66,9 +91,9 @@ void intgame_pc_lens_redraw();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
 bool intgame_get_location_under_cursor(int64_t* loc_ptr);
-int intgame_mode_get();
-bool intgame_mode_set(int mode);
-bool intgame_mode_supports_scrolling(int mode);
+IntgameMode intgame_mode_get();
+bool intgame_mode_set(IntgameMode mode);
+bool intgame_mode_supports_scrolling(IntgameMode mode);
 int sub_552070();
 void sub_552080(int window_type);
 void intgame_text_edit_refresh(const char* str, tig_font_handle_t font);

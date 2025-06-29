@@ -575,7 +575,7 @@ void follower_ui_begin_order_mode(int cmd)
 {
     uint64_t tgt;
 
-    intgame_mode_set(18);
+    intgame_mode_set(INTGAME_MODE_FOLLOWER);
 
     if (cmd == FOLLOWER_UI_COMMAND_WALK) {
         tgt = Tgt_Tile;
@@ -623,7 +623,7 @@ void follower_ui_execute_order(S4F2810* a1)
 // 0x56B280
 void follower_ui_end_order_mode()
 {
-    intgame_mode_set(0);
+    intgame_mode_set(INTGAME_MODE_MAIN);
 }
 
 // 0x56B290

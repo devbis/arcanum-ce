@@ -1190,11 +1190,11 @@ void wmap_ui_open_internal()
         return;
     }
 
-    if (!intgame_mode_set(0)) {
+    if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
         return;
     }
 
-    if (!intgame_mode_set(5)) {
+    if (!intgame_mode_set(INTGAME_MODE_WMAP)) {
         return;
     }
 
@@ -1202,7 +1202,7 @@ void wmap_ui_open_internal()
 
     if (!wmap_ui_create()) {
         wmap_ui_close();
-        intgame_mode_set(0);
+        intgame_mode_set(INTGAME_MODE_MAIN);
 
         if (dword_66D9C8) {
             sub_452650(pc_obj);

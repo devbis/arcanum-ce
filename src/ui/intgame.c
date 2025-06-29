@@ -642,29 +642,28 @@ static TigRect stru_5C7158 = { 217, 63, 364, 78 };
 static TigRect stru_5C7168 = { 217, 87, 364, 54 };
 
 // 0x5C7178
-static int dword_5C7178[22] = {
-    -1,
-    21,
-    352,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    21,
-    0,
-    -1,
-    0,
-    0,
-    0,
+static int dword_5C7178[INTGAME_MODE_COUNT] = {
+    /*         INTGAME_MODE_MAIN */ -1,
+    /*        INTGAME_MODE_SPELL */ 21,
+    /*        INTGAME_MODE_SKILL */ 352,
+    /*       INTGAME_MODE_DIALOG */ 0,
+    /*       INTGAME_MODE_BARTER */ 0,
+    /*         INTGAME_MODE_WMAP */ 0,
+    /*        INTGAME_MODE_SLEEP */ 0,
+    /*      INTGAME_MODE_LOGBOOK */ 0,
+    /*        INTGAME_MODE_INVEN */ 0,
+    /*     INTGAME_MODE_CHAREDIT */ 0,
+    /*         INTGAME_MODE_LOOT */ 0,
+    /*        INTGAME_MODE_STEAL */ 0,
+    /*           INTGAME_MODE_12 */ 0,
+    /*     INTGAME_MODE_QUANTITY */ 0,
+    /*    INTGAME_MODE_SCHEMATIC */ 0,
+    /*      INTGAME_MODE_WRITTEN */ 0,
+    /*         INTGAME_MODE_ITEM */ 21,
+    /*           INTGAME_MODE_17 */ 0,
+    /*     INTGAME_MODE_FOLLOWER */ -1,
+    /* INTGAME_MODE_NPC_IDENTIFY */ 0,
+    /*   INTGAME_MODE_NPC_REPAIR */ 0,
 };
 
 // 0x5C71D0
@@ -707,28 +706,28 @@ static int dword_5C728C[] = {
 static int dword_5C72B0 = 1;
 
 // 0x5C72B4
-static bool intgame_mode_scrolling[] = {
-    true,
-    true,
-    true,
-    true,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    true,
-    false,
-    true,
-    false,
-    false,
+static bool intgame_mode_scrolling[INTGAME_MODE_COUNT] = {
+    /*         INTGAME_MODE_MAIN */ true,
+    /*        INTGAME_MODE_SPELL */ true,
+    /*        INTGAME_MODE_SKILL */ true,
+    /*       INTGAME_MODE_DIALOG */ true,
+    /*       INTGAME_MODE_BARTER */ false,
+    /*         INTGAME_MODE_WMAP */ true,
+    /*        INTGAME_MODE_SLEEP */ false,
+    /*      INTGAME_MODE_LOGBOOK */ false,
+    /*        INTGAME_MODE_INVEN */ false,
+    /*     INTGAME_MODE_CHAREDIT */ false,
+    /*         INTGAME_MODE_LOOT */ false,
+    /*        INTGAME_MODE_STEAL */ false,
+    /*           INTGAME_MODE_12 */ false,
+    /*     INTGAME_MODE_QUANTITY */ false,
+    /*    INTGAME_MODE_SCHEMATIC */ false,
+    /*      INTGAME_MODE_WRITTEN */ false,
+    /*         INTGAME_MODE_ITEM */ true,
+    /*           INTGAME_MODE_17 */ false,
+    /*     INTGAME_MODE_FOLLOWER */ true,
+    /* INTGAME_MODE_NPC_IDENTIFY */ false,
+    /*   INTGAME_MODE_NPC_REPAIR */ false,
 };
 
 // 0x5C7308
@@ -863,7 +862,7 @@ static UiMessage stru_64C540[10];
 static bool intgame_big_window_locked;
 
 // 0x64C634
-static int dword_64C634[11];
+static IntgameMode dword_64C634[11];
 
 // 0x64C660
 static TigRect intgame_pc_lens_rect;
@@ -1280,7 +1279,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     intgame_mt_button_disable();
 
     dword_64C6B8 = 0;
-    dword_64C634[0] = 0;
+    dword_64C634[0] = INTGAME_MODE_MAIN;
     sub_4F25B0(Tgt_Obj_No_T_Wall | Tgt_Tile);
     intgame_pc_lens_mode = 0;
 
@@ -1393,7 +1392,7 @@ void iso_interface_destroy()
 void sub_54AA30()
 {
     dword_64C6B8 = 0;
-    dword_64C634[0] = 0;
+    dword_64C634[0] = INTGAME_MODE_MAIN;
     dword_64C6C0 = 0;
     dword_64C6C4 = 0;
     dword_64C6C8 = 0;
@@ -1898,19 +1897,19 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             switch (intgame_mode_get()) {
-            case 5:
-            case 7:
-            case 9:
-            case 14:
-            case 15:
+            case INTGAME_MODE_WMAP:
+            case INTGAME_MODE_LOGBOOK:
+            case INTGAME_MODE_CHAREDIT:
+            case INTGAME_MODE_SCHEMATIC:
+            case INTGAME_MODE_WRITTEN:
                 if (tig_window_data(dword_64C52C, &window_data) == TIG_OK) {
                     if (msg->data.mouse.x < window_data.rect.x
                         || msg->data.mouse.x - window_data.rect.x > window_data.rect.width) {
-                        intgame_mode_set(0);
+                        intgame_mode_set(INTGAME_MODE_MAIN);
                     }
                     if (msg->data.mouse.y < window_data.rect.y
                         || msg->data.mouse.y - window_data.rect.y > window_data.rect.height) {
-                        intgame_mode_set(0);
+                        intgame_mode_set(INTGAME_MODE_MAIN);
                     }
                 }
                 break;
@@ -2078,12 +2077,12 @@ bool sub_54B5D0(TigMessage* msg)
 
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_OK].button_handle) {
                     sub_578B80(intgame_quantity);
-                    intgame_mode_set(0);
+                    intgame_mode_set(INTGAME_MODE_MAIN);
                     return true;
                 }
 
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_CANCEL].button_handle) {
-                    intgame_mode_set(0);
+                    intgame_mode_set(INTGAME_MODE_MAIN);
                     return true;
                 }
                 break;
@@ -2469,7 +2468,7 @@ bool sub_54B5D0(TigMessage* msg)
         if (msg->data.character.ch == SDLK_RETURN) {
             if (intgame_iso_window_type == 9) {
                 sub_578B80(intgame_quantity);
-                intgame_mode_set(0);
+                intgame_mode_set(INTGAME_MODE_MAIN);
                 v2 = true;
             } else if (!sub_541680()) {
                 broadcast_ui_open();
@@ -2643,7 +2642,7 @@ void intgame_process_event(TigMessage* msg)
     }
 
     switch (intgame_mode_get()) {
-    case 0:
+    case INTGAME_MODE_MAIN:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -2781,7 +2780,7 @@ void intgame_process_event(TigMessage* msg)
             break;
         }
         return;
-    case 1:
+    case INTGAME_MODE_SPELL:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -2847,7 +2846,7 @@ void intgame_process_event(TigMessage* msg)
             break;
         }
         return;
-    case 2:
+    case INTGAME_MODE_SKILL:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -2862,7 +2861,7 @@ void intgame_process_event(TigMessage* msg)
             }
         }
         return;
-    case 3:
+    case INTGAME_MODE_DIALOG:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -2908,7 +2907,7 @@ void intgame_process_event(TigMessage* msg)
             break;
         }
         return;
-    case 16:
+    case INTGAME_MODE_ITEM:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -2939,7 +2938,7 @@ void intgame_process_event(TigMessage* msg)
             break;
         }
         return;
-    case 18:
+    case INTGAME_MODE_FOLLOWER:
         switch (msg->type) {
         case TIG_MESSAGE_MOUSE:
             switch (msg->data.mouse.event) {
@@ -3005,17 +3004,17 @@ void sub_54EA80(S4F2810* a1)
         v1.field_10 = a1;
 
         switch (intgame_mode_get()) {
-        case 1:
+        case INTGAME_MODE_SPELL:
             if (sub_4F2680(&v1)) {
                 spell_ui_apply(a1);
             }
             break;
-        case 2:
+        case INTGAME_MODE_SKILL:
             if (sub_4F2680(&v1)) {
                 sub_57A1F0(a1);
             }
             break;
-        case 16:
+        case INTGAME_MODE_ITEM:
             if (sub_4F2680(&v1)) {
                 item_ui_apply(a1);
             }
@@ -3610,7 +3609,7 @@ void sub_54FCF0(Hotkey* hotkey)
 
     switch (hotkey->type) {
     case HOTKEY_ITEM:
-        intgame_mode_set(0);
+        intgame_mode_set(INTGAME_MODE_MAIN);
         sub_444130(&(hotkey->item_obj));
         if (obj_field_handle_get(hotkey->item_obj.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
             v2 = hotkey->item_obj.obj;
@@ -3926,7 +3925,7 @@ void sub_5506C0(int window_type)
 {
     broadcast_ui_close();
     if (intgame_iso_window_type == 9) {
-        intgame_mode_set(0);
+        intgame_mode_set(INTGAME_MODE_MAIN);
     }
 
     dword_5C6F78 = 6;
@@ -4708,7 +4707,7 @@ void sub_551910(TigMessage* msg)
             } else if (combat_turn_based_is_active()
                 && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
                 && v1.is_loc
-                && intgame_mode_get() == 0) {
+                && intgame_mode_get() == INTGAME_MODE_MAIN) {
                 sub_4B7830(player_get_local_pc_obj(), v1.loc);
             }
         }
@@ -4716,7 +4715,7 @@ void sub_551910(TigMessage* msg)
 }
 
 // 0x551A00
-int intgame_mode_get()
+IntgameMode intgame_mode_get()
 {
     return dword_64C634[dword_64C6B8];
 }
@@ -4739,11 +4738,11 @@ void sub_551A10(int64_t obj)
 }
 
 // 0x551A80
-bool intgame_mode_set(int mode)
+bool intgame_mode_set(IntgameMode mode)
 {
     int64_t pc_obj;
     int64_t obj;
-    int v19;
+    IntgameMode prev_mode;
     bool v1 = false;
     bool v2 = false;
     bool v17 = false;
@@ -4756,9 +4755,9 @@ bool intgame_mode_set(int mode)
     while (1) {
         dword_64C6E8 = true;
         pc_obj = player_get_local_pc_obj();
-        v19 = dword_64C634[dword_64C6B8];
+        prev_mode = dword_64C634[dword_64C6B8];
 
-        if (mode != 0) {
+        if (mode != INTGAME_MODE_MAIN) {
             dword_64C6B8++;
             v18 = true;
         } else {
@@ -4771,25 +4770,25 @@ bool intgame_mode_set(int mode)
             }
         }
 
-        switch (v19) {
-        case 0:
-        case 18:
+        switch (prev_mode) {
+        case INTGAME_MODE_MAIN:
+        case INTGAME_MODE_FOLLOWER:
             v1 = true;
             sub_4F25B0(Tgt_Tile | Tgt_Obj_No_T_Wall);
             break;
-        case 1:
+        case INTGAME_MODE_SPELL:
             v1 = true;
             v17 = true;
             spell_ui_cancel();
             sub_4B7AA0(player_get_local_pc_obj());
             break;
-        case 2:
+        case INTGAME_MODE_SKILL:
             v1 = true;
             v17 = true;
             sub_57A1A0();
             sub_4B7AE0(player_get_local_pc_obj());
             break;
-        case 3:
+        case INTGAME_MODE_DIALOG:
             sub_551A10(pc_obj);
             v1 = 1;
             if (v2) {
@@ -4798,16 +4797,16 @@ bool intgame_mode_set(int mode)
                 sub_567A20(player_get_local_pc_obj());
             }
             break;
-        case 4:
-            if (mode != 13) {
+        case INTGAME_MODE_BARTER:
+            if (mode != INTGAME_MODE_QUANTITY) {
                 inven_ui_destroy();
             }
             v1 = true;
-            if (mode != 13) {
+            if (mode != INTGAME_MODE_QUANTITY) {
                 intgame_unforce_fullscreen();
             }
             break;
-        case 5:
+        case INTGAME_MODE_WMAP:
             v1 = true;
             wmap_ui_close();
             if (intgame_iso_window_type == 6) {
@@ -4816,21 +4815,21 @@ bool intgame_mode_set(int mode)
             scroll_set_scroll_func(NULL);
             intgame_unforce_fullscreen();
             break;
-        case 6:
+        case INTGAME_MODE_SLEEP:
             v1 = true;
             sleep_ui_close();
             break;
-        case 7:
+        case INTGAME_MODE_LOGBOOK:
             v1 = true;
             logbook_ui_close();
             intgame_unforce_fullscreen();
             break;
-        case 8:
+        case INTGAME_MODE_INVEN:
             switch (mode) {
-            case 1:
-            case 2:
-            case 13:
-            case 16:
+            case INTGAME_MODE_SPELL:
+            case INTGAME_MODE_SKILL:
+            case INTGAME_MODE_QUANTITY:
+            case INTGAME_MODE_ITEM:
                 v1 = true;
                 break;
             default:
@@ -4839,32 +4838,31 @@ bool intgame_mode_set(int mode)
                 break;
             }
 
-            if (mode != 13) {
+            if (mode != INTGAME_MODE_QUANTITY) {
                 intgame_unforce_fullscreen();
             }
             break;
-        case 9:
+        case INTGAME_MODE_CHAREDIT:
             v1 = true;
             charedit_close();
             intgame_unforce_fullscreen();
             break;
-        case 10:
-            if (mode == 1
-                || mode == 2) {
-                if (mode != 13) {
+        case INTGAME_MODE_LOOT:
+            if (mode == INTGAME_MODE_SPELL || mode == INTGAME_MODE_SKILL) {
+                if (mode != INTGAME_MODE_QUANTITY) {
                     intgame_unforce_fullscreen();
                 }
-            } else if (mode != 13) {
+            } else if (mode != INTGAME_MODE_QUANTITY) {
                 inven_ui_destroy();
             }
             break;
-        case 11:
-            if (mode != 13) {
+        case INTGAME_MODE_STEAL:
+            if (mode != INTGAME_MODE_QUANTITY) {
                 inven_ui_destroy();
                 intgame_unforce_fullscreen();
             }
             break;
-        case 13:
+        case INTGAME_MODE_QUANTITY:
             sub_5506C0(0);
             obj = sub_579760();
             if (tig_net_is_active()) {
@@ -4879,26 +4877,26 @@ bool intgame_mode_set(int mode)
 
             inven_ui_update(OBJ_HANDLE_NULL);
             break;
-        case 14:
+        case INTGAME_MODE_SCHEMATIC:
             v1 = true;
             schematic_ui_close();
             intgame_unforce_fullscreen();
             break;
-        case 15:
+        case INTGAME_MODE_WRITTEN:
             v1 = true;
             written_ui_close();
             intgame_unforce_fullscreen();
             break;
-        case 16:
+        case INTGAME_MODE_ITEM:
             item_ui_deactivate();
             if (sub_573620()) {
                 sub_575770();
                 intgame_refresh_cursor();
             }
             break;
-        case 19:
-        case 20:
-            if (mode != 13) {
+        case INTGAME_MODE_NPC_IDENTIFY:
+        case INTGAME_MODE_NPC_REPAIR:
+            if (mode != INTGAME_MODE_QUANTITY) {
                 inven_ui_destroy();
             }
             v1 = true;
@@ -4907,34 +4905,34 @@ bool intgame_mode_set(int mode)
         }
 
         switch (mode) {
-        case 0:
-        case 1:
-        case 2:
+        case INTGAME_MODE_MAIN:
+        case INTGAME_MODE_SPELL:
+        case INTGAME_MODE_SKILL:
             sub_5517F0();
             break;
-        case 3:
+        case INTGAME_MODE_DIALOG:
             compact_ui_message_window_hide();
             if (!v18) {
                 sub_567A60(player_get_local_pc_obj());
             }
             break;
-        case 4:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 14:
-        case 15:
-        case 19:
-        case 20:
+        case INTGAME_MODE_BARTER:
+        case INTGAME_MODE_LOGBOOK:
+        case INTGAME_MODE_INVEN:
+        case INTGAME_MODE_CHAREDIT:
+        case INTGAME_MODE_LOOT:
+        case INTGAME_MODE_STEAL:
+        case INTGAME_MODE_SCHEMATIC:
+        case INTGAME_MODE_WRITTEN:
+        case INTGAME_MODE_NPC_IDENTIFY:
+        case INTGAME_MODE_NPC_REPAIR:
             intgame_force_fullscreen();
             break;
-        case 5:
+        case INTGAME_MODE_WMAP:
             intgame_force_fullscreen();
             scroll_set_scroll_func(wmap_ui_scroll);
             break;
-        case 13:
+        case INTGAME_MODE_QUANTITY:
             obj = sub_579760();
             if (tig_net_is_active()) {
                 mp_item_flags_set(obj, OIF_NO_DISPLAY);
@@ -4993,7 +4991,7 @@ void intgame_unforce_fullscreen()
 }
 
 // 0x551F70
-bool intgame_mode_supports_scrolling(int mode)
+bool intgame_mode_supports_scrolling(IntgameMode mode)
 {
     return intgame_mode_scrolling[mode];
 }
@@ -5005,7 +5003,7 @@ void sub_551F80()
 
     pc_obj = player_get_local_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL) {
-        if (intgame_mode_get()) {
+        if (intgame_mode_get() != INTGAME_MODE_MAIN) {
             qword_5C7280 = Tgt_Object;
             return;
         }
@@ -5763,8 +5761,8 @@ bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
 {
     dword_64C6CC = func;
     tc_show();
-    intgame_mode_set(0);
-    intgame_mode_set(3);
+    intgame_mode_set(INTGAME_MODE_MAIN);
+    intgame_mode_set(INTGAME_MODE_DIALOG);
 
     return true;
 }
@@ -5774,7 +5772,7 @@ void intgame_dialog_end()
 {
     dword_64C6CC = NULL;
     tc_hide();
-    intgame_mode_set(0);
+    intgame_mode_set(INTGAME_MODE_MAIN);
 }
 
 // 0x553370
@@ -6064,7 +6062,7 @@ void intgame_refresh_cursor()
 // 0x553A60
 void sub_553A60(int art_num)
 {
-    dword_5C7178[16] = art_num;
+    dword_5C7178[INTGAME_MODE_ITEM] = art_num;
 }
 
 // 0x553A70
@@ -8106,7 +8104,7 @@ void sub_557370(int64_t a1, int64_t a2)
     // NOTE: The code below omit some unused checks from the original code. I'm
     // not sure if it's a bug or not.
     switch (intgame_mode_get()) {
-    case 0:
+    case INTGAME_MODE_MAIN:
         if (sub_573620() == OBJ_HANDLE_NULL) {
             switch (obj_type) {
             case OBJ_TYPE_WALL:
@@ -8161,10 +8159,10 @@ void sub_557370(int64_t a1, int64_t a2)
             }
         }
         break;
-    case 1:
+    case INTGAME_MODE_SPELL:
         sub_4B7AA0(a1);
         break;
-    case 2:
+    case INTGAME_MODE_SKILL:
         sub_4B7AE0(a1);
         break;
     }
