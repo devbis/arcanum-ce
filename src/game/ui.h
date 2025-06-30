@@ -21,6 +21,7 @@ typedef enum UiMessageType {
     UI_MSG_TYPE_DEGREE,
     UI_MSG_TYPE_STAT,
     UI_MSG_TYPE_SCHEMATIC,
+    UI_MSG_TYPE_COUNT,
 } UiMessageType;
 
 typedef struct UiMessage {
