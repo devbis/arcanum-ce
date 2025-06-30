@@ -15,9 +15,26 @@
 #include "ui/intgame.h"
 #include "ui/types.h"
 
+/**
+ * The maximum number of lines in the written message file representing one
+ * logical piece of text.
+ */
 #define TEN 10
 
-#define HUNDRED 100
+/**
+ * The maximum number of pages in the book.
+ */
+#define MAX_BOOK_PAGES 100
+
+/**
+ * The number of columns in the newspaper.
+ */
+#define MAX_NEWSPAPER_COLUMNS 5
+
+/**
+ * The first number of the filler article.
+ */
+#define FIRST_FILLER_ARTICLE 10
 
 typedef enum WrittenMes {
     WRITTEN_MES_BOOK,
@@ -60,13 +77,28 @@ static void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, ch
 static void written_ui_draw_book_side(int side, int* num_ptr, int* offset_ptr);
 static int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr);
 
-// 0x5CA478
+/**
+ * 0x5CA478
+ */
 static tig_window_handle_t written_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
-// 0x5CA480
-static TigRect written_ui_background_frame = { 0, 41, 800, 399 };
+/**
+ * Defines the frame of the written UI window (in the original screen
+ * coordinate system, that is 800x600).
+ *
+ * FIX: The height was 399, creating a 1px gap between written UI and interface
+ * bar. Besides all background images are 668x400 (accompanied by 132x400
+ * sidebar).
+ *
+ * 0x5CA480
+ */
+static TigRect written_ui_frame = { 0, 41, 800, 400 };
 
-// 0x5CA490
+/**
+ * Defines message file names.
+ *
+ * 0x5CA490
+ */
 static const char* written_ui_mes_file_names[WRITTEN_MES_COUNT] = {
     /*      WRITTEN_MES_BOOK */ "mes\\gamebook.mes",
     /*      WRITTEN_MES_NOTE */ "mes\\gamenote.mes",
@@ -75,11 +107,19 @@ static const char* written_ui_mes_file_names[WRITTEN_MES_COUNT] = {
     /*    WRITTEN_MES_PLAQUE */ "mes\\gameplaque.mes",
 };
 
-// 0x5CA4A8
-static TigRect stru_5CA4A8 = { 25, 24, 89, 89 };
+/**
+ * Defines a rect where PC lens is located in the written UI.
+ *
+ * 0x5CA4A8
+ */
+static TigRect written_ui_lens_rect = { 25, 24, 89, 89 };
 
-// 0x5CA4B8
-static int dword_5CA4B8[WRITTEN_TYPE_COUNT] = {
+/**
+ * Defines art numbers of the background images for appropriate UI types.
+ *
+ * 0x5CA4B8
+ */
+static int written_ui_backgrounds[WRITTEN_TYPE_COUNT] = {
     /*      WRITTEN_TYPE_BOOK */ 477, // "bookbackground.art"
     /*      WRITTEN_TYPE_NOTE */ 489, // "notebackground.art"
     /* WRITTEN_TYPE_NEWSPAPER */ 487, // "newsbackground.art"
@@ -89,25 +129,61 @@ static int dword_5CA4B8[WRITTEN_TYPE_COUNT] = {
     /*    WRITTEN_TYPE_PLAQUE */ 633, // "stone_plaque.art"
 };
 
-// 0x5CA4D8
+/**
+ * Book prev/next buttons.
+ *
+ * 0x5CA4D8
+ */
 static UiButtonInfo written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_COUNT] = {
     /* WRITTEN_UI_BOOK_BUTTON_PREV */ { 213, 77, 495, TIG_BUTTON_HANDLE_INVALID },
     /* WRITTEN_UI_BOOK_BUTTON_NEXT */ { 675, 77, 496, TIG_BUTTON_HANDLE_INVALID },
 };
 
-// 0x5CA4F8
+/**
+ * Defines note content frame (in written UI coordinate system).
+ *
+ * 0x5CA4F8
+ */
 static TigRect written_ui_note_content_rect = { 349, 49, 215, 300 };
 
-// 0x5CA508
+/**
+ * Defines telegram content frame (in written UI coordinate system).
+ *
+ * This rect contains actual telegram text.
+ *
+ * 0x5CA508
+ */
 static TigRect written_ui_telegram_content_rect = { 327, 126, 250, 240 };
 
-// 0x5CA518
+/**
+ * Defines telegram disclaimer frame (in written UI coordinate system).
+ *
+ * The disclaimer text is message number 1011 ("NO RESPONSIBILITY is assumed
+ * by this Company...").
+ *
+ * 0x5CA518
+ */
 static TigRect written_ui_telegram_disclaimer_rect = { 335, 90, 234, 20 };
 
-// 0x5CA528
+/**
+ * Defines plaque content frame (in written UI coordinate system).
+ *
+ * 0x5CA528
+ */
 static TigRect written_ui_plaque_content_rect = { 269, 40, 428, 327 };
 
-// 0x5CA538
+/**
+ * Defines telegram elements.
+ *
+ * The telegram elements are "headers" on the telegram card. They don't have
+ * any special meaning. Their purpose is simply to give the appearance of a
+ * real-world telegram.
+ *
+ * The location of elements is arranged with the telegram background image and
+ * should not be changed.
+ *
+ * 0x5CA538
+ */
 static WrittenUiElement written_ui_telegram_elements[] = {
     { 481, 1000, 342, 35, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 481, 1001, 342, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
@@ -122,13 +198,28 @@ static WrittenUiElement written_ui_telegram_elements[] = {
     { 481, 1010, 539, 69, WRITTEN_TEXT_ALIGNMENT_LEFT },
 };
 
-// 0x5CA618
+/**
+ * Defines book page (left and right) content frames (in written UI coordinate
+ * system).
+ *
+ * 0x5CA618
+ */
 static TigRect written_ui_book_content_rects[2] = {
     { 227, 57, 200, 290 },
     { 476, 57, 200, 290 },
 };
 
-// 0x5CA638
+/**
+ * Defines "The Tarantian" newspaper elements.
+ *
+ * Just like the other elements, these don't have any special meaining. Their
+ * purpose is simply to give the appearance of a real-world newspaper.
+ *
+ * The location of elements is arranged with the newspaper background image and
+ * should not be changed.
+ *
+ * 0x5CA638
+ */
 static WrittenUiElement written_ui_newspaper_tarantian_elements[] = {
     { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 484, 1, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
@@ -138,7 +229,17 @@ static WrittenUiElement written_ui_newspaper_tarantian_elements[] = {
     { 482, 2, 712, 76, WRITTEN_TEXT_ALIGNMENT_RIGHT },
 };
 
-// 0x5CA6B0
+/**
+ * Defines "The Vendigroth Times" newspaper elements.
+ *
+ * Just like the other elements, these don't have any special meaining. Their
+ * purpose is simply to give the appearance of a real-world newspaper.
+ *
+ * The location of elements is arranged with the newspaper background image and
+ * should not be changed.
+ *
+ * 0x5CA6B0
+ */
 static WrittenUiElement written_ui_vendigroth_times_elements[] = {
     { 485, 0, 216, 44, WRITTEN_TEXT_ALIGNMENT_CENTER },
     { 815, 4, 453, 41, WRITTEN_TEXT_ALIGNMENT_CENTER },
@@ -148,8 +249,18 @@ static WrittenUiElement written_ui_vendigroth_times_elements[] = {
     { 482, 2, 712, 76, WRITTEN_TEXT_ALIGNMENT_RIGHT },
 };
 
-// 0x5CA728
-static TigRect written_ui_newspaper_content_rects[5] = {
+/**
+ * Defines newspaper content frames.
+ *
+ * The rect at index 0 represents the newspaper headline. The remaining indexes
+ * are newspaper columns.
+ *
+ * The each content rect is arranged with the newspaper background image and
+ * should not be changed.
+ *
+ * 0x5CA728
+ */
+static TigRect written_ui_newspaper_content_rects[MAX_NEWSPAPER_COLUMNS] = {
     { 186, 97, 255, 90 },
     { 188, 196, 120, 175 },
     { 328, 196, 120, 175 },
@@ -157,46 +268,107 @@ static TigRect written_ui_newspaper_content_rects[5] = {
     { 592, 103, 120, 270 },
 };
 
-// 0x67BC68
+/**
+ * The number of filler articles for the newspapers.
+ *
+ * 0x67BC68
+ */
 static int written_ui_num_filler_newspaper_articles;
 
-// 0x67BC6C
+/**
+ * Current message number for the written UI.
+ *
+ * 0x67BC6C
+ */
 static int written_ui_num;
 
-// 0x67BC70
-static int written_ui_book_contents[HUNDRED];
+/**
+ * Array of book content message number (per page).
+ *
+ * 0x67BC70
+ */
+static int written_ui_book_contents[MAX_BOOK_PAGES];
 
-// 0x67BE00
+/**
+ * Buffer for storing concatenated text content.
+ *
+ * This buffer is only used for notes and telegrams. The maximum number of lines
+ * of notes and telegrams is 10, hence the size.
+ *
+ * 0x67BE00
+ */
 static char written_ui_text[TEN * MAX_STRING];
 
-// 0x680C20
-static int written_ui_book_offsets[HUNDRED];
+/**
+ * Array of text offsets for book pages.
+ *
+ * 0x680C20
+ */
+static int written_ui_book_offsets[MAX_BOOK_PAGES];
 
-// 0x680DB0
+/**
+ * Flag indicating if the newspaper is "The Vendigroth Times".
+ *
+ * When this flag is set, the written UI type is guaranteed to be
+ * `WRITTEN_TYPE_NEWSPAPER`.
+ *
+ * 0x680DB0
+ */
 static bool written_ui_is_vendigroth_times;
 
-// 0x680DB4
+/**
+ * Handle to the current message file (corresponds to the current type).
+ *
+ * 0x680DB4
+ */
 static mes_file_handle_t written_ui_mes_file;
 
-// 0x680DB8
+/**
+ * Array of message file handles for written UI files.
+ *
+ * 0x680DB8
+ */
 static mes_file_handle_t written_ui_mes_files[WRITTEN_MES_COUNT];
 
+/**
+ * Current type of writtne UI.
+ */
 // 0x680DCC
 static WrittenType written_ui_type;
 
-// 0x680DD0
+/**
+ * Current page number of a book.
+ *
+ * 0x680DD0
+ */
 static int written_ui_book_cur_page;
 
-// 0x680DD4
+/**
+ * Last page number of a book.
+ *
+ * 0x680DD4
+ */
 static int written_ui_book_max_page;
 
-// 0x680DD8
+/**
+ * Flag indicating whether the written UI is initialized.
+ *
+ * 0x680DD8
+ */
 static bool written_ui_mod_loaded;
 
-// 0x680DDC
+/**
+ * Flag indicating whether the written UI window is currently created.
+ *
+ * 0x680DDC
+ */
 static bool written_ui_created;
 
-// 0x56BAA0
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x56BAA0
+ */
 bool written_ui_mod_load()
 {
     int index;
@@ -205,6 +377,7 @@ bool written_ui_mod_load()
         return false;
     }
 
+    // Load message files for each written content type.
     for (index = 0; index < WRITTEN_MES_COUNT; index++) {
         mes_load(written_ui_mes_file_names[index], &(written_ui_mes_files[index]));
     }
@@ -213,6 +386,7 @@ bool written_ui_mod_load()
 
     written_ui_is_vendigroth_times = false;
 
+    // Calculate the number of filler newspaper articles.
     if (written_ui_mes_files[WRITTEN_MES_NEWSPAPER] != MES_FILE_HANDLE_INVALID) {
         written_ui_num_filler_newspaper_articles = mes_entries_count_in_range(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], 10, 999);
     } else {
@@ -222,7 +396,11 @@ bool written_ui_mod_load()
     return true;
 }
 
-// 0x56BB20
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x56BB20
+ */
 void written_ui_mod_unload()
 {
     int index;
@@ -239,7 +417,11 @@ void written_ui_mod_unload()
     written_ui_mod_loaded = false;
 }
 
-// 0x56BB60
+/**
+ * Toggles the written UI for a given written object.
+ *
+ * 0x56BB60
+ */
 void written_ui_start_obj(int64_t written_obj, int64_t pc_obj)
 {
     int subtype;
@@ -249,37 +431,68 @@ void written_ui_start_obj(int64_t written_obj, int64_t pc_obj)
         return;
     }
 
+    // Ensure the player character is not dead.
     if (critter_is_dead(pc_obj)) {
         return;
     }
 
+    // Retrieve type of written object and message number.
     subtype = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_SUBTYPE);
     start = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_TEXT_START_LINE);
 
     if (subtype == WRITTEN_TYPE_SCHEMATIC) {
+        // Special case - schematic does not have special UI, instead they are
+        // "learned" by the player. The written object is consumed in this
+        // process (unless the player already knows this schematic).
         tech_learn_schematic(pc_obj, written_obj);
     } else {
+        // Determine if the newspaper is "The Vendigroth Times" (affects
+        // background).
         written_ui_is_vendigroth_times = sub_49B290(written_obj) == BP_VENDIGROTH_NEWSPAPER;
+
+        // Proceed to starting the written UI.
         mp_ui_written_start_type(pc_obj, subtype, start);
     }
 }
 
-// 0x56BC00
+/**
+ * Toggles the written UI.
+ *
+ * 0x56BC00
+ */
 void written_ui_start_type(WrittenType written_type, int num)
 {
     if (!written_ui_mod_loaded) {
         return;
     }
 
+    // Close written UI if it's currently visible.
     if (written_ui_created) {
         written_ui_close();
         return;
     }
 
-    if (written_type < 4) {
-        written_ui_mes_file = written_ui_mes_files[written_type];
-    } else if (written_type == WRITTEN_TYPE_PLAQUE) {
+    // Obtain message file corresponding to requested type.
+    // NOTE: Original code is slightly different, but does the same thing.
+    switch (written_type) {
+    case WRITTEN_TYPE_BOOK:
+        written_ui_mes_file = written_ui_mes_files[WRITTEN_MES_BOOK];
+        break;
+    case WRITTEN_TYPE_NOTE:
+        written_ui_mes_file = written_ui_mes_files[WRITTEN_MES_NOTE];
+        break;
+    case WRITTEN_TYPE_NEWSPAPER:
+        written_ui_mes_file = written_ui_mes_files[WRITTEN_MES_NEWSPAPER];
+        break;
+    case WRITTEN_TYPE_TELEGRAM:
+        written_ui_mes_file = written_ui_mes_files[WRITTEN_MES_TELEGRAM];
+        break;
+    case WRITTEN_TYPE_PLAQUE:
         written_ui_mes_file = written_ui_mes_files[WRITTEN_MES_PLAQUE];
+        break;
+    default:
+        written_ui_mes_file = MES_FILE_HANDLE_INVALID;
+        break;
     }
 
     if (written_ui_mes_file == MES_FILE_HANDLE_INVALID) {
@@ -300,7 +513,11 @@ void written_ui_start_type(WrittenType written_type, int num)
     written_ui_create();
 }
 
-// 0x56BC90
+/**
+ * Closes the written UI.
+ *
+ * 0x56BC90
+ */
 void written_ui_close()
 {
     if (!written_ui_mod_loaded) {
@@ -315,7 +532,11 @@ void written_ui_close()
     written_ui_is_vendigroth_times = false;
 }
 
-// 0x56BCC0
+/**
+ * Creates the written UI window.
+ *
+ * 0x56BCC0
+ */
 void written_ui_create()
 {
     TigWindowData window_data;
@@ -325,13 +546,15 @@ void written_ui_create()
     int64_t location;
     int index;
 
+    // Skip if UI is already created.
     if (!written_ui_mod_loaded
         || written_ui_created) {
         return;
     }
 
+    // Set up window properties.
     window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
-    window_data.rect = written_ui_background_frame;
+    window_data.rect = written_ui_frame;
     window_data.message_filter = written_ui_message_filter;
     hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
@@ -340,31 +563,39 @@ void written_ui_create()
         exit(0);
     }
 
+    // Draw the sidebar.
     written_ui_draw_background(494, 0, 0);
 
+    // Center viewport on the player (so that the lens display proper
+    // surroundings).
     obj = player_get_local_pc_obj();
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     location_origin_set(location);
 
+    // Enable the PC lens.
     pc_lens.window_handle = written_ui_window;
-    pc_lens.rect = &stru_5CA4A8;
+    pc_lens.rect = &written_ui_lens_rect;
     tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
     switch (written_ui_type) {
     case WRITTEN_TYPE_BOOK:
+        // Create navigation buttons for books.
         for (index = 0; index < WRITTEN_UI_BOOK_BUTTON_COUNT; index++) {
             intgame_button_create_ex(written_ui_window,
-                &written_ui_background_frame,
+                &written_ui_frame,
                 &(written_ui_book_buttons[index]),
                 TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
         }
+
+        // Initialize book state.
         written_ui_book_cur_page = 0;
         written_ui_book_max_page = 0;
         written_ui_book_contents[0] = written_ui_num;
         written_ui_book_offsets[0] = 0;
         break;
     case WRITTEN_TYPE_NOTE:
+        // Concatenate up to 10 note lines (which must be consecutive).
         for (index = 0; index < TEN; index++) {
             mes_file_entry.num = index + written_ui_num;
             if (!mes_search(written_ui_mes_file, &mes_file_entry)) {
@@ -375,6 +606,7 @@ void written_ui_create()
         }
         break;
     case WRITTEN_TYPE_TELEGRAM:
+        // Concatenate up to 10 telegram lines (which must be consecutive).
         for (index = 0; index < TEN; index++) {
             mes_file_entry.num = index + written_ui_num;
             if (!mes_search(written_ui_mes_file, &mes_file_entry)) {
@@ -382,19 +614,29 @@ void written_ui_create()
             }
             strcat(written_ui_text, mes_file_entry.str);
 
-            mes_file_entry.num = index + written_ui_num;
+            // Unlike the note, the telegram lines are joined with the word
+            // "STOP", instead of a newline.
+            mes_file_entry.num = 1012; // " STOP "
             mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
             strcat(written_ui_text, mes_file_entry.str);
         }
         break;
     }
 
+    // Redraw written UI content.
     written_ui_refresh();
+
+    // Most of the written types are books, so play open book sound effect.
     gsound_play_sfx(SND_INTERFACE_BOOK_OPEN, 1);
+
     written_ui_created = true;
 }
 
-// 0x56BF60
+/**
+ * Destroys the written UI window.
+ *
+ * 0x56BF60
+ */
 void written_ui_destroy()
 {
     if (!written_ui_mod_loaded
@@ -402,21 +644,29 @@ void written_ui_destroy()
         return;
     }
 
+    // Disable the PC lens.
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 
     if (tig_window_destroy(written_ui_window) == TIG_OK) {
         written_ui_window = TIG_WINDOW_HANDLE_INVALID;
     }
 
+    // Most of the written types are books, so play close book sound effect.
     gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
+
     written_ui_created = false;
 }
 
-// 0x56BFC0
+/**
+ * Called when an event occurred.
+ *
+ * 0x56BFC0
+ */
 bool written_ui_message_filter(TigMessage* msg)
 {
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
+        // Clicking on the PC lens closes written UI.
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
             written_ui_close();
@@ -425,6 +675,7 @@ bool written_ui_message_filter(TigMessage* msg)
         break;
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
+            // Handle book navigation button presses.
             if (written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle == msg->data.button.button_handle) {
                 written_ui_book_cur_page -= 2;
                 written_ui_refresh();
@@ -445,7 +696,11 @@ bool written_ui_message_filter(TigMessage* msg)
     return false;
 }
 
-// 0x56C050
+/**
+ * Refreshes the written UI content.
+ *
+ * 0x56C050
+ */
 void written_ui_refresh()
 {
     int art_num;
@@ -460,38 +715,47 @@ void written_ui_refresh()
     char* str;
     TigRect rect;
 
+    // Hide book navigation buttons by default.
     if (written_ui_type == WRITTEN_TYPE_BOOK) {
         tig_button_hide(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle);
         tig_button_hide(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle);
     }
 
+    // Determine the background art number.
     if (written_ui_type == WRITTEN_TYPE_IMAGE) {
         art_num = written_ui_num;
     } else if (written_ui_is_vendigroth_times) {
         art_num = 817; // "vendnewsback.art"
     } else {
-        art_num = dword_5CA4B8[written_ui_type];
+        art_num = written_ui_backgrounds[written_ui_type];
     }
 
+    // Draw the background.
     written_ui_draw_background(art_num, 132, 0);
 
     switch (written_ui_type) {
     case WRITTEN_TYPE_BOOK:
+        // Draw book pages.
         num = written_ui_book_contents[written_ui_book_cur_page];
         offset = written_ui_book_offsets[written_ui_book_cur_page];
         written_ui_draw_book_side(0, &num, &offset);
         written_ui_draw_book_side(1, &num, &offset);
+
+        // Show navigation buttons based on the current page.
         if (written_ui_book_cur_page > 0) {
             tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_PREV].button_handle);
         }
-        if (written_ui_book_cur_page < written_ui_book_max_page - 1 && written_ui_book_max_page < HUNDRED) {
+        if (written_ui_book_cur_page < written_ui_book_max_page - 1 && written_ui_book_max_page < MAX_BOOK_PAGES) {
             tig_button_show(written_ui_book_buttons[WRITTEN_UI_BOOK_BUTTON_NEXT].button_handle);
         }
         break;
     case WRITTEN_TYPE_NOTE:
+        // Draw note text.
         written_ui_draw_string(written_ui_text, 497, &written_ui_note_content_rect);
         break;
     case WRITTEN_TYPE_NEWSPAPER:
+        // Select newspaper elements for "The Vendigroth Times" vs.
+        // "The Tarantian".
         if (written_ui_is_vendigroth_times) {
             elements = written_ui_vendigroth_times_elements;
             cnt = SDL_arraysize(written_ui_vendigroth_times_elements);
@@ -499,6 +763,8 @@ void written_ui_refresh()
             elements = written_ui_newspaper_tarantian_elements;
             cnt = SDL_arraysize(written_ui_newspaper_tarantian_elements);
         }
+
+        // Draw newspaper elements.
         for (index = 0; index < cnt; index++) {
             mes_file_entry.num = elements[index].message_num;
             mes_get_msg(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry);
@@ -509,6 +775,7 @@ void written_ui_refresh()
                 elements[index].alignment);
         }
 
+        // Draw the headline.
         mes_file_entry.num = written_ui_num;
         if (mes_search(written_ui_mes_file, &mes_file_entry)) {
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
@@ -517,26 +784,36 @@ void written_ui_refresh()
 
         mes_file_entry.num++;
         if (mes_search(written_ui_mes_file, &mes_file_entry)) {
+            // Draw the main newspaper article.
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
+            // Start with the first column.
             index = 1;
             rect = written_ui_newspaper_content_rects[index];
             while (true) {
+                // Draw paragraph until it fit or no more space remains.
                 while (!written_ui_draw_paragraph(str, font_num, centered, &rect, &offset)) {
+                    // Advance to the next column.
                     index++;
-                    if (index >= 5) {
+                    if (index >= MAX_NEWSPAPER_COLUMNS) {
                         return;
                     }
 
                     rect = written_ui_newspaper_content_rects[index];
+
+                    // The paragraph didn't fit into the previous column rect,
+                    // the `offset` represents number of consumed characters.
                     str += offset;
                 }
 
+                // The paragraph fit into the supplied rect, the `offset` now
+                // represents used height.
                 rect.height -= offset;
                 rect.y += offset;
 
+                // Advance to the next paragraph.
                 mes_file_entry.num++;
-                if (mes_file_entry.num >= written_ui_num + 10) {
+                if (mes_file_entry.num >= written_ui_num + TEN) {
                     break;
                 }
 
@@ -547,19 +824,27 @@ void written_ui_refresh()
                 written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
             }
 
-            if (index < 5) {
-                mes_file_entry.num = written_ui_num / TEN + TEN;
-                if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + TEN) {
-                    mes_file_entry.num = TEN;
+            // Check if space remains.
+            if (index < MAX_NEWSPAPER_COLUMNS) {
+                // Draw filler articles. Note that there is no randomness, the
+                // filler articles depend on the newspaper number. This approach
+                // guarantees the filler articles are predictable, does not
+                // change between reads, save games, and even replays.
+
+                // Select the first filler article.
+                mes_file_entry.num = written_ui_num / TEN + FIRST_FILLER_ARTICLE;
+                if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + FIRST_FILLER_ARTICLE) {
+                    mes_file_entry.num = FIRST_FILLER_ARTICLE;
                 }
 
                 if (mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
                     written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
+                    // NOTE: The layout approach is exactly the same as above.
                     while (true) {
                         while (!written_ui_draw_paragraph(str, font_num, centered, &rect, &offset)) {
                             index++;
-                            if (index >= 5) {
+                            if (index >= MAX_NEWSPAPER_COLUMNS) {
                                 return;
                             }
 
@@ -567,9 +852,11 @@ void written_ui_refresh()
                             str += offset;
                         }
 
+                        // Advance to the next filler article. Wrap around if
+                        // needed.
                         mes_file_entry.num++;
-                        if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + TEN) {
-                            mes_file_entry.num = TEN;
+                        if (mes_file_entry.num >= written_ui_num_filler_newspaper_articles + FIRST_FILLER_ARTICLE) {
+                            mes_file_entry.num = FIRST_FILLER_ARTICLE;
                         }
 
                         if (!mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
@@ -585,6 +872,7 @@ void written_ui_refresh()
         }
         break;
     case WRITTEN_TYPE_TELEGRAM:
+        // Draw telegram elements.
         cnt = SDL_arraysize(written_ui_telegram_elements);
         for (index = 0; index < cnt; index++) {
             mes_file_entry.num = written_ui_telegram_elements[index].message_num;
@@ -596,12 +884,16 @@ void written_ui_refresh()
                 written_ui_telegram_elements[index].alignment);
         }
 
+        // Draw telegram disclaimer.
         mes_file_entry.num = 1011;
         mes_get_msg(written_ui_mes_files[WRITTEN_MES_TELEGRAM], &mes_file_entry);
         written_ui_draw_string(mes_file_entry.str, 481, &written_ui_telegram_disclaimer_rect);
+
+        // Draw telegram text.
         written_ui_draw_string(written_ui_text, 480, &written_ui_telegram_content_rect);
         break;
     case WRITTEN_TYPE_PLAQUE:
+        // Draw plaque content (which pretends to be a one-page book).
         num = written_ui_num;
         offset = 0;
         written_ui_draw_page_like(&written_ui_plaque_content_rect, &num, &offset);
@@ -609,7 +901,11 @@ void written_ui_refresh()
     }
 }
 
-// 0x56C590
+/**
+ * Draws the background image for the written UI.
+ *
+ * 0x56C590
+ */
 void written_ui_draw_background(int num, int x, int y)
 {
     TigRect src_rect;
@@ -618,8 +914,8 @@ void written_ui_draw_background(int num, int x, int y)
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = written_ui_background_frame.width;
-    src_rect.height = written_ui_background_frame.height;
+    src_rect.width = written_ui_frame.width;
+    src_rect.height = written_ui_frame.height;
 
     dst_rect.x = x;
     dst_rect.y = y;
@@ -634,24 +930,33 @@ void written_ui_draw_background(int num, int x, int y)
     tig_window_blit_art(written_ui_window, &blit_info);
 }
 
-// 0x56C630
+/**
+ * Draws a single text element with specified alignment.
+ *
+ * 0x56C630
+ */
 void written_ui_draw_element(const char* str, int font_num, int x, int y, WrittenTextAlignment alignment)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
     TigRect text_rect;
 
+    // Set up font properties.
     font_info.flags = 0;
     tig_art_interface_id_create(font_num, 0, 0, 0, &(font_info.art_id));
     font_info.str = NULL;
     font_info.color = tig_color_make(0, 0, 0);
+
+    // Create a new font and make it active.
     tig_font_create(&font_info, &font_handle);
     tig_font_push(font_handle);
 
+    // Measure text to determine placement.
     font_info.str = str;
     font_info.width = 0;
     tig_font_measure(&font_info);
 
+    // Adjust x-coordinate based on alignment.
     switch (alignment) {
     case WRITTEN_TEXT_ALIGNMENT_LEFT:
         text_rect.x = x;
@@ -668,34 +973,58 @@ void written_ui_draw_element(const char* str, int font_num, int x, int y, Writte
     text_rect.width = font_info.width;
     text_rect.height = font_info.height;
     tig_window_text_write(written_ui_window, str, &text_rect);
+
+    // Deactivate the font and destroy it.
     tig_font_pop();
     tig_font_destroy(font_handle);
 }
 
-// 0x56C750
+/**
+ * Draws a text string within a specified rect.
+ *
+ * 0x56C750
+ */
 void written_ui_draw_string(const char* str, int font_num, TigRect* rect)
 {
     TigFont font_info;
     tig_font_handle_t font_handle;
 
+    // Set up font properties.
     font_info.flags = 0;
     tig_art_interface_id_create(font_num, 0, 0, 0, &(font_info.art_id));
     font_info.str = NULL;
     font_info.color = tig_color_make(0, 0, 0);
+
+    // Create a new font and make it active.
     tig_font_create(&font_info, &font_handle);
     tig_font_push(font_handle);
+
     tig_window_text_write(written_ui_window, str, rect);
+
+    // Deactivate the font and destroy it.
     tig_font_pop();
     tig_font_destroy(font_handle);
 }
 
-// 0x56C800
+/**
+ * Draws a paragraph of text.
+ *
+ * Returns `true` if paragraph fitted into the available rect. In this case
+ * `offset_ptr` is set to the height that was required by the paragraph.
+ *
+ * When the paragraph didn't fit in to the available rect, returns `false`. In
+ * this case `offset_ptr` indicates number characters drawn which is also the
+ * start position for the next iteration.
+ *
+ * 0x56C800
+ */
 bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* rect, int* offset_ptr)
 {
     TigFont font_desc;
     tig_font_handle_t font;
     bool rc;
 
+    // Set up font properties.
     font_desc.flags = centered == 1 ? TIG_FONT_CENTERED : 0;
     tig_art_interface_id_create(font_num, 0, 0, 0, &(font_desc.art_id));
 
@@ -707,19 +1036,23 @@ bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* r
 
     font_desc.str = NULL;
 
+    // Create a new font and make it active.
     tig_font_create(&font_desc, &font);
     tig_font_push(font);
 
+    // Measure text to determine placement.
     font_desc.str = str;
     font_desc.width = rect->width;
     tig_font_measure(&font_desc);
 
+    // Check if the required height for the paragraph exceeds available height.
     if (font_desc.height > rect->height) {
         size_t truncate_pos = 0;
         size_t end = strlen(str);
         size_t pos;
         char ch;
 
+        // Find the last space or newline for truncation.
         for (pos = 0; pos < end; pos++) {
             ch = str[pos];
             if (ch == ' ' || ch == '\n') {
@@ -735,6 +1068,7 @@ bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* r
             }
         }
 
+        // Draw truncated text if a suitable position was found.
         if (truncate_pos > 0) {
             ch = str[truncate_pos];
             str[truncate_pos] = '\0';
@@ -742,65 +1076,99 @@ bool written_ui_draw_paragraph(char* str, int font_num, int centered, TigRect* r
             str[truncate_pos] = ch;
         }
 
+        // The paragraph didn't fit into the available rect.
         *offset_ptr = (int)truncate_pos;
         rc = false;
     } else {
+        // The paragraph fitted into the available rect.
         tig_window_text_write(written_ui_window, str, rect);
         *offset_ptr = font_desc.height;
         rc = true;
     }
 
+    // Deactivate the font and destroy it.
     tig_font_pop();
     tig_font_destroy(font);
 
     return rc;
 }
 
-// 0x56C9F0
+/**
+ * Parses a message string to extract font number, justification, and actual
+ * string.
+ *
+ * 0x56C9F0
+ */
 void written_ui_parse(char* str, int* font_num_ptr, int* centered_ptr, char** str_ptr)
 {
     *font_num_ptr = atoi(str);
 
+    // Move past the number.
     *str_ptr = str;
     while (SDL_isdigit(**str_ptr)) {
         (*str_ptr)++;
     }
 
+    // Check for justificiation letter. We're only interested in centering with
+    // 'c', and 'l' (for "left") being the default.
     *centered_ptr = **str_ptr == 'c' || **str_ptr == 'C';
 
+    // Move past the justification letter.
     if (**str_ptr != '\0') {
         (*str_ptr)++;
     }
 
+    // Skip any whitespace.
     if (SDL_isspace(**str_ptr)) {
         (*str_ptr)++;
     }
 }
 
-// 0x56CAA0
+/**
+ * Draws one page of a book.
+ *
+ * 0x56CAA0
+ */
 void written_ui_draw_book_side(int side, int* num_ptr, int* offset_ptr)
 {
     TigRect rect;
-    int v1;
+    int offset;
     MesFileEntry mes_file_entry;
 
+    // Retrieve content frame for the book side.
     rect = written_ui_book_content_rects[side];
-    v1 = written_ui_draw_page_like(&rect, num_ptr, offset_ptr);
-    if (v1 != -1) {
-        *offset_ptr += v1;
-        mes_file_entry.num = *num_ptr;
-        if (mes_file_entry.num < written_ui_num + TEN
-            && mes_search(written_ui_mes_file, &mes_file_entry)) {
-            written_ui_book_contents[written_ui_book_cur_page + side + 1] = mes_file_entry.num;
-            written_ui_book_offsets[written_ui_book_cur_page + side + 1] = *offset_ptr;
-            if (written_ui_book_max_page == written_ui_book_cur_page + side) {
-                written_ui_book_max_page++;
-            }
-        }
+
+    // Draw the side text.
+    offset = written_ui_draw_page_like(&rect, num_ptr, offset_ptr);
+    if (offset == -1) {
+        // -1 indicates error.
+        return;
+    }
+
+    *offset_ptr += offset;
+
+    // Check if the next page exists.
+    mes_file_entry.num = *num_ptr;
+    if (mes_file_entry.num >= written_ui_num + TEN
+        || !mes_search(written_ui_mes_file, &mes_file_entry)) {
+        return;
+    }
+
+    // Set message number/start position for the next page.
+    written_ui_book_contents[written_ui_book_cur_page + side + 1] = mes_file_entry.num;
+    written_ui_book_offsets[written_ui_book_cur_page + side + 1] = *offset_ptr;
+
+    // Increase max number of pages if needed.
+    if (written_ui_book_max_page == written_ui_book_cur_page + side) {
+        written_ui_book_max_page++;
     }
 }
 
-// 0x56CB60
+/**
+ * Draws a page-like content for books or plaques.
+ *
+ * 0x56CB60
+ */
 int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr)
 {
     MesFileEntry mes_file_entry;
@@ -810,35 +1178,39 @@ int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr)
     TigRect tmp_rect;
     int offset;
 
+    // Check if the start message number is valid.
     mes_file_entry.num = *num_ptr;
-    if (mes_file_entry.num >= written_ui_num + TEN) {
+    if (mes_file_entry.num >= written_ui_num + TEN
+        || !mes_search(written_ui_mes_file, &mes_file_entry)) {
+        // Indicate error.
         return -1;
     }
 
-    if (!mes_search(written_ui_mes_file, &mes_file_entry)) {
-        return -1;
-    }
-
+    // Retrieve font, justification, and actual string.
     written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
 
     offset = *offset_ptr;
     str += *offset_ptr;
     tmp_rect = *rect;
+
+    // Draw the remaining of the start message.
     if (written_ui_draw_paragraph(str, font_num, centered, &tmp_rect, offset_ptr)) {
         offset = 0;
+
         do {
+            // The parapgraph is fully drawn, `offset_ptr` is the height
+            // occupied. Move `y` and reduce remaining `height`.
             tmp_rect.y += *offset_ptr;
             tmp_rect.height -= *offset_ptr;
 
+            // Check if the next message number is valid.
             mes_file_entry.num++;
-            if (mes_file_entry.num >= written_ui_num + TEN) {
+            if (mes_file_entry.num >= written_ui_num + TEN
+                || !mes_search(written_ui_mes_file, &mes_file_entry)) {
                 break;
             }
 
-            if (!mes_search(written_ui_mes_file, &mes_file_entry)) {
-                break;
-            }
-
+            // Retrieve font, justification, and actual string.
             written_ui_parse(mes_file_entry.str, &font_num, &centered, &str);
         } while (written_ui_draw_paragraph(str, font_num, centered, &tmp_rect, offset_ptr));
     }
@@ -847,7 +1219,13 @@ int written_ui_draw_page_like(TigRect* rect, int* num_ptr, int* offset_ptr)
     return offset;
 }
 
-// 0x56CCA0
+/**
+ * Retrieves a newspaper headline.
+ *
+ * NOTE: The code is slightly reorganized.
+ *
+ * 0x56CCA0
+ */
 void written_ui_newspaper_headline(int num, char* str)
 {
     MesFileEntry mes_file_entry;
@@ -856,25 +1234,28 @@ void written_ui_newspaper_headline(int num, char* str)
     char* tmp;
     char* pch;
 
+    str[0] = '\0';
+
     if (!written_ui_mod_loaded) {
         return;
     }
-
-    mes_file_entry.num = num;
-    str[0] = '\0';
 
     if (written_ui_mes_files[WRITTEN_MES_NEWSPAPER] == MES_FILE_HANDLE_INVALID) {
         return;
     }
 
+    // Search for the headline message.
+    mes_file_entry.num = num;
     if (!mes_search(written_ui_mes_files[WRITTEN_MES_NEWSPAPER], &mes_file_entry)) {
         return;
     }
 
+    // Retrieve font, justification, and actual string.
     written_ui_parse(mes_file_entry.str, &font_num, &centered, &tmp);
 
     strcpy(str, tmp);
 
+    // Replace newlines with spaces.
     pch = str;
     while (*pch != '\0') {
         if (*pch == '\n') {
