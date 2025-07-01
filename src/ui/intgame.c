@@ -215,10 +215,10 @@ static TigRect intgame_interface_window_frames[2] = {
 };
 
 // 0x5C63B0
-static TigRect stru_5C63B0 = { 311, 96, 178, 178 };
+static TigRect intgame_pc_lens_normal_dst_frame = { 311, 96, 178, 178 };
 
 // 0x5C63C0
-static TigRect stru_5C63C0 = { 311, 196, 178, 178 };
+static TigRect intgame_pc_lens_fullscreen_dst_frame = { 311, 196, 178, 178 };
 
 // 0x5C63D0
 static int intgame_mt_window_index = -1;
@@ -851,7 +851,7 @@ static mes_file_handle_t intgame_mes_file;
 static tig_window_handle_t intgame_big_window_handle;
 
 // 0x64C510
-static TigRect stru_64C510;
+static TigRect intgame_pc_lens_dst_rect;
 
 // 0x64C520
 static PcLens intgame_pc_lens;
@@ -878,7 +878,7 @@ static bool intgame_big_window_locked;
 static IntgameMode dword_64C634[11];
 
 // 0x64C660
-static TigRect intgame_pc_lens_rect;
+static TigRect intgame_pc_lens_src_rect;
 
 // 0x64C670
 static tig_font_handle_t dword_64C670;
@@ -1181,7 +1181,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     int iwid;
     TigFont font_desc;
 
-    stru_64C510 = stru_5C63B0;
+    intgame_pc_lens_dst_rect = intgame_pc_lens_normal_dst_frame;
     dword_64C52C = window_handle;
     dword_64C6B0 = 1;
     intgame_iso_interface_created = false;
@@ -4311,11 +4311,11 @@ void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens)
 
         intgame_pc_lens.window_handle = pc_lens->window_handle;
         intgame_pc_lens.art_id = pc_lens->art_id;
-        intgame_pc_lens.rect = &intgame_pc_lens_rect;
-        intgame_pc_lens_rect = *pc_lens->rect;
+        intgame_pc_lens.rect = &intgame_pc_lens_src_rect;
+        intgame_pc_lens_src_rect = *pc_lens->rect;
 
-        vb_create_info.width = stru_64C510.width;
-        vb_create_info.height = stru_64C510.height;
+        vb_create_info.width = intgame_pc_lens_dst_rect.width;
+        vb_create_info.height = intgame_pc_lens_dst_rect.height;
         vb_create_info.flags = 0;
         vb_create_info.background_color = 0;
 
@@ -4323,7 +4323,7 @@ void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens)
             intgame_pc_lens_redraw();
         }
 
-        sub_558130(&stru_64C510);
+        sub_558130(&intgame_pc_lens_dst_rect);
 
         if (dword_5C72B0 < 1) {
             gamelib_renderlock_release();
@@ -4335,22 +4335,22 @@ void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens)
 
         intgame_pc_lens.window_handle = pc_lens->window_handle;
         intgame_pc_lens.art_id = pc_lens->art_id;
-        intgame_pc_lens.rect = &intgame_pc_lens_rect;
-        intgame_pc_lens_rect = *pc_lens->rect;
+        intgame_pc_lens.rect = &intgame_pc_lens_src_rect;
+        intgame_pc_lens_src_rect = *pc_lens->rect;
 
         tig_window_fill(intgame_pc_lens.window_handle,
-            &intgame_pc_lens_rect,
+            &intgame_pc_lens_src_rect,
             tig_color_make(0, 0, 0));
 
         src_rect.x = 0;
         src_rect.y = 0;
-        src_rect.width = intgame_pc_lens_rect.width;
-        src_rect.height = intgame_pc_lens_rect.height;
+        src_rect.width = intgame_pc_lens_src_rect.width;
+        src_rect.height = intgame_pc_lens_src_rect.height;
 
         dst_rect.x = intgame_pc_lens.rect->x;
         dst_rect.y = intgame_pc_lens.rect->y;
-        dst_rect.width = intgame_pc_lens_rect.width;
-        dst_rect.height = intgame_pc_lens_rect.height;
+        dst_rect.width = intgame_pc_lens_src_rect.width;
+        dst_rect.height = intgame_pc_lens_src_rect.height;
 
         blit_info.flags = 0;
         blit_info.art_id = intgame_pc_lens.art_id;
@@ -4411,14 +4411,14 @@ void intgame_pc_lens_redraw()
         tig_window_copy(intgame_pc_lens.window_handle,
             intgame_pc_lens.rect,
             dword_64C52C,
-            &stru_64C510);
+            &intgame_pc_lens_dst_rect);
 
         src_rect.x = 0;
         src_rect.y = 0;
         src_rect.width = intgame_pc_lens.rect->width;
         src_rect.height = intgame_pc_lens.rect->height;
 
-        if (tig_window_copy_to_vbuffer(dword_64C52C, &stru_64C510, intgame_pc_lens_video_buffer, &src_rect) == TIG_OK) {
+        if (tig_window_copy_to_vbuffer(dword_64C52C, &intgame_pc_lens_dst_rect, intgame_pc_lens_video_buffer, &src_rect) == TIG_OK) {
             dst_rect = src_rect;
             dst_rect.x = intgame_pc_lens.rect->x;
             dst_rect.y = intgame_pc_lens.rect->y;
@@ -8335,10 +8335,10 @@ void intgame_toggle_interface()
         resize_info.content_rect = window_data.rect;
 
         if (intgame_compact_interface) {
-            stru_64C510 = stru_5C63C0;
-            stru_64C510.x = (800 - stru_64C510.width) / 2;
-            stru_64C510.y = (600 - stru_64C510.height) / 2;
-            hrp_apply(&stru_64C510, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+            intgame_pc_lens_dst_rect = intgame_pc_lens_fullscreen_dst_frame;
+            intgame_pc_lens_dst_rect.x = (800 - intgame_pc_lens_dst_rect.width) / 2;
+            intgame_pc_lens_dst_rect.y = (600 - intgame_pc_lens_dst_rect.height) / 2;
+            hrp_apply(&intgame_pc_lens_dst_rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             for (index = 0; index < 2; index++) {
                 tig_window_hide(dword_64C4F8[index]);
@@ -8349,10 +8349,10 @@ void intgame_toggle_interface()
 
             compact_ui_create();
         } else {
-            stru_64C510 = stru_5C63B0;
-            stru_64C510.x = (800 - stru_64C510.width) / 2;
-            stru_64C510.y = (600 - stru_64C510.height) / 2;
-            hrp_apply(&stru_64C510, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
+            intgame_pc_lens_dst_rect = intgame_pc_lens_normal_dst_frame;
+            intgame_pc_lens_dst_rect.x = (800 - intgame_pc_lens_dst_rect.width) / 2;
+            intgame_pc_lens_dst_rect.y = (600 - intgame_pc_lens_dst_rect.height) / 2;
+            hrp_apply(&intgame_pc_lens_dst_rect, GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
             gamelib_resize(&resize_info);
             gameuilib_resize(&resize_info);
