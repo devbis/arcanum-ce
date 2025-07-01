@@ -6776,9 +6776,9 @@ int intgame_item_icon_get(int64_t item_obj)
     case OBJ_TYPE_WEAPON:
         art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
         num = intgame_weapon_icons[tig_art_item_id_subtype_get(art_id)];
-        if (num > 0) {
+        if (complexity > 0) {
             num += 1;
-        } else if (num < 0) {
+        } else if (complexity < 0) {
             num += 2;
         }
         break;
@@ -6797,9 +6797,9 @@ int intgame_item_icon_get(int64_t item_obj)
             num = dword_5C7054[armor_coverage];
             break;
         }
-        if (num > 0) {
+        if (complexity > 0) {
             num += 1;
-        } else if (num < 0) {
+        } else if (complexity < 0) {
             num += 2;
         }
         break;
