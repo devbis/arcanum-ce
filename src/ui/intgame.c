@@ -240,7 +240,7 @@ static IntgameIsoWindowTypeInfo intgame_number_boxes[INTGAME_COUNTER_COUNT] = {
 };
 
 // 0x5C6470
-static TigRect stru_5C6470 = { 61, 509, 251, -1 };
+static UiButtonInfo intgame_ammo_button_info = { 61, 509, 251, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6480
 static UiButtonInfo intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_COUNT] = {
@@ -1788,7 +1788,7 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
     TigArtFrameData art_frame_data;
     TigArtBlitInfo blt;
 
-    index = find_interface_window_index(stru_5C6470.x, stru_5C6470.y);
+    index = find_interface_window_index(intgame_ammo_button_info.x, intgame_ammo_button_info.y);
     if (index == -1) {
         tig_debug_printf("intgame_ammo_icon_refresh: ERROR: couldn't find iwid match!\n");
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
@@ -1802,8 +1802,8 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
     src_rect.width = art_frame_data.width;
     src_rect.height = art_frame_data.height;
 
-    dst_rect.x = stru_5C6470.x - intgame_interface_window_frames[index].x;
-    dst_rect.y = stru_5C6470.y - intgame_interface_window_frames[index].y;
+    dst_rect.x = intgame_ammo_button_info.x - intgame_interface_window_frames[index].x;
+    dst_rect.y = intgame_ammo_button_info.y - intgame_interface_window_frames[index].y;
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
