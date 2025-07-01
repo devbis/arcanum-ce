@@ -65,6 +65,9 @@
 
 #define MAX_INTERFACE_WINDOW_ROTATION_STEPS 6
 
+#define MAX_MESSAGE_HISTORY_ITEMS 10
+#define MAX_MESSAGE_HISTORY_STRING_SIZE 200
+
 typedef enum IntgameCounter {
     INTGAME_COUNTER_HEALTH,
     INTGAME_COUNTER_FATIGUE,
@@ -168,10 +171,10 @@ static void iso_interface_window_swap(RotatingWindowType window_type);
 static void intgame_clock_refresh();
 static void sub_552740(int64_t obj, ChareditMode mode);
 static void sub_552770(UiMessage* ui_message);
-static void sub_5528E0();
-static void sub_552930();
-static void sub_552960(bool play_sound);
-static void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
+static void intgame_message_history_scroll_up();
+static void intgame_message_history_scroll_down();
+static void intgame_message_refresh(bool play_sound);
+static void intgame_message_draw(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
 static void intgame_spell_maintain_art_set_func(UiButtonInfo* button, int slot, tig_art_id_t art_id, tig_window_handle_t window_handle);
 static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int slot, bool active, tig_window_handle_t window_handle);
 static void intgame_refresh_quantity();
@@ -869,7 +872,7 @@ static UiPrimaryButton intgame_map_button;
 static tig_font_handle_t intgame_morph15_orange_font;
 
 // 0x64C540
-static UiMessage stru_64C540[10];
+static UiMessage intgame_message_history[MAX_MESSAGE_HISTORY_ITEMS];
 
 // 0x64C630
 static bool intgame_big_window_locked;
@@ -923,13 +926,13 @@ static int dword_64C6B8;
 static int intgame_pc_lens_mode;
 
 // 0x64C6C0
-static int dword_64C6C0;
+static int intgame_message_history_size;
 
 // 0x64C6C4
-static int dword_64C6C4;
+static int intgame_message_history_end;
 
 // 0x64C6C8
-static int dword_64C6C8;
+static int intgame_message_history_curr;
 
 // 0x64C6CC
 static bool(*intgame_dialog_process_event_func)(TigMessage* msg);
@@ -1332,8 +1335,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
 
     sub_54B3C0();
 
-    for (index = 0; index < 10; index++) {
-        stru_64C540[index].str = MALLOC(200);
+    for (index = 0; index < MAX_MESSAGE_HISTORY_ITEMS; index++) {
+        intgame_message_history[index].str = (char*)MALLOC(MAX_MESSAGE_HISTORY_STRING_SIZE);
     }
 
     intgame_mt_window_index = find_interface_window_index(intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].x, intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].y);
@@ -1387,8 +1390,8 @@ void iso_interface_destroy()
 
         tig_font_destroy(intgame_cloister18_font);
 
-        for (index = 0; index < 10; index++) {
-            FREE(stru_64C540[index].str);
+        for (index = 0; index < MAX_MESSAGE_HISTORY_ITEMS; index++) {
+            FREE(intgame_message_history[index].str);
         }
 
         for (index = 0; index < 5; index++) {
@@ -1407,9 +1410,9 @@ void sub_54AA30()
 {
     dword_64C6B8 = 0;
     dword_64C634[0] = INTGAME_MODE_MAIN;
-    dword_64C6C0 = 0;
-    dword_64C6C4 = 0;
-    dword_64C6C8 = 0;
+    intgame_message_history_size = 0;
+    intgame_message_history_end = 0;
+    intgame_message_history_curr = 0;
 }
 
 // 0x54AA60
@@ -2016,7 +2019,7 @@ bool sub_54B5D0(TigMessage* msg)
             case ROTWIN_TYPE_MSG:
                 if (msg->data.button.button_handle == stru_5C65F8[1].button_handle) {
                     if (!sub_573620()) {
-                        sub_5528E0();
+                        intgame_message_history_scroll_up();
                         return true;
                     }
                     sub_575770();
@@ -2025,7 +2028,7 @@ bool sub_54B5D0(TigMessage* msg)
                 }
                 if (msg->data.button.button_handle == stru_5C65F8[0].button_handle) {
                     if (!sub_573620()) {
-                        sub_552930();
+                        intgame_message_history_scroll_down();
                         return true;
                     }
                     sub_575770();
@@ -4454,10 +4457,10 @@ void sub_551160()
             } else if ((obj = object_hover_obj_get()) != OBJ_HANDLE_NULL) {
                 sub_57CCF0(pc_obj, obj);
             } else {
-                sub_552960(false);
+                intgame_message_refresh(false);
             }
         } else {
-            sub_552960(false);
+            intgame_message_refresh(false);
         }
     }
 
@@ -5329,78 +5332,80 @@ void sub_552770(UiMessage* ui_message)
     // 0x64C6EC
     static tig_timestamp_t dword_64C6EC;
 
-    int v1;
+    int prev_idx;
 
     if (ui_message->type >= 6 && ui_message->type <= 12) {
         if (tig_timer_elapsed(dword_64C6EC) > 3000
             && intgame_iso_window_type == ROTWIN_TYPE_MSG) {
             intgame_message_window_clear();
-            sub_5529C0(intgame_rotwin_text_frame[intgame_iso_window_type].window_handle, ui_message, 1);
+            intgame_message_draw(intgame_rotwin_text_frame[intgame_iso_window_type].window_handle,
+                ui_message,
+                true);
         }
     } else {
         tig_timer_now(&dword_64C6EC);
 
-        v1 = dword_64C6C4;
-        if (dword_64C6C0 >= 10) {
-            dword_64C6C4 = (dword_64C6C4 + 1) % 10;
+        prev_idx = intgame_message_history_end;
+        if (intgame_message_history_size < MAX_MESSAGE_HISTORY_ITEMS) {
+            intgame_message_history_end = intgame_message_history_size;
         } else {
-            dword_64C6C4 = dword_64C6C0;
+            intgame_message_history_end = (intgame_message_history_end + 1) % MAX_MESSAGE_HISTORY_ITEMS;
         }
 
-        if (dword_64C6C0 != 0
-            && (ui_message->type == 4
-                || ui_message->type == 5)) {
-            if (SDL_strcasecmp(ui_message->str, stru_64C540[v1].str) == 0) {
-                dword_64C6C4 = v1;
-                dword_64C6C8 = v1;
-                sub_552960(1);
-                return;
-            }
+        if (intgame_message_history_size != 0
+            && (ui_message->type == UI_MSG_TYPE_EXCLAMATION
+                || ui_message->type == UI_MSG_TYPE_QUESTION)
+            && SDL_strcasecmp(ui_message->str, intgame_message_history[prev_idx].str) == 0) {
+            intgame_message_history_end = prev_idx;
+            intgame_message_history_curr = prev_idx;
+            intgame_message_refresh(true);
+            return;
         }
 
-        if (dword_64C6C0 < 10) {
-            dword_64C6C0 += 1;
+        if (intgame_message_history_size < MAX_MESSAGE_HISTORY_ITEMS) {
+            intgame_message_history_size += 1;
         }
 
-        stru_64C540[dword_64C6C4].type = ui_message->type;
-        strncpy(stru_64C540[dword_64C6C4].str, ui_message->str, 200);
-        stru_64C540[dword_64C6C4].str[200 - 1] = '\0';
-        stru_64C540[dword_64C6C4].field_8 = ui_message->field_8;
-        stru_64C540[dword_64C6C4].field_C = ui_message->field_C;
-        dword_64C6C8 = dword_64C6C4;
-        sub_552960(1);
+        intgame_message_history[intgame_message_history_end].type = ui_message->type;
+        strncpy(intgame_message_history[intgame_message_history_end].str, ui_message->str, MAX_MESSAGE_HISTORY_STRING_SIZE);
+        intgame_message_history[intgame_message_history_end].str[MAX_MESSAGE_HISTORY_STRING_SIZE - 1] = '\0';
+        intgame_message_history[intgame_message_history_end].field_8 = ui_message->field_8;
+        intgame_message_history[intgame_message_history_end].field_C = ui_message->field_C;
+        intgame_message_history_curr = intgame_message_history_end;
+        intgame_message_refresh(true);
     }
 }
 
 // 0x5528E0
-void sub_5528E0()
+void intgame_message_history_scroll_up()
 {
-    int v1;
+    int idx;
 
     if (intgame_iso_window_type == ROTWIN_TYPE_MSG) {
-        v1 = (dword_64C6C8 + 9) % 10;
-        if (v1 != dword_64C6C4 && (dword_64C6C4 - v1 + 10) % 10 < dword_64C6C0) {
-             dword_64C6C8 = v1;
+        idx = (intgame_message_history_curr + MAX_MESSAGE_HISTORY_ITEMS - 1) % MAX_MESSAGE_HISTORY_ITEMS;
+        if (idx != intgame_message_history_end
+            && (intgame_message_history_end - idx + MAX_MESSAGE_HISTORY_ITEMS) % MAX_MESSAGE_HISTORY_ITEMS < intgame_message_history_size) {
+             intgame_message_history_curr = idx;
         }
     }
 
-    sub_552960(false);
+    intgame_message_refresh(false);
 }
 
 // 0x552930
-void sub_552930()
+void intgame_message_history_scroll_down()
 {
     if (intgame_iso_window_type == ROTWIN_TYPE_MSG) {
-        if (dword_64C6C8 != dword_64C6C4) {
-            dword_64C6C8 = (dword_64C6C8 + 1) % 10;
+        if (intgame_message_history_curr != intgame_message_history_end) {
+            intgame_message_history_curr = (intgame_message_history_curr + 1) % MAX_MESSAGE_HISTORY_ITEMS;
         }
     }
 
-    sub_552960(false);
+    intgame_message_refresh(false);
 }
 
 // 0x552960
-void sub_552960(bool play_sound)
+void intgame_message_refresh(bool play_sound)
 {
     if (!intgame_iso_interface_created) {
         return;
@@ -5409,17 +5414,17 @@ void sub_552960(bool play_sound)
     iso_interface_window_set(ROTWIN_TYPE_MSG);
 
     if (intgame_iso_window_type == ROTWIN_TYPE_MSG) {
-        if (dword_64C6C0 > 0) {
+        if (intgame_message_history_size > 0) {
             intgame_message_window_clear();
-            sub_5529C0(intgame_rotwin_text_frame[intgame_iso_window_type].window_handle,
-                &(stru_64C540[dword_64C6C8]),
+            intgame_message_draw(intgame_rotwin_text_frame[intgame_iso_window_type].window_handle,
+                &(intgame_message_history[intgame_message_history_curr]),
                 play_sound);
         }
     }
 }
 
 // 0x5529C0
-void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound)
+void intgame_message_draw(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound)
 {
     MesFileEntry mes_file_entry1;
     MesFileEntry mes_file_entry2;
