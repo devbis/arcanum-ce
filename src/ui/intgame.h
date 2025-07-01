@@ -85,7 +85,6 @@ void intgame_draw_bar(int bar);
 void intgame_draw_bars();
 void sub_54B3C0();
 bool sub_54B5D0(TigMessage* msg);
-bool sub_54DC80(TigMessage* msg);
 void intgame_process_event(TigMessage* msg);
 void sub_54EA80(S4F2810* a1);
 bool sub_54EB50();

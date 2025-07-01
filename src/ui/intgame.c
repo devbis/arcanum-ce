@@ -136,6 +136,7 @@ static void intgame_draw_bar_rect(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static bool iso_interface_message_filter(TigMessage* msg);
 static void sub_54DBF0(IntgameSecondaryButton btn, RotatingWindowType window_type);
+static bool handle_button_unhover(TigMessage* msg);
 static void sub_54EB60();
 static void intgame_combat_mode_toggle();
 static void sub_54ECD0();
@@ -1826,7 +1827,7 @@ bool sub_54B5D0(TigMessage* msg)
     char buffer[80];
 
     if (scrollbar_ui_process_event(msg)
-        || sub_54DC80(msg)
+        || handle_button_unhover(msg)
         || hotkey_ui_process_event(msg)) {
         return true;
     }
@@ -2571,12 +2572,13 @@ void sub_54DBF0(IntgameSecondaryButton btn, RotatingWindowType window_type)
 }
 
 // 0x54DC80
-bool sub_54DC80(TigMessage* msg)
+bool handle_button_unhover(TigMessage* msg)
 {
     int index;
 
-    // FIXME: No check for msg type.
-    if (msg->data.button.state != TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
+    // FIX: Check for message type before checking for button state.
+    if (msg->type != TIG_MESSAGE_BUTTON
+        || msg->data.button.state != TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
         return false;
     }
 
