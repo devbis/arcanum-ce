@@ -65,13 +65,13 @@ void broadcast_ui_reset()
 // 0x5718A0
 void broadcast_ui_open()
 {
-    if (broadcast_ui_opened || sub_5533B0() == 7) {
+    if (broadcast_ui_opened || iso_interface_window_get_2() == ROTWIN_TYPE_BROADCAST) {
         broadcast_ui_close();
         return;
     }
 
     broadcast_ui_bcast.loc = 0;
-    sub_5506C0(7);
+    iso_interface_window_set(ROTWIN_TYPE_BROADCAST);
     textedit_ui_focus(&broadcast_ui_textedit);
     dword_6810CC = true;
     intgame_text_edit_refresh(broadcast_ui_textedit.buffer, broadcast_ui_font);
@@ -86,7 +86,7 @@ void broadcast_ui_close()
         dword_6810CC = false;
         textedit_ui_unfocus(&broadcast_ui_textedit);
         *broadcast_ui_textedit.buffer = '\0';
-        sub_5506C0(0);
+        iso_interface_window_set(ROTWIN_TYPE_MSG);
     }
 }
 

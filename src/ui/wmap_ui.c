@@ -3330,7 +3330,7 @@ void sub_564000(int a1)
 // 0x564030
 void sub_564030(WmapNote* note)
 {
-    sub_5506C0(6);
+    iso_interface_window_set(ROTWIN_TYPE_MAP_NOTE);
     dword_66D9D4 = note;
     stru_5C9B20.buffer = note->str;
     textedit_ui_focus(&stru_5C9B20);

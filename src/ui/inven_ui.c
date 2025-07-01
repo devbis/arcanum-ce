@@ -1300,26 +1300,26 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 
     if (msg->data.button.button_handle == inven_ui_total_attack_image_btn
         || msg->data.button.button_handle == inven_ui_total_attack_value_btn) {
-        sub_5506C0(0);
+        iso_interface_window_set(ROTWIN_TYPE_MSG);
         intgame_message_window_display_attack(inven_ui_pc_obj);
         return true;
     }
 
     if (msg->data.button.button_handle == inven_ui_total_defence_image_btn
         || msg->data.button.button_handle == inven_ui_total_defence_value_btn) {
-        sub_5506C0(0);
+        iso_interface_window_set(ROTWIN_TYPE_MSG);
         intgame_message_window_display_defense(inven_ui_pc_obj);
         return true;
     }
 
     if (msg->data.button.button_handle == inven_ui_target_total_attack_btn) {
-        sub_5506C0(0);
+        iso_interface_window_set(ROTWIN_TYPE_MSG);
         intgame_message_window_display_attack(qword_682C78);
         return true;
     }
 
     if (msg->data.button.button_handle == inven_ui_target_total_defence_btn) {
-        sub_5506C0(0);
+        iso_interface_window_set(ROTWIN_TYPE_MSG);
         intgame_message_window_display_defense(qword_682C78);
         return true;
     }
@@ -3875,7 +3875,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
                     sub_578B80(qty);
                 } else {
                     intgame_mode_set(INTGAME_MODE_QUANTITY);
-                    sub_5506C0(9);
+                    iso_interface_window_set(ROTWIN_TYPE_QUANTITY);
                     intgame_refresh_cursor();
                 }
 

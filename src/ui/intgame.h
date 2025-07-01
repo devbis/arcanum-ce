@@ -51,6 +51,22 @@ typedef enum IntgameMode {
     INTGAME_MODE_COUNT,
 } IntgameMode;
 
+typedef enum RotatingWindowType {
+    ROTWIN_TYPE_INVALID = -1,
+    ROTWIN_TYPE_MSG,
+    ROTWIN_TYPE_SPELLS,
+    ROTWIN_TYPE_SKILLS,
+    ROTWIN_TYPE_CHAT,
+    ROTWIN_TYPE_TRAPS,
+    ROTWIN_TYPE_DIALOGUE,
+    ROTWIN_TYPE_MAP_NOTE,
+    ROTWIN_TYPE_BROADCAST,
+    ROTWIN_TYPE_MAGICTECH,
+    ROTWIN_TYPE_QUANTITY,
+    ROTWIN_TYPE_MP_KICKBAN,
+    ROTWIN_TYPE_COUNT,
+} RotatingWindowType;
+
 extern tig_font_handle_t intgame_morph15_white_font;
 
 bool intgame_init(GameInitInfo* init_info);
@@ -75,7 +91,7 @@ void sub_54EA80(S4F2810* a1);
 bool sub_54EB50();
 void sub_54FCF0(Hotkey* hotkey);
 void sub_550150(Hotkey* hotkey);
-void sub_5506C0(int window_type);
+void iso_interface_window_set(RotatingWindowType window_type);
 void sub_550720();
 void sub_550750(UiMessage* ui_message);
 void sub_550770(int a1, char* str);
@@ -94,8 +110,8 @@ bool intgame_get_location_under_cursor(int64_t* loc_ptr);
 IntgameMode intgame_mode_get();
 bool intgame_mode_set(IntgameMode mode);
 bool intgame_mode_supports_scrolling(IntgameMode mode);
-int sub_552070();
-void sub_552080(int window_type);
+RotatingWindowType iso_interface_window_get();
+void iso_interface_window_set_animated(RotatingWindowType window_type);
 void intgame_text_edit_refresh(const char* str, tig_font_handle_t font);
 void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, tig_color_t color, bool a4);
 bool intgame_clock_process_callback(TimeEvent* timeevent);
@@ -104,7 +120,7 @@ void intgame_dialog_end();
 void intgame_dialog_clear();
 void intgame_dialog_set_option(int index, const char* str);
 int intgame_dialog_get_option(TigMessage* msg);
-int sub_5533B0();
+RotatingWindowType iso_interface_window_get_2();
 void intgame_spell_maintain_art_set(int slot, tig_art_id_t art_id);
 void intgame_spell_maintain_refresh(int slot, bool active);
 void intgame_refresh_cursor();
@@ -135,7 +151,7 @@ bool intgame_create_iso_window(tig_window_handle_t* window_handle_ptr);
 bool intgame_is_compact_interface();
 void intgame_set_fullscreen();
 void intgame_toggle_interface();
-int sub_557AA0();
+RotatingWindowType iso_interface_window_get_3();
 int sub_557AB0();
 void sub_557AC0(int group, int index, UiButtonInfo* button_info);
 int64_t sub_557B00();

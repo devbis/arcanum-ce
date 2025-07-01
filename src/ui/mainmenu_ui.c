@@ -5222,7 +5222,7 @@ bool sub_546EE0(TigMessage* msg)
 
         if ((mainmenu_ui_window_type == MM_WINDOW_SHOP || mainmenu_ui_window_type == MM_WINDOW_CHAREDIT)
             && msg->data.character.ch == SDLK_RETURN
-            && sub_552070() != 9) {
+            && iso_interface_window_get() != ROTWIN_TYPE_QUANTITY) {
             gsound_play_sfx(0, 1);
             sub_5480C0(2);
             return true;

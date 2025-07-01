@@ -154,8 +154,8 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
     case ANIM_UI_EVENT_TYPE_6:
     case ANIM_UI_EVENT_TYPE_7:
         break;
-    case ANIM_UI_EVENT_TYPE_8:
-        sub_552080(timeevent->params[1].integer_value);
+    case ANIM_UI_EVENT_TYPE_ROTATE_INTERFACE:
+        iso_interface_window_set_animated(timeevent->params[1].integer_value);
         break;
     case ANIM_UI_EVENT_TYPE_END_DEATH:
         if (critter_is_dead(player_get_local_pc_obj())) {
