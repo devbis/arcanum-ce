@@ -547,7 +547,7 @@ static int intgame_weapon_icons[TIG_ART_WEAPON_TYPE_COUNT] = {
 };
 
 // 0x5C7020
-static int dword_5C7020[TIG_ART_AMMO_TYPE_COUNT] = {
+static int intgame_ammo_icons[TIG_ART_AMMO_TYPE_COUNT] = {
     /*  TIG_ART_AMMO_TYPE_ARROW */ 398,
     /* TIG_ART_AMMO_TYPE_BULLET */ 399,
     /* TIG_ART_AMMO_TYPE_CHARGE */ 400,
@@ -555,7 +555,7 @@ static int dword_5C7020[TIG_ART_AMMO_TYPE_COUNT] = {
 };
 
 // 0x5C7030
-static int dword_5C7030[TIG_ART_ARMOR_TYPE_COUNT] = {
+static int intgame_armor_type_icons[TIG_ART_ARMOR_TYPE_COUNT] = {
     /*     TIG_ART_ARMOR_TYPE_UNDERWEAR */ 402,
     /*      TIG_ART_ARMOR_TYPE_VILLAGER */ 402,
     /*       TIG_ART_ARMOR_TYPE_LEATHER */ 405,
@@ -568,7 +568,7 @@ static int dword_5C7030[TIG_ART_ARMOR_TYPE_COUNT] = {
 };
 
 // 0x5C7054
-static int dword_5C7054[TIG_ART_ARMOR_COVERAGE_COUNT] = {
+static int intgame_armor_coverage_icons[TIG_ART_ARMOR_COVERAGE_COUNT] = {
     /*     TIG_ART_ARMOR_COVERAGE_TORSO */ 0,
     /*    TIG_ART_ARMOR_COVERAGE_SHIELD */ 405,
     /*    TIG_ART_ARMOR_COVERAGE_HELMET */ 405,
@@ -590,7 +590,7 @@ static int intgame_written_icons[WRITTEN_TYPE_COUNT] = {
 };
 
 // 0x5C708C
-static int dword_5C708C[UI_MSG_TYPE_COUNT] = {
+static int intgame_message_icons[UI_MSG_TYPE_COUNT] = {
     /*       UI_MSG_TYPE_LEVEL */ 438, // "levelupicon.art" - Level Up Icon
     /*      UI_MSG_TYPE_POISON */ 439, // "poisoned_icon.art" - Poisoned Icon
     /*       UI_MSG_TYPE_CURSE */ 440, // "hexedicon.art" - Cursed Icon
@@ -5412,7 +5412,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
 
     switch (ui_message->type) {
     case UI_MSG_TYPE_LEVEL:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[0]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[ui_message->type]);
 
         mes_file_entry1.num = 21; // "Level Up"
         mes_get_msg(intgame_mes_file, &mes_file_entry1);
@@ -5453,7 +5453,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_POISON:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[1]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[ui_message->type]);
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
@@ -5474,7 +5474,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_CURSE:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[2]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[ui_message->type]);
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
@@ -5493,7 +5493,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_BLESS:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[3]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[ui_message->type]);
         intgame_message_window_write_text(window_handle,
             ui_message->str,
             &stru_5C70C8,
@@ -5521,7 +5521,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         size_t pos = 0;
         bool rc;
 
-        intgame_message_window_draw_image(window_handle, dword_5C708C[ui_message->type]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[ui_message->type]);
 
         while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
             pos++;
@@ -5569,7 +5569,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_SKILL:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
         intgame_message_window_write_text(window_handle,
             IS_TECH_SKILL(ui_message->field_8)
                 ? tech_skill_name(GET_TECH_SKILL(ui_message->field_8))
@@ -5673,7 +5673,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_LEFT);
         break;
     case UI_MSG_TYPE_TECH:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
         intgame_message_window_write_text(window_handle,
             tech_discipline_name_get(ui_message->field_8),
             &stru_5C70C8,
@@ -5686,7 +5686,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             MSG_TEXT_HALIGN_LEFT);
         break;
     case UI_MSG_TYPE_DEGREE:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
         intgame_message_window_write_text(window_handle,
             tech_degree_name_get(ui_message->field_8 % 8),
             &stru_5C70C8,
@@ -5714,7 +5714,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_STAT: {
         size_t pos = 0;
 
-        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
 
         while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
             pos++;
@@ -5743,7 +5743,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_SCHEMATIC:
-        intgame_message_window_draw_image(window_handle, dword_5C708C[6]);
+        intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
         intgame_message_window_write_text(window_handle,
             sub_56E9D0(ui_message->field_8),
             &stru_5C70C8,
@@ -6783,7 +6783,7 @@ int intgame_item_icon_get(int64_t item_obj)
         }
         break;
     case OBJ_TYPE_AMMO:
-        num = dword_5C7020[obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE)];
+        num = intgame_ammo_icons[obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE)];
         break;
     case OBJ_TYPE_ARMOR:
         art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
@@ -6791,10 +6791,10 @@ int intgame_item_icon_get(int64_t item_obj)
         switch (armor_coverage) {
         case TIG_ART_ARMOR_COVERAGE_TORSO:
             art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
-            num = dword_5C7030[tig_art_item_id_subtype_get(art_id)];
+            num = intgame_armor_type_icons[tig_art_item_id_subtype_get(art_id)];
             break;
         default:
-            num = dword_5C7054[armor_coverage];
+            num = intgame_armor_coverage_icons[armor_coverage];
             break;
         }
         if (complexity > 0) {
