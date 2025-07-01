@@ -153,7 +153,7 @@ static bool sub_550D20();
 static void sub_550D60();
 static void iso_interface_window_enable(RotatingWindowType window_type);
 static void sub_551660();
-static int sub_551740(int x, int y);
+static int find_interface_window_index(int x, int y);
 static void sub_5517F0();
 static bool sub_5518C0(int x, int y);
 static void sub_551910(TigMessage* msg);
@@ -208,7 +208,7 @@ static tig_window_handle_t intgame_maintain_fs_windows[5] = {
 };
 
 // 0x5C6390
-static TigRect stru_5C6390[2] = {
+static TigRect intgame_interface_window_frames[2] = {
     { 0, 0, 800, 41 },
     { 0, 441, 800, 159 },
 };
@@ -220,7 +220,7 @@ static TigRect stru_5C63B0 = { 311, 96, 178, 178 };
 static TigRect stru_5C63C0 = { 311, 196, 178, 178 };
 
 // 0x5C63D0
-static int dword_5C63D0 = -1;
+static int intgame_mt_window_index = -1;
 
 // 0x5C63D8
 static TigRect intgame_health_bar_frame = { 14, 472, 28, 88 };
@@ -1061,7 +1061,7 @@ void intgame_resize(GameResizeInfo* resize_info)
     }
 
     if (!intgame_compact_interface) {
-        hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
+        hotkey_ui_start(dword_64C4F8[1], &(intgame_interface_window_frames[1]), dword_64C4F8[1], false);
 
         for (index = 0; index < 5; index++) {
             tig_window_hide(intgame_maintain_fs_windows[index]);
@@ -1216,7 +1216,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
         }
 
         window_data.background_color = art_anim_data.color_key;
-        window_data.rect = stru_5C6390[index];
+        window_data.rect = intgame_interface_window_frames[index];
         art_blit_info.art_id = art_id;
 
         switch (index) {
@@ -1263,30 +1263,30 @@ void iso_interface_create(tig_window_handle_t window_handle)
     dword_64C530 = 0;
 
     for (index = 0; index < 11; index++) {
-        iwid = sub_551740(intgame_rotwin_text_frame[index].rect.x, intgame_rotwin_text_frame[index].rect.y);
+        iwid = find_interface_window_index(intgame_rotwin_text_frame[index].rect.x, intgame_rotwin_text_frame[index].rect.y);
         if (iwid == -1) {
             tig_debug_printf("iso_interface_create: ERROR: find iwid match!\n");
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
         }
 
-        intgame_rotwin_text_frame[index].rect.x -= stru_5C6390[iwid].x;
-        intgame_rotwin_text_frame[index].rect.y -= stru_5C6390[iwid].y;
+        intgame_rotwin_text_frame[index].rect.x -= intgame_interface_window_frames[iwid].x;
+        intgame_rotwin_text_frame[index].rect.y -= intgame_interface_window_frames[iwid].y;
         intgame_rotwin_text_frame[index].window_handle = dword_64C4F8[iwid];
     }
 
     for (index = 0; index < INTGAME_COUNTER_COUNT; index++) {
-        iwid = sub_551740(intgame_number_boxes[index].rect.x, intgame_number_boxes[index].rect.y);
+        iwid = find_interface_window_index(intgame_number_boxes[index].rect.x, intgame_number_boxes[index].rect.y);
         if (iwid == -1) {
             tig_debug_printf("iso_interface_create: ERROR: find iwid match!\n");
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
         }
 
-        intgame_number_boxes[index].rect.x -= stru_5C6390[iwid].x;
-        intgame_number_boxes[index].rect.y -= stru_5C6390[iwid].y;
+        intgame_number_boxes[index].rect.x -= intgame_interface_window_frames[iwid].x;
+        intgame_number_boxes[index].rect.y -= intgame_interface_window_frames[iwid].y;
         intgame_number_boxes[index].window_handle = dword_64C4F8[iwid];
     }
 
-    hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
+    hotkey_ui_start(dword_64C4F8[1], &(intgame_interface_window_frames[1]), dword_64C4F8[1], false);
     intgame_button_create(&stru_5C6F30);
     intgame_button_create(&intgame_mt_button_info);
     intgame_mt_button_disable();
@@ -1335,8 +1335,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
         stru_64C540[index].str = MALLOC(200);
     }
 
-    dword_5C63D0 = sub_551740(intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].x, intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].y);
-    if (dword_5C63D0 == -1) {
+    intgame_mt_window_index = find_interface_window_index(intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].x, intgame_rotwin_button_info[ROTWIN_TYPE_MAGICTECH].y);
+    if (intgame_mt_window_index == -1) {
         tig_debug_printf("Intgame: ERROR: Couldn't match magic-tech window!\n");
         exit(EXIT_FAILURE);
     }
@@ -1433,12 +1433,12 @@ bool intgame_button_create(UiButtonInfo* button_info)
 {
     int index;
 
-    index = sub_551740(button_info->x, button_info->y);
+    index = find_interface_window_index(button_info->x, button_info->y);
     if (index == -1) {
         return false;
     }
 
-    return intgame_button_create_ex(dword_64C4F8[index], &(stru_5C6390[index]), button_info, TIG_BUTTON_FLAG_0x01);
+    return intgame_button_create_ex(dword_64C4F8[index], &(intgame_interface_window_frames[index]), button_info, TIG_BUTTON_FLAG_0x01);
 }
 
 // 0x54AB20
@@ -1446,12 +1446,12 @@ bool button_create_flags(UiButtonInfo* button_info, unsigned int flags)
 {
     int index;
 
-    index = sub_551740(button_info->x, button_info->y);
+    index = find_interface_window_index(button_info->x, button_info->y);
     if (index == -1) {
         return false;
     }
 
-    return intgame_button_create_ex(dword_64C4F8[index], &(stru_5C6390[index]), button_info, flags);
+    return intgame_button_create_ex(dword_64C4F8[index], &(intgame_interface_window_frames[index]), button_info, flags);
 }
 
 // 0x54ABD0
@@ -1460,14 +1460,14 @@ bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
     int index;
     TigButtonData button_data;
 
-    index = sub_551740(button_info->x, button_info->y);
+    index = find_interface_window_index(button_info->x, button_info->y);
     if (index == -1) {
         return false;
     }
 
     button_data.window_handle = dword_64C4F8[index];
-    button_data.x = button_info->x - stru_5C6390[index].x;
-    button_data.y = button_info->y - stru_5C6390[index].y;
+    button_data.x = button_info->x - intgame_interface_window_frames[index].x;
+    button_data.y = button_info->y - intgame_interface_window_frames[index].y;
     button_data.width = width;
     button_data.height = height;
     button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -1611,8 +1611,8 @@ void intgame_draw_bar_rect(TigRect* rect)
     for (bar = 0; bar < INTGAME_BAR_COUNT; bar++) {
         tmp_rect = rects[bar];
         if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
-            blit_rect.x -= stru_5C6390[1].x;
-            blit_rect.y -= stru_5C6390[1].y;
+            blit_rect.x -= intgame_interface_window_frames[1].x;
+            blit_rect.y -= intgame_interface_window_frames[1].y;
             tig_art_interface_id_create(184, 0, 0, 0, &(art_blit_info.art_id));
 
             art_blit_info.src_rect = &blit_rect;
@@ -1654,8 +1654,8 @@ void intgame_draw_bar_rect(TigRect* rect)
 
                 dst_rect.width = tmp_rect.width;
                 dst_rect.height = tmp_rect.height;
-                dst_rect.x = blit_rect.x - stru_5C6390[1].x;
-                dst_rect.y = blit_rect.y - stru_5C6390[1].y;
+                dst_rect.x = blit_rect.x - intgame_interface_window_frames[1].x;
+                dst_rect.y = blit_rect.y - intgame_interface_window_frames[1].y;
 
                 art_blit_info.flags = 0;
                 art_blit_info.src_rect = &tmp_rect;
@@ -1692,9 +1692,9 @@ void intgame_draw_bar_rect(TigRect* rect)
                 tmp_rect.height = blit_rect.height;
                 tig_art_interface_id_create(nums[bar], 0, 0, 0, &(art_blit_info.art_id));
 
-                dst_rect.x = blit_rect.x - stru_5C6390[1].x;
+                dst_rect.x = blit_rect.x - intgame_interface_window_frames[1].x;
                 dst_rect.width = tmp_rect.width;
-                dst_rect.y = blit_rect.y - stru_5C6390[1].y;
+                dst_rect.y = blit_rect.y - intgame_interface_window_frames[1].y;
                 dst_rect.height = tmp_rect.height;
 
                 art_blit_info.flags = 0;
@@ -1787,7 +1787,7 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
     TigArtFrameData art_frame_data;
     TigArtBlitInfo blt;
 
-    index = sub_551740(stru_5C6470.x, stru_5C6470.y);
+    index = find_interface_window_index(stru_5C6470.x, stru_5C6470.y);
     if (index == -1) {
         tig_debug_printf("intgame_ammo_icon_refresh: ERROR: couldn't find iwid match!\n");
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
@@ -1801,8 +1801,8 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
     src_rect.width = art_frame_data.width;
     src_rect.height = art_frame_data.height;
 
-    dst_rect.x = stru_5C6470.x - stru_5C6390[index].x;
-    dst_rect.y = stru_5C6470.y - stru_5C6390[index].y;
+    dst_rect.x = stru_5C6470.x - intgame_interface_window_frames[index].x;
+    dst_rect.y = stru_5C6470.y - intgame_interface_window_frames[index].y;
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
@@ -1875,7 +1875,7 @@ bool sub_54B5D0(TigMessage* msg)
                 }
             }
 
-            if (msg->data.mouse.y < stru_5C6390[1].y) {
+            if (msg->data.mouse.y < intgame_interface_window_frames[1].y) {
                 if (intgame_iso_window_type == ROTWIN_TYPE_SPELLS
                     || intgame_iso_window_type == ROTWIN_TYPE_SKILLS) {
                     iso_interface_window_set(ROTWIN_TYPE_MSG);
@@ -3853,7 +3853,7 @@ bool sub_5503F0(RotatingWindowType window_type, int progress)
     TigRect src_rect;
     TigRect dst_rect;
 
-    iwid = sub_551740(intgame_rotwin_button_info[window_type].x, intgame_rotwin_button_info[window_type].y);
+    iwid = find_interface_window_index(intgame_rotwin_button_info[window_type].x, intgame_rotwin_button_info[window_type].y);
     if (iwid == -1) {
         return false;
     }
@@ -3868,8 +3868,8 @@ bool sub_5503F0(RotatingWindowType window_type, int progress)
 
     dst_rect.width = src_rect.width;
     dst_rect.height = src_rect.height;
-    dst_rect.x = intgame_rotwin_button_info[window_type].x - stru_5C6390[iwid].x;
-    dst_rect.y = intgame_rotwin_button_info[window_type].y - stru_5C6390[iwid].y;
+    dst_rect.x = intgame_rotwin_button_info[window_type].x - intgame_interface_window_frames[iwid].x;
+    dst_rect.y = intgame_rotwin_button_info[window_type].y - intgame_interface_window_frames[iwid].y;
 
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &src_rect;
@@ -4622,15 +4622,15 @@ void sub_551660()
 }
 
 // 0x551740
-int sub_551740(int x, int y)
+int find_interface_window_index(int x, int y)
 {
     int index;
 
     for (index = 0; index < 2; index++) {
-        if (x >= stru_5C6390[index].x
-            && y >= stru_5C6390[index].y
-            && x < stru_5C6390[index].x + stru_5C6390[index].width
-            && y < stru_5C6390[index].y + stru_5C6390[index].height) {
+        if (x >= intgame_interface_window_frames[index].x
+            && y >= intgame_interface_window_frames[index].y
+            && x < intgame_interface_window_frames[index].x + intgame_interface_window_frames[index].width
+            && y < intgame_interface_window_frames[index].y + intgame_interface_window_frames[index].height) {
             return index;
         }
     }
@@ -5180,8 +5180,8 @@ void intgame_clock_refresh()
     if (dword_64C6D0) {
         sprintf(str, "%d Hours", datetime_current_hour());
 
-        rect.x = stru_5C6390[0].x + 650;
-        rect.y = stru_5C6390[0].y + 5;
+        rect.x = intgame_interface_window_frames[0].x + 650;
+        rect.y = intgame_interface_window_frames[0].y + 5;
         rect.width = 50;
         rect.height = 25;
 
@@ -7957,8 +7957,8 @@ void intgame_mt_button_disable()
             tig_debug_printf("Intgame: intgame_mt_button_disable: ERROR: Can't find Interface Art: %d!\n", 184);
         }
 
-        rect.x = intgame_mt_button_info.x - stru_5C6390[1].x;
-        rect.y = intgame_mt_button_info.y - stru_5C6390[1].y;
+        rect.x = intgame_mt_button_info.x - intgame_interface_window_frames[1].x;
+        rect.y = intgame_mt_button_info.y - intgame_interface_window_frames[1].y;
         rect.width = art_frame_data.width;
         rect.height = art_frame_data.height;
 
