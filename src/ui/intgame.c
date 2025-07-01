@@ -505,10 +505,10 @@ static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_
 static int dword_5C6F78 = 6;
 
 // 0x5C6F80
-static TigRect stru_5C6F80 = { 648, 5, 128, 30 };
+static TigRect intgame_clock_frame = { 648, 5, 128, 30 };
 
 // 0x5C6F90
-static UiButtonInfo stru_5C6F90 = { 0, 0, -1, TIG_BUTTON_HANDLE_INVALID };
+static UiButtonInfo intgame_clock_button_info = { 0, 0, -1, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6FA0
 static int intgame_race_icons[RACE_COUNT] = {
@@ -1299,9 +1299,9 @@ void iso_interface_create(tig_window_handle_t window_handle)
     tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
     tig_font_create(&font_desc, &dword_64C670);
 
-    stru_5C6F90.x = stru_5C6F80.x;
-    stru_5C6F90.y = stru_5C6F80.y;
-    button_create_no_art(&stru_5C6F90, stru_5C6F80.width, stru_5C6F80.height);
+    intgame_clock_button_info.x = intgame_clock_frame.x;
+    intgame_clock_button_info.y = intgame_clock_frame.y;
+    button_create_no_art(&intgame_clock_button_info, intgame_clock_frame.width, intgame_clock_frame.height);
 
     if (tig_art_interface_id_create(207, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -2177,20 +2177,20 @@ bool sub_54B5D0(TigMessage* msg)
         } // msg->data.button.state == TIG_BUTTON_STATE_PRESSED
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
-            if (msg->data.button.button_handle == stru_5C6F90.button_handle) {
+            if (msg->data.button.button_handle == intgame_clock_button_info.button_handle) {
                 datetime = sub_45A7C0();
 
-                mes_file_entry.num = 22;
+                mes_file_entry.num = 22; // "Current Time"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
                 datetime_format_time(&datetime, time_str_buffer);
                 sprintf(buffer, "%s: %s", mes_file_entry.str, time_str_buffer);
 
-                mes_file_entry.num = 23;
+                mes_file_entry.num = 23; // "Current Date"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
                 datetime_format_date(&datetime, time_str_buffer);
                 sprintf(&(buffer[strlen(buffer)]), "   %s: %s", mes_file_entry.str, time_str_buffer);
 
-                ui_message.type = 6;
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
                 ui_message.str = buffer;
                 sub_550750(&ui_message);
                 return true;
@@ -2603,7 +2603,7 @@ bool sub_54DC80(TigMessage* msg)
             }
             return true;
         }
-        if (msg->data.button.button_handle == stru_5C6F90.button_handle) {
+        if (msg->data.button.button_handle == intgame_clock_button_info.button_handle) {
             intgame_message_window_clear();
         }
         break;
@@ -5194,16 +5194,16 @@ void intgame_clock_refresh()
     datetime = sub_45A7C0();
     v1 = (dword_64C47C[1] + dword_64C47C[0]
         + (datetime_seconds_since_reference_date(&datetime) + 73800) % 86400 * (dword_64C47C[1] + dword_64C47C[0]) / 86400
-        - stru_5C6F80.width / 2) % (dword_64C47C[1] + dword_64C47C[0]);
+        - intgame_clock_frame.width / 2) % (dword_64C47C[1] + dword_64C47C[0]);
     if (dword_5C7308 == v1) {
         return;
     }
 
     dword_5C7308 = v1;
-    tig_window_fill(dword_64C4F8[0], &stru_5C6F80, tig_color_make(0, 0, 0));
+    tig_window_fill(dword_64C4F8[0], &intgame_clock_frame, tig_color_make(0, 0, 0));
 
-    dst_x = stru_5C6F80.x;
-    dst_width = stru_5C6F80.width;
+    dst_x = intgame_clock_frame.x;
+    dst_width = intgame_clock_frame.width;
 
     cycle = 0;
     num_cycles = 0;
@@ -5238,12 +5238,12 @@ void intgame_clock_refresh()
             src_rect.x = v1;
             src_rect.y = 0;
             src_rect.width = SDL_min(width - v1, dst_width);
-            src_rect.height = stru_5C6F80.height;
+            src_rect.height = intgame_clock_frame.height;
 
             dst_rect.x = dst_x;
-            dst_rect.y = stru_5C6F80.y;
+            dst_rect.y = intgame_clock_frame.y;
             dst_rect.width = src_rect.width;
-            dst_rect.height = stru_5C6F80.height;
+            dst_rect.height = intgame_clock_frame.height;
 
             art_blit_info.flags = 0;
             art_blit_info.src_rect = &src_rect;
