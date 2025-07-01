@@ -881,7 +881,7 @@ static IntgameMode dword_64C634[11];
 static TigRect intgame_pc_lens_src_rect;
 
 // 0x64C670
-static tig_font_handle_t dword_64C670;
+static tig_font_handle_t intgame_cloister18_font;
 
 // 0x64C674
 static int dword_64C674;
@@ -1300,7 +1300,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     font_desc.str = NULL;
     tig_font_measure(&font_desc);
     tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
-    tig_font_create(&font_desc, &dword_64C670);
+    tig_font_create(&font_desc, &intgame_cloister18_font);
 
     intgame_clock_button_info.x = intgame_clock_frame.x;
     intgame_clock_button_info.y = intgame_clock_frame.y;
@@ -1385,7 +1385,7 @@ void iso_interface_destroy()
             tig_window_destroy(dword_64C4F8[index]);
         }
 
-        tig_font_destroy(dword_64C670);
+        tig_font_destroy(intgame_cloister18_font);
 
         for (index = 0; index < 10; index++) {
             FREE(stru_64C540[index].str);
@@ -1508,7 +1508,7 @@ void intgame_draw_counter(int counter, int value, int digits)
 
     info = &(intgame_number_boxes[counter]);
 
-    tig_font_push(dword_64C670);
+    tig_font_push(intgame_cloister18_font);
 
     if (counter != INTGAME_COUNTER_POISON) {
         info->rect.height++;
