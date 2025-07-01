@@ -275,7 +275,7 @@ static int intgame_ui_primary_button_normal_icons[UI_PRIMARY_BUTTON_COUNT] = {
 };
 
 // 0x5C6538
-static UiButtonInfo stru_5C6538 = { 605, 9, 137, TIG_BUTTON_HANDLE_INVALID };
+static UiButtonInfo intgame_sleep_button_info = { 605, 9, 137, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6548
 static UiButtonInfo stru_5C6548[] = {
@@ -1254,7 +1254,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
         intgame_button_create(&(intgame_primary_buttons[index]));
     }
 
-    intgame_button_create(&stru_5C6538);
+    intgame_button_create(&intgame_sleep_button_info);
     sub_5501C0();
 
     intgame_iso_interface_created = true;
@@ -1998,7 +1998,7 @@ bool sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6538.button_handle) {
+            if (msg->data.button.button_handle == intgame_sleep_button_info.button_handle) {
                 sleep_ui_toggle(OBJ_HANDLE_NULL);
                 return true;
             }
@@ -2241,7 +2241,7 @@ bool sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6538.button_handle) {
+            if (msg->data.button.button_handle == intgame_sleep_button_info.button_handle) {
                 dword_64C674 = (tig_net_is_active()) ? 1010 : 1009;
             }
 
@@ -2588,7 +2588,7 @@ bool sub_54DC80(TigMessage* msg)
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_MAP].button_handle
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_FATE].button_handle
-        || msg->data.button.button_handle == stru_5C6538.button_handle) {
+        || msg->data.button.button_handle == intgame_sleep_button_info.button_handle) {
         dword_64C674 = -1;
         sub_550720();
         return true;
