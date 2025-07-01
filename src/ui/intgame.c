@@ -932,7 +932,7 @@ static int dword_64C6C4;
 static int dword_64C6C8;
 
 // 0x64C6CC
-static bool(*dword_64C6CC)(TigMessage* msg);
+static bool(*intgame_dialog_process_event_func)(TigMessage* msg);
 
 // 0x64C6D0
 static int dword_64C6D0;
@@ -1832,18 +1832,18 @@ bool sub_54B5D0(TigMessage* msg)
         return true;
     }
 
-    if (dword_64C6CC != NULL) {
+    if (intgame_dialog_process_event_func != NULL) {
         if (msg->type != TIG_MESSAGE_KEYBOARD) {
-            return dword_64C6CC(msg);
+            return intgame_dialog_process_event_func(msg);
         }
 
         if (msg->data.keyboard.pressed) {
-            return dword_64C6CC(msg);
+            return intgame_dialog_process_event_func(msg);
         }
 
         if (msg->data.keyboard.key != SDL_SCANCODE_ESCAPE
             && msg->data.keyboard.key != SDL_SCANCODE_O) {
-            return dword_64C6CC(msg);
+            return intgame_dialog_process_event_func(msg);
         }
 
         return false;
@@ -2915,7 +2915,7 @@ void intgame_process_event(TigMessage* msg)
             }
             break;
         case TIG_MESSAGE_PING:
-            if (!dword_64C6CC
+            if (intgame_dialog_process_event_func == NULL
                 && tig_mouse_get_state(&mouse_state) == TIG_OK) {
                 fake_mouse_move.timestamp = msg->timestamp;
                 fake_mouse_move.type = TIG_MESSAGE_MOUSE;
@@ -5780,7 +5780,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
 // 0x553320
 bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
 {
-    dword_64C6CC = func;
+    intgame_dialog_process_event_func = func;
     tc_show();
     intgame_mode_set(INTGAME_MODE_MAIN);
     intgame_mode_set(INTGAME_MODE_DIALOG);
@@ -5791,7 +5791,7 @@ bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
 // 0x553350
 void intgame_dialog_end()
 {
-    dword_64C6CC = NULL;
+    intgame_dialog_process_event_func = NULL;
     tc_hide();
     intgame_mode_set(INTGAME_MODE_MAIN);
 }
