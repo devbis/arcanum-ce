@@ -82,6 +82,14 @@ typedef enum IntgamePrimaryButton {
     INTGAME_PRIMARY_BUTTON_COUNT,
 } IntgamePrimaryButton;
 
+typedef enum IntgameSecondaryButton {
+    INTGAME_SECONDARY_BUTTON_SKILLS,
+    INTGAME_SECONDARY_BUTTON_SPELLS,
+    INTGAME_SECONDARY_BUTTON_COMBAT,
+    INTGAME_SECONDARY_BUTTON_SCHEMATICS,
+    INTGAME_SECONDARY_BUTTON_COUNT,
+} IntgameSecondaryButton;
+
 typedef enum IntgameQuantityButton {
     INTGAME_QUANTITY_BUTTON_TAKE_ALL,
     INTGAME_QUANTITY_BUTTON_PLUS,
@@ -125,7 +133,7 @@ static void intgame_draw_counter(int counter, int value, int digits);
 static void intgame_draw_bar_rect(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static bool iso_interface_message_filter(TigMessage* msg);
-static void sub_54DBF0(int btn, int window_type);
+static void sub_54DBF0(IntgameSecondaryButton btn, int window_type);
 static void sub_54EB60();
 static void intgame_combat_mode_toggle();
 static void sub_54ECD0();
@@ -232,11 +240,11 @@ static IntgameIsoWindowTypeInfo intgame_number_boxes[INTGAME_COUNTER_COUNT] = {
 static TigRect stru_5C6470 = { 61, 509, 251, -1 };
 
 // 0x5C6480
-static UiButtonInfo stru_5C6480[] = {
-    { 693, 456, 472, TIG_BUTTON_HANDLE_INVALID },
-    { 649, 494, 473, TIG_BUTTON_HANDLE_INVALID },
-    { 86, 457, 470, TIG_BUTTON_HANDLE_INVALID },
-    { 693, 539, 471, TIG_BUTTON_HANDLE_INVALID },
+static UiButtonInfo intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_COUNT] = {
+    /*     INTGAME_SECONDARY_BUTTON_SKILLS */ { 693, 456, 472, TIG_BUTTON_HANDLE_INVALID },
+    /*     INTGAME_SECONDARY_BUTTON_SPELLS */ { 649, 494, 473, TIG_BUTTON_HANDLE_INVALID },
+    /*     INTGAME_SECONDARY_BUTTON_COMBAT */ { 86, 457, 470, TIG_BUTTON_HANDLE_INVALID },
+    /* INTGAME_SECONDARY_BUTTON_SCHEMATICS */ { 693, 539, 471, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C64C0
@@ -1233,11 +1241,12 @@ void iso_interface_create(tig_window_handle_t window_handle)
         tig_button_hide(intgame_maintain_buttons[index].button_handle);
     }
 
-    for (index = 0; index < 4; index++) {
-        if (index == 0 || index == 1) {
-            button_create_flags(&(stru_5C6480[index]), 0x2);
+    for (index = 0; index < INTGAME_SECONDARY_BUTTON_COUNT; index++) {
+        if (index == INTGAME_SECONDARY_BUTTON_SKILLS
+            || index == INTGAME_SECONDARY_BUTTON_SPELLS) {
+            button_create_flags(&(intgame_secondary_buttons[index]), 0x2);
         } else {
-            intgame_button_create(&(stru_5C6480[index]));
+            intgame_button_create(&(intgame_secondary_buttons[index]));
         }
     }
 
@@ -1873,10 +1882,10 @@ bool sub_54B5D0(TigMessage* msg)
                 && msg->data.mouse.x <= 790
                 && msg->data.mouse.y <= 590
                 && intgame_iso_window_type == 0) {
-                if (tig_button_state_get(stru_5C6480[1].button_handle, &button_state) == TIG_OK
+                if (tig_button_state_get(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
                     sub_5506C0(1);
-                } else if (tig_button_state_get(stru_5C6480[0].button_handle, &button_state) == TIG_OK
+                } else if (tig_button_state_get(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
                     sub_5506C0(2);
                 } else {
@@ -1944,22 +1953,22 @@ bool sub_54B5D0(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED) {
-            if (msg->data.button.button_handle == stru_5C6480[1].button_handle) {
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle) {
                 sub_5506C0(1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[0].button_handle) {
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle) {
                 sub_5506C0(2);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[2].button_handle) {
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_COMBAT].button_handle) {
                 intgame_combat_mode_toggle();
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[3].button_handle) {
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SCHEMATICS].button_handle) {
                 schematic_ui_toggle(player_get_local_pc_obj(), player_get_local_pc_obj());
                 return true;
             }
@@ -2108,19 +2117,19 @@ bool sub_54B5D0(TigMessage* msg)
         } // msg->data.button.state == TIG_BUTTON_STATE_RELEASED
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
-            if (msg->data.button.button_handle == stru_5C6480[1].button_handle) {
-                if (tig_button_state_get(stru_5C6480[0].button_handle, &button_state) == TIG_OK
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle) {
+                if (tig_button_state_get(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
-                    tig_button_state_change(stru_5C6480[0].button_handle, TIG_BUTTON_STATE_RELEASED);
+                    tig_button_state_change(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle, TIG_BUTTON_STATE_RELEASED);
                 }
                 sub_5506C0(1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[0].button_handle) {
-                if (tig_button_state_get(stru_5C6480[1].button_handle, &button_state) == TIG_OK
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle) {
+                if (tig_button_state_get(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
-                    tig_button_state_change(stru_5C6480[1].button_handle, TIG_BUTTON_STATE_RELEASED);
+                    tig_button_state_change(intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle, TIG_BUTTON_STATE_RELEASED);
                 }
                 sub_5506C0(2);
                 return true;
@@ -2187,23 +2196,23 @@ bool sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[1].button_handle) {
-                dword_64C674 = 1000;
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle) {
+                dword_64C674 = 1000; // "Spells"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[0].button_handle) {
-                dword_64C674 = 1001;
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle) {
+                dword_64C674 = 1001; // "Skills"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[2].button_handle) {
-                dword_64C674 = 1002;
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_COMBAT].button_handle) {
+                dword_64C674 = 1002; // "Combat Toggle"
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C6480[3].button_handle) {
-                dword_64C674 = 1003;
+            if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SCHEMATICS].button_handle) {
+                dword_64C674 = 1003; // "Schematics"
                 return true;
             }
 
@@ -2438,12 +2447,12 @@ bool sub_54B5D0(TigMessage* msg)
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_K:
                 if (!sub_541680()) {
-                    sub_54DBF0(0, 2);
+                    sub_54DBF0(INTGAME_SECONDARY_BUTTON_SKILLS, 2);
                 }
                 return true;
             case SDL_SCANCODE_M:
                 if (!sub_541680()) {
-                    sub_54DBF0(1, 1);
+                    sub_54DBF0(INTGAME_SECONDARY_BUTTON_SPELLS, 1);
                 }
                 return true;
             case SDL_SCANCODE_COMMA:
@@ -2537,19 +2546,23 @@ bool iso_interface_message_filter(TigMessage* msg)
 }
 
 // 0x54DBF0
-void sub_54DBF0(int btn, int window_type)
+void sub_54DBF0(IntgameSecondaryButton btn, int window_type)
 {
     int state;
+    int opposite_btn;
 
-    tig_button_state_get(stru_5C6480[btn].button_handle, &state);
+    tig_button_state_get(intgame_secondary_buttons[btn].button_handle, &state);
     if (state != TIG_BUTTON_STATE_PRESSED) {
-        tig_button_state_change(stru_5C6480[btn != 1 ? 1 : 0].button_handle, TIG_BUTTON_STATE_RELEASED);
+        opposite_btn = btn == INTGAME_SECONDARY_BUTTON_SPELLS
+            ? INTGAME_SECONDARY_BUTTON_SKILLS
+            : INTGAME_SECONDARY_BUTTON_SPELLS;
+        tig_button_state_change(intgame_secondary_buttons[opposite_btn].button_handle, TIG_BUTTON_STATE_RELEASED);
         intgame_force_fullscreen();
-        tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_PRESSED);
+        tig_button_state_change(intgame_secondary_buttons[btn].button_handle, TIG_BUTTON_STATE_PRESSED);
         sub_5506C0(window_type);
     } else {
         sub_5506C0(0);
-        tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_RELEASED);
+        tig_button_state_change(intgame_secondary_buttons[btn].button_handle, TIG_BUTTON_STATE_RELEASED);
         intgame_unforce_fullscreen();
     }
 }
@@ -2566,10 +2579,10 @@ bool sub_54DC80(TigMessage* msg)
 
     sub_54ECD0();
 
-    if (msg->data.button.button_handle == stru_5C6480[1].button_handle
-        || msg->data.button.button_handle == stru_5C6480[0].button_handle
-        || msg->data.button.button_handle == stru_5C6480[2].button_handle
-        || msg->data.button.button_handle == stru_5C6480[3].button_handle
+    if (msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SPELLS].button_handle
+        || msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SKILLS].button_handle
+        || msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_COMBAT].button_handle
+        || msg->data.button.button_handle == intgame_secondary_buttons[INTGAME_SECONDARY_BUTTON_SCHEMATICS].button_handle
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_LOGBOOK].button_handle
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_CHAR].button_handle
         || msg->data.button.button_handle == intgame_primary_buttons[INTGAME_PRIMARY_BUTTON_INVENTORY].button_handle
