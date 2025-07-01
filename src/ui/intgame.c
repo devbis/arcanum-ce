@@ -649,7 +649,7 @@ static TigRect stru_5C7158 = { 217, 63, 364, 78 };
 static TigRect stru_5C7168 = { 217, 87, 364, 54 };
 
 // 0x5C7178
-static int dword_5C7178[INTGAME_MODE_COUNT] = {
+static int intgame_mode_cursors[INTGAME_MODE_COUNT] = {
     /*         INTGAME_MODE_MAIN */ -1,
     /*        INTGAME_MODE_SPELL */ 21,
     /*        INTGAME_MODE_SKILL */ 352,
@@ -6050,7 +6050,7 @@ void intgame_refresh_cursor()
         // FIXME: Meaningless.
         tig_mouse_cursor_get_art_id();
 
-        art_num = dword_5C7178[intgame_mode_get()];
+        art_num = intgame_mode_cursors[intgame_mode_get()];
         if (art_num == -1) {
             if (have_weapon) {
                 if (tig_kb_is_key_pressed(SDL_SCANCODE_COMMA)) {
@@ -6077,7 +6077,7 @@ void intgame_refresh_cursor()
 // 0x553A60
 void sub_553A60(int art_num)
 {
-    dword_5C7178[INTGAME_MODE_ITEM] = art_num;
+    intgame_mode_cursors[INTGAME_MODE_ITEM] = art_num;
 }
 
 // 0x553A70
