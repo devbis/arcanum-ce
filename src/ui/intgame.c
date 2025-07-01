@@ -528,22 +528,22 @@ static int intgame_alignment_icons[6] = {
 };
 
 // 0x5C6FE4
-static int dword_5C6FE4[15] = {
-    391,
-    391,
-    391,
-    391,
-    391,
-    391,
-    392,
-    391,
-    395,
-    391,
-    392,
-    391,
-    391,
-    391,
-    391,
+static int intgame_weapon_icons[TIG_ART_WEAPON_TYPE_COUNT] = {
+    /*        TIG_ART_WEAPON_TYPE_NO_WEAPON */ 391,
+    /*          TIG_ART_WEAPON_TYPE_UNARMED */ 391,
+    /*           TIG_ART_WEAPON_TYPE_DAGGER */ 391,
+    /*            TIG_ART_WEAPON_TYPE_SWORD */ 391,
+    /*              TIG_ART_WEAPON_TYPE_AXE */ 391,
+    /*             TIG_ART_WEAPON_TYPE_MACE */ 391,
+    /*           TIG_ART_WEAPON_TYPE_PISTOL */ 392,
+    /* TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD */ 391,
+    /*              TIG_ART_WEAPON_TYPE_BOW */ 395,
+    /*                TIG_ART_WEAPON_TYPE_9 */ 391,
+    /*            TIG_ART_WEAPON_TYPE_RIFLE */ 392,
+    /*               TIG_ART_WEAPON_TYPE_11 */ 391,
+    /*               TIG_ART_WEAPON_TYPE_12 */ 391,
+    /*            TIG_ART_WEAPON_TYPE_STAFF */ 391,
+    /*               TIG_ART_WEAPON_TYPE_14 */ 391,
 };
 
 // 0x5C7020
@@ -6775,7 +6775,7 @@ int intgame_item_icon_get(int64_t item_obj)
     switch (obj_type) {
     case OBJ_TYPE_WEAPON:
         art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
-        num = dword_5C6FE4[tig_art_item_id_subtype_get(art_id)];
+        num = intgame_weapon_icons[tig_art_item_id_subtype_get(art_id)];
         if (num > 0) {
             num += 1;
         } else if (num < 0) {

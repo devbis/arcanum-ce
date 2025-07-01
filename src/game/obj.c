@@ -2193,7 +2193,7 @@ void sub_408430(tig_art_id_t aid)
             case TIG_ART_WEAPON_TYPE_BOW:
                 tig_debug_printf("Subtype: Bow  ");
                 break;
-            case TIG_ART_WEAPON_TYPE_UNUSED:
+            case TIG_ART_WEAPON_TYPE_9:
                 tig_debug_printf("Subtype: Unused Weapon  ");
                 break;
             case TIG_ART_WEAPON_TYPE_RIFLE:
