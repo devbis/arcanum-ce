@@ -666,7 +666,7 @@ void handle_mouse_scroll()
     int tolerance;
 
     if (!tig_get_active()) {
-        scroll_stop_scrolling();
+        scroll_stop();
         return;
     }
 
@@ -677,27 +677,27 @@ void handle_mouse_scroll()
 
     if (mouse_state.x < tolerance) {
         if (mouse_state.y < tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
+            scroll_start(SCROLL_DIRECTION_UP_LEFT);
         } else if (mouse_state.y >= height - tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
+            scroll_start(SCROLL_DIRECTION_DOWN_LEFT);
         } else {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
+            scroll_start(SCROLL_DIRECTION_LEFT);
         }
     } else if (mouse_state.x >= width - tolerance) {
         if (mouse_state.y < tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
+            scroll_start(SCROLL_DIRECTION_UP_RIGHT);
         } else if (mouse_state.y >= height - tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
+            scroll_start(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
+            scroll_start(SCROLL_DIRECTION_RIGHT);
         }
     } else {
         if (mouse_state.y < tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
+            scroll_start(SCROLL_DIRECTION_UP);
         } else if (mouse_state.y >= height - tolerance) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
+            scroll_start(SCROLL_DIRECTION_DOWN);
         } else {
-            scroll_stop_scrolling();
+            scroll_stop();
         }
     }
 }
@@ -707,24 +707,24 @@ void handle_keyboard_scroll()
 {
     if (tig_kb_is_key_pressed(SDL_SCANCODE_UP)) {
         if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
+            scroll_start(SCROLL_DIRECTION_UP_LEFT);
         } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
+            scroll_start(SCROLL_DIRECTION_UP_RIGHT);
         } else {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
+            scroll_start(SCROLL_DIRECTION_UP);
         }
     } else if (tig_kb_is_key_pressed(SDL_SCANCODE_DOWN)) {
         if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
+            scroll_start(SCROLL_DIRECTION_DOWN_LEFT);
         } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
+            scroll_start(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
-            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
+            scroll_start(SCROLL_DIRECTION_DOWN);
         }
     } else if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
-        scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
+        scroll_start(SCROLL_DIRECTION_LEFT);
     } else if (tig_kb_is_key_pressed(SDL_SCANCODE_RIGHT)) {
-        scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
+        scroll_start(SCROLL_DIRECTION_RIGHT);
     }
 }
 

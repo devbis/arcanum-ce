@@ -10,6 +10,9 @@
 #include "game/tc.h"
 #include "game/ui.h"
 
+#define SCROLL_DIAG_X 4
+#define SCROLL_DIAG_Y 2
+
 static void sub_40E630(int64_t dx, int64_t dy);
 static void sub_40E910(int64_t a1);
 static void scroll_speed_changed();
@@ -43,7 +46,7 @@ static ViewOptions scroll_view_options;
 static int64_t qword_5D11B8;
 
 // 0x5D11C0
-static bool dword_5D11C0;
+static bool is_scrolling;
 
 // 0x5D11C4
 static int scroll_distance;
@@ -115,12 +118,11 @@ int scroll_speed_get()
     return scroll_speed;
 }
 
-// TODO: Review name.
 // 0x40E0A0
-void scroll_start_scrolling_in_direction(int direction)
+void scroll_start(int direction)
 {
     // 0x5D117C
-    static unsigned int dword_5D117C;
+    static unsigned int scroll_ping_time;
 
     int dx;
     int dy;
@@ -138,11 +140,11 @@ void scroll_start_scrolling_in_direction(int direction)
     int rot;
 
     if (!scroll_init_info.editor) {
-        if ((unsigned int)tig_timer_between(dword_5D117C, gamelib_ping_time) < scroll_fps) {
+        if ((unsigned int)tig_timer_between(scroll_ping_time, gamelib_ping_time) < scroll_fps) {
             return;
         }
 
-        dword_5D117C = gamelib_ping_time;
+        scroll_ping_time = gamelib_ping_time;
     }
 
     if (scroll_func != NULL) {
@@ -158,29 +160,29 @@ void scroll_start_scrolling_in_direction(int direction)
         dy = scroll_speed_y;
         break;
     case SCROLL_DIRECTION_UP_RIGHT:
-        dx = -4 - scroll_speed_x;
-        dy = scroll_speed_y + 2;
+        dx = -(scroll_speed_x + SCROLL_DIAG_X);
+        dy = scroll_speed_y + SCROLL_DIAG_Y;
         break;
     case SCROLL_DIRECTION_RIGHT:
         dx = -scroll_speed_x;
         break;
     case SCROLL_DIRECTION_DOWN_RIGHT:
-        dx = -4 - scroll_speed_x;
-        dy = -2 - scroll_speed_y;
+        dx = -(scroll_speed_x + SCROLL_DIAG_X);
+        dy = -(scroll_speed_y + SCROLL_DIAG_Y);
         break;
     case SCROLL_DIRECTION_DOWN:
         dy = -scroll_speed_y;
         break;
     case SCROLL_DIRECTION_DOWN_LEFT:
-        dx = 4 + scroll_speed_x;
-        dy = -2 - scroll_speed_y;
+        dx = scroll_speed_x + SCROLL_DIAG_X;
+        dy = -(scroll_speed_y + SCROLL_DIAG_Y);
         break;
     case SCROLL_DIRECTION_LEFT:
         dx = scroll_speed_x;
         break;
     case SCROLL_DIRECTION_UP_LEFT:
-        dx = scroll_speed_x + 4;
-        dy = scroll_speed_y + 2;
+        dx = scroll_speed_x + SCROLL_DIAG_X;
+        dy = scroll_speed_y + SCROLL_DIAG_Y;
         break;
     default:
         break;
@@ -191,7 +193,7 @@ void scroll_start_scrolling_in_direction(int direction)
         return;
     }
 
-    dword_5D11C0 = true;
+    is_scrolling = true;
 
     distance = scroll_get_distance();
     if (distance == 0) {
@@ -325,11 +327,11 @@ void scroll_start_scrolling_in_direction(int direction)
 
 // TODO: Review name.
 // 0x40E610
-void scroll_stop_scrolling()
+void scroll_stop()
 {
-    if (dword_5D11C0) {
+    if (is_scrolling) {
         ui_refresh_cursor();
-        dword_5D11C0 = false;
+        is_scrolling = false;
     }
 }
 
