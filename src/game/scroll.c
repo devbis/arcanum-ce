@@ -12,7 +12,7 @@
 
 static void sub_40E630(int64_t dx, int64_t dy);
 static void sub_40E910(int64_t a1);
-static void sub_40E940();
+static void scroll_speed_changed();
 static bool sub_40EA50(tig_art_id_t art_id);
 
 // 0x59F050
@@ -25,16 +25,16 @@ static GameInitInfo scroll_init_info;
 static int64_t scroll_center;
 
 // 0x5D1188
-static int dword_5D1188;
+static int scroll_speed;
 
 // 0x5D1190
 static TigRect scroll_iso_content_rect;
 
 // 0x5D11A0
-static int dword_5D11A0;
+static int scroll_speed_y;
 
 // 0x5D11A4
-static int dword_5D11A4;
+static int scroll_speed_x;
 
 // 0x5D11A8
 static ViewOptions scroll_view_options;
@@ -68,9 +68,10 @@ bool scroll_init(GameInitInfo* init_info)
     scroll_init_info = *init_info;
 
     scroll_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_5D1188 = 1;
 
-    sub_40E940();
+    scroll_speed = 1;
+    scroll_speed_changed();
+
     location_set_func_5FC2F8(sub_40E910);
 
     return true;
@@ -98,7 +99,20 @@ void scroll_resize(GameResizeInfo* resize_info)
 void scroll_update_view(ViewOptions* view_options)
 {
     scroll_view_options = *view_options;
-    sub_40E940();
+    scroll_speed_changed();
+}
+
+// 0x40E080
+void scroll_speed_set(int value)
+{
+    scroll_speed = value;
+    scroll_speed_changed();
+}
+
+// 0x40E090
+int scroll_speed_get()
+{
+    return scroll_speed;
 }
 
 // TODO: Review name.
@@ -141,32 +155,32 @@ void scroll_start_scrolling_in_direction(int direction)
 
     switch (direction) {
     case SCROLL_DIRECTION_UP:
-        dy = dword_5D11A0;
+        dy = scroll_speed_y;
         break;
     case SCROLL_DIRECTION_UP_RIGHT:
-        dx = -4 - dword_5D11A4;
-        dy = dword_5D11A0 + 2;
+        dx = -4 - scroll_speed_x;
+        dy = scroll_speed_y + 2;
         break;
     case SCROLL_DIRECTION_RIGHT:
-        dx = -dword_5D11A4;
+        dx = -scroll_speed_x;
         break;
     case SCROLL_DIRECTION_DOWN_RIGHT:
-        dx = -4 - dword_5D11A4;
-        dy = -2 - dword_5D11A0;
+        dx = -4 - scroll_speed_x;
+        dy = -2 - scroll_speed_y;
         break;
     case SCROLL_DIRECTION_DOWN:
-        dy = -dword_5D11A0;
+        dy = -scroll_speed_y;
         break;
     case SCROLL_DIRECTION_DOWN_LEFT:
-        dx = 4 + dword_5D11A4;
-        dy = -2 - dword_5D11A0;
+        dx = 4 + scroll_speed_x;
+        dy = -2 - scroll_speed_y;
         break;
     case SCROLL_DIRECTION_LEFT:
-        dx = dword_5D11A4;
+        dx = scroll_speed_x;
         break;
     case SCROLL_DIRECTION_UP_LEFT:
-        dx = dword_5D11A4 + 4;
-        dy = dword_5D11A0 + 2;
+        dx = scroll_speed_x + 4;
+        dy = scroll_speed_y + 2;
         break;
     default:
         break;
@@ -221,7 +235,7 @@ void scroll_start_scrolling_in_direction(int direction)
         switch (direction) {
         case 1:
             direction = 0;
-            dx += dword_5D11A4 + 4;
+            dx += scroll_speed_x + 4;
             break;
         case 2:
         case 6:
@@ -229,15 +243,15 @@ void scroll_start_scrolling_in_direction(int direction)
             break;
         case 3:
             direction = 4;
-            dx += dword_5D11A4 + 4;
+            dx += scroll_speed_x + 4;
             break;
         case 5:
             direction = 4;
-            dx -= dword_5D11A4 + 4;
+            dx -= scroll_speed_x + 4;
             break;
         case 7:
             direction = 0;
-            dx -= dword_5D11A4 + 4;
+            dx -= scroll_speed_x + 4;
             break;
         }
     }
@@ -250,19 +264,19 @@ void scroll_start_scrolling_in_direction(int direction)
             break;
         case 1:
             direction = 2;
-            dy -= dword_5D11A0 + 2;
+            dy -= scroll_speed_y + 2;
             break;
         case 3:
             direction = 2;
-            dy += dword_5D11A0 + 2;
+            dy += scroll_speed_y + 2;
             break;
         case 5:
             direction = 6;
-            dy += dword_5D11A0 + 2;
+            dy += scroll_speed_y + 2;
             break;
         case 7:
             direction = 6;
-            dy -= dword_5D11A0 + 2;
+            dy -= scroll_speed_y + 2;
             break;
         }
     }
@@ -430,44 +444,44 @@ void sub_40E910(int64_t a1)
 }
 
 // 0x40E940
-void sub_40E940()
+void scroll_speed_changed()
 {
     if (scroll_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        switch (dword_5D1188) {
+        switch (scroll_speed) {
         case 0:
-            dword_5D11A4 = 8;
-            dword_5D11A0 = 4;
+            scroll_speed_x = 8;
+            scroll_speed_y = 4;
             break;
         case 1:
-            dword_5D11A4 = 20;
-            dword_5D11A0 = 10;
+            scroll_speed_x = 20;
+            scroll_speed_y = 10;
             break;
         case 2:
-            dword_5D11A4 = 28;
-            dword_5D11A0 = 14;
+            scroll_speed_x = 28;
+            scroll_speed_y = 14;
             break;
         case 3:
-            dword_5D11A4 = 56;
-            dword_5D11A0 = 28;
+            scroll_speed_x = 56;
+            scroll_speed_y = 28;
             break;
         }
     } else {
-        switch (dword_5D1188) {
+        switch (scroll_speed) {
         case 0:
-            dword_5D11A4 = scroll_view_options.zoom / 2;
-            dword_5D11A0 = scroll_view_options.zoom / 4;
+            scroll_speed_x = scroll_view_options.zoom / 2;
+            scroll_speed_y = scroll_view_options.zoom / 4;
             break;
         case 1:
-            dword_5D11A4 = scroll_view_options.zoom;
-            dword_5D11A0 = scroll_view_options.zoom / 2;
+            scroll_speed_x = scroll_view_options.zoom;
+            scroll_speed_y = scroll_view_options.zoom / 2;
             break;
         case 2:
-            dword_5D11A0 = scroll_view_options.zoom;
-            dword_5D11A4 = scroll_view_options.zoom * 2;
+            scroll_speed_y = scroll_view_options.zoom;
+            scroll_speed_x = scroll_view_options.zoom * 2;
             break;
         case 3:
-            dword_5D11A4 = scroll_view_options.zoom * 4;
-            dword_5D11A0 = scroll_view_options.zoom * 2;
+            scroll_speed_x = scroll_view_options.zoom * 4;
+            scroll_speed_y = scroll_view_options.zoom * 2;
             break;
         }
     }

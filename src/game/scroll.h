@@ -22,6 +22,8 @@ void scroll_exit();
 void scroll_reset();
 void scroll_resize(GameResizeInfo* resize_info);
 void scroll_update_view(ViewOptions* view_options);
+void scroll_speed_set(int value);
+int scroll_speed_get();
 void scroll_start_scrolling_in_direction(int direction);
 void scroll_stop_scrolling();
 void scroll_set_fps(int fps);
