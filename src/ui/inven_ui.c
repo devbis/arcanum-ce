@@ -721,7 +721,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         return false;
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = inven_ui_window_handle;
     tig_art_interface_id_create(340, 0, 0, 0, &(button_data.art_id));
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
@@ -798,7 +798,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
         button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     } else {
-        button_data.flags = TIG_BUTTON_FLAG_HIDDEN;
+        button_data.flags = TIG_BUTTON_HIDDEN;
         button_data.mouse_down_snd_id = -1;
         button_data.mouse_up_snd_id = -1;
         tig_art_interface_id_create(676, 0, 0, 0, &(button_data.art_id));
@@ -841,7 +841,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             return false;
         }
 
-        button_data.flags = TIG_BUTTON_FLAG_0x01;
+        button_data.flags = TIG_BUTTON_MOMENTARY;
         button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
         button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
         if (inven_ui_mode == INVEN_UI_MODE_LOOT) {
@@ -855,7 +855,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             }
         }
 
-        button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+        button_data.flags = TIG_BUTTON_TOGGLE | TIG_BUTTON_LATCH;
         tig_art_interface_id_create(338, 0, 0, 0, &(button_data.art_id));
         button_data.x = 713;
         button_data.y = 37;
@@ -879,7 +879,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         tig_button_radio_group_create(2, button_group, 0);
 
         if (obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_CONTAINER) {
-            button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+            button_data.flags = TIG_BUTTON_TOGGLE | TIG_BUTTON_LATCH;
             tig_art_interface_id_create(338, 0, 0, 0, &button_data.art_id);
             if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 button_data.x = 8;
@@ -912,7 +912,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             button_group[1] = inven_ui_target_inventory_btn;
             tig_button_radio_group_create(2, button_group, 0);
 
-            button_data.flags = TIG_BUTTON_FLAG_HIDDEN;
+            button_data.flags = TIG_BUTTON_HIDDEN;
             button_data.mouse_down_snd_id = -1;
             button_data.mouse_up_snd_id = -1;
             button_data.art_id = TIG_ART_ID_INVALID;
@@ -998,7 +998,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         && critter_leader_get(qword_682C78) == pc_obj) {
         dword_6810FC = 1;
         if (critter_follower_next(qword_682C78) != qword_682C78) {
-            button_data.flags = TIG_BUTTON_FLAG_0x01;
+            button_data.flags = TIG_BUTTON_MOMENTARY;
             button_data.window_handle = inven_ui_window_handle;
             tig_art_interface_id_create(757, 0, 0, 0, &(button_data.art_id));
             button_data.x = 155;

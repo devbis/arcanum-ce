@@ -550,7 +550,7 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
 {
     TigButtonData button_data;
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = ctrl->info.window_handle;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;

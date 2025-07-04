@@ -224,7 +224,7 @@ void follower_ui_create(int index)
 
     tig_window_create(&window_data, &(follower_ui_windows[index]));
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
     button_data.mouse_enter_snd_id = -1;
@@ -550,7 +550,7 @@ void follower_ui_drop_down_menu_create(int index)
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.width = follower_ui_drop_down_menu_entry_rect.width;
     button_data.height = follower_ui_drop_down_menu_entry_rect.height;
     button_data.window_handle = follower_ui_drop_down_menu_window;

@@ -256,7 +256,7 @@ void combat_ui_create()
     blit_info.dst_rect = &rect;
     tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
 
-    if (!intgame_button_create_ex(combat_ui_ap_bar_window_handle, &rect, &combat_ui_end_turn_button_info, TIG_BUTTON_FLAG_0x01)) {
+    if (!intgame_button_create_ex(combat_ui_ap_bar_window_handle, &rect, &combat_ui_end_turn_button_info, TIG_BUTTON_MOMENTARY)) {
         return;
     }
 

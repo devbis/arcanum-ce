@@ -419,7 +419,7 @@ void schematic_ui_create()
 
     tig_button_radio_group_create(TECH_COUNT, buttons, schematic_ui_cur_tech);
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = schematic_ui_window;
     button_data.art_id = TIG_ART_ID_INVALID;
     button_data.mouse_down_snd_id = -1;

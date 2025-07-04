@@ -585,7 +585,7 @@ void written_ui_create()
             intgame_button_create_ex(written_ui_window,
                 &written_ui_frame,
                 &(written_ui_book_buttons[index]),
-                TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
+                TIG_BUTTON_HIDDEN | TIG_BUTTON_MOMENTARY);
         }
 
         // Initialize book state.

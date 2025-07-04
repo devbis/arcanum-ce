@@ -403,14 +403,14 @@ void logbook_ui_create()
         intgame_button_create_ex(logbook_ui_window,
             &(stru_5C33F8[0]),
             &(stru_5C3428[index]),
-            TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
+            TIG_BUTTON_HIDDEN | TIG_BUTTON_MOMENTARY);
     }
 
     for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
         intgame_button_create_ex(logbook_ui_window,
             &(stru_5C33F8[0]),
             &(stru_5C3448[index]),
-            TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
+            TIG_BUTTON_HIDDEN | TIG_BUTTON_MOMENTARY);
         button_handles[index] = stru_5C3448[index].button_handle;
     }
     tig_button_radio_group_create(LOGBOOK_UI_TAB_COUNT, button_handles, logbook_ui_tab);

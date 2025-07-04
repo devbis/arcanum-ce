@@ -171,7 +171,7 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
     scrollbar_ui_button_up_height = art_frame_data.height;
     scrollbar_ui_button_up_width = art_frame_data.width;
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = ctrl->window_handle;
     button_data.x = ctrl->info.scrollbar_rect.x + (ctrl->info.scrollbar_rect.width - art_frame_data.width) / 2;
     button_data.y = ctrl->info.scrollbar_rect.y;

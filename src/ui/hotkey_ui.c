@@ -1127,7 +1127,7 @@ bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
 {
     TigButtonData button_data;
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = dword_6835D8;
     button_data.x = button_info->x;
     button_data.y = button_info->y - 441;

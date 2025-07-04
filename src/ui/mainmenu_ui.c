@@ -4361,7 +4361,7 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
 // 0x5461A0
 bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height)
 {
-    return main_menu_button_create_ex(info, width, height, TIG_BUTTON_FLAG_0x01);
+    return main_menu_button_create_ex(info, width, height, TIG_BUTTON_MOMENTARY);
 }
 
 // 0x5461C0
@@ -4404,7 +4404,7 @@ bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height,
     }
 
     if ((info->flags & 0x2) != 0) {
-        button_data.flags |= TIG_BUTTON_FLAG_0x02;
+        button_data.flags |= TIG_BUTTON_TOGGLE;
     }
 
     button_data.mouse_enter_snd_id = -1;

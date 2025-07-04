@@ -957,7 +957,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         return false;
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_window_handle;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -1019,7 +1019,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         tig_window_blit_art(charedit_window_handle, &art_blit_info);
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_window_handle;
     tig_art_interface_id_create(34, 0, 0, 0, &(button_data.art_id));
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
@@ -1144,7 +1144,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         }
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_window_handle;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
@@ -1166,7 +1166,7 @@ bool charedit_open(int64_t obj, ChareditMode mode)
     if (charedit_mode == CHAREDIT_MODE_PASSIVE
         && critter_leader_get(charedit_obj) == pc_obj
         && critter_follower_next(charedit_obj) != charedit_obj) {
-        button_data.flags = TIG_BUTTON_FLAG_0x01;
+        button_data.flags = TIG_BUTTON_MOMENTARY;
         button_data.window_handle = charedit_window_handle;
 
         tig_art_interface_id_create(827, 0, 0, 0, &(button_data.art_id));
@@ -2071,7 +2071,7 @@ bool charedit_create_skills_win()
         return false;
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01 | TIG_BUTTON_FLAG_HIDDEN;
+    button_data.flags = TIG_BUTTON_MOMENTARY | TIG_BUTTON_HIDDEN;
     button_data.window_handle = charedit_skills_win;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -2098,7 +2098,7 @@ bool charedit_create_skills_win()
         }
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+    button_data.flags = TIG_BUTTON_TOGGLE | TIG_BUTTON_LATCH;
     for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
         button_data.x = charedit_skill_group_buttons[index].x;
         button_data.y = charedit_skill_group_buttons[index].y;
@@ -2113,7 +2113,7 @@ bool charedit_create_skills_win()
 
     tig_button_radio_group_create(CHAREDIT_SKILL_GROUP_COUNT, button_handles, dword_64E020);
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
@@ -2321,7 +2321,7 @@ bool charedit_create_tech_win()
         return false;
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+    button_data.flags = TIG_BUTTON_TOGGLE | TIG_BUTTON_LATCH;
     button_data.window_handle = charedit_tech_win;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -2476,7 +2476,7 @@ void charedit_refresh_tech_win()
         sub_55B880(charedit_tech_win, dword_64C840, stru_5C88C0, 0, -1, 7);
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_tech_win;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -2502,7 +2502,7 @@ void charedit_refresh_tech_win()
         tig_button_create(&button_data, &charedit_dec_tech_degree_btn);
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
@@ -2558,7 +2558,7 @@ bool charedit_create_spells_win()
         return false;
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+    button_data.flags = TIG_BUTTON_TOGGLE | TIG_BUTTON_LATCH;
     button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -2751,7 +2751,7 @@ void charedit_refresh_spells_win()
         sub_55B880(charedit_spells_win, dword_64DF0C, &(charedit_spell_minimum_level_labels[0]), 0, -1, 5);
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
     button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
@@ -2786,7 +2786,7 @@ void charedit_refresh_spells_win()
         }
     }
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
@@ -2856,7 +2856,7 @@ bool sub_55D060()
 
     dword_64D424 = 0;
 
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = dword_64CA60;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;

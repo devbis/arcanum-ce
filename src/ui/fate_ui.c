@@ -250,8 +250,8 @@ void fate_ui_create()
             &window_rect,
             &(fate_ui_buttons[fate]),
             fate_is_activated(fate_ui_obj, fate)
-                ? TIG_BUTTON_FLAG_0x10
-                : TIG_BUTTON_FLAG_0x02);
+                ? TIG_BUTTON_ON
+                : TIG_BUTTON_TOGGLE);
     }
 
     fate_ui_created = true;

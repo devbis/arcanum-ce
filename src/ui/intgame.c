@@ -1442,7 +1442,7 @@ bool intgame_button_create(UiButtonInfo* button_info)
         return false;
     }
 
-    return intgame_button_create_ex(dword_64C4F8[index], &(intgame_interface_window_frames[index]), button_info, TIG_BUTTON_FLAG_0x01);
+    return intgame_button_create_ex(dword_64C4F8[index], &(intgame_interface_window_frames[index]), button_info, TIG_BUTTON_MOMENTARY);
 }
 
 // 0x54AB20
@@ -1474,7 +1474,7 @@ bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
     button_data.y = button_info->y - intgame_interface_window_frames[index].y;
     button_data.width = width;
     button_data.height = height;
-    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.art_id = TIG_ART_ID_INVALID;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
@@ -1821,7 +1821,7 @@ bool sub_54B5D0(TigMessage* msg)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
-    int button_state;
+    TigButtonState button_state;
     TigWindowData window_data;
     int index;
     DateTime datetime;
@@ -2555,7 +2555,7 @@ bool iso_interface_message_filter(TigMessage* msg)
 // 0x54DBF0
 void sub_54DBF0(IntgameSecondaryButton btn, RotatingWindowType window_type)
 {
-    int state;
+    TigButtonState state;
     int opposite_btn;
 
     tig_button_state_get(intgame_secondary_buttons[btn].button_handle, &state);
