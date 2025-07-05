@@ -363,7 +363,7 @@ static TigRect stru_64FBB0;
 static PcLens wmap_ui_pc_lens;
 
 // 0x64FBD8
-static WmapNote stru_64FBD8[200];
+static WmapNote wmap_ui_world_notes[200];
 
 // 0x65E968
 static int dword_65E968;
@@ -411,10 +411,10 @@ static bool wmap_ui_created;
 static int dword_66D868;
 
 // 0x66D86C
-static int dword_66D86C;
+static int wmap_ui_num_world_notes;
 
 // 0x66D870
-static int wmap_ui_town_notes_cnt;
+static int wmap_ui_num_town_notes;
 
 // 0x66D874
 static int dword_66D874;
@@ -522,9 +522,9 @@ static Wmap stru_5C9228[3] = {
         0,
         0,
         0,
-        stru_64FBD8,
+        wmap_ui_world_notes,
         200,
-        &dword_66D86C,
+        &wmap_ui_num_world_notes,
         200,
         -1,
         0,
@@ -563,9 +563,9 @@ static Wmap stru_5C9228[3] = {
         0,
         0,
         0,
-        stru_64FBD8,
+        wmap_ui_world_notes,
         200,
-        &dword_66D86C,
+        &wmap_ui_num_world_notes,
         200,
         -1,
         0,
@@ -606,7 +606,7 @@ static Wmap stru_5C9228[3] = {
         0,
         wmap_ui_town_notes,
         200,
-        &wmap_ui_town_notes_cnt,
+        &wmap_ui_num_town_notes,
         200,
         -1,
         0,
@@ -824,9 +824,9 @@ void wmap_ui_town_notes_save()
         return;
     }
 
-    if (tig_file_fwrite(&wmap_ui_town_notes_cnt, sizeof(wmap_ui_town_notes_cnt), 1, stream) == 1) {
+    if (tig_file_fwrite(&wmap_ui_num_town_notes, sizeof(wmap_ui_num_town_notes), 1, stream) == 1) {
         if (tig_file_fwrite(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
-            for (index = 0; index < wmap_ui_town_notes_cnt; index++) {
+            for (index = 0; index < wmap_ui_num_town_notes; index++) {
                 if (!wmap_ui_town_note_save(&(wmap_ui_town_notes[index]), stream)) {
                     success = false;
                     break;
@@ -3974,9 +3974,9 @@ void wmap_ui_town_notes_load()
             return;
         }
 
-        if (tig_file_fread(&wmap_ui_town_notes_cnt, sizeof(wmap_ui_town_notes_cnt), 1, stream) == 1
+        if (tig_file_fread(&wmap_ui_num_town_notes, sizeof(wmap_ui_num_town_notes), 1, stream) == 1
             && tig_file_fread(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
-            for (index = 0; index < wmap_ui_town_notes_cnt; index++) {
+            for (index = 0; index < wmap_ui_num_town_notes; index++) {
                 if (!wmap_ui_town_note_load(&(wmap_ui_town_notes[index]), stream)) {
                     success = false;
                     break;
@@ -4001,7 +4001,7 @@ void sub_5650C0()
         wmap_ui_town_notes_save();
     }
     dword_66D878 = 0;
-    wmap_ui_town_notes_cnt = 0;
+    wmap_ui_num_town_notes = 0;
 }
 
 // 0x5650E0
