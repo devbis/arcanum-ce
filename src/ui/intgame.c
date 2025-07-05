@@ -2143,7 +2143,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             switch (intgame_iso_window_type) {
-            case 1:
+            case ROTWIN_TYPE_SPELLS:
                 for (index = 0; index < COLLEGE_COUNT; index++) {
                     if (spell_college_small_icon(index) != -1
                         && msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
@@ -2154,7 +2154,7 @@ bool sub_54B5D0(TigMessage* msg)
                     }
                 }
                 break;
-            case 9:
+            case ROTWIN_TYPE_QUANTITY:
                 if (msg->data.button.button_handle == intgame_quantity_buttons[INTGAME_QUANTITY_BUTTON_PLUS].button_handle) {
                     if (intgame_quantity < intgame_max_quantity) {
                         intgame_quantity++;
@@ -2170,7 +2170,7 @@ bool sub_54B5D0(TigMessage* msg)
                     return true;
                 }
                 break;
-            case 6:
+            case ROTWIN_TYPE_MAP_NOTE:
                 for (index = 3; index < 6; index++) {
                     if (msg->data.button.button_handle == stru_5C6CA8[index].button_handle) {
                         sub_564000(index - 3);
@@ -2253,7 +2253,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             switch (intgame_iso_window_type) {
-            case 1:
+            case ROTWIN_TYPE_SPELLS:
                 for (index = 0; index < 16; index++) {
                     if (msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
                         intgame_message_window_display_college(index);
@@ -2267,7 +2267,7 @@ bool sub_54B5D0(TigMessage* msg)
                     }
                 }
                 break;
-            case 8:
+            case ROTWIN_TYPE_MAGICTECH:
                 for (index = 0; index < 5; index++) {
                     if (msg->data.button.button_handle == stru_5C6C18[index].button_handle) {
                         intgame_message_window_display_spell(mt_item_spell(qword_64C688, index));
@@ -2275,7 +2275,7 @@ bool sub_54B5D0(TigMessage* msg)
                     }
                 }
                 break;
-            case 2:
+            case ROTWIN_TYPE_SKILLS:
                 for (index = 0; index < 4; index++) {
                     if (msg->data.button.button_handle == stru_5C6C68[index].button_handle) {
                         intgame_message_window_display_skill(index);
@@ -2283,7 +2283,7 @@ bool sub_54B5D0(TigMessage* msg)
                     }
                 }
                 break;
-            case 0:
+            case ROTWIN_TYPE_MSG:
                 if (msg->data.button.button_handle == stru_5C65F8[1].button_handle) {
                     if (!sub_573620()) {
                         art_id = tig_mouse_cursor_get_art_id();
