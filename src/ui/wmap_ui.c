@@ -217,13 +217,13 @@ static bool sub_563F00(WmapCoords* coords, int64_t* a2);
 static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
-static void sub_5640C0(TextEdit* textedit);
+static void wmap_ui_textedit_on_enter(TextEdit* textedit);
 static bool sub_564140(WmapNote* note);
 static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
 static void sub_5642E0(int a1, int a2);
 static void sub_5642F0(WmapNote* note);
-static void sub_564320(TextEdit* textedit);
+static void wmap_ui_textedit_on_change(TextEdit* textedit);
 static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
 static bool sub_5643E0(WmapCoords* coords);
@@ -293,12 +293,12 @@ static TigRect stru_5C9B08 = { 0, 41, 800, 400 };
 static int dword_5C9B18 = -1;
 
 // 0x5C9B20
-static TextEdit stru_5C9B20 = {
+static TextEdit wmap_ui_textedit = {
     0,
     "",
     50,
-    sub_5640C0,
-    sub_564320,
+    wmap_ui_textedit_on_enter,
+    wmap_ui_textedit_on_change,
     NULL,
 };
 
@@ -438,7 +438,7 @@ static int dword_66D890;
 static int dword_66D894;
 
 // 0x66D898
-static int dword_66D898;
+static bool wmap_ui_textedit_focused;
 
 // 0x66D89C
 static WmapNoteType dword_66D89C;
@@ -1490,7 +1490,7 @@ bool wmap_ui_create()
         }
     }
 
-    dword_66D898 = 0;
+    wmap_ui_textedit_focused = false;
 
     tig_art_interface_id_create(138, 0, 0, 0, &art_id);
 
@@ -2213,7 +2213,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_CHAR:
         return textedit_ui_process_message(msg);
     case TIG_MESSAGE_KEYBOARD:
-        if (dword_66D898) {
+        if (wmap_ui_textedit_focused) {
             return textedit_ui_process_message(msg);
         }
 
@@ -3332,9 +3332,9 @@ void sub_564030(WmapNote* note)
 {
     iso_interface_window_set(ROTWIN_TYPE_MAP_NOTE);
     dword_66D9D4 = note;
-    stru_5C9B20.buffer = note->str;
-    textedit_ui_focus(&stru_5C9B20);
-    dword_66D898 = 1;
+    wmap_ui_textedit.buffer = note->str;
+    textedit_ui_focus(&wmap_ui_textedit);
+    wmap_ui_textedit_focused = true;
     intgame_text_edit_refresh(note->str, wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
 }
 
@@ -3344,16 +3344,16 @@ void sub_564070(bool a1)
     dword_66D9D4 = 0;
     stru_66D718.str[0] = '\0';
     stru_66D718.id = -1;
-    dword_66D898 = 0;
-    textedit_ui_unfocus(&stru_5C9B20);
-    stru_5C9B20.buffer = NULL;
+    wmap_ui_textedit_focused = false;
+    textedit_ui_unfocus(&wmap_ui_textedit);
+    wmap_ui_textedit.buffer = NULL;
     if (a1) {
         intgame_text_edit_refresh(" ", wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
     }
 }
 
 // 0x5640C0
-void sub_5640C0(TextEdit* textedit)
+void wmap_ui_textedit_on_enter(TextEdit* textedit)
 {
     bool v1;
 
@@ -3462,7 +3462,7 @@ void sub_5642F0(WmapNote* note)
 }
 
 // 0x564320
-void sub_564320(TextEdit* textedit)
+void wmap_ui_textedit_on_change(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
         intgame_text_edit_refresh(textedit->buffer, wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
