@@ -309,16 +309,16 @@ static TigRect wmap_ui_nav_cvr_frame = { 294, 0, 0, 0 };
 static tig_art_id_t wmap_ui_nav_cvr_art_id = TIG_ART_ID_INVALID;
 
 // 0x5C9B50
-static UiButtonInfo stru_5C9B50[2] = {
+static UiButtonInfo wmap_ui_zoom_button_info[2] = {
     { 20, 206, 811, TIG_BUTTON_HANDLE_INVALID },
     { 19, 308, 812, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C9B70
-static UiButtonInfo stru_5C9B70 = { 375, 388, 139, TIG_BUTTON_HANDLE_INVALID };
+static UiButtonInfo wmap_ui_navigate_button_info = { 375, 388, 139, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C9B80
-static UiButtonInfo stru_5C9B80 = { 698, 353, 813, TIG_BUTTON_HANDLE_INVALID };
+static UiButtonInfo wmap_ui_travel_button_info = { 698, 353, 813, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C9B90
 static int dword_5C9B90 = 1;
@@ -1393,7 +1393,7 @@ void wmap_ui_close()
         sub_5615D0(0);
         intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         ambient_lighting_enable();
-        intgame_button_destroy(&stru_5C9B70);
+        intgame_button_destroy(&wmap_ui_navigate_button_info);
         intgame_big_window_unlock();
 
         wmap_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -1532,11 +1532,20 @@ bool wmap_ui_create()
     }
 
     for (index = 0; index < 2; index++) {
-        intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &(stru_5C9B50[index]), 0x1);
+        intgame_button_create_ex(wmap_ui_window,
+            &wmap_ui_window_frame,
+            &(wmap_ui_zoom_button_info[index]),
+            TIG_BUTTON_MOMENTARY);
     }
 
-    intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &stru_5C9B70, 4);
-    intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &stru_5C9B80, dword_5C9B90 | 8);
+    intgame_button_create_ex(wmap_ui_window,
+        &wmap_ui_window_frame,
+        &wmap_ui_navigate_button_info,
+        TIG_BUTTON_LATCH);
+    intgame_button_create_ex(wmap_ui_window,
+        &wmap_ui_window_frame,
+        &wmap_ui_travel_button_info,
+        dword_5C9B90 | TIG_BUTTON_HIDDEN);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = dword_66D890 + 203;
@@ -1690,7 +1699,7 @@ bool sub_5615D0(int a1)
             tig_mouse_cursor_set_art_id(art_id);
             break;
         case 4:
-            tig_button_state_change(stru_5C9B70.button_handle, 1);
+            tig_button_state_change(wmap_ui_navigate_button_info.button_handle, 1);
             break;
         }
 
@@ -2073,7 +2082,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_PRESSED:
-            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
                 if (dword_66D8AC != 2 && sub_5615D0(4)) {
                     sub_562A20(msg->data.button.x, msg->data.button.y);
                 }
@@ -2081,7 +2090,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_RELEASED:
-            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_zoom_button_info[0].button_handle) {
                 if (wmap_ui_townmap == TOWNMAP_NONE) {
                     sub_562B70(0);
                     return true;
@@ -2095,12 +2104,12 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_zoom_button_info[1].button_handle) {
                 sub_562B70(1);
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
                 if (v1->field_44 != 0 || dword_66D8A8) {
                     dword_66D8A8 = false;
                 } else {
@@ -2109,7 +2118,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_travel_button_info.button_handle) {
                 if (dword_66D8AC == 3) {
                     sub_5615D0(0);
                 }
@@ -2158,14 +2167,14 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             mes_file_entry.num = -1;
 
-            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
-                mes_file_entry.num = 501;
-            } else if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
-                mes_file_entry.num = 502;
-            } else if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
-                mes_file_entry.num = 510;
-            } else if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
-                mes_file_entry.num = 512;
+            if (msg->data.button.button_handle == wmap_ui_zoom_button_info[0].button_handle) {
+                mes_file_entry.num = 501; // "Map View"
+            } else if (msg->data.button.button_handle == wmap_ui_zoom_button_info[1].button_handle) {
+                mes_file_entry.num = 502; // "Continent View"
+            } else if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
+                mes_file_entry.num = 510; // "Scroll Map"
+            } else if (msg->data.button.button_handle == wmap_ui_travel_button_info.button_handle) {
+                mes_file_entry.num = 512; // "Toggle Walking Waypoint Path"
             } else {
                 return false;
             }
@@ -2183,25 +2192,25 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
             mes_file_entry.num = -1;
 
-            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_zoom_button_info[0].button_handle) {
                 mes_file_entry.num = 501;
                 sub_550720();
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_zoom_button_info[1].button_handle) {
                 mes_file_entry.num = 502;
                 sub_550720();
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
                 mes_file_entry.num = 510;
                 sub_550720();
                 return true;
             }
 
-            if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
+            if (msg->data.button.button_handle == wmap_ui_travel_button_info.button_handle) {
                 mes_file_entry.num = 512;
                 sub_550720();
                 return true;
@@ -2477,13 +2486,13 @@ void sub_562B70(int a1)
 
     switch (a1) {
     case 1:
-        if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_hide(stru_5C9B80.button_handle);
+        if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(wmap_ui_travel_button_info.button_handle);
         }
         break;
     case 2:
-        if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_show(stru_5C9B80.button_handle);
+        if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_show(wmap_ui_travel_button_info.button_handle);
         }
 
         if (!wmap_load_townmap_info()) {
@@ -2493,12 +2502,12 @@ void sub_562B70(int a1)
         break;
     default:
         if (dword_66D880) {
-            if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
-                tig_button_show(stru_5C9B80.button_handle);
+            if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_show(wmap_ui_travel_button_info.button_handle);
             }
         } else {
-            if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
-                tig_button_hide(stru_5C9B80.button_handle);
+            if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_hide(wmap_ui_travel_button_info.button_handle);
             }
         }
         break;
