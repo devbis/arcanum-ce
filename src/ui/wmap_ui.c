@@ -148,9 +148,6 @@ typedef struct S64E408 {
 
 static_assert(sizeof(S64E408) == 0x3D0, "wrong size");
 
-static void wmap_ui_destroy();
-static void sub_562FE0(int a1);
-
 // 0x5C9160
 static WmapNoteTypeInfo wmap_note_type_info[WMAP_NOTE_TYPE_COUNT] = {
     /*     WMAP_NOTE_TYPE_NOTE */ { 142, 0, 0, 0, 0, true },
@@ -165,6 +162,7 @@ static WmapNoteTypeInfo wmap_note_type_info[WMAP_NOTE_TYPE_COUNT] = {
 
 static void sub_560010();
 static void wmap_ui_town_notes_save();
+static void wmap_ui_destroy();
 static bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream);
 static bool wmap_ui_rect_write(TigRect* rect, TigFile* stream);
 static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
@@ -191,12 +189,13 @@ static void sub_562AF0(int x, int y);
 static void sub_562B70(int a1);
 static bool wmap_load_townmap_info();
 static void sub_562F90(WmapTile* a1);
-static bool sub_562FA0(int a1);
-static void sub_562FC0(int a1);
-static bool wmTileArtLockMode(int a1, int a2);
-static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
-static bool sub_563200(int a1, int a2);
-static void sub_563210(int a1, int a2);
+static bool wmTileArtLock(int tile);
+static void wmTileArtUnlock(int tile);
+static void wmTileArtUnload(int tile);
+static bool wmTileArtLockMode(int wmap, int tile);
+static bool wmTileArtLoad(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
+static bool wmTileArtUnlockMode(int wmap, int tile);
+static void wmTileArtUnloadMode(int wmap, int tile);
 static void sub_563270();
 static void sub_5632A0(int direction, int a2, int a3, int a4);
 static void sub_563300(int direction, int a2, int a3, int a4);
@@ -865,7 +864,7 @@ void wmap_ui_destroy()
         }
 
         for (tile = 0; tile < stru_5C9228[wmap].num_tiles; tile++) {
-            sub_562FE0(tile);
+            wmTileArtUnload(tile);
         }
     }
 
@@ -1287,7 +1286,7 @@ bool wmap_load_worldmap_info()
 
         tig_str_parse_str_value(&str, stru_5C9228[0].field_68);
 
-        if (!sub_562FA0(0)) {
+        if (!wmTileArtLock(0)) {
             tig_debug_printf("wmap_load_worldmap_info: ERROR: wmTileArtLockMode failed!\n");
             exit(EXIT_FAILURE);
         }
@@ -1296,8 +1295,8 @@ bool wmap_load_worldmap_info()
         stru_5C9228[0].tile_height = stru_5C9228[0].tiles->rect.height;
         stru_5C9228[0].map_width = stru_5C9228[0].tile_width * stru_5C9228[0].num_hor_tiles;
         stru_5C9228[0].map_height = stru_5C9228[0].tile_height * stru_5C9228[0].num_vert_tiles;
-        sub_562FC0(0);
-        sub_562FE0(0);
+        wmTileArtUnlock(0);
+        wmTileArtUnload(0);
 
         tig_str_parse_named_str_value(&str, "ZoomedName:", stru_5C9228[0].str);
 
@@ -2592,8 +2591,8 @@ bool wmap_load_townmap_info()
     v1->map_width = v1->tile_width * v1->num_hor_tiles;
     v1->map_height = v1->tile_height * v1->num_vert_tiles;
 
-    sub_563200(2, 0);
-    sub_563210(2, 0);
+    wmTileArtUnlockMode(2, 0);
+    wmTileArtUnloadMode(2, 0);
 
     for (index = 0; index < v1->num_tiles; index++) {
         sub_562F90(&(v1->tiles[index]));
@@ -2620,52 +2619,52 @@ void sub_562F90(WmapTile* a1)
 }
 
 // 0x562FA0
-bool sub_562FA0(int a1)
+bool wmTileArtLock(int tile)
 {
-    return wmTileArtLockMode(dword_66D868, a1);
+    return wmTileArtLockMode(dword_66D868, tile);
 }
 
 // 0x562FC0
-void sub_562FC0(int a1)
+void wmTileArtUnlock(int tile)
 {
-    sub_563200(dword_66D868, a1);
+    wmTileArtUnlockMode(dword_66D868, tile);
 }
 
 // 0x562FE0
-void sub_562FE0(int a1)
+void wmTileArtUnload(int tile)
 {
-    sub_563210(dword_66D868, a1);
+    wmTileArtUnloadMode(dword_66D868, tile);
 }
 
 // 0x563000
-bool wmTileArtLockMode(int a1, int a2)
+bool wmTileArtLockMode(int wmap, int tile)
 {
     char path[TIG_MAX_PATH];
 
-    if ((stru_5C9228[a1].tiles[a2].flags & 0x1) == 0) {
-        if (a1 == 2) {
+    if ((stru_5C9228[wmap].tiles[tile].flags & 0x1) == 0) {
+        if (wmap == 2) {
             snprintf(path, sizeof(path),
                 "townmap\\%s\\%s%06d.bmp",
-                stru_5C9228[a1].field_68,
-                stru_5C9228[a1].field_68,
-                a2);
+                stru_5C9228[wmap].field_68,
+                stru_5C9228[wmap].field_68,
+                tile);
             if (!tig_file_exists(path, NULL)) {
                 snprintf(path, sizeof(path),
                     "townmap\\%s\\%s%06d.bmp",
-                    stru_5C9228[a1].field_68,
-                    stru_5C9228[a1].field_68,
+                    stru_5C9228[wmap].field_68,
+                    stru_5C9228[wmap].field_68,
                     0);
             }
         } else {
             snprintf(path, sizeof(path),
                 "%s%03d",
-                stru_5C9228[a1].field_68,
-                a2 + 1);
+                stru_5C9228[wmap].field_68,
+                tile + 1);
         }
 
-        if (sub_5630F0(path, &(stru_5C9228[a1].tiles[a2].video_buffer), &(stru_5C9228[a1].tiles[a2].rect))) {
-            stru_5C9228[a1].tiles[a2].flags |= 0x1;
-            stru_5C9228[a1].num_loaded_tiles++;
+        if (wmTileArtLoad(path, &(stru_5C9228[wmap].tiles[tile].video_buffer), &(stru_5C9228[wmap].tiles[tile].rect))) {
+            stru_5C9228[wmap].tiles[tile].flags |= 0x1;
+            stru_5C9228[wmap].num_loaded_tiles++;
         } else {
             tig_debug_printf("WMapUI: Blit: ERROR: Bmp Load Failed!\n");
         }
@@ -2675,7 +2674,7 @@ bool wmTileArtLockMode(int a1, int a2)
 }
 
 // 0x5630F0
-bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect)
+bool wmTileArtLoad(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect)
 {
     TigBmp bmp;
     TigVideoBufferData video_buffer_data;
@@ -2703,25 +2702,24 @@ bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* re
 }
 
 // 0x563200
-bool sub_563200(int a1, int a2)
+bool wmTileArtUnlockMode(int wmap, int tile)
 {
-    (void)a1;
-    (void)a2;
+    (void)wmap;
+    (void)tile;
 
     return true;
 }
 
 // 0x563210
-void sub_563210(int a1, int a2)
+void wmTileArtUnloadMode(int wmap, int tile)
 {
-    if ((stru_5C9228[a1].tiles[a2].flags & 0x1) != 0) {
-        if (tig_video_buffer_destroy(stru_5C9228[a1].tiles[a2].video_buffer) != TIG_OK) {
+    if ((stru_5C9228[wmap].tiles[tile].flags & 0x1) != 0) {
+        if (tig_video_buffer_destroy(stru_5C9228[wmap].tiles[tile].video_buffer) == TIG_OK) {
+            stru_5C9228[wmap].tiles[tile].flags &= ~0x1;
+            stru_5C9228[wmap].num_loaded_tiles--;
+        } else {
             tig_debug_printf("WMapUI: Destroy: ERROR: Video Buffer Destroy FAILED!\n");
-            return;
         }
-
-        stru_5C9228[a1].tiles[a2].flags &= ~0x1;
-        stru_5C9228[a1].num_loaded_tiles--;
     }
 }
 
@@ -4097,7 +4095,7 @@ void sub_565230()
         return;
     }
 
-    if (!sub_5630F0(stru_5C9228[0].str, &(stru_5C9228[0].video_buffer), &(stru_5C9228[0].field_2A8))) {
+    if (!wmTileArtLoad(stru_5C9228[0].str, &(stru_5C9228[0].video_buffer), &(stru_5C9228[0].field_2A8))) {
         return;
     }
 
@@ -4310,14 +4308,14 @@ void sub_5657A0(TigRect* rect)
             vb_src_rect.width = vb_dst_rect.width;
             vb_src_rect.height = vb_dst_rect.height;
 
-            if (sub_562FA0(idx)) {
+            if (wmTileArtLock(idx)) {
                 vb_blit_info.src_video_buffer = v2->video_buffer;
                 if (tig_video_buffer_blit(&vb_blit_info) != TIG_OK) {
                     tig_debug_printf("WMapUI: Zoomed Blit: ERROR: Blit FAILED!\n");
                     return;
                 }
 
-                sub_562FC0(idx);
+                wmTileArtUnlock(idx);
             }
         }
     }
@@ -4547,7 +4545,7 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
                 src_rect.width = dst_rect.width;
                 src_rect.height = dst_rect.height;
 
-                if (sub_562FA0(idx)) {
+                if (wmTileArtLock(idx)) {
                     dst_rect.x = 0;
                     dst_rect.y = 0;
                     vb_blit_info.src_video_buffer = entry->video_buffer;
@@ -4557,7 +4555,7 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
                         return;
                     }
 
-                    sub_562FC0(idx);
+                    wmTileArtUnlock(idx);
                 }
             }
         }
@@ -4658,7 +4656,7 @@ void wmap_town_refresh_rect(TigRect* rect)
                 vb_src_rect.width = vb_dst_rect.width;
                 vb_src_rect.height = vb_dst_rect.height;
 
-                if (sub_562FA0(idx)) {
+                if (wmTileArtLock(idx)) {
                     if (townmap_is_waitable(wmap_ui_townmap)) {
                         vb_blit_info.flags = 0;
                         vb_blit_info.src_video_buffer = entry->video_buffer;
@@ -4672,10 +4670,10 @@ void wmap_town_refresh_rect(TigRect* rect)
                             tig_debug_printf("WMapUI: TownMap Blit: ERROR: Blit FAILED!\n");
                             return;
                         }
-                        sub_562FC0(idx);
+                        wmTileArtUnlock(idx);
                     } else {
                         tig_window_fill(wmap_ui_window, &vb_dst_rect, tig_color_make(0, 0, 0));
-                        sub_562FC0(idx);
+                        wmTileArtUnlock(idx);
                     }
                 }
             }
