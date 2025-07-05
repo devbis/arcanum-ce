@@ -100,13 +100,13 @@ typedef struct Wmap {
     /* 004C */ void(*refresh_rect)(TigRect* rect);
     /* 0050 */ void(*field_50)(int direction, int, int, int);
     /* 0054 */ int field_54;
-    /* 0058 */ int field_58;
-    /* 005C */ int field_5C;
+    /* 0058 */ int map_width;
+    /* 005C */ int map_height;
     /* 0060 */ int field_60;
     /* 0064 */ int field_64;
     /* 0068 */ char field_68[TIG_MAX_PATH];
-    /* 016C */ int field_16C;
-    /* 0170 */ int field_170;
+    /* 016C */ int tile_width;
+    /* 0170 */ int tile_height;
     /* 0174 */ int num_tiles;
     /* 0178 */ int num_hor_tiles;
     /* 017C */ int num_vert_tiles;
@@ -1290,10 +1290,10 @@ bool wmap_load_worldmap_info()
             exit(EXIT_FAILURE);
         }
 
-        stru_5C9228[0].field_16C = stru_5C9228[0].tiles->rect.width;
-        stru_5C9228[0].field_170 = stru_5C9228[0].tiles->rect.height;
-        stru_5C9228[0].field_58 = stru_5C9228[0].field_16C * stru_5C9228[0].num_hor_tiles;
-        stru_5C9228[0].field_5C = stru_5C9228[0].field_170 * stru_5C9228[0].num_vert_tiles;
+        stru_5C9228[0].tile_width = stru_5C9228[0].tiles->rect.width;
+        stru_5C9228[0].tile_height = stru_5C9228[0].tiles->rect.height;
+        stru_5C9228[0].map_width = stru_5C9228[0].tile_width * stru_5C9228[0].num_hor_tiles;
+        stru_5C9228[0].map_height = stru_5C9228[0].tile_height * stru_5C9228[0].num_vert_tiles;
         sub_562FC0(0);
         sub_562FE0(0);
 
@@ -1308,8 +1308,8 @@ bool wmap_load_worldmap_info()
             v1 = &(stru_5C9228[0].tiles[idx]);
             if ((v1->flags & 0x02) == 0) {
                 v1->flags = 0x02;
-                v1->rect.width = stru_5C9228[0].field_16C;
-                v1->rect.height = stru_5C9228[0].field_170;
+                v1->rect.width = stru_5C9228[0].tile_width;
+                v1->rect.height = stru_5C9228[0].tile_height;
                 v1->field_18 = NULL;
                 v1->field_1C = 0;
             }
@@ -1320,11 +1320,11 @@ bool wmap_load_worldmap_info()
 
         stru_5C9228[0].num_hor_tiles = 8;
         stru_5C9228[0].num_vert_tiles = 8;
-        stru_5C9228[0].field_16C = 250;
-        stru_5C9228[0].field_170 = 250;
+        stru_5C9228[0].tile_width = 250;
+        stru_5C9228[0].tile_height = 250;
         stru_5C9228[0].field_68[0] = '\0';
-        stru_5C9228[0].field_58 = 2000;
-        stru_5C9228[0].field_5C = 2000;
+        stru_5C9228[0].map_width = stru_5C9228[0].tile_width * stru_5C9228[0].num_hor_tiles;
+        stru_5C9228[0].map_height = stru_5C9228[0].tile_height * stru_5C9228[0].num_vert_tiles;
         stru_5C9228[0].str[0] = '\0';
     }
 
@@ -1333,8 +1333,8 @@ bool wmap_load_worldmap_info()
         if (v2->rect.width > 0) {
             v2->field_24 = v2->rect.width / 2;
             v2->field_28 = v2->rect.height / 2;
-            v2->field_2C = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].field_16C - v2->field_24;
-            v2->field_30 = stru_5C9228[0].num_vert_tiles * stru_5C9228[0].field_170 - v2->field_28;
+            v2->field_2C = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].tile_width - v2->field_24;
+            v2->field_30 = stru_5C9228[0].num_vert_tiles * stru_5C9228[0].tile_height - v2->field_28;
         }
 
         if (v2->num_notes != NULL && idx != 2) {
@@ -2575,24 +2575,24 @@ bool wmap_load_townmap_info()
         exit(EXIT_FAILURE);
     }
 
-    v1->field_16C = v1->tiles[0].rect.width;
-    v1->field_170 = v1->tiles[0].rect.height;
-    v1->field_58 = v1->num_hor_tiles * v1->field_16C;
-    v1->field_5C = v1->field_170 * v1->num_vert_tiles;
+    v1->tile_width = v1->tiles[0].rect.width;
+    v1->tile_height = v1->tiles[0].rect.height;
+    v1->map_width = v1->tile_width * v1->num_hor_tiles;
+    v1->map_height = v1->tile_height * v1->num_vert_tiles;
 
     sub_563200(2, 0);
     sub_563210(2, 0);
 
     for (index = 0; index < v1->num_tiles; index++) {
         sub_562F90(&(v1->tiles[index]));
-        v1->tiles[index].rect.width = v1->field_16C;
-        v1->tiles[index].rect.height = v1->field_170;
+        v1->tiles[index].rect.width = v1->tile_width;
+        v1->tiles[index].rect.height = v1->tile_height;
     }
 
-    v1->field_2C = v1->num_hor_tiles * v1->field_16C - v1->field_24;
-    v1->field_60 = v1->num_hor_tiles * v1->field_16C - v1->rect.width;
-    v1->field_30 = v1->num_vert_tiles * v1->field_170 - v1->field_28;
-    v1->field_64 = v1->num_vert_tiles * v1->field_170 - v1->rect.height;
+    v1->field_2C = v1->num_hor_tiles * v1->tile_width - v1->field_24;
+    v1->field_60 = v1->num_hor_tiles * v1->tile_width - v1->rect.width;
+    v1->field_30 = v1->num_vert_tiles * v1->tile_height - v1->field_28;
+    v1->field_64 = v1->num_vert_tiles * v1->tile_height - v1->rect.height;
 
     sub_563590(&(v1->field_3C), false);
 
@@ -4250,12 +4250,12 @@ void sub_5657A0(TigRect* rect)
         return;
     }
 
-    min_x = offset_x / v1->field_16C;
+    min_x = offset_x / v1->tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / v1->field_170;
+    min_y = offset_y / v1->tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
@@ -4490,12 +4490,12 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
     vb_blit_info.dst_video_buffer = video_buffer;
     vb_blit_info.dst_rect = &dst_rect;
 
-    min_x = offset_x / stru_5C9228[0].field_16C;
+    min_x = offset_x / stru_5C9228[0].tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / stru_5C9228[0].field_170;
+    min_y = offset_y / stru_5C9228[0].tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
@@ -4599,12 +4599,12 @@ void wmap_town_refresh_rect(TigRect* rect)
     dirty_rect.height = rect->height;
     tig_window_fill(wmap_ui_window, &dirty_rect, tig_color_make(0, 0, 0));
 
-    min_x = offset_x / stru_5C9228[2].field_16C;
+    min_x = offset_x / stru_5C9228[2].tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / stru_5C9228[2].field_170;
+    min_y = offset_y / stru_5C9228[2].tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
