@@ -459,10 +459,10 @@ static int dword_66D8AC;
 static int dword_66D8B0;
 
 // 0x66D8B4
-static int dword_66D8B4;
+static int wmap_ui_nav_cvr_width;
 
 // 0x66D8B8
-static int dword_66D8B8;
+static int wmap_ui_nav_cvr_height;
 
 // 0x66D8BC
 static char byte_66D8BC[256];
@@ -649,8 +649,8 @@ bool wmap_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    dword_66D8B4 = art_frame_data.width;
-    dword_66D8B8 = art_frame_data.height;
+    wmap_ui_nav_cvr_width = art_frame_data.width;
+    wmap_ui_nav_cvr_height = art_frame_data.height;
     dword_65E970 = tig_color_make(50, 160, 50);
     dword_65E974 = tig_color_make(160, 50, 50);
     dword_64E030 = tig_color_make(50, 50, 235);
@@ -4364,8 +4364,8 @@ void sub_5657A0(TigRect* rect)
     if (tig_rect_intersection(&wmap_ui_nav_cvr_frame, rect, &dst_rect) == TIG_OK) {
         src_rect.x = wmap_ui_nav_cvr_frame.x - dst_rect.x;
         src_rect.y = wmap_ui_nav_cvr_frame.y - dst_rect.y;
-        src_rect.width = dword_66D8B4 - (wmap_ui_nav_cvr_frame.x - dst_rect.x);
-        src_rect.height = dword_66D8B8 - (wmap_ui_nav_cvr_frame.y - dst_rect.y);
+        src_rect.width = wmap_ui_nav_cvr_width - (wmap_ui_nav_cvr_frame.x - dst_rect.x);
+        src_rect.height = wmap_ui_nav_cvr_height - (wmap_ui_nav_cvr_frame.y - dst_rect.y);
 
         art_blit_info.flags = 0;
         art_blit_info.art_id = wmap_ui_nav_cvr_art_id;
