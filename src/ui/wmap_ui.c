@@ -260,7 +260,7 @@ static void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, W
 static int wmap_ui_spell = -1;
 
 // 0x5C9A68
-static TigRect stru_5C9A68 = { 150, 52, 501, 365 };
+static TigRect wmap_ui_canvas_frame = { 150, 52, 501, 365 };
 
 // 0x5C9A78
 static TigRect stru_5C9A78 = { 662, 248, 130, 130 };
@@ -269,16 +269,16 @@ static TigRect stru_5C9A78 = { 662, 248, 130, 130 };
 static TigRect stru_5C9A88 = { 391, 403, 10, 12 };
 
 // 0x5C9A98
-static TigRect stru_5C9A98[] = {
+static TigRect wmap_ui_lat_long_frame[] = {
     { 707, 200, 60, 18 },
     { 707, 232, 60, 18 },
 };
 
 // 0x5C9AB8
-static TigRect stru_5C9AB8 = { 25, 65, 89, 89 };
+static TigRect wmap_ui_pc_lens_frame = { 25, 65, 89, 89 };
 
 // 0x5C9AC8
-static TigRect stru_5C9AC8 = { 0, 0, 200, 50 };
+static TigRect wmap_ui_note_bounds = { 0, 0, 200, 50 };
 
 // 0x5C9AD8
 static int dword_5C9AD8 = -1;
@@ -287,7 +287,7 @@ static int dword_5C9AD8 = -1;
 static tig_window_handle_t wmap_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5C9B08
-static TigRect stru_5C9B08 = { 0, 41, 800, 400 };
+static TigRect wmap_ui_window_frame = { 0, 41, 800, 400 };
 
 // 0x5C9B18
 static int dword_5C9B18 = -1;
@@ -657,16 +657,16 @@ bool wmap_ui_init(GameInitInfo* init_info)
     dword_64E034 = tig_color_make(50, 50, 110);
 
     for (index = 0; index < 3; index++) {
-        if (stru_5C9228[index].rect.y > stru_5C9B08.y) {
-            stru_5C9228[index].rect.y -= stru_5C9B08.y;
+        if (stru_5C9228[index].rect.y > wmap_ui_window_frame.y) {
+            stru_5C9228[index].rect.y -= wmap_ui_window_frame.y;
         }
     }
 
-    stru_5C9A68.y -= stru_5C9B08.y;
-    stru_5C9A98[0].y -= stru_5C9B08.y;
-    stru_5C9A98[1].y -= stru_5C9B08.y;
-    stru_5C9A78.y -= stru_5C9B08.y;
-    stru_5C9AB8.y -= stru_5C9B08.y;
+    wmap_ui_canvas_frame.y -= wmap_ui_window_frame.y;
+    wmap_ui_lat_long_frame[0].y -= wmap_ui_window_frame.y;
+    wmap_ui_lat_long_frame[1].y -= wmap_ui_window_frame.y;
+    stru_5C9A78.y -= wmap_ui_window_frame.y;
+    wmap_ui_pc_lens_frame.y -= wmap_ui_window_frame.y;
     dword_64E03C = tig_color_make(0, 0, 255);
 
     for (index = 0; index < WMAP_NOTE_TYPE_COUNT; index++) {
@@ -716,18 +716,18 @@ bool wmap_ui_init(GameInitInfo* init_info)
     wmap_note_type_info[WMAP_NOTE_TYPE_WAYPOINT].color = tig_color_make(150, 150, 150);
 
     stru_66D708.x = 0;
-    stru_66D708.y = stru_5C9AC8.y;
-    stru_66D708.width = stru_5C9AC8.width + dword_66D890 + 3;
-    stru_66D708.height = stru_5C9AC8.height;
+    stru_66D708.y = wmap_ui_note_bounds.y;
+    stru_66D708.width = wmap_ui_note_bounds.width + dword_66D890 + 3;
+    stru_66D708.height = wmap_ui_note_bounds.height;
 
-    stru_5C9AC8.x = dword_66D890 + 3;
+    wmap_ui_note_bounds.x = dword_66D890 + 3;
 
     if (tig_art_interface_id_create(217, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
         return false;
     }
 
-    wmap_ui_nav_cvr_frame.y = 382 - stru_5C9B08.y;
+    wmap_ui_nav_cvr_frame.y = 382 - wmap_ui_window_frame.y;
     wmap_ui_nav_cvr_frame.width = art_frame_data.width;
     wmap_ui_nav_cvr_frame.height = art_frame_data.height;
 
@@ -1500,15 +1500,15 @@ bool wmap_ui_create()
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
     }
 
-    src_rect.x = stru_5C9B08.x;
+    src_rect.x = wmap_ui_window_frame.x;
     src_rect.y = 0;
-    src_rect.width = stru_5C9B08.width;
-    src_rect.height = stru_5C9B08.height;
+    src_rect.width = wmap_ui_window_frame.width;
+    src_rect.height = wmap_ui_window_frame.height;
 
     dst_rect.x = 0;
     dst_rect.y = 0;
-    dst_rect.width = stru_5C9B08.width;
-    dst_rect.height = stru_5C9B08.height;
+    dst_rect.width = wmap_ui_window_frame.width;
+    dst_rect.height = wmap_ui_window_frame.height;
 
     art_blit_info.flags = 0;
     art_blit_info.art_id = art_id;
@@ -1532,11 +1532,11 @@ bool wmap_ui_create()
     }
 
     for (index = 0; index < 2; index++) {
-        intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &(stru_5C9B50[index]), 0x1);
+        intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &(stru_5C9B50[index]), 0x1);
     }
 
-    intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &stru_5C9B70, 4);
-    intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &stru_5C9B80, dword_5C9B90 | 8);
+    intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &stru_5C9B70, 4);
+    intgame_button_create_ex(wmap_ui_window, &wmap_ui_window_frame, &stru_5C9B80, dword_5C9B90 | 8);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = dword_66D890 + 203;
@@ -1550,7 +1550,7 @@ bool wmap_ui_create()
     }
 
     wmap_ui_pc_lens.window_handle = wmap_ui_window;
-    wmap_ui_pc_lens.rect = &stru_5C9AB8;
+    wmap_ui_pc_lens.rect = &wmap_ui_pc_lens_frame;
     tig_art_interface_id_create(198, 0, 0, 0, &(wmap_ui_pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
 
@@ -2359,7 +2359,7 @@ void sub_562880(WmapCoords* coords)
     for (index = 0; index < 2; index++) {
         if (tig_video_buffer_fill(dword_64E7F4, &stru_66D708, dword_64E03C) == TIG_OK) {
             tig_window_fill(wmap_ui_window,
-                &stru_5C9A98[index],
+                &wmap_ui_lat_long_frame[index],
                 tig_color_make(0, 0, 0));
 
             if (sub_5614F0()) {
@@ -2377,8 +2377,8 @@ void sub_562880(WmapCoords* coords)
 
             tig_font_push(wmap_note_type_info[WMAP_NOTE_TYPE_NOTE].font);
             if (tig_font_write(dword_64E7F4, str, &stru_66D708, &dst_rect) == TIG_OK) {
-                dst_rect.x = stru_5C9A98[index].x;
-                dst_rect.y = stru_5C9A98[index].y;
+                dst_rect.x = wmap_ui_lat_long_frame[index].x;
+                dst_rect.y = wmap_ui_lat_long_frame[index].y;
 
                 src_rect.x = 0;
                 src_rect.y = 0;
@@ -3126,7 +3126,7 @@ void wmap_ui_scroll_internal(int direction, int scale)
 void sub_563AC0(int x, int y, WmapCoords* coords)
 {
     coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
+    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - wmap_ui_window_frame.y;
 }
 
 // 0x563B10
@@ -3151,14 +3151,14 @@ void sub_563B10(int x, int y, WmapCoords* coords)
     }
 
     coords->x = (int)(((x - rect.x) * width) / rect.width);
-    coords->y = (int)(((y - rect.y - stru_5C9B08.y) * height) / rect.height);
+    coords->y = (int)(((y - rect.y - wmap_ui_window_frame.y) * height) / rect.height);
 }
 
 // 0x563C00
 void sub_563C00(int x, int y, WmapCoords* coords)
 {
     coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
+    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - wmap_ui_window_frame.y;
 }
 
 // 0x563C60
@@ -4083,7 +4083,7 @@ void sub_565230()
 
     stru_5C9228[0].flags |= 0x01;
 
-    tig_window_fill(wmap_ui_window, &stru_5C9A68, tig_color_make(0, 0, 0));
+    tig_window_fill(wmap_ui_window, &wmap_ui_canvas_frame, tig_color_make(0, 0, 0));
 
     vb_dst_rect = stru_5C9228[dword_66D868].rect;
 
@@ -4106,7 +4106,7 @@ void sub_565230()
         note = &(stru_5C9228[0].notes[idx]);
         if (wmap_note_type_info[idx].enabled) {
             tmp_rect.x = vb_dst_rect.x + note->coords.x;
-            tmp_rect.y = vb_dst_rect.y + note->coords.y + stru_5C9B08.y;
+            tmp_rect.y = vb_dst_rect.y + note->coords.y + wmap_ui_window_frame.y;
             sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
             tmp_rect.x = vb_dst_rect.x + coords.x;
             tmp_rect.y = vb_dst_rect.y + coords.y;
@@ -4120,7 +4120,7 @@ void sub_565230()
     if (area != AREA_UNKNOWN) {
         sub_561490(area_get_location(area), &coords);
         tmp_rect.x = vb_dst_rect.x + note->coords.x;
-        tmp_rect.y = vb_dst_rect.y + note->coords.y + stru_5C9B08.y;
+        tmp_rect.y = vb_dst_rect.y + note->coords.y + wmap_ui_window_frame.y;
         sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
         tmp_rect.x = vb_dst_rect.x + coords.x - 1;
         tmp_rect.y = vb_dst_rect.y + coords.y - 1;
@@ -4130,7 +4130,7 @@ void sub_565230()
     }
 
     tmp_rect.x = vb_dst_rect.x + stru_5C9228[0].field_3C.x;
-    tmp_rect.y = vb_dst_rect.y + stru_5C9228[0].field_3C.y + stru_5C9B08.y;
+    tmp_rect.y = vb_dst_rect.y + stru_5C9228[0].field_3C.y + wmap_ui_window_frame.y;
     sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
     tmp_rect.x = vb_dst_rect.x + coords.x;
     tmp_rect.y = vb_dst_rect.y + coords.y;
@@ -4145,7 +4145,7 @@ void sub_565230()
         src_rect.width = art_frame_data.width;
         src_rect.height = art_frame_data.height;
 
-        dst_rect.y = 382 - stru_5C9B08.y;
+        dst_rect.y = 382 - wmap_ui_window_frame.y;
         dst_rect.x = 294;
         dst_rect.width = art_frame_data.width;
         dst_rect.height = art_frame_data.height;
@@ -4443,7 +4443,7 @@ void wmap_note_vbid_lock(WmapNote* note)
 
         sub_565F00(note->video_buffer, &(note->field_18));
         tig_font_push(wmap_note_type_info[note->type].font);
-        tig_font_write(note->video_buffer, note->str, &stru_5C9AC8, &dirty_rect);
+        tig_font_write(note->video_buffer, note->str, &wmap_ui_note_bounds, &dirty_rect);
         tig_font_pop();
     }
 }
@@ -4588,7 +4588,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     }
 
     dirty_rect.x = rect->x;
-    dirty_rect.y = rect->y +  stru_5C9B08.y;
+    dirty_rect.y = rect->y +  wmap_ui_window_frame.y;
     dirty_rect.width = rect->width;
     dirty_rect.height = rect->height;
     tig_window_invalidate_rect(&dirty_rect);
