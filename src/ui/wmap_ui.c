@@ -241,8 +241,9 @@ static void sub_564E30(WmapCoords* coords, int64_t* loc_ptr);
 static int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
 static void sub_5650C0();
-static int sub_5650E0(WmapCoords* a1, WmapCoords* a2);
-static void sub_565130(int a1);
+static int wmap_ui_compass_arrow_frame_calc(WmapCoords* a, WmapCoords* b);
+static void wmap_ui_compass_arrow_frame_set(int frame);
+static int wmap_ui_compass_arrow_frame_get();
 static bool sub_565140();
 static void sub_565170(WmapCoords* coords);
 static void sub_565230();
@@ -357,7 +358,7 @@ static TownMapInfo wmap_ui_tmi;
 static uint8_t byte_64E828[5000];
 
 // 0x64FBB0
-static TigRect stru_64FBB0;
+static TigRect wmap_ui_compass_base_bounds;
 
 // 0x64FBC8
 static PcLens wmap_ui_pc_lens;
@@ -456,7 +457,7 @@ static bool dword_66D8A8;
 static int dword_66D8AC;
 
 // 0x66D8B0
-static int dword_66D8B0;
+static int wmap_ui_compass_arrow_num_frames;
 
 // 0x66D8B4
 static int wmap_ui_nav_cvr_width;
@@ -736,17 +737,17 @@ bool wmap_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_64FBB0.x = 0;
-    stru_64FBB0.y = 0;
-    stru_64FBB0.width = art_frame_data.width;
-    stru_64FBB0.height = art_frame_data.height;
+    wmap_ui_compass_base_bounds.x = 0;
+    wmap_ui_compass_base_bounds.y = 0;
+    wmap_ui_compass_base_bounds.width = art_frame_data.width;
+    wmap_ui_compass_base_bounds.height = art_frame_data.height;
 
     if (tig_art_interface_id_create(197, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
         return false;
     }
 
-    dword_66D8B0 = art_anim_data.num_frames;
+    wmap_ui_compass_arrow_num_frames = art_anim_data.num_frames;
 
     for (index = 0; index < 2; index++) {
         stru_64E048[index].field_3C0 = 0;
@@ -1577,7 +1578,7 @@ bool wmap_ui_create()
     sub_562B70(v2);
 
     dword_5C9B18 = -1;
-    sub_565130(1);
+    wmap_ui_compass_arrow_frame_set(1);
     stru_64E048[0].field_3C8 = dword_66D880 != 0;
     wmap_ui_created = true;
 
@@ -3876,7 +3877,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
         }
 
         sub_563590(&v2->field_3C, false);
-        sub_565130(sub_5650E0(&v2->field_3C, &stru_64E048[0].field_0[0].coords));
+        wmap_ui_compass_arrow_frame_set(wmap_ui_compass_arrow_frame_calc(&v2->field_3C, &stru_64E048[0].field_0[0].coords));
         sub_5649C0();
         stru_5C9228[dword_66D868].refresh();
     }
@@ -4015,27 +4016,35 @@ void sub_5650C0()
 }
 
 // 0x5650E0
-int sub_5650E0(WmapCoords* a1, WmapCoords* a2)
+int wmap_ui_compass_arrow_frame_calc(WmapCoords* a, WmapCoords* b)
 {
-    if (a2->x < a1->x) {
-        if (a2->y < a1->y) {
-            return 3 * dword_66D8B0 / 4;
+    if (b->x < a->x) {
+        if (b->y < a->y) {
+            return 3 * wmap_ui_compass_arrow_num_frames / 4;
         } else {
-            return dword_66D8B0 / 2;
+            return wmap_ui_compass_arrow_num_frames / 2;
         }
     } else {
-        if (a2->y < a1->y) {
+        if (b->y < a->y) {
             return 0;
         } else {
-            return dword_66D8B0 / 4;
+            return wmap_ui_compass_arrow_num_frames / 4;
         }
     }
 }
 
 // 0x565130
-void sub_565130(int a1)
+void wmap_ui_compass_arrow_frame_set(int frame)
 {
-    (void)a1;
+    (void)frame;
+}
+
+// NOTE: It's just a guess, never used.
+//
+// 0x5649E0
+int wmap_ui_compass_arrow_frame_get()
+{
+    return 0;
 }
 
 // 0x565140
