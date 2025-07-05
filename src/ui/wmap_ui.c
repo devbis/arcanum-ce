@@ -26,6 +26,13 @@
 #include "ui/textedit_ui.h"
 #include "ui/types.h"
 
+typedef enum WmapUiMode {
+    WMAP_UI_MODE_WORLD,
+    WMAP_UI_MODE_CONTINENT,
+    WMAP_UI_MODE_TOWN,
+    WMAP_UI_MODE_COUNT,
+} WmapUiMode;
+
 typedef enum WmapNoteType {
     WMAP_NOTE_TYPE_NOTE,
     WMAP_NOTE_TYPE_SKULL,
@@ -84,7 +91,7 @@ typedef struct WmapTile {
 
 static_assert(sizeof(WmapTile) == 0x20, "wrong size");
 
-typedef struct Wmap {
+typedef struct WmapInfo {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigRect rect;
     /* 0014 */ TigRect field_14;
@@ -123,9 +130,9 @@ typedef struct Wmap {
     /* 02A8 */ TigRect field_2A8;
     /* 02B8 */ TigVideoBuffer* video_buffer;
     /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
-} Wmap;
+} WmapInfo;
 
-static_assert(sizeof(Wmap) == 0x2C0, "wrong size");
+static_assert(sizeof(WmapInfo) == 0x2C0, "wrong size");
 
 typedef struct S64E048 {
     /* 0000 */ int field_0;
@@ -192,10 +199,10 @@ static void sub_562F90(WmapTile* a1);
 static bool wmTileArtLock(int tile);
 static void wmTileArtUnlock(int tile);
 static void wmTileArtUnload(int tile);
-static bool wmTileArtLockMode(int wmap, int tile);
+static bool wmTileArtLockMode(WmapUiMode mode, int tile);
 static bool wmTileArtLoad(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
-static bool wmTileArtUnlockMode(int wmap, int tile);
-static void wmTileArtUnloadMode(int wmap, int tile);
+static bool wmTileArtUnlockMode(WmapUiMode mode, int tile);
+static void wmTileArtUnloadMode(WmapUiMode mode, int tile);
 static void sub_563270();
 static void sub_5632A0(int direction, int a2, int a3, int a4);
 static void sub_563300(int direction, int a2, int a3, int a4);
@@ -220,7 +227,7 @@ static void wmap_ui_textedit_on_enter(TextEdit* textedit);
 static bool sub_564140(WmapNote* note);
 static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
-static void sub_5642E0(int a1, int a2);
+static void sub_5642E0(int a1, WmapUiMode mode);
 static void sub_5642F0(WmapNote* note);
 static void wmap_ui_textedit_on_change(TextEdit* textedit);
 static void sub_564360(int id);
@@ -253,8 +260,8 @@ static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
 static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
-static void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3);
-static void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5);
+static void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3);
+static void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, WmapInfo* wmap_info);
 
 // 0x5C9220
 static int wmap_ui_spell = -1;
@@ -408,7 +415,7 @@ static bool wmap_ui_initialized;
 static bool wmap_ui_created;
 
 // 0x66D868
-static int dword_66D868;
+static WmapUiMode wmap_ui_mode;
 
 // 0x66D86C
 static int wmap_ui_num_world_notes;
@@ -492,7 +499,7 @@ static WmapNote* dword_66D9D4;
 // obtains references to many internal state variables.
 //
 // 0x5C9228
-static Wmap stru_5C9228[3] = {
+static WmapInfo wmap_ui_mode_info[WMAP_UI_MODE_COUNT] = {
     {
         6,
         { 150, 52, 501, 365 },
@@ -640,7 +647,7 @@ bool wmap_ui_init(GameInitInfo* init_info)
         wmap_ui_action = mes_file_entry.str;
     }
 
-    dword_66D868 = 0;
+    wmap_ui_mode = WMAP_UI_MODE_WORLD;
     dword_66D8AC = 0;
 
     if (tig_art_interface_id_create(217, 0, 0, 0, &wmap_ui_nav_cvr_art_id) != TIG_OK
@@ -656,9 +663,9 @@ bool wmap_ui_init(GameInitInfo* init_info)
     dword_64E030 = tig_color_make(50, 50, 235);
     dword_64E034 = tig_color_make(50, 50, 110);
 
-    for (index = 0; index < 3; index++) {
-        if (stru_5C9228[index].rect.y > wmap_ui_window_frame.y) {
-            stru_5C9228[index].rect.y -= wmap_ui_window_frame.y;
+    for (index = 0; index < WMAP_UI_MODE_COUNT; index++) {
+        if (wmap_ui_mode_info[index].rect.y > wmap_ui_window_frame.y) {
+            wmap_ui_mode_info[index].rect.y -= wmap_ui_window_frame.y;
         }
     }
 
@@ -761,24 +768,24 @@ bool wmap_ui_init(GameInitInfo* init_info)
 // 0x55FF80
 void wmap_ui_exit()
 {
-    int wmap;
+    int mode;
     int tile;
 
-    dword_66D868 = 0;
+    wmap_ui_mode = WMAP_UI_MODE_WORLD;
     dword_66D8AC = 0;
 
-    for (wmap = 0; wmap < 3; wmap++) {
-        if (stru_5C9228[wmap].tiles != NULL) {
-            for (tile = 0; tile < stru_5C9228[wmap].num_tiles; tile++) {
-                if (stru_5C9228[wmap].tiles[tile].field_18 != NULL) {
-                    FREE(stru_5C9228[wmap].tiles[tile].field_18);
+    for (mode = 0; mode < WMAP_UI_MODE_COUNT; mode++) {
+        if (wmap_ui_mode_info[mode].tiles != NULL) {
+            for (tile = 0; tile < wmap_ui_mode_info[mode].num_tiles; tile++) {
+                if (wmap_ui_mode_info[mode].tiles[tile].field_18 != NULL) {
+                    FREE(wmap_ui_mode_info[mode].tiles[tile].field_18);
                 }
             }
 
-            FREE(stru_5C9228[wmap].tiles);
-            stru_5C9228[wmap].tiles = NULL;
+            FREE(wmap_ui_mode_info[mode].tiles);
+            wmap_ui_mode_info[mode].tiles = NULL;
 
-            stru_5C9228[wmap].num_tiles = 0;
+            wmap_ui_mode_info[mode].num_tiles = 0;
         }
     }
 
@@ -792,10 +799,10 @@ void wmap_ui_exit()
 void sub_560010()
 {
     wmap_ui_town_notes_save();
-    stru_5C9228[2].num_tiles = 0;
-    if (stru_5C9228[2].tiles != NULL) {
-        FREE(stru_5C9228[2].tiles);
-        stru_5C9228[2].tiles = NULL;
+    wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_tiles = 0;
+    if (wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tiles != NULL) {
+        FREE(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tiles);
+        wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tiles = NULL;
     }
 }
 
@@ -825,7 +832,7 @@ void wmap_ui_town_notes_save()
     }
 
     if (tig_file_fwrite(&wmap_ui_num_town_notes, sizeof(wmap_ui_num_town_notes), 1, stream) == 1) {
-        if (tig_file_fwrite(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
+        if (tig_file_fwrite(&(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_194), sizeof(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_194), 1, stream) == 1) {
             for (index = 0; index < wmap_ui_num_town_notes; index++) {
                 if (!wmap_ui_town_note_save(&(wmap_ui_town_notes[index]), stream)) {
                     success = false;
@@ -849,26 +856,26 @@ void wmap_ui_town_notes_save()
 // 0x560150
 void wmap_ui_destroy()
 {
-    int wmap;
+    int mode;
     int tile;
 
-    for (wmap = 0; wmap < 3; wmap++) {
-        dword_66D868 = wmap;
+    for (mode = 0; mode < WMAP_UI_MODE_COUNT; mode++) {
+        wmap_ui_mode = mode;
 
-        if ((stru_5C9228[wmap].flags & 0x1) != 0) {
-            if (tig_video_buffer_destroy(stru_5C9228[wmap].video_buffer) == TIG_OK) {
-                stru_5C9228[wmap].flags &= ~0x1;
+        if ((wmap_ui_mode_info[mode].flags & 0x1) != 0) {
+            if (tig_video_buffer_destroy(wmap_ui_mode_info[mode].video_buffer) == TIG_OK) {
+                wmap_ui_mode_info[mode].flags &= ~0x1;
             } else {
                 tig_debug_printf("WMapUI: Destroy: ERROR: Video Buffer Destroy FAILED!\n");
             }
         }
 
-        for (tile = 0; tile < stru_5C9228[wmap].num_tiles; tile++) {
+        for (tile = 0; tile < wmap_ui_mode_info[mode].num_tiles; tile++) {
             wmTileArtUnload(tile);
         }
     }
 
-    dword_66D868 = 0;
+    wmap_ui_mode = WMAP_UI_MODE_WORLD;
     dword_66D87C = 0;
     wmap_ui_module_name[0] = '\0';
 
@@ -887,11 +894,11 @@ void wmap_ui_reset()
     if (wmap_ui_initialized) {
         wmap_ui_close();
 
-        for (index = 0; index < 3; index++) {
-            if (stru_5C9228[index].num_notes != NULL) {
-                *stru_5C9228[index].num_notes = 0;
+        for (index = 0; index < WMAP_UI_MODE_COUNT; index++) {
+            if (wmap_ui_mode_info[index].num_notes != NULL) {
+                *wmap_ui_mode_info[index].num_notes = 0;
             }
-            stru_5C9228[index].field_198 = -1;
+            wmap_ui_mode_info[index].field_198 = -1;
         }
 
         for (index = 0; index < 2; index++) {
@@ -901,7 +908,7 @@ void wmap_ui_reset()
         }
 
         dword_5C9AD8 = -1;
-        dword_66D868 = 0;
+        wmap_ui_mode = WMAP_UI_MODE_WORLD;
         dword_66D8AC = 0;
         dword_65E968 = 0;
         stru_64E048[0].field_3C0 = 0;
@@ -912,8 +919,8 @@ void wmap_ui_reset()
 // 0x560280
 bool wmap_ui_save(TigFile* stream)
 {
-    int v1;
-    int v2;
+    int mode;
+    int note;
     int num_notes;
     int cnt;
 
@@ -921,17 +928,17 @@ bool wmap_ui_save(TigFile* stream)
         return false;
     }
 
-    for (v1 = 0; v1 < 3; v1++) {
-        if ((stru_5C9228[v1].flags & 0x2) != 0) {
-            if (stru_5C9228[v1].num_notes != NULL) {
-                num_notes = *stru_5C9228[v1].num_notes;
+    for (mode = 0; mode < WMAP_UI_MODE_COUNT; mode++) {
+        if ((wmap_ui_mode_info[mode].flags & 0x2) != 0) {
+            if (wmap_ui_mode_info[mode].num_notes != NULL) {
+                num_notes = *wmap_ui_mode_info[mode].num_notes;
             } else {
                 num_notes = 0;
             }
 
             cnt = num_notes;
-            for (v2 = 0; v2 < num_notes; v2++) {
-                if ((stru_5C9228[v1].notes[v2].flags & 0x2) != 0) {
+            for (note = 0; note < num_notes; note++) {
+                if ((wmap_ui_mode_info[mode].notes[note].flags & 0x2) != 0) {
                     cnt--;
                 }
             }
@@ -940,9 +947,9 @@ bool wmap_ui_save(TigFile* stream)
                 return false;
             }
 
-            for (v2 = 0; v2 < num_notes; v2++) {
-                if ((stru_5C9228[v1].notes[v2].flags & 0x2) == 0) {
-                    if (!wmap_ui_town_note_save(&(stru_5C9228[v1].notes[v2]), stream)) {
+            for (note = 0; note < num_notes; note++) {
+                if ((wmap_ui_mode_info[mode].notes[note].flags & 0x2) == 0) {
+                    if (!wmap_ui_town_note_save(&(wmap_ui_mode_info[mode].notes[note]), stream)) {
                         return false;
                     }
                 }
@@ -988,9 +995,9 @@ bool wmap_ui_rect_write(TigRect* rect, TigFile* stream)
 // 0x5604B0
 bool wmap_ui_load(GameLoadInfo* load_info)
 {
-    int type;
+    int mode;
     int cnt;
-    int idx;
+    int note;
     int64_t loc;
     int64_t sector_id;
 
@@ -998,8 +1005,8 @@ bool wmap_ui_load(GameLoadInfo* load_info)
         return false;
     }
 
-    for (type = 0; type < 3; type++) {
-        if ((stru_5C9228[type].flags & 0x2) != 0) {
+    for (mode = 0; mode < WMAP_UI_MODE_COUNT; mode++) {
+        if ((wmap_ui_mode_info[mode].flags & 0x2) != 0) {
             tig_debug_printf("WMapUI: Reading Saved Notes.\n");
 
             if (tig_file_fread(&cnt, sizeof(cnt), 1, load_info->stream) != 1) {
@@ -1008,17 +1015,17 @@ bool wmap_ui_load(GameLoadInfo* load_info)
 
             tig_debug_printf("WMapUI: Reading Saved Notes: %d.\n", cnt);
 
-            if (stru_5C9228[type].num_notes == NULL) {
+            if (wmap_ui_mode_info[mode].num_notes == NULL) {
                 tig_debug_printf("WMapUI: Load: ERROR: Note Data Doesn't Match!\n");
                 exit(EXIT_FAILURE);
             }
 
-            *stru_5C9228[type].num_notes = cnt;
+            *wmap_ui_mode_info[mode].num_notes = cnt;
 
-            for (idx = 0; idx < cnt; idx++) {
-                tig_debug_printf("WMapUI: Reading Individual Note: %d.\n", idx);
+            for (note = 0; note < cnt; note++) {
+                tig_debug_printf("WMapUI: Reading Individual Note: %d.\n", note);
 
-                if (!wmap_ui_town_note_load(&(stru_5C9228[type].notes[idx]), load_info->stream)) {
+                if (!wmap_ui_town_note_load(&(wmap_ui_mode_info[mode].notes[note]), load_info->stream)) {
                     return false;
                 }
             }
@@ -1226,7 +1233,7 @@ void wmap_ui_open_internal()
         wmap_ui_close();
     }
 
-    stru_5C9228[dword_66D868].refresh();
+    wmap_ui_mode_info[wmap_ui_mode].refresh();
 
     ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, false);
 }
@@ -1238,10 +1245,10 @@ bool wmap_load_worldmap_info()
     char path[TIG_MAX_PATH];
     MesFileEntry mes_file_entry;
     char* str;
-    int wmap;
+    int worldmap;
     int idx;
     WmapTile* v1;
-    Wmap* v2;
+    WmapInfo* wmap_info;
     int map_keyed_to;
 
     name = gamelib_current_module_name_get();
@@ -1266,51 +1273,51 @@ bool wmap_load_worldmap_info()
         tig_str_parse_value(&str, &wmap_ui_offset_y);
 
         mes_file_entry.num = 50;
-        if (map_get_worldmap(map_current_map(), &wmap) && wmap != -1) {
-            mes_file_entry.num += wmap;
+        if (map_get_worldmap(map_current_map(), &worldmap) && worldmap != -1) {
+            mes_file_entry.num += worldmap;
         }
         mes_get_msg(wmap_ui_worldmap_info_mes_file, &mes_file_entry);
         str = mes_file_entry.str;
-        tig_str_parse_value(&str, &stru_5C9228[0].num_hor_tiles);
-        tig_str_parse_value(&str, &stru_5C9228[0].num_vert_tiles);
+        tig_str_parse_value(&str, &wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles);
+        tig_str_parse_value(&str, &wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles);
 
-        if (stru_5C9228[0].tiles == NULL) {
-            stru_5C9228[0].num_tiles = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].num_vert_tiles;
-            stru_5C9228[0].tiles = (WmapTile*)CALLOC(stru_5C9228[0].num_tiles, sizeof(WmapTile));
+        if (wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles == NULL) {
+            wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_tiles = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles;
+            wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles = (WmapTile*)CALLOC(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_tiles, sizeof(WmapTile));
 
             // FIXME: Meaningless, calloc already zeroes it out.
-            for (idx = 0; idx < stru_5C9228[0].num_tiles; idx++) {
-                stru_5C9228[0].tiles[idx].flags = 0;
+            for (idx = 0; idx < wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_tiles; idx++) {
+                wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles[idx].flags = 0;
             }
         }
 
-        tig_str_parse_str_value(&str, stru_5C9228[0].field_68);
+        tig_str_parse_str_value(&str, wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_68);
 
         if (!wmTileArtLock(0)) {
             tig_debug_printf("wmap_load_worldmap_info: ERROR: wmTileArtLockMode failed!\n");
             exit(EXIT_FAILURE);
         }
 
-        stru_5C9228[0].tile_width = stru_5C9228[0].tiles->rect.width;
-        stru_5C9228[0].tile_height = stru_5C9228[0].tiles->rect.height;
-        stru_5C9228[0].map_width = stru_5C9228[0].tile_width * stru_5C9228[0].num_hor_tiles;
-        stru_5C9228[0].map_height = stru_5C9228[0].tile_height * stru_5C9228[0].num_vert_tiles;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles->rect.width;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles->rect.height;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].map_width = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].map_height = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles;
         wmTileArtUnlock(0);
         wmTileArtUnload(0);
 
-        tig_str_parse_named_str_value(&str, "ZoomedName:", stru_5C9228[0].str);
+        tig_str_parse_named_str_value(&str, "ZoomedName:", wmap_ui_mode_info[WMAP_UI_MODE_WORLD].str);
 
         dword_66D87C = 0;
         if (tig_str_parse_named_value(&str, "MapKeyedTo:", &map_keyed_to)) {
             dword_66D87C = map_keyed_to;
         }
 
-        for (idx = 0; idx < stru_5C9228[0].num_tiles; idx++) {
-            v1 = &(stru_5C9228[0].tiles[idx]);
+        for (idx = 0; idx < wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_tiles; idx++) {
+            v1 = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles[idx]);
             if ((v1->flags & 0x02) == 0) {
                 v1->flags = 0x02;
-                v1->rect.width = stru_5C9228[0].tile_width;
-                v1->rect.height = stru_5C9228[0].tile_height;
+                v1->rect.width = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width;
+                v1->rect.height = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height;
                 v1->field_18 = NULL;
                 v1->field_1C = 0;
             }
@@ -1319,30 +1326,30 @@ bool wmap_load_worldmap_info()
         wmap_ui_offset_x = 0;
         wmap_ui_offset_y = 0;
 
-        stru_5C9228[0].num_hor_tiles = 8;
-        stru_5C9228[0].num_vert_tiles = 8;
-        stru_5C9228[0].tile_width = 250;
-        stru_5C9228[0].tile_height = 250;
-        stru_5C9228[0].field_68[0] = '\0';
-        stru_5C9228[0].map_width = stru_5C9228[0].tile_width * stru_5C9228[0].num_hor_tiles;
-        stru_5C9228[0].map_height = stru_5C9228[0].tile_height * stru_5C9228[0].num_vert_tiles;
-        stru_5C9228[0].str[0] = '\0';
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles = 8;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles = 8;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width = 250;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height = 250;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_68[0] = '\0';
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].map_width = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].map_height = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles;
+        wmap_ui_mode_info[WMAP_UI_MODE_WORLD].str[0] = '\0';
     }
 
-    for (idx = 0; idx < 3; idx++) {
-        v2 = &(stru_5C9228[idx]);
-        if (v2->rect.width > 0) {
-            v2->field_24 = v2->rect.width / 2;
-            v2->field_28 = v2->rect.height / 2;
-            v2->field_2C = stru_5C9228[0].num_hor_tiles * stru_5C9228[0].tile_width - v2->field_24;
-            v2->field_30 = stru_5C9228[0].num_vert_tiles * stru_5C9228[0].tile_height - v2->field_28;
+    for (idx = 0; idx < WMAP_UI_MODE_COUNT; idx++) {
+        wmap_info = &(wmap_ui_mode_info[idx]);
+        if (wmap_info->rect.width > 0) {
+            wmap_info->field_24 = wmap_info->rect.width / 2;
+            wmap_info->field_28 = wmap_info->rect.height / 2;
+            wmap_info->field_2C = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width - wmap_info->field_24;
+            wmap_info->field_30 = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles * wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height - wmap_info->field_28;
         }
 
-        if (v2->num_notes != NULL && idx != 2) {
-            *v2->num_notes = 0;
+        if (wmap_info->num_notes != NULL && idx != 2) {
+            *wmap_info->num_notes = 0;
         }
 
-        v2->field_198 = -1;
+        wmap_info->field_198 = -1;
     }
 
     dword_5C9AD8 = -1;
@@ -1429,7 +1436,7 @@ bool wmap_ui_create()
     int64_t loc;
     tig_art_id_t art_id;
     int index;
-    int v2;
+    WmapUiMode v2;
 
     if (wmap_ui_created) {
         return true;
@@ -1453,7 +1460,7 @@ bool wmap_ui_create()
     }
 
     if (!wmap_load_worldmap_info()) {
-        if (stru_5C9228[0].field_68[0] == '\0'
+        if (wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_68[0] == '\0'
             && wmap_ui_townmap == TOWNMAP_NONE) {
             MesFileEntry mes_file_entry;
             UiMessage ui_message;
@@ -1467,15 +1474,15 @@ bool wmap_ui_create()
         }
 
         if (sub_5614F0()) {
-            stru_5C9228[dword_66D868].field_60 = 2000 - stru_5C9228[dword_66D868].rect.width;
-            stru_5C9228[dword_66D868].field_64 = 2000 - stru_5C9228[dword_66D868].rect.height;
+            wmap_ui_mode_info[wmap_ui_mode].field_60 = 2000 - wmap_ui_mode_info[wmap_ui_mode].rect.width;
+            wmap_ui_mode_info[wmap_ui_mode].field_64 = 2000 - wmap_ui_mode_info[wmap_ui_mode].rect.height;
         } else {
             int64_t limit_x;
             int64_t limit_y;
 
             location_limits_get(&limit_x, &limit_y);
-            stru_5C9228[dword_66D868].field_60 = (int)(limit_x / 64) - stru_5C9228[dword_66D868].rect.width;
-            stru_5C9228[dword_66D868].field_64 = (int)(limit_y / 64) - stru_5C9228[dword_66D868].rect.height;
+            wmap_ui_mode_info[wmap_ui_mode].field_60 = (int)(limit_x / 64) - wmap_ui_mode_info[wmap_ui_mode].rect.width;
+            wmap_ui_mode_info[wmap_ui_mode].field_64 = (int)(limit_y / 64) - wmap_ui_mode_info[wmap_ui_mode].rect.height;
         }
 
         if (sub_5614F0()) {
@@ -1572,10 +1579,10 @@ bool wmap_ui_create()
     }
 
     sub_561430(loc);
-    sub_563590(&(stru_5C9228[dword_66D868].field_3C), false);
+    sub_563590(&(wmap_ui_mode_info[wmap_ui_mode].field_3C), false);
 
-    v2 = dword_66D868;
-    dword_66D868 = -1;
+    v2 = wmap_ui_mode;
+    wmap_ui_mode = -1;
     sub_562B70(v2);
 
     dword_5C9B18 = -1;
@@ -1618,14 +1625,14 @@ void sub_561490(int64_t location, WmapCoords* coords)
 // 0x5614C0
 void sub_5614C0(int x, int y)
 {
-    stru_5C9228[dword_66D868].field_3C.x = x;
-    stru_5C9228[dword_66D868].field_3C.y = y;
+    wmap_ui_mode_info[wmap_ui_mode].field_3C.x = x;
+    wmap_ui_mode_info[wmap_ui_mode].field_3C.y = y;
 }
 
 // 0x5614F0
 bool sub_5614F0()
 {
-    if (dword_66D868) {
+    if (wmap_ui_mode != WMAP_UI_MODE_WORLD) {
         return false;
     }
 
@@ -1640,12 +1647,12 @@ bool sub_5614F0()
 bool sub_5615D0(int a1)
 {
     bool v1 = false;
-    Wmap* v2;
+    WmapInfo* wmap_info;
     tig_art_id_t art_id;
     int64_t pc_obj;
     int64_t loc;
 
-    v2 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
     if (dword_66D8AC != a1) {
         switch (a1) {
         case 0:
@@ -1691,7 +1698,7 @@ bool sub_5615D0(int a1)
             timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
             dword_66D8AC = a1;
             intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
-            sub_561800(&(v2->field_3C), &loc);
+            sub_561800(&(wmap_info->field_3C), &loc);
             wmap_ui_teleport(loc);
             sub_5649F0(loc);
             break;
@@ -1709,7 +1716,7 @@ bool sub_5615D0(int a1)
 
         if (v1) {
             sub_5649C0();
-            stru_5C9228[dword_66D868].refresh();
+            wmap_ui_mode_info[wmap_ui_mode].refresh();
         }
     }
 
@@ -1746,7 +1753,7 @@ bool wmap_ui_teleport(int64_t loc)
 // 0x5618B0
 bool wmap_ui_message_filter(TigMessage* msg)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     MesFileEntry mes_file_entry;
     char str[48];
     UiMessage ui_message;
@@ -1763,15 +1770,15 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
     wmap_ui_handle_scroll();
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         switch (msg->data.mouse.event) {
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
-            if (msg->data.mouse.x < v1->field_14.x
-                || msg->data.mouse.y < v1->field_14.y
-                || msg->data.mouse.x >= v1->field_14.x + v1->field_14.width
-                || msg->data.mouse.y >= v1->field_14.y + v1->field_14.height) {
+            if (msg->data.mouse.x < wmap_info->field_14.x
+                || msg->data.mouse.y < wmap_info->field_14.y
+                || msg->data.mouse.x >= wmap_info->field_14.x + wmap_info->field_14.width
+                || msg->data.mouse.y >= wmap_info->field_14.y + wmap_info->field_14.height) {
                 if (dword_66D8AC == 4) {
                     sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
@@ -1779,12 +1786,12 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return false;
             }
 
-            if (v1->field_2BC != NULL) {
-                v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+            if (wmap_info->field_2BC != NULL) {
+                wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
             }
 
-            switch (dword_66D868) {
-            case 0:
+            switch (wmap_ui_mode) {
+            case WMAP_UI_MODE_WORLD:
                 switch (dword_66D8AC) {
                 case 0: {
                     if (stru_64E048[0].field_3C8) {
@@ -1809,7 +1816,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         return true;
                     }
 
-                    v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                    wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                     int64_t loc;
                     sub_561800(&stru_64E7E8, &loc);
@@ -1873,7 +1880,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 default:
                     return true;
                 }
-            case 2:
+            case WMAP_UI_MODE_TOWN:
                 switch (dword_66D8AC) {
                 case 0:
                     if (stru_64E048[1].field_3C8) {
@@ -1900,19 +1907,19 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return true;
             }
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
-            switch (dword_66D868) {
-            case 0:
+            switch (wmap_ui_mode) {
+            case WMAP_UI_MODE_WORLD:
                 stru_64E048[0].field_3C8 = dword_66D880 != 0;
                 if (dword_66D8AC == 1 || dword_66D8AC == 4) {
                     sub_5615D0(0);
                 }
                 break;
-            case 1:
+            case WMAP_UI_MODE_CONTINENT:
                 if (wmap_ui_townmap == TOWNMAP_NONE
-                    && msg->data.mouse.x >= v1->field_14.x
-                    && msg->data.mouse.y >= v1->field_14.y
-                    && msg->data.mouse.x < v1->field_14.x + v1->field_14.width
-                    && msg->data.mouse.y < v1->field_14.y + v1->field_14.height
+                    && msg->data.mouse.x >= wmap_info->field_14.x
+                    && msg->data.mouse.y >= wmap_info->field_14.y
+                    && msg->data.mouse.x < wmap_info->field_14.x + wmap_info->field_14.width
+                    && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height
                     && dword_66D8AC == 0) {
                     sub_563B10(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     sub_562B70(0);
@@ -1920,7 +1927,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     sub_563270();
                 }
                 break;
-            case 2:
+            case WMAP_UI_MODE_TOWN:
                 stru_64E048[1].field_3C8 = 1;
                 if (dword_66D8AC == 1 || dword_66D8AC == 4) {
                     sub_5615D0(0);
@@ -1936,14 +1943,14 @@ bool wmap_ui_message_filter(TigMessage* msg)
             return false;
         case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP: {
             if (dword_66D8AC == 3) {
-                if (dword_66D868 == 0) {
+                if (wmap_ui_mode == WMAP_UI_MODE_WORLD) {
                     sub_5615D0(0);
                     return true;
                 }
                 return false;
             }
 
-            int idx = dword_66D868 == 2 ? 1 : 0;
+            int idx = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
             if (dword_5C9AD8 == -1) {
                 dword_5C9AD8 = stru_64E048[idx].field_3C0 - 1;
             }
@@ -1962,15 +1969,15 @@ bool wmap_ui_message_filter(TigMessage* msg)
             return true;
         }
         case TIG_MESSAGE_MOUSE_MOVE:
-            if (msg->data.mouse.x >= v1->field_14.x
-                && msg->data.mouse.y >= v1->field_14.y
-                && msg->data.mouse.x < v1->field_14.x + v1->field_14.width
-                && msg->data.mouse.y < v1->field_14.y + v1->field_14.height) {
-                if (dword_66D868 == 0 || dword_66D868 == 1) {
-                    v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+            if (msg->data.mouse.x >= wmap_info->field_14.x
+                && msg->data.mouse.y >= wmap_info->field_14.y
+                && msg->data.mouse.x < wmap_info->field_14.x + wmap_info->field_14.width
+                && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height) {
+                if (wmap_ui_mode == WMAP_UI_MODE_WORLD || wmap_ui_mode == WMAP_UI_MODE_CONTINENT) {
+                    wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     sub_562880(&stru_64E7E8);
                     v3 = true;
-                } else if (dword_66D868 == 2) {
+                } else if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
                     v3 = true;
                 } else {
                     sub_562880(&stru_64E7E8);
@@ -1978,19 +1985,19 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 }
             }
 
-            switch (dword_66D868) {
+            switch (wmap_ui_mode) {
             case 0:
                 switch (dword_66D8AC) {
                 case 0:
                     if (v3) {
-                        v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                        wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
                         if (find_note_by_coords(&stru_64E7E8, &id)) {
-                            if (v1->field_198 != id) {
+                            if (wmap_info->field_198 != id) {
                                 WmapNote* note = sub_563D90(id);
                                 if (note->id < 200) {
-                                    v1->field_198 = id;
+                                    wmap_info->field_198 = id;
                                     sub_550770(-1, area_get_description(note->id));
                                 }
                             }
@@ -1998,14 +2005,14 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         }
                     }
 
-                    if (v1->field_198 != -1) {
-                        v1->field_198 = -1;
+                    if (wmap_info->field_198 != -1) {
+                        wmap_info->field_198 = -1;
                         sub_550720();
                     }
 
                     return true;
                 case 1:
-                    if (v1) {
+                    if (wmap_info) {
                         sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
                         if (sub_5627B0(&stru_64E7E8)) {
                             sub_564830(dword_5C9AD8, &stru_64E7E8);
@@ -2021,20 +2028,20 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     return true;
                 }
 
-                v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                 int id;
                 if (find_note_by_coords(&stru_64E7E8, &id)) {
-                    if (v1->field_198 != id) {
+                    if (wmap_info->field_198 != id) {
                         WmapNote* note = sub_563D90(id);
                         if (note->id < 200) {
-                            v1->field_198 = id;
+                            wmap_info->field_198 = id;
                             sub_550770(-1, area_get_description(note->id));
                         }
                     }
                 } else {
-                    if (v1->field_198 != -1) {
-                        v1->field_198 = -1;
+                    if (wmap_info->field_198 != -1) {
+                        wmap_info->field_198 = -1;
                         sub_550720();
                     }
                 }
@@ -2045,18 +2052,18 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 switch (dword_66D8AC) {
                 case 0:
                     if (v3) {
-                        v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                        wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
                         if (find_note_by_coords(&stru_64E7E8, &id)) {
-                            if (v1->field_198 != id) {
+                            if (wmap_info->field_198 != id) {
                                 WmapNote* note = sub_563D90(id);
                                 sub_550770(-1, note->str);
                             }
                         }
                     } else {
-                        if (v1->field_198 != -1) {
-                            v1->field_198 = -1;
+                        if (wmap_info->field_198 != -1) {
+                            wmap_info->field_198 = -1;
                             sub_550720();
                         }
                     }
@@ -2112,10 +2119,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
-                if (v1->field_44 != 0 || dword_66D8A8) {
+                if (wmap_info->field_44 != 0 || dword_66D8A8) {
                     dword_66D8A8 = false;
                 } else {
-                    sub_563590(&(v1->field_3C), true);
+                    sub_563590(&(wmap_info->field_3C), true);
                 }
                 return true;
             }
@@ -2127,7 +2134,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                 if (dword_66D8AC == 0) {
                     if (dword_66D880) {
-                        if (stru_64E048[dword_66D868 == 2 ? 1 : 0].field_3C0 > 0) {
+                        if (stru_64E048[wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0].field_3C0 > 0) {
                             dword_5C9AD8 = -1;
 
                             if (sub_5615D0(2)) {
@@ -2142,7 +2149,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                             }
                         }
                     } else {
-                        if (dword_66D868 == 2 && stru_64E048[1].field_3C0 > 0) {
+                        if (wmap_ui_mode == WMAP_UI_MODE_TOWN && stru_64E048[1].field_3C0 > 0) {
                             sub_433640(player_get_local_pc_obj(),
                                 stru_64E048[1].field_0[0].loc);
 
@@ -2242,7 +2249,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
             gsound_play_sfx(0, 1);
 
-            if (dword_66D868 != 1) {
+            if (wmap_ui_mode != 1) {
                 sub_562B70(1);
                 return true;
             }
@@ -2256,7 +2263,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case SDL_SCANCODE_HOME:
             if (dword_66D8AC != 2) {
                 gsound_play_sfx(0, 1);
-                sub_563590(&(v1->field_3C), true);
+                sub_563590(&(wmap_info->field_3C), true);
             }
             return true;
         case SDL_SCANCODE_LEFT:
@@ -2293,7 +2300,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case SDL_SCANCODE_D:
             if (!msg->data.keyboard.pressed
                 && gamelib_cheat_level_get() >= 3
-                && !dword_66D868) {
+                && !wmap_ui_mode) {
                 gsound_play_sfx(0, 1);
 
                 for (int area = area_get_count() - 1; area > 0; area--) {
@@ -2301,7 +2308,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     sub_562800(area);
                 }
 
-                v1->refresh();
+                wmap_info->refresh();
             }
             return true;
         default:
@@ -2317,7 +2324,7 @@ bool sub_5627B0(WmapCoords* coords)
 {
     int64_t loc;
 
-    if (dword_66D868 == 2) {
+    if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
         return 1;
     }
 
@@ -2409,7 +2416,7 @@ void sub_562880(WmapCoords* coords)
 // 0x562A20
 void sub_562A20(int x, int y)
 {
-    if (stru_5C9228[dword_66D868].field_44 != 0
+    if (wmap_ui_mode_info[wmap_ui_mode].field_44 != 0
         && x < stru_5C9A88.x
         && y < stru_5C9A88.y
         && x >= stru_5C9A88.x + stru_5C9A88.width
@@ -2433,21 +2440,21 @@ void sub_562A20(int x, int y)
 // 0x562AF0
 void sub_562AF0(int x, int y)
 {
-    if (y < stru_5C9228[dword_66D868].field_14.y + 23) {
+    if (y < wmap_ui_mode_info[wmap_ui_mode].field_14.y + 23) {
         wmap_ui_scroll_internal(0, 10);
-    } else if (y > stru_5C9228[dword_66D868].field_14.y + stru_5C9228[dword_66D868].field_14.height - 23) {
+    } else if (y > wmap_ui_mode_info[wmap_ui_mode].field_14.y + wmap_ui_mode_info[wmap_ui_mode].field_14.height - 23) {
         wmap_ui_scroll_internal(4, 10);
     }
 
-    if (x < stru_5C9228[dword_66D868].field_14.x + 23) {
+    if (x < wmap_ui_mode_info[wmap_ui_mode].field_14.x + 23) {
         wmap_ui_scroll_internal(6, 10);
-    } else if (x > stru_5C9228[dword_66D868].field_14.x + stru_5C9228[dword_66D868].field_14.width - 23) {
+    } else if (x > wmap_ui_mode_info[wmap_ui_mode].field_14.x + wmap_ui_mode_info[wmap_ui_mode].field_14.width - 23) {
         wmap_ui_scroll_internal(2, 10);
     }
 }
 
 // 0x562B70
-void sub_562B70(int a1)
+void sub_562B70(int mode)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -2461,13 +2468,13 @@ void sub_562B70(int a1)
 
     sub_5615D0(0);
 
-    if (dword_66D868 == a1) {
+    if (wmap_ui_mode == mode) {
         return;
     }
 
-    switch (a1) {
-    case 1:
-        if (stru_5C9228[0].str[0] == '\0') {
+    switch (mode) {
+    case WMAP_UI_MODE_CONTINENT:
+        if (wmap_ui_mode_info[WMAP_UI_MODE_WORLD].str[0] == '\0') {
             mes_file_entry.num = 605;
             mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
@@ -2477,22 +2484,22 @@ void sub_562B70(int a1)
             return;
         }
         break;
-    case 2:
+    case WMAP_UI_MODE_TOWN:
         if (wmap_ui_townmap == TOWNMAP_NONE) {
             return;
         }
         break;
     }
 
-    dword_66D868 = a1;
+    wmap_ui_mode = mode;
 
-    switch (a1) {
-    case 1:
+    switch (mode) {
+    case WMAP_UI_MODE_CONTINENT:
         if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
             tig_button_hide(wmap_ui_travel_button_info.button_handle);
         }
         break;
-    case 2:
+    case WMAP_UI_MODE_TOWN:
         if (wmap_ui_travel_button_info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
             tig_button_show(wmap_ui_travel_button_info.button_handle);
         }
@@ -2516,13 +2523,13 @@ void sub_562B70(int a1)
     }
 
     if (wmap_ui_window != TIG_WINDOW_HANDLE_INVALID) {
-        v2 = a1;
+        v2 = mode;
         if (!dword_66D880) {
             v2 = 2;
         }
 
-        if (stru_5C9228[v2].field_54 != -1) {
-            tig_art_interface_id_create(stru_5C9228[v2].field_54, 0, 0, 0, &art_id);
+        if (wmap_ui_mode_info[v2].field_54 != -1) {
+            tig_art_interface_id_create(wmap_ui_mode_info[v2].field_54, 0, 0, 0, &art_id);
 
             if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK
                 && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
@@ -2544,7 +2551,7 @@ void sub_562B70(int a1)
             }
         }
 
-        stru_5C9228[dword_66D868].refresh();
+        wmap_ui_mode_info[wmap_ui_mode].refresh();
         sub_562880(&stru_64E7E8);
     }
 }
@@ -2552,12 +2559,12 @@ void sub_562B70(int a1)
 // 0x562D80
 bool wmap_load_townmap_info()
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int x;
     int y;
     int index;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
     stru_64E048[1].field_3C0 = 0;
 
     if (!townmap_info(wmap_ui_townmap, &wmap_ui_tmi)) {
@@ -2570,42 +2577,42 @@ bool wmap_load_townmap_info()
         &x,
         &y);
 
-    v1->field_3C.x = x;
-    v1->field_3C.y = y;
-    v1->field_34 = 0;
-    v1->field_38 = 0;
+    wmap_info->field_3C.x = x;
+    wmap_info->field_3C.y = y;
+    wmap_info->field_34 = 0;
+    wmap_info->field_38 = 0;
 
-    strcpy(v1->field_68, townmap_name(wmap_ui_townmap));
-    v1->num_hor_tiles = wmap_ui_tmi.num_hor_tiles;
-    v1->num_vert_tiles = wmap_ui_tmi.num_vert_tiles;
-    v1->num_tiles = wmap_ui_tmi.num_hor_tiles * wmap_ui_tmi.num_vert_tiles;
-    v1->tiles = (WmapTile*)CALLOC(sizeof(*v1->tiles), v1->num_tiles);
+    strcpy(wmap_info->field_68, townmap_name(wmap_ui_townmap));
+    wmap_info->num_hor_tiles = wmap_ui_tmi.num_hor_tiles;
+    wmap_info->num_vert_tiles = wmap_ui_tmi.num_vert_tiles;
+    wmap_info->num_tiles = wmap_ui_tmi.num_hor_tiles * wmap_ui_tmi.num_vert_tiles;
+    wmap_info->tiles = (WmapTile*)CALLOC(sizeof(*wmap_info->tiles), wmap_info->num_tiles);
 
     if (!wmTileArtLockMode(2, 0)) {
         tig_debug_printf("wmap_load_townmap_info: ERROR: wmTileArtLockMode failed!\n");
         exit(EXIT_FAILURE);
     }
 
-    v1->tile_width = v1->tiles[0].rect.width;
-    v1->tile_height = v1->tiles[0].rect.height;
-    v1->map_width = v1->tile_width * v1->num_hor_tiles;
-    v1->map_height = v1->tile_height * v1->num_vert_tiles;
+    wmap_info->tile_width = wmap_info->tiles[0].rect.width;
+    wmap_info->tile_height = wmap_info->tiles[0].rect.height;
+    wmap_info->map_width = wmap_info->tile_width * wmap_info->num_hor_tiles;
+    wmap_info->map_height = wmap_info->tile_height * wmap_info->num_vert_tiles;
 
     wmTileArtUnlockMode(2, 0);
     wmTileArtUnloadMode(2, 0);
 
-    for (index = 0; index < v1->num_tiles; index++) {
-        sub_562F90(&(v1->tiles[index]));
-        v1->tiles[index].rect.width = v1->tile_width;
-        v1->tiles[index].rect.height = v1->tile_height;
+    for (index = 0; index < wmap_info->num_tiles; index++) {
+        sub_562F90(&(wmap_info->tiles[index]));
+        wmap_info->tiles[index].rect.width = wmap_info->tile_width;
+        wmap_info->tiles[index].rect.height = wmap_info->tile_height;
     }
 
-    v1->field_2C = v1->num_hor_tiles * v1->tile_width - v1->field_24;
-    v1->field_60 = v1->num_hor_tiles * v1->tile_width - v1->rect.width;
-    v1->field_30 = v1->num_vert_tiles * v1->tile_height - v1->field_28;
-    v1->field_64 = v1->num_vert_tiles * v1->tile_height - v1->rect.height;
+    wmap_info->field_2C = wmap_info->num_hor_tiles * wmap_info->tile_width - wmap_info->field_24;
+    wmap_info->field_60 = wmap_info->num_hor_tiles * wmap_info->tile_width - wmap_info->rect.width;
+    wmap_info->field_30 = wmap_info->num_vert_tiles * wmap_info->tile_height - wmap_info->field_28;
+    wmap_info->field_64 = wmap_info->num_vert_tiles * wmap_info->tile_height - wmap_info->rect.height;
 
-    sub_563590(&(v1->field_3C), false);
+    sub_563590(&(wmap_info->field_3C), false);
 
     return true;
 }
@@ -2621,50 +2628,50 @@ void sub_562F90(WmapTile* a1)
 // 0x562FA0
 bool wmTileArtLock(int tile)
 {
-    return wmTileArtLockMode(dword_66D868, tile);
+    return wmTileArtLockMode(wmap_ui_mode, tile);
 }
 
 // 0x562FC0
 void wmTileArtUnlock(int tile)
 {
-    wmTileArtUnlockMode(dword_66D868, tile);
+    wmTileArtUnlockMode(wmap_ui_mode, tile);
 }
 
 // 0x562FE0
 void wmTileArtUnload(int tile)
 {
-    wmTileArtUnloadMode(dword_66D868, tile);
+    wmTileArtUnloadMode(wmap_ui_mode, tile);
 }
 
 // 0x563000
-bool wmTileArtLockMode(int wmap, int tile)
+bool wmTileArtLockMode(WmapUiMode mode, int tile)
 {
     char path[TIG_MAX_PATH];
 
-    if ((stru_5C9228[wmap].tiles[tile].flags & 0x1) == 0) {
-        if (wmap == 2) {
+    if ((wmap_ui_mode_info[mode].tiles[tile].flags & 0x1) == 0) {
+        if (mode == 2) {
             snprintf(path, sizeof(path),
                 "townmap\\%s\\%s%06d.bmp",
-                stru_5C9228[wmap].field_68,
-                stru_5C9228[wmap].field_68,
+                wmap_ui_mode_info[mode].field_68,
+                wmap_ui_mode_info[mode].field_68,
                 tile);
             if (!tig_file_exists(path, NULL)) {
                 snprintf(path, sizeof(path),
                     "townmap\\%s\\%s%06d.bmp",
-                    stru_5C9228[wmap].field_68,
-                    stru_5C9228[wmap].field_68,
+                    wmap_ui_mode_info[mode].field_68,
+                    wmap_ui_mode_info[mode].field_68,
                     0);
             }
         } else {
             snprintf(path, sizeof(path),
                 "%s%03d",
-                stru_5C9228[wmap].field_68,
+                wmap_ui_mode_info[mode].field_68,
                 tile + 1);
         }
 
-        if (wmTileArtLoad(path, &(stru_5C9228[wmap].tiles[tile].video_buffer), &(stru_5C9228[wmap].tiles[tile].rect))) {
-            stru_5C9228[wmap].tiles[tile].flags |= 0x1;
-            stru_5C9228[wmap].num_loaded_tiles++;
+        if (wmTileArtLoad(path, &(wmap_ui_mode_info[mode].tiles[tile].video_buffer), &(wmap_ui_mode_info[mode].tiles[tile].rect))) {
+            wmap_ui_mode_info[mode].tiles[tile].flags |= 0x1;
+            wmap_ui_mode_info[mode].num_loaded_tiles++;
         } else {
             tig_debug_printf("WMapUI: Blit: ERROR: Bmp Load Failed!\n");
         }
@@ -2679,7 +2686,7 @@ bool wmTileArtLoad(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect*
     TigBmp bmp;
     TigVideoBufferData video_buffer_data;
 
-    if (dword_66D868 != 2) {
+    if (wmap_ui_mode != WMAP_UI_MODE_TOWN) {
         snprintf(bmp.name, sizeof(bmp.name), "WorldMap\\%s.bmp", path);
         path = bmp.name;
     }
@@ -2702,21 +2709,21 @@ bool wmTileArtLoad(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect*
 }
 
 // 0x563200
-bool wmTileArtUnlockMode(int wmap, int tile)
+bool wmTileArtUnlockMode(WmapUiMode mode, int tile)
 {
-    (void)wmap;
+    (void)mode;
     (void)tile;
 
     return true;
 }
 
 // 0x563210
-void wmTileArtUnloadMode(int wmap, int tile)
+void wmTileArtUnloadMode(WmapUiMode mode, int tile)
 {
-    if ((stru_5C9228[wmap].tiles[tile].flags & 0x1) != 0) {
-        if (tig_video_buffer_destroy(stru_5C9228[wmap].tiles[tile].video_buffer) == TIG_OK) {
-            stru_5C9228[wmap].tiles[tile].flags &= ~0x1;
-            stru_5C9228[wmap].num_loaded_tiles--;
+    if ((wmap_ui_mode_info[mode].tiles[tile].flags & 0x1) != 0) {
+        if (tig_video_buffer_destroy(wmap_ui_mode_info[mode].tiles[tile].video_buffer) == TIG_OK) {
+            wmap_ui_mode_info[mode].tiles[tile].flags &= ~0x1;
+            wmap_ui_mode_info[mode].num_loaded_tiles--;
         } else {
             tig_debug_printf("WMapUI: Destroy: ERROR: Video Buffer Destroy FAILED!\n");
         }
@@ -2726,8 +2733,8 @@ void wmTileArtUnloadMode(int wmap, int tile)
 // 0x563270
 void sub_563270()
 {
-    if (stru_5C9228[dword_66D868].refresh_rect != NULL) {
-        stru_5C9228[dword_66D868].refresh_rect(&(stru_5C9228[dword_66D868].rect));
+    if (wmap_ui_mode_info[wmap_ui_mode].refresh_rect != NULL) {
+        wmap_ui_mode_info[wmap_ui_mode].refresh_rect(&(wmap_ui_mode_info[wmap_ui_mode].rect));
     }
 }
 
@@ -2747,8 +2754,8 @@ void sub_5632A0(int direction, int a2, int a3, int a4)
     case 5:
     case 6:
     case 7:
-        if (stru_5C9228[dword_66D868].refresh_rect != NULL) {
-            stru_5C9228[dword_66D868].refresh_rect(&(stru_5C9228[dword_66D868].rect));
+        if (wmap_ui_mode_info[wmap_ui_mode].refresh_rect != NULL) {
+            wmap_ui_mode_info[wmap_ui_mode].refresh_rect(&(wmap_ui_mode_info[wmap_ui_mode].rect));
         }
         break;
     default:
@@ -2760,15 +2767,15 @@ void sub_5632A0(int direction, int a2, int a3, int a4)
 // 0x563300
 void sub_563300(int direction, int a2, int a3, int a4)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     TigRect one;
     TigRect two;
     TigRect three;
     int dx;
     int dy;
 
-    v1 = &(stru_5C9228[dword_66D868]);
-    one = v1->rect;
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
+    one = wmap_info->rect;
     two = wmap_ui_nav_cvr_frame;
     three = one;
 
@@ -2844,19 +2851,19 @@ void sub_563300(int direction, int a2, int a3, int a4)
         break;
     }
 
-    tig_window_scroll_rect(wmap_ui_window, &(v1->rect), dx, dy);
+    tig_window_scroll_rect(wmap_ui_window, &(wmap_info->rect), dx, dy);
 
-    if (v1->refresh_rect != NULL) {
+    if (wmap_info->refresh_rect != NULL) {
         if (one.width != 0) {
-            v1->refresh_rect(&one);
+            wmap_info->refresh_rect(&one);
         }
 
         if (three.width != 0) {
-            v1->refresh_rect(&three);
+            wmap_info->refresh_rect(&three);
         }
 
         if (two.width != 0) {
-            v1->refresh_rect(&two);
+            wmap_info->refresh_rect(&two);
         }
     }
 }
@@ -2864,33 +2871,33 @@ void sub_563300(int direction, int a2, int a3, int a4)
 // 0x563590
 void sub_563590(WmapCoords* coords, bool a2)
 {
-    Wmap* v3;
+    WmapInfo* wmap_info;
     int v1;
     int v2;
 
-    v3 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
-    v1 = coords->x - v3->field_24;
+    v1 = coords->x - wmap_info->field_24;
     if (v1 < 0) {
         v1 = 0;
-    } else if (v1 > v3->field_24 + v3->field_2C) {
-        v1 = v3->field_2C;
+    } else if (v1 > wmap_info->field_24 + wmap_info->field_2C) {
+        v1 = wmap_info->field_2C;
     }
 
-    v2 = coords->y - v3->field_28;
+    v2 = coords->y - wmap_info->field_28;
     if (v2 < 0) {
         v2 = 0;
-    } else if (v2 > v3->field_24 + v3->field_30) {
-        v2 = v3->field_30;
+    } else if (v2 > wmap_info->field_24 + wmap_info->field_30) {
+        v2 = wmap_info->field_30;
     }
 
-    if (v1 != v3->field_34
-        || v2 != v3->field_38) {
-        v3->field_34 = v1;
-        v3->field_38 = v2;
+    if (v1 != wmap_info->field_34
+        || v2 != wmap_info->field_38) {
+        wmap_info->field_34 = v1;
+        wmap_info->field_38 = v2;
 
         if (a2) {
-            v3->refresh();
+            wmap_info->refresh();
         }
     }
 }
@@ -2986,7 +2993,7 @@ void wmap_ui_scroll(int direction)
 // 0x563790
 void wmap_ui_scroll_internal(int direction, int scale)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int sx;
     int sy;
     int dx;
@@ -2998,7 +3005,7 @@ void wmap_ui_scroll_internal(int direction, int scale)
     sx = scale * wmap_ui_scroll_speed_x;
     sy = scale * wmap_ui_scroll_speed_y;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
     dx = 0;
     dy = 0;
@@ -3034,41 +3041,41 @@ void wmap_ui_scroll_internal(int direction, int scale)
         break;
     }
 
-    offset_x = v1->field_34;
-    offset_y = v1->field_38;
+    offset_x = wmap_info->field_34;
+    offset_y = wmap_info->field_38;
 
-    v1->field_34 += dx;
-    v1->field_38 += dy;
+    wmap_info->field_34 += dx;
+    wmap_info->field_38 += dy;
 
-    if (v1->field_34 < 0) {
-        v1->field_34 = 0;
-    } else if (v1->field_34 > v1->field_60) {
-        v1->field_34 = v1->field_60;
+    if (wmap_info->field_34 < 0) {
+        wmap_info->field_34 = 0;
+    } else if (wmap_info->field_34 > wmap_info->field_60) {
+        wmap_info->field_34 = wmap_info->field_60;
     }
 
-    if (v1->field_38 < 0) {
-        v1->field_38 = 0;
-    } else if (v1->field_38 > v1->field_64) {
-        v1->field_38 = v1->field_64;
+    if (wmap_info->field_38 < 0) {
+        wmap_info->field_38 = 0;
+    } else if (wmap_info->field_38 > wmap_info->field_64) {
+        wmap_info->field_38 = wmap_info->field_64;
     }
 
-    dx = v1->field_34 - offset_x;
-    dy = v1->field_38 - offset_y;
+    dx = wmap_info->field_34 - offset_x;
+    dy = wmap_info->field_38 - offset_y;
     if (dx == 0 && dy == 0) {
         return;
     }
 
-    if (v1->refresh_rect == NULL) {
+    if (wmap_info->refresh_rect == NULL) {
         return;
     }
 
-    if (dword_66D868 != 2) {
-        v1->refresh_rect(&(v1->rect));
+    if (wmap_ui_mode != WMAP_UI_MODE_TOWN) {
+        wmap_info->refresh_rect(&(wmap_info->rect));
         return;
     }
 
     tig_window_scroll_rect(wmap_ui_window,
-        &(v1->rect),
+        &(wmap_info->rect),
         -dx,
         -dy);
 
@@ -3081,16 +3088,16 @@ void wmap_ui_scroll_internal(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
 
-        rect = v1->rect;
+        rect = wmap_info->rect;
         rect.x += rect.width - dx;
         rect.width = dx;
         if (dy > 0) {
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
     } else if (dx < 0) {
         rect.x = wmap_ui_nav_cvr_frame.x;
         rect.y = wmap_ui_nav_cvr_frame.y;
@@ -3100,15 +3107,15 @@ void wmap_ui_scroll_internal(int direction, int scale)
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
 
-        rect = v1->rect;
+        rect = wmap_info->rect;
         rect.width = -dx;
         if (dy > 0) {
             rect.y -= dy;
             rect.height += dy;
         }
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
     }
 
     if (dy > 0) {
@@ -3116,27 +3123,27 @@ void wmap_ui_scroll_internal(int direction, int scale)
         rect.y = wmap_ui_nav_cvr_frame.y - dy;
         rect.width = wmap_ui_nav_cvr_frame.width;
         rect.height = wmap_ui_nav_cvr_frame.height + dy;
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
 
-        rect = v1->rect;
+        rect = wmap_info->rect;
         rect.y += rect.height - dy;
         rect.height = dy;
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
     } else if (dy < 0) {
         rect = wmap_ui_nav_cvr_frame;
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
 
-        rect = v1->rect;
+        rect = wmap_info->rect;
         rect.height = -dy;
-        v1->refresh_rect(&rect);
+        wmap_info->refresh_rect(&rect);
     }
 }
 
 // 0x563AC0
 void sub_563AC0(int x, int y, WmapCoords* coords)
 {
-    coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - wmap_ui_window_frame.y;
+    coords->x = x + wmap_ui_mode_info[wmap_ui_mode].field_34 - wmap_ui_mode_info[wmap_ui_mode].rect.x;
+    coords->y = y + wmap_ui_mode_info[wmap_ui_mode].field_38 - wmap_ui_mode_info[wmap_ui_mode].rect.y - wmap_ui_window_frame.y;
 }
 
 // 0x563B10
@@ -3146,7 +3153,7 @@ void sub_563B10(int x, int y, WmapCoords* coords)
     int64_t width;
     int64_t height;
 
-    rect = stru_5C9228[dword_66D868].rect;
+    rect = wmap_ui_mode_info[wmap_ui_mode].rect;
 
     if (sub_5614F0()) {
         width = 2000;
@@ -3167,39 +3174,39 @@ void sub_563B10(int x, int y, WmapCoords* coords)
 // 0x563C00
 void sub_563C00(int x, int y, WmapCoords* coords)
 {
-    coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - wmap_ui_window_frame.y;
+    coords->x = x + wmap_ui_mode_info[wmap_ui_mode].field_34 - wmap_ui_mode_info[wmap_ui_mode].rect.x;
+    coords->y = y + wmap_ui_mode_info[wmap_ui_mode].field_38 - wmap_ui_mode_info[wmap_ui_mode].rect.y - wmap_ui_window_frame.y;
 }
 
 // 0x563C60
 bool sub_563C60(WmapNote* note)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int index;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
-    if (v1->notes == NULL) {
+    if (wmap_info->notes == NULL) {
         return false;
     }
 
     // Attempt to find and update by id.
-    for (index = 0; index < *v1->num_notes; index++) {
-        if (v1->notes[index].id == note->id) {
+    for (index = 0; index < *wmap_info->num_notes; index++) {
+        if (wmap_info->notes[index].id == note->id) {
             // Note already exists, copy over everything.
-            v1->notes[index] = *note;
-            sub_563D50(&(v1->notes[index]));
+            wmap_info->notes[index] = *note;
+            sub_563D50(&(wmap_info->notes[index]));
             return true;
         }
     }
 
     if (index < 199) {
         // Note does not exists, but there is a room for a new note.
-        v1->notes[index] = *note;
-        sub_563D50(&(v1->notes[index]));
+        wmap_info->notes[index] = *note;
+        sub_563D50(&(wmap_info->notes[index]));
         note->flags &= ~0x4;
-        (*v1->num_notes)++;
-        sub_563D80(v1->notes[index].id, dword_66D868);
+        (*wmap_info->num_notes)++;
+        sub_563D80(wmap_info->notes[index].id, wmap_ui_mode);
         return true;
     }
 
@@ -3228,9 +3235,9 @@ WmapNote* sub_563D90(int id)
 {
     int index;
 
-    for (index = 0; index < *stru_5C9228[dword_66D868].num_notes; index++) {
-        if (stru_5C9228[dword_66D868].notes[index].id == id) {
-            return &(stru_5C9228[dword_66D868].notes[index]);
+    for (index = 0; index < *wmap_ui_mode_info[wmap_ui_mode].num_notes; index++) {
+        if (wmap_ui_mode_info[wmap_ui_mode].notes[index].id == id) {
+            return &(wmap_ui_mode_info[wmap_ui_mode].notes[index]);
         }
     }
 
@@ -3240,7 +3247,7 @@ WmapNote* sub_563D90(int id)
 // 0x563DE0
 bool find_note_by_coords(WmapCoords* coords, int* id_ptr)
 {
-    return find_note_by_coords_type(coords, id_ptr, dword_66D868);
+    return find_note_by_coords_type(coords, id_ptr, wmap_ui_mode);
 }
 
 // 0x563E00
@@ -3248,7 +3255,7 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
 {
     int dx;
     int dy;
-    Wmap* wmap;
+    WmapInfo* wmap_info;
     int idx;
     WmapNote* note;
 
@@ -3269,10 +3276,10 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
         return false;
     }
 
-    wmap = &(stru_5C9228[type]);
-    if (wmap->notes != NULL) {
-        for (idx = *wmap->num_notes - 1; idx >= 0; idx--) {
-            note = &(wmap->notes[idx]);
+    wmap_info = &(wmap_ui_mode_info[type]);
+    if (wmap_info->notes != NULL) {
+        for (idx = *wmap_info->num_notes - 1; idx >= 0; idx--) {
+            note = &(wmap_info->notes[idx]);
             if (wmap_note_type_info[note->type].enabled
                 && coords->x >= note->coords.x - dx
                 && coords->x <= note->coords.x + dx
@@ -3382,34 +3389,34 @@ void wmap_ui_textedit_on_enter(TextEdit* textedit)
     sub_564070(1);
 
     if (v1) {
-        stru_5C9228[dword_66D868].refresh();
+        wmap_ui_mode_info[wmap_ui_mode].refresh();
     }
 }
 
 // 0x564140
 bool sub_564140(WmapNote* note)
 {
-    return sub_564160(note, dword_66D868);
+    return sub_564160(note, wmap_ui_mode);
 }
 
 // 0x564160
-bool sub_564160(WmapNote* note, int a2)
+bool sub_564160(WmapNote* note, WmapUiMode mode)
 {
     int note_index;
 
-    if (stru_5C9228[a2].notes == NULL
-        || *stru_5C9228[a2].num_notes >= 199) {
+    if (wmap_ui_mode_info[mode].notes == NULL
+        || *wmap_ui_mode_info[mode].num_notes >= 199) {
         return false;
     }
 
-    note_index = *stru_5C9228[a2].num_notes;
+    note_index = *wmap_ui_mode_info[mode].num_notes;
 
-    note->id = stru_5C9228[a2].field_194++;
+    note->id = wmap_ui_mode_info[mode].field_194++;
     note->flags &= ~0x4;
-    stru_5C9228[a2].notes[note_index] = *note;
-    sub_563D50(&(stru_5C9228[a2].notes[note_index]));
-    (*stru_5C9228[a2].num_notes)++;
-    sub_563D80(stru_5C9228[a2].notes[note_index].id, a2);
+    wmap_ui_mode_info[mode].notes[note_index] = *note;
+    sub_563D50(&(wmap_ui_mode_info[mode].notes[note_index]));
+    (*wmap_ui_mode_info[mode].num_notes)++;
+    sub_563D80(wmap_ui_mode_info[mode].notes[note_index].id, mode);
 
     return true;
 }
@@ -3417,12 +3424,12 @@ bool sub_564160(WmapNote* note, int a2)
 // 0x564210
 bool sub_564210(WmapNote* note)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int index;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
-    if (v1->notes == NULL) {
+    if (wmap_info->notes == NULL) {
         return false;
     }
 
@@ -3431,25 +3438,25 @@ bool sub_564210(WmapNote* note)
     }
 
     // Find note by id.
-    for (index = 0; index < *v1->num_notes; index++) {
-        if (v1->notes[index].id == note->id) {
+    for (index = 0; index < *wmap_info->num_notes; index++) {
+        if (wmap_info->notes[index].id == note->id) {
             break;
         }
     }
 
-    if (index >= *v1->num_notes) {
+    if (index >= *wmap_info->num_notes) {
         // Note does not exists.
         return false;
     }
 
-    sub_5642F0(&(v1->notes[index]));
-    sub_5642E0(v1->notes[index].id, dword_66D868);
+    sub_5642F0(&(wmap_info->notes[index]));
+    sub_5642E0(wmap_info->notes[index].id, wmap_ui_mode);
 
-    (*v1->num_notes)--;
+    (*wmap_info->num_notes)--;
 
     // Move subsequent notes up (one at a time).
-    while (index < *v1->num_notes) {
-        v1->notes[index] = v1->notes[index + 1];
+    while (index < *wmap_info->num_notes) {
+        wmap_info->notes[index] = wmap_info->notes[index + 1];
         index++;
     }
 
@@ -3457,10 +3464,10 @@ bool sub_564210(WmapNote* note)
 }
 
 // 0x5642E0
-void sub_5642E0(int a1, int a2)
+void sub_5642E0(int a1, WmapUiMode mode)
 {
     (void)a1;
-    (void)a2;
+    (void)mode;
 }
 
 // 0x5642F0
@@ -3485,21 +3492,21 @@ void wmap_ui_textedit_on_change(TextEdit* textedit)
 // 0x564360
 void sub_564360(int id)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int index;
     int cnt;
 
-    v1 = &(stru_5C9228[dword_66D868]);
-    cnt = *v1->num_notes;
-    if (v1->notes != NULL) {
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
+    cnt = *wmap_info->num_notes;
+    if (wmap_info->notes != NULL) {
         for (index = 0; index < cnt; index++) {
-            if (v1->notes[index].id == id) {
+            if (wmap_info->notes[index].id == id) {
                 break;
             }
         }
 
-        if (index < cnt && (v1->notes[index].flags & 0x2) == 0) {
-            sub_564030(&(v1->notes[index]));
+        if (index < cnt && (wmap_info->notes[index].flags & 0x2) == 0) {
+            sub_564030(&(wmap_info->notes[index]));
         }
     }
 }
@@ -3532,11 +3539,11 @@ bool sub_5643E0(WmapCoords* coords)
     UiMessage ui_message;
 
     if (dword_66D880) {
-        if (dword_66D868 == 2) {
+        if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
             type = 1;
         }
     } else {
-        if (dword_66D868 != 2) {
+        if (wmap_ui_mode != WMAP_UI_MODE_TOWN) {
             return false;
         }
         type = 1;
@@ -3549,7 +3556,7 @@ bool sub_5643E0(WmapCoords* coords)
 
     wp = &(stru_64E048[type].field_0[wp_idx]);
 
-    if (dword_66D868 == 2) {
+    if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
         if (wp_idx == 0) {
             from = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
         } else if (wp_idx < 6) {
@@ -3578,7 +3585,7 @@ bool sub_5643E0(WmapCoords* coords)
         }
     } else {
         if (wp_idx == 0) {
-            sub_561800(&(stru_5C9228[dword_66D868].field_3C), &from);
+            sub_561800(&(wmap_ui_mode_info[wmap_ui_mode].field_3C), &from);
         } else {
             start = stru_64E048[type].field_0[wp_idx - 1].field_18 + stru_64E048[type].field_0[wp_idx - 1].field_1C;
             from = stru_64E048[type].field_0[wp_idx - 1].loc;
@@ -3617,7 +3624,7 @@ bool sub_5643E0(WmapCoords* coords)
 
     sub_5649C0();
 
-    stru_5C9228[dword_66D868].refresh();
+    wmap_ui_mode_info[wmap_ui_mode].refresh();
 
     return true;
 }
@@ -3634,7 +3641,7 @@ bool sub_564780(WmapCoords* coords, int* idx_ptr)
     dx = dword_66D8A0 / 2 + 5;
     dy = dword_66D8A4 / 2 + 5;
 
-    if (dword_66D868 == 2) {
+    if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
         v1 = 1;
     }
 
@@ -3664,7 +3671,7 @@ void sub_564840(int a1)
     int v1;
     int index;
 
-    v1 = dword_66D868 == 2 ? 1 : 0;
+    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
     if (stru_64E048[v1].field_3C0 > 0 && a1 < stru_64E048[v1].field_3C0) {
         stru_64E048[v1].field_3C0--;
 
@@ -3673,7 +3680,7 @@ void sub_564840(int a1)
         }
 
         sub_5649C0();
-        stru_5C9228[dword_66D868].refresh();
+        wmap_ui_mode_info[wmap_ui_mode].refresh();
 
         if (stru_64E048[v1].field_3C0 == 0) {
             dword_65E968 = 0;
@@ -3690,7 +3697,7 @@ void sub_5648E0(int a1, int a2, bool a3)
         return;
     }
 
-    v1 = dword_66D868 == 2 ? 1 : 0;
+    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
     if (stru_64E048[v1].field_0[a1].field_4 == a2) {
         return;
     }
@@ -3699,14 +3706,14 @@ void sub_5648E0(int a1, int a2, bool a3)
 
     if (a3) {
         sub_5649C0();
-        stru_5C9228[dword_66D868].refresh();
+        wmap_ui_mode_info[wmap_ui_mode].refresh();
     }
 }
 
 // 0x564940
 void sub_564940()
 {
-    if (dword_5C9AD8 != -1 && dword_66D868 != 2) {
+    if (dword_5C9AD8 != -1 && wmap_ui_mode != WMAP_UI_MODE_TOWN) {
         sub_564970(&(stru_64E048[dword_5C9AD8].field_0[0]));
     }
 }
@@ -3737,21 +3744,21 @@ void sub_5649D0(int a1)
 // 0x5649F0
 bool sub_5649F0(int64_t loc)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     int area;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
     area = sub_4CB4D0(loc, true);
     if (area > 0) {
         loc = area_get_location(area);
     }
 
     if (wmap_ui_teleport(loc)) {
-        sub_561490(loc, &(v1->field_3C));
+        sub_561490(loc, &(wmap_info->field_3C));
     }
 
-    if (v1->refresh != NULL) {
-        v1->refresh();
+    if (wmap_info->refresh != NULL) {
+        wmap_info->refresh();
     }
 
     ambient_lighting_enable();
@@ -3832,7 +3839,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 {
     bool v0;
     bool v1;
-    Wmap* v2;
+    WmapInfo* wmap_info;
     DateTime v9;
     DateTime datetime;
     TimeEvent next_timeevent;
@@ -3844,15 +3851,15 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 
     v0 = false;
     v1 = false;
-    v2 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
     if (stru_64E048[0].field_3C0 > 0) {
-        v8 = v2->field_3C;
+        v8 = wmap_info->field_3C;
 
-        v6 = v2->field_3C;
+        v6 = wmap_info->field_3C;
         sub_565170(&v6);
         sub_564E30(&v6, &loc);
-        v2->field_3C = v6;
+        wmap_info->field_3C = v6;
 
         sub_564A70(player_get_local_pc_obj(), loc);
 
@@ -3876,13 +3883,13 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
             }
         }
 
-        sub_563590(&v2->field_3C, false);
-        wmap_ui_compass_arrow_frame_set(wmap_ui_compass_arrow_frame_calc(&v2->field_3C, &stru_64E048[0].field_0[0].coords));
+        sub_563590(&wmap_info->field_3C, false);
+        wmap_ui_compass_arrow_frame_set(wmap_ui_compass_arrow_frame_calc(&wmap_info->field_3C, &stru_64E048[0].field_0[0].coords));
         sub_5649C0();
-        stru_5C9228[dword_66D868].refresh();
+        wmap_ui_mode_info[wmap_ui_mode].refresh();
     }
 
-    sub_564EE0(&v8, &(v2->field_3C), &v9);
+    sub_564EE0(&v8, &(wmap_info->field_3C), &v9);
     if (!v0) {
         timeevent_inc_datetime(&v9);
     }
@@ -3986,7 +3993,7 @@ void wmap_ui_town_notes_load()
         }
 
         if (tig_file_fread(&wmap_ui_num_town_notes, sizeof(wmap_ui_num_town_notes), 1, stream) == 1
-            && tig_file_fread(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
+            && tig_file_fread(&(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_194), sizeof(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_194), 1, stream) == 1) {
             for (index = 0; index < wmap_ui_num_town_notes; index++) {
                 if (!wmap_ui_town_note_load(&(wmap_ui_town_notes[index]), stream)) {
                     success = false;
@@ -4091,23 +4098,23 @@ void sub_565230()
     int idx;
     int area;
 
-    if (stru_5C9228[0].str[0] == '\0') {
+    if (wmap_ui_mode_info[WMAP_UI_MODE_WORLD].str[0] == '\0') {
         return;
     }
 
-    if (!wmTileArtLoad(stru_5C9228[0].str, &(stru_5C9228[0].video_buffer), &(stru_5C9228[0].field_2A8))) {
+    if (!wmTileArtLoad(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].str, &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].video_buffer), &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_2A8))) {
         return;
     }
 
-    stru_5C9228[0].flags |= 0x01;
+    wmap_ui_mode_info[WMAP_UI_MODE_WORLD].flags |= 0x01;
 
     tig_window_fill(wmap_ui_window, &wmap_ui_canvas_frame, tig_color_make(0, 0, 0));
 
-    vb_dst_rect = stru_5C9228[dword_66D868].rect;
+    vb_dst_rect = wmap_ui_mode_info[wmap_ui_mode].rect;
 
     vb_blit_info.flags = 0;
-    vb_blit_info.src_video_buffer = stru_5C9228[0].video_buffer;
-    vb_blit_info.src_rect = &(stru_5C9228[0].field_2A8);
+    vb_blit_info.src_video_buffer = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].video_buffer;
+    vb_blit_info.src_rect = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_2A8);
     vb_blit_info.dst_rect = &vb_dst_rect;
 
     if (tig_window_vbid_get(wmap_ui_window, &vb_blit_info.dst_video_buffer) != TIG_OK
@@ -4120,8 +4127,8 @@ void sub_565230()
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    for (idx = 0; idx < *stru_5C9228[0].num_notes; idx++) {
-        note = &(stru_5C9228[0].notes[idx]);
+    for (idx = 0; idx < *wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_notes; idx++) {
+        note = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].notes[idx]);
         if (wmap_note_type_info[idx].enabled) {
             tmp_rect.x = vb_dst_rect.x + note->coords.x;
             tmp_rect.y = vb_dst_rect.y + note->coords.y + wmap_ui_window_frame.y;
@@ -4147,8 +4154,8 @@ void sub_565230()
         tig_window_fill(wmap_ui_window, &tmp_rect, tig_color_make(255, 255, 0));
     }
 
-    tmp_rect.x = vb_dst_rect.x + stru_5C9228[0].field_3C.x;
-    tmp_rect.y = vb_dst_rect.y + stru_5C9228[0].field_3C.y + wmap_ui_window_frame.y;
+    tmp_rect.x = vb_dst_rect.x + wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_3C.x;
+    tmp_rect.y = vb_dst_rect.y + wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_3C.y + wmap_ui_window_frame.y;
     sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
     tmp_rect.x = vb_dst_rect.x + coords.x;
     tmp_rect.y = vb_dst_rect.y + coords.y;
@@ -4184,7 +4191,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
     int offset_x;
     int offset_y;
 
-    rect = stru_5C9228[dword_66D868].rect;
+    rect = wmap_ui_mode_info[wmap_ui_mode].rect;
 
     if (sub_5614F0()) {
         width = 2000;
@@ -4214,7 +4221,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
 // 0x5657A0
 void sub_5657A0(TigRect* rect)
 {
-    Wmap* v1;
+    WmapInfo* wmap_info;
     TigRect tmp_rect;
     TigVideoBufferBlitInfo vb_blit_info;
     TigRect vb_src_rect;
@@ -4235,22 +4242,22 @@ void sub_5657A0(TigRect* rect)
     WmapNote* note;
     int area;
 
-    v1 = &(stru_5C9228[dword_66D868]);
+    wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
     if (rect == NULL) {
-        rect = &(v1->rect);
+        rect = &(wmap_info->rect);
     }
 
     tmp_rect = *rect;
 
     tig_window_fill(wmap_ui_window, &tmp_rect, tig_color_make(0, 0, 0));
 
-    if (v1->field_68[0] == '\0') {
+    if (wmap_info->field_68[0] == '\0') {
         return;
     }
 
-    offset_x = v1->field_34;
-    offset_y = v1->field_38;
+    offset_x = wmap_info->field_34;
+    offset_y = wmap_info->field_38;
 
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &src_rect;
@@ -4268,32 +4275,32 @@ void sub_5657A0(TigRect* rect)
         return;
     }
 
-    min_x = offset_x / v1->tile_width;
+    min_x = offset_x / wmap_info->tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / v1->tile_height;
+    min_y = offset_y / wmap_info->tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
 
-    v2 = &(v1->tiles[min_y * v1->num_hor_tiles + min_x]);
+    v2 = &(wmap_info->tiles[min_y * wmap_info->num_hor_tiles + min_x]);
 
     max_x = tmp_rect.width / v2->rect.width + min_x + 1;
-    if (max_x > v1->num_hor_tiles) {
-        max_x = v1->num_hor_tiles;
+    if (max_x > wmap_info->num_hor_tiles) {
+        max_x = wmap_info->num_hor_tiles;
     }
 
     max_y = tmp_rect.height / v2->rect.height + min_y + 2;
-    if (max_y > v1->num_vert_tiles) {
-        max_y = v1->num_vert_tiles;
+    if (max_y > wmap_info->num_vert_tiles) {
+        max_y = wmap_info->num_vert_tiles;
     }
 
     for (y = min_y; y < max_y; y++) {
         for (x = min_x; x < max_x; x++) {
-            idx = y * v1->num_hor_tiles + x;
-            v2 = &(v1->tiles[idx]);
+            idx = y * wmap_info->num_hor_tiles + x;
+            v2 = &(wmap_info->tiles[idx]);
             vb_src_rect.x = tmp_rect.x + v2->rect.width * x - offset_x;
             vb_src_rect.y = tmp_rect.y + v2->rect.height * y - offset_y;
             vb_src_rect.width = v2->rect.width;
@@ -4330,27 +4337,27 @@ void sub_5657A0(TigRect* rect)
     vb_dst_rect.x = 0;
     vb_dst_rect.y = 0;
 
-    for (idx = 0; idx < *v1->num_notes; idx++) {
-        note = &(v1->notes[idx]);
+    for (idx = 0; idx < *wmap_info->num_notes; idx++) {
+        note = &(wmap_info->notes[idx]);
         if (wmap_note_type_info[note->type].enabled
             && sub_565CF0(note)) {
-            sub_566D10(note->type, &(note->coords), &tmp_rect, rect, v1);
+            sub_566D10(note->type, &(note->coords), &tmp_rect, rect, wmap_info);
             sub_565D00(note, &tmp_rect, rect);
         }
     }
 
-    sub_566A80(v1, &tmp_rect, rect);
+    sub_566A80(wmap_info, &tmp_rect, rect);
 
     area = area_get_last_known_area(player_get_local_pc_obj());
     if (area != AREA_UNKNOWN) {
         WmapCoords coords;
 
         sub_561490(area_get_location(area), &coords);
-        sub_566D10(WMAP_NOTE_TYPE_NEW_LOC, &coords, &tmp_rect, rect, v1);
+        sub_566D10(WMAP_NOTE_TYPE_NEW_LOC, &coords, &tmp_rect, rect, wmap_info);
     }
 
-    offset_x = v1->field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - v1->field_34;
-    offset_y = v1->field_3C.y + wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / -2 - v1->field_38;
+    offset_x = wmap_info->field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - wmap_info->field_34;
+    offset_y = wmap_info->field_3C.y + wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / -2 - wmap_info->field_38;
 
     vb_dst_rect.x = offset_x + tmp_rect.x;
     vb_dst_rect.y = offset_y + tmp_rect.y;
@@ -4408,10 +4415,10 @@ void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3)
     if ((note->flags & 0x4) != 0) {
         x = 0;
         y = 0;
-        dx = a2->x + note->coords.x - stru_5C9228[dword_66D868].field_34;
-        dy = a2->y + note->coords.y - stru_5C9228[dword_66D868].field_38;
+        dx = a2->x + note->coords.x - wmap_ui_mode_info[wmap_ui_mode].field_34;
+        dy = a2->y + note->coords.y - wmap_ui_mode_info[wmap_ui_mode].field_38;
 
-        if (dword_66D868 == 0 && note->id <= area_get_count()) {
+        if (wmap_ui_mode == WMAP_UI_MODE_WORLD && note->id <= area_get_count()) {
             area_get_wm_offset(note->id, &x, &y);
         }
 
@@ -4496,8 +4503,8 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
     src_rect.width = 5;
     src_rect.height = 5;
 
-    offset_x = stru_5C9228[0].field_34;
-    offset_y = stru_5C9228[0].field_38;
+    offset_x = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_34;
+    offset_y = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].field_38;
 
     vb_blit_info.flags = TIG_VIDEO_BUFFER_BLIT_BLEND_ALPHA_CONST;
     vb_blit_info.src_rect = &src_rect;
@@ -4508,33 +4515,33 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
     vb_blit_info.dst_video_buffer = video_buffer;
     vb_blit_info.dst_rect = &dst_rect;
 
-    min_x = offset_x / stru_5C9228[0].tile_width;
+    min_x = offset_x / wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / stru_5C9228[0].tile_height;
+    min_y = offset_y / wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
 
-    idx = min_x + stru_5C9228[0].num_hor_tiles * min_y;
-    entry = &(stru_5C9228[0].tiles[idx]);
+    idx = min_x + wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles * min_y;
+    entry = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles[idx]);
 
     max_x = rect->width / entry->rect.width + min_x + 1;
-    if (max_x > stru_5C9228[0].num_hor_tiles) {
-        max_x = stru_5C9228[0].num_hor_tiles;
+    if (max_x > wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles) {
+        max_x = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles;
     }
 
     max_y = rect->height / entry->rect.height + min_y + 2;
-    if (max_y > stru_5C9228[0].num_vert_tiles) {
-        max_y = stru_5C9228[0].num_vert_tiles;
+    if (max_y > wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles) {
+        max_y = wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_vert_tiles;
     }
 
     for (row = min_y; row < max_y; row++) {
         for (col = min_x; col < max_x; col++) {
-            idx = col + stru_5C9228[0].num_hor_tiles * row;
-            entry = &(stru_5C9228[0].tiles[idx]);
+            idx = col + wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_hor_tiles * row;
+            entry = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].tiles[idx]);
 
             src_rect.x = bounds.x + src_rect.width * min_x - offset_x;
             src_rect.y = bounds.y + src_rect.height * min_y - offset_y;
@@ -4589,12 +4596,12 @@ void wmap_town_refresh_rect(TigRect* rect)
     int note;
 
     if (rect == NULL) {
-        rect = &(stru_5C9228[2].rect);
+        rect = &(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].rect);
     }
 
-    offset_x = stru_5C9228[2].field_34;
-    offset_y = stru_5C9228[2].field_38;
-    bounds = stru_5C9228[2].rect;
+    offset_x = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+    offset_y = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
+    bounds = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].rect;
 
     vb_blit_info.flags = 0;
     vb_blit_info.src_rect = &vb_src_rect;
@@ -4617,33 +4624,33 @@ void wmap_town_refresh_rect(TigRect* rect)
     dirty_rect.height = rect->height;
     tig_window_fill(wmap_ui_window, &dirty_rect, tig_color_make(0, 0, 0));
 
-    min_x = offset_x / stru_5C9228[2].tile_width;
+    min_x = offset_x / wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tile_width;
     if (min_x < 0) {
         min_x = 0;
     }
 
-    min_y = offset_y / stru_5C9228[2].tile_height;
+    min_y = offset_y / wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tile_height;
     if (min_y < 0) {
         min_y = 0;
     }
 
-    idx = min_x + min_y * stru_5C9228[2].num_hor_tiles;
-    entry = &(stru_5C9228[2].tiles[idx]);
+    idx = min_x + min_y * wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_hor_tiles;
+    entry = &(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tiles[idx]);
 
     max_x = bounds.width / entry->rect.width + min_x + 2;
-    if (max_x > stru_5C9228[2].num_hor_tiles) {
-        max_x = stru_5C9228[2].num_hor_tiles;
+    if (max_x > wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_hor_tiles) {
+        max_x = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_hor_tiles;
     }
 
     max_y = bounds.height / entry->rect.height + min_y + 3;
-    if (max_y > stru_5C9228[2].num_vert_tiles) {
-        max_y = stru_5C9228[2].num_vert_tiles;
+    if (max_y > wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_vert_tiles) {
+        max_y = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_vert_tiles;
     }
 
     for (row = min_y; row < max_y; row++) {
         for (col = min_x; col < max_x; col++) {
-            idx = col + row * stru_5C9228[2].num_hor_tiles;
-            entry = &(stru_5C9228[2].tiles[idx]);
+            idx = col + row * wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_hor_tiles;
+            entry = &(wmap_ui_mode_info[WMAP_UI_MODE_TOWN].tiles[idx]);
 
             vb_src_rect.width = entry->rect.width;
             vb_src_rect.height = entry->rect.height;
@@ -4684,12 +4691,12 @@ void wmap_town_refresh_rect(TigRect* rect)
     art_blit_info.src_rect = &art_src_rect;
     art_blit_info.dst_rect = &art_dst_rect;
 
-    for (note = 0; note < *stru_5C9228[2].num_notes; note++) {
-        offset_x = stru_5C9228[2].notes[note].coords.x;
-        offset_y = stru_5C9228[2].notes[note].coords.y;
+    for (note = 0; note < *wmap_ui_mode_info[WMAP_UI_MODE_TOWN].num_notes; note++) {
+        offset_x = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].notes[note].coords.x;
+        offset_y = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].notes[note].coords.y;
 
-        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width / 2 - stru_5C9228[2].field_34;
-        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height / 2 - stru_5C9228[2].field_38;
+        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
@@ -4710,9 +4717,9 @@ void wmap_town_refresh_rect(TigRect* rect)
         }
     }
 
-    sub_566A80(&(stru_5C9228[2]), &bounds, &dirty_rect);
-    offset_x = stru_5C9228[2].field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - stru_5C9228[2].field_34;
-    offset_y = stru_5C9228[2].field_3C.y - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 - stru_5C9228[2].field_38;
+    sub_566A80(&(wmap_ui_mode_info[WMAP_UI_MODE_TOWN]), &bounds, &dirty_rect);
+    offset_x = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_3C.x - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+    offset_y = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_3C.y - wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
 
     vb_dst_rect.x = bounds.x + offset_x;
     vb_dst_rect.y = bounds.y + offset_y;
@@ -4737,8 +4744,8 @@ void wmap_town_refresh_rect(TigRect* rect)
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
         townmap_loc_to_coords(&wmap_ui_tmi, loc, &offset_x, &offset_y);
-        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + stru_5C9228[2].field_34;
-        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + stru_5C9228[2].field_38;
+        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
@@ -4769,8 +4776,8 @@ void wmap_town_refresh_rect(TigRect* rect)
             if (!player_is_local_pc_obj(node->obj)) {
                 loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
                 townmap_loc_to_coords(&wmap_ui_tmi, loc, &offset_x, &offset_y);
-                offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + stru_5C9228[2].field_34;
-                offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + stru_5C9228[2].field_38;
+                offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].width / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+                offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_CROSS].height / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
 
                 vb_dst_rect.x = bounds.x + offset_x;
                 vb_dst_rect.y = bounds.y + offset_y;
@@ -4810,7 +4817,7 @@ void wmap_town_refresh_rect(TigRect* rect)
 }
 
 // 0x566A80
-void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
+void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
 {
     int v1;
     TigArtBlitInfo art_blit_info;
@@ -4825,7 +4832,7 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
     int x2;
     int y2;
 
-    v1 = dword_66D868 == 2 ? 1 : 0;
+    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
     if (stru_64E048[v1].field_3C0 <= 0) {
         return;
     }
@@ -4890,14 +4897,14 @@ void sub_566A80(Wmap *a1, TigRect *a2, TigRect *a3)
 void wmap_ui_get_current_location(int64_t* loc_ptr)
 {
     if (wmap_ui_created && dword_66D8AC == 2) {
-        sub_561800(&stru_5C9228[dword_66D868].field_3C, loc_ptr);
+        sub_561800(&wmap_ui_mode_info[wmap_ui_mode].field_3C, loc_ptr);
     } else {
         *loc_ptr = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
     }
 }
 
 // 0x566D10
-void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5)
+void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, WmapInfo* wmap_info)
 {
     int dx;
     int dy;
@@ -4905,8 +4912,8 @@ void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, Wmap* a5
     TigRect src_rect;
     TigRect dst_rect;
 
-    dx = coords->x - wmap_note_type_info[type].width / 2 - a5->field_34;
-    dy = coords->y - wmap_note_type_info[type].height / 2 - a5->field_38;
+    dx = coords->x - wmap_note_type_info[type].width / 2 - wmap_info->field_34;
+    dy = coords->y - wmap_note_type_info[type].height / 2 - wmap_info->field_38;
 
     src_rect.x = a3->x + dx;
     src_rect.y = a3->y + dy;
