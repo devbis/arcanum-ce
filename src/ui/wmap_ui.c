@@ -396,10 +396,10 @@ static tig_sound_handle_t dword_66D848;
 static int64_t qword_66D850;
 
 // 0x66D858
-static int dword_66D858;
+static int wmap_ui_offset_x;
 
 // 0x66D85C
-static int dword_66D85C;
+static int wmap_ui_offset_y;
 
 // 0x66D860
 static bool wmap_ui_initialized;
@@ -1261,8 +1261,8 @@ bool wmap_load_worldmap_info()
         mes_file_entry.num = 20;
         mes_get_msg(dword_66D6FC, &mes_file_entry);
         str = mes_file_entry.str;
-        tig_str_parse_value(&str, &dword_66D858);
-        tig_str_parse_value(&str, &dword_66D85C);
+        tig_str_parse_value(&str, &wmap_ui_offset_x);
+        tig_str_parse_value(&str, &wmap_ui_offset_y);
 
         mes_file_entry.num = 50;
         if (map_get_worldmap(map_current_map(), &wmap) && wmap != -1) {
@@ -1315,12 +1315,13 @@ bool wmap_load_worldmap_info()
             }
         }
     } else {
+        wmap_ui_offset_x = 0;
+        wmap_ui_offset_y = 0;
+
         stru_5C9228[0].num_hor_tiles = 8;
         stru_5C9228[0].num_vert_tiles = 8;
-        dword_66D858 = 0;
         stru_5C9228[0].field_16C = 250;
         stru_5C9228[0].field_170 = 250;
-        dword_66D85C = 0;
         stru_5C9228[0].field_68[0] = '\0';
         stru_5C9228[0].field_58 = 2000;
         stru_5C9228[0].field_5C = 2000;
@@ -2352,8 +2353,8 @@ void sub_562880(WmapCoords* coords)
     TigRect src_rect;
     TigRect dst_rect;
 
-    x = dword_66D858 + coords->x;
-    y = dword_66D85C + coords->y;
+    x = wmap_ui_offset_x + coords->x;
+    y = wmap_ui_offset_y + coords->y;
 
     for (index = 0; index < 2; index++) {
         if (tig_video_buffer_fill(dword_64E7F4, &stru_66D708, dword_64E03C) == TIG_OK) {
