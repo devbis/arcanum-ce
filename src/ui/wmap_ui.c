@@ -148,7 +148,7 @@ typedef struct S64E408 {
 
 static_assert(sizeof(S64E408) == 0x3D0, "wrong size");
 
-static void sub_560150();
+static void wmap_ui_destroy();
 static void sub_562FE0(int a1);
 
 // 0x5C9160
@@ -382,7 +382,7 @@ static WmapNote wmap_ui_town_notes[200];
 static int dword_66D6F8;
 
 // 0x66D6FC
-static mes_file_handle_t dword_66D6FC;
+static mes_file_handle_t wmap_ui_worldmap_info_mes_file;
 
 // 0x66D708
 static TigRect stru_66D708;
@@ -466,10 +466,10 @@ static int wmap_ui_nav_cvr_width;
 static int wmap_ui_nav_cvr_height;
 
 // 0x66D8BC
-static char byte_66D8BC[256];
+static char wmap_ui_module_name[256];
 
 // 0x66D9BC
-static bool dword_66D9BC;
+static bool wmap_ui_info_loaded;
 
 // 0x66D9C0
 static const char* wmap_ui_action;
@@ -635,7 +635,7 @@ bool wmap_ui_init(GameInitInfo* init_info)
         exit(EXIT_FAILURE);
     }
 
-    mes_file_entry.num = 499;
+    mes_file_entry.num = 499; // "Action"
     if (mes_search(wmap_ui_worldmap_mes_file, &mes_file_entry)) {
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
         wmap_ui_action = mes_file_entry.str;
@@ -783,7 +783,7 @@ void wmap_ui_exit()
         }
     }
 
-    sub_560150();
+    wmap_ui_destroy();
     sub_560010();
     mes_unload(wmap_ui_worldmap_mes_file);
     wmap_ui_initialized = false;
@@ -848,35 +848,36 @@ void wmap_ui_town_notes_save()
 }
 
 // 0x560150
-void sub_560150()
+void wmap_ui_destroy()
 {
-    int index;
-    int j;
+    int wmap;
+    int tile;
 
-    for (index = 0; index < 3; index++) {
-        dword_66D868 = index;
+    for (wmap = 0; wmap < 3; wmap++) {
+        dword_66D868 = wmap;
 
-        if ((stru_5C9228[index].flags & 0x1) != 0) {
-            if (tig_video_buffer_destroy(stru_5C9228[index].video_buffer) == TIG_OK) {
-                stru_5C9228[index].flags &= ~0x1;
+        if ((stru_5C9228[wmap].flags & 0x1) != 0) {
+            if (tig_video_buffer_destroy(stru_5C9228[wmap].video_buffer) == TIG_OK) {
+                stru_5C9228[wmap].flags &= ~0x1;
             } else {
                 tig_debug_printf("WMapUI: Destroy: ERROR: Video Buffer Destroy FAILED!\n");
             }
         }
 
-        for (j = 0; j < stru_5C9228[index].num_tiles; j++) {
-            sub_562FE0(j);
+        for (tile = 0; tile < stru_5C9228[wmap].num_tiles; tile++) {
+            sub_562FE0(tile);
         }
     }
 
     dword_66D868 = 0;
     dword_66D87C = 0;
-    byte_66D8BC[0] = '\0';
+    wmap_ui_module_name[0] = '\0';
 
-    if (dword_66D9BC) {
-        mes_unload(dword_66D6FC);
+    if (wmap_ui_info_loaded) {
+        mes_unload(wmap_ui_worldmap_info_mes_file);
     }
-    dword_66D9BC = false;
+
+    wmap_ui_info_loaded = false;
 }
 
 // 0x560200
@@ -1249,18 +1250,18 @@ bool wmap_load_worldmap_info()
         return false;
     }
 
-    if (strcmp(byte_66D8BC, name) == 0) {
+    if (strcmp(wmap_ui_module_name, name) == 0) {
         return false;
     }
 
-    strcpy(byte_66D8BC, name);
+    strcpy(wmap_ui_module_name, name);
 
     tig_str_parse_set_separator(',');
 
     sprintf(path, "WorldMap\\WorldMap.mes");
-    if (mes_load(path, &dword_66D6FC)) {
+    if (mes_load(path, &wmap_ui_worldmap_info_mes_file)) {
         mes_file_entry.num = 20;
-        mes_get_msg(dword_66D6FC, &mes_file_entry);
+        mes_get_msg(wmap_ui_worldmap_info_mes_file, &mes_file_entry);
         str = mes_file_entry.str;
         tig_str_parse_value(&str, &wmap_ui_offset_x);
         tig_str_parse_value(&str, &wmap_ui_offset_y);
@@ -1269,7 +1270,7 @@ bool wmap_load_worldmap_info()
         if (map_get_worldmap(map_current_map(), &wmap) && wmap != -1) {
             mes_file_entry.num += wmap;
         }
-        mes_get_msg(dword_66D6FC, &mes_file_entry);
+        mes_get_msg(wmap_ui_worldmap_info_mes_file, &mes_file_entry);
         str = mes_file_entry.str;
         tig_str_parse_value(&str, &stru_5C9228[0].num_hor_tiles);
         tig_str_parse_value(&str, &stru_5C9228[0].num_vert_tiles);
@@ -1350,7 +1351,8 @@ bool wmap_load_worldmap_info()
     dword_66D8A4 = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].height;
     qword_66D850 = 320;
     sub_560EE0();
-    dword_66D9BC = 1;
+
+    wmap_ui_info_loaded = true;
 
     return true;
 }
@@ -1389,7 +1391,7 @@ void wmap_ui_close()
         sub_4AA580(pc_obj);
     }
 
-    if (intgame_mode_set(false) && wmap_ui_created) {
+    if (intgame_mode_set(INTGAME_MODE_MAIN) && wmap_ui_created) {
         sub_564070(false);
         sub_5615D0(0);
         intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
@@ -1405,7 +1407,7 @@ void wmap_ui_close()
         wmap_ui_created = 0;
         wmap_ui_obj = OBJ_HANDLE_NULL;
         wmap_ui_spell = -1;
-        sub_560150();
+        wmap_ui_destroy();
         sub_560010();
     }
 }
