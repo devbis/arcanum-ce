@@ -324,10 +324,10 @@ static UiButtonInfo stru_5C9B80 = { 698, 353, 813, TIG_BUTTON_HANDLE_INVALID };
 static int dword_5C9B90 = 1;
 
 // 0x5C9B94
-static int dword_5C9B94 = 5;
+static int wmap_ui_scroll_speed_x = 5;
 
 // 0x5C9B98
-static int dword_5C9B98 = 5;
+static int wmap_ui_scroll_speed_y = 5;
 
 // 0x64E030
 static tig_color_t dword_64E030;
@@ -2984,8 +2984,8 @@ void wmap_ui_scroll_internal(int direction, int scale)
     int offset_y;
     TigRect rect;
 
-    sx = scale * dword_5C9B94;
-    sy = scale * dword_5C9B98;
+    sx = scale * wmap_ui_scroll_speed_x;
+    sy = scale * wmap_ui_scroll_speed_y;
 
     v1 = &(stru_5C9228[dword_66D868]);
 
