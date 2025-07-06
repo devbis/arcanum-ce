@@ -218,7 +218,7 @@ static void sub_563D50(WmapNote* note);
 static void sub_563D80(int a1, int a2);
 static WmapNote* sub_563D90(int id);
 static bool find_note_by_coords(WmapCoords* coords, int* id_ptr);
-static bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type);
+static bool find_note_by_coords_mode(WmapCoords* coords, int* id_ptr, WmapUiMode mode);
 static bool sub_563F00(WmapCoords* coords, int64_t* a2);
 static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
@@ -3252,11 +3252,11 @@ WmapNote* sub_563D90(int id)
 // 0x563DE0
 bool find_note_by_coords(WmapCoords* coords, int* id_ptr)
 {
-    return find_note_by_coords_type(coords, id_ptr, wmap_ui_mode);
+    return find_note_by_coords_mode(coords, id_ptr, wmap_ui_mode);
 }
 
 // 0x563E00
-bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
+bool find_note_by_coords_mode(WmapCoords* coords, int* id_ptr, WmapUiMode mode)
 {
     int dx;
     int dy;
@@ -3264,13 +3264,13 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
     int idx;
     WmapNote* note;
 
-    switch (type) {
-    case 0:
-    case 2:
+    switch (mode) {
+    case WMAP_UI_MODE_WORLD:
+    case WMAP_UI_MODE_TOWN:
         dx = wmap_note_type_icon_max_width / 2;
         dy = wmap_note_type_icon_max_height / 2;
         break;
-    case 1:
+    case WMAP_UI_MODE_CONTINENT:
         dx = 20;
         dy = 20;
         break;
@@ -3281,7 +3281,7 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
         return false;
     }
 
-    wmap_info = &(wmap_ui_mode_info[type]);
+    wmap_info = &(wmap_ui_mode_info[mode]);
     if (wmap_info->notes != NULL) {
         for (idx = *wmap_info->num_notes - 1; idx >= 0; idx--) {
             note = &(wmap_info->notes[idx]);
@@ -3822,7 +3822,7 @@ void wmap_ui_mark_townmap(int64_t obj)
 
     townmap_loc_to_coords(&wmap_ui_tmi, obj_loc, &(note.coords.x), &(note.coords.y));
 
-    if (find_note_by_coords_type(&(note.coords), NULL, 2)) {
+    if (find_note_by_coords_mode(&(note.coords), NULL, WMAP_UI_MODE_TOWN)) {
         return;
     }
 
