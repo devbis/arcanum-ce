@@ -224,10 +224,10 @@ static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
 static void wmap_ui_textedit_on_enter(TextEdit* textedit);
-static bool sub_564140(WmapNote* note);
-static bool sub_564160(WmapNote* note, WmapUiMode mode);
-static bool sub_564210(WmapNote* note);
-static void sub_5642E0(int a1, WmapUiMode mode);
+static bool wmap_note_add(WmapNote* note);
+static bool wmap_note_add_mode(WmapNote* note, WmapUiMode mode);
+static bool wmap_note_remove(WmapNote* note);
+static void sub_5642E0(int id, WmapUiMode mode);
 static void sub_5642F0(WmapNote* note);
 static void wmap_ui_textedit_on_change(TextEdit* textedit);
 static void sub_564360(int id);
@@ -3378,34 +3378,34 @@ void sub_564070(bool a1)
 // 0x5640C0
 void wmap_ui_textedit_on_enter(TextEdit* textedit)
 {
-    bool v1;
+    bool should_refresh;
 
     if (*textedit->buffer != '\0' && sub_5643C0(textedit->buffer)) {
         if (textedit->buffer == stru_66D718.str) {
             dword_66D9D4->flags = 0;
-            v1 = sub_564140(dword_66D9D4);
+            should_refresh = wmap_note_add(dword_66D9D4);
         } else {
-            v1 = true;
+            should_refresh = true;
         }
     } else {
-        v1 = sub_564210(dword_66D9D4);
+        should_refresh = wmap_note_remove(dword_66D9D4);
     }
 
     sub_564070(1);
 
-    if (v1) {
+    if (should_refresh) {
         wmap_ui_mode_info[wmap_ui_mode].refresh();
     }
 }
 
 // 0x564140
-bool sub_564140(WmapNote* note)
+bool wmap_note_add(WmapNote* note)
 {
-    return sub_564160(note, wmap_ui_mode);
+    return wmap_note_add_mode(note, wmap_ui_mode);
 }
 
 // 0x564160
-bool sub_564160(WmapNote* note, WmapUiMode mode)
+bool wmap_note_add_mode(WmapNote* note, WmapUiMode mode)
 {
     int note_index;
 
@@ -3427,7 +3427,7 @@ bool sub_564160(WmapNote* note, WmapUiMode mode)
 }
 
 // 0x564210
-bool sub_564210(WmapNote* note)
+bool wmap_note_remove(WmapNote* note)
 {
     WmapInfo* wmap_info;
     int index;
@@ -3469,9 +3469,9 @@ bool sub_564210(WmapNote* note)
 }
 
 // 0x5642E0
-void sub_5642E0(int a1, WmapUiMode mode)
+void sub_5642E0(int id, WmapUiMode mode)
 {
-    (void)a1;
+    (void)id;
     (void)mode;
 }
 
@@ -3834,7 +3834,7 @@ void wmap_ui_mark_townmap(int64_t obj)
 
     dword_66D878 = pc_townmap;
 
-    if (!sub_564160(&note, 2)) {
+    if (!wmap_note_add_mode(&note, 2)) {
         tig_debug_printf("WmapUI: WARNING: Attempt to mark TownMap Failed: Note didn't Add!\n");
     }
 }
