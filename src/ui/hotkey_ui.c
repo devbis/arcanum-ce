@@ -212,7 +212,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
 }
 
 // 0x57DA50
-void sub_57DA50()
+void hotkey_ui_end()
 {
     int index;
     tig_button_handle_t button_handle;

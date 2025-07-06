@@ -12,7 +12,7 @@ bool hotkey_ui_init(GameInitInfo* init_info);
 void hotkey_ui_exit();
 void hotkey_ui_resize(GameResizeInfo* resize_info);
 bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t a3, bool a4);
-void sub_57DA50();
+void hotkey_ui_end();
 void sub_57DAB0();
 bool hotkey_ui_save(TigFile* stream);
 bool hotkey_ui_load(GameLoadInfo* load_info);

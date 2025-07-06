@@ -1056,7 +1056,7 @@ void intgame_resize(GameResizeInfo* resize_info)
     TigWindowData window_data;
     TigRect rect;
 
-    sub_57DA50();
+    hotkey_ui_end();
     dword_64C52C = resize_info->window_handle;
 
     if (intgame_fs_hotkey_window != TIG_WINDOW_HANDLE_INVALID) {
