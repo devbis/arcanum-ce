@@ -439,10 +439,10 @@ static int dword_66D880;
 static int64_t wmap_ui_obj;
 
 // 0x66D890
-static int dword_66D890;
+static int wmap_note_type_icon_max_width;
 
 // 0x66D894
-static int dword_66D894;
+static int wmap_note_type_icon_max_height;
 
 // 0x66D898
 static bool wmap_ui_textedit_focused;
@@ -689,12 +689,12 @@ bool wmap_ui_init(GameInitInfo* init_info)
             wmap_note_type_info[index].width = art_frame_data.width;
             wmap_note_type_info[index].height = art_frame_data.height;
 
-            if (art_frame_data.width > dword_66D890) {
-                dword_66D890 = art_frame_data.width;
+            if (art_frame_data.width > wmap_note_type_icon_max_width) {
+                wmap_note_type_icon_max_width = art_frame_data.width;
             }
 
-            if (art_frame_data.height > dword_66D894) {
-                dword_66D894 = art_frame_data.height;
+            if (art_frame_data.height > wmap_note_type_icon_max_height) {
+                wmap_note_type_icon_max_height = art_frame_data.height;
             }
         }
     }
@@ -724,10 +724,10 @@ bool wmap_ui_init(GameInitInfo* init_info)
 
     stru_66D708.x = 0;
     stru_66D708.y = wmap_ui_note_bounds.y;
-    stru_66D708.width = wmap_ui_note_bounds.width + dword_66D890 + 3;
+    stru_66D708.width = wmap_ui_note_bounds.width + wmap_note_type_icon_max_width + 3;
     stru_66D708.height = wmap_ui_note_bounds.height;
 
-    wmap_ui_note_bounds.x = dword_66D890 + 3;
+    wmap_ui_note_bounds.x = wmap_note_type_icon_max_width + 3;
 
     if (tig_art_interface_id_create(217, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -1557,7 +1557,7 @@ bool wmap_ui_create()
         wmap_ui_travel_button_flags | TIG_BUTTON_HIDDEN);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
-    vb_create_info.width = dword_66D890 + 203;
+    vb_create_info.width = wmap_note_type_icon_max_width + 203;
     vb_create_info.height = 50;
     vb_create_info.background_color = dword_64E03C;
     vb_create_info.color_key = dword_64E03C;
@@ -3224,7 +3224,7 @@ void sub_563D50(WmapNote* note)
 {
     note->field_18.x = note->coords.x;
     note->field_18.y = note->coords.y;
-    note->field_18.width = dword_66D890 + 203;
+    note->field_18.width = wmap_note_type_icon_max_width + 203;
     note->field_18.height = 50;
 }
 
@@ -3267,8 +3267,8 @@ bool find_note_by_coords_type(WmapCoords* coords, int* id_ptr, int type)
     switch (type) {
     case 0:
     case 2:
-        dx = dword_66D890 / 2;
-        dy = dword_66D894 / 2;
+        dx = wmap_note_type_icon_max_width / 2;
+        dy = wmap_note_type_icon_max_height / 2;
         break;
     case 1:
         dx = 20;
@@ -4460,7 +4460,7 @@ void wmap_note_vbid_lock(WmapNote* note)
 
     if ((note->flags & 0x4) == 0) {
         vb_create_info.flags = TIG_VIDEO_BUFFER_LOCKED | TIG_VIDEO_BUFFER_VIDEO_MEMORY;
-        vb_create_info.width = dword_66D890 + 203;
+        vb_create_info.width = wmap_note_type_icon_max_width + 203;
         vb_create_info.height = 50;
         vb_create_info.background_color = dword_64E03C;
         vb_create_info.color_key = dword_64E03C;
