@@ -193,7 +193,7 @@ static void sub_562800(int id);
 static void sub_562880(WmapCoords* coords);
 static void sub_562A20(int x, int y);
 static void sub_562AF0(int x, int y);
-static void sub_562B70(int a1);
+static void wmap_ui_mode_set(WmapUiMode mode);
 static bool wmap_load_townmap_info();
 static void sub_562F90(WmapTile* a1);
 static bool wmTileArtLock(int tile);
@@ -225,7 +225,7 @@ static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
 static void wmap_ui_textedit_on_enter(TextEdit* textedit);
 static bool sub_564140(WmapNote* note);
-static bool sub_564160(WmapNote* note, int a2);
+static bool sub_564160(WmapNote* note, WmapUiMode mode);
 static bool sub_564210(WmapNote* note);
 static void sub_5642E0(int a1, WmapUiMode mode);
 static void sub_5642F0(WmapNote* note);
@@ -1228,7 +1228,7 @@ void wmap_ui_open_internal()
     }
 
     if (wmap_ui_townmap != TOWNMAP_NONE) {
-        sub_562B70(2);
+        wmap_ui_mode_set(WMAP_UI_MODE_TOWN);
     } else if (tig_net_is_active()) {
         wmap_ui_close();
     }
@@ -1436,7 +1436,7 @@ bool wmap_ui_create()
     int64_t loc;
     tig_art_id_t art_id;
     int index;
-    WmapUiMode v2;
+    WmapUiMode mode;
 
     if (wmap_ui_created) {
         return true;
@@ -1581,9 +1581,9 @@ bool wmap_ui_create()
     sub_561430(loc);
     sub_563590(&(wmap_ui_mode_info[wmap_ui_mode].field_3C), false);
 
-    v2 = wmap_ui_mode;
+    mode = wmap_ui_mode;
     wmap_ui_mode = -1;
-    sub_562B70(v2);
+    wmap_ui_mode_set(mode);
 
     dword_5C9B18 = -1;
     wmap_ui_compass_arrow_frame_set(1);
@@ -1922,7 +1922,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height
                     && dword_66D8AC == 0) {
                     sub_563B10(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
-                    sub_562B70(0);
+                    wmap_ui_mode_set(WMAP_UI_MODE_WORLD);
                     sub_563590(&stru_64E7E8, 0);
                     sub_563270();
                 }
@@ -2101,12 +2101,12 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_RELEASED:
             if (msg->data.button.button_handle == wmap_ui_zoom_button_info[0].button_handle) {
                 if (wmap_ui_townmap == TOWNMAP_NONE) {
-                    sub_562B70(0);
+                    wmap_ui_mode_set(WMAP_UI_MODE_WORLD);
                     return true;
                 }
 
                 if (!dword_66D9C8) {
-                    sub_562B70(2);
+                    wmap_ui_mode_set(WMAP_UI_MODE_TOWN);
                     return true;
                 }
 
@@ -2114,7 +2114,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == wmap_ui_zoom_button_info[1].button_handle) {
-                sub_562B70(1);
+                wmap_ui_mode_set(WMAP_UI_MODE_CONTINENT);
                 return true;
             }
 
@@ -2243,19 +2243,19 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (dword_66D8AC == 2) {
-                sub_562B70(2);
+                wmap_ui_mode_set(WMAP_UI_MODE_TOWN);
                 return true;
             }
 
             gsound_play_sfx(0, 1);
 
             if (wmap_ui_mode != 1) {
-                sub_562B70(1);
+                wmap_ui_mode_set(WMAP_UI_MODE_CONTINENT);
                 return true;
             }
 
             if (wmap_ui_townmap == TOWNMAP_NONE) {
-                sub_562B70(0);
+                wmap_ui_mode_set(WMAP_UI_MODE_WORLD);
                 return true;
             }
 
@@ -2300,7 +2300,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case SDL_SCANCODE_D:
             if (!msg->data.keyboard.pressed
                 && gamelib_cheat_level_get() >= 3
-                && !wmap_ui_mode) {
+                && wmap_ui_mode == WMAP_UI_MODE_WORLD) {
                 gsound_play_sfx(0, 1);
 
                 for (int area = area_get_count() - 1; area > 0; area--) {
@@ -2454,7 +2454,7 @@ void sub_562AF0(int x, int y)
 }
 
 // 0x562B70
-void sub_562B70(int mode)
+void wmap_ui_mode_set(WmapUiMode mode)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -2505,7 +2505,7 @@ void sub_562B70(int mode)
         }
 
         if (!wmap_load_townmap_info()) {
-            sub_562B70(0);
+            wmap_ui_mode_set(WMAP_UI_MODE_WORLD);
             return;
         }
         break;
