@@ -1114,7 +1114,7 @@ void sub_57EFA0(int type, int data, int64_t item_obj)
 
     stru_683518[0].type = type;
     stru_683518[0].data = data;
-    sub_4440E0(item_obj, &stru_683518[1].item_obj);
+    sub_4440E0(item_obj, &stru_683518[1].item_obj); // FIXME: Probably wrong, should be [0].
     intgame_recent_action_button_get(0)->art_num = tig_art_num_get(new_art_id);
     button_handle = intgame_recent_action_button_get(0)->button_handle;
     if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
