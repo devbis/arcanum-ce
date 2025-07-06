@@ -153,10 +153,10 @@ static bool intgame_message_window_write_text(tig_window_handle_t window_handle,
 static bool intgame_spells_init();
 static void intgame_spells_show_college_spells(int group);
 static void intgame_spells_hide_college_spells(int group);
-static bool sub_550D20();
-static void sub_550D60();
+static bool intgame_mt_spells_init();
+static void intgame_mt_spells_disable();
 static void iso_interface_window_enable(RotatingWindowType window_type);
-static void sub_551660();
+static void intgame_mt_spells_enable();
 static int find_interface_window_index(int x, int y);
 static void sub_5517F0();
 static bool sub_5518C0(int x, int y);
@@ -409,7 +409,7 @@ static UiButtonInfo intgame_spell_buttons[SPELL_COUNT] = {
 };
 
 // 0x5C6C18
-static UiButtonInfo stru_5C6C18[] = {
+static UiButtonInfo intgame_mt_spell_buttons[] = {
     { 353, 542, -1, TIG_BUTTON_HANDLE_INVALID },
     { 402, 542, -1, TIG_BUTTON_HANDLE_INVALID },
     { 451, 542, -1, TIG_BUTTON_HANDLE_INVALID },
@@ -2063,8 +2063,8 @@ bool sub_54B5D0(TigMessage* msg)
                 break;
             case ROTWIN_TYPE_MAGICTECH:
                 for (index = 0; index < 5; index++) {
-                    if (stru_5C6C18[index].art_num != -1
-                        && msg->data.button.button_handle == stru_5C6C18[index].button_handle) {
+                    if (intgame_mt_spell_buttons[index].art_num != -1
+                        && msg->data.button.button_handle == intgame_mt_spell_buttons[index].button_handle) {
                         sub_57C040(qword_64C688, index);
                         return true;
                     }
@@ -2269,7 +2269,7 @@ bool sub_54B5D0(TigMessage* msg)
                 break;
             case ROTWIN_TYPE_MAGICTECH:
                 for (index = 0; index < 5; index++) {
-                    if (msg->data.button.button_handle == stru_5C6C18[index].button_handle) {
+                    if (msg->data.button.button_handle == intgame_mt_spell_buttons[index].button_handle) {
                         intgame_message_window_display_spell(mt_item_spell(qword_64C688, index));
                         return true;
                     }
@@ -3809,7 +3809,7 @@ bool sub_5501C0()
     }
 
     intgame_spells_init();
-    sub_550D20();
+    intgame_mt_spells_init();
 
     for (index = 0; index < 5; index++) {
         stru_64C4A8[index].x = intgame_rotwin_text_frame[5].rect.x;
@@ -3926,7 +3926,7 @@ void iso_interface_window_disable(RotatingWindowType window_type)
     case ROTWIN_TYPE_BROADCAST:
         break;
     case ROTWIN_TYPE_MAGICTECH:
-        sub_550D60();
+        intgame_mt_spells_disable();
         break;
     case ROTWIN_TYPE_QUANTITY:
         for (index = 0; index < INTGAME_QUANTITY_BUTTON_COUNT; index++) {
@@ -4244,31 +4244,32 @@ void intgame_spells_hide_college_spells(int clg)
 }
 
 // 0x550D20
-bool sub_550D20()
+bool intgame_mt_spells_init()
 {
     int index;
 
     for (index = 0; index < 5; index++) {
-        stru_5C6C18[index].art_num = spell_icon(0);
-        if (stru_5C6C18[index].art_num != -1) {
-            if (!intgame_button_create(&(stru_5C6C18[index]))) {
+        intgame_mt_spell_buttons[index].art_num = spell_icon(0);
+        if (intgame_mt_spell_buttons[index].art_num != -1) {
+            if (!intgame_button_create(&(intgame_mt_spell_buttons[index]))) {
                 return false;
             }
         }
     }
 
-    sub_550D60();
+    intgame_mt_spells_disable();
+
     return true;
 }
 
 // 0x550D60
-void sub_550D60()
+void intgame_mt_spells_disable()
 {
     int index;
 
     for (index = 0; index < 5; index++) {
-        if (stru_5C6C18[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_hide(stru_5C6C18[index].button_handle);
+        if (intgame_mt_spell_buttons[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(intgame_mt_spell_buttons[index].button_handle);
         }
     }
 
@@ -4534,7 +4535,7 @@ void iso_interface_window_enable(RotatingWindowType window_type)
     case ROTWIN_TYPE_BROADCAST:
         break;
     case ROTWIN_TYPE_MAGICTECH:
-        sub_551660();
+        intgame_mt_spells_enable();
         break;
     case ROTWIN_TYPE_QUANTITY:
         for (index = 0; index < INTGAME_QUANTITY_BUTTON_COUNT; index++) {
@@ -4597,7 +4598,7 @@ void iso_interface_window_enable(RotatingWindowType window_type)
 }
 
 // 0x551660
-void sub_551660()
+void intgame_mt_spells_enable()
 {
     int index;
     int spl;
@@ -4614,11 +4615,11 @@ void sub_551660()
             spl = mt_item_spell(qword_64C688, index);
             if (spl != -1
                 && !magictech_is_tech(spl)
-                && stru_5C6C18[index].art_num != -1) {
-                stru_5C6C18[index].art_num = spell_icon(spl);
-                tig_art_interface_id_create(stru_5C6C18[index].art_num, 0, 0, 0, &art_id);
-                tig_button_set_art(stru_5C6C18[index].button_handle, art_id);
-                tig_button_show(stru_5C6C18[index].button_handle);
+                && intgame_mt_spell_buttons[index].art_num != -1) {
+                intgame_mt_spell_buttons[index].art_num = spell_icon(spl);
+                tig_art_interface_id_create(intgame_mt_spell_buttons[index].art_num, 0, 0, 0, &art_id);
+                tig_button_set_art(intgame_mt_spell_buttons[index].button_handle, art_id);
+                tig_button_show(intgame_mt_spell_buttons[index].button_handle);
             }
         }
     }
@@ -8509,7 +8510,7 @@ int sub_557C00()
     }
 
     for (index = 0; index < 5; index++) {
-        if (tig_button_data(stru_5C6C18[index].button_handle, &button_data) != TIG_OK) {
+        if (tig_button_data(intgame_mt_spell_buttons[index].button_handle, &button_data) != TIG_OK) {
             return 6;
         }
 
