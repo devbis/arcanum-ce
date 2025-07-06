@@ -56,7 +56,7 @@ static int dword_5CB4BC[10] = {
 int dword_5CB4E4 = -1;
 
 // 0x683510
-static tig_window_handle_t dword_683510;
+static tig_window_handle_t hotkey_secondary_window_handle;
 
 // 0x683518
 static Hotkey stru_683518[2];
@@ -65,7 +65,7 @@ static Hotkey stru_683518[2];
 static TigRect stru_6835C8;
 
 // 0x6835D8
-static tig_window_handle_t dword_6835D8;
+static tig_window_handle_t hotkey_primary_window_handle;
 
 // 0x6835E0
 static Hotkey stru_6835E0[10];
@@ -74,10 +74,10 @@ static Hotkey stru_6835E0[10];
 static Hotkey stru_683950;
 
 // 0x6839A8
-static int dword_6839A8;
+static int hotkey_slot_width;
 
 // 0x6839AC
-static int dword_6839AC;
+static int hotkey_slot_height;
 
 // 0x6839B0
 int dword_6839B0;
@@ -92,8 +92,8 @@ bool hotkey_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_6835D8 = TIG_WINDOW_HANDLE_INVALID;
-    dword_683510 = TIG_WINDOW_HANDLE_INVALID;
+    hotkey_primary_window_handle = TIG_WINDOW_HANDLE_INVALID;
+    hotkey_secondary_window_handle = TIG_WINDOW_HANDLE_INVALID;
 
     if (tig_art_interface_id_create(dword_5CB494[0], 0, 0, 0, &art_id) != TIG_OK) {
         tig_debug_printf("hotkey_ui_init: ERROR: tig_art_interface_id_create failed!\n");
@@ -101,8 +101,8 @@ bool hotkey_ui_init(GameInitInfo* init_info)
     }
 
     tig_art_frame_data(art_id, &art_frame_data);
-    dword_6839A8 = art_frame_data.width;
-    dword_6839AC = art_frame_data.height;
+    hotkey_slot_width = art_frame_data.width;
+    hotkey_slot_height = art_frame_data.height;
 
     for (index = 0; index < 2; index++) {
         hotkey = &(stru_683518[index]);
@@ -140,7 +140,7 @@ void hotkey_ui_resize(GameResizeInfo* resize_info)
 }
 
 // 0x57D840
-bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t a3, bool a4)
+bool hotkey_ui_start(tig_window_handle_t primary_window_handle, TigRect* rect, tig_window_handle_t secondary_window_handle, bool fullscreen)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -151,8 +151,8 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
     Hotkey* hotkey;
 
     stru_6835C8 = *rect;
-    dword_6835D8 = a1;
-    dword_683510 = a3;
+    hotkey_primary_window_handle = primary_window_handle;
+    hotkey_secondary_window_handle = secondary_window_handle;
 
     if (tig_art_interface_id_create(dword_5CB494[0], 0, 0, 0, &art_id) != TIG_OK) {
         tig_debug_printf("hotkey_ui_start: ERROR: tig_art_interface_id_create failed!\n");
@@ -161,20 +161,20 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
 
     tig_art_frame_data(art_id, &art_frame_data);
 
-    dword_6839A8 = art_frame_data.width;
-    dword_6839AC = art_frame_data.height;
+    hotkey_slot_width = art_frame_data.width;
+    hotkey_slot_height = art_frame_data.height;
 
-    if (dword_683510 != TIG_WINDOW_HANDLE_INVALID) {
+    if (hotkey_secondary_window_handle != TIG_WINDOW_HANDLE_INVALID) {
         for (index = 0; index < 2; index++) {
             hotkey = &(stru_683518[index]);
             intgame_recent_action_button_get(index)->art_num = hotkey->type == 2 || hotkey->type != 3
                 ? sub_579F70(hotkey->data)
                 : spell_icon(hotkey->data);
-            intgame_button_create_ex(dword_683510, &stru_6835C8, intgame_recent_action_button_get(index), 0x1);
+            intgame_button_create_ex(hotkey_secondary_window_handle, &stru_6835C8, intgame_recent_action_button_get(index), 0x1);
         }
     }
 
-    if (a4) {
+    if (fullscreen) {
         if (tig_art_interface_id_create(184, 0, 0, 0, &art_id) == TIG_OK) {
             tig_art_frame_data(art_id, &art_frame_data);
 
@@ -192,7 +192,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
             art_blit_info.art_id = art_id;
             art_blit_info.src_rect = &src_rect;
             art_blit_info.dst_rect = &dst_rect;
-            tig_window_blit_art(dword_6835D8, &art_blit_info);
+            tig_window_blit_art(hotkey_primary_window_handle, &art_blit_info);
         }
     }
 
@@ -202,7 +202,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
         hotkey->info.y = 445;
         intgame_hotkey_refresh(index);
 
-        if (!button_create_no_art(&(hotkey->info), dword_6839A8, dword_6839AC)) {
+        if (!button_create_no_art(&(hotkey->info), hotkey_slot_width, hotkey_slot_height)) {
             tig_debug_printf("hotkey_ui_start: ERROR: button_create_no_art failed!\n");
             exit(EXIT_FAILURE);
         }
@@ -524,8 +524,8 @@ void intgame_hotkey_refresh(int index)
 
         dst_rect.x = hotkey->info.x;
         dst_rect.y = 4;
-        dst_rect.width = dword_6839A8;
-        dst_rect.height = dword_6839AC;
+        dst_rect.width = hotkey_slot_width;
+        dst_rect.height = hotkey_slot_height;
 
         art_blit_info.flags = 0;
         art_blit_info.art_id = art_id;
@@ -533,9 +533,9 @@ void intgame_hotkey_refresh(int index)
         art_blit_info.dst_rect = &dst_rect;
 
         if (intgame_is_compact_interface()) {
-            tig_window_fill(dword_6835D8, &dst_rect, tig_color_make(0, 0, 0));
+            tig_window_fill(hotkey_primary_window_handle, &dst_rect, tig_color_make(0, 0, 0));
         }
-        tig_window_blit_art(dword_6835D8, &art_blit_info);
+        tig_window_blit_art(hotkey_primary_window_handle, &art_blit_info);
     } else {
         tig_debug_printf("Intgame: intgame_hotkey_refresh: ERROR: Can't find Interface Art: %d!\n", dword_5CB494[0]);
     }
@@ -563,23 +563,23 @@ void intgame_hotkey_refresh(int index)
         dst_rect.x = hotkey->info.x;
         dst_rect.y = 4;
 
-        if (art_frame_data.width > dword_6839A8) {
-            dst_rect.width = dword_6839A8;
+        if (art_frame_data.width > hotkey_slot_width) {
+            dst_rect.width = hotkey_slot_width;
         } else {
             dst_rect.width = art_frame_data.width;
 
-            if (dword_6839A8 - art_frame_data.width > 0) {
-                dst_rect.x += (dword_6839A8 - art_frame_data.width) / 2;
+            if (hotkey_slot_width - art_frame_data.width > 0) {
+                dst_rect.x += (hotkey_slot_width - art_frame_data.width) / 2;
             }
         }
 
-        if (art_frame_data.height > dword_6839AC) {
-            dst_rect.height = dword_6839AC;
+        if (art_frame_data.height > hotkey_slot_height) {
+            dst_rect.height = hotkey_slot_height;
         } else {
             dst_rect.height = art_frame_data.height;
 
-            if (dword_6839AC - art_frame_data.height > 0) {
-                dst_rect.y += (dword_6839AC - art_frame_data.height) / 2;
+            if (hotkey_slot_height - art_frame_data.height > 0) {
+                dst_rect.y += (hotkey_slot_height - art_frame_data.height) / 2;
             }
         }
 
@@ -587,7 +587,7 @@ void intgame_hotkey_refresh(int index)
         art_blit_info.art_id = art_id;
         art_blit_info.src_rect = &src_rect;
         art_blit_info.dst_rect = &dst_rect;
-        tig_window_blit_art(dword_6835D8, &art_blit_info);
+        tig_window_blit_art(hotkey_primary_window_handle, &art_blit_info);
 
         if (hotkey->count != -1) {
             // NOTE: Fixed unbalanced `tig_font_pop` in some code paths.
@@ -596,11 +596,11 @@ void intgame_hotkey_refresh(int index)
                 SDL_itoa(hotkey->count, badge, 10);
                 dst_rect.x = hotkey->info.x + 2;
                 dst_rect.y = 0;
-                if (tig_window_text_write(dword_6835D8, badge, &dst_rect) != TIG_OK) {
+                if (tig_window_text_write(hotkey_primary_window_handle, badge, &dst_rect) != TIG_OK) {
                     tig_debug_printf("intgame_hotkey_refresh: ERROR: Failed to do text write of count: hotkey: %d, count: %s, wid: %d!\n",
                         index,
                         badge,
-                        dword_6835D8);
+                        hotkey_primary_window_handle);
                 }
                 tig_font_pop();
             } else {
@@ -1128,7 +1128,7 @@ bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
     TigButtonData button_data;
 
     button_data.flags = TIG_BUTTON_MOMENTARY;
-    button_data.window_handle = dword_6835D8;
+    button_data.window_handle = hotkey_primary_window_handle;
     button_data.x = button_info->x;
     button_data.y = button_info->y - 441;
     button_data.art_id = TIG_ART_ID_INVALID;
