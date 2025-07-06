@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  windows:
+    name: Windows (${{ matrix.arch }})
+    runs-on: windows-2025
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86
+          - arch: x64
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: out/build/windows-${{ matrix.arch }}
+          key: windows-${{ matrix.arch }}-cmake-v1
+
+      - name: Configure
+        run: cmake --preset windows-${{ matrix.arch }}
+
+      - name: Build
+        run: cmake --build --preset windows-${{ matrix.arch }}-debug
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcanum-ce-windows-${{ matrix.arch }}
+          path:  out/build/windows-${{ matrix.arch }}/Debug/arcanum-ce.exe
+          retention-days: 7
