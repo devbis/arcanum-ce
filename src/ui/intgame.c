@@ -2879,7 +2879,7 @@ void intgame_process_event(TigMessage* msg)
                 }
                 break;
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
-                sub_57A1A0();
+                skill_ui_cancel();
                 break;
             }
         }
@@ -4810,7 +4810,7 @@ bool intgame_mode_set(IntgameMode mode)
         case INTGAME_MODE_SKILL:
             v1 = true;
             v17 = true;
-            sub_57A1A0();
+            skill_ui_cancel();
             sub_4B7AE0(player_get_local_pc_obj());
             break;
         case INTGAME_MODE_DIALOG:

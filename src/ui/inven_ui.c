@@ -1543,7 +1543,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_down(TigMessage*
         if (v1 != OBJ_HANDLE_NULL) {
             sub_4F2810(&v3, v1);
             sub_57A1F0(&v3);
-            sub_57A1A0();
+            skill_ui_cancel();
             return true;
         }
         break;

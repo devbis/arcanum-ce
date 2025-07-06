@@ -115,7 +115,7 @@ bool skill_ui_init(GameInitInfo* init_info)
 // 0x579F30
 void skill_ui_reset()
 {
-    qword_683490 = 0;
+    qword_683490 = OBJ_HANDLE_NULL;
 }
 
 // 0x579F40
@@ -162,7 +162,7 @@ void sub_579FA0(int64_t obj, int type)
     }
 
     if (intgame_mode_get() == INTGAME_MODE_SKILL) {
-        sub_57A1A0();
+        skill_ui_cancel();
     }
 
     qword_683490 = obj;
@@ -227,10 +227,10 @@ void skill_ui_preprocess(int64_t obj, int type)
 }
 
 // 0x57A1A0
-void sub_57A1A0()
+void skill_ui_cancel()
 {
     intgame_mode_set(INTGAME_MODE_MAIN);
-    qword_683490 = 0;
+    qword_683490 = OBJ_HANDLE_NULL;
 }
 
 // 0x57A1F0
@@ -282,7 +282,7 @@ void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3)
         if (!a1->is_loc
             && is_pc
             && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            sub_57A1A0();
+            skill_ui_cancel();
 
             spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
 
