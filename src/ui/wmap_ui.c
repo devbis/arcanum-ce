@@ -102,7 +102,7 @@ typedef struct WmapInfo {
     /* 0034 */ int field_34;
     /* 0038 */ int field_38;
     /* 003C */ WmapCoords field_3C;
-    /* 0044 */ int field_44;
+    /* 0044 */ bool navigatable;
     /* 0048 */ void(*refresh)();
     /* 004C */ void(*refresh_rect)(TigRect* rect);
     /* 0050 */ void(*field_50)(int direction, int, int, int);
@@ -191,7 +191,7 @@ static bool sub_5627B0(WmapCoords* coords);
 static bool sub_5627F0(int64_t loc);
 static void sub_562800(int id);
 static void sub_562880(WmapCoords* coords);
-static void sub_562A20(int x, int y);
+static void wmap_ui_navigate(int x, int y);
 static void sub_562AF0(int x, int y);
 static void wmap_ui_mode_set(WmapUiMode mode);
 static bool wmap_load_townmap_info();
@@ -457,7 +457,7 @@ static int dword_66D8A0;
 static int dword_66D8A4;
 
 // 0x66D8A8
-static bool dword_66D8A8;
+static bool wmap_ui_navigating;
 
 // 0x66D8AC
 static int dword_66D8AC;
@@ -1780,7 +1780,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 || msg->data.mouse.x >= wmap_info->field_14.x + wmap_info->field_14.width
                 || msg->data.mouse.y >= wmap_info->field_14.y + wmap_info->field_14.height) {
                 if (dword_66D8AC == 4) {
-                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 }
                 return false;
@@ -1875,7 +1875,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     return true;
                 }
                 case 4:
-                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 default:
                     return true;
@@ -1898,7 +1898,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
                     return true;
                 case 4:
-                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 default:
                     return true;
@@ -2093,7 +2093,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_PRESSED:
             if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
                 if (dword_66D8AC != 2 && sub_5615D0(4)) {
-                    sub_562A20(msg->data.button.x, msg->data.button.y);
+                    wmap_ui_navigate(msg->data.button.x, msg->data.button.y);
                 }
                 return true;
             }
@@ -2119,10 +2119,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
-                if (wmap_info->field_44 != 0 || dword_66D8A8) {
-                    dword_66D8A8 = false;
-                } else {
+                if (wmap_info->navigatable && !wmap_ui_navigating) {
                     sub_563590(&(wmap_info->field_3C), true);
+                } else {
+                    wmap_ui_navigating = false;
                 }
                 return true;
             }
@@ -2414,26 +2414,31 @@ void sub_562880(WmapCoords* coords)
 }
 
 // 0x562A20
-void sub_562A20(int x, int y)
+void wmap_ui_navigate(int x, int y)
 {
-    if (wmap_ui_mode_info[wmap_ui_mode].field_44 != 0
-        && x < stru_5C9A88.x
-        && y < stru_5C9A88.y
-        && x >= stru_5C9A88.x + stru_5C9A88.width
-        && y >= stru_5C9A88.y + stru_5C9A88.height) {
-        dword_66D8A8 = true;
+    if (!wmap_ui_mode_info[wmap_ui_mode].navigatable) {
+        return;
+    }
 
-        if (y < stru_5C9A88.y) {
-            wmap_ui_scroll_internal(0, 8);
-        } else if (y > stru_5C9A88.y + stru_5C9A88.height) {
-            wmap_ui_scroll_internal(4, 8);
-        }
+    if (x >= stru_5C9A88.x
+        && y >= stru_5C9A88.y
+        && x < stru_5C9A88.x + stru_5C9A88.width
+        && y < stru_5C9A88.y + stru_5C9A88.height) {
+        return;
+    }
 
-        if (x < stru_5C9A88.x) {
-            wmap_ui_scroll_internal(6, 8);
-        } else if (x > stru_5C9A88.x + stru_5C9A88.width) {
-            wmap_ui_scroll_internal(2, 8);
-        }
+    wmap_ui_navigating = true;
+
+    if (y < stru_5C9A88.y) {
+        wmap_ui_scroll_internal(0, 8);
+    } else if (y > stru_5C9A88.y + stru_5C9A88.height) {
+        wmap_ui_scroll_internal(4, 8);
+    }
+
+    if (x < stru_5C9A88.x) {
+        wmap_ui_scroll_internal(6, 8);
+    } else if (x > stru_5C9A88.x + stru_5C9A88.width) {
+        wmap_ui_scroll_internal(2, 8);
     }
 }
 
