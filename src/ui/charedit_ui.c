@@ -150,7 +150,7 @@ static void charedit_scheme_win_refresh();
 static bool charedit_skills_win_message_filter(TigMessage* msg);
 static bool sub_55D6F0(TigMessage* msg);
 static bool charedit_tech_win_message_filter(TigMessage* msg);
-static bool sub_55DC60(TigMessage* msg);
+static bool charedit_spells_win_message_filter(TigMessage* msg);
 static bool charedit_scheme_win_message_filter(TigMessage* msg);
 static bool sub_55E110();
 static void sub_55EBA0();
@@ -2539,7 +2539,7 @@ bool charedit_create_spells_win()
     window_data.rect.width = art_frame_data.width;
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
-    window_data.message_filter = sub_55DC60;
+    window_data.message_filter = charedit_spells_win_message_filter;
     hrp_apply(&(window_data.rect), GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL);
 
     if (tig_window_create(&window_data, &charedit_spells_win) != TIG_OK) {
@@ -3282,7 +3282,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
 }
 
 // 0x55DC60
-bool sub_55DC60(TigMessage* msg)
+bool charedit_spells_win_message_filter(TigMessage* msg)
 {
     int index;
     PacketChareditTraitChange pkt;
