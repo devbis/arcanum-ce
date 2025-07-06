@@ -161,8 +161,6 @@ typedef struct DialogFileEntry {
     /* 0018 */ char* actions;
 } DialogFileEntry;
 
-static_assert(sizeof(DialogFileEntry) == 0x1C, "wrong size");
-
 typedef struct DialogFile {
     /* 0000 */ char path[TIG_MAX_PATH];
     /* 0104 */ int refcount;
@@ -171,8 +169,6 @@ typedef struct DialogFile {
     /* 0114 */ int entries_capacity;
     /* 0118 */ DialogFileEntry* entries;
 } DialogFile;
-
-static_assert(sizeof(DialogFile) == 0x120, "wrong size");
 
 static void dialog_state_init(int64_t npc_obj, int64_t pc_obj, DialogState* state);
 static void sub_414810(int a1, int a2, int a3, int a4, DialogState* a5);

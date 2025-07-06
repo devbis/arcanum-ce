@@ -24,8 +24,6 @@ typedef struct SectorCacheEntry {
     /* 0010 */ Sector sector;
 } SectorCacheEntry;
 
-static_assert(sizeof(SectorCacheEntry) == 0x8878, "wrong size");
-
 typedef struct S60180C {
     int64_t id;
     DateTime datetime;

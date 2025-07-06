@@ -10,9 +10,6 @@ typedef struct SectorRoofList {
     tig_art_id_t art_ids[SECTOR_ROOF_LIST_SIZE];
 } SectorRoofList;
 
-// See 0x4F7F20.
-static_assert(sizeof(SectorRoofList) == 0x404, "wrong size");
-
 bool sector_roof_list_init(SectorRoofList* list);
 bool sector_roof_list_reset(SectorRoofList* list);
 bool sector_roof_list_exit(SectorRoofList* list);

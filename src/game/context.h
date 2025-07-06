@@ -23,29 +23,21 @@ typedef struct GameInitInfo {
     IsoRedrawFunc* draw_func;
 } GameInitInfo;
 
-static_assert(sizeof(GameInitInfo) == 0x10, "wrong size");
-
 typedef struct GameResizeInfo {
     tig_window_handle_t window_handle;
     TigRect window_rect;
     TigRect content_rect;
 } GameResizeInfo;
 
-static_assert(sizeof(GameResizeInfo) == 0x24, "wrong size");
-
 typedef struct GameLoadInfo {
     int version;
     TigFile* stream;
 } GameLoadInfo;
 
-static_assert(sizeof(GameLoadInfo) == 0x8, "wrong size");
-
 typedef struct ViewOptions {
     int type;
     int zoom;
 } ViewOptions;
-
-static_assert(sizeof(ViewOptions) == 0x8, "wrong size");
 
 typedef struct LocRect LocRect;
 
@@ -56,9 +48,6 @@ typedef struct SectorListNode {
     /* 0014 */ int height;
     /* 0018 */ struct SectorListNode* next;
 } SectorListNode;
-
-// See 0x4D13D0.
-static_assert(sizeof(SectorListNode) == 0x20, "wrong size");
 
 // TODO: Better name.
 typedef struct SomeSectorStuffEntry {
@@ -72,16 +61,12 @@ typedef struct SomeSectorStuffEntry {
     /* 0054 */ int field_54;
 } SomeSectorStuffEntry;
 
-static_assert(sizeof(SomeSectorStuffEntry) == 0x58, "wrong size");
-
 // TODO: Better name.
 typedef struct SomeSectorStuff {
     /* 0000 */ int height;
     /* 0004 */ int field_4;
     /* 0008 */ SomeSectorStuffEntry field_8[3];
 } SomeSectorStuff;
-
-static_assert(sizeof(SomeSectorStuff) == 0x110, "wrong size");
 
 typedef struct GameDrawInfo {
     TigRect* screen_rect;
@@ -91,8 +76,6 @@ typedef struct GameDrawInfo {
     TigRectListNode** rects;
 } GameDrawInfo;
 
-static_assert(sizeof(GameDrawInfo) == 0x14, "wrong size");
-
 typedef struct MapNewInfo {
     /* 0000 */ const char* base_path;
     /* 0004 */ const char* save_path;
@@ -100,7 +83,5 @@ typedef struct MapNewInfo {
     /* 0010 */ int64_t width;
     /* 0018 */ int64_t height;
 } MapNewInfo;
-
-static_assert(sizeof(MapNewInfo) == 0x20, "wrong size");
 
 #endif /* ARCANUM_GAME_CONTEXT_H_ */

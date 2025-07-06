@@ -73,8 +73,6 @@ typedef struct ObjectList {
     /* 0050 */ ObjectNode* head;
 } ObjectList;
 
-static_assert(sizeof(ObjectList) == 0x58, "wrong size");
-
 extern int dword_5E2E68;
 extern int dword_5E2E6C;
 extern bool dword_5E2E94;

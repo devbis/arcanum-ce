@@ -15,8 +15,6 @@ typedef struct CyclicUiControl {
     /* 0040 */ unsigned char in_use; // boolean
 } CyclicUiControl;
 
-static_assert(sizeof(CyclicUiControl) == 0x44, "wrong size");
-
 static bool sub_57FA70(CyclicUiControl** ctrl_ptr, int id, const char* function_name);
 static bool sub_57FAD0(CyclicUiControl* ctrl);
 static bool sub_57FB20(CyclicUiControl* ctrl);

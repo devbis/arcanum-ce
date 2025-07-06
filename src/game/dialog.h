@@ -27,8 +27,6 @@ typedef struct DialogState {
     /* 1844 */ int seed;
 } DialogState;
 
-static_assert(sizeof(DialogState) == 0x1848, "wrong size");
-
 typedef struct DialogSerializedData {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;

@@ -28,9 +28,6 @@ typedef struct TeleportObjectNode {
     struct TeleportObjectNode* next;
 } TeleportObjectNode;
 
-// See 0x4D3F00.
-static_assert(sizeof(TeleportObjectNode) == 0x18, "wrong size");
-
 static bool teleport_process(TeleportData* teleport_data);
 static bool schedule_teleport_obj_recursively(int64_t obj, int64_t loc);
 static bool sub_4D39A0(TeleportData* teleport_data);

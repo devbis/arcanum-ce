@@ -78,8 +78,6 @@ typedef struct GameSaveInfo {
     /* 035C */ int story_state;
 } GameSaveInfo;
 
-static_assert(sizeof(GameSaveInfo) == 0x360, "wrong size");
-
 extern unsigned int gamelib_ping_time;
 extern Settings settings;
 extern TigVideoBuffer* gamelib_scratch_video_buffer;

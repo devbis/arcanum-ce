@@ -14,16 +14,10 @@ typedef struct FindNode {
     /* 0018 */ int64_t sec;
 } FindNode;
 
-// See 0x4E3BE0.
-static_assert(sizeof(FindNode) == 0x20, "wrong size");
-
 typedef struct FindSector {
     /* 0000 */ int64_t sec;
     /* 0008 */ FindNode* head;
 } FindSector;
-
-// See 0x4E3DD0.
-static_assert(sizeof(FindSector) == 0x10, "wrong size");
 
 static void obj_find_node_reserve();
 static void obj_find_node_clear();

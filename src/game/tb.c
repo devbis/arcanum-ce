@@ -60,8 +60,6 @@ typedef struct TextBubble {
     /* 002C */ TbPosition pos;
 } TextBubble;
 
-static_assert(sizeof(TextBubble) == 0x30, "wrong size");
-
 static void tb_remove_internal(TextBubble* tb);
 static void tb_get_rect(TextBubble* tb, TigRect* rect);
 static void tb_calc_rect(TextBubble* tb, int64_t loc, int offset_x, int offset_y, TigRect* rect);

@@ -27,8 +27,6 @@ typedef struct PermOidLookupEntry {
     /* 0018 */ int64_t obj;
 } PermOidLookupEntry;
 
-static_assert(sizeof(PermOidLookupEntry) == 0x20, "wrong size");
-
 static int acquire_index();
 static void release_index(int index);
 static bool grow_pool();

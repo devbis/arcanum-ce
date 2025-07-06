@@ -12,16 +12,12 @@ typedef struct TileScriptListNode {
     /* 0014 */ struct TileScriptListNode* next;
 } TileScriptListNode;
 
-static_assert(sizeof(TileScriptListNode) == 0x18, "wrong size");
-
 #define TILE_SCRIPT_LIST_MODIFIED 0x0001
 
 typedef struct TileScriptList {
     /* 0000 */ unsigned int flags;
     /* 0004 */ struct TileScriptListNode* head;
 } TileScriptList;
-
-static_assert(sizeof(TileScriptList) == 0x8, "wrong size");
 
 extern TileScriptListNode* tile_script_node_head;
 

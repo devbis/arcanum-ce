@@ -42,8 +42,6 @@ typedef struct S5F0DEC {
     /* 0018 */ struct S5F0DEC* next;
 } S5F0DEC;
 
-static_assert(sizeof(S5F0DEC) == 0x20, "wrong size");
-
 typedef struct S5E8AD0 {
     /* 0000 */ unsigned int flags;
     /* 0004 */ int field_4;
@@ -57,6 +55,7 @@ typedef struct S5E8AD0 {
     /* 0038 */ ObjectID field_38;
 } S5E8AD0;
 
+// Serializeable.
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
 typedef struct S5F0DFC {
@@ -170,8 +169,6 @@ typedef struct S5F0DFC {
     /* 01AC */ int field_1AC;
 } S5F0DFC;
 
-static_assert(sizeof(S5F0DFC) == 0x1B0, "wrong size");
-
 typedef struct S5F0E1C {
     /* 0000 */ ObjectID field_0;
     /* 0018 */ ObjectID field_18;
@@ -181,15 +178,11 @@ typedef struct S5F0E1C {
     /* 003C */ int field_3C;
 } S5F0E1C;
 
-static_assert(sizeof(S5F0E1C) == 0x40, "wrong size");
-
 typedef struct MultiplayerLevelSchemeInfo {
     /* 0000 */ ObjectID oid;
-    /* 0018 */ char rule[2000];
-    /* 07E8 */ char name[2000];
+    /* 0018 */ char rule[MAX_STRING];
+    /* 07E8 */ char name[MAX_STRING];
 } MultiplayerLevelSchemeInfo;
-
-static_assert(sizeof(MultiplayerLevelSchemeInfo) == 0xFB8, "wrong size");
 
 typedef struct S5F0BC8 {
     /* 0000 */ ObjectID oid;
@@ -197,16 +190,12 @@ typedef struct S5F0BC8 {
     /* 001C */ int size;
 } S5F0BC8;
 
-static_assert(sizeof(S5F0BC8) == 0x20, "wrong size");
-
 typedef struct S5E8940 {
     /* 0000 */ bool(*success_func)(void*);
     /* 0004 */ void* success_info;
     /* 0008 */ bool(*failure_func)(void*);
     /* 000C */ void* failure_info;
 } S5E8940;
-
-static_assert(sizeof(S5E8940) == 0x10, "wrong size");
 
 static void sub_49CB80(S5E8AD0* a1);
 static void multiplayer_start_play(PlayerCreateInfo* player_create_info);

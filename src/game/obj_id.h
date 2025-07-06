@@ -26,6 +26,7 @@ typedef struct ObjectID {
     } d;
 } ObjectID;
 
+// Serializeable.
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
 void objid_create_guid(ObjectID* oid);

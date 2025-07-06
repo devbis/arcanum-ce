@@ -8,9 +8,6 @@ typedef struct ObjectNode {
     /* 0004 */ struct ObjectNode* next;
 } ObjectNode;
 
-// See 0x4E9990.
-static_assert(sizeof(ObjectNode) == 0x10, "wrong size");
-
 bool object_node_init(GameInitInfo* init_info);
 void object_node_exit();
 ObjectNode* object_node_create();

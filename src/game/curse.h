@@ -10,8 +10,6 @@ typedef struct CurseLogbookEntry {
     /* 0008 */ DateTime datetime;
 } CurseLogbookEntry;
 
-static_assert(sizeof(CurseLogbookEntry) == 0x10, "wrong size");
-
 bool curse_mod_load();
 void curse_mod_unload();
 void curse_copy_name(int curse, char* buffer);

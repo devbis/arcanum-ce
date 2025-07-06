@@ -62,6 +62,7 @@ typedef struct S5754C0 {
     /* 002C */ int field_2C;
 } S5754C0;
 
+// Serializeable.
 static_assert(sizeof(S5754C0) == 0x30, "wrong size");
 
 static bool sub_572340();

@@ -11,6 +11,4 @@ typedef struct SchematicInfo {
     int qty;
 } SchematicInfo;
 
-static_assert(sizeof(SchematicInfo) == 0x34, "wrong size");
-
 #endif /* ARCANUM_GAME_SCHEMATIC_H_ */

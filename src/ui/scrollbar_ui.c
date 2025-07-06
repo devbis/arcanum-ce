@@ -21,8 +21,6 @@ typedef struct ScrollbarUiControl {
     /* 007C */ int field_7C;
 } ScrollbarUiControl;
 
-static_assert(sizeof(ScrollbarUiControl) == 0x80, "wrong size");
-
 static void sub_5807F0(int index, int a2);
 static void scrollbar_ui_control_reset(ScrollbarUiControl* ctrl);
 static void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info);

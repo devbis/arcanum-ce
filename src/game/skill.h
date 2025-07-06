@@ -89,8 +89,6 @@ typedef struct SkillCallbacks {
     SkillNoLockFunc* no_lock_func;
 } SkillCallbacks;
 
-static_assert(sizeof(SkillCallbacks) == 0x24, "wrong size");
-
 // clang-format off
 #define SKILL_INVOCATION_SUCCESS            0x00000001u
 #define SKILL_INVOCATION_AIM                0x00000008u
@@ -126,8 +124,6 @@ typedef struct SkillInvocation {
     /* 00A0 */ int modifier;
     /* 00A4 */ int hit_loc;
 } SkillInvocation;
-
-static_assert(sizeof(SkillInvocation) == 0xA8, "wrong size");
 
 extern const char* basic_skill_lookup_keys_tbl[BASIC_SKILL_COUNT];
 extern const char* tech_skill_lookup_keys_tbl[TECH_SKILL_COUNT];

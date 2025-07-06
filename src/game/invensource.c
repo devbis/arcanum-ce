@@ -13,8 +13,6 @@ typedef struct NamedInvenSourceSet {
     /* 0048 */ InvenSourceSet set;
 } NamedInvenSourceSet;
 
-static_assert(sizeof(NamedInvenSourceSet) == 0xE6C, "wrong size");
-
 static bool parse_set_data(mes_file_handle_t invensource_mes_file, mes_file_handle_t invensourcebuy_mes_file);
 static bool parse_invensource_entry(MesFileEntry* mes_file_entry, char* str);
 static bool parse_invensourcebuy_entry(MesFileEntry* mes_file_entry, char* str);

@@ -52,8 +52,6 @@ typedef struct S64B870 {
     /* 0010 */ int y;
 } S64B870;
 
-static_assert(sizeof(S64B870) == 0x14, "wrong size");
-
 static void sub_5412E0(bool a1);
 static TigWindowModalDialogChoice mainmenu_ui_confirm(int num);
 static void sub_541740();

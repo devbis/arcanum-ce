@@ -47,9 +47,6 @@ typedef struct ReputationInfo {
     /* 0010 */ ReputationEffectInfo effects[5];
 } ReputationInfo;
 
-// See 0x4C15D0.
-static_assert(sizeof(ReputationInfo) == 0x4C, "wrong size");
-
 static bool reputation_parse(const char* path, int start, int end);
 
 /**

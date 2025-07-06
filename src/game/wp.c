@@ -10,8 +10,6 @@ typedef struct S5FC668 {
     /* 000C */ int field_C;
 } S5FC668;
 
-static_assert(sizeof(S5FC668) == 0x10, "wrong size");
-
 static void sub_4C0090();
 static void sub_4C00D0(int64_t obj);
 static void sub_4C0140(S5FC668* a1, GameDrawInfo* draw_info);

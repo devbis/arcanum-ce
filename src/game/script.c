@@ -55,8 +55,6 @@ typedef struct ScriptCacheEntry {
     /* 0014 */ ScriptFile* file;
 } ScriptCacheEntry;
 
-static_assert(sizeof(ScriptCacheEntry) == 0x18, "wrong size");
-
 typedef struct ScriptState {
     /* 0000 */ ScriptInvocation* invocation;
     /* 0004 */ int field_4;
@@ -72,8 +70,6 @@ typedef struct ScriptState {
     /* 03C4 */ int field_3C4;
     /* 03C8 */ int64_t lc_objs[10];
 } ScriptState;
-
-static_assert(sizeof(ScriptState) == 0x418, "wrong size");
 
 static int script_execute_condition(ScriptCondition* condition, int line, ScriptState* state);
 static int script_execute_action(ScriptAction* action, int line, ScriptState* state);

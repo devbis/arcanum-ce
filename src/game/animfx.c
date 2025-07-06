@@ -76,7 +76,7 @@ static unsigned int dword_5B76C8[] = {
     ANIMFX_LIST_ENTRY_CAN_AUTOSCALE,
 };
 
-static_assert(sizeof(off_5B76A8) / sizeof(off_5B76A8[0]) == sizeof(dword_5B76C8) / sizeof(dword_5B76C8[0]), "wrong size");
+static_assert(SDL_arraysize(off_5B76A8) == SDL_arraysize(dword_5B76C8), "wrong size");
 
 // 0x5B76E8
 static const char* off_5B76E8[] = {
@@ -89,15 +89,13 @@ static const char* off_5B76E8[] = {
     "alphS",
 };
 
-static_assert(sizeof(off_5B76E8) / sizeof(off_5B76E8[0]) == BLEND_COUNT, "wrong size");
+static_assert(SDL_arraysize(off_5B76E8) == BLEND_COUNT, "wrong size");
 
 // 0x5B7704
-static const char* off_5B7704[] = {
-    "Translucency",
-    "Tinting",
+static const char* off_5B7704[EFFECT_TYPE_COUNT] = {
+    /* EFFECT_TYPE_TRANSLUCENCY */ "Translucency",
+    /*      EFFECT_TYPE_TINTING */ "Tinting",
 };
-
-static_assert(sizeof(off_5B7704) / sizeof(off_5B7704[0]) == EFFECT_TYPE_COUNT, "wrong size");
 
 // 0x5B770C
 static int dword_5B770C[] = {
@@ -111,7 +109,7 @@ static int dword_5B770C[] = {
     200,
 };
 
-static_assert(sizeof(dword_5B770C) / sizeof(dword_5B770C[0]) == SCALE_COUNT, "wrong size");
+static_assert(SDL_arraysize(dword_5B770C) == SCALE_COUNT, "wrong size");
 
 // 0x5B772C
 static int dword_5B772C[] = {
@@ -125,7 +123,7 @@ static int dword_5B772C[] = {
     7,
 };
 
-static_assert(sizeof(dword_5B772C) / sizeof(dword_5B772C[0]) == SCALE_COUNT, "wrong size");
+static_assert(SDL_arraysize(dword_5B772C) == SCALE_COUNT, "wrong size");
 
 // 0x601700
 static AnimID stru_601700;

@@ -36,14 +36,10 @@ typedef struct WmapRndEncounterChartEntry {
     /* 0010 */ int value;
 } WmapRndEncounterChartEntry;
 
-static_assert(sizeof(WmapRndEncounterChartEntry) == 0x18, "wrong size");
-
 typedef struct WmapRndEncounterChart {
     /* 0000 */ WmapRndEncounterChartEntry* entries;
     /* 0004 */ int num_entries;
 } WmapRndEncounterChart;
-
-static_assert(sizeof(WmapRndEncounterChart) == 0x8, "wrong size");
 
 typedef struct WmapRndEncounterTableEntry {
     /* 0000 */ int frequency;
@@ -58,20 +54,17 @@ typedef struct WmapRndEncounterTableEntry {
     /* 003C */ int message_num;
 } WmapRndEncounterTableEntry;
 
-static_assert(sizeof(WmapRndEncounterTableEntry) == 0x40, "wrong size");
-
 typedef struct WmapRndEncounterTable {
     /* 0000 */ int num_entries;
     /* 0004 */ WmapRndEncounterTableEntry* entries;
 } WmapRndEncounterTable;
-
-static_assert(sizeof(WmapRndEncounterTable) == 0x8, "wrong size");
 
 typedef struct WmapRndSaveInfo {
     /* 0000 */ int trigger_cnt;
     /* 0004 */ int message_num;
 } WmapRndSaveInfo;
 
+// Serializeable.
 static_assert(sizeof(WmapRndSaveInfo) == 0x8, "wrong size");
 
 static bool wmap_rnd_terrain_clear(uint16_t tid);

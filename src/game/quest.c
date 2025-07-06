@@ -28,8 +28,6 @@ typedef struct Quest {
     char* dumb_description;
 } Quest;
 
-static_assert(sizeof(Quest) == 0x64, "wrong size");
-
 static bool quest_parse(const char* path, int start, int end);
 static int quest_state_set_internal(int64_t pc_obj, int num, int state, int64_t npc_obj);
 static int quest_logbook_entry_compare(const void* va, const void* vb);

@@ -10,8 +10,6 @@ typedef struct BlessLogbookEntry {
     /* 0008 */ DateTime datetime;
 } BlessLogbookEntry;
 
-static_assert(sizeof(BlessLogbookEntry) == 0x10, "wrong size");
-
 bool bless_mod_load();
 void bless_mod_unload();
 void bless_copy_name(int bless, char* buffer);

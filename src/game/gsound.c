@@ -29,17 +29,12 @@ typedef struct Sound {
     /* 0024 */ char path[TIG_MAX_PATH];
 } Sound;
 
-// See 0x41BF70.
-static_assert(sizeof(Sound) == 0x128, "wrong size");
-
 typedef struct SoundScheme {
     /* 0000 */ int scheme_num;
     /* 0004 */ int scheme_idx;
     /* 0008 */ int count;
     /* 000C */ Sound sounds[TWENTY_FIVE];
 } SoundScheme;
-
-static_assert(sizeof(SoundScheme) == 0x1CF4, "wrong size");
 
 static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundScheme* scheme);

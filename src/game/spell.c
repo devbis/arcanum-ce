@@ -24,8 +24,6 @@ typedef struct SpellInfo {
     /* 0008 */ uint8_t dummy[176];
 } SpellInfo;
 
-static_assert(sizeof(SpellInfo) == 0xB8, "wrong size");
-
 /**
  * Array defining the minimum character level required for each spell level.
  *

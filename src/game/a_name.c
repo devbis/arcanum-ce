@@ -27,8 +27,6 @@ typedef struct WallStructure {
     /* 001C */ int field_1C;
 } WallStructure;
 
-static_assert(sizeof(WallStructure) == 0x20, "wrong size");
-
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr);

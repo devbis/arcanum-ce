@@ -16,9 +16,6 @@ typedef struct MagicTechObjectNode {
     };
 } MagicTechObjectNode;
 
-// See 0x4BACB1.
-static_assert(sizeof(MagicTechObjectNode) == 0x48, "wrong size");
-
 bool mt_obj_node_init(GameInitInfo* init_info);
 void mt_obj_node_exit();
 MagicTechObjectNode* mt_obj_node_create();

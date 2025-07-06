@@ -36,18 +36,12 @@ typedef struct Light {
     /* 0028 */ TigPalette palette;
 } Light;
 
-// See 0x4DDD20.
-static_assert(sizeof(Light) == 0x30, "wrong size");
-
 typedef struct Shadow {
     /* 0000 */ tig_art_id_t art_id;
     /* 0004 */ TigPalette palette;
     /* 0008 */ tig_color_t color;
     /* 000C */ struct Shadow* next;
 } Shadow;
-
-// See 4DE7C0.
-static_assert(sizeof(Shadow) == 0x10, "wrong size");
 
 bool light_init(GameInitInfo* init_info);
 void light_exit();

@@ -48,48 +48,34 @@ typedef struct ObjectBlitInfo {
     /* 0030 */ int rect_index;
 } ObjectBlitInfo;
 
-static_assert(sizeof(ObjectBlitInfo) == 0x34, "wrong size");
-
 typedef struct ObjectBlitRectInfo {
     /* 0000 */ TigRect src_rect;
     /* 0010 */ TigRect dst_rect;
 } ObjectBlitRectInfo;
 
-static_assert(sizeof(ObjectBlitRectInfo) == 0x20, "wrong size");
-
 typedef struct ObjectRenderColors {
     int colors[160];
 } ObjectRenderColors;
-
-static_assert(sizeof(ObjectRenderColors) == 0x280, "wrong size");
 
 typedef struct IndexedObjectRenderColors {
     /* 0000 */ void* ptr;
     /* 0004 */ ObjectRenderColors colors;
 } IndexedObjectRenderColors;
 
-static_assert(sizeof(IndexedObjectRenderColors) == 0x284, "wrong size");
-
 typedef struct ObjectRenderColorsNode {
     IndexedObjectRenderColors* data;
     struct ObjectRenderColorsNode* next;
 } ObjectRenderColorsNode;
-
-static_assert(sizeof(ObjectRenderColorsNode) == 0x8, "wrong size");
 
 typedef struct ObjectDropInfo {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t loc;
 } ObjectDropInfo;
 
-static_assert(sizeof(ObjectDropInfo) == 0x10, "wrong size");
-
 typedef struct ObjectPickupInfo {
     /* 0000 */ int64_t item_obj;
     /* 0008 */ int64_t parent_obj;
 } ObjectPickupInfo;
-
-static_assert(sizeof(ObjectPickupInfo) == 0x10, "wrong size");
 
 static void sub_43C5C0(GameDrawInfo* draw_info);
 static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);

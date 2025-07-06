@@ -31,9 +31,6 @@ typedef struct TeleportData {
     /* 0058 */ int time;
 } TeleportData;
 
-// See 0x4D3380.
-static_assert(sizeof(TeleportData) == 0x60, "wrong size");
-
 bool teleport_init(GameInitInfo* init_info);
 void teleport_reset();
 void teleport_exit();

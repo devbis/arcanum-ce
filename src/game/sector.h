@@ -30,8 +30,6 @@ typedef struct Sector {
     /* 485C */ SectorObjectList objects;
 } Sector;
 
-static_assert(sizeof(Sector) == 0x8868, "wrong size");
-
 typedef bool(SectorEnumerateFunc)(Sector* sector);
 typedef bool(SectorLockFunc)(const char* path);
 

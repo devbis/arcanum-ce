@@ -33,9 +33,6 @@ typedef struct LightSchemeData {
     LightSchemeColorComponents outdoor;
 } LightSchemeData;
 
-// See 0x4A7C60.
-static_assert(sizeof(LightSchemeData) == 0x18, "wrong size");
-
 static void light_scheme_parse(int msg_file);
 
 /**

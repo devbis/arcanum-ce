@@ -12,6 +12,7 @@ typedef struct TileScriptListNodeSerializedData {
     /* 0014 */ int next;
 } TileScriptListNodeSerializedData;
 
+// Serializeable.
 static_assert(sizeof(TileScriptListNodeSerializedData) == 0x18, "wrong size");
 
 static void sub_4F6380();

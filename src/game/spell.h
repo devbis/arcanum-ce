@@ -23,8 +23,6 @@ typedef enum College {
     COLLEGE_COUNT,
 } College;
 
-static_assert(COLLEGE_COUNT == 16, "wrong size");
-
 #define SPELL_MASTERY_IDX COLLEGE_COUNT
 
 typedef enum Spell {
@@ -110,8 +108,6 @@ typedef enum Spell {
     SPELL_TEMPUS_FUGIT,
     SPELL_COUNT,
 } Spell;
-
-static_assert(SPELL_COUNT == 80, "wrong size");
 
 bool spell_init(GameInitInfo* init_info);
 void spell_exit();

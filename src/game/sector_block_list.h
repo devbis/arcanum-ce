@@ -8,16 +8,10 @@ typedef struct SectorBlockList {
     /* 0004 */ uint32_t mask[128];
 } SectorBlockList;
 
-// See 0x4F81E0.
-static_assert(sizeof(SectorBlockList) == 0x204, "wrong size");
-
 typedef struct SectorBlockListNode {
     /* 0000 */ void* data;
     /* 0004 */ struct SectorBlockListNode* next;
 } SectorBlockListNode;
-
-// See 0x4F83B1.
-static_assert(sizeof(SectorBlockListNode) == 0x8, "wrong size");
 
 bool sector_block_list_init(SectorBlockList* list);
 bool sector_block_list_reset(SectorBlockList* list);

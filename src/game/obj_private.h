@@ -32,8 +32,6 @@ typedef struct S4E4BD0 {
     int field_C;
 } S4E4BD0;
 
-static_assert(sizeof(S4E4BD0) == 0x10, "wrong size");
-
 typedef struct ObjSa {
     /* 0000 */ int type;
     /* 0004 */ void* ptr;
@@ -48,8 +46,6 @@ typedef struct ObjSa {
         PcQuestState quest;
     } storage;
 } ObjSa;
-
-static_assert(sizeof(ObjSa) == 0x28, "wrong size");
 
 void sub_4E3F80();
 void sub_4E3F90();

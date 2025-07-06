@@ -58,8 +58,6 @@ typedef struct GameUiLibModule {
     GameUiResizeFunc* resize_func;
 } GameUiLibModule;
 
-static_assert(sizeof(GameUiLibModule) == 0x24, "wrong size");
-
 // 0x5C2AE0
 static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Scrollbar", scrollbar_ui_init, scrollbar_ui_reset, NULL, NULL, scrollbar_ui_exit, NULL, NULL, NULL },

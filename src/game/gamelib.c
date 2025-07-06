@@ -109,8 +109,6 @@ typedef struct GameLibModule {
     GameResizeFunc* resize_func;
 } GameLibModule;
 
-static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
-
 typedef struct GameSaveEntry {
     time_t modify_time;
     char* path;
@@ -1522,11 +1520,11 @@ bool gamelib_saveinfo_save(GameSaveInfo* save_info)
         do {
             if (tig_file_fwrite(&(save_info->version), sizeof(save_info->version), 1, stream) != 1) break;
 
-            size = strlen(save_info->module_name);
+            size = (int)strlen(save_info->module_name);
             if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
             if (tig_file_fwrite(save_info->module_name, size, 1, stream) != 1) break;
 
-            size = strlen(save_info->pc_name);
+            size = (int)strlen(save_info->pc_name);
             if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
             if (tig_file_fwrite(save_info->pc_name, size, 1, stream) != 1) break;
 
@@ -1537,7 +1535,7 @@ bool gamelib_saveinfo_save(GameSaveInfo* save_info)
             if (tig_file_fwrite(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->story_state), sizeof(save_info->story_state), 1, stream) != 1) break;
 
-            size = strlen(save_info->description);
+            size = (int)strlen(save_info->description);
             if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
             if (size != 0 && tig_file_fwrite(save_info->description, size, 1, stream) != 1) break;
 

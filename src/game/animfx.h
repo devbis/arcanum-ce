@@ -24,8 +24,6 @@ typedef struct AnimFxListEntry {
     /* 0014 */ int projectile_speed;
 } AnimFxListEntry;
 
-static_assert(sizeof(AnimFxListEntry) == 0x18, "wrong size");
-
 typedef enum AnimFxListFlags {
     ANIMFX_LIST_LOADED = 0x1,
 } AnimFxListFlags;
@@ -43,8 +41,6 @@ typedef struct AnimFxList {
     /* 0024 */ int* sound_effects;
     /* 0028 */ AnimFxListEntry* entries;
 } AnimFxList;
-
-static_assert(sizeof(AnimFxList) == 0x2C, "wrong size");
 
 typedef uint32_t AnimFxNodeFlags;
 
@@ -80,8 +76,6 @@ typedef struct AnimFxNode {
     /* 0048 */ int rotation;
     /* 004C */ int scale;
 } AnimFxNode;
-
-static_assert(sizeof(AnimFxNode) == 0x50, "wrong size");
 
 extern const char* animfx_play_flags_lookup_tbl_keys[ANIMFX_PLAY_COUNT];
 extern unsigned int animfx_play_flags_lookup_tbl_values[ANIMFX_PLAY_COUNT];

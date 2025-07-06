@@ -17,6 +17,7 @@ typedef struct TownMapInfo {
     /* 0028 */ float scale;
 } TownMapInfo;
 
+// Serializeable.
 static_assert(sizeof(TownMapInfo) == 0x30, "wrong size");
 
 void townmap_reset();

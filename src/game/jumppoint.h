@@ -10,7 +10,7 @@ typedef struct JumpPoint {
     /* 0018 */ int64_t dst_loc;
 } JumpPoint;
 
-// See 0x4E3800.
+// Serializeable.
 static_assert(sizeof(JumpPoint) == 0x20, "wrong size");
 
 bool jumppoint_init(GameInitInfo* init_info);

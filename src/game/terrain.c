@@ -19,6 +19,7 @@ typedef struct TerrainHeader {
     /* 0018 */ int base_terrain_type;
 } TerrainHeader;
 
+// Serializeable.
 static_assert(sizeof(TerrainHeader) == 0x20, "wrong size");
 
 static void sub_4E80C0(int a1, int a2, TigVideoBuffer* vb, TigRect* rect);

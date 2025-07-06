@@ -15,8 +15,6 @@ typedef struct RumorLogbookEntry {
     /* 0010 */ bool quelled;
 } RumorLogbookEntry;
 
-static_assert(sizeof(RumorLogbookEntry) == 0x18, "wrong size");
-
 bool rumor_init(GameInitInfo* init_info);
 void rumor_reset();
 void rumor_exit();

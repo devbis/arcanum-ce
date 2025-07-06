@@ -12,8 +12,6 @@ typedef struct S4F2810 {
     /* 0008 */ int is_loc;
 } S4F2810;
 
-static_assert(sizeof(S4F2810) == 0x10, "wrong size");
-
 typedef struct S603D20 {
     /* 0000 */ uint64_t aoe_flags;
     /* 0008 */ unsigned int aoe_spell_flags;
@@ -37,15 +35,11 @@ typedef struct S603CB8_F50_Entry {
     /* 0034 */ int field_34;
 } S603CB8_F50_Entry;
 
-static_assert(sizeof(S603CB8_F50_Entry) == 0x38, "wrong size");
-
 typedef struct S603CB8_F50 {
     /* 0000 */ int cnt;
     /* 0004 */ int field_4;
     /* 0008 */ S603CB8_F50_Entry entries[256];
 } S603CB8_F50;
-
-static_assert(sizeof(S603CB8_F50) == 0x3808, "wrong size");
 
 typedef struct S603CB8 {
     /* 0000 */ S603D20* field_0;
@@ -67,16 +61,12 @@ typedef struct S603CB8 {
     /* 0064 */ int field_64;
 } S603CB8;
 
-// TODO: Figure out sizeof(S603CB8).
-
 typedef struct S4F2680 {
     /* 0000 */ int64_t field_0;
     /* 0008 */ int64_t field_8;
     /* 0010 */ S4F2810* field_10;
     /* 0014 */ int field_14;
 } S4F2680;
-
-static_assert(sizeof(S4F2680) == 0x18, "wrong size");
 
 #define Tgt_No_Self 0x10000000
 #define Tgt_Non_Party 0x1000000000000000

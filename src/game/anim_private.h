@@ -120,8 +120,6 @@ typedef struct AnimGoalSubNode {
     /* 001C */ int field_1C;
 } AnimGoalSubNode;
 
-static_assert(sizeof(AnimGoalSubNode) == 0x20, "wrong size");
-
 typedef struct AnimGoalNode {
     /* 0000 */ int num_subnodes;
     /* 0004 */ int priority_level;
@@ -132,14 +130,13 @@ typedef struct AnimGoalNode {
     /* 0020 */ AnimGoalSubNode subnodes[15];
 } AnimGoalNode;
 
-static_assert(sizeof(AnimGoalNode) == 0x200, "wrong size");
-
 typedef struct AnimID {
     int slot_num;
     int field_4;
     int field_8;
 } AnimID;
 
+// Serializeable.
 static_assert(sizeof(AnimID) == 0xC, "wrong size");
 
 typedef struct AGModifyData {
@@ -153,6 +150,7 @@ typedef struct AGModifyData {
     /* 002C */ int path_curr;
 } AGModifyData;
 
+// Serializeable.
 static_assert(sizeof(AGModifyData) == 0x30, "wrong size");
 
 typedef union AnimRunInfoParam {
@@ -196,6 +194,7 @@ typedef struct AnimGoalData {
     /* 00B0 */ Ryan field_B0[5];
 } AnimGoalData;
 
+// Serializeable.
 static_assert(sizeof(AnimGoalData) == 0x178, "wrong size");
 
 typedef struct AnimPath {
@@ -212,6 +211,7 @@ typedef struct AnimPath {
     /* 00F0 */ int64_t field_F0;
 } AnimPath;
 
+// Serializeable.
 static_assert(sizeof(AnimPath) == 0xF8, "wrong size");
 
 typedef struct AnimRunInfo {
@@ -237,8 +237,6 @@ typedef struct AnimRunInfo {
     /* 0D30 */ int field_D30;
     /* 0D34 */ int field_D34;
 } AnimRunInfo;
-
-static_assert(sizeof(AnimRunInfo) == 0xD38, "wrong size");
 
 extern const char* off_5A164C[];
 extern int dword_5A5978;

@@ -45,8 +45,6 @@ typedef struct TrapListNode {
     /* 0030 */ struct TrapListNode* next;
 } TrapListNode;
 
-static_assert(sizeof(TrapListNode) == 0x38, "wrong size");
-
 static int trap_type_from_scr(Script* scr);
 static void trap_remove_internal(int64_t trap_obj);
 static void trap_timeevent_schedule(int spl, int64_t loc, int delay, int64_t item_obj);

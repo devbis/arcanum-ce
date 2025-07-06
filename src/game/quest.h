@@ -22,13 +22,12 @@ typedef struct QuestLogbookEntry {
     /* 0010 */ int state;
 } QuestLogbookEntry;
 
-static_assert(sizeof(QuestLogbookEntry) == 0x18, "wrong size");
-
 typedef struct PcQuestState {
     /* 0000 */ DateTime datetime;
     /* 0008 */ int state;
 } PcQuestState;
 
+// Serializeable.
 static_assert(sizeof(PcQuestState) == 0x10, "wrong size");
 
 bool quest_init(GameInitInfo* init_info);

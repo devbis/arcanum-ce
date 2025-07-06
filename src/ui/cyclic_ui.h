@@ -20,8 +20,6 @@ typedef struct CyclicUiControlInfo {
     /* 0029 */ unsigned char enabled; // boolean
 } CyclicUiControlInfo;
 
-static_assert(sizeof(CyclicUiControlInfo) == 0x2C, "wrong size");
-
 bool cyclic_ui_init(GameInitInfo* init_info);
 void cyclic_ui_exit();
 bool cyclic_ui_handle_button_pressed(tig_button_handle_t button_handle);

@@ -16,16 +16,11 @@ typedef struct SettingsEntry {
     /* 000C */ struct SettingsEntry* next;
 } SettingsEntry;
 
-// See 0x438C80.
-static_assert(sizeof(SettingsEntry) == 0x10, "wrong size");
-
 typedef struct Settings {
     /* 0000 */ const char* path;
     /* 0004 */ SettingsEntry* entries;
     /* 0008 */ SettingsFlags flags;
 } Settings;
-
-static_assert(sizeof(Settings) == 0xC, "wrong size");
 
 void settings_init(Settings* settings, const char* path);
 void settings_exit(Settings* settings);

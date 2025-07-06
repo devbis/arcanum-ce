@@ -24,9 +24,6 @@ typedef struct TextFloaterEntry {
     /* 001C */ struct TextFloaterEntry* next;
 } TextFloaterEntry;
 
-// See 0x4D5950.
-static_assert(sizeof(TextFloaterEntry) == 0x20, "wrong size");
-
 /**
  * Represents a text floater "box" associated with a game object.
  */
@@ -35,9 +32,6 @@ typedef struct TextFloaterList {
     /* 0008 */ TextFloaterEntry* head;
     /* 000C */ struct TextFloaterList* next;
 } TextFloaterList;
-
-// See 0x4D57E0.
-static_assert(sizeof(TextFloaterList) == 0x10, "wrong size");
 
 static void tf_clear();
 static TextFloaterList* tf_list_create();

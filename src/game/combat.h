@@ -18,8 +18,6 @@ typedef struct CombatCallbacks {
     CombatCallbackF10* field_10;
 } CombatCallbacks;
 
-static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");
-
 typedef enum Loudness {
     LOUDNESS_SILENT,
     LOUDNESS_NORMAL,
@@ -98,6 +96,7 @@ typedef struct CombatContext {
     /* 0064 */ int field_64;
 } CombatContext;
 
+// Serializeable.
 static_assert(sizeof(CombatContext) == 0x68, "wrong size");
 
 bool combat_init(GameInitInfo* init_info);

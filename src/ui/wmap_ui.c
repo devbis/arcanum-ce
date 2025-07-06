@@ -50,8 +50,6 @@ typedef struct WmapCoords {
     int y;
 } WmapCoords;
 
-static_assert(sizeof(WmapCoords) == 0x8, "wrong size");
-
 typedef struct WmapNoteTypeInfo {
     // NOTE: Rare case - during initialization the value at offset 0 is art num,
     // which is replaced with interface art id (see `wmap_ui_init`).
@@ -66,8 +64,6 @@ typedef struct WmapNoteTypeInfo {
     /* 0014 */ bool enabled;
 } WmapNoteTypeInfo;
 
-static_assert(sizeof(WmapNoteTypeInfo) == 0x18, "wrong size");
-
 typedef struct WmapNote {
     /* 0000 */ int id;
     /* 0004 */ unsigned int flags;
@@ -79,8 +75,6 @@ typedef struct WmapNote {
     /* 0128 */ TigVideoBuffer* video_buffer;
 } WmapNote;
 
-static_assert(sizeof(WmapNote) == 0x130, "wrong size");
-
 typedef struct WmapTile {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigVideoBuffer* video_buffer;
@@ -88,8 +82,6 @@ typedef struct WmapTile {
     /* 0018 */ void* field_18;
     /* 001C */ int field_1C;
 } WmapTile;
-
-static_assert(sizeof(WmapTile) == 0x20, "wrong size");
 
 typedef struct WmapInfo {
     /* 0000 */ unsigned int flags;
@@ -132,8 +124,6 @@ typedef struct WmapInfo {
     /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
 } WmapInfo;
 
-static_assert(sizeof(WmapInfo) == 0x2C0, "wrong size");
-
 typedef struct S64E048 {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
@@ -143,8 +133,6 @@ typedef struct S64E048 {
     /* 001C */ int field_1C;
 } S64E048;
 
-static_assert(sizeof(S64E048) == 0x20, "wrong size");
-
 typedef struct S64E408 {
     /* 0000 */ S64E048 field_0[30];
     /* 03C0 */ int field_3C0;
@@ -152,8 +140,6 @@ typedef struct S64E408 {
     /* 03C8 */ int field_3C8;
     /* 03CC */ int field_3CC;
 } S64E408;
-
-static_assert(sizeof(S64E408) == 0x3D0, "wrong size");
 
 // 0x5C9160
 static WmapNoteTypeInfo wmap_note_type_info[WMAP_NOTE_TYPE_COUNT] = {

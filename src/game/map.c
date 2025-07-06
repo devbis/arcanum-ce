@@ -79,15 +79,13 @@ typedef struct MapListInfo {
     int area;
 } MapListInfo;
 
-// See 0x40EA90.
-static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
-
 typedef struct MapProperties {
     /* 0000 */ int base_terrain_type;
     /* 0008 */ int64_t width;
     /* 0010 */ int64_t height;
 } MapProperties;
 
+// Serializeable.
 static_assert(sizeof(MapProperties) == 0x18, "wrong size");
 
 static void map_close();
@@ -106,13 +104,13 @@ static void map_apply_obj_patch(int64_t obj, char* str);
 
 // 0x59F058
 static const char* off_59F058[MAP_TYPE_COUNT] = {
-    "NONE",
-    "START_MAP",
-    "SHOPPING_MAP",
+    /*         MAP_TYPE_NONE */ "NONE",
+    /*    MAP_TYPE_START_MAP */ "START_MAP",
+    /* MAP_TYPE_SHOPPING_MAP */ "SHOPPING_MAP",
 };
 
 // 0x59F068
-static MapModule map_modules[] = {
+static MapModule map_modules[MAP_MODULE_COUNT] = {
     { "Scroll", scroll_init, scroll_reset, NULL, NULL, scroll_exit, NULL, scroll_update_view, NULL, NULL, NULL, NULL, scroll_resize },
     { "Location", location_init, NULL, NULL, NULL, location_exit, NULL, location_update_view, NULL, NULL, NULL, NULL, location_resize },
     { "Light", light_init, NULL, NULL, NULL, light_exit, NULL, light_update_view, NULL, NULL, NULL, NULL, light_resize },
@@ -131,8 +129,6 @@ static MapModule map_modules[] = {
     { "Wall", wall_init, NULL, NULL, NULL, wall_exit, NULL, wall_update_view, NULL, NULL, NULL, NULL, wall_resize },
     { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, jumppoint_map_new, jumppoint_map_close, jumppoint_resize },
 };
-
-static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, "wrong size");
 
 // 0x59F3DC
 static char off_59F3DC[] = "*** Deleted Map ***";

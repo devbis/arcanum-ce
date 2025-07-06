@@ -12,28 +12,20 @@ typedef struct MapEntry {
     int map;
 } MapEntry;
 
-static_assert(sizeof(MapEntry) == 0x4, "wrong size");
-
 typedef struct AntiTeleportMapList {
     MapEntry* entries;
     int cnt;
 } AntiTeleportMapList;
-
-static_assert(sizeof(AntiTeleportMapList) == 0x8, "wrong size");
 
 typedef struct RegionEntry {
     int64_t location;
     int64_t radius;
 } RegionEntry;
 
-static_assert(sizeof(RegionEntry) == 0x10, "wrong size");
-
 typedef struct AntiteleportRegionList {
     RegionEntry* entries;
     int cnt;
 } AntiteleportRegionList;
-
-static_assert(sizeof(AntiteleportRegionList) == 0x8, "wrong size");
 
 static void antiteleport_clear();
 static void antiteleport_region_list_init(AntiteleportRegionList* region_list);

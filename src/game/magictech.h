@@ -72,8 +72,6 @@ typedef struct MagicTechAoe {
     /* 0014 */ int count;
 } MagicTechAoe;
 
-static_assert(sizeof(MagicTechAoe) == 0x18, "wrong size");
-
 typedef struct MagicTechComponentTrait {
     /* 0004 */ int fld;
     /* 0004 */ int field_4;
@@ -180,9 +178,6 @@ typedef struct MagicTechComponentInfo {
     } data;
 } MagicTechComponentInfo;
 
-// See 0x4580C6.
-static_assert(sizeof(MagicTechComponentInfo) == 0x68, "wrong size");
-
 typedef struct MagicTechComponentList {
     int cnt;
     MagicTechComponentInfo* entries;
@@ -205,22 +200,15 @@ typedef union MagicTechInfoAI {
     int values[10];
 } MagicTechInfoAI;
 
-// See 0x450090.
-static_assert(sizeof(MagicTechInfoAI) == 0x28, "wrong size");
-
 typedef struct MagicTechResistance {
     int stat;
     int value;
 } MagicTechResistance;
 
-static_assert(sizeof(MagicTechResistance) == 0x8, "wrong size");
-
 typedef struct MagicTechMaintenanceInfo {
     /* 0000 */ int cost;
     /* 0004 */ int period;
 } MagicTechMaintenanceInfo;
-
-static_assert(sizeof(MagicTechMaintenanceInfo) == 0x8, "wrong size");
 
 typedef struct MagicTechDurationInfo {
     /* 0000 */ int period;
@@ -228,8 +216,6 @@ typedef struct MagicTechDurationInfo {
     /* 0008 */ int level;
     /* 000C */ int modifier;
 } MagicTechDurationInfo;
-
-static_assert(sizeof(MagicTechDurationInfo) == 0x10, "wrong size");
 
 typedef struct MagicTechCasterTargetPair {
     int caster;
@@ -274,8 +260,6 @@ typedef struct MagicTechInfo {
     /* 0154 */ int defensive2;
 } MagicTechInfo;
 
-static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
-
 typedef struct MagicTechRunInfo {
     /* 0000 */ int id;
     /* 0004 */ int spell;
@@ -296,8 +280,6 @@ typedef struct MagicTechRunInfo {
     /* 0154 */ int field_154;
 } MagicTechRunInfo;
 
-static_assert(sizeof(MagicTechRunInfo) == 0x158, "wrong size");
-
 typedef unsigned int MagicTechInvocationFlags;
 
 #define MAGICTECH_INVOCATION_0x01 0x01u
@@ -316,6 +298,7 @@ typedef struct MagicTechInvocation {
     /* 00DC */ MagicTechInvocationFlags flags;
 } MagicTechInvocation;
 
+// Serializeable.
 static_assert(sizeof(MagicTechInvocation) == 0xE0, "wrong size");
 
 typedef struct MagicTechSummonInfo {
@@ -334,7 +317,11 @@ typedef struct MagicTechSummonInfo {
     /* 00CC */ int field_CC;
 } MagicTechSummonInfo;
 
+// TODO: Wrong size on x64 (network only).
+#if defined(_WIN32) && !defined(_WIN64)
+// Serializeable.
 static_assert(sizeof(MagicTechSummonInfo) == 0xD0, "wrong size");
+#endif
 
 extern MagicTechInfo* magictech_spells;
 extern MagicTechRunInfo* magictech_run_info;

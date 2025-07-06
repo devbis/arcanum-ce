@@ -94,8 +94,6 @@ typedef struct TimeEvent {
     TimeEventParam params[TIMEEVENT_PARAM_COUNT];
 } TimeEvent;
 
-static_assert(sizeof(TimeEvent) == 0x30, "wrong size");
-
 typedef bool(TimeEventProcessFunc)(TimeEvent* timeevent);
 typedef bool(TimeEventEnumerateFunc)(TimeEvent* timeevent);
 
@@ -108,9 +106,6 @@ typedef struct TimeEventFuncs {
     TimeEventProcessFunc* mainmenu_func;
     TimeEventProcessFunc* mp_ctrl_ui_func;
 } TimeEventFuncs;
-
-// See 0x45AE20.
-static_assert(sizeof(TimeEventFuncs) == 0x1C, "wrong size");
 
 DateTime sub_45A7C0();
 DateTime sub_45A7D0(DateTime* other);

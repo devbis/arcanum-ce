@@ -9,8 +9,6 @@ typedef struct SectorTileList {
     /* 4200 */ uint8_t dif;
 } SectorTileList;
 
-static_assert(sizeof(SectorTileList) == 0x4204, "wrong size");
-
 bool sector_tile_list_init(SectorTileList* list, tig_art_id_t* art_id_ptr);
 bool sector_tile_list_reset(SectorTileList* list);
 bool sector_tile_list_exit(SectorTileList* list);

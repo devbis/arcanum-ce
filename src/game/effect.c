@@ -79,9 +79,6 @@ typedef struct Effect {
     int operators[MAX_CHANGE_COUNT];
 } Effect;
 
-// See 0x4E99F0.
-static_assert(sizeof(Effect) == 0x58, "wrong size");
-
 static void effect_parse(int num, char* text);
 static void effect_remove_internal(int64_t obj, int index);
 static int effect_adjust_func(int64_t obj, int id, int value, Effect* tbl, bool ignore_innate_effects);

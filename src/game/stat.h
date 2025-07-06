@@ -38,15 +38,11 @@ typedef enum Stat {
     STAT_COUNT,
 } Stat;
 
-static_assert(STAT_COUNT == 28, "wrong size");
-
 typedef enum Gender {
     GENDER_FEMALE,
     GENDER_MALE,
     GENDER_COUNT,
 } Gender;
-
-static_assert(GENDER_COUNT == 2, "wrong size");
 
 typedef enum Race {
     RACE_HUMAN,
@@ -62,8 +58,6 @@ typedef enum Race {
     RACE_ORC,
     RACE_COUNT,
 } Race;
-
-static_assert(RACE_COUNT == 11, "wrong size");
 
 extern const char* stat_lookup_keys_tbl[STAT_COUNT];
 

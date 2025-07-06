@@ -123,8 +123,6 @@ typedef struct IntgameIsoWindowTypeInfo {
     /* 0010 */ tig_window_handle_t window_handle;
 } IntgameIsoWindowTypeInfo;
 
-static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
-
 #define MSG_TEXT_HALIGN_LEFT 0x01u
 #define MSG_TEXT_HALIGN_RIGHT 0x02u
 #define MSG_TEXT_HALIGN_CENTER 0x04u

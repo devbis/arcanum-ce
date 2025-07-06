@@ -17,16 +17,12 @@ typedef struct S5E0A10 {
     /* 000C */ int field_C;
 } S5E0A10;
 
-static_assert(sizeof(S5E0A10) == 0x10, "wrong size");
-
 typedef struct S5E0E20 {
     /* 0000 */ unsigned int flags;
     /* 0008 */ int64_t sector_id;
     /* 0010 */ int64_t obj;
     /* 0018 */ int64_t field_18;
 } S5E0E20;
-
-static_assert(sizeof(S5E0E20) == 0x20, "wrong size");
 
 typedef struct S5A3FF0 {
     /* 0000 */ int field_0;
@@ -38,8 +34,6 @@ typedef struct S5A3FF0 {
     /* 0018 */ int field_18[10];
     /* 0040 */ int field_40[4][5];
 } S5A3FF0;
-
-static_assert(sizeof(S5A3FF0) == 0x90, "wrong size");
 
 static void sub_438570(int64_t obj, int64_t sector_id, int type);
 static bool sub_4386B0(int64_t obj, int* index_ptr);

@@ -17,8 +17,6 @@ typedef struct S603720 {
     uint16_t field_2;
 } S603720;
 
-static_assert(sizeof(S603720) == 0x4, "wrong size");
-
 static void sub_4E4C80(S4E4BD0* a1, int size);
 static void sub_4E6040(int a1, int a2);
 static void sub_4E6130(int a1, int a2);

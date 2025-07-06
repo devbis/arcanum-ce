@@ -60,8 +60,6 @@ typedef union AiParams {
     int values[AI_PARAMS_MAX];
 } AiParams;
 
-static_assert(sizeof(AiParams) == 0x44, "wrong size");
-
 typedef struct Ai {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t danger_source;
@@ -74,16 +72,12 @@ typedef struct Ai {
     /* 0030 */ int sound_id;
 } Ai;
 
-static_assert(sizeof(Ai) == 0x38, "wrong size");
-
 typedef struct S4ABF10 {
     /* 0000 */ unsigned int flags;
     /* 0004 */ MagicTechAiActionListEntry* entries;
     /* 0008 */ int cnt;
     /* 0010 */ int64_t obj;
 } S4ABF10;
-
-static_assert(sizeof(S4ABF10) == 0x18, "wrong size");
 
 static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);

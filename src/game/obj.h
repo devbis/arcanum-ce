@@ -389,8 +389,6 @@ typedef struct Object {
     /* 0054 */ intptr_t transient_properties[19];
 } Object;
 
-static_assert(sizeof(Object) == 0xA0, "wrong size");
-
 typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 
 bool obj_init(GameInitInfo* init_info);

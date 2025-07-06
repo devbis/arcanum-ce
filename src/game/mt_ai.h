@@ -22,15 +22,10 @@ typedef struct MagicTechAiActionListEntry {
     /* 0008 */ int64_t item_obj;
 } MagicTechAiActionListEntry;
 
-// See 0x4CC3C0.
-static_assert(sizeof(MagicTechAiActionListEntry) == 0x10, "wrong size");
-
 typedef struct MagicTechAiActionList {
     /* 0000 */ int cnt;
     /* 0004 */ MagicTechAiActionListEntry* entries;
 } MagicTechAiActionList;
-
-static_assert(sizeof(MagicTechAiActionList) == 0x8, "wrong size");
 
 typedef struct MagicTechAi {
     /* 0000 */ int64_t obj;
@@ -43,8 +38,6 @@ typedef struct MagicTechAi {
     /* 002C */ int field_2C;
     /* 0030 */ MagicTechAiActionList actions[MAGICTECH_AI_ACTION_COUNT];
 } MagicTechAi;
-
-static_assert(sizeof(MagicTechAi) == 0x80, "wrong size");
 
 bool mt_ai_init(GameInitInfo* init_info);
 void mt_ai_reset();

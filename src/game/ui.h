@@ -32,8 +32,6 @@ typedef struct UiMessage {
     int64_t field_10;
 } UiMessage;
 
-static_assert(sizeof(UiMessage) == 0x18, "wrong size");
-
 typedef enum UiPrimaryButton {
     UI_PRIMARY_BUTTON_CHAR,
     UI_PRIMARY_BUTTON_LOGBOOK,

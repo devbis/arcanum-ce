@@ -38,14 +38,10 @@ typedef struct ItemInsertInfo {
     /* 0010 */ int inventory_location;
 } ItemInsertInfo;
 
-static_assert(sizeof(ItemInsertInfo) == 0x18, "wrong size");
-
 typedef struct ItemRemoveInfo {
     /* 0000 */ int64_t item_obj;
     /* 0008 */ int64_t parent_obj;
 } ItemRemoveInfo;
-
-static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location);
 static bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_obj);

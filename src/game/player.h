@@ -16,8 +16,6 @@ typedef struct PlayerCreateInfo {
     int basic_prototype;
 } PlayerCreateInfo;
 
-static_assert(sizeof(PlayerCreateInfo) == 0x30, "wrong size");
-
 bool player_init(GameInitInfo* init_info);
 void player_reset();
 void player_exit();

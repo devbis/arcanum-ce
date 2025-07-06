@@ -15,8 +15,6 @@ typedef enum Tech {
     TECH_COUNT,
 } Tech;
 
-static_assert(TECH_COUNT == 8, "wrong size");
-
 typedef enum Degree {
     DEGREE_LAYMAN,
     DEGREE_NOVICE,
@@ -28,8 +26,6 @@ typedef enum Degree {
     DEGREE_DOCTORATE,
     DEGREE_COUNT,
 } Degree;
-
-static_assert(DEGREE_COUNT == 8, "wrong size");
 
 bool tech_init(GameInitInfo* init_info);
 void tech_exit();

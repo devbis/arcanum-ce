@@ -302,6 +302,7 @@ typedef struct ScriptAction {
     int op_value[8];
 } ScriptAction;
 
+// Serializeable.
 static_assert(sizeof(ScriptAction) == 0x2C, "wrong size");
 
 typedef struct ScriptCondition {
@@ -312,6 +313,7 @@ typedef struct ScriptCondition {
     ScriptAction els;
 } ScriptCondition;
 
+// Serializeable.
 static_assert(sizeof(ScriptCondition) == 0x84, "wrong size");
 
 typedef struct ScriptFile {
@@ -322,19 +324,21 @@ typedef struct ScriptFile {
     /* 0034 */ ScriptCondition* entries;
 } ScriptFile;
 
-static_assert(sizeof(ScriptFile) == 0x38, "wrong size");
-
 typedef struct ScriptHeader {
     unsigned int flags;
     // TODO: Refactor to uint8_t[4].
     unsigned int counters;
 } ScriptHeader;
 
+// Serializeable.
+static_assert(sizeof(ScriptHeader) == 0x8, "wrong size");
+
 typedef struct Script {
     ScriptHeader hdr;
     int num;
 } Script;
 
+// Serializeable.
 static_assert(sizeof(Script) == 0xC, "wrong size");
 
 typedef struct ScriptInvocation {

@@ -29,8 +29,6 @@ typedef struct ObjectFieldInfo {
     /* 0018 */ int type;
 } ObjectFieldInfo;
 
-static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
-
 typedef bool (ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* field_info);
 
 static void object_field_not_exists(Object* object, int fld);

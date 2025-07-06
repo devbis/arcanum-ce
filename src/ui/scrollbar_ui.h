@@ -8,8 +8,6 @@ typedef struct ScrollbarId {
     /* 0004 */ int global_index;
 } ScrollbarId;
 
-static_assert(sizeof(ScrollbarId) == 0x8, "wrong size");
-
 typedef void(ScrollbarUiControlValueChanged)(int value);
 typedef void(ScrollbarUiControlRefresh)(TigRect* rect);
 
@@ -26,8 +24,6 @@ typedef struct ScrollbarUiControlInfo {
     /* 003C */ ScrollbarUiControlValueChanged* field_3C;
     /* 0040 */ ScrollbarUiControlRefresh* field_40;
 } ScrollbarUiControlInfo;
-
-static_assert(sizeof(ScrollbarUiControlInfo) == 0x44, "wrong size");
 
 #define SCROLLBAR_MIN_VALUE 0
 #define SCROLLBAR_MAX_VALUE 1

@@ -12,8 +12,6 @@ typedef struct SectorLightList {
     bool modified;
 } SectorLightList;
 
-static_assert(sizeof(SectorLightList) == 0x8, "wrong size");
-
 bool sector_light_list_init(SectorLightList* list);
 bool sector_light_list_reset(SectorLightList* list);
 bool sector_light_list_exit(SectorLightList* list);

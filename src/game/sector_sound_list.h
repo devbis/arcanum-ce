@@ -9,6 +9,7 @@ typedef struct SectorSoundList {
     /* 0008 */ int ambient_scheme_idx;
 } SectorSoundList;
 
+// Serializeable.
 static_assert(sizeof(SectorSoundList) == 0xC, "wrong size");
 
 bool sector_sound_list_init(SectorSoundList* list);

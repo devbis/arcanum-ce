@@ -19,8 +19,6 @@ typedef struct TileCacheEntry {
     unsigned int time;
 } TileCacheEntry;
 
-static_assert(sizeof(TileCacheEntry) == 0xC, "wrong size");
-
 static void sub_4D7820(int64_t loc, tig_art_id_t art_id);
 static void sub_4D7980();
 static void sub_4D79C0(ViewOptions* view_options);

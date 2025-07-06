@@ -10,8 +10,6 @@ typedef struct SectorScriptList {
     /* 0004 */ Script scr;
 } SectorScriptList;
 
-static_assert(sizeof(SectorScriptList) == 0x10, "wrong size");
-
 bool sector_script_list_init(SectorScriptList* list);
 bool sector_script_list_reset(SectorScriptList* list);
 bool sector_script_list_exit(SectorScriptList* list);
