@@ -1198,15 +1198,15 @@ bool sub_57F260()
 }
 
 // 0x57F2C0
-void sub_57F2C0(int64_t obj, int a3)
+void hotkey_ui_notify_item_inserted_or_removed(int64_t item_obj, bool removed)
 {
     int index;
     Hotkey* hotkey;
 
-    if (a3) {
+    if (removed) {
         for (index = 0; index < 2; index++) {
             hotkey = &(stru_683518[index]);
-            if (hotkey->item_obj.obj == obj) {
+            if (hotkey->item_obj.obj == item_obj) {
                 sub_57E5A0(hotkey);
                 sub_57EFA0(2, sub_557B50(index), hotkey->item_obj.obj);
             }

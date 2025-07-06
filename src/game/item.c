@@ -3818,7 +3818,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
             sub_460590(item_obj, inventory_location);
         }
 
-        sub_4602A0(item_obj, 0, inventory_location);
+        ui_notify_item_inserted_or_removed(item_obj, false, inventory_location);
     }
 
     if (parent_obj_type != OBJ_TYPE_CONTAINER
@@ -4493,7 +4493,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     }
 
     if (is_pc) {
-        sub_4602A0(item_obj, 1, inventory_location);
+        ui_notify_item_inserted_or_removed(item_obj, true, inventory_location);
     }
 
     mt_ai_notify_inventory_changed(parent_obj);

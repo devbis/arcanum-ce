@@ -91,10 +91,10 @@ void sub_460280(int64_t obj)
 }
 
 // 0x4602A0
-void sub_4602A0(int64_t obj, int a3, int a4)
+void ui_notify_item_inserted_or_removed(int64_t item_obj, bool removed, int inventory_location)
 {
-    if (ui_callbacks.field_1C != NULL) {
-        ui_callbacks.field_1C(obj, a3, a4);
+    if (ui_callbacks.notify_item_inserted_or_removed != NULL) {
+        ui_callbacks.notify_item_inserted_or_removed(item_obj, removed, inventory_location);
     }
 }
 

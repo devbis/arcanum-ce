@@ -77,7 +77,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_14 = sub_57CC10;
     callbacks.field_10 = sub_5571C0;
     callbacks.field_18 = sub_5570A0;
-    callbacks.field_1C = sub_5570D0;
+    callbacks.notify_item_inserted_or_removed = intgame_notify_item_inserted_or_removed;
     callbacks.show_inven_loot = show_inven_loot;
     callbacks.show_inven_identify = show_inven_identify;
     callbacks.field_28 = tech_ui_adjust_degree;

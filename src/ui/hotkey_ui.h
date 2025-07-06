@@ -31,7 +31,7 @@ void sub_57EDF0(int64_t obj, int64_t a2, int a3);
 bool sub_57EED0(int64_t obj, int a2);
 void sub_57F1D0(int index);
 void sub_57F210(int index);
-void sub_57F2C0(int64_t obj, int a3);
+void hotkey_ui_notify_item_inserted_or_removed(int64_t item_obj, bool removed);
 Hotkey* sub_57F240(int index);
 bool sub_57F260();
 void hotkey_ui_notify_spell_removed(int spell);

@@ -133,7 +133,7 @@ void intgame_toggle_primary_button(UiPrimaryButton btn, bool on);
 void intgame_set_map_button(UiPrimaryButton btn);
 void sub_556E60();
 void sub_5570A0(int64_t obj);
-void sub_5570D0(int64_t obj, bool a2, int a3);
+void intgame_notify_item_inserted_or_removed(int64_t item_obj, bool removed, int inventory_location);
 void sub_5571C0(int64_t obj);
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();

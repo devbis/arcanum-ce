@@ -7988,31 +7988,33 @@ void sub_5570A0(int64_t obj)
 }
 
 // 0x5570D0
-void sub_5570D0(int64_t obj, bool a2, int a3)
+void intgame_notify_item_inserted_or_removed(int64_t item_obj, bool removed, int inventory_location)
 {
     int index;
-    Hotkey* v1;
+    Hotkey* hotkey;
 
     for (index = 0; index < 10; index++) {
-        v1 = sub_57F240(index);
-        if (a2 && v1->item_obj.obj == obj) {
+        hotkey = sub_57F240(index);
+        if (removed && hotkey->item_obj.obj == item_obj) {
             sub_57EF90(index);
         }
 
-        if (v1->type == 1 && v1->item_obj.obj != OBJ_HANDLE_NULL) {
-            v1->count = item_count_items_matching_prototype(player_get_local_pc_obj(), v1->item_obj.obj);
+        if (hotkey->type == HOTKEY_ITEM
+            && hotkey->item_obj.obj != OBJ_HANDLE_NULL) {
+            hotkey->count = item_count_items_matching_prototype(player_get_local_pc_obj(), hotkey->item_obj.obj);
             intgame_hotkey_refresh(index);
         }
     }
 
-    if (a2) {
-        sub_57F2C0(obj, a2);
-        if (qword_64C688 == obj && intgame_iso_window_type == 8) {
+    if (removed) {
+        hotkey_ui_notify_item_inserted_or_removed(item_obj, removed);
+        if (qword_64C688 == item_obj
+            && intgame_iso_window_type == ROTWIN_TYPE_MAGICTECH) {
             iso_interface_window_set(ROTWIN_TYPE_MSG);
             qword_64C688 = OBJ_HANDLE_NULL;
         }
 
-        if (a3 == 1004) {
+        if (inventory_location == ITEM_INV_LOC_WEAPON) {
             intgame_mt_button_disable();
         }
     } else {
