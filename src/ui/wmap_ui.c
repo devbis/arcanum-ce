@@ -328,7 +328,7 @@ static UiButtonInfo wmap_ui_navigate_button_info = { 375, 388, 139, TIG_BUTTON_H
 static UiButtonInfo wmap_ui_travel_button_info = { 698, 353, 813, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C9B90
-static int dword_5C9B90 = 1;
+static TigButtonFlags wmap_ui_travel_button_flags = TIG_BUTTON_MOMENTARY;
 
 // 0x5C9B94
 static int wmap_ui_scroll_speed_x = 5;
@@ -1554,7 +1554,7 @@ bool wmap_ui_create()
     intgame_button_create_ex(wmap_ui_window,
         &wmap_ui_window_frame,
         &wmap_ui_travel_button_info,
-        dword_5C9B90 | TIG_BUTTON_HIDDEN);
+        wmap_ui_travel_button_flags | TIG_BUTTON_HIDDEN);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = dword_66D890 + 203;
