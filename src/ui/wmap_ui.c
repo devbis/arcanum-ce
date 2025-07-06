@@ -254,7 +254,7 @@ static bool sub_565140();
 static void sub_565170(WmapCoords* coords);
 static void sub_565230();
 static void sub_5656B0(int x, int y, WmapCoords* coords);
-static void sub_5657A0(TigRect* rect);
+static void wmap_world_refresh_rect(TigRect* rect);
 static bool sub_565CF0(WmapNote* note);
 static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
 static void wmap_note_vbid_lock(WmapNote* note);
@@ -514,7 +514,7 @@ static WmapInfo wmap_ui_mode_info[WMAP_UI_MODE_COUNT] = {
         0,
         1,
         sub_563270,
-        sub_5657A0,
+        wmap_world_refresh_rect,
         sub_5632A0,
         -1,
         0,
@@ -4224,7 +4224,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
 }
 
 // 0x5657A0
-void sub_5657A0(TigRect* rect)
+void wmap_world_refresh_rect(TigRect* rect)
 {
     WmapInfo* wmap_info;
     TigRect tmp_rect;
