@@ -582,7 +582,7 @@ void spell_ui_remove(int64_t obj, int spell)
     cost = spell_cost(spell);
     unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
     if (spell_remove(obj, spell)) {
-        sub_57F340(spell);
+        hotkey_ui_notify_spell_removed(spell);
         stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
         if (charedit_is_created()) {

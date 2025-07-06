@@ -1215,7 +1215,7 @@ void sub_57F2C0(int64_t obj, int a3)
 }
 
 // 0x57F340
-void sub_57F340(int spell)
+void hotkey_ui_notify_spell_removed(int spell)
 {
     int index;
     Hotkey* hotkey;
@@ -1225,7 +1225,7 @@ void sub_57F340(int spell)
         if (hotkey->type == HOTKEY_SPELL && hotkey->data == spell) {
             sub_57E5A0(hotkey);
             hotkey->data = sub_557B50(index);
-            sub_57EFA0(2, hotkey->data, OBJ_HANDLE_NULL);
+            sub_57EFA0(HOTKEY_SKILL, hotkey->data, OBJ_HANDLE_NULL);
         }
     }
 
