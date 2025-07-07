@@ -14,7 +14,7 @@
 #define SCROLL_DIAG_Y 2
 
 static void sub_40E630(int64_t dx, int64_t dy);
-static void sub_40E910(int64_t a1);
+static void scroll_origin_changed(int64_t loc);
 static void scroll_speed_changed();
 static bool sub_40EA50(tig_art_id_t art_id);
 
@@ -43,7 +43,7 @@ static int scroll_speed_x;
 static ViewOptions scroll_view_options;
 
 // 0x5D11B8
-static int64_t qword_5D11B8;
+static int64_t scroll_origin;
 
 // 0x5D11C0
 static bool is_scrolling;
@@ -75,7 +75,7 @@ bool scroll_init(GameInitInfo* init_info)
     scroll_speed = 1;
     scroll_speed_changed();
 
-    location_set_func_5FC2F8(sub_40E910);
+    location_origin_significant_change_callback_set(scroll_origin_changed);
 
     return true;
 }
@@ -390,9 +390,9 @@ void sub_40E630(int64_t dx, int64_t dy)
         int64_t loc;
 
         location_at(scroll_iso_content_rect.width / 2, scroll_iso_content_rect.height / 2, &loc);
-        if (loc != qword_5D11B8) {
+        if (loc != scroll_origin) {
             gsound_listener_set(loc);
-            qword_5D11B8 = loc;
+            scroll_origin = loc;
         }
     }
 }
@@ -437,11 +437,11 @@ void scroll_set_scroll_func(ScrollFunc* func)
 }
 
 // 0x40E910
-void sub_40E910(int64_t a1)
+void scroll_origin_changed(int64_t loc)
 {
     if (!scroll_init_info.editor) {
-        gsound_listener_set(a1);
-        qword_5D11B8 = a1;
+        gsound_listener_set(loc);
+        scroll_origin = loc;
     }
 }
 

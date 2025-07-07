@@ -43,7 +43,7 @@ static int64_t location_origin_y;
 static int64_t location_limit_x;
 
 // 0x5FC2F8
-static LocationFunc5FC2F8* dword_5FC2F8;
+static LocationOriginSignificantChangeCallback* location_origin_significant_change_callback;
 
 // 0x4B8440
 bool location_init(GameInitInfo* init_info)
@@ -278,15 +278,15 @@ void location_origin_set(int64_t location)
 
     location_iso_invalidate_rect(&location_iso_content_rect);
 
-    if (dword_5FC2F8 != NULL) {
-        dword_5FC2F8(location);
+    if (location_origin_significant_change_callback != NULL) {
+        location_origin_significant_change_callback(location);
     }
 }
 
 // 0x4B8D40
-void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
+void location_origin_significant_change_callback_set(LocationOriginSignificantChangeCallback* func)
 {
-    dword_5FC2F8 = func;
+    location_origin_significant_change_callback = func;
 }
 
 // NOTE: Original code is likely different.
