@@ -1723,7 +1723,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -1783,7 +1783,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -1813,7 +1813,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -1905,7 +1905,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -1936,7 +1936,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_CHARGE);
             tig_art_scenery_id_create(8, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -1966,7 +1966,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_FUEL);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 2);
@@ -2056,7 +2056,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 12);
@@ -2088,7 +2088,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 14);
@@ -2120,7 +2120,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 6);
@@ -2211,7 +2211,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 90);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_FUEL);
             tig_art_scenery_id_create(0x20, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3139,7 +3139,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 90);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 70);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -3171,7 +3171,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 70);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -3203,7 +3203,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 60);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 2);
@@ -3233,7 +3233,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
@@ -3264,7 +3264,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -3295,7 +3295,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -3326,7 +3326,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -3357,7 +3357,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 15);
@@ -3387,7 +3387,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
@@ -3628,7 +3628,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3660,7 +3660,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 60);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3690,7 +3690,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 8);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3720,7 +3720,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3753,7 +3753,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -3787,7 +3787,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
@@ -3817,7 +3817,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
@@ -3848,7 +3848,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
@@ -3879,7 +3879,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 20);
@@ -3910,7 +3910,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 1);
@@ -3942,7 +3942,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 110);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -3973,7 +3973,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 15);
@@ -4004,7 +4004,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 6);
@@ -4035,7 +4035,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 4);
@@ -4231,7 +4231,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -4261,7 +4261,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 70);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
@@ -4321,7 +4321,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -4351,7 +4351,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 110);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -5251,7 +5251,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5285,7 +5285,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5319,7 +5319,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5352,7 +5352,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5385,7 +5385,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5418,7 +5418,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_ARROW);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5451,7 +5451,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 2);
@@ -5482,7 +5482,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
@@ -5513,7 +5513,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_CHARGE);
             tig_art_scenery_id_create(8, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5543,7 +5543,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 130);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_FUEL);
             tig_art_scenery_id_create(8, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5575,7 +5575,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -5608,7 +5608,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
@@ -5640,7 +5640,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
@@ -5673,7 +5673,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 120);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 1);
@@ -6121,7 +6121,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 8);
@@ -6152,7 +6152,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 110);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, TIG_ART_AMMO_TYPE_BULLET);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, -1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 5);
