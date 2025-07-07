@@ -1,5 +1,6 @@
 #include "game/obj_id.h"
 
+#include <inttypes.h>
 #include <stdio.h>
 
 #include "game/location.h"
@@ -103,7 +104,8 @@ void objid_id_to_str(char* buffer, ObjectID oid)
 {
     switch (oid.type) {
     case OID_TYPE_HANDLE:
-        sprintf(buffer, "Handle_%I64X", oid.d.h);
+        // FIX: Specifier.
+        sprintf(buffer, "Handle_%" PRIX64, oid.d.h);
         break;
     case OID_TYPE_BLOCKED:
         strcpy(buffer, "Blocked");
@@ -129,7 +131,8 @@ void objid_id_to_str(char* buffer, ObjectID oid)
             oid.d.g.data[15]);
         break;
     case OID_TYPE_P:
-        sprintf(buffer, "P_%08I64X_%08I64X_%08X_%08X",
+        // FIX: Specifier.
+        sprintf(buffer, "P_%08" PRIX64 "_%08" PRIX64 "_%08X_%08X",
             LOCATION_GET_X(oid.d.p.location),
             LOCATION_GET_Y(oid.d.p.location),
             oid.d.p.temp_id,
