@@ -560,7 +560,7 @@ bool map_new(MapNewInfo* new_map_info)
     map_properties.base_terrain_type = new_map_info->base_terrain_type;
     map_properties.width = new_map_info->width << 6;
     map_properties.height = new_map_info->height << 6;
-    if (!tig_file_fwrite(&map_properties, sizeof(map_properties), 1, stream) != 1) {
+    if (tig_file_fwrite(&map_properties, sizeof(map_properties), 1, stream) != 1) {
         tig_debug_printf("Error writing map properties file %s\n", path);
         tig_file_fclose(stream);
         return false;
