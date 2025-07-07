@@ -1047,7 +1047,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             tig_art_light_id_create(0x13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, 18);
@@ -1062,7 +1063,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             tig_art_light_id_create(0x14, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, 18);
@@ -1077,8 +1079,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
         case BP_DEAD_TREE:
@@ -1090,7 +1092,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
         case BP_PLANT_SCENERY:
@@ -1100,7 +1103,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400C00);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C00);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
         case BP_SMALL_METAL_OBJECT:
@@ -1112,8 +1116,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
         case BP_METAL_OBJECT:
@@ -1125,7 +1129,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case BP_BIG_METAL_OBJECT:
@@ -1138,7 +1143,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 14);
             break;
         case BP_SMALL_STONE:
@@ -1177,7 +1183,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
         case BP_SMALL_WOODEN_OBJECT:
@@ -1284,7 +1291,8 @@ void sub_468930(int64_t obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x800 | 0x400000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x800);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 20);
             break;
         case BP_LIGHT_1:
@@ -1293,7 +1301,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 21);
             break;
@@ -1365,7 +1374,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1379,7 +1389,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1393,7 +1404,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1407,7 +1419,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1421,7 +1434,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xEu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1435,7 +1449,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xFu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1449,7 +1464,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0x10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1463,7 +1479,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0x11, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1492,7 +1509,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1506,7 +1524,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1520,7 +1539,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1544,7 +1564,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100C00);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
+            obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100C00);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 64);
             break;
         case BP_TICKING_TIME_BOMB:
