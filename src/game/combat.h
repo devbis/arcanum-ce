@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_COMBAT_H_
 
 #include "game/context.h"
+#include "game/damage_type.h"
 #include "game/timeevent.h"
 
 typedef void(CombatCallbackF0)(int a1);
@@ -24,17 +25,6 @@ typedef enum Loudness {
     LOUDNESS_LOUD,
     LOUDNESS_COUNT,
 } Loudness;
-
-// NOTE: The values does not match ResistanceType enum, even though both
-// have 5 members.
-typedef enum DamageType {
-    DAMAGE_TYPE_NORMAL,
-    DAMAGE_TYPE_POISON,
-    DAMAGE_TYPE_ELECTRICAL,
-    DAMAGE_TYPE_FIRE,
-    DAMAGE_TYPE_FATIGUE,
-    DAMAGE_TYPE_COUNT,
-} DamageType;
 
 typedef enum HitLocation {
     HIT_LOC_TORSO,

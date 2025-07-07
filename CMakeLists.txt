@@ -48,6 +48,7 @@ set(SRCS
     "src/game/critter.h"
     "src/game/curse.c"
     "src/game/curse.h"
+    "src/game/damage_type.h"
     "src/game/description.c"
     "src/game/description.h"
     "src/game/descriptions.h"

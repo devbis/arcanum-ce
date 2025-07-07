@@ -2399,7 +2399,7 @@ int item_total_attack(int64_t critter_obj)
     int effectiveness;
     int v2;
     int v3;
-    int damage_type;
+    DamageType damage_type;
     int min_dam;
     int max_dam;
 
@@ -2414,7 +2414,7 @@ int item_total_attack(int64_t critter_obj)
     v3 = effectiveness * dword_5B32EC;
     v2 = dword_5B32EC;
 
-    for (damage_type = 0; damage_type < 5; damage_type++) {
+    for (damage_type = 0; damage_type < DAMAGE_TYPE_COUNT; damage_type++) {
         item_weapon_damage(weapon_obj,
             critter_obj,
             damage_type,
@@ -2909,11 +2909,11 @@ void item_wield_best(int64_t critter_obj, int inventory_location, int64_t target
                     || obj_field_int32_get(item_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION) <= item_ammo_quantity_get(critter_obj, ammo_type)) {
                     int total_dam = 0;
                     int skill = item_weapon_skill(item_obj);
-                    for (int dam_type = 0; dam_type < 5; dam_type++) {
+                    for (DamageType damage_type = 0; damage_type < DAMAGE_TYPE_COUNT; damage_type++) {
                         int min_dam;
                         int max_dam;
 
-                        item_weapon_damage(item_obj, critter_obj, dam_type, skill, false, &min_dam, &max_dam);
+                        item_weapon_damage(item_obj, critter_obj, damage_type, skill, false, &min_dam, &max_dam);
                         total_dam = (min_dam + max_dam) / 2;
                     }
 
@@ -3451,7 +3451,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
             min_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type);
             max_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type + 1);
         } else {
-            if (damage_type != 0 && damage_type != 4) {
+            if (damage_type != DAMAGE_TYPE_NORMAL && damage_type != DAMAGE_TYPE_FATIGUE) {
                 *min_dam_ptr = 0;
                 *max_dam_ptr = 0;
                 return;
@@ -3478,8 +3478,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
         massive_dam = 3 * max_dam;
     }
 
-    if ((damage_type == 0
-            || damage_type == 4)
+    if ((damage_type == DAMAGE_TYPE_NORMAL || damage_type == DAMAGE_TYPE_FATIGUE)
         && skill == SKILL_MELEE) {
         if (min_dam <= 0 || min_dam + bonus_dam > 0) {
             min_dam += bonus_dam;

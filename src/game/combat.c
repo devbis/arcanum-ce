@@ -2703,7 +2703,7 @@ void sub_4B6680(CombatContext* combat)
     unsigned int critter_flags;
     unsigned int critter_flags2;
     unsigned int spell_flags;
-    int damage_type;
+    DamageType damage_type;
     int min_damage;
     int max_damage;
     int damage;
@@ -2718,7 +2718,7 @@ void sub_4B6680(CombatContext* combat)
         spell_flags = obj_field_int32_get(combat->target_obj, OBJ_F_SPELL_FLAGS);
     }
 
-    for (damage_type = 0; damage_type < 5; damage_type++) {
+    for (damage_type = 0; damage_type < DAMAGE_TYPE_COUNT; damage_type++) {
         item_weapon_damage(combat->weapon_obj,
             combat->attacker_obj,
             damage_type,
@@ -2727,7 +2727,7 @@ void sub_4B6680(CombatContext* combat)
             &min_damage,
             &max_damage);
 
-        if (damage_type == 1
+        if (damage_type == DAMAGE_TYPE_POISON
             && ((critter_flags & (OCF_UNDEAD | OCF_MECHANICAL)) != 0
                 || (spell_flags & OSF_STONED) != 0)) {
             damage = 0;
