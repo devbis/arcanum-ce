@@ -11,7 +11,7 @@ static bool sub_4E67A0(TigGuid* guid, const char* str);
 static bool sub_4E6970(ObjectID_P* p, const char* str);
 static bool sub_4E6A60(int* value_ptr, const char* str);
 static bool sub_4E6AA0(int* value_ptr, const char* str, size_t length);
-static bool sub_4E6B00(char* dst, const char* src, int size);
+static bool sub_4E6B00(char* dst, const char* src, size_t length);
 
 // 0x4E62A0
 void objid_create_guid(ObjectID* oid)
@@ -327,11 +327,11 @@ bool sub_4E6AA0(int* value_ptr, const char* str, size_t length)
 }
 
 // 0x4E6B00
-bool sub_4E6B00(char* dst, const char* src, int size)
+bool sub_4E6B00(char* dst, const char* src, size_t length)
 {
-    int index;
+    size_t index;
 
-    for (index = 0; index < size; index++) {
+    for (index = 0; index < length; index++) {
         if (!((src[index] >= '0' && src[index] <= '9')
             || (src[index] >= 'A' && src[index] <= 'F')
             || (src[index] >= 'a' && src[index] <= 'f'))) {
