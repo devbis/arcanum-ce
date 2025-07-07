@@ -16,8 +16,8 @@ typedef struct CyclicUiControlInfo {
     /* 001C */ const char** text_array;
     /* 0020 */ int text_array_size;
     /* 0024 */ CyclicUiControlValueChanged* value_changed_callback;
-    /* 0028 */ unsigned char visible; // boolean
-    /* 0029 */ unsigned char enabled; // boolean
+    /* 0028 */ bool visible;
+    /* 0029 */ bool enabled;
 } CyclicUiControlInfo;
 
 bool cyclic_ui_init(GameInitInfo* init_info);

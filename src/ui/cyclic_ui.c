@@ -12,7 +12,7 @@ typedef struct CyclicUiControl {
     /* 0034 */ mes_file_handle_t mes_file;
     /* 0038 */ int value;
     /* 003C */ int max_value;
-    /* 0040 */ unsigned char in_use; // boolean
+    /* 0040 */ bool in_use;
 } CyclicUiControl;
 
 static bool sub_57FA70(CyclicUiControl** ctrl_ptr, int id, const char* function_name);
