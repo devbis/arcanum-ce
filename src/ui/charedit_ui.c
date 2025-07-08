@@ -395,14 +395,14 @@ static S5C8150 charedit_spell_minimum_level_labels[5] = {
 
 // 0x5C87D0
 static S5C87D0 charedit_tech_buttons[TECH_COUNT] = {
-    { 8, 7, TIG_BUTTON_HANDLE_INVALID, TECH_HERBOLOGY },
-    { 34, 29, TIG_BUTTON_HANDLE_INVALID, TECH_CHEMISTRY },
-    { 61, 7, TIG_BUTTON_HANDLE_INVALID, TECH_ELECTRIC },
-    { 88, 28, TIG_BUTTON_HANDLE_INVALID, TECH_EXPLOSIVES },
-    { 116, 7, TIG_BUTTON_HANDLE_INVALID, TECH_GUN },
-    { 142, 29, TIG_BUTTON_HANDLE_INVALID, TECH_MECHANICAL },
-    { 171, 7, TIG_BUTTON_HANDLE_INVALID, TECH_SMITHY },
-    { 198, 29, TIG_BUTTON_HANDLE_INVALID, TECH_THERAPEUTICS },
+    /*    TECH_HERBOLOGY */ { 8, 7, TIG_BUTTON_HANDLE_INVALID, TECH_HERBOLOGY },
+    /*    TECH_CHEMISTRY */ { 34, 29, TIG_BUTTON_HANDLE_INVALID, TECH_CHEMISTRY },
+    /*     TECH_ELECTRIC */ { 61, 7, TIG_BUTTON_HANDLE_INVALID, TECH_ELECTRIC },
+    /*   TECH_EXPLOSIVES */ { 88, 28, TIG_BUTTON_HANDLE_INVALID, TECH_EXPLOSIVES },
+    /*          TECH_GUN */ { 116, 7, TIG_BUTTON_HANDLE_INVALID, TECH_GUN },
+    /*   TECH_MECHANICAL */ { 142, 29, TIG_BUTTON_HANDLE_INVALID, TECH_MECHANICAL },
+    /*       TECH_SMITHY */ { 171, 7, TIG_BUTTON_HANDLE_INVALID, TECH_SMITHY },
+    /* TECH_THERAPEUTICS */ { 198, 29, TIG_BUTTON_HANDLE_INVALID, TECH_THERAPEUTICS },
 };
 
 // 0x5C8850
@@ -512,15 +512,15 @@ static S5C8CA8 charedit_skills_hover_areas[CHAREDIT_SKILLS_PER_GROUP] = {
 };
 
 // 0x5C8D08
-static S5C8CA8 stru_5C8D08[8] = {
-    { 512, 129, 219, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 162, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 194, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 226, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 258, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 290, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 322, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
-    { 535, 354, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+static S5C8CA8 charedit_tech_degree_buttons[DEGREE_COUNT] = {
+    /*     DEGREE_LAYMAN */ { 512, 129, 219, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*     DEGREE_NOVICE */ { 535, 162, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*  DEGREE_ASSISTANT */ { 535, 194, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*  DEGREE_ASSOCIATE */ { 535, 226, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /* DEGREE_TECHNICIAN */ { 535, 258, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*   DEGREE_ENGINEER */ { 535, 290, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*  DEGREE_PROFESSOR */ { 535, 322, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
+    /*  DEGREE_DOCTORATE */ { 535, 354, 177, 27, 0, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C8DC8
@@ -539,37 +539,37 @@ static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
 static S5C8150 stru_5C8F50 = { NULL, 0, 0, -1 };
 
 // 0x5C8F70
-static int charedit_tech_degree_icons_x[TECH_COUNT - 1] = {
-    8,
-    8,
-    8,
-    8,
-    8,
-    8,
-    8,
+static int charedit_tech_degree_icons_x[DEGREE_COUNT - 1] = {
+    /*     DEGREE_NOVICE */ 8,
+    /*  DEGREE_ASSISTANT */ 8,
+    /*  DEGREE_ASSOCIATE */ 8,
+    /* DEGREE_TECHNICIAN */ 8,
+    /*   DEGREE_ENGINEER */ 8,
+    /*  DEGREE_PROFESSOR */ 8,
+    /*  DEGREE_DOCTORATE */ 8,
 };
 
 // 0x5C8F8C
-static int charedit_tech_degree_icons_y[TECH_COUNT - 1] = {
-    96,
-    129,
-    162,
-    195,
-    228,
-    261,
-    294,
+static int charedit_tech_degree_icons_y[DEGREE_COUNT - 1] = {
+    /*     DEGREE_NOVICE */ 96,
+    /*  DEGREE_ASSISTANT */ 129,
+    /*  DEGREE_ASSOCIATE */ 162,
+    /* DEGREE_TECHNICIAN */ 195,
+    /*   DEGREE_ENGINEER */ 228,
+    /*  DEGREE_PROFESSOR */ 261,
+    /*  DEGREE_DOCTORATE */ 294,
 };
 
 // 0x5C8FA8
-static int charedit_tech_degree_icons[TECH_COUNT] = {
-    653,
-    649,
-    650,
-    651,
-    652,
-    654,
-    655,
-    656,
+static int charedit_tech_degree_icons[DEGREE_COUNT] = {
+    /*     DEGREE_LAYMAN */ 653,
+    /*     DEGREE_NOVICE */ 649,
+    /*  DEGREE_ASSISTANT */ 650,
+    /*  DEGREE_ASSOCIATE */ 651,
+    /* DEGREE_TECHNICIAN */ 652,
+    /*   DEGREE_ENGINEER */ 654,
+    /*  DEGREE_PROFESSOR */ 655,
+    /*  DEGREE_DOCTORATE */ 656,
 };
 
 // 0x5C8FC8
@@ -2418,10 +2418,10 @@ void charedit_refresh_tech_win()
     charedit_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
     charedit_dec_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
 
-    for (index = 0; index < 8; index++) {
-        if (stru_5C8D08[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_destroy(stru_5C8D08[index].button_handle);
-            stru_5C8D08[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
+    for (index = 0; index < DEGREE_COUNT; index++) {
+        if (charedit_tech_degree_buttons[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_destroy(charedit_tech_degree_buttons[index].button_handle);
+            charedit_tech_degree_buttons[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
         }
     }
 
@@ -2507,12 +2507,12 @@ void charedit_refresh_tech_win()
     button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
 
-    for (index = 0; index < 8; index++) {
-        button_data.x = stru_5C8D08[index].x - 503;
-        button_data.y = stru_5C8D08[index].y - 63;
-        button_data.width = stru_5C8D08[index].width;
-        button_data.height = stru_5C8D08[index].height;
-        tig_button_create(&button_data, &(stru_5C8D08[index].button_handle));
+    for (index = 0; index < DEGREE_COUNT; index++) {
+        button_data.x = charedit_tech_degree_buttons[index].x - 503;
+        button_data.y = charedit_tech_degree_buttons[index].y - 63;
+        button_data.width = charedit_tech_degree_buttons[index].width;
+        button_data.height = charedit_tech_degree_buttons[index].height;
+        tig_button_create(&button_data, &(charedit_tech_degree_buttons[index].button_handle));
     }
 }
 
@@ -3174,8 +3174,8 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 8; index++) {
-                if (msg->data.button.button_handle == stru_5C8D08[index].button_handle) {
+            for (index = 0; index < DEGREE_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_tech_degree_buttons[index].button_handle) {
                     if (index == 0) {
                         dword_64CDB4 = 139;
                     } else {
@@ -3209,8 +3209,8 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 8; index++) {
-                if (msg->data.button.button_handle == stru_5C8D08[index].button_handle) {
+            for (index = 0; index < DEGREE_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_tech_degree_buttons[index].button_handle) {
                     dword_64CDB4 = -1;
                     sub_550720();
                     return true;
