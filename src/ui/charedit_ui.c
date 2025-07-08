@@ -126,7 +126,7 @@ typedef struct S5C8CA8 {
 
 static void sub_55A240();
 static bool charedit_window_message_filter(TigMessage* msg);
-static void sub_55AE70(int a1);
+static void charedit_show_hint(int hint);
 static void charedit_cycle_obj(bool next);
 static void charedit_refresh_internal();
 static void charedit_refresh_secondary_stats();
@@ -646,7 +646,7 @@ static tig_font_handle_t dword_64C848;
 static int charedit_player_basic_skills_tbl[8][BASIC_SKILL_COUNT];
 
 // 0x64C9CC
-static int dword_64C9CC;
+static int charedit_hint;
 
 // 0x64C9D0
 static tig_font_handle_t dword_64C9D0;
@@ -658,7 +658,7 @@ static int charedit_player_tech_skills_tbl[8][TECH_SKILL_COUNT];
 static tig_button_handle_t dword_64CA54;
 
 // 0x64CA58
-static int dword_64CA58;
+static int charedit_skills_hint;
 
 // 0x64CA5C
 static tig_button_handle_t dword_64CA5C;
@@ -697,7 +697,7 @@ static const char* charedit_scheme_names[200];
 static tig_font_handle_t dword_64CDB0;
 
 // 0x64CDB4
-static int dword_64CDB4;
+static int charedit_tech_hint;
 
 // 0x64CDB8
 static tig_font_handle_t dword_64CDB8;
@@ -742,7 +742,7 @@ static int charedit_scheme_ids[200];
 static int dword_64D304[23];
 
 // 0x64D360
-static int dword_64D360;
+static int charedit_spells_hint;
 
 // 0x64D364
 static int dword_64D364[COLLEGE_COUNT];
@@ -1180,10 +1180,10 @@ bool charedit_open(int64_t obj, ChareditMode mode)
         tig_button_create(&button_data, &dword_64CA5C);
     }
 
-    dword_64C9CC = -1;
-    dword_64CA58 = -1;
-    dword_64CDB4 = -1;
-    dword_64D360 = -1;
+    charedit_hint = -1;
+    charedit_skills_hint = -1;
+    charedit_tech_hint = -1;
+    charedit_spells_hint = -1;
 
     if (player_is_local_pc_obj(obj)) {
         ui_toggle_primary_button(UI_PRIMARY_BUTTON_CHAR, false);
@@ -1313,40 +1313,40 @@ bool charedit_window_message_filter(TigMessage* msg)
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             if (msg->data.button.button_handle == dword_64C7B4) {
-                dword_64C9CC = 132;
+                charedit_hint = 132;
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64C83C) {
-                dword_64C9CC = 133;
+                charedit_hint = 133;
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64D3B8) {
-                dword_64C9CC = 134;
+                charedit_hint = 134;
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64CA54) {
-                dword_64C9CC = 140;
+                charedit_hint = 140;
                 return true;
             }
 
             for (index = 0; index < 32; index++) {
                 if (msg->data.button.button_handle == stru_5C89A8[index].button_handle) {
-                    dword_64C9CC = stru_5C89A8[index].field_10;
+                    charedit_hint = stru_5C89A8[index].field_10;
                     return true;
                 }
             }
 
             for (index = 0; index < 10; index++) {
                 if (msg->data.button.button_handle == stru_5C7F88[index].button_handle) {
-                    dword_64C9CC = dword_5C80C8[index];
+                    charedit_hint = dword_5C80C8[index];
                     return true;
                 }
 
                 if (msg->data.button.button_handle == stru_5C8028[index].button_handle) {
-                    dword_64C9CC = dword_5C80C8[index];
+                    charedit_hint = dword_5C80C8[index];
                     return true;
                 }
             }
@@ -1357,14 +1357,14 @@ bool charedit_window_message_filter(TigMessage* msg)
                 || msg->data.button.button_handle == dword_64C83C
                 || msg->data.button.button_handle == dword_64D3B8
                 || msg->data.button.button_handle == dword_64CA54) {
-                dword_64C9CC = -1;
+                charedit_hint = -1;
                 sub_550720();
                 return true;
             }
 
             for (index = 0; index < 32; index++) {
                 if (msg->data.button.button_handle == stru_5C89A8[index].button_handle) {
-                    dword_64C9CC = -1;
+                    charedit_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -1373,7 +1373,7 @@ bool charedit_window_message_filter(TigMessage* msg)
             for (index = 0; index < 10; index++) {
                 if (msg->data.button.button_handle == stru_5C7F88[index].button_handle
                     || msg->data.button.button_handle == stru_5C8028[index].button_handle) {
-                    dword_64C9CC = -1;
+                    charedit_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -1592,7 +1592,7 @@ bool charedit_window_message_filter(TigMessage* msg)
     case TIG_MESSAGE_MOUSE:
         switch (msg->data.mouse.event) {
         case TIG_MESSAGE_MOUSE_IDLE:
-            sub_55AE70(dword_64C9CC);
+            charedit_show_hint(charedit_hint);
             return false;
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
             if (charedit_mode != CHAREDIT_MODE_CREATE
@@ -1624,61 +1624,61 @@ bool charedit_window_message_filter(TigMessage* msg)
 }
 
 // 0x55AE70
-void sub_55AE70(int a1)
+void charedit_show_hint(int hint)
 {
     UiMessage ui_message;
     MesFileEntry mes_file_entry;
     int value;
 
-    if (a1 == -1) {
+    if (hint == -1) {
         return;
     }
 
-    if (a1 >= 109 && a1 <= 116) {
+    if (hint >= 109 && hint <= 116) {
         ui_message.type = UI_MSG_TYPE_STAT;
-        ui_message.field_8 = dword_5C8124[a1 - 109 + 2];
+        ui_message.field_8 = dword_5C8124[hint - 109 + 2];
         value = stat_base_get(charedit_obj, ui_message.field_8);
         if (value < stat_level_max(charedit_obj, ui_message.field_8)) {
             ui_message.field_C = stat_cost(value + 1);
         } else {
             ui_message.field_C = 0;
         }
-        mes_file_entry.num = a1;
+        mes_file_entry.num = hint;
         if (mes_search(charedit_mes_file, &mes_file_entry)) {
             ui_message.str = mes_file_entry.str;
             sub_550750(&ui_message);
         }
-    } else if (a1 >= 1000 && a1 < 1999) {
+    } else if (hint >= 1000 && hint < 1999) {
         ui_message.type = UI_MSG_TYPE_SKILL;
-        ui_message.field_8 = a1 - 1000;
+        ui_message.field_8 = hint - 1000;
         if (IS_TECH_SKILL(ui_message.field_8)) {
             ui_message.field_C = tech_skill_min_stat_level_required(tech_skill_base(charedit_obj, GET_TECH_SKILL(ui_message.field_8)) + 4);
         } else {
             ui_message.field_C = basic_skill_min_stat_level_required(basic_skill_base(charedit_obj, GET_BASIC_SKILL(ui_message.field_8)) + 4);
         }
         sub_550750(&ui_message);
-    } else if (a1 >= 2000 && a1 < 2999) {
+    } else if (hint >= 2000 && hint < 2999) {
         ui_message.type = UI_MSG_TYPE_SPELL;
-        ui_message.field_8 = a1 - 2000;
-        ui_message.field_C = spell_cost(a1 - 2000);
+        ui_message.field_8 = hint - 2000;
+        ui_message.field_C = spell_cost(hint - 2000);
         ui_message.field_10 = charedit_obj;
         sub_550750(&ui_message);
-    } else if (a1 >= 3000 && a1 < 3999) {
+    } else if (hint >= 3000 && hint < 3999) {
         ui_message.type = UI_MSG_TYPE_COLLEGE;
-        ui_message.field_8 = a1 - 3000;
+        ui_message.field_8 = hint - 3000;
         sub_550750(&ui_message);
-    } else if (a1 >= 4000 && a1 < 4999) {
+    } else if (hint >= 4000 && hint < 4999) {
         ui_message.type = UI_MSG_TYPE_TECH;
-        ui_message.field_8 = a1 - 4000;
+        ui_message.field_8 = hint - 4000;
         sub_550750(&ui_message);
-    } else if (a1 >= 5000 && a1 < 5999) {
+    } else if (hint >= 5000 && hint < 5999) {
         ui_message.type = UI_MSG_TYPE_DEGREE;
-        ui_message.field_8 = a1 - 5000;
+        ui_message.field_8 = hint - 5000;
         ui_message.field_C = tech_degree_cost_get(ui_message.field_8 % DEGREE_COUNT);
         sub_550750(&ui_message);
     } else {
         ui_message.type = UI_MSG_TYPE_FEEDBACK;
-        mes_file_entry.num = a1;
+        mes_file_entry.num = hint;
         if (mes_search(charedit_mes_file, &mes_file_entry)) {
             ui_message.str = mes_file_entry.str;
             sub_550750(&ui_message);
@@ -2932,7 +2932,7 @@ bool charedit_skills_win_message_filter(TigMessage* msg)
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
-            sub_55AE70(dword_64CA58);
+            charedit_show_hint(charedit_skills_hint);
         }
         break;
     case TIG_MESSAGE_BUTTON:
@@ -2940,26 +2940,26 @@ bool charedit_skills_win_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
             for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skill_group_buttons[index].button_handle) {
-                    dword_64CA58 = index + 135;
+                    charedit_skills_hint = index + 135;
                     return true;
                 }
             }
 
             for (index = 0; index < CHAREDIT_SKILLS_PER_GROUP; index++) {
                 if (msg->data.button.button_handle == charedit_skills_hover_areas[index].button_handle) {
-                    dword_64CA58 = 4 * dword_64E020 + 1000 + index;
+                    charedit_skills_hint = 4 * dword_64E020 + 1000 + index;
                     return true;
                 }
             }
 
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
-                    dword_64CA58 = charedit_skills_plus_buttons[index].art_num + 1000;
+                    charedit_skills_hint = charedit_skills_plus_buttons[index].art_num + 1000;
                     return true;
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[index].button_handle) {
-                    dword_64CA58 = charedit_skills_minus_buttons[index].art_num + 1000;
+                    charedit_skills_hint = charedit_skills_minus_buttons[index].art_num + 1000;
                     return true;
                 }
             }
@@ -2967,7 +2967,7 @@ bool charedit_skills_win_message_filter(TigMessage* msg)
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
             for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skill_group_buttons[index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -2975,7 +2975,7 @@ bool charedit_skills_win_message_filter(TigMessage* msg)
 
             for (index = 0; index < CHAREDIT_SKILLS_PER_GROUP; index++) {
                 if (msg->data.button.button_handle == charedit_skills_hover_areas[index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -2983,13 +2983,13 @@ bool charedit_skills_win_message_filter(TigMessage* msg)
 
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -3069,12 +3069,12 @@ bool sub_55D6F0(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
             for (index = 0; index < TECH_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    dword_64CA58 = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 1012;
+                    charedit_skills_hint = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 1012;
                     return true;
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    dword_64CA58 = charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 1012;
+                    charedit_skills_hint = charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 1012;
                     return true;
                 }
             }
@@ -3086,13 +3086,13 @@ bool sub_55D6F0(TigMessage* msg)
             // NOTE: Original code is buggy.
             for (index = 0; index < TECH_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    dword_64CA58 = -1;
+                    charedit_skills_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -3159,7 +3159,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
-            sub_55AE70(dword_64D360);
+            charedit_show_hint(charedit_tech_hint);
         }
 
         return false;
@@ -3169,7 +3169,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
             for (index = 0; index < TECH_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_tech_buttons[index].button_handle) {
-                    dword_64CDB4 = 4000 + index;
+                    charedit_tech_hint = 4000 + index;
                     return true;
                 }
             }
@@ -3177,9 +3177,9 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             for (index = 0; index < DEGREE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_tech_degree_buttons[index].button_handle) {
                     if (index == 0) {
-                        dword_64CDB4 = 139;
+                        charedit_tech_hint = 139;
                     } else {
-                        dword_64CDB4 = 5000 + 8 * charedit_selected_tech + index;
+                        charedit_tech_hint = 5000 + 8 * charedit_selected_tech + index;
                     }
                     return true;
                 }
@@ -3187,13 +3187,13 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
 
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
                 v1 = tech_degree_get(charedit_obj, charedit_selected_tech);
-                dword_64CDB4 = 5001 + 8 * charedit_selected_tech + v1;
+                charedit_tech_hint = 5001 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
                 v1 = tech_degree_get(charedit_obj, charedit_selected_tech);
-                dword_64CDB4 = 5000 + 8 * charedit_selected_tech + v1;
+                charedit_tech_hint = 5000 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
@@ -3203,7 +3203,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
             for (index = 0; index < TECH_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_tech_buttons[index].button_handle) {
-                    dword_64CDB4 = -1;
+                    charedit_tech_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -3211,20 +3211,20 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
 
             for (index = 0; index < DEGREE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_tech_degree_buttons[index].button_handle) {
-                    dword_64CDB4 = -1;
+                    charedit_tech_hint = -1;
                     sub_550720();
                     return true;
                 }
             }
 
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
-                dword_64CDB4 = -1;
+                charedit_tech_hint = -1;
                 sub_550720();
                 return true;
             }
 
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
-                dword_64CDB4 = -1;
+                charedit_tech_hint = -1;
                 sub_550720();
                 return true;
             }
@@ -3290,7 +3290,7 @@ bool charedit_spells_win_message_filter(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
-            sub_55AE70(dword_64D360);
+            charedit_show_hint(charedit_spells_hint);
         }
 
         return false;
@@ -3300,25 +3300,25 @@ bool charedit_spells_win_message_filter(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
             for (index = 0; index < COLLEGE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
-                    dword_64D360 = 3000 + index;
+                    charedit_spells_hint = 3000 + index;
                     return true;
                 }
             }
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C8DC8[index].button_handle) {
-                    dword_64D360 = 2000 + 5 * dword_64E024 + index;
+                    charedit_spells_hint = 2000 + 5 * dword_64E024 + index;
                     return true;
                 }
             }
 
             if (msg->data.button.button_handle == spell_plus_bid) {
-                dword_64D360 = spell_college_level_get(charedit_obj, dword_64E024) + 5 * (dword_64E024 + 400);
+                charedit_spells_hint = spell_college_level_get(charedit_obj, dword_64E024) + 5 * (dword_64E024 + 400);
                 return true;
             }
 
             if (msg->data.button.button_handle == spell_minus_bid) {
-                dword_64D360 = spell_college_level_get(charedit_obj, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
+                charedit_spells_hint = spell_college_level_get(charedit_obj, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
                 return true;
             }
 
@@ -3328,7 +3328,7 @@ bool charedit_spells_win_message_filter(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
             for (index = 0; index < COLLEGE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
-                    dword_64D360 = -1;
+                    charedit_spells_hint = -1;
                     sub_550720();
                     return true;
                 }
@@ -3336,20 +3336,20 @@ bool charedit_spells_win_message_filter(TigMessage* msg)
 
             for (index = 0; index < 5; index++) {
                 if (msg->data.button.button_handle == stru_5C8DC8[index].button_handle) {
-                    dword_64D360 = -1;
+                    charedit_spells_hint = -1;
                     sub_550720();
                     return true;
                 }
             }
 
             if (msg->data.button.button_handle == spell_plus_bid) {
-                dword_64D360 = -1;
+                charedit_spells_hint = -1;
                 sub_550720();
                 return true;
             }
 
             if (msg->data.button.button_handle == spell_minus_bid) {
-                dword_64D360 = -1;
+                charedit_spells_hint = -1;
                 sub_550720();
                 return true;
             }
