@@ -1261,7 +1261,7 @@ static S64B870 stru_64B870[2];
 static GameSaveInfo mainmenu_ui_gsi;
 
 // 0x64BBF8
-static GameSaveList stru_64BBF8;
+static GameSaveList mainmenu_ui_gsl;
 
 // 0x64BC04
 static tig_font_handle_t dword_64BC04[3];
@@ -2185,14 +2185,14 @@ void mainmenu_ui_load_game_create()
     sub_542200();
 
     if (dword_64C37C) {
-        gamelib_modsavlist_create(dword_64C37C, &stru_64BBF8);
+        gamelib_savelist_create_module(dword_64C37C, &mainmenu_ui_gsl);
     } else {
-        gamelib_savlist_create(&stru_64BBF8);
+        gamelib_savelist_create(&mainmenu_ui_gsl);
     }
 
-    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
+    gamelib_savelist_sort(&mainmenu_ui_gsl, GAME_SAVE_LIST_ORDER_DATE, false);
 
-    window->cnt = stru_64BBF8.count;
+    window->cnt = mainmenu_ui_gsl.count;
     if (window->selected_index == -1) {
         if (window->cnt > 0) {
             const char* path = gamelib_last_save_name();
@@ -2201,8 +2201,8 @@ void mainmenu_ui_load_game_create()
             window->selected_index = 0;
 
             if (path != NULL && *path != '\0') {
-                for (index = 0; index < stru_64BBF8.count; index++) {
-                    if (strcmp(stru_64BBF8.paths[index], path) == 0) {
+                for (index = 0; index < mainmenu_ui_gsl.count; index++) {
+                    if (strcmp(mainmenu_ui_gsl.names[index], path) == 0) {
                         window->selected_index = index;
                         break;
                     }
@@ -2288,7 +2288,7 @@ void mainmenu_ui_load_game_destroy()
         mainmenu_ui_gsi_loaded = false;
     }
 
-    gamelib_savlist_destroy(&stru_64BBF8);
+    gamelib_savelist_destroy(&mainmenu_ui_gsl);
 
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     if (dword_64C37C != NULL)
@@ -2323,7 +2323,7 @@ bool mainmenu_ui_load_game_execute(int btn)
         return false;
     }
 
-    strncpy(name, stru_64BBF8.paths[index], 8);
+    strncpy(name, mainmenu_ui_gsl.names[index], 8);
     name[8] = '\0';
 
     return sub_5432B0(name);
@@ -2400,7 +2400,7 @@ void sub_542560()
         mainmenu_ui_gsi_loaded = false;
 
         if (window->selected_index > -1
-            && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &mainmenu_ui_gsi)) {
+            && gamelib_saveinfo_load(mainmenu_ui_gsl.names[window->selected_index], &mainmenu_ui_gsi)) {
             mainmenu_ui_gsi_loaded = true;
         }
     }
@@ -2463,7 +2463,7 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
         dst_rect.height -= 5;
 
-        if (stru_64BBF8.count) {
+        if (mainmenu_ui_gsl.count != 0) {
             int index;
             int max_y;
             char* name;
@@ -2497,8 +2497,8 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
         if (window->selected_index > -1) {
             if (!mainmenu_ui_gsi_loaded
-                && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &mainmenu_ui_gsi)) {
+                && mainmenu_ui_gsl.count > 0
+                && gamelib_saveinfo_load(mainmenu_ui_gsl.names[window->selected_index], &mainmenu_ui_gsi)) {
                 mainmenu_ui_gsi_loaded = true;
             }
 
@@ -2702,8 +2702,8 @@ void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cnt, tig_
 // 0x543040
 char* sub_543040(int index)
 {
-    if (stru_64BBF8.paths != NULL) {
-        return stru_64BBF8.paths[index] + 8;
+    if (mainmenu_ui_gsl.names != NULL) {
+        return mainmenu_ui_gsl.names[index] + 8;
     } else {
         return "";
     }
@@ -2760,7 +2760,7 @@ bool mainmenu_ui_load_game_handle_delete()
         return false;
     }
 
-    if (!gamelib_delete(stru_64BBF8.paths[window->selected_index])) {
+    if (!gamelib_delete(mainmenu_ui_gsl.names[window->selected_index])) {
         return false;
     }
 
@@ -2769,10 +2769,10 @@ bool mainmenu_ui_load_game_handle_delete()
         mainmenu_ui_gsi_loaded = false;
     }
 
-    gamelib_savlist_destroy(&stru_64BBF8);
-    gamelib_savlist_create(&stru_64BBF8);
+    gamelib_savelist_destroy(&mainmenu_ui_gsl);
+    gamelib_savelist_create(&mainmenu_ui_gsl);
 
-    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
+    gamelib_savelist_sort(&mainmenu_ui_gsl, GAME_SAVE_LIST_ORDER_DATE, false);
     window->selected_index = -1;
     window->cnt--;
     window->refresh_func(NULL);
@@ -2861,11 +2861,11 @@ void mainmenu_ui_save_game_create()
     window = main_menu_window_info[mainmenu_ui_window_type];
 
     sub_542200();
-    gamelib_savlist_create(&stru_64BBF8);
-    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
+    gamelib_savelist_create(&mainmenu_ui_gsl);
+    gamelib_savelist_sort(&mainmenu_ui_gsl, GAME_SAVE_LIST_ORDER_DATE, false);
     byte_64C2F8[0] = '\0';
-    window->cnt = stru_64BBF8.count + 1;
-    if (stru_64BBF8.count != 0) {
+    window->cnt = mainmenu_ui_gsl.count + 1;
+    if (mainmenu_ui_gsl.count != 0) {
         window->selected_index = 1;
     } else {
         window->selected_index = -1;
@@ -2927,7 +2927,7 @@ void mainmenu_ui_save_game_destroy()
         mainmenu_ui_gsi_loaded = false;
     }
 
-    gamelib_savlist_destroy(&stru_64BBF8);
+    gamelib_savelist_destroy(&mainmenu_ui_gsl);
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 }
 
@@ -2949,43 +2949,43 @@ bool mainmenu_ui_save_game_execute(int btn)
     }
 
     if (v1 > 0) {
-        name = strcpy(fname, stru_64BBF8.paths[v1 - 1]);
-        strcpy(byte_64C2F8, stru_64BBF8.paths[v1 - 1] + 8);
+        name = strcpy(fname, mainmenu_ui_gsl.names[v1 - 1]);
+        strcpy(byte_64C2F8, mainmenu_ui_gsl.names[v1 - 1] + 8);
         fname[8] = '\0';
 
         if (mainmenu_ui_confirm(5064)) {
             return false;
         }
     } else {
-        gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_NAME, false);
+        gamelib_savelist_sort(&mainmenu_ui_gsl, GAME_SAVE_LIST_ORDER_NAME, false);
 
-        if (stru_64BBF8.count > 0) {
-            if (SDL_toupper(stru_64BBF8.paths[0][4]) == 'A') {
-                if (stru_64BBF8.count > 1
-                    && stru_64BBF8.paths[1] != NULL) {
-                    strncpy(fname, stru_64BBF8.paths[1], 8);
+        if (mainmenu_ui_gsl.count > 0) {
+            if (SDL_toupper(mainmenu_ui_gsl.names[0][4]) == 'A') {
+                if (mainmenu_ui_gsl.count > 1
+                    && mainmenu_ui_gsl.names[1] != NULL) {
+                    strncpy(fname, mainmenu_ui_gsl.names[1], 8);
                     fname[8] = '\0';
                     num = atoi(&(fname[4])) + 1;
                     if (num >= 9999) {
                         return false;
                     }
 
-                    strcpy(fname, stru_64BBF8.paths[0]);
+                    strcpy(fname, mainmenu_ui_gsl.names[0]);
                     sprintf(&(fname[4]), "%04d", num);
                     name = fname;
                 } else {
                     name = "Slot0000";
                 }
             } else {
-                if (stru_64BBF8.paths[0] != NULL) {
-                    strncpy(fname, stru_64BBF8.paths[0], 8);
+                if (mainmenu_ui_gsl.names[0] != NULL) {
+                    strncpy(fname, mainmenu_ui_gsl.names[0], 8);
                     fname[8] = '\0';
                     num = atoi(&(fname[4])) + 1;
                     if (num >= 9999) {
                         return false;
                     }
 
-                    strcpy(fname, stru_64BBF8.paths[0]);
+                    strcpy(fname, mainmenu_ui_gsl.names[0]);
                     sprintf(&(fname[4]), "%04d", num);
                     name = fname;
                 } else {
@@ -3191,8 +3191,8 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
         if (window->selected_index > 0) {
             if (!mainmenu_ui_gsi_loaded
-                && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &mainmenu_ui_gsi)) {
+                && mainmenu_ui_gsl.count > 0
+                && gamelib_saveinfo_load(mainmenu_ui_gsl.names[window->selected_index - 1], &mainmenu_ui_gsi)) {
                 mainmenu_ui_gsi_loaded = true;
             }
 
@@ -3384,7 +3384,7 @@ void sub_544290()
 
     mainmenu_ui_gsi_loaded = false;
     if (window->selected_index > 0) {
-        if (gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &mainmenu_ui_gsi)) {
+        if (gamelib_saveinfo_load(mainmenu_ui_gsl.names[window->selected_index - 1], &mainmenu_ui_gsi)) {
             mainmenu_ui_gsi_loaded = true;
         }
     } else {
@@ -3409,7 +3409,7 @@ bool mainmenu_ui_save_game_handle_delete()
         return false;
     }
 
-    if (!gamelib_delete(stru_64BBF8.paths[window->selected_index - 1])) {
+    if (!gamelib_delete(mainmenu_ui_gsl.names[window->selected_index - 1])) {
         return false;
     }
 
@@ -3418,9 +3418,9 @@ bool mainmenu_ui_save_game_handle_delete()
         mainmenu_ui_gsi_loaded = false;
     }
 
-    gamelib_savlist_destroy(&stru_64BBF8);
-    gamelib_savlist_create(&stru_64BBF8);
-    gamelib_savelist_sort(&stru_64BBF8, GAME_SAVE_LIST_ORDER_DATE, false);
+    gamelib_savelist_destroy(&mainmenu_ui_gsl);
+    gamelib_savelist_create(&mainmenu_ui_gsl);
+    gamelib_savelist_sort(&mainmenu_ui_gsl, GAME_SAVE_LIST_ORDER_DATE, false);
     window->selected_index = -1;
     window->cnt--;
     window->refresh_func(NULL);

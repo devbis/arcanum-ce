@@ -47,7 +47,7 @@ typedef struct GameModuleList {
 typedef struct GameSaveList {
     char* module;
     unsigned int count;
-    char** paths;
+    char** names;
 } GameSaveList;
 
 typedef enum GameSaveListOrder {
@@ -112,9 +112,9 @@ bool gamelib_in_save();
 bool gamelib_in_load();
 void gamelib_set_extra_save_func(GameExtraSaveFunc* func);
 void gamelib_set_extra_load_func(GameExtraLoadFunc* func);
-void gamelib_savlist_create(GameSaveList* save_list);
-void gamelib_modsavlist_create(const char* module, GameSaveList* save_list);
-void gamelib_savlist_destroy(GameSaveList* save_list);
+void gamelib_savelist_create(GameSaveList* save_list);
+void gamelib_savelist_create_module(const char* module, GameSaveList* save_list);
+void gamelib_savelist_destroy(GameSaveList* save_list);
 void gamelib_savelist_sort(GameSaveList* save_list, GameSaveListOrder order, bool a3);
 bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveInfo* save_info);
 void gamelib_saveinfo_exit(GameSaveInfo* save_info);

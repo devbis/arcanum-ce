@@ -1221,15 +1221,15 @@ const char* gamelib_last_save_name()
     static GameSaveList save_list;
 
     byte_5D0D88[0] = '\0';
-    gamelib_savlist_create(&save_list);
+    gamelib_savelist_create(&save_list);
     gamelib_savelist_sort(&save_list, GAME_SAVE_LIST_ORDER_DATE, true);
 
     if (save_list.count > 0) {
-        strcpy(byte_5D0D88, save_list.paths[0]);
+        strcpy(byte_5D0D88, save_list.names[0]);
     }
 
     // FIX: Memory leak.
-    gamelib_savlist_destroy(&save_list);
+    gamelib_savelist_destroy(&save_list);
 
     return byte_5D0D88;
 }
@@ -1259,7 +1259,7 @@ void gamelib_set_extra_load_func(GameExtraLoadFunc* func)
 }
 
 // 0x403900
-void gamelib_savlist_create(GameSaveList* save_list)
+void gamelib_savelist_create(GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
@@ -1267,7 +1267,7 @@ void gamelib_savlist_create(GameSaveList* save_list)
     char ext[COMPAT_MAX_EXT];
 
     save_list->count = 0;
-    save_list->paths = NULL;
+    save_list->names = NULL;
     save_list->module = NULL;
 
     tig_file_list_create(&file_list, "save\\slot*.*");
@@ -1275,8 +1275,8 @@ void gamelib_savlist_create(GameSaveList* save_list)
     for (index = 0; index < file_list.count; index++) {
         compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
         if (SDL_strcasecmp(ext, ".gsi") == 0) {
-            save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
-            save_list->paths[save_list->count++] = STRDUP(fname);
+            save_list->names = (char**)REALLOC(save_list->names, sizeof(save_list->names) * (save_list->count + 1));
+            save_list->names[save_list->count++] = STRDUP(fname);
         }
     }
 
@@ -1284,7 +1284,7 @@ void gamelib_savlist_create(GameSaveList* save_list)
 }
 
 // 0x4039E0
-void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
+void gamelib_savelist_create_module(const char* module, GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
@@ -1293,7 +1293,7 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
     char path[TIG_MAX_PATH];
 
     save_list->count = 0;
-    save_list->paths = NULL;
+    save_list->names = NULL;
     save_list->module = STRDUP(module);
 
     snprintf(path, sizeof(path), ".\\Modules\\%s\\save\\slot*.*", module);
@@ -1302,8 +1302,8 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
     for (index = 0; index < file_list.count; index++) {
         compat_splitpath(file_list.entries[index].path, NULL, NULL, fname, ext);
         if (SDL_strcasecmp(ext, ".gsi") == 0) {
-            save_list->paths = (char**)REALLOC(save_list->paths, sizeof(save_list->paths) * (save_list->count + 1));
-            save_list->paths[save_list->count++] = STRDUP(fname);
+            save_list->names = (char**)REALLOC(save_list->names, sizeof(save_list->names) * (save_list->count + 1));
+            save_list->names[save_list->count++] = STRDUP(fname);
         }
     }
 
@@ -1311,20 +1311,20 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
 }
 
 // 0x403BB0
-void gamelib_savlist_destroy(GameSaveList* save_list)
+void gamelib_savelist_destroy(GameSaveList* save_list)
 {
     unsigned int index;
 
     for (index = 0; index < save_list->count; index++) {
-        FREE(save_list->paths[index]);
+        FREE(save_list->names[index]);
     }
 
-    if (save_list->paths != NULL) {
-        FREE(save_list->paths);
+    if (save_list->names != NULL) {
+        FREE(save_list->names);
     }
 
     save_list->count = 0;
-    save_list->paths = NULL;
+    save_list->names = NULL;
 
     if (save_list->module != NULL) {
         FREE(save_list->module);
@@ -1346,16 +1346,16 @@ void gamelib_savelist_sort(GameSaveList* save_list, GameSaveListOrder order, boo
     entries = (GameSaveEntry*)MALLOC(sizeof(*entries) * save_list->count);
 
     for (index = 0; index < save_list->count; index++) {
-        entries[index].path = save_list->paths[index];
+        entries[index].path = save_list->names[index];
         if (save_list->module != NULL) {
             snprintf(path, sizeof(path),
                 ".\\Modules\\%s\\save\\%s.gsi",
                 save_list->module,
-                save_list->paths[index]);
+                save_list->names[index]);
         } else {
             snprintf(path, sizeof(path),
                 "save\\%s.gsi",
-                save_list->paths[index]);
+                save_list->names[index]);
         }
 
         if (!tig_file_exists(path, &file_info)) {
@@ -1378,7 +1378,7 @@ void gamelib_savelist_sort(GameSaveList* save_list, GameSaveListOrder order, boo
     }
 
     for (index = 0; index < save_list->count; index++) {
-        save_list->paths[index] = entries[index].path;
+        save_list->names[index] = entries[index].path;
     }
 
     FREE(entries);
