@@ -1258,7 +1258,7 @@ static MainMenuWindowInfo *main_menu_window_info[MM_WINDOW_COUNT] = {
 static S64B870 stru_64B870[2];
 
 // 0x64B898
-static GameSaveInfo stru_64B898;
+static GameSaveInfo mainmenu_ui_gsi;
 
 // 0x64BBF8
 static GameSaveList stru_64BBF8;
@@ -1363,7 +1363,7 @@ static int dword_64C43C;
 static int dword_64C440;
 
 // 0x64C444
-static bool dword_64C444;
+static bool mainmenu_ui_gsi_loaded;
 
 // 0x64C448
 static int mainmenu_ui_progressbar_max_value;
@@ -2282,9 +2282,10 @@ void sub_542200()
 void mainmenu_ui_load_game_destroy()
 {
     scrollbar_ui_control_destroy(stru_64C220);
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = false;
+
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
     }
 
     gamelib_savlist_destroy(&stru_64BBF8);
@@ -2394,13 +2395,13 @@ void sub_542560()
     MainMenuWindowInfo* window;
 
     window = main_menu_window_info[mainmenu_ui_window_type];
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = 0;
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
 
         if (window->selected_index > -1
-            && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &stru_64B898)) {
-            dword_64C444 = true;
+            && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &mainmenu_ui_gsi)) {
+            mainmenu_ui_gsi_loaded = true;
         }
     }
 }
@@ -2495,15 +2496,15 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
             && rect->x < stru_5C46C0.x + stru_5C46C0.width
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
         if (window->selected_index > -1) {
-            if (!dword_64C444
+            if (!mainmenu_ui_gsi_loaded
                 && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &stru_64B898)) {
-                dword_64C444 = true;
+                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index], &mainmenu_ui_gsi)) {
+                mainmenu_ui_gsi_loaded = true;
             }
 
-            if (dword_64C444) {
-                if (stru_64B898.thumbnail_video_buffer != NULL) {
-                    if (tig_video_buffer_data(stru_64B898.thumbnail_video_buffer, &video_buffer_data) == TIG_OK) {
+            if (mainmenu_ui_gsi_loaded) {
+                if (mainmenu_ui_gsi.thumbnail_video_buffer != NULL) {
+                    if (tig_video_buffer_data(mainmenu_ui_gsi.thumbnail_video_buffer, &video_buffer_data) == TIG_OK) {
                         stru_5C46B0.width = video_buffer_data.width;
                         stru_5C46B0.height = video_buffer_data.height;
 
@@ -2512,7 +2513,7 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
                         win_blit_info.type = TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW;
                         win_blit_info.vb_blit_flags = 0;
-                        win_blit_info.src_video_buffer = stru_64B898.thumbnail_video_buffer;
+                        win_blit_info.src_video_buffer = mainmenu_ui_gsi.thumbnail_video_buffer;
                         win_blit_info.src_rect = &stru_5C46B0;
                         win_blit_info.dst_window_handle = dword_5C3624;
                         win_blit_info.dst_rect = &stru_5C46C0;
@@ -2526,12 +2527,12 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
                 font = dword_64C210[0];
                 tig_font_push(font);
 
-                if (stru_64B898.version == 25) {
+                if (mainmenu_ui_gsi.version == 25) {
                     if (dword_5C4790) {
-                        sub_542DF0(stru_64B898.pc_name, &stru_5C46D0, font);
-                        if (stru_64B898.pc_portrait != 0) {
+                        sub_542DF0(mainmenu_ui_gsi.pc_name, &stru_5C46D0, font);
+                        if (mainmenu_ui_gsi.pc_portrait != 0) {
                             portrait_draw_native(OBJ_HANDLE_NULL,
-                                stru_64B898.pc_portrait,
+                                mainmenu_ui_gsi.pc_portrait,
                                 dword_5C3624,
                                 stru_5C46E0.x,
                                 stru_5C46E0.y);
@@ -2539,14 +2540,14 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
                         mes_file_entry.num = 5051; // "Level %d"
                         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-                        sprintf(str, mes_file_entry.str, stru_64B898.pc_level);
+                        sprintf(str, mes_file_entry.str, mainmenu_ui_gsi.pc_level);
                         sub_542DF0(str, &stru_5C4720, font);
 
-                        sub_542DF0(stru_64B898.description, &stru_5C4730, font);
+                        sub_542DF0(mainmenu_ui_gsi.description, &stru_5C4730, font);
 
-                        if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.map) {
-                            area = area_get_nearest_area_in_range(stru_64B898.pc_location, true);
-                        } else if (!map_get_area(stru_64B898.map, &area)) {
+                        if (map_by_type(MAP_TYPE_START_MAP) == mainmenu_ui_gsi.map) {
+                            area = area_get_nearest_area_in_range(mainmenu_ui_gsi.pc_location, true);
+                        } else if (!map_get_area(mainmenu_ui_gsi.map, &area)) {
                             area = 0;
                         }
 
@@ -2560,13 +2561,13 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
                         sub_542DF0(area_name, &stru_5C46F0, font);
 
-                        datetime_format_date(&(stru_64B898.datetime), str);
+                        datetime_format_date(&(mainmenu_ui_gsi.datetime), str);
                         sub_542EA0(str, &stru_5C4710, font);
 
-                        datetime_format_time(&(stru_64B898.datetime), str);
+                        datetime_format_time(&(mainmenu_ui_gsi.datetime), str);
                         sub_542EA0(str, &stru_5C4700, font);
 
-                        story_state_desc = script_story_state_info(stru_64B898.story_state);
+                        story_state_desc = script_story_state_info(mainmenu_ui_gsi.story_state);
                         if (story_state_desc != NULL && *story_state_desc != '\0') {
                             mmUITextWriteCenteredToArray(story_state_desc, stru_5C4740, 4, font);
                         }
@@ -2763,9 +2764,9 @@ bool mainmenu_ui_load_game_handle_delete()
         return false;
     }
 
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = false;
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
     }
 
     gamelib_savlist_destroy(&stru_64BBF8);
@@ -2791,18 +2792,18 @@ bool sub_543220()
     }
 
     path = gamelib_last_save_name();
-    if (path[0] == '\0' || !gamelib_saveinfo_load(path, &stru_64B898)) {
+    if (path[0] == '\0' || !gamelib_saveinfo_load(path, &mainmenu_ui_gsi)) {
         return false;
     }
-    dword_64C444 = true;
+    mainmenu_ui_gsi_loaded = true;
 
     strncpy(name, path, 8);
     name[8] = '\0';
 
     rc = sub_5432B0(name);
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = false;
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
     }
 
     return rc;
@@ -2816,12 +2817,12 @@ bool sub_5432B0(const char* name)
 
     sub_542200();
 
-    if (stru_64B898.version == 25) {
+    if (mainmenu_ui_gsi.version == 25) {
         sub_541710();
         sub_40DAB0();
 
         if (gamelib_load(name)) {
-            gamelib_current_mode_name_set(stru_64B898.module_name);
+            gamelib_current_mode_name_set(mainmenu_ui_gsi.module_name);
 
             mes_file_entry.num = 5000; // "Game Loaded Successfully."
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
@@ -2921,9 +2922,9 @@ void mainmenu_ui_save_game_destroy()
 {
     scrollbar_ui_control_destroy(stru_64C220);
 
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = false;
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
     }
 
     gamelib_savlist_destroy(&stru_64BBF8);
@@ -3189,15 +3190,15 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
             && rect->x < stru_5C46C0.x + stru_5C46C0.width
             && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
         if (window->selected_index > 0) {
-            if (!dword_64C444
+            if (!mainmenu_ui_gsi_loaded
                 && stru_64BBF8.count > 0
-                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &stru_64B898)) {
-                dword_64C444 = true;
+                && gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &mainmenu_ui_gsi)) {
+                mainmenu_ui_gsi_loaded = true;
             }
 
-            if (dword_64C444) {
-                if (stru_64B898.thumbnail_video_buffer != NULL) {
-                    if (tig_video_buffer_data(stru_64B898.thumbnail_video_buffer, &video_buffer_data) == TIG_OK) {
+            if (mainmenu_ui_gsi_loaded) {
+                if (mainmenu_ui_gsi.thumbnail_video_buffer != NULL) {
+                    if (tig_video_buffer_data(mainmenu_ui_gsi.thumbnail_video_buffer, &video_buffer_data) == TIG_OK) {
                         stru_5C46B0.width = video_buffer_data.width;
                         stru_5C46B0.height = video_buffer_data.height;
 
@@ -3206,7 +3207,7 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
 
                         win_blit_info.type = TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW;
                         win_blit_info.vb_blit_flags = 0;
-                        win_blit_info.src_video_buffer = stru_64B898.thumbnail_video_buffer;
+                        win_blit_info.src_video_buffer = mainmenu_ui_gsi.thumbnail_video_buffer;
                         win_blit_info.src_rect = &stru_5C46B0;
                         win_blit_info.dst_window_handle = dword_5C3624;
                         win_blit_info.dst_rect = &stru_5C46C0;
@@ -3221,10 +3222,10 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
                 tig_font_push(font);
 
                 if (dword_5C4790) {
-                    sub_542DF0(stru_64B898.pc_name, &stru_5C46D0, font);
-                    if (stru_64B898.pc_portrait != 0) {
+                    sub_542DF0(mainmenu_ui_gsi.pc_name, &stru_5C46D0, font);
+                    if (mainmenu_ui_gsi.pc_portrait != 0) {
                         portrait_draw_native(OBJ_HANDLE_NULL,
-                            stru_64B898.pc_portrait,
+                            mainmenu_ui_gsi.pc_portrait,
                             dword_5C3624,
                             stru_5C46E0.x,
                             stru_5C46E0.y);
@@ -3232,14 +3233,14 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
 
                     mes_file_entry.num = 5051; // "Level %d"
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-                    sprintf(str, mes_file_entry.str, stru_64B898.pc_level);
+                    sprintf(str, mes_file_entry.str, mainmenu_ui_gsi.pc_level);
                     sub_542DF0(str, &stru_5C4720, font);
 
-                    sub_542DF0(stru_64B898.description, &stru_5C4730, font);
+                    sub_542DF0(mainmenu_ui_gsi.description, &stru_5C4730, font);
 
-                    if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.map) {
-                        area = area_get_nearest_area_in_range(stru_64B898.pc_location, true);
-                    } else if (!map_get_area(stru_64B898.map, &area)) {
+                    if (map_by_type(MAP_TYPE_START_MAP) == mainmenu_ui_gsi.map) {
+                        area = area_get_nearest_area_in_range(mainmenu_ui_gsi.pc_location, true);
+                    } else if (!map_get_area(mainmenu_ui_gsi.map, &area)) {
                         area = 0;
                     }
 
@@ -3253,13 +3254,13 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
 
                     sub_542DF0(area_name, &stru_5C46F0, font);
 
-                    datetime_format_date(&(stru_64B898.datetime), str);
+                    datetime_format_date(&(mainmenu_ui_gsi.datetime), str);
                     sub_542EA0(str, &stru_5C4710, font);
 
-                    datetime_format_time(&(stru_64B898.datetime), str);
+                    datetime_format_time(&(mainmenu_ui_gsi.datetime), str);
                     sub_542EA0(str, &stru_5C4700, font);
 
-                    story_state_desc = script_story_state_info(stru_64B898.story_state);
+                    story_state_desc = script_story_state_info(mainmenu_ui_gsi.story_state);
                     if (story_state_desc != NULL && *story_state_desc != '\0') {
                         mmUITextWriteCenteredToArray(story_state_desc, stru_5C4740, 4, font);
                     }
@@ -3371,7 +3372,7 @@ void sub_544290()
     window = main_menu_window_info[mainmenu_ui_window_type];
     sub_549450();
 
-    if (!dword_64C444) {
+    if (!mainmenu_ui_gsi_loaded) {
         if (window->selected_index == 0) {
             byte_64C2F8[0] = 0;
             sub_5493C0(byte_64C2F8, 23);
@@ -3379,12 +3380,12 @@ void sub_544290()
         return;
     }
 
-    gamelib_saveinfo_exit(&stru_64B898);
+    gamelib_saveinfo_exit(&mainmenu_ui_gsi);
 
-    dword_64C444 = false;
+    mainmenu_ui_gsi_loaded = false;
     if (window->selected_index > 0) {
-        if (gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &stru_64B898)) {
-            dword_64C444 = true;
+        if (gamelib_saveinfo_load(stru_64BBF8.paths[window->selected_index - 1], &mainmenu_ui_gsi)) {
+            mainmenu_ui_gsi_loaded = true;
         }
     } else {
         byte_64C2F8[0] = 0;
@@ -3412,9 +3413,9 @@ bool mainmenu_ui_save_game_handle_delete()
         return false;
     }
 
-    if (dword_64C444) {
-        gamelib_saveinfo_exit(&stru_64B898);
-        dword_64C444 = false;
+    if (mainmenu_ui_gsi_loaded) {
+        gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+        mainmenu_ui_gsi_loaded = false;
     }
 
     gamelib_savlist_destroy(&stru_64BBF8);
@@ -3441,13 +3442,13 @@ void mainmenu_ui_last_save_create()
 
     path = gamelib_last_save_name();
     if (path[0] != '\0') {
-        if (dword_64C444) {
-            gamelib_saveinfo_exit(&stru_64B898);
-            dword_64C444 = false;
+        if (mainmenu_ui_gsi_loaded) {
+            gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+            mainmenu_ui_gsi_loaded = false;
         }
 
-        if (gamelib_saveinfo_load(path, &stru_64B898)) {
-            dword_64C444 = true;
+        if (gamelib_saveinfo_load(path, &mainmenu_ui_gsi)) {
+            mainmenu_ui_gsi_loaded = true;
             dword_64C384 = true;
 
             rect.x = 0;
@@ -3471,9 +3472,9 @@ void mainmenu_ui_last_save_create()
             name[8] = '\0';
             sub_5432B0(name);
 
-            if (dword_64C444) {
-                gamelib_saveinfo_exit(&stru_64B898);
-                dword_64C444 = false;
+            if (mainmenu_ui_gsi_loaded) {
+                gamelib_saveinfo_exit(&mainmenu_ui_gsi);
+                mainmenu_ui_gsi_loaded = false;
             }
         }
     } else {
