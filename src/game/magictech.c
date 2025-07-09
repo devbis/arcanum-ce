@@ -2697,7 +2697,7 @@ void sub_452650(int64_t obj)
     start_map = map_by_type(MAP_TYPE_START_MAP);
 
     if (cur_map == start_map) {
-        area = sub_4CB4D0(obj_field_int64_get(obj, OBJ_F_LOCATION), true);
+        area = area_get_nearest_area_in_range(obj_field_int64_get(obj, OBJ_F_LOCATION), true);
     } else {
         if (!tig_net_is_active()) {
             map_get_area(cur_map, &area);

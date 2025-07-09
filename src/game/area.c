@@ -11,82 +11,153 @@
 #include "game/townmap.h"
 #include "game/ui.h"
 
+/**
+ * Default area detection radius when it's not specified.
+ */
 #define DEFAULT_RADIUS 5
 
-#define AREA_KNOWN 0x1
+typedef uint8_t AreaFlags;
+
+#define AREA_KNOWN 0x1u
 
 static int get_nearest_area(int64_t obj);
-static int sub_4CB630(int64_t loc);
+static int area_from_loc(int64_t loc);
 
-// 0x5FF5A8
-static int area_count;
+/**
+ * The number of areas.
+ *
+ * 0x5FF5A8
+ */
+static int num_areas;
 
-// 0x5FF5AC
+/**
+ * Array of area locations.
+ *
+ * 0x5FF5AC
+ */
 static int64_t* area_locations;
 
-// 0x5FF5B0
+/**
+ * Array of area names.
+ *
+ * 0x5FF5B0
+ */
 static char** area_names;
 
-// 0x5FF5B4
+/**
+ * "gamearea.mes"
+ *
+ * 0x5FF5B4
+ */
 static mes_file_handle_t area_gamearea_mes_file;
 
-// 0x5FF5B8
-static uint8_t* area_flags_per_player[8];
+/**
+ * Per-player area flags (in multiplayer mode), tracking known areas.
+ *
+ * 0x5FF5B8
+ */
+static AreaFlags* area_flags_per_player[8];
 
-// 0x5FF5D8
+/**
+ * Array of area short descriptions.
+ *
+ * 0x5FF5D8
+ */
 static char** area_descriptions;
 
-// 0x5FF5DC
+/**
+ * Array of x offsets to area worldmap labels.
+ *
+ * 0x5FF5DC
+ */
 static int* area_wm_x_offsets;
 
-// 0x5FF5E0
+/**
+ * Array of y offsets to area worldmap labels.
+ *
+ * 0x5FF5E0
+ */
 static int* area_wm_y_offsets;
 
-// 0x5FF5E4
+/**
+ * Array of area detection radiuses.
+ *
+ * 0x5FF5E4
+ */
 static int* area_radiuses;
 
-// 0x5FF5E8
-static uint8_t* area_flags;
+/**
+ * Array of area flags, tracking known areas in single-player mode.
+ *
+ * 0x5FF5E8
+ */
+static AreaFlags* area_flags;
 
-// 0x5FF5EC
+/**
+ * Last area marked known in single-player mode.
+ *
+ * 0x5FF5EC
+ */
 static int area_last_known_area;
 
-// 0x5FF5F0
+/**
+ * Per-player last area marked known in multiplayer mode.
+ *
+ * 0x5FF5F0
+ */
 static int area_last_known_area_per_player[8];
 
-// 0x4CA940
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4CA940
+ */
 bool area_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    area_count = 0;
+    num_areas = 0;
 
     return true;
 }
 
-// 0x4CA950
+/**
+ * Called when the game is being reset.
+ *
+ * 0x4CA950
+ */
 void area_reset()
 {
     int area;
     int player;
 
-    for (area = 0; area < area_count; area++) {
+    // Clear local player area flags.
+    for (area = 0; area < num_areas; area++) {
         area_flags[area] = 0;
     }
 
+    // Clear per-player area flags for all players.
     for (player = 0; player < 8; player++) {
-        for (area = 0; area < area_count; area++) {
+        for (area = 0; area < num_areas; area++) {
             area_flags_per_player[player][area] = 0;
         }
     }
 }
 
-// 0x4CA9A0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4CA9A0
+ */
 void area_exit()
 {
 }
 
-// 0x4CA9B0
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x4CA9B0
+ */
 bool area_mod_load()
 {
     MesFileEntry mes_file_entry;
@@ -97,31 +168,35 @@ bool area_mod_load()
     char* pch;
     int radius;
 
-    area_count = 0;
+    num_areas = 0;
 
+    // Load module-specific areas message file (optional).
     if (!mes_load("mes\\gamearea.mes", &area_gamearea_mes_file)) {
         return true;
     }
 
+    // Count the number of areas.
     mes_file_entry.num = 0;
     mes_get_msg(area_gamearea_mes_file, &mes_file_entry);
     do {
-        area_count++;
+        num_areas++;
     } while (mes_find_next(area_gamearea_mes_file, &mes_file_entry));
 
-    area_names = (char**)MALLOC(sizeof(*area_names) * area_count);
-    area_descriptions = (char**)MALLOC(sizeof(*area_descriptions) * area_count);
-    area_locations = (int64_t*)MALLOC(sizeof(*area_locations) * area_count);
-    area_flags = (uint8_t*)MALLOC(sizeof(*area_flags) * area_count);
+    // Allocate arrays for area data.
+    area_names = (char**)MALLOC(sizeof(*area_names) * num_areas);
+    area_descriptions = (char**)MALLOC(sizeof(*area_descriptions) * num_areas);
+    area_locations = (int64_t*)MALLOC(sizeof(*area_locations) * num_areas);
+    area_flags = (uint8_t*)MALLOC(sizeof(*area_flags) * num_areas);
 
     for (index = 0; index < 8; index++) {
-        area_flags_per_player[index] = (uint8_t*)MALLOC(sizeof(*area_flags_per_player[index]) * area_count);
+        area_flags_per_player[index] = (uint8_t*)MALLOC(sizeof(*area_flags_per_player[index]) * num_areas);
     }
 
-    area_radiuses = (int*)MALLOC(sizeof(*area_radiuses) * area_count);
-    area_wm_x_offsets = (int*)MALLOC(sizeof(*area_wm_x_offsets) * area_count);
-    area_wm_y_offsets = (int*)MALLOC(sizeof(*area_wm_y_offsets) * area_count);
+    area_radiuses = (int*)MALLOC(sizeof(*area_radiuses) * num_areas);
+    area_wm_x_offsets = (int*)MALLOC(sizeof(*area_wm_x_offsets) * num_areas);
+    area_wm_y_offsets = (int*)MALLOC(sizeof(*area_wm_y_offsets) * num_areas);
 
+    // Parse each area entry.
     index = 0;
     mes_file_entry.num = 0;
     mes_get_msg(area_gamearea_mes_file, &mes_file_entry);
@@ -129,35 +204,50 @@ bool area_mod_load()
 
     do {
         str = mes_file_entry.str;
+
+        // The first pair are coordinates of the placement of the area on the
+        // world map.
         tig_str_parse_value_64(&str, &x);
         tig_str_parse_value_64(&str, &y);
         area_locations[index] = location_make(x, y);
+
+        // The next pair are offsets (in pixels) of the area label on the
+        // world map.
         area_wm_x_offsets[index] = 0;
         area_wm_y_offsets[index] = 0;
         tig_str_parse_value(&str, &(area_wm_x_offsets[index]));
         tig_str_parse_value(&str, &(area_wm_y_offsets[index]));
 
+        // Parse the name and short description, separated by '/'.
         pch = strchr(mes_file_entry.str, '/');
         if (pch != NULL) {
             area_names[index] = pch + 1;
 
             pch = strchr(pch + 1, '/');
             if (pch != NULL) {
+                // Clamp area name.
                 *pch++ = '\0';
                 area_descriptions[index] = pch;
+
                 area_flags[index] = 0;
                 area_radiuses[index] = DEFAULT_RADIUS * 64;
 
+                // Parse radius if present.
                 pch = strchr(pch, '/');
                 if (pch != NULL) {
+                    // Clamp area short description.
                     *pch++ = '\0';
+
                     if (tig_str_parse_named_value(&pch, "Radius:", &radius)) {
                         if (index > 0) {
+                            // Convert radius in sectors to radius in tiles.
                             area_radiuses[index] = radius * 64;
                         } else if (index == 0) {
-                            area_radiuses[0] = 0;
+                            // Special case - radius of unknown area is always
+                            // 0.
+                            area_radiuses[AREA_UNKNOWN] = 0;
                         } else {
-                            // FIXME: Unreachable (and wrong).
+                            // FIXME: Unreachable, `index` is never negative.
                             area_radiuses[index] = -1;
                         }
                     }
@@ -175,7 +265,11 @@ bool area_mod_load()
     return true;
 }
 
-// 0x4CACB0
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x4CACB0
+ */
 void area_mod_unload()
 {
     int player;
@@ -199,69 +293,97 @@ void area_mod_unload()
     }
 }
 
-// 0x4CAD50
+/**
+ * Called when the game is being loaded.
+ *
+ * 0x4CAD50
+ */
 bool area_load(GameLoadInfo* load_info)
 {
     int player;
 
-    if (tig_file_fread(area_flags, area_count, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(area_flags, num_areas, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&area_last_known_area, sizeof(area_last_known_area), 1, load_info->stream) != 1) return false;
 
     for (player = 0; player < 8; player++) {
-        if (tig_file_fread(area_flags_per_player[player], area_count, 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(area_flags_per_player[player], num_areas, 1, load_info->stream) != 1) return false;
         if (tig_file_fread(&(area_last_known_area_per_player[player]), sizeof(area_last_known_area_per_player[0]), 1, load_info->stream) != 1) return false;
     }
 
     return true;
 }
 
-// 0x4CADF0
+/**
+ * Called when the game is being saved.
+ *
+ * 0x4CADF0
+ */
 bool area_save(TigFile* stream)
 {
     int player;
 
-    if (tig_file_fwrite(area_flags, area_count, 1, stream) != 1) return false;
+    if (tig_file_fwrite(area_flags, num_areas, 1, stream) != 1) return false;
     if (tig_file_fwrite(&area_last_known_area, sizeof(area_last_known_area), 1, stream) != 1) return false;
 
     for (player = 0; player < 8; player++) {
-        if (tig_file_fwrite(area_flags_per_player[player], area_count, 1, stream) != 1) return false;
+        if (tig_file_fwrite(area_flags_per_player[player], num_areas, 1, stream) != 1) return false;
         if (tig_file_fwrite(&(area_last_known_area_per_player[player]), sizeof(area_last_known_area_per_player[0]), 1, stream) != 1) return false;
     }
 
     return true;
 }
 
-// 0x4CAE80
-int area_get_count()
+/**
+ * Returns the total number of areas.
+ *
+ * 0x4CAE80
+ */
+int area_count()
 {
-  return area_count;
+    return num_areas;
 }
 
-// 0x4CAE90
+/**
+ * Retrieves the name of a specific area.
+ *
+ * 0x4CAE90
+ */
 char* area_get_name(int area)
 {
-    return area >= 0 && area < area_count
+    return area >= 0 && area < num_areas
         ? area_names[area]
         : NULL;
 }
 
-// 0x4CAEB0
+/**
+ * Retrieves the description of a specific area.
+ *
+ * 0x4CAEB0
+ */
 char* area_get_description(int area)
 {
-    return area >= 0 && area < area_count
+    return area >= 0 && area < num_areas
         ? area_descriptions[area]
         : NULL;
 }
 
-// 0x4CAED0
+/**
+ * Retrieves the location of a specific area.
+ *
+ * 0x4CAED0
+ */
 int64_t area_get_location(int area)
 {
-    return area >= 0 && area < area_count
+    return area >= 0 && area < num_areas
         ? area_locations[area]
         : 0;
 }
 
-// 0x4CAF00
+/**
+ * Retrieves the world map label offsets for a specific area.
+ *
+ * 0x4CAF00
+ */
 void area_get_wm_offset(int area, int* x, int* y)
 {
     // FIXME: No bound checking guard seen in previous functions.
@@ -269,120 +391,151 @@ void area_get_wm_offset(int area, int* x, int* y)
     *y = area_wm_y_offsets[area];
 }
 
-// 0x4CAF50
+/**
+ * Checks if an area is known to a player character.
+ *
+ * 0x4CAF50
+ */
 bool area_is_known(int64_t pc_obj, int area)
 {
     int player;
 
-    if (pc_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (tig_net_is_active()) {
-            player = multiplayer_find_slot_from_obj(pc_obj);
-            if (player != -1) {
-                return (area_flags_per_player[player][area] & 1) != 0;
-            }
-        } else if (pc_obj == player_get_local_pc_obj()) {
-            return (area_flags[area] & AREA_KNOWN) != 0;
+    // Validate the object and ensure it's a player character.
+    if (pc_obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    if (tig_net_is_active()) {
+        player = multiplayer_find_slot_from_obj(pc_obj);
+        if (player != -1) {
+            return (area_flags_per_player[player][area] & AREA_KNOWN) != 0;
         }
+    } else if (pc_obj == player_get_local_pc_obj()) {
+        return (area_flags[area] & AREA_KNOWN) != 0;
     }
 
     return false;
 }
 
-// 0x4CAFD0
+/**
+ * Marks an area as known to a player character.
+ *
+ * 0x4CAFD0
+ */
 bool area_set_known(int64_t pc_obj, int area)
 {
     PacketAreaKnownSet pkt;
     int player;
 
+    // If the area is already known, no action is needed.
     if (area_is_known(pc_obj, area)) {
         return true;
     }
 
-    if (pc_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (tig_net_is_active()) {
-            if (!multiplayer_is_locked()) {
-                if (tig_net_is_host()) {
-                    pkt.type = 101;
-                    pkt.oid = obj_get_id(pc_obj);
-                    pkt.area = area;
-                    tig_net_send_app_all(&pkt, sizeof(pkt));
+    // Validate the object and ensure it's a player character.
+    if (pc_obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
 
-                    player = multiplayer_find_slot_from_obj(pc_obj);
-                    if (player == -1) {
-                        return false;
-                    }
+    if (tig_net_is_active()) {
+        if (!multiplayer_is_locked()) {
+            if (tig_net_is_host()) {
+                pkt.type = 101;
+                pkt.oid = obj_get_id(pc_obj);
+                pkt.area = area;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
 
-                    area_flags_per_player[player][area] |= 1;
-                    area_last_known_area_per_player[player] = area;
-                    mp_ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true, player);
+                player = multiplayer_find_slot_from_obj(pc_obj);
+                if (player == -1) {
+                    return false;
                 }
-                return true;
+
+                area_flags_per_player[player][area] |= AREA_KNOWN;
+                area_last_known_area_per_player[player] = area;
+                mp_ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true, player);
             }
-        } else if (pc_obj == player_get_local_pc_obj()) {
-            area_flags[area] |= AREA_KNOWN;
-            ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true);
-            area_last_known_area = area;
             return true;
         }
+    } else if (pc_obj == player_get_local_pc_obj()) {
+        area_flags[area] |= AREA_KNOWN;
+        area_last_known_area = area;
+        ui_toggle_primary_button(UI_PRIMARY_BUTTON_WORLDMAP, true);
+        return true;
     }
 
     return false;
 }
 
-// 0x4CB100
+/**
+ * Retrieves the last known area for a player character.
+ *
+ * 0x4CB100
+ */
 int area_get_last_known_area(int64_t pc_obj)
 {
     int player;
 
-    if (pc_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (tig_net_is_active()) {
-            player = multiplayer_find_slot_from_obj(pc_obj);
-            if (player != -1) {
-                return area_last_known_area_per_player[player];
-            }
-        } else {
-            if (pc_obj == player_get_local_pc_obj()) {
-                return area_last_known_area;
-            }
+    // Validate the object and ensure it's a player character.
+    if (pc_obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return AREA_UNKNOWN;
+    }
+
+    if (tig_net_is_active()) {
+        player = multiplayer_find_slot_from_obj(pc_obj);
+        if (player != -1) {
+            return area_last_known_area_per_player[player];
         }
+    } else if (pc_obj == player_get_local_pc_obj()) {
+        return area_last_known_area;
     }
 
     return AREA_UNKNOWN;
 }
 
-// 0x4CB160
+/**
+ * Resets the last known area for a player character.
+ *
+ * 0x4CB160
+ */
 void area_reset_last_known_area(int64_t pc_obj)
 {
     PacketAreaResetLastKnown pkt;
     int player;
 
-    if (pc_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (tig_net_is_active()) {
-            if (!multiplayer_is_locked()) {
-                if (!tig_net_is_host()) {
-                    return;
-                }
+    // Validate the object and ensure it's a player character.
+    if (pc_obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
 
-                pkt.type = 102;
-                pkt.oid = obj_get_id(pc_obj);
-                tig_net_send_app_all(&pkt, sizeof(pkt));
-
-                player = multiplayer_find_slot_from_obj(pc_obj);
-                if (player != -1) {
-                    area_last_known_area_per_player[player] = AREA_UNKNOWN;
-                }
+    if (tig_net_is_active()) {
+        if (!multiplayer_is_locked()) {
+            if (!tig_net_is_host()) {
+                return;
             }
-        } else if (pc_obj == player_get_local_pc_obj()) {
-            area_last_known_area = AREA_UNKNOWN;
+
+            pkt.type = 102;
+            pkt.oid = obj_get_id(pc_obj);
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+
+            player = multiplayer_find_slot_from_obj(pc_obj);
+            if (player != -1) {
+                area_last_known_area_per_player[player] = AREA_UNKNOWN;
+            }
         }
+    } else if (pc_obj == player_get_local_pc_obj()) {
+        area_last_known_area = AREA_UNKNOWN;
     }
 }
 
-// 0x4CB220
+/**
+ * Finds the nearest area to a given location.
+ *
+ * 0x4CB220
+ */
 int get_nearest_area(int64_t loc)
 {
     int area;
@@ -390,10 +543,12 @@ int get_nearest_area(int64_t loc)
     int64_t nearest_dist;
     int64_t distance;
 
+    // Initialize with the unknown area as a base.
     nearest_area = AREA_UNKNOWN;
-    nearest_dist = location_dist(area_get_location(0), loc);
+    nearest_dist = location_dist(area_get_location(nearest_area), loc);
 
-    for (area = 1; area < area_count; area++) {
+    // Compare distances to all other areas.
+    for (area = 1; area < num_areas; area++) {
         distance = location_dist(area_get_location(area), loc);
         if (distance < nearest_dist) {
             nearest_area = area;
@@ -404,7 +559,12 @@ int get_nearest_area(int64_t loc)
     return nearest_area;
 }
 
-// 0x4CB2A0
+/**
+ * Finds the nearest known area to a location within a range for a player
+ * character.
+ *
+ * 0x4CB2A0
+ */
 int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
 {
     int area;
@@ -412,16 +572,19 @@ int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
     int64_t nearest_dist;
     int64_t dist;
 
+    // Validate the object and ensure it's a player character.
     if (pc_obj == OBJ_HANDLE_NULL
         || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return AREA_UNKNOWN;
     }
 
-    // NOTE: Original code is different.
+    // Initialize with an invalid distance to ensure at least one area is
+    // considered.
     nearest_area = AREA_UNKNOWN;
     nearest_dist = range + 1;
 
-    for (area = 1; area < area_count; area++) {
+    // Check all areas for known status and distance.
+    for (area = 1; area < num_areas; area++) {
         dist = location_dist(area_get_location(area), loc);
         if (dist < nearest_dist) {
             if (area_is_known(pc_obj, area)) {
@@ -434,8 +597,12 @@ int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
     return nearest_area;
 }
 
-// 0x4CB4D0
-int sub_4CB4D0(int64_t loc, bool a2)
+/**
+ * NOTE: Original code is different.
+ *
+ * 0x4CB4D0
+ */
+int area_get_nearest_area_in_range(int64_t loc, bool safe)
 {
     int area;
     int nearest_area;
@@ -443,13 +610,15 @@ int sub_4CB4D0(int64_t loc, bool a2)
     int64_t dist;
     int64_t radius;
 
-    // NOTE: Original code is different.
+    // Initialize with an invalid distance to ensure at least one area is
+    // considered.
     nearest_area = AREA_UNKNOWN;
     nearest_dist = 99999;
 
-    for (area = 1; area < area_count; area++) {
+    // Check all areas for distance.
+    for (area = 1; area < num_areas; area++) {
         radius = area_radiuses[area];
-        if (a2 && radius <= 0) {
+        if (safe && radius <= 0) {
             radius = 64;
         }
 
@@ -464,53 +633,72 @@ int sub_4CB4D0(int64_t loc, bool a2)
     return nearest_area;
 }
 
-// 0x4CB630
-int sub_4CB630(int64_t loc)
+/**
+ * Determines the area from a specified location.
+ *
+ * 0x4CB630
+ */
+int area_from_loc(int64_t loc)
 {
-    int v1;
-    int v2;
-    int v3;
+    int loc_townmap;
+    int area;
+    int area_townmap;
 
-    v1 = townmap_get(sector_id_from_loc(loc));
-    if (v1 == 0) {
+    // Retrieve the townmap for the sector containing the specified location.
+    loc_townmap = townmap_get(sector_id_from_loc(loc));
+    if (loc_townmap == TOWNMAP_NONE) {
         return AREA_UNKNOWN;
     }
 
-    v2 = get_nearest_area(loc);
-    if (v2 == 0) {
+    // Find the nearest area to the specified location.
+    area = get_nearest_area(loc);
+    if (area == AREA_UNKNOWN) {
         return AREA_UNKNOWN;
     }
 
-    v3 = townmap_get(sector_id_from_loc(area_get_location(v2)));
-    if (v3 == 0) {
+    // Retrieve the townmap from the sector containing area's origin location.
+    area_townmap = townmap_get(sector_id_from_loc(area_get_location(area)));
+    if (area_townmap == TOWNMAP_NONE) {
         return AREA_UNKNOWN;
     }
 
-    if (v1 != v3) {
+    // Ensure both townmap IDs match.
+    if (loc_townmap != area_townmap) {
         return AREA_UNKNOWN;
     }
 
-    return v2;
+    return area;
 }
 
-// 0x4CB6A0
-int sub_4CB6A0(int64_t obj)
+/**
+ * Retrieves the area associated with an object's current map.
+ *
+ * The `obj` is implied to be a player character, but this is not enforced.
+ *
+ * 0x4CB6A0
+ */
+int area_of_object(int64_t obj)
 {
     int map;
     int area;
 
+    // Validate the object.
     if (obj == OBJ_HANDLE_NULL) {
         return AREA_UNKNOWN;
     }
 
     map = map_current_map();
+
+    // Retrieve area from the current map.
     if (!map_get_area(map, &area)) {
         return AREA_UNKNOWN;
     }
 
+    // Special case - the primary map usually does not have associated area.
+    // In this case attempt to obtain area from PC's location.
     if (area == AREA_UNKNOWN
         && map == map_by_type(MAP_TYPE_START_MAP)) {
-        area = sub_4CB630(obj_field_int64_get(obj, OBJ_F_LOCATION));
+        area = area_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
 
     return area;

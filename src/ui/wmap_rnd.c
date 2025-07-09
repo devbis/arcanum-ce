@@ -1018,7 +1018,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
     wmap_rnd_schedule();
 
     if (map_current_map() == map_by_type(MAP_TYPE_START_MAP)
-        && sub_4CB6A0(player_get_local_pc_obj()) == AREA_UNKNOWN) {
+        && area_of_object(player_get_local_pc_obj()) == AREA_UNKNOWN) {
         wmap_ui_get_current_location(&loc);
         if (wmap_rnd_check(loc)) {
             if (wmap_ui_is_created()) {

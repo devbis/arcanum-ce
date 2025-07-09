@@ -2298,7 +2298,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
     }
     case SAT_GET_AREA: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        int area = sub_4CB6A0(obj);
+        int area = area_of_object(obj);
         script_set_value(action->op_type[1], action->op_value[1], state, area);
         return NEXT;
     }

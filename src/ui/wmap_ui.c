@@ -1558,7 +1558,7 @@ bool wmap_ui_create()
     tig_art_interface_id_create(198, 0, 0, 0, &(wmap_ui_pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
 
-    for (index = area_get_count() - 1; index > 0; index--) {
+    for (index = area_count() - 1; index > 0; index--) {
         if (area_is_known(player_get_local_pc_obj(), index)) {
             sub_562800(index);
         }
@@ -2289,7 +2289,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 && wmap_ui_mode == WMAP_UI_MODE_WORLD) {
                 gsound_play_sfx(0, 1);
 
-                for (int area = area_get_count() - 1; area > 0; area--) {
+                for (int area = area_count() - 1; area > 0; area--) {
                     area_set_known(player_get_local_pc_obj(), area);
                     sub_562800(area);
                 }
@@ -3739,7 +3739,7 @@ bool sub_5649F0(int64_t loc)
     int area;
 
     wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
-    area = sub_4CB4D0(loc, true);
+    area = area_get_nearest_area_in_range(loc, true);
     if (area > 0) {
         loc = area_get_location(area);
     }
@@ -3762,7 +3762,7 @@ void sub_564A70(int64_t pc_obj, int64_t loc)
 {
     int area;
 
-    area = sub_4CB4D0(loc, false);
+    area = area_get_nearest_area_in_range(loc, false);
     if (area > 0) {
         if (!area_is_known(pc_obj, area)) {
             if (area_get_last_known_area(pc_obj) == area) {
@@ -4409,7 +4409,7 @@ void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3)
         dx = a2->x + note->coords.x - wmap_ui_mode_info[wmap_ui_mode].field_34;
         dy = a2->y + note->coords.y - wmap_ui_mode_info[wmap_ui_mode].field_38;
 
-        if (wmap_ui_mode == WMAP_UI_MODE_WORLD && note->id <= area_get_count()) {
+        if (wmap_ui_mode == WMAP_UI_MODE_WORLD && note->id <= area_count()) {
             area_get_wm_offset(note->id, &x, &y);
         }
 
