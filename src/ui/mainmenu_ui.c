@@ -2544,9 +2544,9 @@ void mainmenu_ui_load_game_refresh(TigRect* rect)
 
                         sub_542DF0(stru_64B898.description, &stru_5C4730, font);
 
-                        if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
+                        if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.map) {
                             area = area_get_nearest_area_in_range(stru_64B898.pc_location, true);
-                        } else if (!map_get_area(stru_64B898.field_340, &area)) {
+                        } else if (!map_get_area(stru_64B898.map, &area)) {
                             area = 0;
                         }
 
@@ -3237,9 +3237,9 @@ void mainmenu_ui_save_game_refresh(TigRect* rect)
 
                     sub_542DF0(stru_64B898.description, &stru_5C4730, font);
 
-                    if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
+                    if (map_by_type(MAP_TYPE_START_MAP) == stru_64B898.map) {
                         area = area_get_nearest_area_in_range(stru_64B898.pc_location, true);
-                    } else if (!map_get_area(stru_64B898.field_340, &area)) {
+                    } else if (!map_get_area(stru_64B898.map, &area)) {
                         area = 0;
                     }
 

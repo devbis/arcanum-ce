@@ -1470,7 +1470,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
     strcpy(save_info->pc_name, pc_name);
     FREE(pc_name);
 
-    save_info->field_340 = map_current_map();
+    save_info->map = map_current_map();
     save_info->pc_portrait = portrait_get(pc_obj);
     save_info->pc_level = stat_level_get(pc_obj, STAT_LEVEL);
     save_info->pc_location = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
@@ -1528,7 +1528,7 @@ bool gamelib_saveinfo_save(GameSaveInfo* save_info)
             if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
             if (tig_file_fwrite(save_info->pc_name, size, 1, stream) != 1) break;
 
-            if (tig_file_fwrite(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->map), sizeof(save_info->map), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
             if (tig_file_fwrite(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
@@ -1579,7 +1579,7 @@ bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
         if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
         if (tig_file_fread(save_info->pc_name, size, 1, stream) != 1) break;
 
-        if (tig_file_fread(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->map), sizeof(save_info->map), 1, stream) != 1) break;
         if (tig_file_fread(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
         if (tig_file_fread(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
         if (tig_file_fread(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;

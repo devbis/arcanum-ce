@@ -68,7 +68,7 @@ typedef struct GameSaveInfo {
     /* 031C */ int field_31C;
     /* 0320 */ DateTime datetime;
     /* 0328 */ char pc_name[24];
-    /* 0340 */ int field_340;
+    /* 0340 */ int map;
     /* 0344 */ int field_344;
     /* 0348 */ int field_348;
     /* 034C */ int field_34C;
