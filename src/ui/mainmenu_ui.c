@@ -44,6 +44,12 @@
 #include "ui/wmap_rnd.h"
 #include "ui/wmap_ui.h"
 
+typedef enum MainMenuUiNewCharHoverMode {
+    MMUI_NEW_CHAR_HOVER_MODE_BACKGROUND,
+    MMUI_NEW_CHAR_HOVER_MODE_GENDER,
+    MMUI_NEW_CHAR_HOVER_MODE_RACE,
+} MainMenuUiNewCharHoverMode;
+
 typedef struct S64B870 {
     /* 0000 */ tig_art_id_t art_id;
     /* 0004 */ int max_frame;
@@ -107,7 +113,7 @@ static void mainmenu_ui_create_single_player();
 static void mainmenu_ui_pick_new_or_pregen_create();
 static void mainmenu_ui_new_char_create();
 static void mainmenu_ui_new_char_refresh(TigRect* rect);
-static void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect);
+static void mmUISharedCharRefreshFunc(int64_t obj, TigRect* rect);
 static bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle);
 static bool mainmenu_ui_new_char_next_background(int64_t obj, int* background_ptr);
 static bool mainmenu_ui_new_char_prev_background(int64_t obj, int* background_ptr);
@@ -971,28 +977,28 @@ static MainMenuWindowInfo mainmenu_ui_new_char_window_info = {
 };
 
 // 0x5C4EC0
-static TigRect stru_5C4EC0 = { 339, 23, 409, 19 };
+static TigRect mainmenu_ui_shared_char_stats_title_rect = { 339, 23, 409, 19 };
 
 // 0x5C4ED0
-static TigRect stru_5C4ED0 = { 46, 183, 228, 19 };
+static TigRect mainmenu_ui_shared_char_name_rect = { 46, 183, 228, 19 };
 
 // 0x5C4EE0
-static TigRect stru_5C4EE0 = { 46, 183, 228, 18 };
+static TigRect mainmenu_ui_new_char_name_rect = { 46, 183, 228, 18 };
 
 // 0x5C4EF0
-static TigRect stru_5C4EF0 = { 66, 243, 186, 19 };
+static TigRect mainmenu_ui_shared_char_gender_rect = { 66, 243, 186, 19 };
 
 // 0x5C4F00
-static TigRect stru_5C4F00 = { 22, 231, 276, 39 };
+static TigRect mainmenu_ui_new_char_gender_hover_rect = { 22, 231, 276, 39 };
 
 // 0x5C4F10
-static TigRect stru_5C4F10 = { 66, 293, 186, 19 };
+static TigRect mainmenu_ui_shared_char_race_rect = { 66, 293, 186, 19 };
 
 // 0x5C4F20
-static TigRect stru_5C4F20 = { 22, 281, 276, 40 };
+static TigRect mainmenu_ui_new_char_race_hover_rect = { 22, 281, 276, 40 };
 
 // 0x5C4F30
-static TigRect stru_5C4F30 = { 66, 343, 186, 19 };
+static TigRect mainmenu_ui_shared_char_background_rect = { 66, 343, 186, 19 };
 
 // 0x5C4F40
 static TigRect stru_5C4F40 = { 22, 331, 276, 40 };
@@ -1020,22 +1026,22 @@ static TigRect stru_5C4F50[15] = {
 static TigRect stru_5C5040 = { 618, 105, 145, 15 };
 
 // 0x5C5050
-static TigRect stru_5C5050 = { 346, 46, 729, 74 };
+static TigRect mainmenu_ui_shared_char_stats_view_rect = { 346, 46, 729, 74 };
 
 // 0x5C5060
-static TigRect stru_5C5060 = { 95, 28, 64, 64 };
+static TigRect mainmenu_ui_shared_char_portrait_rect = { 95, 28, 64, 64 };
 
 // 0x5C5070
-static TigRect stru_5C5070 = { 350, 155, 395, 212 };
+static TigRect mainmenu_ui_shared_char_desc_view_rect = { 350, 155, 395, 212 };
 
 // 0x5C5080
-static TigRect stru_5C5080 = { 350, 159, 395, 19 };
+static TigRect mainmenu_ui_shared_char_desc_title_rect = { 350, 159, 395, 19 };
 
 // 0x5C5090
-static TigRect stru_5C5090 = { 350, 185, 395, 182 };
+static TigRect mainmenu_ui_shared_char_desc_body_rect = { 350, 185, 395, 182 };
 
 // 0x5C50A0
-static MainMenuButtonInfo stru_5C50A0 = {
+static MainMenuButtonInfo mainmenu_ui_new_char_name_button = {
     45,
     224,
     -1,
@@ -1378,7 +1384,7 @@ static bool dword_64C450;
 static ChareditMode dword_64C454;
 
 // 0x64C458
-static int dword_64C458;
+static MainMenuUiNewCharHoverMode mainmenu_ui_new_char_hover_mode;
 
 // 0x64C460
 static int64_t qword_64C460;
@@ -3546,7 +3552,7 @@ void mainmenu_ui_new_char_create()
 {
     PlayerCreateInfo player_create_info;
 
-    dword_64C458 = 0;
+    mainmenu_ui_new_char_hover_mode = MMUI_NEW_CHAR_HOVER_MODE_BACKGROUND;
     mainmenu_ui_window_type = MM_WINDOW_NEW_CHAR;
 
     player_create_info_init(&player_create_info);
@@ -3558,7 +3564,7 @@ void mainmenu_ui_new_char_create()
     }
 
     mainmenu_ui_create_window();
-    if (!main_menu_button_create(&stru_5C50A0, stru_5C4EE0.width + 2, stru_5C4EE0.height + 2)) {
+    if (!main_menu_button_create(&mainmenu_ui_new_char_name_button, mainmenu_ui_new_char_name_rect.width + 2, mainmenu_ui_new_char_name_rect.height + 2)) {
         tig_debug_printf("MainMenu-UI: mainmenu_ui_create_new_char: ERROR: Failed to create button.\n");
     }
 }
@@ -3571,14 +3577,14 @@ void mainmenu_ui_new_char_refresh(TigRect* rect)
     MesFileEntry mes_file_entry;
 
     pc_obj = player_get_local_pc_obj();
-    mmUINewCharRefreshFunc(pc_obj, rect);
+    mmUISharedCharRefreshFunc(pc_obj, rect);
 
     if (rect == NULL
-        || (stru_5C4ED0.x < rect->x + rect->width
-            && stru_5C4ED0.y < rect->y + rect->height
-            && rect->x < stru_5C4ED0.x + stru_5C4ED0.width
-            && rect->y < stru_5C4ED0.y + stru_5C4ED0.height)) {
-        if (tig_window_fill(dword_5C3624, &stru_5C4ED0, tig_color_make(0, 0, 0)) != TIG_OK) {
+        || (mainmenu_ui_shared_char_name_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_name_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_name_rect.x + mainmenu_ui_shared_char_name_rect.width
+            && rect->y < mainmenu_ui_shared_char_name_rect.y + mainmenu_ui_shared_char_name_rect.height)) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_name_rect, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("MainMenu-UI: mmUINewCharRefreshFunc: ERROR: Window Fill Failed.\n");
         }
 
@@ -3589,15 +3595,15 @@ void mainmenu_ui_new_char_refresh(TigRect* rect)
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
         if (textedit_ui_is_focused()) {
-            sub_544100(str, &stru_5C4ED0, dword_64C218[1]);
+            sub_544100(str, &mainmenu_ui_shared_char_name_rect, dword_64C218[1]);
         } else {
-            sub_542DF0(str, &stru_5C4ED0, dword_64C218[1]);
+            sub_542DF0(str, &mainmenu_ui_shared_char_name_rect, dword_64C218[1]);
         }
     }
 }
 
 // 0x5448E0
-void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
+void mmUISharedCharRefreshFunc(int64_t obj, TigRect* rect)
 {
     int race;
     int gender;
@@ -3612,80 +3618,86 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
     gender = stat_level_get(obj, STAT_GENDER);
 
     if (rect == NULL
-        || (stru_5C5060.x < rect->x + rect->width
-            && stru_5C5060.y < rect->y + rect->height
-            && rect->x < stru_5C5060.x + stru_5C5060.width
-            && rect->y < stru_5C5060.y + stru_5C5060.height)) {
+        || (mainmenu_ui_shared_char_portrait_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_portrait_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_portrait_rect.x + mainmenu_ui_shared_char_portrait_rect.width
+            && rect->y < mainmenu_ui_shared_char_portrait_rect.y + mainmenu_ui_shared_char_portrait_rect.height)) {
         portrait = portrait_get(obj);
-        if (tig_window_fill(dword_5C3624, &stru_5C5060, tig_color_make(0, 0, 0)) != TIG_OK) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_portrait_rect, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("MainMenu-UI: mmUINewCharRefreshFunc: ERROR: Window Fill #0 Failed.\n");
         }
-        portrait_draw_128x128(obj, portrait, dword_5C3624, stru_5C5060.x, stru_5C5060.y);
+        portrait_draw_128x128(obj,
+            portrait,
+            dword_5C3624,
+            mainmenu_ui_shared_char_portrait_rect.x,
+            mainmenu_ui_shared_char_portrait_rect.y);
     }
 
     font = dword_64C218[0];
     tig_font_push(font);
     if (rect == NULL
-        || (stru_5C4EF0.x < rect->x + rect->width
-            && stru_5C4EF0.y < rect->y + rect->height
-            && rect->x < stru_5C4EF0.x + stru_5C4EF0.width
-            && rect->y < stru_5C4EF0.y + stru_5C4EF0.height)) {
-        if (tig_window_fill(dword_5C3624, &stru_5C4EF0, tig_color_make(0, 0, 0)) == TIG_OK) {
+        || (mainmenu_ui_shared_char_gender_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_gender_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_gender_rect.x + mainmenu_ui_shared_char_gender_rect.width
+            && rect->y < mainmenu_ui_shared_char_gender_rect.y + mainmenu_ui_shared_char_gender_rect.height)) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_gender_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
             mes_file_entry.num = 740 + gender; // "Female", "Male"
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-            sub_542DF0(mes_file_entry.str, &stru_5C4EF0, font);
+            sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_gender_rect, font);
         }
     }
 
     if (rect == NULL
-        || (stru_5C4F10.x < rect->x + rect->width
-            && stru_5C4F10.y < rect->y + rect->height
-            && rect->x < stru_5C4F10.x + stru_5C4F10.width
-            && rect->y < stru_5C4F10.y + stru_5C4F10.height)) {
-        if (tig_window_fill(dword_5C3624, &stru_5C4F10, tig_color_make(0, 0, 0)) == TIG_OK) {
-            mes_file_entry.num = 720 + race;
+        || (mainmenu_ui_shared_char_race_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_race_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_race_rect.x + mainmenu_ui_shared_char_race_rect.width
+            && rect->y < mainmenu_ui_shared_char_race_rect.y + mainmenu_ui_shared_char_race_rect.height)) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_race_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
+            mes_file_entry.num = 720 + race; // "Human", "Dwarf", "Elf", etc.
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-            sub_542DF0(mes_file_entry.str, &stru_5C4F10, font);
+            sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_race_rect, font);
         }
     }
 
     if (rect == NULL
-        || (stru_5C4F30.x < rect->x + rect->width
-            && stru_5C4F30.y < rect->y + rect->height
-            && rect->x < stru_5C4F30.x + stru_5C4F30.width
-            && rect->y < stru_5C4F30.y + stru_5C4F30.height)) {
-        if (tig_window_fill(dword_5C3624, &stru_5C4F30, tig_color_make(0, 0, 0)) == TIG_OK) {
+        || (mainmenu_ui_shared_char_background_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_background_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_background_rect.x + mainmenu_ui_shared_char_background_rect.width
+            && rect->y < mainmenu_ui_shared_char_background_rect.y + mainmenu_ui_shared_char_background_rect.height)) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_background_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
             background = background_text_get(obj);
             sub_542DF0(background_description_get_name(background),
-                &stru_5C4F30,
+                &mainmenu_ui_shared_char_background_rect,
                 font);
         }
     }
     tig_font_pop();
 
     if (rect == NULL
-        || (stru_5C5070.x < rect->x + rect->width
-            && stru_5C5070.y < rect->y + rect->height
-            && rect->x < stru_5C5070.x + stru_5C5070.width
-            && rect->y < stru_5C5070.y + stru_5C5070.height)) {
-        if (tig_window_fill(dword_5C3624, &stru_5C5070, tig_color_make(0, 0, 0)) == TIG_OK) {
-            if (dword_64C458 == 1) {
+        || (mainmenu_ui_shared_char_desc_view_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_desc_view_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_desc_view_rect.x + mainmenu_ui_shared_char_desc_view_rect.width
+            && rect->y < mainmenu_ui_shared_char_desc_view_rect.y + mainmenu_ui_shared_char_desc_view_rect.height)) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_desc_view_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
+            if (mainmenu_ui_new_char_hover_mode == MMUI_NEW_CHAR_HOVER_MODE_GENDER) {
                 font = dword_64C210[0];
                 tig_font_push(font);
                 mes_file_entry.num = 742 + gender;
                 mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                 if (mes_file_entry.str[0] != '\0') {
-                    sub_542DF0(mes_file_entry.str, &stru_5C5090, font);
+                    sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_desc_body_rect, font);
                 } else {
                     tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
                 }
                 tig_font_pop();
             } else {
                 background = background_text_get(obj);
-                if (background > 1000 && dword_64C458 == 0) {
+                if (background > 1000 && mainmenu_ui_new_char_hover_mode == MMUI_NEW_CHAR_HOVER_MODE_BACKGROUND) {
                     font = dword_64C210[0];
                     tig_font_push(font);
-                    sub_542DF0(background_description_get_body(background), &stru_5C5070, font);
+                    sub_542DF0(background_description_get_body(background),
+                        &mainmenu_ui_shared_char_desc_view_rect,
+                        font);
                     tig_font_pop();
                 } else {
                     font = dword_64C210[1];
@@ -3693,7 +3705,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
                     mes_file_entry.num = 745; // "Race"
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                     if (mes_file_entry.str[0] != '\0') {
-                        sub_542DF0(mes_file_entry.str, &stru_5C5080, font);
+                        sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_desc_title_rect, font);
                     } else {
                         tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
                     }
@@ -3704,7 +3716,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
                     mes_file_entry.num = 770 + 2 * race + gender;;
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                     if (mes_file_entry.str[0] != '\0') {
-                        sub_542DF0(mes_file_entry.str, &stru_5C5090, font);
+                        sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_desc_body_rect, font);
                     } else {
                         tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
                     }
@@ -3715,16 +3727,18 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
     }
 
     if (rect == NULL
-        || (stru_5C5050.x < rect->x + rect->width
-            && stru_5C5050.y < rect->y + rect->height
-            && rect->x < stru_5C5050.x + stru_5C5050.width
-            && rect->y < stru_5C5050.y + stru_5C5050.height)) {
+        || (mainmenu_ui_shared_char_stats_view_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_stats_view_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_stats_view_rect.x + mainmenu_ui_shared_char_stats_view_rect.width
+            && rect->y < mainmenu_ui_shared_char_stats_view_rect.y + mainmenu_ui_shared_char_stats_view_rect.height)) {
         font = dword_64C210[1];
         tig_font_push(font);
-        if (tig_window_fill(dword_5C3624, &stru_5C4EC0, tig_color_make(0, 0, 0)) == TIG_OK) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_stats_title_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
             mes_file_entry.num = 739; // "Initial Stats"
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-            sub_542DF0(mes_file_entry.str, &stru_5C4EC0, font);
+            sub_542DF0(mes_file_entry.str,
+                &mainmenu_ui_shared_char_stats_title_rect,
+                font);
         }
         tig_font_pop();
 
@@ -3759,7 +3773,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
     }
 
     if (index >= 10) {
-        if (button_handle == stru_5C50A0.button_handle
+        if (button_handle == mainmenu_ui_new_char_name_button.button_handle
             && sub_549520() == NULL) {
             strcpy(byte_64C0F0, byte_64C2F8);
             byte_64C2F8[0] = '\0';
@@ -3791,7 +3805,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
             portrait_find_last(pc_obj, &portrait);
         }
         obj_field_int32_set(pc_obj, OBJ_F_CRITTER_PORTRAIT, portrait);
-        window->refresh_func(&stru_5C5060);
+        window->refresh_func(&mainmenu_ui_shared_char_portrait_rect);
         return true;
     case 3:
         portrait = portrait_get(pc_obj);
@@ -3799,7 +3813,7 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
             portrait_find_first(pc_obj, &portrait);
         }
         obj_field_int32_set(pc_obj, OBJ_F_CRITTER_PORTRAIT, portrait);
-        window->refresh_func(&stru_5C5060);
+        window->refresh_func(&mainmenu_ui_shared_char_portrait_rect);
         return true;
     case 4:
         if (mainmenu_ui_new_char_prev_race(pc_obj)) {
@@ -4058,26 +4072,26 @@ bool mainmenu_ui_new_char_button_leave(tig_button_handle_t button_handle)
 // 0x5456B0
 void mainmenu_ui_new_char_mouse_idle(int x, int y)
 {
-    int v1;
+    MainMenuUiNewCharHoverMode mode;
 
     y -= 43;
-    if (x >= stru_5C4F00.x
-        && y >= stru_5C4F00.y
-        && x < stru_5C4F00.x + stru_5C4F00.width
-        && y < stru_5C4F00.y + stru_5C4F00.height) {
-        v1 = 1;
-    } else if (x >= stru_5C4F20.x
-        && y >= stru_5C4F20.y
-        && x < stru_5C4F20.x + stru_5C4F20.width
-        && y < stru_5C4F20.y + stru_5C4F20.height) {
-        v1 = 2;
+    if (x >= mainmenu_ui_new_char_gender_hover_rect.x
+        && y >= mainmenu_ui_new_char_gender_hover_rect.y
+        && x < mainmenu_ui_new_char_gender_hover_rect.x + mainmenu_ui_new_char_gender_hover_rect.width
+        && y < mainmenu_ui_new_char_gender_hover_rect.y + mainmenu_ui_new_char_gender_hover_rect.height) {
+        mode = MMUI_NEW_CHAR_HOVER_MODE_GENDER;
+    } else if (x >= mainmenu_ui_new_char_race_hover_rect.x
+        && y >= mainmenu_ui_new_char_race_hover_rect.y
+        && x < mainmenu_ui_new_char_race_hover_rect.x + mainmenu_ui_new_char_race_hover_rect.width
+        && y < mainmenu_ui_new_char_race_hover_rect.y + mainmenu_ui_new_char_race_hover_rect.height) {
+        mode = MMUI_NEW_CHAR_HOVER_MODE_RACE;
     } else {
-        v1 = 0;
+        mode = MMUI_NEW_CHAR_HOVER_MODE_BACKGROUND;
     }
 
-    if (dword_64C458 != v1) {
-        dword_64C458 = v1;
-        main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C5070);
+    if (mainmenu_ui_new_char_hover_mode != mode) {
+        mainmenu_ui_new_char_hover_mode = mode;
+        main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&mainmenu_ui_shared_char_desc_view_rect);
     }
 }
 
@@ -4124,17 +4138,17 @@ void mainmenu_ui_pregen_char_refresh(TigRect* rect)
 {
     char* name;
 
-    mmUINewCharRefreshFunc(qword_64C460, rect);
+    mmUISharedCharRefreshFunc(qword_64C460, rect);
     if (rect == NULL
-        || (stru_5C4ED0.x < rect->x + rect->width
-            && stru_5C4ED0.y < rect->y + rect->height
-            && rect->x < stru_5C4ED0.x + stru_5C4ED0.width
-            && rect->y < stru_5C4ED0.y + stru_5C4ED0.height)) {
+        || (mainmenu_ui_shared_char_name_rect.x < rect->x + rect->width
+            && mainmenu_ui_shared_char_name_rect.y < rect->y + rect->height
+            && rect->x < mainmenu_ui_shared_char_name_rect.x + mainmenu_ui_shared_char_name_rect.width
+            && rect->y < mainmenu_ui_shared_char_name_rect.y + mainmenu_ui_shared_char_name_rect.height)) {
         tig_font_push(dword_64C218[1]);
-        if (tig_window_fill(dword_5C3624, &stru_5C4ED0, tig_color_make(0, 0, 0)) == TIG_OK) {
+        if (tig_window_fill(dword_5C3624, &mainmenu_ui_shared_char_name_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
             obj_field_string_get(qword_64C460, OBJ_F_PC_PLAYER_NAME, &name);
             if (name != NULL) {
-                sub_542DF0(name, &stru_5C4ED0, dword_64C218[1]);
+                sub_542DF0(name, &mainmenu_ui_shared_char_name_rect, dword_64C218[1]);
                 FREE(name);
             }
         }
