@@ -534,17 +534,17 @@ bool name_missing_art_load()
         return false;
     }
 
-    if (tig_file_fread(missing_critter_art, sizeof(*missing_critter_art), num_critter_art, stream) < num_critter_art) {
+    if (tig_file_fread(missing_critter_art, sizeof(*missing_critter_art), num_critter_art, stream) < (size_t)num_critter_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fread(missing_monster_art, sizeof(*missing_monster_art), num_monster_art, stream) < num_monster_art) {
+    if (tig_file_fread(missing_monster_art, sizeof(*missing_monster_art), num_monster_art, stream) < (size_t)num_monster_art) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (tig_file_fread(missing_unique_npc_art, sizeof(*missing_unique_npc_art), num_unique_npc_art, stream) < num_monster_art) {
+    if (tig_file_fread(missing_unique_npc_art, sizeof(*missing_unique_npc_art), num_unique_npc_art, stream) < (size_t)num_monster_art) {
         tig_file_fclose(stream);
         return false;
     }
