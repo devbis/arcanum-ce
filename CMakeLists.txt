@@ -44,6 +44,7 @@ set(SRCS
     "src/game/combat.c"
     "src/game/combat.h"
     "src/game/context.h"
+    "src/game/criticals.h"
     "src/game/critter.c"
     "src/game/critter.h"
     "src/game/curse.c"

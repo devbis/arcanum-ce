@@ -8,6 +8,7 @@
 #include "game/anim.h"
 #include "game/animfx.h"
 #include "game/ci.h"
+#include "game/criticals.h"
 #include "game/critter.h"
 #include "game/descriptions.h"
 #include "game/effect.h"
@@ -2420,9 +2421,9 @@ void combat_process_crit_hit(CombatContext* combat)
     int target_obj_type;
     int attacker_obj_type;
     bool npc_attacks_pc;
-    int crit_hit_chart;
+    CritHitType crit_hit_type;
     int chance;
-    int critter_crit_hit_chart;
+    CritBodyType crit_body_type;
     unsigned int critter_flags;
     int64_t helmet_obj;
     int difficulty;
@@ -2452,18 +2453,18 @@ void combat_process_crit_hit(CombatContext* combat)
     npc_attacks_pc = target_obj_type == OBJ_TYPE_PC
         && attacker_obj_type == OBJ_TYPE_NPC;
 
-    critter_crit_hit_chart = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
+    crit_body_type = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-        crit_hit_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_HIT_CHART);
+        crit_hit_type = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_HIT_CHART);
         if ((combat->flags & 0x20000) == 0) {
             chance = item_adjust_magic(combat->weapon_obj,
                 combat->attacker_obj,
                 obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT));
         }
     } else {
-        crit_hit_chart = 1;
+        crit_hit_type = CRIT_HIT_TYPE_CRUSHING;
         chance = 0;
     }
 
@@ -2483,14 +2484,15 @@ void combat_process_crit_hit(CombatContext* combat)
         }
     }
 
-    if (critter_crit_hit_chart != 2) {
+    if (crit_body_type != CRIT_BODY_TYPE_AMORPHOUS) {
         critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
         if ((critter_flags & OCF_UNDEAD) == 0) {
             helmet_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_HELMET);
 
             difficulty = chance + 5;
 
-            if (crit_hit_chart == 1 || crit_hit_chart == 3) {
+            if (crit_hit_type == CRIT_HIT_TYPE_CRUSHING
+                || crit_hit_type == CRIT_HIT_TYPE_ELECTRICAL) {
                 difficulty += 10;
             }
 
@@ -2512,8 +2514,8 @@ void combat_process_crit_hit(CombatContext* combat)
 
             // NOTE: Not sure how to reimplement it without goto.
             do {
-                if (critter_crit_hit_chart != 4) {
-                    if (critter_crit_hit_chart != 5 && combat->hit_loc == HIT_LOC_ARM) {
+                if (crit_body_type != CRIT_BODY_TYPE_SNAKE) {
+                    if (crit_body_type != CRIT_BODY_TYPE_AVIAN && combat->hit_loc == HIT_LOC_ARM) {
                         if (random_between(1, 100) <= chance + 1
                             && !critter_check_stat(combat->target_obj, STAT_CONSTITUTION, -5)) {
                             combat->dam_flags |= CDF_CRIPPLE_ARM;
@@ -2531,7 +2533,7 @@ void combat_process_crit_hit(CombatContext* combat)
                 }
 
                 if (combat->hit_loc == HIT_LOC_HEAD) {
-                    if (crit_hit_chart == 1) {
+                    if (crit_hit_type == CRIT_HIT_TYPE_CRUSHING) {
                         if (helmet_obj != OBJ_HANDLE_NULL
                             && random_between(1, 100) <= chance + 5) {
                             combat->dam_flags |= CDF_DROP_HELMET;
@@ -2556,10 +2558,10 @@ void combat_process_crit_hit(CombatContext* combat)
             }
         }
 
-        if (critter_crit_hit_chart == 0) {
+        if (crit_body_type == CRIT_BODY_TYPE_BIPED) {
             difficulty = chance + 5;
 
-            if (crit_hit_chart == 1) {
+            if (crit_hit_type == CRIT_HIT_TYPE_CRUSHING) {
                 difficulty += 5;
             }
 
@@ -2597,12 +2599,12 @@ void combat_process_crit_hit(CombatContext* combat)
 // 0x4B6410
 void combat_process_crit_miss(CombatContext* combat)
 {
-    int crit_miss_chart;
+    CritMissType crit_miss_type;
     int chance;
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL) {
         if (obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-            crit_miss_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_MISS_CHART);
+            crit_miss_type = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_MISS_CHART);
             if ((combat->flags & 0x20000) == 0) {
                 chance = item_adjust_magic(combat->weapon_obj,
                     combat->attacker_obj,
@@ -2611,11 +2613,11 @@ void combat_process_crit_miss(CombatContext* combat)
                 chance = 0;
             }
         } else {
-            crit_miss_chart = 1;
+            crit_miss_type = CRIT_MISS_TYPE_BLUDGEON;
             chance = 0;
         }
     } else {
-        crit_miss_chart = 5;
+        crit_miss_type = CRIT_MISS_TYPE_HANDS;
         chance = 0;
     }
 
@@ -2631,13 +2633,14 @@ void combat_process_crit_miss(CombatContext* combat)
 
     if (random_between(1, 100) <= 50) {
         combat->flags |= CF_CRITICAL;
-        if (crit_miss_chart != 5 && random_between(1, 100) <= chance + 1) {
+        if (crit_miss_type != CRIT_MISS_TYPE_HANDS
+            && random_between(1, 100) <= chance + 1) {
             combat->dam_flags |= CDF_DESTROY_WEAPON;
         }
 
-        if ((crit_miss_chart == 6
-                || crit_miss_chart == 7
-                || crit_miss_chart == 8)
+        if ((crit_miss_type == CRIT_MISS_TYPE_EXPLOSIVE
+                || crit_miss_type == CRIT_MISS_TYPE_FIRE
+                || crit_miss_type == CRIT_MISS_TYPE_ELECTRICAL)
             && random_between(1, 100) <= chance + 1) {
             combat->dam_flags |= CDF_EXPLODE_WEAPON;
         }

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "game/criticals.h"
 #include "game/critter.h"
 #include "game/damage_type.h"
 #include "game/descriptions.h"
@@ -150,43 +151,43 @@ static int race_to_body_type_tbl[RACE_COUNT] = {
 
 // 0x5B38C8
 static const char* off_5B38C8[] = {
-    "Description",
-    "Internal Name",
-    "Level",
-    "Art Number and Palette",
-    "Scale",
-    "Alignment",
-    "Critter Flag",
-    "Critter2 Flag",
-    "NPC Flag",
-    "Blit Flag",
-    "Spell Flag",
-    "Hit Chart",
-    "Basic Stat",
-    "Spell",
-    "Faction",
-    "AI Packet",
-    "Material",
-    "Hit Points",
-    "Script",
-    "Damage Resistance",
-    "Fire Resistance",
-    "Electrical Resistance",
-    "Poison Resistance",
-    "Magic Resistance",
-    "Normal Damage",
-    "Poison Damage",
-    "Electrical Damage",
-    "Fire Damage",
-    "Fatigue Damage",
-    "Sound Bank",
-    "Inventory Source",
-    "Portrait",
-    "Retail Price Multiplier",
-    "Social Class",
-    "Object Flag",
-    "Auto Level Scheme",
-    "Category",
+    /*             PROTO_F_DESCRIPTION */ "Description",
+    /*           PROTO_F_INTERNAL_NAME */ "Internal Name",
+    /*                   PROTO_F_LEVEL */ "Level",
+    /*  PROTO_F_ART_NUMBER_AND_PALETTE */ "Art Number and Palette",
+    /*                   PROTO_F_SCALE */ "Scale",
+    /*               PROTO_F_ALIGNMENT */ "Alignment",
+    /*            PROTO_F_CRITTER_FLAG */ "Critter Flag",
+    /*           PROTO_F_CRITTER2_FLAG */ "Critter2 Flag",
+    /*                PROTO_F_NPC_FLAG */ "NPC Flag",
+    /*               PROTO_F_BLIT_FLAG */ "Blit Flag",
+    /*              PROTO_F_SPELL_FLAG */ "Spell Flag",
+    /*               PROTO_F_HIT_CHART */ "Hit Chart",
+    /*              PROTO_F_BASIC_STAT */ "Basic Stat",
+    /*                   PROTO_F_SPELL */ "Spell",
+    /*                 PROTO_F_FACTION */ "Faction",
+    /*               PROTO_F_AI_PACKET */ "AI Packet",
+    /*                PROTO_F_MATERIAL */ "Material",
+    /*              PROTO_F_HIT_POINTS */ "Hit Points",
+    /*                  PROTO_F_SCRIPT */ "Script",
+    /*       PROTO_F_DAMAGE_RESISTANCE */ "Damage Resistance",
+    /*         PROTO_F_FIRE_RESISTANCE */ "Fire Resistance",
+    /*   PROTO_F_ELECTRICAL_RESISTANCE */ "Electrical Resistance",
+    /*       PROTO_F_POISON_RESISTANCE */ "Poison Resistance",
+    /*        PROTO_F_MAGIC_RESISTANCE */ "Magic Resistance",
+    /*           PROTO_F_NORMAL_DAMAGE */ "Normal Damage",
+    /*           PROTO_F_POISON_DAMAGE */ "Poison Damage",
+    /*       PROTO_F_ELECTRICAL_DAMAGE */ "Electrical Damage",
+    /*             PROTO_F_FIRE_DAMAGE */ "Fire Damage",
+    /*          PROTO_F_FATIGUE_DAMAGE */ "Fatigue Damage",
+    /*              PROTO_F_SOUND_BANK */ "Sound Bank",
+    /*        PROTO_F_INVENTORY_SOURCE */ "Inventory Source",
+    /*                PROTO_F_PORTRAIT */ "Portrait",
+    /* PROTO_F_RETAIL_PRICE_MULTIPLIER */ "Retail Price Multiplier",
+    /*            PROTO_F_SOCIAL_CLASS */ "Social Class",
+    /*             PROTO_F_OBJECT_FLAG */ "Object Flag",
+    /*       PROTO_F_AUTO_LEVEL_SCHEME */ "Auto Level Scheme",
+    /*                PROTO_F_CATEGORY */ "Category",
 };
 
 // 0x5B395C
@@ -1618,8 +1619,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1647,8 +1648,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1675,8 +1676,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1703,8 +1704,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1731,8 +1732,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -1762,8 +1763,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -1792,8 +1793,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -1821,8 +1822,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1852,8 +1853,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -1881,8 +1882,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, TECH_SMITHY);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
@@ -1913,8 +1914,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -1945,8 +1946,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 3);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 8);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_ELECTRICAL);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_ELECTRICAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_ELECTRICAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_ELECTRICAL, 40);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
@@ -1974,8 +1975,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_FIRE);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_FIRE);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FIRE, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_FIRE, 30);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 5070);
@@ -2004,8 +2005,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2034,8 +2035,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 6);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_EXPLOSIVE);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 16);
@@ -2064,8 +2065,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
@@ -2096,8 +2097,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2128,8 +2129,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2159,8 +2160,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -2189,8 +2190,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -2220,8 +2221,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_FIRE);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_FIRE);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FIRE, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_FIRE, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_ELECTRICAL, 5);
@@ -2252,8 +2253,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -2279,8 +2280,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2309,8 +2310,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2338,8 +2339,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2369,8 +2370,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2401,8 +2402,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2434,8 +2435,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2463,8 +2464,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -2492,8 +2493,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -2517,8 +2518,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2546,8 +2547,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2575,8 +2576,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2604,8 +2605,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2633,8 +2634,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -2663,8 +2664,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2698,8 +2699,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2731,8 +2732,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2759,8 +2760,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -2787,8 +2788,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -2817,8 +2818,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -2847,8 +2848,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2880,8 +2881,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2914,8 +2915,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2942,8 +2943,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -2970,8 +2971,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -2998,8 +2999,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3026,8 +3027,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 7);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3054,8 +3055,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3084,8 +3085,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3115,8 +3116,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_FIRE);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3147,8 +3148,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
@@ -3179,8 +3180,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3211,8 +3212,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
@@ -3241,8 +3242,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3272,8 +3273,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3303,8 +3304,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3334,8 +3335,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3365,8 +3366,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3395,8 +3396,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3426,8 +3427,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 4);
@@ -3455,8 +3456,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3484,8 +3485,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3513,8 +3514,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3542,8 +3543,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 6);
@@ -3571,8 +3572,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3603,8 +3604,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3637,8 +3638,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3669,8 +3670,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3699,8 +3700,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 25);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3729,8 +3730,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -3762,8 +3763,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3795,8 +3796,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3825,8 +3826,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3856,8 +3857,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3887,8 +3888,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 6);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3918,8 +3919,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 25);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -3950,8 +3951,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -3981,8 +3982,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4012,8 +4013,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4043,8 +4044,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4074,8 +4075,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4107,8 +4108,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -4136,8 +4137,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -4169,8 +4170,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -4204,8 +4205,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -4239,8 +4240,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -4269,8 +4270,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
@@ -4301,8 +4302,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4329,8 +4330,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 35);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4359,8 +4360,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4392,8 +4393,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4426,8 +4427,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4457,8 +4458,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4490,8 +4491,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -4524,8 +4525,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -4558,8 +4559,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -4593,8 +4594,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, TECH_ELECTRIC);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
@@ -4625,8 +4626,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4656,8 +4657,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4689,8 +4690,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4722,8 +4723,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4755,8 +4756,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, TECH_SMITHY);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
@@ -4787,8 +4788,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, TECH_ELECTRIC);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
@@ -4819,8 +4820,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, TECH_SMITHY);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
@@ -4851,8 +4852,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4883,8 +4884,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4916,8 +4917,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 13);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 13);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -4950,8 +4951,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 13);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_HANDLED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -4984,8 +4985,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5018,8 +5019,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5052,8 +5053,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5085,8 +5086,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5119,8 +5120,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5154,8 +5155,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5189,8 +5190,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5224,8 +5225,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5260,8 +5261,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FIRE, 5);
@@ -5294,8 +5295,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5328,8 +5329,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5361,8 +5362,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5394,8 +5395,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5427,8 +5428,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BOWS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 2);
@@ -5459,8 +5460,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 5);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 5);
@@ -5490,8 +5491,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5522,8 +5523,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 4);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 3);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 8);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_ELECTRICAL);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_ELECTRICAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_ELECTRICAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_ELECTRICAL, 80);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 44);
@@ -5552,8 +5553,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 6);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_FIRE);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_EXPLOSIVE);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FIRE, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_FIRE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
@@ -5583,8 +5584,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 3);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5617,8 +5618,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 6);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 60);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 5);
@@ -5648,8 +5649,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5681,8 +5682,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
@@ -5712,8 +5713,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5745,8 +5746,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5778,8 +5779,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5811,8 +5812,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 3);
@@ -5845,8 +5846,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
@@ -5875,8 +5876,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5907,8 +5908,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5940,8 +5941,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -5971,8 +5972,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -6004,8 +6005,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -6037,8 +6038,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -6070,8 +6071,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 40);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
@@ -6100,8 +6101,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 14);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CUTTING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 25);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 6);
@@ -6129,8 +6130,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_ELECTRICAL, 10);
@@ -6160,8 +6161,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_GUNS);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 25);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -6191,8 +6192,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_CRUSHING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLUDGEON);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_FATIGUE, 1);
@@ -6219,8 +6220,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -6248,8 +6249,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -6278,8 +6279,8 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_RANGE, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MIN_STRENGTH, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
-            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, CRIT_HIT_TYPE_IMPALING);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, CRIT_MISS_TYPE_BLADED);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, DAMAGE_TYPE_NORMAL, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, DAMAGE_TYPE_NORMAL, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
@@ -15705,7 +15706,7 @@ void sub_468930(int64_t obj, int description)
         break;
     case OBJ_TYPE_PC:
         obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
-        obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
+        obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, CRIT_BODY_TYPE_BIPED);
         tig_art_light_id_create(6, 0, 0, 1, &rgb);
         obj_field_int32_set(obj, OBJ_F_SHADOW, rgb);
         switch (description) {
@@ -15988,7 +15989,7 @@ void sub_49B010(int64_t obj, int description)
     Script scr;
     int exp;
 
-    obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
+    obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, CRIT_BODY_TYPE_BIPED);
 
     switch (description) {
     case BP_BASIC_FEMALE_NPC:
@@ -16162,7 +16163,7 @@ int sub_49B5A0(TigFile* stream, int64_t obj, int type)
     int v4;
 
     if (obj != 0) {
-        obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
+        obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, CRIT_BODY_TYPE_BIPED);
         obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
         obj_field_int32_set(obj, OBJ_F_NPC_REACTION_BASE, 50);
         obj_field_int32_set(obj, OBJ_F_NPC_WAIT, 2);
@@ -16540,7 +16541,7 @@ void sub_49C060(int64_t obj, TigFile* stream, int type)
         OFS_COUNT);
 
     value = obj_field_int32_get(obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
-    if (value != 0) {
+    if (value != CRIT_BODY_TYPE_BIPED) {
         tig_file_fprintf(stream, "%s: %d\n",
             off_5B38C8[PROTO_F_HIT_CHART],
             value);
