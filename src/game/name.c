@@ -46,133 +46,133 @@ static int dword_5A106C[] = {
 };
 
 // 0x5A10B8
-static int name_check_anims[] = {
-    1,
-    6,
-    23,
-    0,
-    21,
-    21,
-    21,
-    21,
-    21,
-    21,
-    21,
-    21,
-    21,
-    21,
-    17,
-    18,
-    19,
-    24,
-    3,
+static TigArtAnim name_check_anims[] = {
+    TIG_ART_ANIM_WALK,
+    TIG_ART_ANIM_RUN,
+    TIG_ART_ANIM_STUNNED,
+    TIG_ART_ANIM_STAND,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_ATTACK_LOW,
+    TIG_ART_ANIM_DECAPITATION,
+    TIG_ART_ANIM_BLOWN_OUT_CHUNK,
+    TIG_ART_ANIM_SEVERED_LEG,
+    TIG_ART_ANIM_EXPLODE,
+    TIG_ART_ANIM_STEALTH_WALK,
 };
 
 // 0x5A1104
-static int name_check_weapons[] = {
-    1,
-    1,
-    1,
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    10,
-    13,
-    1,
-    1,
-    1,
-    1,
-    0,
+static TigArtWeaponType name_check_weapons[] = {
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_NO_WEAPON,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_DAGGER,
+    TIG_ART_WEAPON_TYPE_SWORD,
+    TIG_ART_WEAPON_TYPE_AXE,
+    TIG_ART_WEAPON_TYPE_MACE,
+    TIG_ART_WEAPON_TYPE_PISTOL,
+    TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD,
+    TIG_ART_WEAPON_TYPE_BOW,
+    TIG_ART_WEAPON_TYPE_RIFLE,
+    TIG_ART_WEAPON_TYPE_STAFF,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_UNARMED,
+    TIG_ART_WEAPON_TYPE_NO_WEAPON,
 };
 
 // 0x5A1150
-static int dword_5A1150[] = {
-    1,
-    1,
-    0,
-    0,
-    20,
-    20,
-    20,
-    20,
-    20,
-    20,
-    20,
-    20,
-    20,
-    20,
-    7,
-    7,
-    7,
-    7,
-    1,
+static TigArtAnim dword_5A1150[] = {
+    TIG_ART_ANIM_WALK,
+    TIG_ART_ANIM_WALK,
+    TIG_ART_ANIM_STAND,
+    TIG_ART_ANIM_STAND,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_ATTACK,
+    TIG_ART_ANIM_FALL_DOWN,
+    TIG_ART_ANIM_FALL_DOWN,
+    TIG_ART_ANIM_FALL_DOWN,
+    TIG_ART_ANIM_FALL_DOWN,
+    TIG_ART_ANIM_WALK,
 };
 
 // 0x5A119C
-static char byte_5A119C[2] = {
+static char name_shielding_codes[2] = {
     'X',
     'S',
 };
 
 // 0x5A11A0
-static char byte_5A11A0[3] = {
+static char name_gender_codes[3] = {
     'F',
     'M',
     'X',
 };
 
 // 0x5A11A4
-static const char *off_5A11A4[] = {
-    "HM",
-    "DF",
-    "GH",
-    "HG",
-    "EF",
+static const char *name_body_type_strs[TIG_ART_CRITTER_BODY_TYPE_COUNT] = {
+    /*     TIG_ART_CRITTER_BODY_TYPE_HUMAN */ "HM",
+    /*     TIG_ART_CRITTER_BODY_TYPE_DWARF */ "DF",
+    /*  TIG_ART_CRITTER_BODY_TYPE_HALFLING */ "GH",
+    /* TIG_ART_CRITTER_BODY_TYPE_HALF_OGRE */ "HG",
+    /*       TIG_ART_CRITTER_BODY_TYPE_ELF */ "EF",
 };
 
 // 0x5A11B8
-static const char *off_5A11B8[] = {
-    "UW",
-    "V1",
-    "LA",
-    "CM",
-    "PM",
-    "RB",
-    "PC",
-    "BN",
-    "CD",
+static const char *name_armor_type_strs[TIG_ART_ARMOR_TYPE_COUNT] = {
+    /*     TIG_ART_ARMOR_TYPE_UNDERWEAR */ "UW",
+    /*      TIG_ART_ARMOR_TYPE_VILLAGER */ "V1",
+    /*       TIG_ART_ARMOR_TYPE_LEATHER */ "LA",
+    /*         TIG_ART_ARMOR_TYPE_CHAIN */ "CM",
+    /*         TIG_ART_ARMOR_TYPE_PLATE */ "PM",
+    /*          TIG_ART_ARMOR_TYPE_ROBE */ "RB",
+    /* TIG_ART_ARMOR_TYPE_PLATE_CLASSIC */ "PC",
+    /*     TIG_ART_ARMOR_TYPE_BARBARIAN */ "BN",
+    /*  TIG_ART_ARMOR_TYPE_CITY_DWELLER */ "CD",
 };
 
 // 0x5A11DC
-static char byte_5A11DC[15] = {
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'X',
-    'Y',
-    'N',
-    'Z',
+static char name_weapon_type_codes[TIG_ART_WEAPON_TYPE_COUNT] = {
+    /*        TIG_ART_WEAPON_TYPE_NO_WEAPON */ 'A',
+    /*          TIG_ART_WEAPON_TYPE_UNARMED */ 'B',
+    /*           TIG_ART_WEAPON_TYPE_DAGGER */ 'C',
+    /*            TIG_ART_WEAPON_TYPE_SWORD */ 'D',
+    /*              TIG_ART_WEAPON_TYPE_AXE */ 'E',
+    /*             TIG_ART_WEAPON_TYPE_MACE */ 'F',
+    /*           TIG_ART_WEAPON_TYPE_PISTOL */ 'G',
+    /* TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD */ 'H',
+    /*              TIG_ART_WEAPON_TYPE_BOW */ 'I',
+    /*                TIG_ART_WEAPON_TYPE_9 */ 'J',
+    /*            TIG_ART_WEAPON_TYPE_RIFLE */ 'K',
+    /*               TIG_ART_WEAPON_TYPE_11 */ 'X',
+    /*               TIG_ART_WEAPON_TYPE_12 */ 'Y',
+    /*            TIG_ART_WEAPON_TYPE_STAFF */ 'N',
+    /*               TIG_ART_WEAPON_TYPE_14 */ 'Z',
 };
 
 // 0x5A11EC
-static char byte_5A11EC[3] = {
-    'F',
-    'B',
-    'U',
+static char name_eye_candy_type_codes[TIG_ART_EYE_CANDY_TYPE_COUNT] = {
+    /* TIG_ART_EYE_CANDY_TYPE_FOREGROUND_OVERLAY */ 'F',
+    /* TIG_ART_EYE_CANDY_TYPE_BACKGROUND_OVERLAY */ 'B',
+    /*           TIG_ART_EYE_CANDY_TYPE_UNDERLAY */ 'U',
 };
 
 // 0x5D55F0
@@ -430,19 +430,19 @@ void name_missing_art_init()
                     missing_critter_art[num] |= dword_5A106C[idx];
                     tig_debug_printf("Unable to create valid art id for critter %d (%s%c) using animation %d (%c%c)\n",
                         num,
-                        off_5A11A4[num / 2],
-                        byte_5A11A0[num & 1],
+                        name_body_type_strs[num / 2],
+                        name_gender_codes[num & 1],
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     missing_critter_art[num] |= dword_5A106C[idx];
                     tig_debug_printf("Missing art for critter %d (%s%c) using animation %d (%c%c)\n",
                         num,
-                        off_5A11A4[num / 2],
-                        byte_5A11A0[num & 1],
+                        name_body_type_strs[num / 2],
+                        name_gender_codes[num & 1],
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
@@ -458,7 +458,7 @@ void name_missing_art_init()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     missing_monster_art[num] |= dword_5A106C[idx];
@@ -470,7 +470,7 @@ void name_missing_art_init()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
@@ -486,7 +486,7 @@ void name_missing_art_init()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 } else if (tig_art_exists(aid) != TIG_OK) {
                     missing_unique_npc_art[num] |= dword_5A106C[idx];
@@ -498,7 +498,7 @@ void name_missing_art_init()
                         num,
                         mes_file_entry.str,
                         name_check_anims[idx],
-                        byte_5A11DC[name_check_weapons[idx]],
+                        name_weapon_type_codes[name_check_weapons[idx]],
                         'a' + name_check_anims[idx]);
                 }
             }
@@ -849,6 +849,16 @@ void fix_missing_art(int num, int cnt, unsigned int* missing, int* anim_ptr, int
 int name_resolve_path(tig_art_id_t aid, char* path)
 {
     MesFileEntry mes_file_entry;
+    int armor_type;
+    int body_type;
+    int anim;
+    int shield;
+    int weapon;
+    char gender_code;
+    const char* body_type_str;
+    const char* armor_type_str;
+    char shield_code;
+    char weapon_code;
 
     if (!name_initialized) {
         return TIG_ERR_IO;
@@ -867,60 +877,51 @@ int name_resolve_path(tig_art_id_t aid, char* path)
             return TIG_ERR_GENERIC;
         }
         return TIG_OK;
-    case TIG_ART_TYPE_CRITTER: {
-        int armor;
-        int body_type;
-        char v3;
-        int anim;
-        const char* v5;
-        const char* v6;
-        int shield;
-        char v8;
-        int weapon;
-        char v10;
-
-        armor = tig_art_critter_id_armor_get(aid);
-        if (armor >= TIG_ART_ARMOR_TYPE_COUNT) {
+    case TIG_ART_TYPE_CRITTER:
+        armor_type = tig_art_critter_id_armor_get(aid);
+        if (armor_type >= TIG_ART_ARMOR_TYPE_COUNT) {
             return TIG_ERR_GENERIC;
         }
 
         body_type = tig_art_critter_id_body_type_get(aid);
-        if (armor == TIG_ART_ARMOR_TYPE_PLATE
-            || armor == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
-            v3 = byte_5A11A0[2];
+        if (armor_type == TIG_ART_ARMOR_TYPE_PLATE
+            || armor_type == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
+            gender_code = name_gender_codes[2];
         } else {
-            v3 = byte_5A11A0[tig_art_critter_id_gender_get(aid)];
+            gender_code = name_gender_codes[tig_art_critter_id_gender_get(aid)];
         }
+
         anim = tig_art_id_anim_get(aid);
-        v5 = off_5A11A4[body_type];
-        if (anim == 24) {
-            v6 = "XX";
-            v3 = byte_5A11A0[2];
+        body_type_str = name_body_type_strs[body_type];
+        if (anim == TIG_ART_ANIM_EXPLODE) {
+            armor_type_str = "XX";
+            gender_code = name_gender_codes[2];
         } else {
-            v6 = off_5A11B8[armor];
+            armor_type_str = name_armor_type_strs[armor_type];
         }
+
         shield = tig_art_critter_id_shield_get(aid);
-        v8 = byte_5A119C[shield];
+        shield_code = name_shielding_codes[shield];
+
         weapon = tig_art_critter_id_weapon_get(aid);
         if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
             && shield == 1) {
-            v10 = byte_5A11DC[3];
+            weapon_code = name_weapon_type_codes[TIG_ART_WEAPON_TYPE_SWORD];
         } else {
-            v10 = byte_5A11DC[weapon];
+            weapon_code = name_weapon_type_codes[weapon];
         }
 
         sprintf(path,
             "art\\critter\\%s%c\\%s%c%s%c%c%c.art",
-            v5,
-            v3,
-            v5,
-            v3,
-            v6,
-            v8,
-            v10,
+            body_type_str,
+            gender_code,
+            body_type_str,
+            gender_code,
+            armor_type_str,
+            shield_code,
+            weapon_code,
             'a' + anim);
         return TIG_OK;
-    }
     case TIG_ART_TYPE_PORTAL:
         if (!a_name_portal_aid_to_fname(aid, path)) {
             return TIG_ERR_GENERIC;
@@ -967,50 +968,35 @@ int name_resolve_path(tig_art_id_t aid, char* path)
             return TIG_ERR_GENERIC;
         }
         return TIG_OK;
-    case TIG_ART_TYPE_MONSTER: {
-        int anim;
-        int armor;
-        const char* v3;
-        int shield;
-        char v5;
-        int weapon;
-        char v7;
-
+    case TIG_ART_TYPE_MONSTER:
         mes_file_entry.num = tig_art_monster_id_specie_get(aid);
         if (!mes_search(name_monster_mes_file, &mes_file_entry)) {
             return TIG_ERR_GENERIC;
         }
 
         anim = tig_art_id_anim_get(aid);
-        armor = tig_art_critter_id_armor_get(aid);
-        v3 = anim != 24 ? off_5A11B8[armor] : "XX";
+        armor_type = tig_art_critter_id_armor_get(aid);
+        armor_type_str = anim != TIG_ART_ANIM_EXPLODE ? name_armor_type_strs[armor_type] : "XX";
         shield = tig_art_critter_id_shield_get(aid);
-        v5 = byte_5A119C[shield];
+        shield_code = name_shielding_codes[shield];
         weapon = tig_art_critter_id_weapon_get(aid);
         if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
             && shield == 1) {
-            v7 = byte_5A11DC[3];
+            weapon_code = name_weapon_type_codes[TIG_ART_WEAPON_TYPE_SWORD];
         } else {
-            v7 = byte_5A11DC[weapon];
+            weapon_code = name_weapon_type_codes[weapon];
         }
 
         sprintf(path,
             "art\\monster\\%s\\%s%s%c%c%c.art",
             mes_file_entry.str,
             mes_file_entry.str,
-            v3,
-            v5,
-            v7,
+            armor_type_str,
+            shield_code,
+            weapon_code,
             'a' + anim);
         return TIG_OK;
-    }
-    case TIG_ART_TYPE_UNIQUE_NPC: {
-        int anim;
-        int shield;
-        char v3;
-        int weapon;
-        char v5;
-
+    case TIG_ART_TYPE_UNIQUE_NPC:
         mes_file_entry.num = tig_art_num_get(aid);
         if (!mes_search(name_unique_npc_mes_file, &mes_file_entry)) {
             return TIG_ERR_GENERIC;
@@ -1018,24 +1004,23 @@ int name_resolve_path(tig_art_id_t aid, char* path)
 
         anim = tig_art_id_anim_get(aid);
         shield = tig_art_critter_id_shield_get(aid);
-        v3 = byte_5A119C[shield];
+        shield_code = name_shielding_codes[shield];
         weapon = tig_art_critter_id_weapon_get(aid);
         if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
             && shield == 1) {
-            v5 = byte_5A11DC[3];
+            weapon_code = name_weapon_type_codes[TIG_ART_WEAPON_TYPE_SWORD];
         } else {
-            v5 = byte_5A11DC[weapon];
+            weapon_code = name_weapon_type_codes[weapon];
         }
 
         sprintf(path,
             "art\\unique_npc\\%s\\%s%c%c%c.art",
             mes_file_entry.str,
             mes_file_entry.str,
-            v3,
-            v5,
+            shield_code,
+            weapon_code,
             'a' + anim);
         return TIG_OK;
-    }
     case TIG_ART_TYPE_EYE_CANDY:
         mes_file_entry.num = tig_art_num_get(aid);
         if (!mes_search(name_eye_candy_mes_file, &mes_file_entry)) {
@@ -1044,7 +1029,7 @@ int name_resolve_path(tig_art_id_t aid, char* path)
         sprintf(path,
             "art\\eye_candy\\%s_%c.art",
             mes_file_entry.str,
-            byte_5A11EC[tig_art_eye_candy_id_type_get(aid)]);
+            name_eye_candy_type_codes[tig_art_eye_candy_id_type_get(aid)]);
         return TIG_OK;
     default:
         return TIG_ERR_GENERIC;
