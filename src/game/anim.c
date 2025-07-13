@@ -7834,7 +7834,7 @@ bool sub_42A720(AnimRunInfo* run_info)
             ai_attack(v1, node->obj, LOUDNESS_NORMAL, 0);
 
             if (combat_turn_based_is_active()
-                && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != sub_4B80D0()) {
+                && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != combat_turn_based_turn_get()) {
                 v2 = true;
                 combat.dam[DAMAGE_TYPE_NORMAL] *= 2;
                 combat.dam[DAMAGE_TYPE_FIRE] *= 2;
@@ -7849,7 +7849,7 @@ bool sub_42A720(AnimRunInfo* run_info)
     object_list_destroy(&objects);
 
     if (v2) {
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data = sub_4B80D0();
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data = combat_turn_based_turn_get();
     }
 
     return true;

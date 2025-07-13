@@ -162,7 +162,7 @@ static bool combat_fast_turn_based;
 static int combat_turn_based_active;
 
 // 0x5FC230
-static int dword_5FC230;
+static int combat_turn_based_turn;
 
 // 0x5FC234
 static int combat_action_points;
@@ -262,7 +262,7 @@ bool combat_save(TigFile* stream)
     if (stream == NULL) return false;
     if (tig_file_fwrite(&combat_turn_based, sizeof(combat_turn_based), 1, stream) != 1) return false;
     if (tig_file_fwrite(&combat_turn_based_active, sizeof(combat_turn_based_active), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_5FC230, sizeof(dword_5FC230), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&combat_turn_based_turn, sizeof(combat_turn_based_turn), 1, stream) != 1) return false;
 
     if (!combat_turn_based_active) {
         return true;
@@ -299,7 +299,7 @@ bool combat_load(GameLoadInfo* load_info)
     if (load_info->stream == NULL) return false;
     if (tig_file_fread(&combat_turn_based, sizeof(combat_turn_based), 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&combat_turn_based_active, sizeof(combat_turn_based_active), 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_5FC230, sizeof(dword_5FC230), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&combat_turn_based_turn, sizeof(combat_turn_based_turn), 1, load_info->stream) != 1) return false;
 
     if (!combat_turn_based_active) {
         return true;
@@ -3219,7 +3219,7 @@ bool combat_turn_based_start()
         return true;
     }
 
-    dword_5FC230 = 0;
+    combat_turn_based_turn = 0;
 
     if (!anim_goal_interrupt_all_for_tb_combat()) {
         tig_debug_printf("Combat: TB_Start: Anim-Goal-Interrupt FAILED!\n");
@@ -3293,7 +3293,7 @@ bool combat_turn_based_begin_turn()
 
     dword_5FC250 = 0;
     pc_obj = player_get_local_pc_obj();
-    dword_5FC230++;
+    combat_turn_based_turn++;
     pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
     sub_4B7300();
 
@@ -3861,9 +3861,9 @@ bool sub_4B8040(int64_t obj)
 }
 
 // 0x4B80D0
-int sub_4B80D0()
+int combat_turn_based_turn_get()
 {
-    return dword_5FC230;
+    return combat_turn_based_turn;
 }
 
 // 0x4B80E0
