@@ -350,7 +350,7 @@ void sub_56EFA0(int a1)
     rect.width = combat_ui_compact_ap_bar_frame.width;
     rect.height = combat_ui_compact_ap_bar_frame.height;
 
-    action_points = sub_4B7C20();
+    action_points = combat_required_action_points_get();
     v4 = a1 - action_points;
     if (v4 >= 25) {
         v1 = 0;
@@ -475,7 +475,7 @@ void sub_56F430(int a1)
     }
 
     if (a1 != 0) {
-        action_points = sub_4B7C20();
+        action_points = combat_required_action_points_get();
         orange = action_points;
         green = a1 - action_points;
         if (green >= TWENTY) {

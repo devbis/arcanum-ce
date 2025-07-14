@@ -4732,7 +4732,7 @@ void sub_551910(TigMessage* msg)
                 && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
                 && v1.is_loc
                 && intgame_mode_get() == INTGAME_MODE_MAIN) {
-                sub_4B7830(player_get_local_pc_obj(), v1.loc);
+                combat_check_move_to(player_get_local_pc_obj(), v1.loc);
             }
         }
     }
@@ -4804,13 +4804,13 @@ bool intgame_mode_set(IntgameMode mode)
             v1 = true;
             v17 = true;
             spell_ui_cancel();
-            sub_4B7AA0(player_get_local_pc_obj());
+            combat_check_cast_spell(player_get_local_pc_obj());
             break;
         case INTGAME_MODE_SKILL:
             v1 = true;
             v17 = true;
             skill_ui_cancel();
-            sub_4B7AE0(player_get_local_pc_obj());
+            combat_check_use_skill(player_get_local_pc_obj());
             break;
         case INTGAME_MODE_DIALOG:
             sub_551A10(pc_obj);
@@ -8103,57 +8103,57 @@ void intgame_big_window_unlock()
 }
 
 // 0x557370
-void sub_557370(int64_t a1, int64_t a2)
+void sub_557370(int64_t source_obj, int64_t target_obj)
 {
     unsigned int spell_flags;
     unsigned int critter_flags;
-    int obj_type;
+    int target_obj_type;
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (source_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    if (!critter_is_active(a1)) {
+    if (!critter_is_active(source_obj)) {
         return;
     }
 
-    if (a2 == a1) {
+    if (target_obj == source_obj) {
         return;
     }
 
-    spell_flags = obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS);
-    critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
+    spell_flags = obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS);
+    critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
 
     if ((spell_flags & OSF_STONED) != 0
         || (critter_flags & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
         return;
     }
 
-    obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    target_obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
 
     // NOTE: The code below omit some unused checks from the original code. I'm
     // not sure if it's a bug or not.
     switch (intgame_mode_get()) {
     case INTGAME_MODE_MAIN:
         if (sub_573620() == OBJ_HANDLE_NULL) {
-            switch (obj_type) {
+            switch (target_obj_type) {
             case OBJ_TYPE_WALL:
             case OBJ_TYPE_PORTAL:
             case OBJ_TYPE_SCENERY:
                 if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
-                    sub_4B78D0(a1, a2);
+                    combat_check_attack(source_obj, target_obj);
                 } else {
                     if ((spell_flags & OSF_POLYMORPHED) == 0) {
-                        sub_4B79A0(a1, a2);
+                        combat_check_use_obj(source_obj, target_obj);
                     }
                 }
                 break;
             case OBJ_TYPE_CONTAINER:
                 if ((spell_flags & OSF_POLYMORPHED) == 0) {
                     if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
-                        sub_4B78D0(a1, a2);
+                        combat_check_attack(source_obj, target_obj);
                     } else {
-                        sub_4B79A0(a1, a2);
+                        combat_check_use_obj(source_obj, target_obj);
                     }
                 }
                 break;
@@ -8168,32 +8168,32 @@ void sub_557370(int64_t a1, int64_t a2)
             case OBJ_TYPE_WRITTEN:
             case OBJ_TYPE_GENERIC:
                 if ((spell_flags & OSF_POLYMORPHED) == 0) {
-                    sub_4B7A20(a1, a2);
+                    combat_check_pick_item(source_obj, target_obj);
                 }
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
-                if (critter_is_dead(a2)) {
+                if (critter_is_dead(target_obj)) {
                     if (tig_kb_get_modifier(SDL_KMOD_ALT)) {
-                        sub_4B79A0(a1, a2);
+                        combat_check_use_obj(source_obj, target_obj);
                     }
                 } else {
-                    if (!player_is_local_pc_obj(critter_pc_leader_get(a2)) || tig_kb_get_modifier(SDL_KMOD_LALT)) {
-                        sub_4B78D0(a1, a2);
+                    if (!player_is_local_pc_obj(critter_pc_leader_get(target_obj)) || tig_kb_get_modifier(SDL_KMOD_LALT)) {
+                        combat_check_attack(source_obj, target_obj);
                     }
                 }
                 break;
             case OBJ_TYPE_TRAP:
-                sub_4B7830(a1, obj_field_int64_get(a2, OBJ_F_LOCATION));
+                combat_check_move_to(source_obj, obj_field_int64_get(target_obj, OBJ_F_LOCATION));
                 break;
             }
         }
         break;
     case INTGAME_MODE_SPELL:
-        sub_4B7AA0(a1);
+        combat_check_cast_spell(source_obj);
         break;
     case INTGAME_MODE_SKILL:
-        sub_4B7AE0(a1);
+        combat_check_use_skill(source_obj);
         break;
     }
 }

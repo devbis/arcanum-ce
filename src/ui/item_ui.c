@@ -110,7 +110,7 @@ void item_ui_activate(int64_t owner_obj, int64_t item_obj)
         return;
     }
 
-    if (sub_4B7790(owner_obj, 4)) {
+    if (combat_check_action_points(owner_obj, 4)) {
         sub_4F25B0(*tgt_ptr);
         if (intgame_mode_set(INTGAME_MODE_ITEM)) {
             sub_4F25B0(*tgt_ptr);

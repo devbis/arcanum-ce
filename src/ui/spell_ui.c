@@ -208,7 +208,7 @@ SpellUiActivate spell_ui_activate(int64_t obj, int spl)
         return SPELL_UI_ACTIVATE_ERR;
     }
 
-    if (!sub_4B7AA0(qword_683500)) {
+    if (!combat_check_cast_spell(qword_683500)) {
         dword_683508 = false;
         return false;
     }

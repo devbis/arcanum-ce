@@ -69,7 +69,7 @@ static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
-static int sub_4B7BA0(int64_t obj, int64_t a2, bool a3);
+static int combat_move_cost(int64_t source_obj, int64_t target_loc, bool adjacent);
 static bool sub_4B7DC0(int64_t obj);
 static void sub_4B7EB0();
 static void pc_switch_weapon(int64_t pc_obj, int64_t target_obj);
@@ -174,7 +174,7 @@ static int64_t qword_5FC238;
 static ObjectNode* dword_5FC240;
 
 // 0x5FC244
-static int dword_5FC244;
+static int combat_required_action_points;
 
 // 0x5FC248
 static int64_t qword_5FC248;
@@ -280,7 +280,7 @@ bool combat_save(TigFile* stream)
     oid = obj_get_id(dword_5FC240->obj);
     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
 
-    if (tig_file_fwrite(&dword_5FC244, sizeof(dword_5FC244), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&combat_required_action_points, sizeof(combat_required_action_points), 1, stream) != 1) return false;
 
     oid = obj_get_id(qword_5FC248);
     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
@@ -340,9 +340,9 @@ bool combat_load(GameLoadInfo* load_info)
 
     dword_5FC240 = node;
 
-    if (tig_file_fread(&dword_5FC244, sizeof(dword_5FC244), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&combat_required_action_points, sizeof(combat_required_action_points), 1, load_info->stream) != 1) return false;
 
-    dword_5FC244 = 0;
+    combat_required_action_points = 0;
 
     if (tig_file_fread(&oid, sizeof(oid), 1, load_info->stream) != 1) return false;
     qword_5FC248 = objp_perm_lookup(oid);
@@ -3198,7 +3198,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
             sub_4B7CD0(dword_5FC240->obj, combat_action_points);
         }
 
-        if (combat_get_action_points() <= 0) {
+        if (combat_action_points_get() <= 0) {
             combat_turn_based_next_subturn();
         }
     }
@@ -3365,7 +3365,7 @@ void combat_turn_based_subturn_start()
     if (dword_5FC240 != NULL) {
         combat_debug(dword_5FC240->obj, "SubTurn Start");
         combat_turn_based_whos_turn_set(dword_5FC240->obj);
-        sub_4B7790(dword_5FC240->obj, 0);
+        combat_check_action_points(dword_5FC240->obj, 0);
     } else {
         tig_debug_printf("Combat: combat_turn_based_subturn_start: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
         combat_turn_based_end();
@@ -3434,13 +3434,13 @@ void combat_turn_based_end_turn()
 }
 
 // 0x4B7780
-int combat_get_action_points()
+int combat_action_points_get()
 {
     return combat_action_points;
 }
 
 // 0x4B7790
-bool sub_4B7790(int64_t obj, int a2)
+bool combat_check_action_points(int64_t obj, int required_action_points)
 {
     bool is_pc;
 
@@ -3452,18 +3452,20 @@ bool sub_4B7790(int64_t obj, int a2)
         return true;
     }
 
-    dword_5FC244 = a2;
+    combat_required_action_points = required_action_points;
 
     is_pc = player_is_local_pc_obj(obj);
     if (is_pc) {
         combat_callbacks.field_C(combat_action_points);
     }
 
-    if (combat_action_points >= a2) {
+    if (combat_action_points >= required_action_points) {
         return true;
     }
 
-    if (combat_action_points > 0 && is_pc && critter_fatigue_current(obj) > 1) {
+    if (combat_action_points > 0
+        && is_pc
+        && critter_fatigue_current(obj) > 1) {
         return true;
     }
 
@@ -3471,154 +3473,160 @@ bool sub_4B7790(int64_t obj, int a2)
 }
 
 // 0x4B7830
-bool sub_4B7830(int64_t a1, int64_t a2)
+bool combat_check_move_to(int64_t source_obj, int64_t target_loc)
 {
     int type;
 
     if (!combat_turn_based_active) {
-        return sub_4B7790(a1, 0);
+        return combat_check_action_points(source_obj, 0);
     }
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(source_obj, OBJ_F_TYPE);
     if (obj_type_is_item(type)
-        && (obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_INVENTORY) != 0
-        && obj_field_handle_get(a1, OBJ_F_ITEM_PARENT) != OBJ_HANDLE_NULL) {
-        return sub_4B7790(a1, 0);
+        && (obj_field_int32_get(source_obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0
+        && obj_field_handle_get(source_obj, OBJ_F_ITEM_PARENT) != OBJ_HANDLE_NULL) {
+        return combat_check_action_points(source_obj, 0);
     }
 
-    return sub_4B7790(a1, sub_4B7BA0(a1, a2, 0));
+    return combat_check_action_points(source_obj, combat_move_cost(source_obj, target_loc, false));
 }
 
 // 0x4B78D0
-bool sub_4B78D0(int64_t a1, int64_t a2)
+bool combat_check_attack(int64_t source_obj, int64_t target_obj)
 {
-    int v1;
+    int action_points;
     int64_t weapon_obj;
-    int64_t loc1;
-    int64_t loc2;
+    int64_t source_loc;
+    int64_t target_loc;
 
     if (!combat_turn_based_active) {
-        return sub_4B7790(a1, 0);
+        return combat_check_action_points(source_obj, 0);
     }
 
-    v1 = sub_4B7C30(a1);
-    weapon_obj = item_wield_get(a1, ITEM_INV_LOC_WEAPON);
-    if (weapon_obj == OBJ_HANDLE_NULL || item_weapon_range(weapon_obj, a1) <= 1) {
-        loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
-        loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
-        if (location_dist(loc1, loc2) > 1) {
-            v1 += sub_4B7BA0(a1, loc2, 1);
+    action_points = combat_attack_cost(source_obj);
+
+    weapon_obj = item_wield_get(source_obj, ITEM_INV_LOC_WEAPON);
+    if (weapon_obj == OBJ_HANDLE_NULL
+        || item_weapon_range(weapon_obj, source_obj) <= 1) {
+        source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+        target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+        if (location_dist(source_loc, target_loc) > 1) {
+            action_points += combat_move_cost(source_obj, target_loc, true);
         }
     }
 
-    return v1;
+    return combat_check_action_points(source_obj, action_points);
 }
 
 // 0x4B79A0
-bool sub_4B79A0(int64_t a1, int64_t a2)
+bool combat_check_use_obj(int64_t source_obj, int64_t target_obj)
 {
-    int64_t loc1;
-    int64_t loc2;
-    int v1;
+    int64_t source_loc;
+    int64_t target_loc;
+    int action_points;
 
     if (!combat_turn_based_active) {
-        return sub_4B7790(a1, 0);
+        return combat_check_action_points(source_obj, 0);
     }
 
-    v1 = 2;
-    loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
-    loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
-    if (loc1 != loc2) {
-        v1 += sub_4B7BA0(a1, loc2, true);
+    action_points = 2;
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    if (source_loc != target_loc) {
+        action_points += combat_move_cost(source_obj, target_loc, true);
     }
-    return sub_4B7790(a1, v1);
+
+    return combat_check_action_points(source_obj, action_points);
 }
 
 // 0x4B7A20
-bool sub_4B7A20(int64_t a1, int64_t a2)
+bool combat_check_pick_item(int64_t source_obj, int64_t target_obj)
 {
-    int64_t loc1;
-    int64_t loc2;
-    int v1;
+    int64_t source_loc;
+    int64_t target_loc;
+    int action_points;
 
     if (!combat_turn_based_active) {
-        return sub_4B7790(a1, 0);
+        return combat_check_action_points(source_obj, 0);
     }
 
-    v1 = 1;
-    loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
-    loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
-    if (loc1 != loc2) {
-        v1 += sub_4B7BA0(a1, loc2, false);
+    action_points = 1;
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    if (source_loc != target_loc) {
+        action_points += combat_move_cost(source_obj, target_loc, false);
     }
-    return sub_4B7790(a1, v1);
+
+    return combat_check_action_points(source_obj, action_points);
 }
 
 // 0x4B7AA0
-bool sub_4B7AA0(int64_t obj)
+bool combat_check_cast_spell(int64_t source_obj)
 {
-    if (combat_turn_based_active) {
-        return sub_4B7790(obj, 4);
-    } else {
-        return sub_4B7790(obj, 0);
+    if (!combat_turn_based_active) {
+        return combat_check_action_points(source_obj, 0);
     }
+
+    return combat_check_action_points(source_obj, 4);
 }
 
 // 0x4B7AE0
-bool sub_4B7AE0(int64_t obj)
+bool combat_check_use_skill(int64_t source_obj)
 {
-    if (combat_turn_based_active) {
-        return sub_4B7790(obj, 4);
-    } else {
-        return sub_4B7790(obj, 0);
+    if (!combat_turn_based_active) {
+        return combat_check_action_points(source_obj, 0);
     }
+
+    return combat_check_action_points(source_obj, 4);
 }
 
 // 0x4B7BA0
-int sub_4B7BA0(int64_t obj, int64_t a2, bool a3)
+int combat_move_cost(int64_t source_obj, int64_t target_loc, bool adjacent)
 {
-    int v1;
+    int mult;
 
-    v1 = 2;
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        && get_always_run(obj)) {
-        v1 = 1;
+    mult = 2;
+    if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && get_always_run(source_obj)) {
+        mult = 1;
     }
 
-    if (a3) {
-        return v1 * sub_426250(obj, a2);
+    if (adjacent) {
+        return mult * sub_426250(source_obj, target_loc);
     } else {
-        return v1 * sub_4261E0(obj, a2);
+        return mult * sub_4261E0(source_obj, target_loc);
     }
 }
 
 // 0x4B7C20
-int sub_4B7C20()
+int combat_required_action_points_get()
 {
-    return dword_5FC244;
+    return combat_required_action_points;
 }
 
 // 0x4B7C30
-int sub_4B7C30(int64_t obj)
+int combat_attack_cost(int64_t obj)
 {
     int64_t weapon_obj;
     int speed;
-    int v1;
+    int action_points;
 
     weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
     speed = item_weapon_magic_speed(weapon_obj, obj);
     if (speed > 24) {
-        v1 = 1;
+        action_points = 1;
     } else if (speed > 20) {
-        v1 = 2;
+        action_points = 2;
     } else {
-        v1 = 8 - speed / 3;
-        if (v1 < 1) {
-            v1 = 1;
+        action_points = 8 - speed / 3;
+        if (action_points < 1) {
+            action_points = 1;
         }
     }
 
-    return v1;
+    return action_points;
 }
 
 // 0x4B7C90

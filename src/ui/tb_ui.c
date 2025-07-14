@@ -265,28 +265,28 @@ void sub_57CC70(int64_t a1, int64_t a2)
 }
 
 // 0x57CCF0
-void sub_57CCF0(int64_t a1, int64_t a2)
+void sub_57CCF0(int64_t source_obj, int64_t target_obj)
 {
     char buffer[2000];
 
-    if (sub_57CD60(a1, a2, buffer)) {
-        sub_553BE0(a1, a2, buffer);
-        sub_557370(a1, a2);
+    if (sub_57CD60(source_obj, target_obj, buffer)) {
+        sub_553BE0(source_obj, target_obj, buffer);
+        sub_557370(source_obj, target_obj);
     }
 }
 
 // 0x57CD60
-bool sub_57CD60(int64_t a1, int64_t a2, char* buffer)
+bool sub_57CD60(int64_t source_obj, int64_t target_obj, char* buffer)
 {
-    if (!player_is_local_pc_obj(a1)) {
+    if (!player_is_local_pc_obj(source_obj)) {
         return false;
     }
 
-    if (!object_script_execute(a1, a2, OBJ_HANDLE_NULL, SAP_EXAMINE, 0)) {
+    if (!object_script_execute(source_obj, target_obj, OBJ_HANDLE_NULL, SAP_EXAMINE, 0)) {
         return false;
     }
 
-    object_examine(a2, a1, buffer);
+    object_examine(target_obj, source_obj, buffer);
 
     return true;
 }
