@@ -2356,7 +2356,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         return NEXT;
     }
     case SAT_GET_SCROLL_DISTANCE:
-        script_set_value(action->op_type[0], action->op_value[0], state, scroll_get_distance());
+        script_set_value(action->op_type[0], action->op_value[0], state, scroll_distance_get());
         return NEXT;
     case SAT_GET_MAGICTECH_ADJUSTMENT_EX: {
         int value = script_get_value(action->op_type[0], action->op_value[0], state);

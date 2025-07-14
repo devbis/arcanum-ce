@@ -224,17 +224,17 @@ int main(int argc, char** argv)
     pch = strstr(lpCmdLine, "-scrollfps:");
     if (pch != NULL) {
         value = atoi(pch + 11);
-        scroll_set_fps(value);
+        scroll_fps_set(value);
     } else {
-        scroll_set_fps(35);
+        scroll_fps_set(35);
     }
 
     pch = strstr(lpCmdLine, "-scrolldist:");
     if (pch != NULL) {
         value = atoi(pch + 12);
-        scroll_set_distance(value);
+        scroll_distance_set(value);
     } else {
-        scroll_set_distance(10);
+        scroll_distance_set(10);
     }
 
     pch = strstr(lpCmdLine, "-mod:");

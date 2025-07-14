@@ -4,6 +4,13 @@
 #include "game/context.h"
 #include "game/location.h"
 
+typedef enum ScrollSpeed {
+    SCROLL_SPEED_SLOW,
+    SCROLL_SPEED_NORMAL,
+    SCROLL_SPEED_FAST,
+    SCROLL_SPEED_VERY_FAST,
+} ScrollSpeed;
+
 typedef enum ScrollDirection {
     SCROLL_DIRECTION_UP,
     SCROLL_DIRECTION_UP_RIGHT,
@@ -22,13 +29,13 @@ void scroll_exit();
 void scroll_reset();
 void scroll_resize(GameResizeInfo* resize_info);
 void scroll_update_view(ViewOptions* view_options);
-void scroll_speed_set(int value);
-int scroll_speed_get();
+void scroll_speed_set(ScrollSpeed value);
+ScrollSpeed scroll_speed_get();
 void scroll_start(int direction);
 void scroll_stop();
-void scroll_set_fps(int fps);
-void scroll_set_distance(int distance);
-int scroll_get_distance();
+void scroll_fps_set(int fps);
+void scroll_distance_set(int distance);
+int scroll_distance_get();
 void scroll_set_center(int64_t location);
 void scroll_set_scroll_func(ScrollFunc* func);
 
