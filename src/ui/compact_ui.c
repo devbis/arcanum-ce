@@ -291,7 +291,7 @@ void compact_ui_message_window_release()
         tig_window_box(compact_ui_message_window_handle, &rect, tig_color_make(9, 9, 9));
     }
 
-    anim_ui_event_remove(14, -1);
+    anim_ui_event_remove(ANIM_UI_EVENT_TYPE_HIDE_COMPACT_UI, -1);
     compact_ui_message_window_hide();
 }
 
