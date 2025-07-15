@@ -11,7 +11,6 @@ typedef struct FadeData {
     /* 0004 */ tig_color_t color;
     /* 0008 */ int steps;
     /* 000C */ float duration;
-    /* 0010 */ int field_10;
 } FadeData;
 
 bool gfade_init(GameInitInfo* init_info);

@@ -2446,7 +2446,6 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
             TeleportData teleport_data;
             teleport_data.flags = TELEPORT_FADE_IN | TELEPORT_FADE_OUT;
             teleport_data.fade_out.flags = 0;
-            teleport_data.fade_out.field_10 = 0;
             teleport_data.fade_out.duration = 2.0f;
             teleport_data.fade_out.color = tig_color_make(0, 0, 0);
             teleport_data.fade_out.steps = 48;
@@ -2486,7 +2485,6 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
             TeleportData teleport_data;
             teleport_data.flags = 0;
             teleport_data.fade_out.flags = 0;
-            teleport_data.fade_out.field_10 = 0;
             teleport_data.fade_out.duration = 2.0f;
             teleport_data.fade_out.color = tig_color_make(0, 0, 0);
             teleport_data.fade_out.steps = 48;

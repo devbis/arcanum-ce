@@ -1663,7 +1663,6 @@ void sub_5412E0(bool a1)
                 fade_data.color = 0;
                 fade_data.steps = 64;
                 fade_data.duration = 3.0f;
-                fade_data.field_10 = 0;
                 gfade_run(&fade_data);
 
                 teleport_data.flags = TELEPORT_MOVIE1 | TELEPORT_MOVIE2 | TELEPORT_FADE_IN;

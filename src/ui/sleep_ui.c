@@ -682,7 +682,6 @@ void sleep_ui_fall_asleep()
 
     // Set up and run fade-out effect.
     fade_data.flags = 0;
-    fade_data.field_10 = 0;
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
     fade_data.color = tig_color_make(0, 0, 0);

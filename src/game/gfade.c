@@ -90,7 +90,6 @@ bool gfade_timeevent_process(TimeEvent* timeevent)
     fade_data.color = timeevent->params[1].integer_value;
     fade_data.duration = timeevent->params[2].float_value;
     fade_data.steps = timeevent->params[3].integer_value;
-    fade_data.field_10 = 0;
 
     if ((fade_data.flags & FADE_IN) != 0) {
         gfade_iso_invalidate_rect(NULL);
