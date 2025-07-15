@@ -706,6 +706,10 @@ void sleep_ui_wake_up()
         return;
     }
 
+    // Close the sleep UI.
+    is_sleeping = false;
+    sleep_ui_close();
+
     // Re-enable ambient lighting updates.
     ambient_lighting_enable();
 
@@ -720,10 +724,6 @@ void sleep_ui_wake_up()
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
     gfade_run(&fade_data);
-
-    // Close the sleep UI.
-    is_sleeping = false;
-    sleep_ui_close();
 }
 
 /**
