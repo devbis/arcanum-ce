@@ -154,7 +154,7 @@ static bool charedit_spells_win_message_filter(TigMessage* msg);
 static bool charedit_scheme_win_message_filter(TigMessage* msg);
 static bool charedit_labels_init();
 static void charedit_labels_exit();
-static void sub_55EC90();
+static void charedit_refresh_alignment_aptitude_bars();
 static void sub_55EFB0();
 static void sub_55EFE0();
 static void sub_55EFF0();
@@ -1724,7 +1724,7 @@ void charedit_refresh_internal()
         charedit_scheme_win_refresh();
         break;
     }
-    sub_55EC90();
+    charedit_refresh_alignment_aptitude_bars();
     charedit_refresh_basic_info();
     sub_551160();
     intgame_draw_bar(INTGAME_BAR_HEALTH);
@@ -3717,11 +3717,11 @@ void charedit_labels_exit()
 }
 
 // 0x55EC90
-void sub_55EC90()
+void charedit_refresh_alignment_aptitude_bars()
 {
     int index;
     char buffer[3][10];
-    const char* tmp[3];
+    const char* labels[3];
     int value;
     TigArtFrameData art_frame_data;
     TigArtBlitInfo art_blit_info;
@@ -3729,7 +3729,7 @@ void sub_55EC90()
     TigRect dst_rect;
 
     for (index = 0; index < 3; index++) {
-        tmp[index] = buffer[index];
+        labels[index] = buffer[index];
     }
 
     value = stat_level_get(charedit_obj, STAT_ALIGNMENT) / 10;
@@ -3814,7 +3814,7 @@ void sub_55EC90()
     art_blit_info.dst_rect = &stru_5C8980;
     tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
-    sub_55B880(charedit_window_handle, charedit_cloister18_white_font, stru_5C8940, tmp, -1, 3);
+    sub_55B880(charedit_window_handle, charedit_cloister18_white_font, stru_5C8940, labels, -1, 3);
 }
 
 // 0x55EFB0
