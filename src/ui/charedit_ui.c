@@ -152,8 +152,8 @@ static bool sub_55D6F0(TigMessage* msg);
 static bool charedit_tech_win_message_filter(TigMessage* msg);
 static bool charedit_spells_win_message_filter(TigMessage* msg);
 static bool charedit_scheme_win_message_filter(TigMessage* msg);
-static bool sub_55E110();
-static void sub_55EBA0();
+static bool charedit_labels_init();
+static void charedit_labels_exit();
 static void sub_55EC90();
 static void sub_55EFB0();
 static void sub_55EFE0();
@@ -604,7 +604,7 @@ static int dword_5C900C[11] = {
 };
 
 // 0x64C7A0
-static tig_font_handle_t dword_64C7A0;
+static tig_font_handle_t charedit_morph15_green_font;
 
 // 0x64C7A8
 static ScrollbarId charedit_scheme_scrollbar;
@@ -625,7 +625,7 @@ static tig_button_handle_t dword_64C7E8[15];
 static tig_button_handle_t dword_64C824;
 
 // 0x64C828
-static tig_font_handle_t dword_64C828;
+static tig_font_handle_t charedit_morph15_gray_font;
 
 // 0x64C82C
 static int dword_64C82C[TECH_SKILL_COUNT];
@@ -634,13 +634,13 @@ static int dword_64C82C[TECH_SKILL_COUNT];
 static tig_button_handle_t dword_64C83C;
 
 // 0x64C840
-static tig_font_handle_t dword_64C840;
+static tig_font_handle_t charedit_garmond9_white_font;
 
 // 0x64C844
 static const char* charedit_fatigue_str;
 
 // 0x64C848
-static tig_font_handle_t dword_64C848;
+static tig_font_handle_t charedit_cloister18_white_font;
 
 // 0x64C84C
 static int charedit_player_basic_skills_tbl[8][BASIC_SKILL_COUNT];
@@ -649,7 +649,7 @@ static int charedit_player_basic_skills_tbl[8][BASIC_SKILL_COUNT];
 static int charedit_hint;
 
 // 0x64C9D0
-static tig_font_handle_t dword_64C9D0;
+static tig_font_handle_t charedit_flare12_white_font;
 
 // 0x64C9D4
 static int charedit_player_tech_skills_tbl[8][TECH_SKILL_COUNT];
@@ -670,7 +670,7 @@ static tig_window_handle_t charedit_scheme_win;
 static tig_window_handle_t charedit_window_handle;
 
 // 0x64CA68
-static tig_font_handle_t dword_64CA68;
+static tig_font_handle_t charedit_flare12_blue_font;
 
 // 0x64CA6C
 static tig_window_handle_t charedit_skills_win;
@@ -694,19 +694,19 @@ static tig_window_handle_t charedit_tech_win;
 static const char* charedit_scheme_names[200];
 
 // 0x64CDB0
-static tig_font_handle_t dword_64CDB0;
+static tig_font_handle_t charedit_pork12_gray_font;
 
 // 0x64CDB4
 static int charedit_tech_hint;
 
 // 0x64CDB8
-static tig_font_handle_t dword_64CDB8;
+static tig_font_handle_t charedit_garmond9_yellow_font;
 
 // 0x64CDBC
-static tig_font_handle_t dword_64CDBC;
+static tig_font_handle_t charedit_arial10_white_font;
 
 // 0x64CDC0
-static tig_font_handle_t dword_64CDC0;
+static tig_font_handle_t charedit_nick16_yellow_font;
 
 // 0x64CDC4
 static tig_button_handle_t charedit_dec_tech_degree_btn;
@@ -718,7 +718,7 @@ static int charedit_num_schemes;
 static ChareditMode charedit_mode;
 
 // 0x64CDD0
-static tig_font_handle_t dword_64CDD0;
+static tig_font_handle_t charedit_morph15_yellow_font;
 
 // 0x64CDD4
 static tig_button_handle_t spell_plus_bid;
@@ -733,7 +733,7 @@ static int charedit_player_spell_college_levels_tbl[8][COLLEGE_COUNT];
 static tig_button_handle_t dword_64CFDC;
 
 // 0x64CFE0
-static tig_font_handle_t dword_64CFE0;
+static tig_font_handle_t charedit_nick16_white_font;
 
 // 0x64CFE4
 static int charedit_scheme_ids[200];
@@ -748,16 +748,16 @@ static int charedit_spells_hint;
 static int dword_64D364[COLLEGE_COUNT];
 
 // 0x64D3A4
-static tig_font_handle_t dword_64D3A4;
+static tig_font_handle_t charedit_icons17_white_font;
 
 // 0x64D3A8
-static tig_font_handle_t dword_64D3A8;
+static tig_font_handle_t charedit_morph15_white_font;
 
 // 0x64D3AC
 static tig_button_handle_t dword_64D3AC;
 
 // 0x64D3B0
-static tig_font_handle_t dword_64D3B0;
+static tig_font_handle_t charedit_nick16_gray_font;
 
 // 0x64D3B4
 static tig_button_handle_t charedit_inc_tech_degree_btn;
@@ -766,7 +766,7 @@ static tig_button_handle_t charedit_inc_tech_degree_btn;
 static tig_button_handle_t dword_64D3B8;
 
 // 0x64D3BC
-static tig_font_handle_t dword_64D3BC;
+static tig_font_handle_t charedit_morph15_red_font;
 
 // 0x64D3C0
 static const char* charedit_quest_str;
@@ -775,7 +775,7 @@ static const char* charedit_quest_str;
 static char* charedit_errors[CHAREDIT_ERR_COUNT];
 
 // 0x64D420
-static tig_font_handle_t dword_64D420;
+static tig_font_handle_t charedit_pork12_yellow_font;
 
 // 0x64D424
 static int charedit_top_scheme_index;
@@ -784,7 +784,7 @@ static int charedit_top_scheme_index;
 static tig_button_handle_t dword_64D428;
 
 // 0x64D42C
-static tig_font_handle_t dword_64D42C;
+static tig_font_handle_t charedit_garmond9_gray_font;
 
 // 0x64D430
 static tig_button_handle_t spell_minus_bid;
@@ -805,7 +805,7 @@ static const char* charedit_minimum_level_str;
 static int dword_64DEEC[TECH_COUNT];
 
 // 0x64DF0C
-static tig_font_handle_t dword_64DF0C;
+static tig_font_handle_t charedit_pork12_white_font;
 
 // 0x64DF10
 static int charedit_player_tech_degrees_tbl[8][TECH_COUNT];
@@ -836,30 +836,30 @@ bool charedit_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    if (!sub_55E110()) {
+    if (!charedit_labels_init()) {
         return false;
     }
 
     if (!charedit_scheme_win_create()) {
-        sub_55EBA0();
+        charedit_labels_exit();
         return false;
     }
 
     if (!charedit_create_spells_win()) {
-        sub_55EBA0();
+        charedit_labels_exit();
         tig_window_destroy(charedit_scheme_win);
         return false;
     }
 
     if (!charedit_create_tech_win()) {
-        sub_55EBA0();
+        charedit_labels_exit();
         tig_window_destroy(charedit_spells_win);
         tig_window_destroy(charedit_scheme_win);
         return false;
     }
 
     if (!charedit_create_skills_win()) {
-        sub_55EBA0();
+        charedit_labels_exit();
         tig_window_destroy(charedit_spells_win);
         tig_window_destroy(charedit_tech_win);
         tig_window_destroy(charedit_scheme_win);
@@ -877,7 +877,7 @@ bool charedit_init(GameInitInfo* init_info)
 // 0x559770
 void charedit_exit()
 {
-    sub_55EBA0();
+    charedit_labels_exit();
     tig_window_destroy(charedit_skills_win);
     tig_window_destroy(charedit_spells_win);
     tig_window_destroy(charedit_tech_win);
@@ -1252,22 +1252,22 @@ void charedit_refresh_basic_info()
     const char* labels[7];
     int index;
 
-    sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[0]), NULL, -1, 3);
-    sub_55B880(charedit_window_handle, dword_64CDD0, &(stru_5C8150[3]), NULL, -1, 1);
+    sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[0]), NULL, -1, 3);
+    sub_55B880(charedit_window_handle, charedit_morph15_yellow_font, &(stru_5C8150[3]), NULL, -1, 1);
 
     if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), NULL, -1, 5);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[4]), NULL, -1, 5);
     } else if (critter_is_monstrous(charedit_obj)) {
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[7]), NULL, -1, 2);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[7]), NULL, -1, 2);
     } else {
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), NULL, -1, 2);
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[7]), NULL, -1, 2);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[4]), NULL, -1, 2);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[7]), NULL, -1, 2);
     }
 
-    sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, NULL, -1, 13);
+    sub_55B880(charedit_window_handle, charedit_flare12_white_font, stru_5C81E0, NULL, -1, 13);
 
     object_examine(charedit_obj, charedit_obj, buffers[3]);
-    tig_font_push(dword_64CDD0);
+    tig_font_push(charedit_morph15_yellow_font);
     font_desc.str = buffers[3];
     pch = &(buffers[3][strlen(buffers[3])]);
     do {
@@ -1288,13 +1288,13 @@ void charedit_refresh_basic_info()
         labels[index] = buffers[index];
     }
 
-    sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[0]), &(labels[0]), -1, 3);
-    sub_55B880(charedit_window_handle, dword_64CDD0, &(stru_5C8150[3]), &(labels[3]), -1, 1);
+    sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[0]), &(labels[0]), -1, 3);
+    sub_55B880(charedit_window_handle, charedit_morph15_yellow_font, &(stru_5C8150[3]), &(labels[3]), -1, 1);
 
     if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), &(labels[4]), -1, 3);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[4]), &(labels[4]), -1, 3);
     } else if (!critter_is_monstrous(charedit_obj)) {
-        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), &(labels[4]), -1, 2);
+        sub_55B880(charedit_window_handle, charedit_morph15_white_font, &(stru_5C8150[4]), &(labels[4]), -1, 2);
     }
 }
 
@@ -1754,7 +1754,7 @@ void charedit_refresh_secondary_stats()
             object_get_resistance(charedit_obj, stru_5C81E0[index].value, true));
     }
 
-    sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, labels, -1, 13);
+    sub_55B880(charedit_window_handle, charedit_flare12_white_font, stru_5C81E0, labels, -1, 13);
 }
 
 // 0x55B280
@@ -1791,7 +1791,7 @@ void charedit_refresh_stat(int stat)
         return;
     }
 
-    font = dword_64D3A8;
+    font = charedit_morph15_white_font;
     switch (stat) {
     case CHAREDIT_STAT_HP_PTS_MAXIMUM:
         value = object_hp_max(charedit_obj);
@@ -1804,9 +1804,9 @@ void charedit_refresh_stat(int stat)
         base_value = charedit_stat_value_get(charedit_obj, stat - 1);
         effective_value = effect_adjust_stat_level_no_innate(charedit_obj, charedit_stat_map_to_critter_stat(stat), base_value);
         if (effective_value > base_value) {
-            font = dword_64C7A0;
+            font = charedit_morph15_green_font;
         } else if (effective_value < base_value) {
-            font = dword_64D3BC;
+            font = charedit_morph15_red_font;
         }
     }
 
@@ -2174,7 +2174,7 @@ void sub_55BD10(int group)
     art_blit_info.dst_rect = &rect;
     tig_window_blit_art(charedit_skills_win, &art_blit_info);
 
-    sub_55B880(charedit_skills_win, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], 0, -1, 4);
+    sub_55B880(charedit_skills_win, charedit_morph15_white_font, &stru_5C82F0[4 * dword_64E020], 0, -1, 4);
 
     for (index = 0; index < 4; index++) {
         if (dword_64E020 < 3) {
@@ -2199,7 +2199,7 @@ void sub_55BD10(int group)
         v2[index] = v1[index];
     }
 
-    sub_55B880(charedit_skills_win, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], v2, -1, 4);
+    sub_55B880(charedit_skills_win, charedit_morph15_white_font, &stru_5C82F0[4 * dword_64E020], v2, -1, 4);
     charedit_refresh_skills_win();
 }
 
@@ -2433,16 +2433,16 @@ void charedit_refresh_tech_win()
 
     str[0][0] = (char)('1' + charedit_selected_tech);
     str[0][1] = '\0';
-    sub_55B880(charedit_tech_win, dword_64D3A4, &(stru_5C8FC8[0]), 0, -1, 1);
+    sub_55B880(charedit_tech_win, charedit_icons17_white_font, &(stru_5C8FC8[0]), 0, -1, 1);
 
     sprintf(str[0],
         "%s %s",
         tech_discipline_name_get(charedit_selected_tech),
         tech_degree_name_get(tech_degree_get(charedit_obj, charedit_selected_tech)));
-    sub_55B880(charedit_tech_win, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
+    sub_55B880(charedit_tech_win, charedit_nick16_white_font, &(stru_5C8FC8[1]), 0, -1, 1);
 
     sprintf(str[0], "%d", tech_degree_level_get(charedit_obj, charedit_selected_tech));
-    sub_55B880(charedit_tech_win, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
+    sub_55B880(charedit_tech_win, charedit_flare12_blue_font, &(stru_5C8FC8[2]), 0, -1, 1);
 
     degree = tech_degree_get(charedit_obj, charedit_selected_tech);
     next_degree = degree < 7 ? degree + 1 : degree;
@@ -2460,20 +2460,20 @@ void charedit_refresh_tech_win()
 
     if (next_degree > degree) {
         if (degree > 0) {
-            sub_55B880(charedit_tech_win, dword_64CFE0, stru_5C8850, 0, -1, degree);
-            sub_55B880(charedit_tech_win, dword_64C840, stru_5C88C0, 0, -1, degree);
+            sub_55B880(charedit_tech_win, charedit_nick16_white_font, stru_5C8850, 0, -1, degree);
+            sub_55B880(charedit_tech_win, charedit_garmond9_white_font, stru_5C88C0, 0, -1, degree);
         }
 
-        sub_55B880(charedit_tech_win, dword_64CDC0, &(stru_5C8850[degree]), 0, -1, 1);
-        sub_55B880(charedit_tech_win, dword_64CDB8, &(stru_5C88C0[degree]), 0, -1, 1);
+        sub_55B880(charedit_tech_win, charedit_nick16_yellow_font, &(stru_5C8850[degree]), 0, -1, 1);
+        sub_55B880(charedit_tech_win, charedit_garmond9_yellow_font, &(stru_5C88C0[degree]), 0, -1, 1);
 
         if (degree + 1 < 7) {
-            sub_55B880(charedit_tech_win, dword_64D3B0, &stru_5C8850[degree + 1], 0, -1, 6 - degree);
-            sub_55B880(charedit_tech_win, dword_64D42C, &stru_5C88C0[degree + 1], 0, -1, 6 - degree);
+            sub_55B880(charedit_tech_win, charedit_nick16_gray_font, &stru_5C8850[degree + 1], 0, -1, 6 - degree);
+            sub_55B880(charedit_tech_win, charedit_garmond9_gray_font, &stru_5C88C0[degree + 1], 0, -1, 6 - degree);
         }
     } else {
-        sub_55B880(charedit_tech_win, dword_64CFE0, stru_5C8850, 0, -1, 7);
-        sub_55B880(charedit_tech_win, dword_64C840, stru_5C88C0, 0, -1, 7);
+        sub_55B880(charedit_tech_win, charedit_nick16_white_font, stru_5C8850, 0, -1, 7);
+        sub_55B880(charedit_tech_win, charedit_garmond9_white_font, stru_5C88C0, 0, -1, 7);
     }
 
     button_data.flags = TIG_BUTTON_MOMENTARY;
@@ -2713,18 +2713,18 @@ void charedit_refresh_spells_win()
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(charedit_spells_win, dword_64D3A8, &(charedit_spell_title_labels[0]), NULL, -1, cnt);
+            sub_55B880(charedit_spells_win, charedit_morph15_white_font, &(charedit_spell_title_labels[0]), NULL, -1, cnt);
         }
 
         sub_55B880(charedit_spells_win,
-            charedit_mode == CHAREDIT_MODE_PASSIVE ? dword_64C828 : dword_64CDD0,
+            charedit_mode == CHAREDIT_MODE_PASSIVE ? charedit_morph15_gray_font : charedit_morph15_yellow_font,
             &charedit_spell_title_labels[cnt], NULL, -1, 1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(charedit_spells_win, dword_64C828, &(charedit_spell_title_labels[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, charedit_morph15_gray_font, &(charedit_spell_title_labels[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(charedit_spells_win, dword_64D3A8, &(charedit_spell_title_labels[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, charedit_morph15_white_font, &(charedit_spell_title_labels[0]), 0, -1, 5);
     }
 
     for (index = 0; index < 5; index++) {
@@ -2737,18 +2737,18 @@ void charedit_refresh_spells_win()
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(charedit_spells_win, dword_64DF0C, &(charedit_spell_minimum_level_labels[0]), 0, -1, cnt);
+            sub_55B880(charedit_spells_win, charedit_pork12_white_font, &(charedit_spell_minimum_level_labels[0]), 0, -1, cnt);
         }
 
         sub_55B880(charedit_spells_win,
-            charedit_mode == CHAREDIT_MODE_PASSIVE ? dword_64CDB0 : dword_64D420,
+            charedit_mode == CHAREDIT_MODE_PASSIVE ? charedit_pork12_gray_font : charedit_pork12_yellow_font,
             &(charedit_spell_minimum_level_labels[cnt]), NULL, -1, 1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(charedit_spells_win, dword_64CDB0, &(charedit_spell_minimum_level_labels[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, charedit_pork12_gray_font, &(charedit_spell_minimum_level_labels[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(charedit_spells_win, dword_64DF0C, &(charedit_spell_minimum_level_labels[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, charedit_pork12_white_font, &(charedit_spell_minimum_level_labels[0]), 0, -1, 5);
     }
 
     button_data.flags = TIG_BUTTON_MOMENTARY;
@@ -2918,8 +2918,8 @@ void charedit_scheme_win_refresh()
         stru_5C8E50[index].str = charedit_scheme_names[charedit_top_scheme_index + index];
     }
 
-    sub_55B880(charedit_scheme_win, dword_64CA68, &stru_5C8E40, NULL, -1, 1);
-    sub_55B880(charedit_scheme_win, dword_64C9D0, &(stru_5C8E50[0]), NULL, -1, cnt);
+    sub_55B880(charedit_scheme_win, charedit_flare12_blue_font, &stru_5C8E40, NULL, -1, 1);
+    sub_55B880(charedit_scheme_win, charedit_flare12_white_font, &(stru_5C8E50[0]), NULL, -1, cnt);
 
     scrollbar_ui_control_redraw(charedit_scheme_scrollbar);
 }
@@ -3427,7 +3427,7 @@ bool charedit_scheme_win_message_filter(TigMessage* msg)
             for (index = 0; index < 15; index++) {
                 if (msg->data.button.button_handle == dword_64C7E8[index]) {
                     if (index < charedit_num_schemes) {
-                        sub_55B880(charedit_scheme_win, dword_64CA68, &stru_5C8E50[index], NULL, -1, 1);
+                        sub_55B880(charedit_scheme_win, charedit_flare12_blue_font, &stru_5C8E50[index], NULL, -1, 1);
                     }
 
                     return true;
@@ -3441,7 +3441,7 @@ bool charedit_scheme_win_message_filter(TigMessage* msg)
             for (index = 0; index < 15; index++) {
                 if (msg->data.button.button_handle == dword_64C7E8[index]) {
                     if (index < charedit_num_schemes) {
-                        sub_55B880(charedit_scheme_win, dword_64C9D0, &stru_5C8E50[index], NULL, -1, 1);
+                        sub_55B880(charedit_scheme_win, charedit_flare12_white_font, &stru_5C8E50[index], NULL, -1, 1);
                     }
 
                     return true;
@@ -3494,7 +3494,7 @@ bool charedit_scheme_win_message_filter(TigMessage* msg)
 }
 
 // 0x55E110
-bool sub_55E110()
+bool charedit_labels_init()
 {
     int num;
     int index;
@@ -3513,12 +3513,13 @@ bool sub_55E110()
         stru_5C8150[index].str = mes_file_entry.str;
     }
 
+    // Skip "Base" and "Adj."
     for (index = 0; index < 2; index++) {
         mes_file_entry.num = num++;
         mes_get_msg(charedit_mes_file, &mes_file_entry);
     }
 
-    // Skip "Electrical".
+    // Skip "Total".
     num++;
 
     for (index = 0; index < 13; index++) {
@@ -3577,142 +3578,142 @@ bool sub_55E110()
     tig_art_interface_id_create(26, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64CDBC);
+    tig_font_create(&font_desc, &charedit_arial10_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64D3A8);
+    tig_font_create(&font_desc, &charedit_morph15_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 210, 0);
-    tig_font_create(&font_desc, &dword_64CDD0);
+    tig_font_create(&font_desc, &charedit_morph15_yellow_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(128, 128, 128);
-    tig_font_create(&font_desc, &dword_64C828);
+    tig_font_create(&font_desc, &charedit_morph15_gray_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(0, 255, 0);
-    tig_font_create(&font_desc, &dword_64C7A0);
+    tig_font_create(&font_desc, &charedit_morph15_green_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 0, 0);
-    tig_font_create(&font_desc, &dword_64D3BC);
+    tig_font_create(&font_desc, &charedit_morph15_red_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64DF0C);
+    tig_font_create(&font_desc, &charedit_pork12_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 0);
-    tig_font_create(&font_desc, &dword_64D420);
+    tig_font_create(&font_desc, &charedit_pork12_yellow_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(128, 128, 128);
-    tig_font_create(&font_desc, &dword_64CDB0);
+    tig_font_create(&font_desc, &charedit_pork12_gray_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64C848);
+    tig_font_create(&font_desc, &charedit_cloister18_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(300, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64D3A4);
+    tig_font_create(&font_desc, &charedit_icons17_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64CFE0);
+    tig_font_create(&font_desc, &charedit_nick16_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 0);
-    tig_font_create(&font_desc, &dword_64CDC0);
+    tig_font_create(&font_desc, &charedit_nick16_yellow_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(128, 128, 128);
-    tig_font_create(&font_desc, &dword_64D3B0);
+    tig_font_create(&font_desc, &charedit_nick16_gray_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(0, 0, 255);
-    tig_font_create(&font_desc, &dword_64CA68);
+    tig_font_create(&font_desc, &charedit_flare12_blue_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64C9D0);
+    tig_font_create(&font_desc, &charedit_flare12_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_desc, &dword_64C840);
+    tig_font_create(&font_desc, &charedit_garmond9_white_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(255, 255, 0);
-    tig_font_create(&font_desc, &dword_64CDB8);
+    tig_font_create(&font_desc, &charedit_garmond9_yellow_font);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
     font_desc.str = NULL;
     font_desc.color = tig_color_make(128, 128, 128);
-    tig_font_create(&font_desc, &dword_64D42C);
+    tig_font_create(&font_desc, &charedit_garmond9_gray_font);
 
     return true;
 }
 
 // 0x55EBA0
-void sub_55EBA0()
+void charedit_labels_exit()
 {
     mes_unload(charedit_mes_file);
-    tig_font_destroy(dword_64CDBC);
-    tig_font_destroy(dword_64D3A8);
-    tig_font_destroy(dword_64CDD0);
-    tig_font_destroy(dword_64C828);
-    tig_font_destroy(dword_64C7A0);
-    tig_font_destroy(dword_64D3BC);
-    tig_font_destroy(dword_64DF0C);
-    tig_font_destroy(dword_64D420);
-    tig_font_destroy(dword_64CDB0);
-    tig_font_destroy(dword_64C848);
-    tig_font_destroy(dword_64D3A4);
-    tig_font_destroy(dword_64CFE0);
-    tig_font_destroy(dword_64CDC0);
-    tig_font_destroy(dword_64D3B0);
-    tig_font_destroy(dword_64CA68);
-    tig_font_destroy(dword_64C9D0);
-    tig_font_destroy(dword_64C840);
-    tig_font_destroy(dword_64CDB8);
-    tig_font_destroy(dword_64D42C);
+    tig_font_destroy(charedit_arial10_white_font);
+    tig_font_destroy(charedit_morph15_white_font);
+    tig_font_destroy(charedit_morph15_yellow_font);
+    tig_font_destroy(charedit_morph15_gray_font);
+    tig_font_destroy(charedit_morph15_green_font);
+    tig_font_destroy(charedit_morph15_red_font);
+    tig_font_destroy(charedit_pork12_white_font);
+    tig_font_destroy(charedit_pork12_yellow_font);
+    tig_font_destroy(charedit_pork12_gray_font);
+    tig_font_destroy(charedit_cloister18_white_font);
+    tig_font_destroy(charedit_icons17_white_font);
+    tig_font_destroy(charedit_nick16_white_font);
+    tig_font_destroy(charedit_nick16_yellow_font);
+    tig_font_destroy(charedit_nick16_gray_font);
+    tig_font_destroy(charedit_flare12_blue_font);
+    tig_font_destroy(charedit_flare12_white_font);
+    tig_font_destroy(charedit_garmond9_white_font);
+    tig_font_destroy(charedit_garmond9_yellow_font);
+    tig_font_destroy(charedit_garmond9_gray_font);
 }
 
 // 0x55EC90
@@ -3813,7 +3814,7 @@ void sub_55EC90()
     art_blit_info.dst_rect = &stru_5C8980;
     tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
-    sub_55B880(charedit_window_handle, dword_64C848, stru_5C8940, tmp, -1, 3);
+    sub_55B880(charedit_window_handle, charedit_cloister18_white_font, stru_5C8940, tmp, -1, 3);
 }
 
 // 0x55EFB0
