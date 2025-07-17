@@ -70,7 +70,7 @@ void sub_5412D0();
 bool mainmenu_ui_handle();
 bool mainmenu_ui_is_active();
 TigWindowModalDialogChoice mainmenu_ui_confirm_quit();
-void sub_541710();
+void mainmenu_ui_reset();
 void sub_5417A0(bool a1);
 void sub_541810(MainMenuWindowType window_type);
 bool sub_543220();

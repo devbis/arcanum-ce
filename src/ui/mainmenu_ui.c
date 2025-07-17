@@ -1796,7 +1796,7 @@ TigWindowModalDialogChoice mainmenu_ui_confirm(int num)
 }
 
 // 0x541710
-void sub_541710()
+void mainmenu_ui_reset()
 {
     inven_ui_destroy();
     charedit_close();
@@ -2823,7 +2823,7 @@ bool sub_5432B0(const char* name)
     sub_542200();
 
     if (mainmenu_ui_gsi.version == 25) {
-        sub_541710();
+        mainmenu_ui_reset();
         sub_40DAB0();
 
         if (gamelib_load(name)) {
@@ -2842,7 +2842,7 @@ bool sub_5432B0(const char* name)
             return true;
         }
 
-        sub_541710();
+        mainmenu_ui_reset();
     }
 
     mes_file_entry.num = 5001; // "Save Game Corrupt!  Load Failed!"
@@ -5606,7 +5606,7 @@ bool sub_549310(tig_button_handle_t button_handle)
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
     }
 
-    sub_541710();
+    mainmenu_ui_reset();
 
     return true;
 }
