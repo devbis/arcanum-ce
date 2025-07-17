@@ -1349,7 +1349,7 @@ int64_t* dword_64C41C;
 int dword_64C420;
 
 // 0x64C424
-static bool dword_64C424;
+static bool mainmenu_ui_auto_equip_items_on_start;
 
 // 0x64C428
 static bool dword_64C428;
@@ -1535,7 +1535,7 @@ void sub_541150()
 {
     mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
     dword_64C418 = 0;
-    dword_64C424 = false;
+    mainmenu_ui_auto_equip_items_on_start = false;
 }
 
 // 0x541170
@@ -1628,14 +1628,15 @@ void sub_5412E0(bool a1)
         sub_53EB00();
 
         pc_obj = player_get_local_pc_obj();
-        if (dword_64C424) {
+
+        if (mainmenu_ui_auto_equip_items_on_start) {
             if (item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON) == OBJ_HANDLE_NULL) {
                 item_wield_best(pc_obj, ITEM_INV_LOC_WEAPON, OBJ_HANDLE_NULL);
             }
             if (item_wield_get(pc_obj, ITEM_INV_LOC_ARMOR) == OBJ_HANDLE_NULL) {
                 item_wield_best(pc_obj, ITEM_INV_LOC_ARMOR, OBJ_HANDLE_NULL);
             }
-            dword_64C424 = false;
+            mainmenu_ui_auto_equip_items_on_start = false;
         }
 
         if (mainmenu_ui_window_type != MM_WINDOW_0 || !stru_5C36B0[mainmenu_ui_type][1]) {
@@ -4113,12 +4114,13 @@ bool mainmenu_ui_new_char_execute(int btn)
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         sub_550770(-1, mes_file_entry.str);
         return false;
-    } else {
-        obj_field_string_set(pc_obj, OBJ_F_PC_PLAYER_NAME, byte_64C2F8);
-        ui_spell_maintain_refresh();
-        dword_64C424 = 1;
-        return true;
     }
+
+    obj_field_string_set(pc_obj, OBJ_F_PC_PLAYER_NAME, byte_64C2F8);
+    ui_spell_maintain_refresh();
+    mainmenu_ui_auto_equip_items_on_start = true;
+
+    return true;
 }
 
 // 0x545870
