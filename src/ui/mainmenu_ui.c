@@ -1340,7 +1340,7 @@ static char byte_64C394[128];
 static MainMenuWindowType mainmenu_ui_window_type;
 
 // 0x64C418
-static bool dword_64C418;
+static bool mainmenu_ui_start_new_game;
 
 // 0x64C41C
 int64_t* dword_64C41C;
@@ -1490,7 +1490,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
     dword_64C388 = false;
 
     gamelib_thumbnail_size_set(468, 300);
-    dword_64C418 = 0;
+    mainmenu_ui_start_new_game = false;
     sub_549A80();
     dword_64C37C = NULL;
 
@@ -1534,7 +1534,7 @@ void mainmenu_ui_exit()
 void sub_541150()
 {
     mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-    dword_64C418 = 0;
+    mainmenu_ui_start_new_game = false;
     mainmenu_ui_auto_equip_items_on_start = false;
 }
 
@@ -1640,13 +1640,8 @@ void sub_5412E0(bool a1)
         }
 
         if (mainmenu_ui_window_type != MM_WINDOW_0 || !stru_5C36B0[mainmenu_ui_type][1]) {
-            if (!dword_64C418) {
-                if (dword_5C4004) {
-                    sub_40FED0();
-                }
-                gamelib_draw();
-            } else {
-                dword_64C418 = false;
+            if (mainmenu_ui_start_new_game) {
+                mainmenu_ui_start_new_game = false;
 
                 map = map_by_type(MAP_TYPE_START_MAP);
                 if (map == 0) {
@@ -1689,6 +1684,11 @@ void sub_5412E0(bool a1)
                 sub_45B800(&timeevent, &datetime);
 
                 wmap_rnd_schedule();
+            } else {
+                if (dword_5C4004) {
+                    sub_40FED0();
+                }
+                gamelib_draw();
             }
         }
 
@@ -2835,7 +2835,7 @@ bool sub_5432B0(const char* name)
             ui_message.str = mes_file_entry.str;
             sub_460630(&ui_message);
 
-            dword_64C418 = 0;
+            mainmenu_ui_start_new_game = false;
             sub_5412D0();
 
             return true;
@@ -4218,7 +4218,7 @@ bool mainmenu_ui_pregen_char_execute(int btn)
 
     (void)btn;
 
-    dword_64C418 = 1;
+    mainmenu_ui_start_new_game = true;
 
     player_create_info_init(&player_create_info);
     player_create_info.loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
@@ -4349,7 +4349,7 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
     }
     object_list_destroy(&objects);
 
-    dword_64C418 = true;
+    mainmenu_ui_start_new_game = true;
 
     if (npc_obj == OBJ_HANDLE_NULL) {
         sub_5412D0();
