@@ -1060,7 +1060,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     rect.height = 89;
     pc_lens.rect = &rect;
     tig_art_interface_id_create(art_id, 0, 0, 0, &(pc_lens.art_id));
-    if (!sub_541680()) {
+    if (!mainmenu_ui_is_active()) {
         intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     }
 
@@ -1787,7 +1787,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
 
     dword_68346C = 0;
     if (intgame_pc_lens_check_pt_unscale(msg->data.mouse.x, msg->data.mouse.y)) {
-        if (!sub_541680()) {
+        if (!mainmenu_ui_is_active()) {
             if (qword_6810E0 != OBJ_HANDLE_NULL) {
                 if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
                     sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);

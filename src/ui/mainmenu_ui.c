@@ -1324,7 +1324,7 @@ static char* dword_64C37C;
 static bool mainmenu_ui_initialized;
 
 // 0x64C384
-static bool dword_64C384;
+static bool mainmenu_ui_active;
 
 // 0x64C388
 static bool dword_64C388;
@@ -1551,7 +1551,7 @@ void mainmenu_ui_start(MainMenuType type)
 {
     tig_art_id_t art_id;
 
-    if (!dword_64C384) {
+    if (!mainmenu_ui_active) {
         dword_64C390 = 0;
 
         if (type != MM_TYPE_OPTIONS) {
@@ -1626,7 +1626,7 @@ void sub_5412E0(bool a1)
     DateTime datetime;
     TimeEvent timeevent;
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         sub_53EB00();
 
         pc_obj = player_get_local_pc_obj();
@@ -1732,7 +1732,7 @@ bool mainmenu_ui_handle()
 
     broadcast_ui_close();
 
-    while (dword_64C384) {
+    while (mainmenu_ui_active) {
         tig_ping();
         tig_timer_now(&timestamp);
         timeevent_ping(timestamp);
@@ -1760,9 +1760,9 @@ bool mainmenu_ui_handle()
 }
 
 // 0x541680
-bool sub_541680()
+bool mainmenu_ui_is_active()
 {
-    return dword_64C384;
+    return mainmenu_ui_active;
 }
 
 // 0x541690
@@ -1812,7 +1812,7 @@ void sub_541710()
 // 0x541740
 void sub_541740()
 {
-    if (!dword_64C384) {
+    if (!mainmenu_ui_active) {
         dword_5C3FB8 = -1;
         if (main_menu_window_info[mainmenu_ui_window_type]->init_func != NULL) {
             main_menu_window_info[mainmenu_ui_window_type]->init_func();
@@ -1820,7 +1820,7 @@ void sub_541740()
             mainmenu_ui_create_window();
         }
 
-        if (dword_64C384) {
+        if (mainmenu_ui_active) {
             if (!dword_64C38C) {
                 sub_541810(mainmenu_ui_window_type);
             }
@@ -2792,7 +2792,7 @@ bool sub_543220()
     char name[256];
     bool rc;
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         return false;
     }
 
@@ -3443,7 +3443,7 @@ void mainmenu_ui_last_save_create()
 
     mainmenu_ui_window_type = MM_WINDOW_LAST_SAVE_GAME;
     mainmenu_ui_create_window();
-    dword_64C384 = false;
+    mainmenu_ui_active = false;
 
     path = gamelib_last_save_name();
     if (path[0] != '\0') {
@@ -3454,7 +3454,7 @@ void mainmenu_ui_last_save_create()
 
         if (gamelib_saveinfo_load(path, &mainmenu_ui_gsi)) {
             mainmenu_ui_gsi_loaded = true;
-            dword_64C384 = true;
+            mainmenu_ui_active = true;
 
             rect.x = 0;
             rect.y = 0;
@@ -3483,7 +3483,7 @@ void mainmenu_ui_last_save_create()
             }
         }
     } else {
-        dword_64C384 = true;
+        mainmenu_ui_active = true;
         sub_5417A0(1);
         dword_64C38C = true;
     }
@@ -3515,7 +3515,7 @@ void mainmenu_ui_credits_create()
     dword_64C38C = true;
     slide_ui_start(SLIDE_UI_TYPE_CREDITS);
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
             main_menu_window_info[mainmenu_ui_window_type]->refresh_func(NULL);
         }
@@ -4464,7 +4464,7 @@ void mainmenu_ui_create_window_func(bool should_display)
         should_display = false;
     }
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         return;
     }
 
@@ -4720,7 +4720,7 @@ void mainmenu_ui_create_window_func(bool should_display)
     }
 
     window->refresh_text_flags |= 0x20;
-    dword_64C384 = true;
+    mainmenu_ui_active = true;
 
     if (window->refresh_func != NULL) {
         window->refresh_func(NULL);
@@ -4831,7 +4831,7 @@ void sub_546DD0()
 {
     int index;
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         sub_549450();
         timeevent_clear_all_typed(TIMEEVENT_TYPE_MAINMENU);
 
@@ -4856,7 +4856,7 @@ void sub_546DD0()
             dword_5C3658 = TIG_WINDOW_HANDLE_INVALID;
         }
 
-        dword_64C384 = false;
+        mainmenu_ui_active = false;
     }
 }
 
@@ -5478,7 +5478,7 @@ void sub_5480C0(int a1)
                 return;
             }
         }
-        if (dword_64C384) {
+        if (mainmenu_ui_active) {
             if (mainmenu_ui_window_type == MM_WINDOW_SHOP) {
                 sub_5412D0();
             } else {
@@ -5589,7 +5589,7 @@ bool sub_549310(tig_button_handle_t button_handle)
         tig_button_show(button_handle);
     }
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         sub_5417A0(0);
         mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
         dword_64C390 = 0;
@@ -5712,7 +5712,7 @@ void mainmenu_ui_progressbar_init(int max_value)
 {
     mainmenu_ui_progressbar_max_value = max_value;
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
             main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C4538);
         }
@@ -5724,7 +5724,7 @@ void mainmenu_ui_progressbar_update(int value)
 {
     mainmenu_ui_progressbar_value = value;
 
-    if (dword_64C384) {
+    if (mainmenu_ui_active) {
         if (main_menu_window_info[mainmenu_ui_window_type]->refresh_func != NULL) {
             main_menu_window_info[mainmenu_ui_window_type]->refresh_func(&stru_5C4538);
         }

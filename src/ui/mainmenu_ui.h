@@ -68,7 +68,7 @@ void mainmenu_ui_exit();
 void mainmenu_ui_start(MainMenuType type);
 void sub_5412D0();
 bool mainmenu_ui_handle();
-bool sub_541680();
+bool mainmenu_ui_is_active();
 TigWindowModalDialogChoice mainmenu_ui_confirm_quit();
 void sub_541710();
 void sub_5417A0(bool a1);

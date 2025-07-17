@@ -162,7 +162,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             if (sub_573620() != OBJ_HANDLE_NULL) {
                 sub_575770();
             }
-            if (sub_541680()) {
+            if (mainmenu_ui_is_active()) {
                 sub_5412D0();
                 anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_DEATH, -1, 300);
             } else {
@@ -184,7 +184,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         if (sub_573620() != OBJ_HANDLE_NULL) {
             sub_575770();
         }
-        if (sub_541680()) {
+        if (mainmenu_ui_is_active()) {
             sub_5412D0();
             anim_ui_event_add_delay(ANIM_UI_EVENT_TYPE_END_GAME, -1, 300);
         } else {

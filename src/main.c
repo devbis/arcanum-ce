@@ -643,7 +643,7 @@ void main_loop()
                     }
                 }
             } else {
-                if (sub_541680()) {
+                if (mainmenu_ui_is_active()) {
                     if (!mainmenu_ui_handle()) {
                         return;
                     }

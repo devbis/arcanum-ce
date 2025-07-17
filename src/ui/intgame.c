@@ -1864,7 +1864,7 @@ bool sub_54B5D0(TigMessage* msg)
     }
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
-        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_MOVE || sub_541680()) {
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_MOVE || mainmenu_ui_is_active()) {
             return false;
         }
 
@@ -2452,12 +2452,12 @@ bool sub_54B5D0(TigMessage* msg)
         } else if (msg->data.keyboard.pressed == 0) {
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_K:
-                if (!sub_541680()) {
+                if (!mainmenu_ui_is_active()) {
                     sub_54DBF0(INTGAME_SECONDARY_BUTTON_SKILLS, ROTWIN_TYPE_SKILLS);
                 }
                 return true;
             case SDL_SCANCODE_M:
-                if (!sub_541680()) {
+                if (!mainmenu_ui_is_active()) {
                     sub_54DBF0(INTGAME_SECONDARY_BUTTON_SPELLS, ROTWIN_TYPE_SPELLS);
                 }
                 return true;
@@ -2487,13 +2487,13 @@ bool sub_54B5D0(TigMessage* msg)
                 sub_578B80(intgame_quantity);
                 intgame_mode_set(INTGAME_MODE_MAIN);
                 v2 = true;
-            } else if (!sub_541680()) {
+            } else if (!mainmenu_ui_is_active()) {
                 broadcast_ui_open();
                 v2 = true;
             }
         }
 
-        if (sub_541680()) {
+        if (mainmenu_ui_is_active()) {
             return false;
         }
 
