@@ -60,8 +60,6 @@ typedef struct S64B870 {
 
 static void sub_5412E0(bool a1);
 static TigWindowModalDialogChoice mainmenu_ui_confirm(int num);
-static void sub_541740();
-static MainMenuWindowType sub_5417E0();
 static void sub_541830(char* dst, const char* src);
 static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void mainmenu_ui_create_mainmenu();
@@ -1279,7 +1277,7 @@ static tig_font_handle_t dword_64BC10[3];
 static char byte_64BC1C[1000];
 
 // 0x64C004
-static MainMenuWindowType dword_64C004[50];
+static MainMenuWindowType mainmenu_ui_window_stack[50];
 
 // 0x64C0CC
 static tig_font_handle_t dword_64C0CC[2][3];
@@ -1333,7 +1331,7 @@ static bool dword_64C388;
 static bool dword_64C38C;
 
 // 0x64C390
-static int dword_64C390;
+static int mainmenu_ui_num_windows;
 
 // 0x64C394
 static char byte_64C394[128];
@@ -1552,7 +1550,7 @@ void mainmenu_ui_start(MainMenuType type)
     tig_art_id_t art_id;
 
     if (!mainmenu_ui_active) {
-        dword_64C390 = 0;
+        mainmenu_ui_num_windows = 0;
 
         if (type != MM_TYPE_OPTIONS) {
             sub_45B320();
@@ -1572,25 +1570,25 @@ void mainmenu_ui_start(MainMenuType type)
         case MM_TYPE_IN_PLAY:
             mainmenu_ui_window_type = MM_WINDOW_MAINMENU_IN_PLAY;
             dword_5C4004 = false;
-            sub_541740();
+            mainmenu_ui_open();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_IN_PLAY_LOCKED:
             mainmenu_ui_window_type = MM_WINDOW_MAINMENU_IN_PLAY_LOCKED;
             dword_5C4004 = false;
-            sub_541740();
+            mainmenu_ui_open();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_OPTIONS:
             mainmenu_ui_window_type = MM_WINDOW_OPTIONS;
             dword_5C4004 = false;
-            sub_541740();
+            mainmenu_ui_open();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         case MM_TYPE_5:
             mainmenu_ui_window_type = MM_WINDOW_26;
             dword_5C4004 = false;
-            sub_541740();
+            mainmenu_ui_open();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         default:
@@ -1600,7 +1598,7 @@ void mainmenu_ui_start(MainMenuType type)
             }
             mainmenu_ui_window_type = MM_WINDOW_0;
             dword_5C4004 = true;
-            sub_541740();
+            mainmenu_ui_open();
             object_hover_obj_set(OBJ_HANDLE_NULL);
             break;
         }
@@ -1693,7 +1691,7 @@ void sub_5412E0(bool a1)
             }
         }
 
-        sub_5417A0(0);
+        mainmenu_ui_close(false);
     }
 
     intgame_refresh_cursor();
@@ -1721,9 +1719,9 @@ bool mainmenu_ui_handle()
     }
 
     if (mainmenu_ui_window_type < MM_WINDOW_MAINMENU) {
-        sub_5417A0(0);
+        mainmenu_ui_close(false);
         mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-        sub_541740();
+        mainmenu_ui_open();
 
         if (tig_mouse_show() != TIG_OK) {
             tig_debug_printf("mainmenu_ui_handle: ERROR: tig_mouse_show failed!\n");
@@ -1810,7 +1808,7 @@ void mainmenu_ui_reset()
 }
 
 // 0x541740
-void sub_541740()
+void mainmenu_ui_open()
 {
     if (!mainmenu_ui_active) {
         dword_5C3FB8 = -1;
@@ -1822,7 +1820,7 @@ void sub_541740()
 
         if (mainmenu_ui_active) {
             if (!dword_64C38C) {
-                sub_541810(mainmenu_ui_window_type);
+                mainmenu_ui_push_window_stack(mainmenu_ui_window_type);
             }
         }
 
@@ -1831,7 +1829,7 @@ void sub_541740()
 }
 
 // 0x5417A0
-void sub_5417A0(bool a1)
+void mainmenu_ui_close(bool back)
 {
     if (main_menu_window_info[mainmenu_ui_window_type]->exit_func != NULL) {
         main_menu_window_info[mainmenu_ui_window_type]->exit_func();
@@ -1839,31 +1837,31 @@ void sub_5417A0(bool a1)
 
     sub_546DD0();
 
-    if (a1) {
-        mainmenu_ui_window_type = sub_5417E0();
+    if (back) {
+        mainmenu_ui_window_type = mainmenu_ui_pop_window_stack();
         if (mainmenu_ui_window_type != MM_WINDOW_0) {
-            sub_541740();
+            mainmenu_ui_open();
         }
     }
 }
 
 // 0x5417E0
-MainMenuWindowType sub_5417E0()
+MainMenuWindowType mainmenu_ui_pop_window_stack()
 {
-    if (dword_64C390 > 0) {
-        if (--dword_64C390 > 0) {
-            return dword_64C004[--dword_64C390];
+    if (mainmenu_ui_num_windows > 0) {
+        if (--mainmenu_ui_num_windows > 0) {
+            return mainmenu_ui_window_stack[--mainmenu_ui_num_windows];
         }
     } else {
-        dword_64C390 = 0;
+        mainmenu_ui_num_windows = 0;
     }
     return MM_WINDOW_0;
 }
 
 // 0x541810
-void sub_541810(MainMenuWindowType window_type)
+void mainmenu_ui_push_window_stack(MainMenuWindowType window_type)
 {
-    dword_64C004[dword_64C390++] = window_type;
+    mainmenu_ui_window_stack[mainmenu_ui_num_windows++] = window_type;
 }
 
 // 0x541830
@@ -2022,7 +2020,7 @@ bool mainmenu_ui_press_mainmenu_in_play(tig_button_handle_t button_handle)
             return false;
         }
 
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
 
         if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
@@ -2057,7 +2055,7 @@ bool mainmenu_ui_press_mainmenu_in_play_locked(tig_button_handle_t button_handle
             return false;
         }
 
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
 
         if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
@@ -2147,7 +2145,7 @@ bool mainmenu_ui_press_options(tig_button_handle_t button_handle)
     if (stru_5C36B0[mainmenu_ui_type][0]) {
         sub_5412D0();
     } else {
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         if (mainmenu_ui_window_type == MM_WINDOW_0) {
             sub_5412D0();
         }
@@ -3484,7 +3482,7 @@ void mainmenu_ui_last_save_create()
         }
     } else {
         mainmenu_ui_active = true;
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         dword_64C38C = true;
     }
 
@@ -3497,10 +3495,10 @@ void mainmenu_ui_intro_create()
     mainmenu_ui_window_type = MM_WINDOW_INTRO;
     gmovie_play(1, 0, 0);
     gmovie_play(7, 0, 0);
-    dword_64C390++;
-    sub_5417E0();
+    mainmenu_ui_num_windows++;
+    mainmenu_ui_pop_window_stack();
     mainmenu_ui_window_type = MM_WINDOW_SINGLE_PLAYER;
-    sub_541740();
+    mainmenu_ui_open();
     dword_64C38C = true;
 }
 
@@ -3508,10 +3506,10 @@ void mainmenu_ui_intro_create()
 void mainmenu_ui_credits_create()
 {
     mainmenu_ui_window_type = MM_WINDOW_CREDITS;
-    dword_64C390++;
-    sub_5417E0();
+    mainmenu_ui_num_windows++;
+    mainmenu_ui_pop_window_stack();
     mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-    sub_541740();
+    mainmenu_ui_open();
     dword_64C38C = true;
     slide_ui_start(SLIDE_UI_TYPE_CREDITS);
 
@@ -3791,12 +3789,12 @@ bool mainmenu_ui_new_char_button_released(tig_button_handle_t button_handle)
             return true;
         }
 
-        sub_5417A0(0);
+        mainmenu_ui_close(false);
         mainmenu_ui_window_type = MM_WINDOW_CHAREDIT;
-        sub_541740();
+        mainmenu_ui_open();
         return true;
     case 1:
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         return true;
     case 2:
         portrait = portrait_get(pc_obj);
@@ -4183,7 +4181,7 @@ bool mainmenu_ui_pregen_char_button_released(tig_button_handle_t button_handle)
         sub_5412D0();
         return true;
     case 1:
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         return true;
     case 2:
         if (mainmenu_ui_pregen_char_idx > 1) {
@@ -4267,7 +4265,7 @@ bool mainmenu_ui_charedit_button_released(tig_button_handle_t button_handle)
     }
 
     if (button_handle == mainmenu_ui_charedit_buttons[1].button_handle) {
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         return true;
     }
 
@@ -4283,7 +4281,7 @@ void mainmenu_ui_charedit_refresh(TigRect* rect)
 
     pc_obj = player_get_local_pc_obj();
     if (!charedit_open(pc_obj, dword_64C454)) {
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
     }
     dword_64C454 = CHAREDIT_MODE_3;
 }
@@ -4312,7 +4310,7 @@ bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle)
     }
 
     if (button_handle == mainmenu_ui_shop_buttons[1].button_handle) {
-        sub_5417A0(1);
+        mainmenu_ui_close(true);
         return true;
     }
 
@@ -4927,9 +4925,9 @@ bool sub_546EE0(TigMessage* msg)
             switch (mainmenu_ui_window_type) {
             case MM_WINDOW_0:
             case MM_WINDOW_1:
-                sub_5417A0(0);
+                mainmenu_ui_close(false);
                 mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-                sub_541740();
+                mainmenu_ui_open();
                 return true;
             case MM_WINDOW_OPTIONS:
                 if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
@@ -4939,7 +4937,7 @@ bool sub_546EE0(TigMessage* msg)
                         }
                     } else {
                         gsound_play_sfx(0, 1);
-                        sub_5417A0(1);
+                        mainmenu_ui_close(true);
                     }
                     return true;
                 }
@@ -4949,7 +4947,7 @@ bool sub_546EE0(TigMessage* msg)
                     if (dword_64C450) {
                         sub_5412D0();
                     } else {
-                        sub_5417A0(1);
+                        mainmenu_ui_close(true);
                     }
                     return true;
                 }
@@ -4979,9 +4977,9 @@ bool sub_546EE0(TigMessage* msg)
             switch (mainmenu_ui_window_type) {
             case MM_WINDOW_0:
             case MM_WINDOW_1:
-                sub_5417A0(0);
+                mainmenu_ui_close(false);
                 mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-                sub_541740();
+                mainmenu_ui_open();
                 return true;
             }
             return false;
@@ -5018,9 +5016,9 @@ bool sub_546EE0(TigMessage* msg)
                             }
                         }
 
-                        sub_5417A0(0);
+                        mainmenu_ui_close(false);
                         mainmenu_ui_window_type = window->buttons[idx].field_10;
-                        sub_541740();
+                        mainmenu_ui_open();
                         return true;
                     }
 
@@ -5036,7 +5034,7 @@ bool sub_546EE0(TigMessage* msg)
                     }
 
                     if (window->buttons[idx].field_10 == -2) {
-                        sub_5417A0(1);
+                        mainmenu_ui_close(true);
                         if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
                         }
@@ -5149,9 +5147,9 @@ bool sub_546EE0(TigMessage* msg)
         case MM_WINDOW_0:
             return false;
         case MM_WINDOW_1:
-            sub_5417A0(0);
+            mainmenu_ui_close(false);
             mainmenu_ui_window_type = 2;
-            sub_541740();
+            mainmenu_ui_open();
             return true;
         case MM_WINDOW_MAINMENU:
             if (msg->data.keyboard.key == SDL_SCANCODE_ESCAPE
@@ -5174,7 +5172,7 @@ bool sub_546EE0(TigMessage* msg)
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
-                sub_5417A0(1);
+                mainmenu_ui_close(true);
                 if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
@@ -5200,7 +5198,7 @@ bool sub_546EE0(TigMessage* msg)
             switch (msg->data.keyboard.key) {
             case SDL_SCANCODE_ESCAPE:
                 gsound_play_sfx(0, 1);
-                sub_5417A0(1);
+                mainmenu_ui_close(true);
                 if (mainmenu_ui_window_type == MM_WINDOW_0) {
                     sub_5412D0();
                 }
@@ -5266,9 +5264,9 @@ bool sub_546EE0(TigMessage* msg)
                 }
             }
 
-            sub_5417A0(0);
+            mainmenu_ui_close(false);
             mainmenu_ui_window_type = window->buttons[idx].field_10;
-            sub_541740();
+            mainmenu_ui_open();
             return true;
         }
 
@@ -5284,7 +5282,7 @@ bool sub_546EE0(TigMessage* msg)
         }
 
         if (window->buttons[idx].field_10 == -2) {
-            sub_5417A0(1);
+            mainmenu_ui_close(true);
             if (mainmenu_ui_window_type == MM_WINDOW_0) {
                 sub_5412D0();
             }
@@ -5305,7 +5303,7 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 case 4:
                     if (!stru_5C36B0[mainmenu_ui_type][0]) {
-                        sub_5417A0(1);
+                        mainmenu_ui_close(true);
 
                         if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
@@ -5327,7 +5325,7 @@ bool sub_546EE0(TigMessage* msg)
                     return true;
                 case 2:
                     if (!stru_5C36B0[mainmenu_ui_type][0]) {
-                        sub_5417A0(1);
+                        mainmenu_ui_close(true);
 
                         if (mainmenu_ui_window_type == MM_WINDOW_0) {
                             sub_5412D0();
@@ -5482,15 +5480,15 @@ void sub_5480C0(int a1)
             if (mainmenu_ui_window_type == MM_WINDOW_SHOP) {
                 sub_5412D0();
             } else {
-                sub_5417A0(0);
+                mainmenu_ui_close(false);
                 mainmenu_ui_window_type++;
-                sub_541740();
+                mainmenu_ui_open();
             }
         }
         return;
     case 3:
         if (mainmenu_ui_window_type != MM_WINDOW_OPTIONS || options_ui_load_module()) {
-            sub_5417A0(1);
+            mainmenu_ui_close(true);
         }
         return;
     case 4:
@@ -5590,11 +5588,11 @@ bool sub_549310(tig_button_handle_t button_handle)
     }
 
     if (mainmenu_ui_active) {
-        sub_5417A0(0);
+        mainmenu_ui_close(false);
         mainmenu_ui_window_type = MM_WINDOW_MAINMENU;
-        dword_64C390 = 0;
+        mainmenu_ui_num_windows = 0;
         mainmenu_ui_type = !dword_5C4000 ? MM_TYPE_1 : MM_TYPE_DEFAULT;
-        sub_541740();
+        mainmenu_ui_open();
     } else {
         sub_53EAF0();
     }
@@ -5861,8 +5859,8 @@ void sub_549960()
 // 0x549990
 void sub_549990(int* a1, int num)
 {
-    memcpy(&(dword_64C004[1]), a1, sizeof(*a1) * num);
-    dword_64C390 = num + 1;
+    memcpy(&(mainmenu_ui_window_stack[1]), a1, sizeof(*a1) * num);
+    mainmenu_ui_num_windows = num + 1;
 }
 
 // 0x549A40
