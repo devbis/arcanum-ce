@@ -117,7 +117,7 @@ char* item_effect_get(int num)
         mes_file = item_effect_mes_file;
     } else {
         mes_file = game_item_effect_mes_file;
-        if (mes_file == -1) {
+        if (mes_file == MES_FILE_HANDLE_INVALID) {
             return NULL;
         }
     }
