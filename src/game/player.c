@@ -285,7 +285,7 @@ bool player_obj_create_player(PlayerCreateInfo* player_create_info)
         tig_debug_printf("pcObj == %I64u\n", player_pc_obj);
     }
 
-    level_set_level(player_create_info->obj, 1);
+    level_set(player_create_info->obj, 1);
     sub_463E20(player_create_info->obj);
     obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
     ui_spell_maintain_refresh();

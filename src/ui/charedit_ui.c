@@ -1870,7 +1870,7 @@ int charedit_stat_value_get(int64_t obj, int stat)
     case CHAREDIT_STAT_LEVEL:
         return stat_level_get(obj, STAT_LEVEL);
     case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
-        return level_get_experience_points_to_next_level(obj);
+        return level_experience_points_to_next_level(obj);
     case CHAREDIT_STAT_HP_PTS_CURRENT:
         return object_hp_current(obj);
     case CHAREDIT_STAT_HP_PTS_MAXIMUM:
@@ -2848,7 +2848,7 @@ bool charedit_scheme_win_create()
     charedit_num_schemes = 0;
     for (index = 0; index < 200; index++) {
         charedit_scheme_ids[charedit_num_schemes] = index;
-        charedit_scheme_names[charedit_num_schemes] = level_advancement_scheme_get_name(index);
+        charedit_scheme_names[charedit_num_schemes] = auto_level_scheme_name(index);
         if (charedit_scheme_names[charedit_num_schemes] != NULL) {
             charedit_num_schemes++;
         }
@@ -2906,7 +2906,7 @@ void charedit_scheme_win_refresh()
         }
         stru_5C8E40.str = byte_64D714;
     } else {
-        stru_5C8E40.str = level_advancement_scheme_get_name(level_auto_level_scheme_get(charedit_obj));
+        stru_5C8E40.str = auto_level_scheme_name(auto_level_scheme_get(charedit_obj));
     }
 
     cnt = charedit_num_schemes;
@@ -3455,7 +3455,7 @@ bool charedit_scheme_win_message_filter(TigMessage* msg)
             for (index = 0; index < 15; index++) {
                 if (msg->data.button.button_handle == dword_64C7E8[index]) {
                     if (index < charedit_num_schemes) {
-                        level_auto_level_scheme_set(charedit_obj, charedit_scheme_ids[index + charedit_top_scheme_index]);
+                        auto_level_scheme_set(charedit_obj, charedit_scheme_ids[index + charedit_top_scheme_index]);
                         if (tig_net_is_active()) {
                             multiplayer_notify_level_scheme_changed(player_get_local_pc_obj());
                         }

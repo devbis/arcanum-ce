@@ -2836,7 +2836,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int scheme = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            level_auto_level_scheme_set(handles[idx], scheme);
+            auto_level_scheme_set(handles[idx], scheme);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;

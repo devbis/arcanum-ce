@@ -1589,10 +1589,10 @@ bool save_char(const char* path, int64_t obj)
     sub_4598D0(obj);
     sub_424070(obj, PRIORITY_HIGHEST, false, true);
 
-    scheme = level_auto_level_scheme_get(obj);
+    scheme = auto_level_scheme_get(obj);
     if (scheme != 0) {
-        scheme_rule = level_advancement_scheme_get_rule(scheme);
-        scheme_name = level_advancement_scheme_get_name(scheme);
+        scheme_rule = auto_level_scheme_rule(scheme);
+        scheme_name = auto_level_scheme_name(scheme);
     } else {
         scheme_rule = NULL;
         scheme_name = NULL;
@@ -1973,10 +1973,10 @@ bool multiplayer_notify_level_scheme_changed(int64_t obj)
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    scheme = level_auto_level_scheme_get(obj);
+    scheme = auto_level_scheme_get(obj);
     if (scheme == 0) {
-        rule = level_advancement_scheme_get_rule(scheme);
-        name = level_advancement_scheme_get_name(scheme);
+        rule = auto_level_scheme_rule(scheme);
+        name = auto_level_scheme_name(scheme);
     } else {
         rule = "";
         name = "";

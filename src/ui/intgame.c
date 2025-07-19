@@ -7850,7 +7850,7 @@ void intgame_refresh_experience_gauges(int64_t obj)
         tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
     }
 
-    cnt = 11 * level_get_experience_points_to_next_level_in_percent(obj) / 10;
+    cnt = 11 * level_progress_towards_next_level(obj) / 10;
     for (index = 0; index < cnt / 100; index++) {
         if (tig_art_interface_id_create(stru_5C71D0[index].art_num, 0, 0, 0, &art_id) == TIG_OK
             && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
