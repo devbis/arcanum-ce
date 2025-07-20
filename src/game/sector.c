@@ -846,7 +846,7 @@ bool sub_4D04E0(int64_t id)
         return false;
     }
 
-    if ((sector_cache_entries[sector_cache_indexes[index]].sector.flags & 0x80000000) != 0) {
+    if ((sector_cache_entries[sector_cache_indexes[index]].sector.flags & SECTOR_IS_NEW) != 0) {
         return false;
     }
 
@@ -1287,7 +1287,7 @@ void sub_4D1400(Sector* sector)
         dword_601834++;
     }
 
-    sector->flags = 0x80000000;
+    sector->flags = SECTOR_IS_NEW;
     sector_light_list_reset(&(sector->lights));
     sector_tile_list_reset(&(sector->tiles));
     sector_roof_list_reset(&(sector->roofs));
@@ -1407,7 +1407,7 @@ bool sector_load_editor(int64_t id, Sector* sector)
                     return false;
                 }
 
-                sector->flags &= ~0x0007;
+                sector->flags &= ~SECTOR_CHANGED_MASK;
 
                 if (!sector_sound_list_load(&(sector->sounds), stream)) {
                     tig_debug_printf("Error loading sound list from sector file %s\n", path);
@@ -1665,7 +1665,7 @@ bool sector_load_game(int64_t id, Sector* sector)
                     }
                 }
 
-                sector->flags &= ~0x0007;
+                sector->flags &= ~SECTOR_CHANGED_MASK;
             }
 
             if (placeholder >= 0xAA0004) {
@@ -1747,15 +1747,15 @@ bool sector_save_editor(Sector* sector)
         dif_flags |= DIF_HAVE_SECTOR_SCRIPT_LIST;
     }
 
-    if ((sector->flags & 0x01) != 0) {
+    if ((sector->flags & SECTOR_TOWNMAP_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_TOWNMAP;
     }
 
-    if ((sector->flags & 0x02) != 0) {
+    if ((sector->flags & SECTOR_APTITUDE_ADJ_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_APTITUDE_ADJ;
     }
 
-    if ((sector->flags & 0x04) != 0) {
+    if ((sector->flags & SECTOR_LIGHT_SCHEME_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_LIGHT_SCHEME;
     }
 
@@ -1878,7 +1878,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
         return false;
     }
 
-    sector->flags &= ~0x0007;
+    sector->flags &= ~SECTOR_CHANGED_MASK;
 
     if (!sector_sound_list_save(&(sector->sounds), stream)) {
         tig_debug_printf("Error saving sound list to sector data file %s\n", path);
@@ -1940,15 +1940,15 @@ bool sector_save_game(Sector* sector)
         dif_flags |= DIF_HAVE_SECTOR_SCRIPT_LIST;
     }
 
-    if ((sector->flags & 0x1) != 0) {
+    if ((sector->flags & SECTOR_TOWNMAP_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_TOWNMAP;
     }
 
-    if ((sector->flags & 0x2) != 0) {
+    if ((sector->flags & SECTOR_APTITUDE_ADJ_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_APTITUDE_ADJ;
     }
 
-    if ((sector->flags & 0x4) != 0) {
+    if ((sector->flags & SECTOR_LIGHT_SCHEME_CHANGED) != 0) {
         dif_flags |= DIF_HAVE_LIGHT_SCHEME;
     }
 

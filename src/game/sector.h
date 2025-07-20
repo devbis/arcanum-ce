@@ -12,9 +12,17 @@
 #include "game/tile_script_list.h"
 #include "game/timeevent.h"
 
+typedef uint32_t SectorFlags;
+
+#define SECTOR_TOWNMAP_CHANGED 0x00000001u
+#define SECTOR_APTITUDE_ADJ_CHANGED 0x00000002u
+#define SECTOR_LIGHT_SCHEME_CHANGED 0x00000004u
+#define SECTOR_IS_NEW 0x80000000u
+
+#define SECTOR_CHANGED_MASK (SECTOR_TOWNMAP_CHANGED | SECTOR_APTITUDE_ADJ_CHANGED | SECTOR_LIGHT_SCHEME_CHANGED)
+
 typedef struct Sector {
-    /* 0000 */ int flags;
-    /* 0004 */ int field_4;
+    /* 0000 */ SectorFlags flags;
     /* 0008 */ int64_t id;
     /* 0010 */ DateTime datetime;
     /* 0018 */ SectorLightList lights;

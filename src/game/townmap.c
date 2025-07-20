@@ -224,7 +224,7 @@ void townmap_set(int64_t sec, int townmap)
 
     // Set the town map ID and mark the sector as modified.
     sector->townmap_info = townmap;
-    sector->flags |= 0x1;
+    sector->flags |= SECTOR_TOWNMAP_CHANGED;
 
     sector_unlock(sec);
 }
