@@ -188,9 +188,9 @@ bool map_init(GameInitInfo* init_info)
         return true;
     }
 
-    map_base_path = (char*)calloc(TIG_MAX_PATH, sizeof(*map_base_path));
-    map_save_path = (char*)calloc(TIG_MAX_PATH, sizeof(*map_save_path));
-    map_list_info = (MapListInfo*)calloc(MAP_LIST_CAPACITY, sizeof(*map_list_info));
+    map_base_path = (char*)CALLOC(TIG_MAX_PATH, sizeof(*map_base_path));
+    map_save_path = (char*)CALLOC(TIG_MAX_PATH, sizeof(*map_save_path));
+    map_list_info = (MapListInfo*)CALLOC(MAP_LIST_CAPACITY, sizeof(*map_list_info));
 
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
         if (map_modules[index].init_func != NULL) {
@@ -203,9 +203,9 @@ bool map_init(GameInitInfo* init_info)
                     }
                 }
 
-                free(map_base_path);
-                free(map_save_path);
-                free(map_list_info);
+                FREE(map_base_path);
+                FREE(map_save_path);
+                FREE(map_list_info);
 
                 return false;
             }
@@ -323,9 +323,9 @@ void map_exit()
         }
     }
 
-    free(map_base_path);
-    free(map_save_path);
-    free(map_list_info);
+    FREE(map_base_path);
+    FREE(map_save_path);
+    FREE(map_list_info);
 
     dword_5D11F0 = false;
 }

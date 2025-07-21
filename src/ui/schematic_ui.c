@@ -460,7 +460,7 @@ void schematic_ui_destroy()
         intgame_big_window_unlock();
         schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
         if (schematic_ui_num_found_schematics > 0) {
-            free(schematic_ui_found_schematics);
+            FREE(schematic_ui_found_schematics);
         }
         gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
         schematic_ui_created = false;
