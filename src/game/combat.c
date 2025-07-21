@@ -56,7 +56,7 @@ static void combat_process_crit_hit(CombatContext* combat);
 static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
-static void sub_4B6680(CombatContext* combat);
+static void combat_calc_dmg(CombatContext* combat);
 static void sub_4B6860(CombatContext* combat);
 static int sub_4B6930(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
@@ -763,7 +763,7 @@ void sub_4B2F60(CombatContext* combat)
             object_script_execute(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
-        sub_4B6680(combat);
+        combat_calc_dmg(combat);
         combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
@@ -1028,7 +1028,7 @@ void sub_4B3770(CombatContext* combat)
             object_script_execute(combat->target_obj, combat->attacker_obj, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
-        sub_4B6680(combat);
+        combat_calc_dmg(combat);
         combat_dmg(combat);
 
         if ((combat->flags & CF_CRITICAL) != 0) {
@@ -2701,11 +2701,11 @@ bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
 }
 
 // 0x4B6680
-void sub_4B6680(CombatContext* combat)
+void combat_calc_dmg(CombatContext* combat)
 {
-    unsigned int critter_flags;
-    unsigned int critter_flags2;
-    unsigned int spell_flags;
+    unsigned int critter_flags = 0;
+    unsigned int critter_flags2 = 0;
+    unsigned int spell_flags = 0;
     DamageType damage_type;
     int min_damage;
     int max_damage;
@@ -2759,7 +2759,7 @@ void sub_4B6680(CombatContext* combat)
         combat->dam[damage_type] = damage;
     }
 
-    spell_flags = obj_field_int32_get(combat->target_obj, OBJ_F_SPELL_FLAGS);
+    spell_flags = obj_field_int32_get(combat->attacker_obj, OBJ_F_SPELL_FLAGS);
     if (combat->weapon_obj == OBJ_HANDLE_NULL) {
         if ((spell_flags & OSF_BODY_OF_EARTH) != 0) {
             combat->dam[DAMAGE_TYPE_NORMAL] += 5;
