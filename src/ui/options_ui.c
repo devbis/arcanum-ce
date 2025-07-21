@@ -19,7 +19,7 @@ typedef void(OptionsUiControlValueSetter)(int value);
 
 typedef struct OptionsUiControlInfo {
     /* 0000 */ bool active;
-    /* 0004 */ int type;
+    /* 0004 */ CyclicUiControlType type;
     /* 0008 */ int max_value;
     /* 000C */ const char* debug_name;
     /* 0010 */ const char* mes;
@@ -99,29 +99,29 @@ static int options_ui_controls_y[MAX_CONTROLS] = {
  */
 static OptionsUiControlInfo options_ui_tab_controls_meta[OPTIONS_UI_TAB_COUNT][MAX_CONTROLS] = {
     {
-        { true, 2, 0, "Module", "", options_ui_module_get, NULL },
-        { true, 1, 0, "Difficulty", "mes\\OptionsDifficulty.mes", options_ui_difficulty_get, options_ui_difficutly_set },
-        { true, 1, 0, "Violence Filter", "mes\\OptionsOffOn.mes", options_ui_violence_filter_get, options_ui_violence_filter_set },
-        { true, 1, 0, "Default Combat Mode", "mes\\OptionsCombatMode.mes", options_ui_combat_mode_get, options_ui_combat_mode_set },
-        { true, 1, 0, "Auto Attack", "mes\\OptionsOffOn.mes", options_ui_auto_attack_get, options_ui_auto_attack_set },
-        { true, 1, 0, "Auto Switch Weapons", "mes\\OptionsOffOn.mes", options_ui_auto_switch_weapons_get, options_ui_auto_switch_weapons_set },
-        { true, 1, 0, "Always Run", "mes\\OptionsOffOn.mes", options_ui_awlays_run_get, options_ui_always_run_set },
-        { true, 1, 0, "Follower Skills", "mes\\OptionsOffOn.mes", options_ui_follower_skills_get, options_ui_follower_skills_set },
+        { true, CYCLIC_UI_CONTROL_TEXT_ARRAY, 0, "Module", "", options_ui_module_get, NULL },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Difficulty", "mes\\OptionsDifficulty.mes", options_ui_difficulty_get, options_ui_difficutly_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Violence Filter", "mes\\OptionsOffOn.mes", options_ui_violence_filter_get, options_ui_violence_filter_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Default Combat Mode", "mes\\OptionsCombatMode.mes", options_ui_combat_mode_get, options_ui_combat_mode_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Auto Attack", "mes\\OptionsOffOn.mes", options_ui_auto_attack_get, options_ui_auto_attack_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Auto Switch Weapons", "mes\\OptionsOffOn.mes", options_ui_auto_switch_weapons_get, options_ui_auto_switch_weapons_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Always Run", "mes\\OptionsOffOn.mes", options_ui_awlays_run_get, options_ui_always_run_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Follower Skills", "mes\\OptionsOffOn.mes", options_ui_follower_skills_get, options_ui_follower_skills_set },
     },
     {
-        { true, 0, 9, "Brightness", "", options_ui_brightness_get, options_ui_brightness_set },
-        { true, 0, 0, "Text Duration", "", options_ui_text_duration_get, options_ui_text_duration_set },
-        { true, 1, 0, "Floats", "mes\\OptionsFloats.mes", options_ui_floats_get, options_ui_floats_set },
-        { true, 0, 0, "Float Speed", "", options_ui_float_speed_get, options_ui_float_speed_set },
-        { true, 1, 0, "Combat Taunts", "mes\\OptionsOffOn.mes", options_ui_combat_taunts_get, options_ui_combat_taunts_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 9, "Brightness", "", options_ui_brightness_get, options_ui_brightness_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 0, "Text Duration", "", options_ui_text_duration_get, options_ui_text_duration_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Floats", "mes\\OptionsFloats.mes", options_ui_floats_get, options_ui_floats_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 0, "Float Speed", "", options_ui_float_speed_get, options_ui_float_speed_set },
+        { true, CYCLIC_UI_CONTROL_MESSAGE_FILE, 0, "Combat Taunts", "mes\\OptionsOffOn.mes", options_ui_combat_taunts_get, options_ui_combat_taunts_set },
         { false, 0, 0, "", "", NULL, NULL },
         { false, 0, 0, "", "", NULL, NULL },
         { false, 0, 0, "", "", NULL, NULL },
     },
     {
-        { true, 0, 0, "Effects", "", options_ui_effects_volume_get, options_ui_effects_volume_set },
-        { true, 0, 0, "Voice", "", options_ui_voice_volume_get, options_ui_voice_volume_set },
-        { true, 0, 0, "Music", "", options_ui_music_volume_get, options_ui_music_volume_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 0, "Effects", "", options_ui_effects_volume_get, options_ui_effects_volume_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 0, "Voice", "", options_ui_voice_volume_get, options_ui_voice_volume_set },
+        { true, CYCLIC_UI_CONTROL_NUMERIC_BAR, 0, "Music", "", options_ui_music_volume_get, options_ui_music_volume_set },
         { false, 0, 0, "", "", NULL, NULL },
         { false, 0, 0, "", "", NULL, NULL },
         { false, 0, 0, "", "", NULL, NULL },
@@ -235,7 +235,7 @@ void options_ui_start(OptionsUiTab tab, tig_window_handle_t window_handle, bool 
 
         // Load control title from the message file.
         mes_file_entry.num = index + 100 * (tab + 1);
-        control_info.text = mes_search(options_ui_mes_file, &mes_file_entry)
+        control_info.title = mes_search(options_ui_mes_file, &mes_file_entry)
             ? mes_file_entry.str
             : NULL;
 

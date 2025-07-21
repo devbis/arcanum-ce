@@ -3,15 +3,21 @@
 
 #include "game/context.h"
 
+typedef enum CyclicUiControlType {
+    CYCLIC_UI_CONTROL_NUMERIC_BAR,
+    CYCLIC_UI_CONTROL_MESSAGE_FILE,
+    CYCLIC_UI_CONTROL_TEXT_ARRAY,
+} CyclicUiControlType;
+
 typedef void CyclicUiControlValueChanged(int value);
 
 typedef struct CyclicUiControlInfo {
     /* 0000 */ tig_window_handle_t window_handle;
     /* 0004 */ int x;
     /* 0008 */ int y;
-    /* 000C */ int type;
+    /* 000C */ CyclicUiControlType type;
     /* 0010 */ int max_value;
-    /* 0014 */ const char* text;
+    /* 0014 */ const char* title;
     /* 0018 */ const char* mes_file_path;
     /* 001C */ const char** text_array;
     /* 0020 */ int text_array_size;
@@ -25,7 +31,7 @@ void cyclic_ui_exit();
 bool cyclic_ui_handle_button_pressed(tig_button_handle_t button_handle);
 void cyclic_ui_control_init(CyclicUiControlInfo* info);
 bool cyclic_ui_control_create(CyclicUiControlInfo* info, int* id_ptr);
-void cyclic_ui_control_destroy(int id, bool a2);
+void cyclic_ui_control_destroy(int id, bool exiting);
 void cyclic_ui_control_show(int id, bool visible);
 void cyclic_ui_control_enable(int id, bool enabled);
 void cyclic_ui_control_set(int id, int value);
