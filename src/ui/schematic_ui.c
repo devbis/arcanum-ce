@@ -51,28 +51,47 @@ static void schematic_ui_create();
 static void schematic_ui_destroy();
 static bool schematic_ui_message_filter(TigMessage* msg);
 static int tech_from_schematic(int schematic);
-static int sub_56DB60();
+static int schematic_ui_current_id();
 static void schematic_ui_parse_items(const char* str, int* items);
 static void schematic_ui_redraw();
 static void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4);
 
-// 0x5CA818
+/**
+ * 0x5CA818
+ */
 static tig_window_handle_t schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
-// 0x5CA820
+/**
+ * Defines the frame of the schematic UI window (in the original screen
+ * coordinate system, that is 800x600).
+ *
+ * 0x5CA820
+ */
 static TigRect schematic_ui_window_rect = { 0, 41, 800, 400 };
 
-// 0x5CA830
+/**
+ * Defines art numbers of the indicator icons for appropriate readiness state.
+ *
+ * 0x5CA830
+ */
 static int schematic_ui_combine_indicator_icons[SCHEMATIC_UI_READINESS_COUNT] = {
     /*           SCHEMATIC_UI_READINESS_OK */ 360,
     /*     SCHEMATIC_UI_READINESS_NO_ITEMS */ 359,
     /* SCHEMATIC_UI_READINESS_NO_EXPERTISE */ 358,
 };
 
-// 0x5CA840
+/**
+ * Defines a rect where PC lens is located in the schematic UI.
+ *
+ * 0x5CA840
+ */
 static TigRect schematic_ui_pc_lens_rect = { 50, 26, 89, 89 };
 
-// 0x5CA850
+/**
+ * Defines schematic UI navigation/action buttons.
+ *
+ * 0x5CA850
+ */
 static UiButtonInfo schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COUNT] = {
     /*    SCHEMATIC_UI_BUTTON_PREV */ { 204, 57, 372, TIG_BUTTON_HANDLE_INVALID },
     /*    SCHEMATIC_UI_BUTTON_NEXT */ { 687, 57, 373, TIG_BUTTON_HANDLE_INVALID },
@@ -81,7 +100,11 @@ static UiButtonInfo schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COUNT] = {
     /*   SCHEMATIC_UI_BUTTON_FOUND */ { 29, 289, 6, TIG_BUTTON_HANDLE_INVALID },
 };
 
-// 0x5CA8A0
+/**
+ * Defines tech discipline tab buttons.
+ *
+ * 0x5CA8A0
+ */
 static UiButtonInfo schematic_ui_tabs[TECH_COUNT] = {
     /*    TECH_HERBOLOGY */ { 707, 58, 355, TIG_BUTTON_HANDLE_INVALID },
     /*    TECH_CHEMISTRY */ { 707, 103, 356, TIG_BUTTON_HANDLE_INVALID },
@@ -93,120 +116,249 @@ static UiButtonInfo schematic_ui_tabs[TECH_COUNT] = {
     /* TECH_THERAPEUTICS */ { 707, 373, 369, TIG_BUTTON_HANDLE_INVALID },
 };
 
-// 0x5CA920
+/**
+ * Defines component item frames.
+ *
+ * 0x5CA920
+ */
 static TigRect schematic_ui_component_rects[] = {
     { 579, 181, 99, 67 },
     { 579, 277, 99, 67 },
 };
 
-// 0x5CA940
+/**
+ * Defines component item tech discipline icon frames.
+ *
+ * 0x5CA940
+ */
 static TigRect schematic_ui_component_icon_rects[] = {
     { 583, 182, 50, 50 },
     { 583, 278, 50, 50 },
 };
 
-// 0x5CA960
+/**
+ * Defines component item complexity score frames.
+ *
+ * 0x5CA960
+ */
 static TigRect schematic_ui_component_complexity_rects[] = {
     { 658, 232, 50, 50 },
     { 658, 328, 50, 50 },
 };
 
-// FIXME: Should be initialized with `TIG_BUTTON_HANDLE_INVALID`.
-//
-// 0x680DE0
+/**
+ * Button handle for the "Component 1" slot.
+ *
+ * 0x680DE0
+ */
 static tig_button_handle_t schematic_ui_component1_button;
 
-// 0x680DE4
+/**
+ * Array tracking the number of learned schematics per tech discipline.
+ *
+ * 0x680DE4
+ */
 static int schematic_ui_num_learned_schematics_by_tech[TECH_COUNT];
 
-// 0x680E04
+/**
+ * Array tracking the number of found schematics per tech discipline.
+ *
+ * 0x680E04
+ */
 static int schematic_ui_num_found_schematics_by_tech[TECH_COUNT];
 
-// 0x680E24
+/**
+ * Last page for "Learned schematics" view.
+ *
+ * 0x680E24
+ */
 static int schematic_ui_learned_page;
 
-// 0x680E28
+/**
+ * 0x680E28
+ */
 static int64_t schematic_ui_component2_obj;
 
-// 0x680E30
+/**
+ * Last tech discipline for "Learned schematics" view.
+ *
+ * 0x680E30
+ */
 static int schematic_ui_learned_tech;
 
-// 0x680E34
+/**
+ * 0x680E34
+ */
 static tig_font_handle_t schematic_ui_name_font;
 
-// 0x680E38
+/**
+ * 0x680E38
+ */
 static tig_font_handle_t schematic_ui_description_font;
 
-// 0x680E3C
+/**
+ * Button handle for the "Component 2" slot.
+ *
+ * 0x680E3C
+ */
 static tig_button_handle_t schematic_ui_component2_button;
 
-// 0x680E40
+/**
+ * Current view mode of the schematic UI.
+ *
+ * 0x680E40
+ */
 static SchematicUiView schematic_ui_view;
 
-// 0x680E44
+/**
+ * "schematic.mes"
+ *
+ * 0x680E44
+ */
 static mes_file_handle_t schematic_ui_rules_mes_file;
 
-// 0x680E48
+/**
+ * Total number of schematics in the current view.
+ *
+ * 0x680E48
+ */
 static int schematic_ui_cur_num_schematics;
 
-// 0x680E4C
+/**
+ * Pointer to the array of schematic counts by tech discipline.
+ *
+ * This is an unowned pointer to `schematic_ui_num_learned_schematics_by_tech`
+ * or `schematic_ui_num_found_schematics_by_tech` depending the current view
+ * mode.
+ *
+ * 0x680E4C
+ */
 static int* schematic_ui_cur_num_schematics_by_tech;
 
-// 0x680E50
+/**
+ * Array of found schematic IDs.
+ *
+ * 0x680E50
+ */
 static int* schematic_ui_found_schematics;
 
-// 0x680E54
+/**
+ * Total number of learned schematics.
+ *
+ * 0x680E54
+ */
 static int schematic_ui_num_learned_schematics;
 
-// 0x680E58
+/**
+ * Current page index in the schematic UI.
+ *
+ * 0x680E58
+ */
 static int schematic_ui_cur_page;
 
-// 0x680E5C
+/**
+ * Pointer to array of schematic IDs for the current view.
+ *
+ * This is an unowned pointer to `schematic_ui_learned_schematics` or
+ * `schematic_ui_found_schematics` depending the current view mode.
+ *
+ * 0x680E5C
+ */
 static int* schematic_ui_cur_schematics;
 
-// 0x680E60
+/**
+ * 0x680E60
+ */
 static int64_t schematic_ui_secondary_obj;
 
-// 0x680E68
+/**
+ * Last page for "Found schematics" view.
+ *
+ * 0x680E68
+ */
 static int schematic_ui_found_page;
 
-// 0x680E6C
+/**
+ * Current tech discipline in the schematic UI.
+ *
+ * 0x680E6C
+ */
 static int schematic_ui_cur_tech;
 
-// 0x680E70
+/**
+ * 0x680E70
+ */
 static int64_t schematic_ui_primary_obj;
 
-// 0x680E78
-static int schematic_ui_text_mes_file;
+/**
+ * "schematic_text.mes"
+ *
+ * 0x680E78
+ */
+static mes_file_handle_t schematic_ui_text_mes_file;
 
-// 0x680E7C
+/**
+ * Readiness state for combining items in the current schematic.
+ *
+ * 0x680E7C
+ */
 static SchematicUiReadiness schematic_ui_readiness;
 
-// 0x680E80
+/**
+ * Last tech discipline for "Found schematics" view.
+ *
+ * 0x680E80
+ */
 static int schematic_ui_found_tech;
 
-// 0x680E84
+/**
+ * Total number of found schematics.
+ *
+ * 0x680E84
+ */
 static int schematic_ui_num_found_schematics;
 
-// 0x680E88
+/**
+ * 0x680E88
+ */
 static tig_font_handle_t schematic_ui_icons17_font;
 
-// 0x680E8C
+/**
+ * 0x680E8C
+ */
 static tig_font_handle_t schematic_ui_icons32_font;
 
-// 0x680E90
+/**
+ * 0x680E90
+ */
 static int64_t schematic_ui_component1_obj;
 
-// 0x680E98
+/**
+ * Array of learned schematic IDs.
+ *
+ * 0x680E98
+ */
 static int* schematic_ui_learned_schematics;
 
-// 0x680E9C
+/**
+ * Flag indicating whether the schematic UI is initialized.
+ *
+ * 0x680E9C
+ */
 static bool schematic_ui_initialized;
 
-// 0x680EA0
+/**
+ * Flag indicating whether the schematic UI is currently displayed.
+ *
+ * 0x680EA0
+ */
 static bool schematic_ui_created;
 
-// 0x56CD60
+/**
+ * Called when the game is initialized.
+ *
+ * 0x56CD60
+ */
 bool schematic_ui_init(GameInitInfo* init_info)
 {
     int num;
@@ -217,22 +369,29 @@ bool schematic_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
+    // Load schematic rules (required).
     if (!mes_load("rules\\schematic.mes", &schematic_ui_rules_mes_file)) {
         return false;
     }
 
+    // Load UI messages (required).
     if (!mes_load("mes\\schematic_text.mes", &schematic_ui_text_mes_file)) {
         mes_unload(schematic_ui_rules_mes_file);
         return false;
     }
 
+    // Reset schematic counts per tech discipline.
     for (tech = 0; tech < TECH_COUNT; tech++) {
         schematic_ui_num_learned_schematics_by_tech[tech] = 0;
     }
 
+    // Count and store learned schematics from the message file (range
+    // 2000-3999, 7 fields per rule).
     schematic_ui_num_learned_schematics = mes_entries_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
     if (schematic_ui_num_learned_schematics > 0) {
         schematic_ui_learned_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_learned_schematics);
+
+        // Populate learned schematics.
         idx = 0;
         for (num = 2000; num < 3999; num += 10) {
             mes_file_entry.num = num;
@@ -247,6 +406,7 @@ bool schematic_ui_init(GameInitInfo* init_info)
         }
     }
 
+    // Set up fonts.
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
@@ -279,22 +439,33 @@ bool schematic_ui_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x56D040
+/**
+ * Called when the game shuts down.
+ *
+ * 0x56D040
+ */
 void schematic_ui_exit()
 {
     mes_unload(schematic_ui_rules_mes_file);
     mes_unload(schematic_ui_text_mes_file);
+
     tig_font_destroy(schematic_ui_description_font);
     tig_font_destroy(schematic_ui_icons17_font);
     tig_font_destroy(schematic_ui_icons32_font);
     tig_font_destroy(schematic_ui_name_font);
+
     if (schematic_ui_num_learned_schematics > 0) {
         FREE(schematic_ui_learned_schematics);
     }
+
     schematic_ui_initialized = false;
 }
 
-// 0x56D0B0
+/**
+ * Called when the game is being reset.
+ *
+ * 0x56D0B0
+ */
 void schematic_ui_reset()
 {
     schematic_ui_primary_obj = OBJ_HANDLE_NULL;
@@ -306,53 +477,76 @@ void schematic_ui_reset()
 void sub_56D0D0()
 {
     schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_ITEMS;
+
     schematic_ui_cur_tech = 0;
     schematic_ui_found_tech = 0;
     schematic_ui_learned_tech = 0;
+
     schematic_ui_cur_page = 0;
     schematic_ui_found_page = 0;
     schematic_ui_learned_page = 0;
+
     schematic_ui_cur_num_schematics = schematic_ui_num_learned_schematics;
     schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_learned_schematics_by_tech;
     schematic_ui_cur_schematics = schematic_ui_learned_schematics;
+
     schematic_ui_view = SCHEMATIC_UI_VIEW_LEARNED;
 }
 
-// 0x56D130
+/**
+ * Toggles the schematic UI.
+ *
+ * 0x56D130
+ */
 void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
 {
     int tech;
     int index;
 
+    // Close schematic UI if it's currently visible.
     if (schematic_ui_created) {
         schematic_ui_close();
         return;
     }
 
+    // Validate critters.
     if (primary_obj == OBJ_HANDLE_NULL
         || secondary_obj == OBJ_HANDLE_NULL
         || critter_is_dead(primary_obj)
-        || critter_is_dead(secondary_obj)
-        || !intgame_mode_set(INTGAME_MODE_MAIN)
-        || !intgame_mode_set(INTGAME_MODE_SCHEMATIC)) {
+        || critter_is_dead(secondary_obj)) {
+        return;
+    }
+
+    if (!intgame_mode_set(INTGAME_MODE_MAIN)) {
+        return;
+    }
+
+    if (!intgame_mode_set(INTGAME_MODE_SCHEMATIC)) {
         return;
     }
 
     schematic_ui_primary_obj = primary_obj;
     schematic_ui_secondary_obj = secondary_obj;
 
+    // Reset state for NPCs.
     if (obj_field_int32_get(primary_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_56D0D0();
     }
 
+    // Initialize number of known schematics. The number of found schematics is
+    // set to `0` and will be initialized separately.
     for (tech = 0; tech < TECH_COUNT; tech++) {
         schematic_ui_num_learned_schematics_by_tech[tech] = tech_degree_get(primary_obj, tech);
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 
+    // Only player characters can have found schematics (NPCs does not have
+    // appropriate field).
     if (obj_field_int32_get(primary_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         schematic_ui_num_found_schematics = obj_arrayfield_length_get(primary_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
         if (schematic_ui_num_found_schematics > 0) {
+            // Load found schematics into the appropriate array, and track
+            // number of found schematics per tech.
             schematic_ui_found_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_found_schematics);
             for (index = 0; index < schematic_ui_num_found_schematics; index++) {
                 schematic_ui_found_schematics[index] = obj_arrayfield_uint32_get(primary_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
@@ -365,6 +559,7 @@ void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
         schematic_ui_num_found_schematics = 0;
     }
 
+    // Set current schematic data based on view mode.
     if (schematic_ui_view == SCHEMATIC_UI_VIEW_FOUND) {
         schematic_ui_cur_num_schematics_by_tech = schematic_ui_num_found_schematics_by_tech;
         schematic_ui_cur_schematics = schematic_ui_found_schematics;
@@ -374,7 +569,11 @@ void schematic_ui_toggle(int64_t primary_obj, int64_t secondary_obj)
     schematic_ui_create();
 }
 
-// 0x56D2D0
+/**
+ * Closes the schematic UI.
+ *
+ * 0x56D2D0
+ */
 void schematic_ui_close()
 {
     if (schematic_ui_created && intgame_mode_set(INTGAME_MODE_MAIN)) {
@@ -384,7 +583,11 @@ void schematic_ui_close()
     }
 }
 
-// 0x56D310
+/**
+ * Creates the schematic UI window.
+ *
+ * 0x56D310
+ */
 void schematic_ui_create()
 {
     int index;
@@ -392,6 +595,7 @@ void schematic_ui_create()
     TigButtonData button_data;
     PcLens pc_lens;
 
+    // Skip if UI is already created.
     if (schematic_ui_created) {
         return;
     }
@@ -401,6 +605,7 @@ void schematic_ui_create()
         exit(0);
     }
 
+    // Create navigation and action buttons.
     for (index = 0; index < SCHEMATIC_UI_BUTTON_COUNT; index++) {
         intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_buttons[index]), 1);
     }
@@ -412,13 +617,16 @@ void schematic_ui_create()
     buttons[1] = schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle;
     tig_button_radio_group_create(2, buttons, schematic_ui_view);
 
+    // Create tech discipline tabs.
     for (index = 0; index < TECH_COUNT; index++) {
         intgame_button_create_ex(schematic_ui_window, &schematic_ui_window_rect, &(schematic_ui_tabs[index]), 1);
         buttons[index] = schematic_ui_tabs[index].button_handle;
     }
 
+    // Create radio group for tech tabs to ensure mutual exclusivity.
     tig_button_radio_group_create(TECH_COUNT, buttons, schematic_ui_cur_tech);
 
+    // Set up component slot buttons.
     button_data.flags = TIG_BUTTON_MOMENTARY;
     button_data.window_handle = schematic_ui_window;
     button_data.art_id = TIG_ART_ID_INVALID;
@@ -427,12 +635,14 @@ void schematic_ui_create()
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
+    // Component 1 button.
     button_data.x = schematic_ui_component_rects[0].x;
     button_data.y = schematic_ui_component_rects[0].y;
     button_data.width = schematic_ui_component_rects[0].width;
     button_data.height = schematic_ui_component_rects[0].height;
     tig_button_create(&button_data, &schematic_ui_component1_button);
 
+    // Component 2 button.
     button_data.x = schematic_ui_component_rects[1].x;
     button_data.y = schematic_ui_component_rects[1].y;
     button_data.width = schematic_ui_component_rects[1].width;
@@ -441,33 +651,54 @@ void schematic_ui_create()
 
     schematic_ui_redraw();
 
+    // Center viewport on the player (so that the lens display proper
+    // surroundings).
     location_origin_set(obj_field_int64_get(schematic_ui_primary_obj, OBJ_F_LOCATION));
 
+    // Enable the PC lens.
     pc_lens.window_handle = schematic_ui_window;
     pc_lens.rect = &schematic_ui_pc_lens_rect;
     tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
     intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
+    // Play sound effect for opening the UI.
     gsound_play_sfx(SND_INTERFACE_BOOK_OPEN, 1);
+
     schematic_ui_created = true;
 }
 
-// 0x56D4D0
+/**
+ * Destroys the schematic UI.
+ *
+ * 0x56D4D0
+ */
 void schematic_ui_destroy()
 {
-    if (schematic_ui_created) {
-        intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
-        intgame_big_window_unlock();
-        schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
-        if (schematic_ui_num_found_schematics > 0) {
-            FREE(schematic_ui_found_schematics);
-        }
-        gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
-        schematic_ui_created = false;
+    if (!schematic_ui_created) {
+        return;
     }
+
+    // Disable the PC lens.
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
+
+    intgame_big_window_unlock();
+    schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
+
+    if (schematic_ui_num_found_schematics > 0) {
+        FREE(schematic_ui_found_schematics);
+    }
+
+    // Play sound effect for closing the UI.
+    gsound_play_sfx(SND_INTERFACE_BOOK_CLOSE, 1);
+
+    schematic_ui_created = false;
 }
 
-// 0x56D530
+/**
+ * Called when an event occurred.
+ *
+ * 0x56D530
+ */
 bool schematic_ui_message_filter(TigMessage* msg)
 {
     MesFileEntry mes_file_entry;
@@ -477,6 +708,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
+        // Clicking on the PC lens closes schematic UI.
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
             schematic_ui_close();
@@ -487,6 +719,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            // Check mouse hover over "component 1" button.
             if (msg->data.button.button_handle == schematic_ui_component1_button) {
                 if (schematic_ui_component1_obj != OBJ_HANDLE_NULL) {
                     sub_57CCF0(schematic_ui_secondary_obj, schematic_ui_component1_obj);
@@ -494,6 +727,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Check mouse hover over "component 2" button.
             if (msg->data.button.button_handle == schematic_ui_component2_button) {
                 if (schematic_ui_component2_obj != OBJ_HANDLE_NULL) {
                     sub_57CCF0(schematic_ui_secondary_obj, schematic_ui_component2_obj);
@@ -501,6 +735,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Check mouse hover over "Combine" button.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle) {
                 mes_file_entry.num = 3;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
@@ -510,6 +745,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Check mouse hover over "Learned schematics" button.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle) {
                 mes_file_entry.num = 4;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
@@ -519,6 +755,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Check mouse hover over "Found schematics" button.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle) {
                 mes_file_entry.num = 5;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
@@ -528,6 +765,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Check mouse hover over tech discipline tabs.
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == schematic_ui_tabs[tech].button_handle) {
                     ui_message.type = UI_MSG_TYPE_TECH;
@@ -539,6 +777,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             break;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
+            // Clear feedback when mouse leaves buttons.
             if (msg->data.button.button_handle == schematic_ui_component1_button
                 || msg->data.button.button_handle == schematic_ui_component2_button
                 || msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle
@@ -557,6 +796,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             break;
         case TIG_BUTTON_STATE_PRESSED:
+            // Handle tech discipline tab selection.
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == schematic_ui_tabs[tech].button_handle) {
                     schematic_ui_cur_tech = tech;
@@ -567,6 +807,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 }
             }
 
+            // Handle page navigation buttons.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_PREV].button_handle) {
                 schematic_ui_cur_page--;
                 schematic_ui_redraw();
@@ -581,13 +822,16 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 return true;
             }
 
+            // Switch to "Learned schematics" view.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_LEARNED].button_handle) {
                 if (schematic_ui_view == SCHEMATIC_UI_VIEW_FOUND) {
                     tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_RELEASED);
 
+                    // Save last "Found schmeatics" view settings.
                     schematic_ui_found_page = schematic_ui_cur_page;
                     schematic_ui_found_tech = schematic_ui_cur_tech;
 
+                    // Restore "Learned schematics" view settings.
                     schematic_ui_cur_page = schematic_ui_learned_page;
                     schematic_ui_cur_tech = schematic_ui_learned_tech;
 
@@ -596,20 +840,29 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     schematic_ui_cur_schematics = schematic_ui_learned_schematics;
                     schematic_ui_view = SCHEMATIC_UI_VIEW_LEARNED;
 
+                    // Manually restore selection of the appropriate tech
+                    // discipline tab.
                     tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_PRESSED);
+
+                    // Refresh the UI.
                     schematic_ui_redraw();
+
+                    // Play sound effect.
                     gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
                 return true;
             }
 
+            // Switch to "Found schematics" view.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_FOUND].button_handle) {
                 if (schematic_ui_view == SCHEMATIC_UI_VIEW_LEARNED) {
                     tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_RELEASED);
 
+                    // Save last "Learned schematics" view settings.
                     schematic_ui_learned_page = schematic_ui_cur_page;
                     schematic_ui_learned_tech = schematic_ui_cur_tech;
 
+                    // Restore "Found schematics" view settings.
                     schematic_ui_cur_page = schematic_ui_found_page;
                     schematic_ui_cur_tech = schematic_ui_found_tech;
 
@@ -618,8 +871,14 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     schematic_ui_cur_schematics = schematic_ui_found_schematics;
                     schematic_ui_view = SCHEMATIC_UI_VIEW_FOUND;
 
+                    // Manually restore selection of the appropriate tech
+                    // discipline tab.
                     tig_button_state_change(schematic_ui_tabs[schematic_ui_cur_tech].button_handle, TIG_BUTTON_STATE_PRESSED);
+
+                    // Refresh the UI.
                     schematic_ui_redraw();
+
+                    // Play sound effect.
                     gsound_play_sfx(SND_INTERFACE_BOOK_SWITCH, 1);
                 }
                 return true;
@@ -627,18 +886,19 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             break;
         case TIG_BUTTON_STATE_RELEASED:
+            // Handle "Combine" button.
             if (msg->data.button.button_handle == schematic_ui_buttons[SCHEMATIC_UI_BUTTON_COMBINE].button_handle) {
                 switch (schematic_ui_readiness) {
                 case SCHEMATIC_UI_READINESS_OK:
                     if (tig_net_is_active() && !tig_net_is_host()) {
                         pkt.type = 79;
-                        pkt.field_4 = sub_56DB60();
+                        pkt.field_4 = schematic_ui_current_id();
                         pkt.field_8 = obj_get_id(schematic_ui_primary_obj);
                         pkt.field_20 = obj_get_id(schematic_ui_secondary_obj);
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                         schematic_ui_redraw();
                     } else {
-                        schematic_ui_process(sub_56DB60(), schematic_ui_primary_obj, schematic_ui_secondary_obj);
+                        schematic_ui_process(schematic_ui_current_id(), schematic_ui_primary_obj, schematic_ui_secondary_obj);
                         schematic_ui_redraw();
                     }
                     break;
@@ -667,18 +927,26 @@ bool schematic_ui_message_filter(TigMessage* msg)
     return false;
 }
 
-// 0x56DB00
+/**
+ * Determines the tech discipline associated with a schematic.
+ *
+ * 0x56DB00
+ */
 int tech_from_schematic(int schematic)
 {
     SchematicInfo schematic_info;
     int64_t obj;
 
+    // Handle found schematics - the associated tech is stored in a separate
+    // field (`OBJ_F_ITEM_DISCIPLINE`).
     if (schematic >= 4000) {
         schematic_ui_info_get(schematic, &schematic_info);
         obj = sub_4685A0(schematic_info.prod[0]);
         return obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE);
     }
 
+    // Handle learned schematics - the associated tech is derived from a
+    // special numbering scheme.
     if (schematic >= 2000) {
         return (schematic - 2000) / 200;
     }
@@ -686,34 +954,47 @@ int tech_from_schematic(int schematic)
     return 0;
 }
 
-// 0x56DB60
-int sub_56DB60()
+/**
+ * Retrieves the ID of the currently displayed schematic.
+ *
+ * 0x56DB60
+ */
+int schematic_ui_current_id()
 {
     int index;
-    int v1;
+    int page;
 
     if (schematic_ui_cur_num_schematics_by_tech[schematic_ui_cur_tech] == 0) {
         return -1;
     }
 
-    v1 = 0;
+    // Iterate through schematics to find the one matching the current tech and
+    // page.
+    page = 0;
     for (index = 0; index < schematic_ui_cur_num_schematics; index++) {
         if (tech_from_schematic(schematic_ui_cur_schematics[index]) == schematic_ui_cur_tech) {
-            if (v1 == schematic_ui_cur_page) {
+            if (page == schematic_ui_cur_page) {
                 return schematic_ui_cur_schematics[index];
             }
-            v1++;
+            page++;
         }
     }
 
     return -1;
 }
 
-// 0x56DBD0
+/**
+ * Retrieves information about a schematic from the message file.
+ *
+ * 0x56DBD0
+ */
 void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
 {
     MesFileEntry mes_file_entry;
 
+    // Special case - schematic title page, exactly the same data structure,
+    // but different message number range. Each tech has it's own title,
+    // description, and drawings.
     if (schematic == -1) {
         // Schematic title page.
         schematic = 10 * schematic_ui_cur_tech + 6000;
@@ -754,7 +1035,11 @@ void schematic_ui_info_get(int schematic, SchematicInfo* schematic_info)
     schematic_info->qty = atoi(mes_file_entry.str);
 }
 
-// 0x56DD20
+/**
+ * Parses a space-separated string of item IDs into an array.
+ *
+ * 0x56DD20
+ */
 void schematic_ui_parse_items(const char* str, int* items)
 {
     char mut_str[MAX_STRING];
@@ -771,6 +1056,7 @@ void schematic_ui_parse_items(const char* str, int* items)
             pch = strtok(NULL, " ");
         } while (pch != NULL);
 
+        // Fill remaining slots with the last valid ID.
         if (cnt > 0) {
             while (cnt < 3) {
                 items[cnt] = items[cnt - 1];
@@ -780,7 +1066,11 @@ void schematic_ui_parse_items(const char* str, int* items)
     }
 }
 
-// 0x56DDC0
+/**
+ * Refreshes the schematic UI.
+ *
+ * 0x56DDC0
+ */
 void schematic_ui_redraw()
 {
     TigRect src_rect;
@@ -798,6 +1088,7 @@ void schematic_ui_redraw()
     bool have_item2;
     bool have_expertise2;
 
+    // Show or hide navigation buttons based on page availability.
     if (schematic_ui_cur_page != 0) {
         tig_button_show(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_PREV].button_handle);
     } else {
@@ -810,7 +1101,7 @@ void schematic_ui_redraw()
         tig_button_hide(schematic_ui_buttons[SCHEMATIC_UI_BUTTON_NEXT].button_handle);
     }
 
-    // Render background.
+    // Draw background.
     blit_info.flags = 0;
     tig_art_interface_id_create(365, 0, 0, 0, &(blit_info.art_id));
 
@@ -826,10 +1117,10 @@ void schematic_ui_redraw()
     tig_window_blit_art(schematic_ui_window, &blit_info);
 
     // Obtain current schematic info.
-    schematic = sub_56DB60();
+    schematic = schematic_ui_current_id();
     schematic_ui_info_get(schematic, &schematic_info);
 
-    // Render schematic image.
+    // Draw schematic image.
     blit_info.flags = 0;
     tig_art_interface_id_create(schematic_info.art_num, 0, 0, 0, &(blit_info.art_id));
     tig_art_frame_data(blit_info.art_id, &art_frame_data);
@@ -848,7 +1139,7 @@ void schematic_ui_redraw()
 
     tig_window_blit_art(schematic_ui_window, &blit_info);
 
-    // Render name.
+    // Draw schematic name.
     mes_file_entry.num = schematic_info.name;
     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
 
@@ -865,7 +1156,7 @@ void schematic_ui_redraw()
     tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
-    // Render description.
+    // Draw schematic description.
     mes_file_entry.num = schematic_info.description;
     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
 
@@ -882,7 +1173,7 @@ void schematic_ui_redraw()
     tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
-    // Render icon.
+    // Draw tech discipline icon.
     obj = sub_4685A0(schematic_info.prod[0]);
     icon[0] = (char)obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
     icon[1] = '\0';
@@ -897,10 +1188,11 @@ void schematic_ui_redraw()
     tig_window_text_write(schematic_ui_window, icon, &src_rect);
     tig_font_pop();
 
-    // Draw components.
+    // Draw schematic components.
     schematic_ui_draw_component(0, &schematic_info, &have_item1, &have_expertise1);
     schematic_ui_draw_component(1, &schematic_info, &have_item2, &have_expertise2);
 
+    // Determine readiness state based on component checks.
     if (!have_expertise1 || !have_expertise2) {
         schematic_ui_readiness = SCHEMATIC_UI_READINESS_NO_EXPERTISE;
     } else if (!have_item1 || !have_item2) {
@@ -909,7 +1201,7 @@ void schematic_ui_redraw()
         schematic_ui_readiness = SCHEMATIC_UI_READINESS_OK;
     }
 
-    // Draw indicator.
+    // Draw readiness indicator.
     blit_info.flags = 0;
     tig_art_interface_id_create(schematic_ui_combine_indicator_icons[schematic_ui_readiness], 0, 0, 0, &(blit_info.art_id));
     tig_art_frame_data(blit_info.art_id, &art_frame_data);
@@ -929,7 +1221,11 @@ void schematic_ui_redraw()
     tig_window_blit_art(schematic_ui_window, &blit_info);
 }
 
-// 0x56E190
+/**
+ * Renders a component slot in the schematic UI.
+ *
+ * 0x56E190
+ */
 void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* have_item, bool* have_expertise)
 {
     int index;
@@ -947,6 +1243,7 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
     float width_ratio;
     float height_ratio;
 
+    // Check availability of the required item.
     if (ingr == 0) {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item1[index]);
@@ -981,14 +1278,18 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
         schematic_ui_component2_obj = item_obj;
     }
 
+    // Check expertise for the component's tech discipline.
     tech = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
     complexity = -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
     *have_expertise = tech_degree_level_get(schematic_ui_primary_obj, tech) >= complexity;
 
+    // Draw component background based on expertise and item availability.
     if (*have_expertise) {
         if (*have_item) {
+            // "schem_have_item.art"
             tig_art_interface_id_create(831, 0, 0, 0, &(art_blit_info.art_id));
         } else {
+            // "schem_no_item.art"
             tig_art_interface_id_create(830, 0, 0, 0, &(art_blit_info.art_id));
         }
 
@@ -1012,8 +1313,10 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
         tig_window_blit_art(schematic_ui_window, &art_blit_info);
     }
 
+    // Draw component image.
     art_blit_info.flags = 0;
 
+    // Retrieve proper art ID.
     switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
     case OBJ_TYPE_WEAPON:
         art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_WEAPON_PAPER_DOLL_AID);
@@ -1048,6 +1351,7 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
 
     dst_rect = schematic_ui_component_rects[ingr];
 
+    // Scale the image to fit the component slot.
     width_ratio = (float)art_frame_data.width / (float)schematic_ui_component_rects[ingr].width;
     height_ratio = (float)art_frame_data.height / (float)schematic_ui_component_rects[ingr].height;
 
@@ -1067,6 +1371,7 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
+    // Apply grayscale effect if expertise is lacking.
     if (!*have_expertise && tig_art_anim_data(art_blit_info.art_id, &art_anim_data) == TIG_OK) {
         palette = tig_palette_create();
 
@@ -1093,12 +1398,14 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
     }
 
     if (complexity > 0) {
+        // Draw tech discipline icon.
         str[0] = (char)(tech + '1');
         str[1] = '\0';
         tig_font_push(schematic_ui_icons17_font);
         tig_window_text_write(schematic_ui_window, str, &(schematic_ui_component_icon_rects[ingr]));
         tig_font_pop();
 
+        // Draw complexity score.
         sprintf(str, "%d", complexity);
         tig_font_push(schematic_ui_description_font);
         tig_window_text_write(schematic_ui_window, str, &schematic_ui_component_complexity_rects[ingr]);
@@ -1106,7 +1413,11 @@ void schematic_ui_draw_component(int ingr, SchematicInfo* schematic_info, bool* 
     }
 }
 
-// 0x56E720
+/**
+ * Processes a schematic combination.
+ *
+ * 0x56E720
+ */
 bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_obj)
 {
     SchematicInfo info;
@@ -1126,12 +1437,15 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
         return true;
     }
 
+    // Check for title page.
     if (schematic == -1) {
         return false;
     }
 
+    // Retrieve schematic information.
     schematic_ui_info_get(schematic, &info);
 
+    // Find available item for component 1.
     for (ingridient1 = 0; ingridient1 < 3; ingridient1++) {
         obj = sub_4685A0(info.item1[ingridient1]);
         ingridient1_obj = sub_462540(primary_obj, obj, 0x7);
@@ -1139,11 +1453,11 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
             break;
         }
     }
-
     if (ingridient1 == 3) {
         return false;
     }
 
+    // Find available item for component 2.
     for (ingridient2 = 0; ingridient2 < 3; ingridient2++) {
         obj = sub_4685A0(info.item2[ingridient2]);
         ingridient2_obj = sub_462540(primary_obj, obj, 0x7);
@@ -1151,7 +1465,6 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
             break;
         }
     }
-
     if (ingridient2 == 3) {
         return false;
     }
@@ -1164,6 +1477,7 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
 
     loc = obj_field_int64_get(primary_obj, OBJ_F_LOCATION);
 
+    // Consume component 1 item.
     if (obj_field_int32_get(ingridient1_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
         item_ammo_transfer(primary_obj,
             OBJ_HANDLE_NULL,
@@ -1174,6 +1488,7 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
         object_destroy(ingridient1_obj);
     }
 
+    // Consume component 2 item.
     if (obj_field_int32_get(ingridient2_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
         item_ammo_transfer(primary_obj,
             OBJ_HANDLE_NULL,
@@ -1184,6 +1499,7 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
         object_destroy(ingridient2_obj);
     }
 
+    // Create final product items.
     for (qty = 0; qty < info.qty; qty++) {
         if (!mp_object_create(prod, loc, &prod_obj)) {
             return false;
@@ -1197,7 +1513,11 @@ bool schematic_ui_process(int schematic, int64_t primary_obj, int64_t secondary_
     return true;
 }
 
-// 0x56E950
+/**
+ * Provides feedback for a schematic processing.
+ *
+ * 0x56E950
+ */
 bool schematic_ui_feedback(bool success, int64_t primary_obj, int64_t secondary_obj)
 {
     MesFileEntry mes_file_entry;
@@ -1217,11 +1537,12 @@ bool schematic_ui_feedback(bool success, int64_t primary_obj, int64_t secondary_
 
         gsound_play_sfx(schematic_ui_cur_tech + SND_INTERFACE_COM_HERBAL, 1);
     }
+
     return true;
 }
 
 // 0x56E9D0
-char* sub_56E9D0(int schematic)
+char* schematic_ui_product_name(int schematic)
 {
     SchematicInfo schematic_info;
     MesFileEntry mes_file_entry;
@@ -1233,14 +1554,22 @@ char* sub_56E9D0(int schematic)
     return mes_file_entry.str;
 }
 
-// 0x56EA10
-char* schematic_ui_product_get(int tech, int degree)
+/**
+ * Retrieves the product name a learned schematic.
+ *
+ * 0x56EA10
+ */
+char* schematic_ui_learned_schematic_product_name(int tech, int degree)
 {
-    return sub_56E9D0(tech_schematic_get(tech, degree));
+    return schematic_ui_product_name(tech_schematic_get(tech, degree));
 }
 
-// 0x56EA30
-void schematic_ui_components_get(int tech, int degree, char* item1, char* item2)
+/**
+ * Retrieves the component names of a learned schematic.
+ *
+ * 0x56EA30
+ */
+void schematic_ui_learned_schematic_component_names(int tech, int degree, char* item1, char* item2)
 {
     SchematicInfo schematic_info;
     int64_t obj;

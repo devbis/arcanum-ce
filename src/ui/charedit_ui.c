@@ -2452,8 +2452,8 @@ void charedit_refresh_tech_win()
     }
 
     for (index = 1; index - 1 < 7; index++) {
-        stru_5C8850[index - 1].str = schematic_ui_product_get(charedit_selected_tech, index);
-        schematic_ui_components_get(charedit_selected_tech, index, components[0], components[1]);
+        stru_5C8850[index - 1].str = schematic_ui_learned_schematic_product_name(charedit_selected_tech, index);
+        schematic_ui_learned_schematic_component_names(charedit_selected_tech, index, components[0], components[1]);
         sprintf(str[index - 1], "[%s]+[%s]", components[0], components[1]);
         stru_5C88C0[index - 1].str = str[index - 1];
     }

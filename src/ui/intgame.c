@@ -5769,7 +5769,7 @@ void intgame_message_draw(tig_window_handle_t window_handle, UiMessage* ui_messa
     case UI_MSG_TYPE_SCHEMATIC:
         intgame_message_window_draw_image(window_handle, intgame_message_icons[UI_MSG_TYPE_FEEDBACK]);
         intgame_message_window_write_text(window_handle,
-            sub_56E9D0(ui_message->field_8),
+            schematic_ui_product_name(ui_message->field_8),
             &stru_5C70C8,
             intgame_morph15_white_font,
             MSG_TEXT_HALIGN_LEFT);
