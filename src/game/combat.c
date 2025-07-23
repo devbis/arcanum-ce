@@ -64,7 +64,7 @@ static void sub_4B7080();
 static bool combat_turn_based_start();
 static void combat_turn_based_end();
 static bool combat_turn_based_begin_turn();
-static void sub_4B7300();
+static void combat_recalc_perception_range();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
@@ -99,7 +99,7 @@ static int dword_5B57A8[TRAINING_COUNT] = {
 };
 
 // 0x5B57B8
-static int dword_5B57B8 = 15;
+static int combat_perception_range = 15;
 
 // 0x5B57BC
 static int combat_material_damage_reduction_tbl[MATERIAL_COUNT] = {
@@ -3230,12 +3230,12 @@ bool combat_turn_based_start()
     sub_423FE0(sub_4B7080);
 
     loc = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
-    sub_4B7300();
+    combat_recalc_perception_range();
 
-    loc_rect.x1 = LOCATION_GET_X(loc) - dword_5B57B8;
-    loc_rect.x2 = LOCATION_GET_X(loc) + dword_5B57B8;
-    loc_rect.y1 = LOCATION_GET_Y(loc) - dword_5B57B8;
-    loc_rect.y2 = LOCATION_GET_Y(loc) + dword_5B57B8;
+    loc_rect.x1 = LOCATION_GET_X(loc) - combat_perception_range;
+    loc_rect.x2 = LOCATION_GET_X(loc) + combat_perception_range;
+    loc_rect.y1 = LOCATION_GET_Y(loc) - combat_perception_range;
+    loc_rect.y2 = LOCATION_GET_Y(loc) + combat_perception_range;
     object_list_rect(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &stru_5FC180);
     sub_4B7EB0();
 
@@ -3251,11 +3251,11 @@ bool combat_turn_based_start()
 }
 
 // 0x4B7300
-void sub_4B7300()
+void combat_recalc_perception_range()
 {
-    dword_5B57B8 = stat_level_get(player_get_local_pc_obj(), STAT_PERCEPTION) / 2 + 5;
-    if (dword_5B57B8 < 10) {
-        dword_5B57B8 = 10;
+    combat_perception_range = stat_level_get(player_get_local_pc_obj(), STAT_PERCEPTION) / 2 + 5;
+    if (combat_perception_range < 10) {
+        combat_perception_range = 10;
     }
 }
 
@@ -3295,12 +3295,12 @@ bool combat_turn_based_begin_turn()
     pc_obj = player_get_local_pc_obj();
     combat_turn_based_turn++;
     pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-    sub_4B7300();
+    combat_recalc_perception_range();
 
-    loc_rect.x1 = LOCATION_GET_X(pc_loc) - dword_5B57B8;
-    loc_rect.y1 = LOCATION_GET_Y(pc_loc) - dword_5B57B8;
-    loc_rect.x2 = LOCATION_GET_X(pc_loc) + dword_5B57B8;
-    loc_rect.y2 = LOCATION_GET_Y(pc_loc) + dword_5B57B8;
+    loc_rect.x1 = LOCATION_GET_X(pc_loc) - combat_perception_range;
+    loc_rect.y1 = LOCATION_GET_Y(pc_loc) - combat_perception_range;
+    loc_rect.x2 = LOCATION_GET_X(pc_loc) + combat_perception_range;
+    loc_rect.y2 = LOCATION_GET_Y(pc_loc) + combat_perception_range;
     object_list_rect(&loc_rect, OBJ_TM_PC | OBJ_TM_NPC, &objects);
     object_list_copy(&stru_5FC180, &objects);
     object_list_destroy(&objects);
