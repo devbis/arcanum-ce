@@ -58,7 +58,7 @@ static int combat_random_hit_loc();
 static bool combat_consume_ammo(int64_t weapon_obj, int64_t critter_obj, int cnt, bool destroy);
 static void combat_calc_dmg(CombatContext* combat);
 static void combat_apply_resistance(CombatContext* combat);
-static int sub_4B6930(CombatContext* combat);
+static int combat_play_hit_fx(CombatContext* combat);
 static void combat_process_taunts(CombatContext* combat);
 static void sub_4B7080();
 static bool combat_turn_based_start();
@@ -709,7 +709,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
         mt_item_notify_parent_attacks_loc(attacker_obj,
             weapon_obj,
             obj_field_int64_get(block_obj, OBJ_F_LOCATION));
-        return sub_4B6930(&combat);
+        return combat_play_hit_fx(&combat);
     }
 
     int weapon_range;
@@ -1002,7 +1002,7 @@ int sub_4B3170(CombatContext* combat)
 
     if (is_melee) {
         combat_process_taunts(combat);
-        return sub_4B6930(combat);
+        return combat_play_hit_fx(combat);
     }
 
     return 0;
@@ -1536,7 +1536,7 @@ void combat_dmg(CombatContext* combat)
             combat->flags |= CF_HIT;
             if (!tig_net_is_active()
                 || tig_net_is_host()) {
-                sub_4B6930(combat);
+                combat_play_hit_fx(combat);
             }
         }
 
@@ -2810,7 +2810,7 @@ void combat_apply_resistance(CombatContext* combat)
 }
 
 // 0x4B6930
-int sub_4B6930(CombatContext* combat)
+int combat_play_hit_fx(CombatContext* combat)
 {
     int blood_splotch_type = BLOOD_SPLOTCH_TYPE_NONE;
     int max_damage = 0;
