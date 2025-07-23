@@ -38,6 +38,7 @@ typedef enum HitLocation {
 #define CF_AIM                  0x00000001
 #define CF_HIT                  0x00000002
 #define CF_CRITICAL             0x00000004
+#define CF_WEAPON_WEAR          0x00010000
 #define CF_TRAP                 0x00080000
 // clang-format on
 

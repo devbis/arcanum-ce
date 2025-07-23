@@ -50,7 +50,7 @@ static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
-static void sub_4B5580(CombatContext* combat);
+static void combat_apply_weapon_wear(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static void combat_process_crit_hit(CombatContext* combat);
 static void combat_process_crit_miss(CombatContext* combat);
@@ -1137,7 +1137,8 @@ void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int hit_loc)
 
     sub_4B2210(attacker_obj, target_obj, &combat);
     combat.hit_loc = hit_loc;
-    combat.flags |= 0x50000;
+    combat.flags |= CF_WEAPON_WEAR;
+    combat.flags |= 0x40000;
     sub_4B3170(&combat);
 }
 
@@ -1935,7 +1936,7 @@ void combat_dmg(CombatContext* combat)
             }
         }
 
-        sub_4B5580(combat);
+        combat_apply_weapon_wear(combat);
 
         if (weapon_dropped) {
             pc_switch_weapon(combat->target_obj, combat->attacker_obj);
@@ -1971,7 +1972,7 @@ void combat_dmg(CombatContext* combat)
         if (object_hp_current(combat->target_obj) > 0) {
             if (combat->field_30 != OBJ_HANDLE_NULL) {
                 ai_notify_portal_container_guards(combat->field_30, combat->target_obj, true, LOUDNESS_LOUD);
-                sub_4B5580(combat);
+                combat_apply_weapon_wear(combat);
             }
         } else {
             if (trap_type(combat->target_obj) != TRAP_TYPE_INVALID) {
@@ -2034,7 +2035,7 @@ bool sub_4B5520(CombatContext* combat)
 }
 
 // 0x4B5580
-void sub_4B5580(CombatContext* combat)
+void combat_apply_weapon_wear(CombatContext* combat)
 {
     int dam;
     int complexity;
@@ -2049,7 +2050,7 @@ void sub_4B5580(CombatContext* combat)
         return;
     }
 
-    if ((combat->flags & 0x10000) == 0) {
+    if ((combat->flags & CF_WEAPON_WEAR) == 0) {
         return;
     }
 
@@ -2098,7 +2099,7 @@ void sub_4B5580(CombatContext* combat)
             complexity = 100;
         }
 
-        dam += dam * complexity / -100;
+        dam -= dam * complexity / 100;
 
         switch (tig_art_item_id_subtype_get(obj_field_int32_get(combat->weapon_obj, OBJ_F_ITEM_USE_AID_FRAGMENT))) {
         case TIG_ART_WEAPON_TYPE_AXE:
