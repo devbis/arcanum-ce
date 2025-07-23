@@ -57,7 +57,7 @@ static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
 static bool combat_consume_ammo(int64_t weapon_obj, int64_t critter_obj, int cnt, bool destroy);
 static void combat_calc_dmg(CombatContext* combat);
-static void sub_4B6860(CombatContext* combat);
+static void combat_apply_resistance(CombatContext* combat);
 static int sub_4B6930(CombatContext* combat);
 static void combat_process_taunts(CombatContext* combat);
 static void sub_4B7080();
@@ -1485,7 +1485,7 @@ void combat_dmg(CombatContext* combat)
         combat_process_crit_hit(combat);
     }
 
-    sub_4B6860(combat);
+    combat_apply_resistance(combat);
 
     dam_flags = combat->dam_flags;
     if ((dam_flags & (CDF_FULL | CDF_DEATH)) != 0) {
@@ -2774,7 +2774,7 @@ void combat_calc_dmg(CombatContext* combat)
 }
 
 // 0x4B6860
-void sub_4B6860(CombatContext* combat)
+void combat_apply_resistance(CombatContext* combat)
 {
     int damage_type;
     int resistance;
@@ -2798,7 +2798,7 @@ void sub_4B6860(CombatContext* combat)
         return;
     }
 
-    for (damage_type = 0; damage_type < 5; damage_type++) {
+    for (damage_type = 0; damage_type < DAMAGE_TYPE_COUNT; damage_type++) {
         resistance = object_get_resistance(combat->target_obj, combat_damage_to_resistance_tbl[damage_type], false);
         if (damage_type == DAMAGE_TYPE_FATIGUE) {
             resistance = 3 * resistance / 4;
