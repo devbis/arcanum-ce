@@ -71,7 +71,7 @@ static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
 static int combat_move_cost(int64_t source_obj, int64_t target_loc, bool adjacent);
 static bool sub_4B7DC0(int64_t obj);
-static void sub_4B7EB0();
+static void sort_combat_list();
 static void pc_switch_weapon(int64_t pc_obj, int64_t target_obj);
 
 // 0x5B5790
@@ -138,7 +138,7 @@ static int combat_damage_to_resistance_tbl[DAMAGE_TYPE_COUNT] = {
 static mes_file_handle_t combat_mes_file;
 
 // 0x5FC180
-static ObjectList stru_5FC180;
+static ObjectList combat_critter_list;
 
 // 0x5FC1D8
 static bool combat_editor;
@@ -326,7 +326,7 @@ bool combat_load(GameLoadInfo* load_info)
         return false;
     }
 
-    node = stru_5FC180.head;
+    node = combat_critter_list.head;
     while (node != NULL) {
         if (node->obj == obj) {
             break;
@@ -3067,7 +3067,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
     }
 
     if (dword_5FC240->obj != obj) {
-        dword_5FC240 = stru_5FC180.head;
+        dword_5FC240 = combat_critter_list.head;
         while (dword_5FC240 != NULL) {
             if (dword_5FC240->obj == obj) {
                 break;
@@ -3078,7 +3078,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
         if (dword_5FC240 == NULL) {
             tig_debug_printf("Combat: TB: Note: Couldn't change to 'Who's' Turn, inserting them in list.\n");
             combat_turn_based_add_critter(obj);
-            dword_5FC240 = stru_5FC180.head;
+            dword_5FC240 = combat_critter_list.head;
             while (dword_5FC240 != NULL) {
                 if (dword_5FC240->obj == obj) {
                     break;
@@ -3236,10 +3236,10 @@ bool combat_turn_based_start()
     loc_rect.x2 = LOCATION_GET_X(loc) + combat_perception_range;
     loc_rect.y1 = LOCATION_GET_Y(loc) - combat_perception_range;
     loc_rect.y2 = LOCATION_GET_Y(loc) + combat_perception_range;
-    object_list_rect(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &stru_5FC180);
-    sub_4B7EB0();
+    object_list_rect(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &combat_critter_list);
+    sort_combat_list();
 
-    node = stru_5FC180.head;
+    node = combat_critter_list.head;
     while (node != NULL) {
         sub_424070(node->obj, 3, 0, 1);
         node = node->next;
@@ -3272,14 +3272,14 @@ void combat_turn_based_end()
         sub_423FE0(NULL);
 
         if (!in_combat_reset) {
-            node = stru_5FC180.head;
+            node = combat_critter_list.head;
             while (node != NULL) {
                 animfx_remove(&combat_eye_candies, node->obj, 0, -1);
                 node = node->next;
             }
         }
 
-        object_list_destroy(&stru_5FC180);
+        object_list_destroy(&combat_critter_list);
     }
 }
 
@@ -3302,13 +3302,13 @@ bool combat_turn_based_begin_turn()
     loc_rect.x2 = LOCATION_GET_X(pc_loc) + combat_perception_range;
     loc_rect.y2 = LOCATION_GET_Y(pc_loc) + combat_perception_range;
     object_list_rect(&loc_rect, OBJ_TM_PC | OBJ_TM_NPC, &objects);
-    object_list_copy(&stru_5FC180, &objects);
+    object_list_copy(&combat_critter_list, &objects);
     object_list_destroy(&objects);
 
-    sub_4B7EB0();
+    sort_combat_list();
 
     dword_5FC250 = 0;
-    dword_5FC240 = stru_5FC180.head;
+    dword_5FC240 = combat_critter_list.head;
     while (sub_4B7580(dword_5FC240) && dword_5FC240 != NULL) {
         dword_5FC250++;
         dword_5FC240 = dword_5FC240->next;
@@ -3317,7 +3317,7 @@ bool combat_turn_based_begin_turn()
     if (dword_5FC240 == NULL) {
         if (critter_is_active(pc_obj)) {
             dword_5FC250 = 0;
-            dword_5FC240 = stru_5FC180.head;
+            dword_5FC240 = combat_critter_list.head;
             while (dword_5FC240 != NULL && dword_5FC240->obj != pc_obj) {
                 dword_5FC240 = dword_5FC240->next;
                 dword_5FC250++;
@@ -3702,7 +3702,7 @@ void combat_turn_based_add_critter(int64_t obj)
         return;
     }
 
-    curr = stru_5FC180.head;
+    curr = combat_critter_list.head;
     while (curr != NULL && curr->obj != obj) {
         prev = curr;
         curr = curr->next;
@@ -3726,14 +3726,14 @@ void combat_turn_based_add_critter(int64_t obj)
         prev->next = curr;
     } else {
         tig_debug_printf("Combat: combat_turn_based_add_critter: ERROR: Base list is EMPTY!\n");
-        stru_5FC180.head = curr;
+        combat_critter_list.head = curr;
     }
 
-    sub_4B7EB0();
+    sort_combat_list();
 }
 
 // 0x4B7EB0
-void sub_4B7EB0()
+void sort_combat_list()
 {
     ObjectNode* node;
     ObjectNode* tail;
@@ -3748,7 +3748,7 @@ void sub_4B7EB0()
 
     tail = NULL;
     prev = NULL;
-    node = stru_5FC180.head;
+    node = combat_critter_list.head;
     if (node != NULL) {
         do {
             process = true;
@@ -3764,7 +3764,7 @@ void sub_4B7EB0()
                 if (prev != NULL) {
                     prev->next = node->next;
                 } else {
-                    stru_5FC180.head = node->next;
+                    combat_critter_list.head = node->next;
                 }
 
                 if (tail != NULL) {
@@ -3781,7 +3781,7 @@ void sub_4B7EB0()
                 if (prev != NULL) {
                     node = prev->next;
                 } else {
-                    node = stru_5FC180.head;
+                    node = combat_critter_list.head;
                 }
             } else {
                 prev = node;
@@ -3793,19 +3793,19 @@ void sub_4B7EB0()
             if (prev != NULL) {
                 prev->next = tail;
             } else {
-                stru_5FC180.head = tail;
+                combat_critter_list.head = tail;
             }
         }
     }
 
-    node = stru_5FC180.head;
+    node = combat_critter_list.head;
     while (node != NULL) {
         combat_recalc_reaction(node->obj);
         node = node->next;
     }
 
     index = 0;
-    node = stru_5FC180.head;
+    node = combat_critter_list.head;
     while (node != NULL) {
         name = NULL;
         if (obj_handle_is_valid(node->obj)) {
