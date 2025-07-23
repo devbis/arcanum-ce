@@ -59,7 +59,7 @@ static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
 static void combat_calc_dmg(CombatContext* combat);
 static void sub_4B6860(CombatContext* combat);
 static int sub_4B6930(CombatContext* combat);
-static void sub_4B6B90(CombatContext* combat);
+static void combat_process_taunts(CombatContext* combat);
 static void sub_4B7080();
 static bool combat_turn_based_start();
 static void combat_turn_based_end();
@@ -705,7 +705,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
         combat.flags &= ~0xC000;
         sub_4B2690(proj_obj, attacker_obj, target_obj, &combat, 1);
         sub_4B2F60(&combat);
-        sub_4B6B90(&combat);
+        combat_process_taunts(&combat);
         mt_item_notify_parent_attacks_loc(attacker_obj,
             weapon_obj,
             obj_field_int64_get(block_obj, OBJ_F_LOCATION));
@@ -1001,7 +1001,7 @@ int sub_4B3170(CombatContext* combat)
     anim_play_weapon_fx(combat, combat->attacker_obj, combat->attacker_obj, ANIM_WEAPON_EYE_CANDY_TYPE_FIRE);
 
     if (is_melee) {
-        sub_4B6B90(combat);
+        combat_process_taunts(combat);
         return sub_4B6930(combat);
     }
 
@@ -2901,7 +2901,7 @@ tig_art_id_t combat_projectile_art_id_rotation_set(tig_art_id_t aid, int project
 }
 
 // 0x4B6B90
-void sub_4B6B90(CombatContext* combat)
+void combat_process_taunts(CombatContext* combat)
 {
     int64_t pc_obj;
 
