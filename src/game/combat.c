@@ -55,7 +55,7 @@ static void sub_4B5E90(int64_t loc);
 static void combat_process_crit_hit(CombatContext* combat);
 static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
-static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
+static bool combat_consume_ammo(int64_t weapon_obj, int64_t critter_obj, int cnt, bool destroy);
 static void combat_calc_dmg(CombatContext* combat);
 static void sub_4B6860(CombatContext* combat);
 static int sub_4B6930(CombatContext* combat);
@@ -822,7 +822,7 @@ int sub_4B3170(CombatContext* combat)
         combat->hit_loc = combat_random_hit_loc();
     }
 
-    if (!sub_4B65D0(combat->weapon_obj, combat->attacker_obj, 1, 0)) {
+    if (!combat_consume_ammo(combat->weapon_obj, combat->attacker_obj, 1, false)) {
         combat->flags |= 0x400;
 
         sound_id = sfx_item_sound(combat->weapon_obj, combat->attacker_obj, combat->target_obj, WEAPON_SOUND_OUT_OF_AMMO);
@@ -1789,13 +1789,13 @@ void combat_dmg(CombatContext* combat)
                 weapon_dropped = true;
             } else {
                 if ((dam_flags & CDF_DESTROY_AMMO) != 0) {
-                    sub_4B65D0(weapon_obj, combat->target_obj, 0, true);
+                    combat_consume_ammo(weapon_obj, combat->target_obj, 0, true);
 
                     mes_file_entry.num = 9; // "Ammo lost"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->target_obj, tf_type, mes_file_entry.str);
                 } else if ((dam_flags & CDF_LOST_AMMO) != 0) {
-                    sub_4B65D0(weapon_obj, combat->target_obj, 5, false);
+                    combat_consume_ammo(weapon_obj, combat->target_obj, 5, false);
 
                     mes_file_entry.num = 9; // "Ammo lost"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -2668,7 +2668,7 @@ int combat_random_hit_loc()
 }
 
 // 0x4B65D0
-bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
+bool combat_consume_ammo(int64_t weapon_obj, int64_t critter_obj, int cnt, bool destroy)
 {
     int ammo_type;
     int qty;
@@ -2686,12 +2686,12 @@ bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
 
     qty = item_ammo_quantity_get(critter_obj, ammo_type);
 
-    if (a4) {
+    if (destroy) {
         item_ammo_transfer(critter_obj, OBJ_HANDLE_NULL, qty, ammo_type, OBJ_HANDLE_NULL);
         return true;
     }
 
-    consumption = a3 * obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
+    consumption = cnt * obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
     if (qty >= consumption) {
         item_ammo_transfer(critter_obj, OBJ_HANDLE_NULL, consumption, ammo_type, OBJ_HANDLE_NULL);
         return true;
@@ -2821,7 +2821,7 @@ int sub_4B6930(CombatContext* combat)
         && obj_type_is_critter(obj_field_int32_get(combat->target_obj, OBJ_F_TYPE))
         && (combat->flags & CF_HIT) != 0) {
         if ((combat->flags & CF_CRITICAL) != 0) {
-            blood_splotch_type = 6;
+            blood_splotch_type = BLOOD_SPLOTCH_TYPE_CRITICAL;
         } else {
             for (damage_type = 0; damage_type < 4; damage_type++) {
                 if (combat->dam[damage_type] > max_damage) {
