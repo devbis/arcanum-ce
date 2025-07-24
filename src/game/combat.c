@@ -51,7 +51,7 @@ static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
 static void combat_apply_weapon_wear(CombatContext* combat);
-static void sub_4B5E90(int64_t loc);
+static void combat_remove_blood_splotch(int64_t loc);
 static void combat_process_crit_hit(CombatContext* combat);
 static void combat_process_crit_miss(CombatContext* combat);
 static int combat_random_hit_loc();
@@ -2249,7 +2249,7 @@ void combat_heal(CombatContext* combat)
 
     v2 = true;
 
-    sub_4B5E90(combat->target_loc);
+    combat_remove_blood_splotch(combat->target_loc);
     ai_stop_fleeing(combat->target_obj);
     object_flags_unset(combat->target_obj, OF_FLAT | OF_NO_BLOCK);
 
@@ -2390,7 +2390,7 @@ void combat_heal(CombatContext* combat)
 }
 
 // 0x4B5E90
-void sub_4B5E90(int64_t loc)
+void combat_remove_blood_splotch(int64_t loc)
 {
     ObjectList objects;
     ObjectNode* node;
