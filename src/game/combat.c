@@ -45,7 +45,7 @@ static void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_a
 static void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
 static int combat_weapon_loudness(int64_t weapon_obj);
 static void sub_4B2F60(CombatContext* combat);
-static void sub_4B3770(CombatContext* combat);
+static void combat_process_melee_attack(CombatContext* combat);
 static void combat_process_ranged_attack(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
@@ -995,7 +995,7 @@ int sub_4B3170(CombatContext* combat)
     if ((combat->flags & CF_RANGED) != 0) {
         combat_process_ranged_attack(combat);
     } else {
-        sub_4B3770(combat);
+        combat_process_melee_attack(combat);
     }
 
     anim_play_weapon_fx(combat, combat->attacker_obj, combat->attacker_obj, ANIM_WEAPON_EYE_CANDY_TYPE_FIRE);
@@ -1009,7 +1009,7 @@ int sub_4B3170(CombatContext* combat)
 }
 
 // 0x4B3770
-void sub_4B3770(CombatContext* combat)
+void combat_process_melee_attack(CombatContext* combat)
 {
     int sound_id;
     CombatContext body_of_fire;
