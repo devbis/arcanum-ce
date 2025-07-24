@@ -41,7 +41,7 @@
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
-static void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id);
+static void combat_create_projectile(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t proj_aid);
 static void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
 static int combat_weapon_loudness(int64_t weapon_obj);
 static void sub_4B2F60(CombatContext* combat);
@@ -438,49 +438,53 @@ void fast_turn_based_changed()
 }
 
 // 0x4B24F0
-void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id)
+void combat_create_projectile(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t proj_aid)
 {
-    int64_t missile_obj;
+    int64_t proj_obj;
     int hit_loc;
     unsigned int weapon_flags;
     unsigned int critter_flags2;
 
-    if (mp_object_create(BP_PROJECTILE, loc, &missile_obj)) {
-        mp_obj_field_int32_set(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE, combat->dam_flags);
-        if ((combat->flags & 0x100) != 0) {
-            hit_loc = combat->dam[DAMAGE_TYPE_NORMAL];
-        } else {
-            hit_loc = combat->hit_loc;
-        }
-        mp_obj_field_int32_set(missile_obj, OBJ_F_PROJECTILE_HIT_LOC, hit_loc);
-
-        mp_obj_field_obj_set(missile_obj, OBJ_F_PROJECTILE_PARENT_WEAPON, combat->weapon_obj);
-
-        if (combat->weapon_obj != OBJ_HANDLE_NULL
-            && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-            weapon_flags = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS);
-            if ((weapon_flags & OWF_TRANS_PROJECTILE) != 0) {
-                mp_obj_field_int32_set(missile_obj, OBJ_F_BLIT_FLAGS, TIG_ART_BLT_BLEND_ADD);
-            }
-            if ((weapon_flags & OWF_BOOMERANGS) != 0) {
-                critter_flags2 = obj_field_int32_get(combat->attacker_obj, OBJ_F_CRITTER_FLAGS2);
-                critter_flags2 |= OCF2_USING_BOOMERANG;
-                mp_obj_field_int32_set(combat->attacker_obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
-
-                combat->flags |= 0x1000;
-            }
-        }
-
-        mp_obj_field_int32_set(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, combat->flags);
-        anim_goal_projectile(combat->attacker_obj,
-            missile_obj,
-            missile_art_id,
-            a3,
-            a4,
-            combat->target_obj,
-            combat->target_loc,
-            combat->weapon_obj);
+    if (!mp_object_create(BP_PROJECTILE, loc, &proj_obj)) {
+        return;
     }
+
+    mp_obj_field_int32_set(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE, combat->dam_flags);
+
+    if ((combat->flags & 0x100) != 0) {
+        hit_loc = combat->dam[DAMAGE_TYPE_NORMAL];
+    } else {
+        hit_loc = combat->hit_loc;
+    }
+    mp_obj_field_int32_set(proj_obj, OBJ_F_PROJECTILE_HIT_LOC, hit_loc);
+
+    mp_obj_field_obj_set(proj_obj, OBJ_F_PROJECTILE_PARENT_WEAPON, combat->weapon_obj);
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+        weapon_flags = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS);
+        if ((weapon_flags & OWF_TRANS_PROJECTILE) != 0) {
+            mp_obj_field_int32_set(proj_obj, OBJ_F_BLIT_FLAGS, TIG_ART_BLT_BLEND_ADD);
+        }
+        if ((weapon_flags & OWF_BOOMERANGS) != 0) {
+            critter_flags2 = obj_field_int32_get(combat->attacker_obj, OBJ_F_CRITTER_FLAGS2);
+            critter_flags2 |= OCF2_USING_BOOMERANG;
+            mp_obj_field_int32_set(combat->attacker_obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+
+            combat->flags |= 0x1000;
+        }
+    }
+
+    mp_obj_field_int32_set(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, combat->flags);
+
+    anim_goal_projectile(combat->attacker_obj,
+        proj_obj,
+        proj_aid,
+        a3,
+        a4,
+        combat->target_obj,
+        combat->target_loc,
+        combat->weapon_obj);
 }
 
 // 0x4B2650
@@ -1125,7 +1129,7 @@ void combat_process_ranged_attack(CombatContext* combat)
         }
 
         for (arrow = 0; arrow < num_arrows; arrow++) {
-            sub_4B24F0(combat, loc, dword_5B57FC[arrow], dword_5B57FC[arrow], missile_art_id);
+            combat_create_projectile(combat, loc, dword_5B57FC[arrow], dword_5B57FC[arrow], missile_art_id);
         }
     }
 }
