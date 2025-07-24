@@ -3655,7 +3655,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
             ASSERT(num_loops < 100); // 2088, "numLoops < ANIM_MAX_LOOPS_ALLOWED"
 
-            sub_4B7C90(run_info->anim_obj);
+            combat_turn_based_end_critter_turn(run_info->anim_obj);
             dword_5A5978 = -1;
             sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
             return true;
@@ -4849,7 +4849,7 @@ bool sub_425930(AnimRunInfo* run_info)
         path_create_info.flags = PATH_FLAG_0x0001;
         if (!sub_425BF0(&path_create_info, 1)) {
             if (!player_is_pc_obj(obj)) {
-                sub_4B7C90(obj);
+                combat_turn_based_end_critter_turn(obj);
             }
             return false;
         }
@@ -4857,7 +4857,7 @@ bool sub_425930(AnimRunInfo* run_info)
         run_info->path.max = sub_41F3C0(&path_create_info);
         if (run_info->path.max == 0 || run_info->path.max > range) {
             if (!player_is_pc_obj(obj)) {
-                sub_4B7C90(obj);
+                combat_turn_based_end_critter_turn(obj);
             }
             return false;
         }
@@ -4974,7 +4974,7 @@ bool sub_425D60(AnimRunInfo* run_info)
         path_create_info.flags = PATH_FLAG_0x0001;
         if (!sub_425BF0(&path_create_info, 1)) {
             if (!player_is_pc_obj(obj)) {
-                sub_4B7C90(obj);
+                combat_turn_based_end_critter_turn(obj);
             }
             return false;
         }
@@ -4982,7 +4982,7 @@ bool sub_425D60(AnimRunInfo* run_info)
         run_info->path.max = sub_41F3C0(&path_create_info);
         if (run_info->path.max == 0 || run_info->path.max > range) {
             if (!player_is_pc_obj(obj)) {
-                sub_4B7C90(obj);
+                combat_turn_based_end_critter_turn(obj);
             }
             return false;
         }
@@ -5252,7 +5252,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
 
     if (path->max == 0) {
         if (!player_is_pc_obj(obj)) {
-            sub_4B7C90(obj);
+            combat_turn_based_end_critter_turn(obj);
         }
         return false;
     }
@@ -5408,7 +5408,7 @@ bool sub_426A80(AnimRunInfo* run_info)
     if (source_obj == OBJ_HANDLE_NULL
         || target_obj == OBJ_HANDLE_NULL) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -5461,7 +5461,7 @@ bool sub_426A80(AnimRunInfo* run_info)
 
     if (!sub_425BF0(&path_create_info, true)) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -5472,7 +5472,7 @@ bool sub_426A80(AnimRunInfo* run_info)
 
     if (run_info->path.max == 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -5945,7 +5945,7 @@ bool sub_427730(AnimRunInfo* run_info)
 
         if (run_info->path.max == 0) {
             if (!player_is_pc_obj(obj)) {
-                sub_4B7C90(obj);
+                combat_turn_based_end_critter_turn(obj);
             }
             return false;
         }
@@ -6071,7 +6071,7 @@ bool sub_427990(AnimRunInfo* run_info)
 
         if (!sub_425BF0(&path_create_info, true)) {
             if (!player_is_pc_obj(source_obj)) {
-                sub_4B7C90(source_obj);
+                combat_turn_based_end_critter_turn(source_obj);
             }
             return false;
         }
@@ -6088,7 +6088,7 @@ bool sub_427990(AnimRunInfo* run_info)
                 run_info->path.max -= (int)range - 1;
                 if (run_info->path.max < 1) {
                     if (!player_is_pc_obj(source_obj)) {
-                        sub_4B7C90(source_obj);
+                        combat_turn_based_end_critter_turn(source_obj);
                     }
                     return false;
                 }
@@ -6115,7 +6115,7 @@ bool sub_427990(AnimRunInfo* run_info)
 
     if (range != 0 || orig_range == 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6151,7 +6151,7 @@ bool sub_427990(AnimRunInfo* run_info)
 
     if (path_create_info.flags == PATH_FLAG_0x0001 || (run_info->flags & 0x4000) != 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6160,7 +6160,7 @@ bool sub_427990(AnimRunInfo* run_info)
 
     if (!sub_425BF0(&path_create_info, true)) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6171,7 +6171,7 @@ bool sub_427990(AnimRunInfo* run_info)
 
     if (run_info->path.max <= 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6278,7 +6278,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     if (path_create_flags == path_create_info.flags
         || (run_info->flags & 0x4000) != 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6286,7 +6286,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     path_create_info.flags = path_create_flags;
     if (!sub_425BF0(&path_create_info, false)) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6297,7 +6297,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
 
     if (run_info->path.max == 0) {
         if (!player_is_pc_obj(source_obj)) {
-            sub_4B7C90(source_obj);
+            combat_turn_based_end_critter_turn(source_obj);
         }
         return false;
     }
@@ -6309,7 +6309,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         run_info->path.max -= (int)range - 1;
         if (run_info->path.max < 1) {
             if (!player_is_pc_obj(source_obj)) {
-                sub_4B7C90(source_obj);
+                combat_turn_based_end_critter_turn(source_obj);
             }
             return false;
         }
@@ -6987,7 +6987,7 @@ bool sub_4294A0(AnimRunInfo* run_info)
     rc = sub_4294F0(run_info->params[0].obj, run_info->params[1].obj);
     if (!rc) {
         if (combat_turn_based_is_active()) {
-            sub_4B7C90(run_info->params[0].obj);
+            combat_turn_based_end_critter_turn(run_info->params[0].obj);
         }
     }
 
@@ -14418,7 +14418,7 @@ bool anim_goal_animate_stunned(int64_t obj)
     }
 
     combat_critter_activate_combat_mode(obj);
-    sub_4B7C90(obj);
+    combat_turn_based_end_critter_turn(obj);
 
     goal_data.params[AGDATA_SCRATCH_VAL5].data = (20 - stat_level_get(obj, STAT_CONSTITUTION)) / 2;
 

@@ -3637,7 +3637,7 @@ int combat_attack_cost(int64_t obj)
 }
 
 // 0x4B7C90
-void sub_4B7C90(int64_t obj)
+void combat_turn_based_end_critter_turn(int64_t obj)
 {
     if (combat_turn_based_active
         && dword_5FC240->obj == obj) {

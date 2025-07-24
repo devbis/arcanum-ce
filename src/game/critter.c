@@ -371,7 +371,7 @@ int critter_fatigue_damage_set(int64_t obj, int value)
             magictech_demaintain_spells(obj);
             mt_item_notify_parent_going_unconscious(OBJ_HANDLE_NULL, obj);
             anim_goal_knockdown(obj);
-            sub_4B7C90(obj);
+            combat_turn_based_end_critter_turn(obj);
         }
     }
 
