@@ -317,7 +317,7 @@ void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3)
         }
         return;
     case SKILL_DISARM_TRAPS:
-        if (!a1->is_loc && sub_4B7CD0(obj, 4)) {
+        if (!a1->is_loc && combat_consume_action_points(obj, 4)) {
             skill_invocation_init(&skill_invocation);
             sub_4440E0(obj, &(skill_invocation.source));
             sub_4440E0(a1->obj, &(skill_invocation.target));

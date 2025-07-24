@@ -1470,7 +1470,7 @@ void item_use_on_obj(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     }
 
     if (!object_script_execute(source_obj, item_obj, target_obj, SAP_USE, 0)) {
-        sub_4B7CD0(source_obj, 4);
+        combat_consume_action_points(source_obj, 4);
         return;
     }
 
@@ -1489,7 +1489,7 @@ void item_use_on_obj(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    sub_4B7CD0(source_obj, 4);
+    combat_consume_action_points(source_obj, 4);
 
     if (item_type == OBJ_TYPE_WRITTEN) {
         ui_written_start_obj(item_obj, source_obj);
@@ -1577,7 +1577,7 @@ void item_use_on_loc(int64_t obj, int64_t item_obj, int64_t target_loc)
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
         sub_4CBF70(item_obj, 0);
     } else {
-        sub_4B7CD0(obj, 4);
+        combat_consume_action_points(obj, 4);
         if (obj_type == OBJ_TYPE_WRITTEN) {
             ui_written_start_obj(item_obj, obj);
             return;

@@ -135,7 +135,7 @@ bool combat_check_use_skill(int64_t source_obj);
 int combat_required_action_points_get();
 int combat_attack_cost(int64_t obj);
 void sub_4B7C90(int64_t obj);
-bool sub_4B7CD0(int64_t obj, int action_points);
+bool combat_consume_action_points(int64_t obj, int action_points);
 void combat_turn_based_add_critter(int64_t obj);
 bool sub_4B8040(int64_t obj);
 int combat_turn_based_turn_get();

@@ -3202,7 +3202,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
 
         if (dword_5FC264) {
             dword_5FC264 = false;
-            sub_4B7CD0(dword_5FC240->obj, combat_action_points);
+            combat_consume_action_points(dword_5FC240->obj, combat_action_points);
         }
 
         if (combat_action_points_get() <= 0) {
@@ -3647,7 +3647,7 @@ void sub_4B7C90(int64_t obj)
 }
 
 // 0x4B7CD0
-bool sub_4B7CD0(int64_t obj, int action_points)
+bool combat_consume_action_points(int64_t obj, int action_points)
 {
     bool is_pc;
     CombatContext combat;
@@ -3671,7 +3671,9 @@ bool sub_4B7CD0(int64_t obj, int action_points)
         return true;
     }
 
-    if (combat_action_points > 0 && is_pc && critter_fatigue_current(obj) > 1) {
+    if (combat_action_points > 0
+        && is_pc
+        && critter_fatigue_current(obj) > 1) {
         sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
         combat.flags |= 0x80;
         combat.dam[DAMAGE_TYPE_FATIGUE] = 2;

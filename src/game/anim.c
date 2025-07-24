@@ -3738,7 +3738,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
             if ((state_change & 0x90000000) == 0x90000000) {
                 run_info->flags |= 0x02;
                 if (combat_turn_based_is_active() && !player_is_local_pc_obj(run_info->anim_obj)) {
-                    sub_4B7CD0(run_info->anim_obj, combat_required_action_points_get());
+                    combat_consume_action_points(run_info->anim_obj, combat_required_action_points_get());
                 }
 
                 for (int idx = 1; idx <= run_info->current_goal; idx++) {
@@ -6616,7 +6616,7 @@ bool sub_428A10(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_4B7CD0(source_obj, 2)) {
+    if (!combat_consume_action_points(source_obj, 2)) {
         return false;
     }
 
@@ -7261,7 +7261,7 @@ bool sub_429B50(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_4B7CD0(obj, 4)) {
+    if (!combat_consume_action_points(obj, 4)) {
         return false;
     }
 
@@ -7627,7 +7627,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_4B7CD0(source_obj, 4)) {
+    if (!combat_consume_action_points(source_obj, 4)) {
         return false;
     }
 
@@ -7935,7 +7935,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
         }
     }
 
-    if (!sub_4B7CD0(source_obj, 1)) {
+    if (!combat_consume_action_points(source_obj, 1)) {
         return false;
     }
 
@@ -10275,7 +10275,7 @@ bool sub_42E590(AnimRunInfo* run_info)
     }
 
     if (combat_turn_based_is_active()
-        && (combat_turn_based_whos_turn_get() == obj || !sub_4B7CD0(obj, 5))) {
+        && (combat_turn_based_whos_turn_get() == obj || !combat_consume_action_points(obj, 5))) {
         return false;
     }
 
@@ -11785,7 +11785,7 @@ int sub_430FC0(AnimRunInfo* run_info)
         }
     }
 
-    if (!sub_4B7CD0(obj, action_points)) {
+    if (!combat_consume_action_points(obj, action_points)) {
         dword_5DE6E4 = 0;
         sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
         return false;
@@ -12816,7 +12816,7 @@ bool sub_432700(AnimRunInfo* run_info)
     }
 
     action_points = combat_attack_cost(source_obj);
-    if (!sub_4B7CD0(source_obj, action_points)) {
+    if (!combat_consume_action_points(source_obj, action_points)) {
         sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
         return false;
     }
@@ -13241,7 +13241,7 @@ bool sub_433270(AnimRunInfo* run_info)
         return true;
     }
 
-    return sub_4B7CD0(obj, 2);
+    return combat_consume_action_points(obj, 2);
 }
 
 // 0x4332E0
