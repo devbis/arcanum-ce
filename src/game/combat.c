@@ -46,7 +46,7 @@ static void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* 
 static int combat_weapon_loudness(int64_t weapon_obj);
 static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
-static void sub_4B39B0(CombatContext* combat);
+static void combat_process_ranged_attack(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
@@ -408,7 +408,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
 
     if (combat->skill == BASIC_SKILL_THROWING
         || item_weapon_range(combat->weapon_obj, combat->attacker_obj) > 1) {
-        combat->flags |= 0x200;
+        combat->flags |= CF_RANGED;
     }
 }
 
@@ -696,7 +696,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
             combat.field_28 = target_obj;
         }
 
-        combat.flags = proj_flags | 0x40000 | 0x200;
+        combat.flags = proj_flags | 0x40000 | CF_RANGED;
         combat.dam_flags = proj_dam_flags;
         combat.dam[DAMAGE_TYPE_NORMAL] = dam;
         combat.hit_loc = hit_loc;
@@ -841,7 +841,7 @@ int sub_4B3170(CombatContext* combat)
     gsound_play_sfx_on_obj(sound_id, 1, combat->attacker_obj);
 
     bool is_melee = true;
-    if ((combat->flags & 0x200) != 0
+    if ((combat->flags & CF_RANGED) != 0
         && (combat->skill == SKILL_THROWING
             || obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MISSILE_AID) != -1)) {
         is_melee = false;
@@ -871,7 +871,7 @@ int sub_4B3170(CombatContext* combat)
     } else if ((combat->flags & 0x100) != 0) {
         combat->flags |= CF_HIT;
     } else {
-        if ((combat->flags & 0x200) != 0) {
+        if ((combat->flags & CF_RANGED) != 0) {
             int64_t blocking_obj;
 
             sub_4ADE00(combat->attacker_obj, combat->target_loc, &blocking_obj);
@@ -992,8 +992,8 @@ int sub_4B3170(CombatContext* combat)
         combat_process_crit_miss(combat);
     }
 
-    if ((combat->flags & 0x200) != 0) {
-        sub_4B39B0(combat);
+    if ((combat->flags & CF_RANGED) != 0) {
+        combat_process_ranged_attack(combat);
     } else {
         sub_4B3770(combat);
     }
@@ -1067,7 +1067,7 @@ void sub_4B3770(CombatContext* combat)
 }
 
 // 0x4B39B0
-void sub_4B39B0(CombatContext* combat)
+void combat_process_ranged_attack(CombatContext* combat)
 {
     bool is_boomerangs = false;
     tig_art_id_t missile_art_id = TIG_ART_ID_INVALID;
@@ -1161,7 +1161,9 @@ void combat_throw(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, 
             combat.target_loc = target_loc;
         }
         combat.flags &= ~0xC000;
-        combat.flags |= 0x40240;
+        combat.flags |= 0x4000;
+        combat.flags |= CF_RANGED;
+        combat.flags |= 0x40;
         mp_object_flags_set(weapon_obj, OF_OFF);
         object_drop(weapon_obj, attacker_loc);
         sub_4B3170(&combat);
@@ -1976,7 +1978,7 @@ void combat_dmg(CombatContext* combat)
             }
         } else {
             if (trap_type(combat->target_obj) != TRAP_TYPE_INVALID) {
-                int64_t triggerer_obj = (combat->flags & 0x200) == 0
+                int64_t triggerer_obj = (combat->flags & CF_RANGED) == 0
                     ? combat->attacker_obj
                     : OBJ_HANDLE_NULL;
                 trap_invoke(triggerer_obj, combat->target_obj);
