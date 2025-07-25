@@ -99,7 +99,7 @@ static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_
 static int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sound_id_ptr);
 static bool sub_4AAF50(Ai* ai);
 static bool sub_4AB030(int64_t a1, int64_t a2);
-static int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
+static int64_t ai_choose_target(int64_t attacker_obj, int64_t candidate1_obj, int64_t candidate2_obj);
 static void sub_4AB2A0(int64_t a1, int64_t a2);
 static bool ai_should_flee(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AB460(int64_t a1);
@@ -1436,7 +1436,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
         break;
     case AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS:
         if (danger_source_obj == a2
-            || sub_4AB0B0(a1, danger_source_obj, a2) == a2) {
+            || ai_choose_target(a1, danger_source_obj, a2) == a2) {
             sub_4AB2A0(a1, a2);
         }
         break;
@@ -1448,7 +1448,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
         break;
     case AI_DANGER_SOURCE_TYPE_SURRENDER:
         if (danger_source_obj == a2
-            || sub_4AB0B0(a1, danger_source_obj, a2) == a2) {
+            || ai_choose_target(a1, danger_source_obj, a2) == a2) {
             sub_4AB2A0(a1, a2);
         } else {
             if (critter_is_active(a1)) {
@@ -1802,67 +1802,67 @@ bool sub_4AB030(int64_t a1, int64_t a2)
 }
 
 // 0x4AB0B0
-int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
+int64_t ai_choose_target(int64_t attacker_obj, int64_t candidate1_obj, int64_t candidate2_obj)
 {
-    int64_t dist1;
     int64_t dist2;
-    int score1;
+    int64_t dist1;
     int score2;
+    int score1;
 
-    if (a2 == OBJ_HANDLE_NULL) {
-        return a3;
+    if (candidate1_obj == OBJ_HANDLE_NULL) {
+        return candidate2_obj;
     }
 
-    if (a3 == OBJ_HANDLE_NULL) {
-        return a2;
+    if (candidate2_obj == OBJ_HANDLE_NULL) {
+        return candidate1_obj;
     }
 
-    if (!obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
-        return a2;
+    if (!obj_type_is_critter(obj_field_int32_get(candidate2_obj, OBJ_F_TYPE))) {
+        return candidate1_obj;
     }
 
-    if (!obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))) {
-        return a3;
+    if (!obj_type_is_critter(obj_field_int32_get(candidate1_obj, OBJ_F_TYPE))) {
+        return candidate2_obj;
     }
 
-    if (critter_is_unconscious(a3)) {
-        return a2;
+    if (critter_is_unconscious(candidate2_obj)) {
+        return candidate1_obj;
     }
 
-    if (critter_is_unconscious(a2)) {
-        return a3;
+    if (critter_is_unconscious(candidate1_obj)) {
+        return candidate2_obj;
     }
 
-    dist1 = object_dist(a1, a3);
-    if (dist1 > 20) {
-        return a2;
-    }
-
-    dist2 = object_dist(a1, a2);
+    dist2 = object_dist(attacker_obj, candidate2_obj);
     if (dist2 > 20) {
-        return a3;
+        return candidate1_obj;
     }
 
-    if (ai_check_decoy(a1, a2)) {
-        return a2;
+    dist1 = object_dist(attacker_obj, candidate1_obj);
+    if (dist1 > 20) {
+        return candidate2_obj;
     }
 
-    if (ai_check_decoy(a1, a3)) {
-        return a3;
+    if (ai_check_decoy(attacker_obj, candidate1_obj)) {
+        return candidate1_obj;
+    }
+
+    if (ai_check_decoy(attacker_obj, candidate2_obj)) {
+        return candidate2_obj;
     }
 
     if (random_between(1, 100) > 50) {
         score1 = -((int)dist1);
         score2 = -((int)dist2);
     } else {
-        score1 = stat_level_get(a3, STAT_LEVEL) - (int)dist1;
-        score2 = stat_level_get(a3, STAT_LEVEL) - (int)dist2;
+        score1 = stat_level_get(candidate1_obj, STAT_LEVEL) - (int)dist1;
+        score2 = stat_level_get(candidate2_obj, STAT_LEVEL) - (int)dist2;
     }
 
-    if (score1 > score2) {
-        return a3;
+    if (score2 > score1) {
+        return candidate2_obj;
     } else {
-        return a2;
+        return candidate1_obj;
     }
 }
 
