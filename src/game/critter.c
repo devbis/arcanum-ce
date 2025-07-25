@@ -543,7 +543,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
     if (obj_field_int32_get(victim_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         critter_npc_combat_focus_wipe_schedule(victim_obj);
         obj_field_handle_set(victim_obj, OBJ_F_NPC_COMBAT_FOCUS, killer_obj);
-        sub_4AA1B0(victim_obj, killer_obj);
+        ai_notify_killed(victim_obj, killer_obj);
 
         if (killer_obj != OBJ_HANDLE_NULL) {
             if (obj_field_int32_get(killer_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {

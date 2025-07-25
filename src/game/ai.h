@@ -131,7 +131,7 @@ void ai_redirect_perform(AiRedirect* ai_redirect);
 void ai_attack(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags);
 void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj);
 void ai_notify_explosion_dynamite(int64_t pc_obj);
-void sub_4AA1B0(int64_t a1, int64_t a2);
+void ai_notify_killed(int64_t victim_obj, int64_t killer_obj);
 void sub_4AA300(int64_t a1, int64_t a2);
 void ai_stop_attacking(int64_t obj);
 void sub_4AA580(int64_t obj);

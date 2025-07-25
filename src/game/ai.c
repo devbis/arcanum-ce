@@ -1257,28 +1257,29 @@ void ai_notify_explosion_dynamite(int64_t pc_obj)
 }
 
 // 0x4AA1B0
-void sub_4AA1B0(int64_t a1, int64_t a2)
+void ai_notify_killed(int64_t victim_obj, int64_t killer_obj)
 {
-    ai_stop_fleeing(a1);
-    ai_npc_unwait(a1, true);
+    ai_stop_fleeing(victim_obj);
+    ai_npc_unwait(victim_obj, true);
 
-    if (a2 != OBJ_HANDLE_NULL
-        && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        ObjectList objects;
+    if (killer_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(killer_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        ObjectList npcs;
         ObjectNode* node;
         int danger_type;
         int64_t danger_obj;
         unsigned int flags;
 
-        ai_objects_in_radius(a2, 3, &objects, OBJ_TM_NPC);
-        node = objects.head;
+        ai_objects_in_radius(killer_obj, 3, &npcs, OBJ_TM_NPC);
+
+        node = npcs.head;
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
                 && (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0
-                && critter_faction_same(a1, node->obj)) {
+                && critter_faction_same(victim_obj, node->obj)) {
                 ai_danger_source(node->obj, &danger_type, &danger_obj);
                 if (danger_type == AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS
-                    && danger_obj == a2) {
+                    && danger_obj == killer_obj) {
                     flags = obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS);
                     flags |= ONF_BACKING_OFF;
                     obj_field_int32_set(node->obj, OBJ_F_NPC_FLAGS, flags);
@@ -1286,7 +1287,8 @@ void sub_4AA1B0(int64_t a1, int64_t a2)
             }
             node = node->next;
         }
-        object_list_destroy(&objects);
+
+        object_list_destroy(&npcs);
     }
 }
 
