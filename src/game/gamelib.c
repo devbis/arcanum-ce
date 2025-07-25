@@ -131,7 +131,7 @@ static GameLibModule gamelib_modules[] = {
     { "Description", description_init, NULL, description_mod_load, description_mod_unload, description_exit, NULL, NULL, NULL, NULL },
     { "Item-Effect", item_effect_init, NULL, item_effect_mod_load, item_effect_mod_unload, item_effect_exit, NULL, NULL, NULL, NULL },
     { "Teleport", teleport_init, teleport_reset, NULL, NULL, teleport_exit, teleport_ping, NULL, NULL, NULL },
-    { "Sector", sub_4D10C0, sub_4D10D0, NULL, NULL, sub_4D10E0, NULL, NULL, sub_4D1150, sub_4D12B0, NULL },
+    { "Sector", sector_history_init, sector_history_reset, NULL, NULL, sector_history_exit, NULL, NULL, sector_history_save, sector_history_load, NULL },
     { "Random", random_init, NULL, NULL, NULL, random_exit, NULL, NULL, NULL, NULL, NULL },
     { "Critter", critter_init, NULL, NULL, NULL, critter_exit, NULL, NULL, NULL, NULL, NULL },
     { "Name", name_init, NULL, NULL, NULL, name_exit, NULL, NULL, NULL, NULL },

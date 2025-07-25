@@ -38,14 +38,17 @@ typedef struct SectorCacheEntry {
     /* 0010 */ Sector sector;
 } SectorCacheEntry;
 
-typedef struct S60180C {
+typedef struct SectorHistoryEntry {
     int64_t id;
     DateTime datetime;
-} S60180C;
+} SectorHistoryEntry;
+
+// Serializeable.
+static_assert(sizeof(SectorHistoryEntry) == 0x10, "wrong size");
 
 static bool sub_4CF810(unsigned int size);
 static void sector_block_clear();
-static void sub_4D1100();
+static void sector_history_clear();
 static int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4);
 static SectorListNode* sector_list_node_create();
 static void sector_list_node_reserve();
@@ -165,7 +168,7 @@ static ViewOptions sector_view_options;
 static SectorListNode* sector_list_free_node_head;
 
 // 0x60180C
-static S60180C* dword_60180C;
+static SectorHistoryEntry* sector_history_entries;
 
 // 0x601810
 static int64_t sector_demo_limits_min_y;
@@ -189,7 +192,7 @@ static int dword_60182C;
 static bool sector_grid_enabled;
 
 // 0x601834
-static unsigned int dword_601834;
+static unsigned int sector_history_size;
 
 // 0x601838
 static int sector_refcount;
@@ -233,7 +236,7 @@ bool sector_init(GameInitInfo* init_info)
 void sector_reset()
 {
     sub_4D0B40();
-    dword_601834 = 0;
+    sector_history_size = 0;
 }
 
 // 0x4CF0E0
@@ -307,7 +310,7 @@ void sector_map_close()
 {
     sub_4D0B40();
     if (!gamelib_in_load()) {
-        dword_601834 = 0;
+        sector_history_size = 0;
     }
 }
 
@@ -580,7 +583,7 @@ bool sub_4CF810(unsigned int size)
     }
 
     sector_cache_size = size;
-    sub_4D1100();
+    sector_history_clear();
 
     return true;
 }
@@ -931,13 +934,13 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
         }
 
         datetime = qword_5B7CD0;
-        for (unsigned int j = 0; j < dword_601834; j++) {
-            if (dword_60180C[j].id == id) {
-                datetime = sub_45A7D0(&(dword_60180C[j].datetime));
-                memcpy(&(dword_60180C[j]),
-                    &(dword_60180C[j + 1]),
-                    sizeof(*dword_60180C) * (dword_601834 - j - 1));
-                dword_601834--;
+        for (unsigned int j = 0; j < sector_history_size; j++) {
+            if (sector_history_entries[j].id == id) {
+                datetime = sub_45A7D0(&(sector_history_entries[j].datetime));
+                memcpy(&(sector_history_entries[j]),
+                    &(sector_history_entries[j + 1]),
+                    sizeof(*sector_history_entries) * (sector_history_size - j - 1));
+                sector_history_size--;
                 break;
             }
         }
@@ -1134,38 +1137,38 @@ void sector_enumerate(SectorEnumerateFunc* func)
 }
 
 // 0x4D10C0
-bool sub_4D10C0(GameInitInfo* init_info)
+bool sector_history_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    sub_4D1100();
+    sector_history_clear();
 
     return true;
 }
 
 // 0x4D10D0
-void sub_4D10D0()
+void sector_history_reset()
 {
-    dword_601834 = 0;
+    sector_history_size = 0;
 }
 
 // 0x4D10E0
-void sub_4D10E0()
+void sector_history_exit()
 {
-    FREE(dword_60180C);
-    dword_601834 = 0;
+    FREE(sector_history_entries);
+    sector_history_size = 0;
 }
 
 // 0x4D1100
-void sub_4D1100()
+void sector_history_clear()
 {
-    dword_60180C = (S60180C*)REALLOC(dword_60180C, sizeof(*dword_60180C) * sector_cache_size * 2);
-    memset(dword_60180C, 0, sizeof(*dword_60180C) * sector_cache_size * 2);
-    dword_601834 = 0;
+    sector_history_entries = (SectorHistoryEntry*)REALLOC(sector_history_entries, sizeof(*sector_history_entries) * sector_cache_size * 2);
+    memset(sector_history_entries, 0, sizeof(*sector_history_entries) * sector_cache_size * 2);
+    sector_history_size = 0;
 }
 
 // 0x4D1150
-bool sub_4D1150(TigFile* stream)
+bool sector_history_save(TigFile* stream)
 {
     unsigned int index;
     unsigned int k;
@@ -1174,32 +1177,32 @@ bool sub_4D1150(TigFile* stream)
     for (index = 0; index < sector_cache_size; index++) {
         cache_entry = &(sector_cache_entries[index]);
         if (cache_entry->used) {
-            for (k = 0; k < dword_601834; k++) {
-                if (dword_60180C[k].id == cache_entry->sector.id) {
+            for (k = 0; k < sector_history_size; k++) {
+                if (sector_history_entries[k].id == cache_entry->sector.id) {
                     break;
                 }
             }
 
-            if (k >= dword_601834) {
-                if (dword_601834 == 2 * sector_cache_size) {
-                    memcpy(&(dword_60180C[0]),
-                        &(dword_60180C[1]),
-                        sizeof(*dword_60180C) * (dword_601834 - 1));
-                    dword_601834--;
+            if (k >= sector_history_size) {
+                if (sector_history_size == 2 * sector_cache_size) {
+                    memcpy(&(sector_history_entries[0]),
+                        &(sector_history_entries[1]),
+                        sizeof(*sector_history_entries) * (sector_history_size - 1));
+                    sector_history_size--;
                 }
 
-                dword_60180C[dword_601834].id = cache_entry->sector.id;
-                dword_60180C[dword_601834].datetime = sub_45A7C0();
-                dword_601834++;
+                sector_history_entries[sector_history_size].id = cache_entry->sector.id;
+                sector_history_entries[sector_history_size].datetime = sub_45A7C0();
+                sector_history_size++;
             }
         }
     }
 
-    if (tig_file_fwrite(&dword_601834, sizeof(dword_601834), 1, stream) != 1) {
+    if (tig_file_fwrite(&sector_history_size, sizeof(sector_history_size), 1, stream) != 1) {
         return false;
     }
 
-    if (tig_file_fwrite(dword_60180C, sizeof(*dword_60180C), dword_601834, stream) != dword_601834) {
+    if (tig_file_fwrite(sector_history_entries, sizeof(*sector_history_entries), sector_history_size, stream) != sector_history_size) {
         return false;
     }
 
@@ -1207,17 +1210,17 @@ bool sub_4D1150(TigFile* stream)
 }
 
 // 0x4D12B0
-bool sub_4D12B0(GameLoadInfo* load_info)
+bool sector_history_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(&dword_601834, sizeof(dword_601834), 1, load_info->stream) != 1) {
+    if (tig_file_fread(&sector_history_size, sizeof(sector_history_size), 1, load_info->stream) != 1) {
         return false;
     }
 
-    if (dword_601834 > 2 * sector_cache_size) {
+    if (sector_history_size > 2 * sector_cache_size) {
         return false;
     }
 
-    if (tig_file_fread(dword_60180C, sizeof(*dword_60180C), dword_601834, load_info->stream) != dword_601834) {
+    if (tig_file_fread(sector_history_entries, sizeof(*sector_history_entries), sector_history_size, load_info->stream) != sector_history_size) {
         return false;
     }
 
@@ -1277,14 +1280,16 @@ void sector_list_node_reserve()
 void sub_4D1400(Sector* sector)
 {
     if (sector->id != -1) {
-        if (dword_601834 == 2 * sector_cache_size) {
-            memcpy(dword_60180C, &(dword_60180C[1]), sizeof(*dword_60180C) * (dword_601834 - 1));
-            dword_601834--;
+        if (sector_history_size == 2 * sector_cache_size) {
+            memcpy(sector_history_entries,
+                &(sector_history_entries[1]),
+                sizeof(*sector_history_entries) * (sector_history_size - 1));
+            sector_history_size--;
         }
 
-        dword_60180C[dword_601834].id = sector->id;
-        dword_60180C[dword_601834].datetime = sub_45A7C0();
-        dword_601834++;
+        sector_history_entries[sector_history_size].id = sector->id;
+        sector_history_entries[sector_history_size].datetime = sub_45A7C0();
+        sector_history_size++;
     }
 
     sector->flags = SECTOR_IS_NEW;

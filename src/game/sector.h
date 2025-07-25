@@ -75,11 +75,11 @@ bool sector_block_load(const char* base_map_name, const char* current_map_name);
 void sector_art_cache_enable();
 void sector_art_cache_disable();
 void sector_enumerate(SectorEnumerateFunc* func);
-bool sub_4D10C0(GameInitInfo* init_info);
-void sub_4D10D0();
-void sub_4D10E0();
-bool sub_4D1150(TigFile* stream);
-bool sub_4D12B0(GameLoadInfo* load_info);
+bool sector_history_init(GameInitInfo* init_info);
+void sector_history_reset();
+void sector_history_exit();
+bool sector_history_save(TigFile* stream);
+bool sector_history_load(GameLoadInfo* load_info);
 
 #define SECTOR_X(a) ((a) & 0x3FFFFFF)
 #define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)
