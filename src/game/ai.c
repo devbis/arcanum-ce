@@ -107,7 +107,7 @@ static bool sub_4AB990(int64_t a1, int64_t a2);
 static void sub_4ABC20(Ai* ai);
 static bool sub_4ABC70(Ai* ai);
 static int sub_4ABE20(Ai* ai);
-static bool sub_4ABEB0(int64_t obj, int64_t tgt);
+static bool ai_is_stronger(int64_t attacker_obj, int64_t target_obj);
 static bool sub_4ABF10(Ai* ai, S4ABF10* a2);
 static void ai_action_perform(Ai* ai);
 static void ai_action_perform_cast(Ai* ai);
@@ -2252,7 +2252,7 @@ int sub_4ABE20(Ai* ai)
     if (ai->leader_obj != OBJ_HANDLE_NULL
         && ai_object_hp_ratio(ai->obj) > 50
         && ai_object_hp_ratio(ai->leader_obj) > 50
-        && !sub_4ABEB0(ai->obj, ai->danger_source)) {
+        && !ai_is_stronger(ai->obj, ai->danger_source)) {
         return 0;
     }
 
@@ -2262,19 +2262,19 @@ int sub_4ABE20(Ai* ai)
 }
 
 // 0x4ABEB0
-bool sub_4ABEB0(int64_t obj, int64_t tgt)
+bool ai_is_stronger(int64_t attacker_obj, int64_t target_obj)
 {
-    int obj_level;
-    int tgt_level;
+    int attacker_level;
+    int target_level;
 
-    tgt_level = stat_level_get(tgt, STAT_LEVEL);
-    obj_level = stat_level_get(obj, STAT_LEVEL);
+    target_level = stat_level_get(target_obj, STAT_LEVEL);
+    attacker_level = stat_level_get(attacker_obj, STAT_LEVEL);
 
-    if (tgt_level < 20 && tgt_level >= obj_level + 10) {
+    if (target_level < 20 && target_level >= attacker_level + 10) {
         return true;
-    } else if (tgt_level < 40 && tgt_level >= obj_level + 5) {
+    } else if (target_level < 40 && target_level >= attacker_level + 5) {
         return true;
-    } else if (tgt_level >= obj_level) {
+    } else if (target_level >= attacker_level) {
         return true;
     }
 
