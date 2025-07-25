@@ -46,7 +46,7 @@ typedef struct SectorHistoryEntry {
 // Serializeable.
 static_assert(sizeof(SectorHistoryEntry) == 0x10, "wrong size");
 
-static bool sector_cache_init(unsigned int size);
+static bool sector_cache_init(unsigned int capacity);
 static void sector_block_clear();
 static void sector_history_clear();
 static int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4);
@@ -81,10 +81,10 @@ static DateTime qword_5B7CD0 = { -1, -1 };
 static int sector_art_cache_state = 1;
 
 // 0x601780
-static unsigned int sector_cache_size;
+static unsigned int sector_cache_capacity;
 
 // 0x601784
-static unsigned int dword_601784;
+static unsigned int sector_cache_size;
 
 // 0x601788
 static SectorSaveFunc* sector_save_func;
@@ -254,7 +254,7 @@ void sector_exit()
         sector_list_free_node_head = node;
     }
 
-    for (index = 0; index < sector_cache_size; index++) {
+    for (index = 0; index < sector_cache_capacity; index++) {
         sector = &(sector_cache_entries[index].sector);
         if (!sector_object_list_exit(&(sector->objects))) {
             tig_debug_printf("Error destroying object list in sector_exit()\n");
@@ -289,7 +289,7 @@ void sector_exit()
         }
     }
 
-    dword_601784 = 0;
+    sector_cache_size = 0;
     FREE(sector_cache_indexes);
     FREE(sector_cache_entries);
     FREE(sector_base_path);
@@ -486,7 +486,7 @@ void sector_limits_get(int64_t* x, int64_t* y)
 }
 
 // 0x4CF810
-bool sector_cache_init(unsigned int size)
+bool sector_cache_init(unsigned int capacity)
 {
     unsigned int index;
     Sector* sector;
@@ -497,15 +497,15 @@ bool sector_cache_init(unsigned int size)
 
     sector_flush(0);
 
-    if (size < 8) {
-        size = 8;
-    } else if (size > 128) {
-        size = 128;
+    if (capacity < 8) {
+        capacity = 8;
+    } else if (capacity > 128) {
+        capacity = 128;
     }
 
-    if (size < sector_cache_size) {
+    if (capacity < sector_cache_capacity) {
         // Requested size is smaller - shrink current cache.
-        for (index = sector_cache_size - 1; index >= size; index--) {
+        for (index = sector_cache_capacity - 1; index >= capacity; index--) {
             sector = &(sector_cache_entries[index].sector);
             sector_object_list_exit(&(sector->objects));
             sector_block_list_exit(&(sector->blocks));
@@ -516,13 +516,13 @@ bool sector_cache_init(unsigned int size)
             sector_light_list_exit(&(sector->lights));
         }
 
-        sector_cache_entries = (SectorCacheEntry*)REALLOC(sector_cache_entries, sizeof(*sector_cache_entries) * size);
-        sector_cache_indexes = (int*)REALLOC(sector_cache_indexes, sizeof(*sector_cache_indexes) * size);
-    } else if (size > sector_cache_size) {
-        sector_cache_entries = (SectorCacheEntry*)REALLOC(sector_cache_entries, sizeof(*sector_cache_entries) * size);
-        sector_cache_indexes = (int*)REALLOC(sector_cache_indexes, sizeof(*sector_cache_indexes) * size);
+        sector_cache_entries = (SectorCacheEntry*)REALLOC(sector_cache_entries, sizeof(*sector_cache_entries) * capacity);
+        sector_cache_indexes = (int*)REALLOC(sector_cache_indexes, sizeof(*sector_cache_indexes) * capacity);
+    } else if (capacity > sector_cache_capacity) {
+        sector_cache_entries = (SectorCacheEntry*)REALLOC(sector_cache_entries, sizeof(*sector_cache_entries) * capacity);
+        sector_cache_indexes = (int*)REALLOC(sector_cache_indexes, sizeof(*sector_cache_indexes) * capacity);
 
-        for (index = sector_cache_size; index < size; index++) {
+        for (index = sector_cache_capacity; index < capacity; index++) {
             memset(&(sector_cache_entries[index]), 0, sizeof(*sector_cache_entries));
             sector_cache_indexes[index] = 0;
 
@@ -582,7 +582,7 @@ bool sector_cache_init(unsigned int size)
         }
     }
 
-    sector_cache_size = size;
+    sector_cache_capacity = capacity;
     sector_history_clear();
 
     return true;
@@ -896,8 +896,8 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
         cache_entry->refcount++;
         cache_entry->timestamp = dword_6017BC;
     } else {
-        if (dword_601784 >= sector_cache_size) {
-            for (index = 0; index < sector_cache_size; index++) {
+        if (sector_cache_size >= sector_cache_capacity) {
+            for (index = 0; index < sector_cache_capacity; index++) {
                 if (sector_cache_entries[sector_cache_indexes[index]].refcount == 0) {
                     if (oldest == -1
                         || sector_cache_entries[sector_cache_indexes[index]].timestamp < sector_cache_entries[sector_cache_indexes[oldest]].timestamp) {
@@ -921,8 +921,8 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
 
             memcpy(&(sector_cache_indexes[oldest]),
                 &(sector_cache_indexes[oldest + 1]),
-                sizeof(*sector_cache_indexes) * (dword_601784 - oldest - 1));
-            dword_601784--;
+                sizeof(*sector_cache_indexes) * (sector_cache_size - oldest - 1));
+            sector_cache_size--;
 
             sector_cache_find_by_id(id, &dword_60182C);
         }
@@ -956,9 +956,9 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
 
         memcpy(&(sector_cache_indexes[dword_60182C + 1]),
             &(sector_cache_indexes[dword_60182C]),
-            sizeof(*sector_cache_indexes) * (dword_601784 - dword_60182C));
+            sizeof(*sector_cache_indexes) * (sector_cache_size - dword_60182C));
         sector_cache_indexes[dword_60182C] = index;
-        dword_601784++;
+        sector_cache_size++;
 
         cache_entry->used = true;
         cache_entry->refcount = 1;
@@ -994,12 +994,12 @@ void sub_4D0B40()
 {
     unsigned int index;
 
-    for (index = 0; index < dword_601784; index++) {
+    for (index = 0; index < sector_cache_size; index++) {
         sub_4D1400(&(sector_cache_entries[sector_cache_indexes[index]].sector));
         sector_cache_entries[sector_cache_indexes[index]].used = false;
     }
 
-    dword_601784 = 0;
+    sector_cache_size = 0;
 }
 
 // 0x4D0BC0
@@ -1008,7 +1008,7 @@ void sector_flush(unsigned int flags)
     unsigned int index;
     SectorCacheEntry* cache_entry;
 
-    for (index = 0; index < dword_601784; index++) {
+    for (index = 0; index < sector_cache_size; index++) {
         cache_entry = &(sector_cache_entries[sector_cache_indexes[index]]);
         if (cache_entry->refcount == 0) {
             sector_save_func(&(cache_entry->sector));
@@ -1017,9 +1017,9 @@ void sector_flush(unsigned int flags)
                 cache_entry->used = false;
                 memmove(&(sector_cache_indexes[index]),
                     &(sector_cache_indexes[index + 1]),
-                    sizeof(*sector_cache_indexes) * (dword_601784 - 1));
+                    sizeof(*sector_cache_indexes) * (sector_cache_size - 1));
                 index--;
-                dword_601784--;
+                sector_cache_size--;
             }
         }
     }
@@ -1127,7 +1127,7 @@ void sector_enumerate(SectorEnumerateFunc* func)
 
     in_sector_enumerate = true;
 
-    for (index = 0; index < dword_601784; index++) {
+    for (index = 0; index < sector_cache_size; index++) {
         if (!func(&(sector_cache_entries[sector_cache_indexes[index]].sector))) {
             break;
         }
@@ -1162,8 +1162,8 @@ void sector_history_exit()
 // 0x4D1100
 void sector_history_clear()
 {
-    sector_history_entries = (SectorHistoryEntry*)REALLOC(sector_history_entries, sizeof(*sector_history_entries) * sector_cache_size * 2);
-    memset(sector_history_entries, 0, sizeof(*sector_history_entries) * sector_cache_size * 2);
+    sector_history_entries = (SectorHistoryEntry*)REALLOC(sector_history_entries, sizeof(*sector_history_entries) * sector_cache_capacity * 2);
+    memset(sector_history_entries, 0, sizeof(*sector_history_entries) * sector_cache_capacity * 2);
     sector_history_size = 0;
 }
 
@@ -1174,7 +1174,7 @@ bool sector_history_save(TigFile* stream)
     unsigned int k;
     SectorCacheEntry* cache_entry;
 
-    for (index = 0; index < sector_cache_size; index++) {
+    for (index = 0; index < sector_cache_capacity; index++) {
         cache_entry = &(sector_cache_entries[index]);
         if (cache_entry->used) {
             for (k = 0; k < sector_history_size; k++) {
@@ -1184,7 +1184,7 @@ bool sector_history_save(TigFile* stream)
             }
 
             if (k >= sector_history_size) {
-                if (sector_history_size == 2 * sector_cache_size) {
+                if (sector_history_size == 2 * sector_cache_capacity) {
                     memcpy(&(sector_history_entries[0]),
                         &(sector_history_entries[1]),
                         sizeof(*sector_history_entries) * (sector_history_size - 1));
@@ -1216,7 +1216,7 @@ bool sector_history_load(GameLoadInfo* load_info)
         return false;
     }
 
-    if (sector_history_size > 2 * sector_cache_size) {
+    if (sector_history_size > 2 * sector_cache_capacity) {
         return false;
     }
 
@@ -1280,7 +1280,7 @@ void sector_list_node_reserve()
 void sub_4D1400(Sector* sector)
 {
     if (sector->id != -1) {
-        if (sector_history_size == 2 * sector_cache_size) {
+        if (sector_history_size == 2 * sector_cache_capacity) {
             memcpy(sector_history_entries,
                 &(sector_history_entries[1]),
                 sizeof(*sector_history_entries) * (sector_history_size - 1));
@@ -2119,7 +2119,7 @@ bool sector_cache_find_by_id(int64_t id, int* index_ptr)
     int64_t curr;
 
     l = 0;
-    r = dword_601784 - 1;
+    r = sector_cache_size - 1;
     while (l <= r) {
         m = (l + r) / 2;
         curr = sector_cache_entries[sector_cache_indexes[m]].sector.id;
@@ -2144,7 +2144,7 @@ bool sector_cache_find_unused(unsigned int* index_ptr)
     unsigned int index;
 
     // NOTE: Unsigned comparison.
-    for (index = 0; index < sector_cache_size; index++) {
+    for (index = 0; index < sector_cache_capacity; index++) {
         if (!sector_cache_entries[index].used) {
             *index_ptr = index;
             return true;
