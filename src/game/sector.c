@@ -46,7 +46,7 @@ typedef struct SectorHistoryEntry {
 // Serializeable.
 static_assert(sizeof(SectorHistoryEntry) == 0x10, "wrong size");
 
-static bool sub_4CF810(unsigned int size);
+static bool sector_cache_init(unsigned int size);
 static void sector_block_clear();
 static void sector_history_clear();
 static int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4);
@@ -225,7 +225,7 @@ bool sector_init(GameInitInfo* init_info)
 
     sector_limits_set(0x4000000, 0x4000000);
 
-    if (!sub_4CF810(16)) {
+    if (!sector_cache_init(16)) {
         return false;
     }
 
@@ -486,7 +486,7 @@ void sector_limits_get(int64_t* x, int64_t* y)
 }
 
 // 0x4CF810
-bool sub_4CF810(unsigned int size)
+bool sector_cache_init(unsigned int size)
 {
     unsigned int index;
     Sector* sector;
