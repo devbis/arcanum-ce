@@ -934,7 +934,7 @@ bool sub_44F3C0(MagicTechRunInfo* run_info, TigFile* stream)
     if (!mt_obj_node_save_list(&(run_info->summoned_obj), stream)) return false;
     if (tig_file_fwrite(&(run_info->field_138), sizeof(run_info->field_138), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_13C), sizeof(run_info->field_13C), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->field_140), sizeof(run_info->field_140), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->trigger), sizeof(run_info->trigger), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_144), sizeof(run_info->field_144), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_148), sizeof(run_info->field_148), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_150), sizeof(run_info->field_150), 1, stream) != 1) return false;
@@ -999,7 +999,7 @@ bool sub_44F620(MagicTechRunInfo* run_info, TigFile* stream)
     if (!mt_obj_node_load_list(&(run_info->summoned_obj), stream)) return false;
     if (tig_file_fread(&(run_info->field_138), sizeof(run_info->field_138), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_13C), sizeof(run_info->field_13C), 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->field_140), sizeof(run_info->field_140), 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->trigger), sizeof(run_info->trigger), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_144), sizeof(run_info->field_144), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_148), sizeof(run_info->field_148), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_150), sizeof(run_info->field_150), 1, stream) != 1) return false;
@@ -2054,9 +2054,9 @@ void sub_4510F0()
 
                             if (dword_5E7598->item_triggers == 0
                                 || dword_5E761C->item_triggers == 0
-                                || ((dword_5E75F0->field_140 & dword_5E761C->item_triggers) != 0
+                                || ((dword_5E75F0->trigger & dword_5E761C->item_triggers) != 0
                                     && ((dword_5E761C->item_triggers & 0x100) == 0
-                                        || (dword_5E75F0->field_140 & 0x100) != 0))) {
+                                        || (dword_5E75F0->trigger & 0x100) != 0))) {
                                 dword_5E75DC = 1;
                                 sub_453EE0();
                                 magictech_procs[dword_5E761C->type]();
@@ -2170,7 +2170,7 @@ void MTComponentCast_ProcFunc()
     magictech_invocation_init(&mt_invocation, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
     sub_4440E0(stru_5E6D28.field_20, &(mt_invocation.target_obj));
     sub_4440E0(dword_5E75F0->parent_obj.obj, &(mt_invocation.parent_obj));
-    mt_invocation.flags |= MAGICTECH_INVOCATION_0x01;
+    mt_invocation.flags |= MAGICTECH_INVOCATION_FRIENDLY;
     mt_invocation.target_loc = stru_5E6D28.field_28;
 
     if (mt_invocation.parent_obj.obj != OBJ_HANDLE_NULL) {
@@ -4575,7 +4575,7 @@ void magictech_invocation_init(MagicTechInvocation* mt_invocation, int64_t obj, 
     mt_invocation->target_loc = 0;
     sub_4440E0(sub_450A50(obj), &(mt_invocation->parent_obj));
     sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation->field_A0));
-    mt_invocation->field_D8 = 0;
+    mt_invocation->trigger = 0;
     mt_invocation->flags = 0;
 }
 
@@ -4696,7 +4696,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
     }
 
     run_info->field_138 = 0;
-    run_info->field_140 = mt_invocation->field_D8;
+    run_info->trigger = mt_invocation->trigger;
     run_info->field_144 = 0;
     run_info->field_150 = info->duration_trigger_count;
 
@@ -4731,7 +4731,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
             ? AG_THROW_SPELL_W_CAST_ANIM
             : AG_THROW_SPELL;
 
-        if ((mt_invocation->flags & MAGICTECH_INVOCATION_0x01) != 0) {
+        if ((mt_invocation->flags & MAGICTECH_INVOCATION_FRIENDLY) != 0) {
             if (sub_44D500(&goal_data, run_info->parent_obj.obj, AG_THROW_SPELL_FRIENDLY)) {
                 goal_data.params[AGDATA_SPELL_DATA].data = run_info->id;
                 goal_data.params[AGDATA_TARGET_OBJ].obj = run_info->target_obj.obj;

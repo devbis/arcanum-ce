@@ -1478,7 +1478,7 @@ void item_use_on_obj(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         || (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_IS_MAGICAL) != 0) {
         sub_4F2810(&v1, target_obj);
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
-        sub_4CBF70(item_obj, target_obj);
+        mt_item_notify_used(item_obj, target_obj);
 
         if (item_type == OBJ_TYPE_FOOD
             || item_type == OBJ_TYPE_SCROLL) {
@@ -1575,7 +1575,7 @@ void item_use_on_loc(int64_t obj, int64_t item_obj, int64_t target_loc)
     if (mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
         sub_4F27F0(&v1, target_loc);
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
-        sub_4CBF70(item_obj, 0);
+        mt_item_notify_used(item_obj, OBJ_HANDLE_NULL);
     } else {
         combat_consume_action_points(obj, 4);
         if (obj_type == OBJ_TYPE_WRITTEN) {
@@ -3529,7 +3529,7 @@ int item_weapon_aoe_radius(int64_t obj)
         return 0;
     }
 
-    return sub_4502B0(sub_4CB790(10000));
+    return sub_4502B0(mt_item_spell_to_magictech_spell(10000));
 }
 
 // 0x466260

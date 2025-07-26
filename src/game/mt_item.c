@@ -5,41 +5,45 @@
 #include "game/obj.h"
 #include "game/random.h"
 
-static void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags);
-static void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags);
-static void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags);
+static void handle_item_event(int64_t item_obj, int64_t parent_obj, int64_t extra_obj, unsigned int flags);
+static void handle_item_event_func(int64_t item_obj, int64_t parent_obj, int64_t extra_obj, int64_t target_loc, unsigned int flags);
+static void handle_item_unwear_drop(int64_t item_obj, int64_t parent_obj, unsigned int flags);
 
-// 0x5B72AC
+/**
+ * 0x5B72AC
+ */
 const char* mt_item_trig_keys[MT_ITEM_TRIG_COUNT] = {
-    /*                         MT_ITEM_NONE */ "None",
-    /*                MT_ITEM_USER_ACTIVATE */ "User_Activate",
-    /*                         MT_ITEM_WEAR */ "Wear",
-    /*                       MT_ITEM_UNWEAR */ "Unwear",
-    /*                       MT_ITEM_PICKUP */ "Pickup",
-    /*                         MT_ITEM_DROP */ "Drop",
-    /*                   MT_ITEM_PARENT_HIT */ "Parent_Hit",
-    /*               MT_ITEM_PARENT_STUNNED */ "Parent_Stunned",
-    /*     MT_ITEM_PARENT_GOING_UNCONSCIOUS */ "Parent_Going_Unconscious",
-    /*                 MT_ITEM_PARENT_DYING */ "Parent_Dying",
-    /*      MT_ITEM_PARENT_HIT_BY_ATK_SPELL */ "Parent_Hit_By_Atk_Spell",
-    /*         MT_ITEM_PARENT_ATKS_OPPONENT */ "Parent_Atks_Opponent",
-    /*         MT_ITEM_PARENT_ATKS_LOCATION */ "Parent_Atks_Location",
-    /*         MT_ITEM_PARENT_DMGS_OPPONENT */ "Parent_Dmgs_Opponent",
-    /*  MT_ITEM_PARENT_DMGS_OPPONENT_W_ITEM */ "Parent_Dmgs_Opponent_W_Item",
-    /*                   MT_ITEM_TARGET_HIT */ "Target_Hit",
-    /*     MT_ITEM_TARGET_GOING_UNCONSCIOUS */ "Target_Going_Unconscious",
-    /*                    MT_ITEM_ITEM_USED */ "Item_Used",
-    /*              MT_ITEM_TARGET_ATTACKER */ "Target_Attacker",
-    /*       MT_ITEM_TARGET_ATTACKER_WEAPON */ "Target_Attacker_Weapon",
-    /*        MT_ITEM_TARGET_ATTACKER_ARMOR */ "Target_Attacker_Armor",
-    /* MT_ITEM_TARGET_ATTACKER_WEAPON_MELEE */ "Target_Attacker_Weapon_Melee",
-    /*           MT_ITEM_RANDOM_CHANCE_RARE */ "Random_Chance_Rare",
-    /*       MT_ITEM_RANDOM_CHANCE_UNCOMMON */ "Random_Chance_Uncommon",
-    /*         MT_ITEM_RANDOM_CHANCE_COMMON */ "Random_Chance_Common",
-    /*       MT_ITEM_RANDOM_CHANCE_FREQUENT */ "Random_Chance_Frequent",
+    /*                         MT_ITEM_TRIG_NONE */ "None",
+    /*                MT_ITEM_TRIG_USER_ACTIVATE */ "User_Activate",
+    /*                         MT_ITEM_TRIG_WEAR */ "Wear",
+    /*                       MT_ITEM_TRIG_UNWEAR */ "Unwear",
+    /*                       MT_ITEM_TRIG_PICKUP */ "Pickup",
+    /*                         MT_ITEM_TRIG_DROP */ "Drop",
+    /*                   MT_ITEM_TRIG_PARENT_HIT */ "Parent_Hit",
+    /*               MT_ITEM_TRIG_PARENT_STUNNED */ "Parent_Stunned",
+    /*     MT_ITEM_TRIG_PARENT_GOING_UNCONSCIOUS */ "Parent_Going_Unconscious",
+    /*                 MT_ITEM_TRIG_PARENT_DYING */ "Parent_Dying",
+    /*      MT_ITEM_TRIG_PARENT_HIT_BY_ATK_SPELL */ "Parent_Hit_By_Atk_Spell",
+    /*         MT_ITEM_TRIG_PARENT_ATKS_OPPONENT */ "Parent_Atks_Opponent",
+    /*         MT_ITEM_TRIG_PARENT_ATKS_LOCATION */ "Parent_Atks_Location",
+    /*         MT_ITEM_TRIG_PARENT_DMGS_OPPONENT */ "Parent_Dmgs_Opponent",
+    /*  MT_ITEM_TRIG_PARENT_DMGS_OPPONENT_W_ITEM */ "Parent_Dmgs_Opponent_W_Item",
+    /*                   MT_ITEM_TRIG_TARGET_HIT */ "Target_Hit",
+    /*     MT_ITEM_TRIG_TARGET_GOING_UNCONSCIOUS */ "Target_Going_Unconscious",
+    /*                    MT_ITEM_TRIG_ITEM_USED */ "Item_Used",
+    /*              MT_ITEM_TRIG_TARGET_ATTACKER */ "Target_Attacker",
+    /*       MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON */ "Target_Attacker_Weapon",
+    /*        MT_ITEM_TRIG_TARGET_ATTACKER_ARMOR */ "Target_Attacker_Armor",
+    /* MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON_MELEE */ "Target_Attacker_Weapon_Melee",
+    /*           MT_ITEM_TRIG_RANDOM_CHANCE_RARE */ "Random_Chance_Rare",
+    /*       MT_ITEM_TRIG_RANDOM_CHANCE_UNCOMMON */ "Random_Chance_Uncommon",
+    /*         MT_ITEM_TRIG_RANDOM_CHANCE_COMMON */ "Random_Chance_Common",
+    /*       MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT */ "Random_Chance_Frequent",
 };
 
-// 0x5B7314
+/**
+ * 0x5B7314
+ */
 unsigned int mt_item_trig_values[MT_ITEM_TRIG_COUNT] = {
     MT_ITEM_TRIG_NONE,
     MT_ITEM_TRIG_USER_ACTIVATE,
@@ -58,7 +62,7 @@ unsigned int mt_item_trig_values[MT_ITEM_TRIG_COUNT] = {
     MT_ITEM_TRIG_PARENT_DMGS_OPPONENT_W_ITEM,
     MT_ITEM_TRIG_TARGET_HIT,
     MT_ITEM_TRIG_TARGET_GOING_UNCONSCIOUS,
-    MT_ITEM_TRIG_ITEM_USED,
+    MT_ITEM_TRIG_ITEM_USED | MT_ITEM_TRIG_TARGET_ATTACKER, // NOTE: Strange case.
     MT_ITEM_TRIG_TARGET_ATTACKER,
     MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON,
     MT_ITEM_TRIG_TARGET_ATTACKER_ARMOR,
@@ -69,13 +73,23 @@ unsigned int mt_item_trig_values[MT_ITEM_TRIG_COUNT] = {
     MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT,
 };
 
-// 0x5FF610
+/**
+ * Flag indicating whether the mt item module has been initialized.
+ *
+ * 0x5FF610
+ */
 static bool mt_item_initialized;
 
-// 0x5FF618
+/**
+ * 0x5FF618
+ */
 static int64_t qword_5FF618;
 
-// 0x4CB720
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4CB720
+ */
 bool mt_item_init(GameInitInfo* init_info)
 {
     (void)init_info;
@@ -85,7 +99,11 @@ bool mt_item_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4CB730
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4CB730
+ */
 void mt_item_exit()
 {
     if (mt_item_initialized) {
@@ -93,52 +111,83 @@ void mt_item_exit()
     }
 }
 
-// 0x4CB760
-unsigned int mt_item_triggers(int index)
+/**
+ * Retrieves the trigger flags for a given spell.
+ *
+ * 0x4CB760
+ */
+unsigned int mt_item_triggers(int spell)
 {
-    return index != 10000 ? magictech_spells[index].item_triggers : 0;
+    return spell != 10000 ? magictech_spells[spell].item_triggers : 0;
 }
 
-// 0x4CB790
-int sub_4CB790(int a1)
+/**
+ * Converts item spell to magictech spell.
+ *
+ * NOTE: The only case where this function is relevant is when converting the
+ * special value of `10000`, which seems to indicate no particular spell.
+ * However, since all items can be thrown, it is remapped to `16`
+ * (`SPELL_STONE_THROW`).
+ *
+ * 0x4CB790
+ */
+int mt_item_spell_to_magictech_spell(int spell)
 {
-    return a1 & 0xFF;
+    return spell & 0xFF;
 }
 
-// 0x4CB7A0
-int mt_item_spell(int64_t item_obj, int index)
+/**
+ * Retrieves the magictech spell for a given item at a specific slot.
+ *
+ * The `slot` is implied to be in range 0-4, but this is not enforced.
+ *
+ * 0x4CB7A0
+ */
+int mt_item_spell(int64_t item_obj, int slot)
 {
-    int spl;
+    int spell;
 
     if (item_obj == OBJ_HANDLE_NULL) {
         return -1;
     }
 
-    spl = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1 + index);
-    if (spl == 10000) {
+    spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1 + slot);
+    if (spell == 10000) {
         return -1;
     }
 
-    return spl;
+    return spell;
 }
 
-// 0x4CB7D0
+/**
+ * Notifies the system that an item has been equipped.
+ *
+ * 0x4CB7D0
+ */
 void mt_item_notify_wear(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, MT_ITEM_TRIG_WEAR);
+    handle_item_event(item_obj, parent_obj, OBJ_HANDLE_NULL, MT_ITEM_TRIG_WEAR);
 }
 
-// 0x4CB800
-void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags)
+/**
+ * Shortcut for `handle_item_event_func`, specifying no target location.
+ *
+ * 0x4CB800
+ */
+void handle_item_event(int64_t item_obj, int64_t parent_obj, int64_t extra_obj, unsigned int flags)
 {
-    sub_4CB830(a1, a2, a3, OBJ_HANDLE_NULL, flags);
+    handle_item_event_func(item_obj, parent_obj, extra_obj, 0, flags);
 }
 
-// 0x4CB830
-void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags)
+/**
+ * Processes item triggers.
+ *
+ * 0x4CB830
+ */
+void handle_item_event_func(int64_t item_obj, int64_t parent_obj, int64_t extra_obj, int64_t target_loc, unsigned int flags)
 {
-    int index;
-    int spl;
+    int slot;
+    int spell;
     unsigned int trig;
     MagicTechInvocation mt_invocation;
 
@@ -148,76 +197,105 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
         return;
     }
 
-    for (index = 0; index < 5; index++) {
-        spl = obj_field_int32_get(a1, OBJ_F_ITEM_SPELL_1 + index);
-        if (spl == 10000) {
+    for (slot = 0; slot < 5; slot++) {
+        spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1 + slot);
+        if (spell == 10000) {
             break;
         }
 
-        trig = mt_item_triggers(spl);
-        if ((trig & flags) != 0) {
-            if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_ANY) == 0
-                || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_RARE) != 0
-                    && random_between(1, 100) <= 10)
-                || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_UNCOMMON) != 0
-                    && random_between(1, 100) <= 20)
-                || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_COMMON) != 0
-                    && random_between(1, 100) <= 40)
-                || ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT) != 0
-                    && random_between(1, 100) <= 66)) {
-                magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
+        trig = mt_item_triggers(spell);
 
-                if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ANY) != 0) {
-                    if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER) != 0) {
-                        sub_4440E0(a3, &(mt_invocation.target_obj));
-                    } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON) != 0) {
-                        if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_WEAPON), &(mt_invocation.target_obj));
-                        } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
-                        }
-                    } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ARMOR) != 0) {
-                        if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_ARMOR), &(mt_invocation.target_obj));
-                        } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
-                        }
-                    } else {
-                        sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
-                    }
-                } else if ((trig & MT_ITEM_TRIG_PARENT_ATKS_LOCATION) != 0) {
-                    mt_invocation.target_loc = a4;
-                } else {
-                    sub_4440E0(a2, &(mt_invocation.target_obj));
+        // Check if the spell's triggers match the event flags.
+        if ((trig & flags) == 0) {
+            continue;
+        }
+
+        // Check random chance triggers.
+        if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_ANY) != 0) {
+            if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_RARE) != 0) {
+                // Rare - 10%.
+                if (random_between(1, 100) > 10) {
+                    continue;
                 }
-
-                mt_invocation.field_D8 = flags;
-                mt_invocation.flags |= MAGICTECH_INVOCATION_0x01;
-
-                if (qword_5FF618 != OBJ_HANDLE_NULL) {
-                    sub_4440E0(qword_5FF618, &(mt_invocation.field_A0));
+            } else if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_UNCOMMON) != 0) {
+                // Uncommon - 20%.
+                if (random_between(1, 100) > 20) {
+                    continue;
                 }
-
-                if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL || mt_invocation.target_loc != 0) {
-                    magictech_invocation_run(&mt_invocation);
+            } else if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_COMMON) != 0) {
+                // Common - 40%.
+                if (random_between(1, 100) > 40) {
+                    continue;
+                }
+            } else if ((trig & MT_ITEM_TRIG_RANDOM_CHANCE_FREQUENT) != 0) {
+                // Frequent - 66%.
+                if (random_between(1, 100) > 66) {
+                    continue;
                 }
             }
+        }
+
+        magictech_invocation_init(&mt_invocation, item_obj, mt_item_spell_to_magictech_spell(spell));
+
+        if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ANY) != 0) {
+            if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER) != 0) {
+                sub_4440E0(extra_obj, &(mt_invocation.target_obj));
+            } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON) != 0) {
+                if (extra_obj != OBJ_HANDLE_NULL) {
+                    sub_4440E0(item_wield_get(extra_obj, ITEM_INV_LOC_WEAPON), &(mt_invocation.target_obj));
+                } else {
+                    sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
+                }
+            } else if ((trig & MT_ITEM_TRIG_TARGET_ATTACKER_ARMOR) != 0) {
+                if (extra_obj != OBJ_HANDLE_NULL) {
+                    sub_4440E0(item_wield_get(extra_obj, ITEM_INV_LOC_ARMOR), &(mt_invocation.target_obj));
+                } else {
+                    sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
+                }
+            } else {
+                sub_4440E0(OBJ_HANDLE_NULL, &(mt_invocation.target_obj));
+            }
+        } else if ((trig & MT_ITEM_TRIG_PARENT_ATKS_LOCATION) != 0) {
+            mt_invocation.target_loc = target_loc;
+        } else {
+            sub_4440E0(parent_obj, &(mt_invocation.target_obj));
+        }
+
+        mt_invocation.trigger = flags;
+        mt_invocation.flags |= MAGICTECH_INVOCATION_FRIENDLY;
+
+        if (qword_5FF618 != OBJ_HANDLE_NULL) {
+            sub_4440E0(qword_5FF618, &(mt_invocation.field_A0));
+        }
+
+        if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL
+            || mt_invocation.target_loc != 0) {
+            magictech_invocation_run(&mt_invocation);
         }
     }
 
     qword_5FF618 = OBJ_HANDLE_NULL;
 }
 
-// 0x4CBAA0
+/**
+ * Notifies the system that an item has been picked up.
+ *
+ * 0x4CBAA0
+ */
 void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, MT_ITEM_TRIG_PICKUP);
+    handle_item_event(item_obj, parent_obj, OBJ_HANDLE_NULL, MT_ITEM_TRIG_PICKUP);
 }
 
-// 0x4CBAD0
+/**
+ * Notifies the system that the parent object has been hit.
+ *
+ * 0x4CBAD0
+ */
 void mt_item_notify_parent_hit(int64_t attacker_obj, CombatContext* combat, int64_t target_obj)
 {
     unsigned int flags;
+    int type;
     int index;
     int64_t item_obj;
 
@@ -226,23 +304,34 @@ void mt_item_notify_parent_hit(int64_t attacker_obj, CombatContext* combat, int6
     }
 
     flags = MT_ITEM_TRIG_PARENT_HIT;
+
+    // Add melee weapon event.
     if ((combat->flags & 0x40000) != 0
         && (combat->weapon_obj == OBJ_HANDLE_NULL
             || item_weapon_range(combat->weapon_obj, attacker_obj) <= 1)) {
         flags |= MT_ITEM_TRIG_TARGET_ATTACKER_WEAPON_MELEE;
     }
 
-    if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
-        for (index = 0; index < 9; index++) {
-            item_obj = item_wield_get(target_obj, 1000 + index);
-            if (item_obj != OBJ_HANDLE_NULL) {
-                sub_4CB800(item_obj, target_obj, attacker_obj, flags);
-            }
+    // Process only if the target is a critter.
+    type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    // Iterate through equipment slots and fire an event.
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(target_obj, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            handle_item_event(item_obj, target_obj, attacker_obj, flags);
         }
     }
 }
 
-// 0x4CBB80
+/**
+ * Notifies the system that the parent object has been stunned.
+ *
+ * 0x4CBB80
+ */
 void mt_item_notify_parent_stunned(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
@@ -253,20 +342,26 @@ void mt_item_notify_parent_stunned(int64_t attacker_obj, int64_t target_obj)
         return;
     }
 
+    // Process only if the target is a critter.
     type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
+    // Iterate through equipment slots and fire an event.
     for (index = 0; index < 9; index++) {
         item_obj = item_wield_get(target_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, target_obj, attacker_obj, MT_ITEM_TRIG_PARENT_STUNNED);
+            handle_item_event(item_obj, target_obj, attacker_obj, MT_ITEM_TRIG_PARENT_STUNNED);
         }
     }
 }
 
-// 0x4CBBF0
+/**
+ * Notifies the system that the parent object is going unconscious.
+ *
+ * 0x4CBBF0
+ */
 void mt_item_notify_parent_going_unconscious(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
@@ -277,61 +372,79 @@ void mt_item_notify_parent_going_unconscious(int64_t attacker_obj, int64_t targe
         return;
     }
 
+    // Process only if the target is a critter.
     type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
+    // Iterate through equipment slots and fire an event.
     for (index = 0; index < 9; index++) {
         item_obj = item_wield_get(target_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, target_obj, attacker_obj, MT_ITEM_TRIG_PARENT_GOING_UNCONSCIOUS);
+            handle_item_event(item_obj, target_obj, attacker_obj, MT_ITEM_TRIG_PARENT_GOING_UNCONSCIOUS);
         }
     }
 }
 
-// 0x4CBC60
-void mt_item_notify_parent_dying(int64_t killer_obj, int64_t victim_obj)
+/**
+ * Notifies the system that the parent object has died.
+ *
+ * 0x4CBC60
+ */
+void mt_item_notify_parent_dying(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
-    type = obj_field_int32_get(victim_obj, OBJ_F_TYPE);
+    // Process only if the target is a critter.
+    type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
+    // Iterate through equipment slots and fire an event.
     for (index = 0; index < 9; index++) {
-        item_obj = item_wield_get(victim_obj, 1000 + index);
+        item_obj = item_wield_get(target_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, victim_obj, killer_obj, MT_ITEM_TRIG_PARENT_DYING);
+            handle_item_event(item_obj, target_obj, attacker_obj, MT_ITEM_TRIG_PARENT_DYING);
         }
     }
 }
 
-// 0x4CBD40
+/**
+ * Notifies the system that the parent object is attacking another object.
+ *
+ * 0x4CBD40
+ */
 void mt_item_notify_parent_attacks_obj(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
+    // Process only if the attacker is a critter.
     type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
+    // Iterate through equipment slots and fire an event.
     qword_5FF618 = attacker_obj;
     for (index = 0; index < 9; index++) {
         item_obj = item_wield_get(attacker_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_PARENT_ATKS_OPPONENT);
+            handle_item_event(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_PARENT_ATKS_OPPONENT);
         }
     }
 }
 
-// 0x4CBDB0
+/**
+ * Notifies the system that the parent object is attacking a location.
+ *
+ * 0x4CBDB0
+ */
 void mt_item_notify_parent_attacks_loc(int64_t attacker_obj, int64_t weapon_obj, int64_t target_loc)
 {
     if (weapon_obj == OBJ_HANDLE_NULL) {
@@ -339,10 +452,14 @@ void mt_item_notify_parent_attacks_loc(int64_t attacker_obj, int64_t weapon_obj,
     }
 
     qword_5FF618 = attacker_obj;
-    sub_4CB830(weapon_obj, attacker_obj, OBJ_HANDLE_NULL, target_loc, MT_ITEM_TRIG_PARENT_ATKS_LOCATION);
+    handle_item_event_func(weapon_obj, attacker_obj, OBJ_HANDLE_NULL, target_loc, MT_ITEM_TRIG_PARENT_ATKS_LOCATION);
 }
 
-// 0x4CBE00
+/**
+ * Notifies the system that the target object is going unconscious.
+ *
+ * 0x4CBE00
+ */
 void mt_item_notify_target_going_unconscious(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
@@ -353,71 +470,90 @@ void mt_item_notify_target_going_unconscious(int64_t attacker_obj, int64_t targe
         return;
     }
 
+    // Process only if the attacker is a critter.
     type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
+    // Iterate through equipment slots and fire an event.
     for (index = 0; index < 9; index++) {
         item_obj = item_wield_get(attacker_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_TARGET_GOING_UNCONSCIOUS);
+            handle_item_event(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_TARGET_GOING_UNCONSCIOUS);
         }
     }
 }
 
-// 0x4CBE70
-void mt_item_notify_parent_dmgs_obj(int64_t obj, int64_t weapon_obj, int64_t target_obj)
+/**
+ * Notifies the system that the parent object has damaged another object.
+ *
+ * 0x4CBE70
+ */
+void mt_item_notify_parent_dmgs_obj(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
     if (obj_type_is_critter(type)) {
+        // Iterate through equipment slots and fire an event.
         for (index = 0; index < 9; index++) {
-            item_obj = item_wield_get(obj, 1000 + index);
+            item_obj = item_wield_get(attacker_obj, 1000 + index);
             if (item_obj != OBJ_HANDLE_NULL) {
-                sub_4CB800(item_obj, obj, target_obj, MT_ITEM_TRIG_PARENT_DMGS_OPPONENT);
-                sub_4CB800(item_obj, obj, target_obj, MT_ITEM_TRIG_TARGET_HIT);
+                handle_item_event(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_PARENT_DMGS_OPPONENT);
+                handle_item_event(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_TARGET_HIT);
                 if (item_obj == weapon_obj) {
-                    sub_4CB800(item_obj, obj, target_obj, MT_ITEM_TRIG_PARENT_DMGS_OPPONENT_W_ITEM);
+                    handle_item_event(item_obj, attacker_obj, target_obj, MT_ITEM_TRIG_PARENT_DMGS_OPPONENT_W_ITEM);
                 }
             }
         }
     } else if (obj_type_is_item(type)) {
-        sub_4CB800(obj, target_obj, obj, MT_ITEM_TRIG_TARGET_HIT);
+        handle_item_event(attacker_obj, target_obj, attacker_obj, MT_ITEM_TRIG_TARGET_HIT);
     }
 }
 
-// 0x4CBF70
-void sub_4CBF70(int64_t a1, int64_t a2)
+/**
+ * Notifies the system that an item has been used.
+ *
+ * 0x4CBF70
+ */
+void mt_item_notify_used(int64_t item_obj, int64_t target_obj)
 {
     int type;
     int64_t parent_obj;
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
     if (obj_type_is_item(type)) {
-        parent_obj = obj_field_handle_get(a1, OBJ_F_ITEM_PARENT);
-        sub_4CB800(a1, parent_obj, a2, 0x1000);
+        parent_obj = obj_field_handle_get(item_obj, OBJ_F_ITEM_PARENT);
+        handle_item_event(item_obj, parent_obj, target_obj, MT_ITEM_TRIG_ITEM_USED);
     }
 }
 
-// 0x4CBFC0
+/**
+ * Notifies the system that an item has been unequipped.
+ *
+ * 0x4CBFC0
+ */
 void mt_item_notify_unwear(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CBFF0(item_obj, parent_obj, MT_ITEM_TRIG_UNWEAR);
+    handle_item_unwear_drop(item_obj, parent_obj, MT_ITEM_TRIG_UNWEAR);
 }
 
-// 0x4CBFF0
-void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
+/**
+ * Internal helper to process unwear or drop triggers for an item.
+ *
+ * 0x4CBFF0
+ */
+void handle_item_unwear_drop(int64_t item_obj, int64_t parent_obj, unsigned int flags)
 {
-    int index;
-    int spl;
+    int slot;
+    int spell;
     MagicTechInvocation mt_invocation;
 
     if (tig_net_is_active()
@@ -425,45 +561,61 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
         return;
     }
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (parent_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    for (index = 0; index < 5; index++) {
-        spl = obj_field_int32_get(a1, OBJ_F_ITEM_SPELL_1 + index);
-        if (spl == 10000) {
+    // Iterate through spell slots.
+    for (slot = 0; slot < 5; slot++) {
+        spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1 + slot);
+        if (spell == 10000) {
             break;
         }
 
-        if ((mt_item_triggers(spl) & flags) != 0) {
-            magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(mt_invocation.target_obj));
-            sub_4573D0(&mt_invocation);
+        if ((mt_item_triggers(spell) & flags) == 0) {
+            continue;
+        }
 
-            magictech_invocation_init(&mt_invocation, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(mt_invocation.target_obj));
-            mt_invocation.field_D8 = flags;
-            if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL) {
-                magictech_invocation_run(&mt_invocation);
-            }
+        // Remove current effects.
+        magictech_invocation_init(&mt_invocation, item_obj, mt_item_spell_to_magictech_spell(spell));
+        sub_4440E0(parent_obj, &(mt_invocation.target_obj));
+        sub_4573D0(&mt_invocation);
+
+        // Add new effects.
+        magictech_invocation_init(&mt_invocation, item_obj, mt_item_spell_to_magictech_spell(spell));
+        sub_4440E0(parent_obj, &(mt_invocation.target_obj));
+        mt_invocation.trigger = flags;
+        if (mt_invocation.target_obj.obj != OBJ_HANDLE_NULL) {
+            magictech_invocation_run(&mt_invocation);
         }
     }
 }
 
-// 0x4CC130
+/**
+ * Notifies the system that an item has been dropped.
+ *
+ * 0x4CC130
+ */
 void mt_item_notify_drop(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CBFF0(item_obj, parent_obj, MT_ITEM_TRIG_DROP);
+    handle_item_unwear_drop(item_obj, parent_obj, MT_ITEM_TRIG_DROP);
 }
 
-// 0x4CC160
+/**
+ * Determines if an item is valid for AI actions.
+ *
+ * NOTE: The code looks unclear and likely contains remnants from earlier
+ * implementations.
+ *
+ * 0x4CC160
+ */
 bool mt_item_valid_ai_action(int64_t item_obj)
 {
-    int spl;
+    int spell;
 
     // FIXME: Unused, probably should validate if item_obj is of item type.
     obj_field_int32_get(item_obj, OBJ_F_TYPE);
@@ -472,12 +624,12 @@ bool mt_item_valid_ai_action(int64_t item_obj)
         return false;
     }
 
-    spl = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
-    if (spl == 10000) {
+    spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
+    if (spell == 10000) {
         return true;
     }
 
-    if (magictech_spells[spl].item_triggers != 0) {
+    if (magictech_spells[spell].item_triggers != 0) {
         return true;
     }
 

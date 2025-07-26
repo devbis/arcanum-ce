@@ -273,7 +273,7 @@ typedef struct MagicTechRunInfo {
     /* 0134 */ MagicTechObjectNode* summoned_obj;
     /* 0138 */ int field_138;
     /* 013C */ int field_13C;
-    /* 0140 */ int field_140;
+    /* 0140 */ unsigned int trigger;
     /* 0144 */ int field_144;
     /* 0148 */ DateTime field_148;
     /* 0150 */ int field_150;
@@ -282,7 +282,7 @@ typedef struct MagicTechRunInfo {
 
 typedef unsigned int MagicTechInvocationFlags;
 
-#define MAGICTECH_INVOCATION_0x01 0x01u
+#define MAGICTECH_INVOCATION_FRIENDLY 0x01u
 #define MAGICTECH_INVOCATION_FREE 0x02u
 #define MAGICTECH_INVOCATION_UNRESISTABLE 0x04u
 
@@ -294,7 +294,7 @@ typedef struct MagicTechInvocation {
     /* 0070 */ FollowerInfo target_obj;
     /* 00A0 */ FollowerInfo field_A0;
     /* 00D0 */ int64_t target_loc;
-    /* 00D8 */ int field_D8;
+    /* 00D8 */ unsigned int trigger;
     /* 00DC */ MagicTechInvocationFlags flags;
 } MagicTechInvocation;
 
