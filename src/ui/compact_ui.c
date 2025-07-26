@@ -188,6 +188,7 @@ bool compact_ui_destroy()
     for (index = 0; index < MAX_COMPONENTS; index++) {
         if (compact_ui_components[index].window_handle != TIG_WINDOW_HANDLE_INVALID) {
             tig_window_destroy(compact_ui_components[index].window_handle);
+            compact_ui_components[index].window_handle = TIG_WINDOW_HANDLE_INVALID;
         }
     }
 
