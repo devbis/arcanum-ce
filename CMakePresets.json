@@ -12,6 +12,67 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}"
         },
         {
+            "name": "linux-base",
+            "hidden": true,
+            "inherits": [
+                "base"
+            ],
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-x86-base",
+            "hidden": true,
+            "inherits": [
+                "linux-base"
+            ],
+            "cacheVariables": {
+                "CMAKE_C_FLAGS": "-m32 -malign-double",
+                "CMAKE_CXX_FLAGS": "-m32 -malign-double",
+                "CMAKE_SYSTEM_NAME": "Linux",
+                "CMAKE_SYSTEM_PROCESSOR": "i386"
+            }
+        },
+        {
+            "name": "linux-x86-debug",
+            "inherits": [
+                "linux-x86-base"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-x86-release",
+            "inherits": [
+                "linux-x86-base"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-x64-debug",
+            "inherits": [
+                "linux-base"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-x64-release",
+            "inherits": [
+                "linux-base"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
             "name": "windows-base",
             "hidden": true,
             "inherits": [
@@ -40,6 +101,22 @@
         }
     ],
     "buildPresets": [
+        {
+            "name": "linux-x86-debug",
+            "configurePreset": "linux-x86-debug"
+        },
+        {
+            "name": "linux-x86-release",
+            "configurePreset": "linux-x86-release"
+        },
+        {
+            "name": "linux-x64-debug",
+            "configurePreset": "linux-x64-debug"
+        },
+        {
+            "name": "linux-x64-release",
+            "configurePreset": "linux-x64-release"
+        },
         {
             "name": "windows-x86-debug",
             "configurePreset": "windows-x86",
