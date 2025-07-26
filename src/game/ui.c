@@ -75,10 +75,10 @@ void ui_refresh_health_bar(int64_t obj)
 }
 
 // 0x460260
-void sub_460260(int64_t a1)
+void ui_refresh_fatigue_bar(int64_t obj)
 {
-    if (ui_callbacks.field_14 != NULL) {
-        ui_callbacks.field_14(a1);
+    if (ui_callbacks.refresh_fatigue_bar != NULL) {
+        ui_callbacks.refresh_fatigue_bar(obj);
     }
 }
 

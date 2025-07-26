@@ -40,7 +40,7 @@ static void show_inven_loot(int64_t pc_obj, int64_t target_obj);
 static void show_inven_identify(int64_t pc_obj, int64_t target_obj);
 static void show_inven_npc_identify(int64_t pc_obj, int64_t target_obj);
 static void sub_57CBE0(char* str);
-static void sub_57CC10(int64_t obj);
+static void refresh_fatigue_bar(int64_t obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
 static void end_death();
 static void end_game();
@@ -74,7 +74,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_4 = sub_57CAF0;
     callbacks.update_inven = tb_inven_ui_update;
     callbacks.field_C = NULL;
-    callbacks.field_14 = sub_57CC10;
+    callbacks.refresh_fatigue_bar = refresh_fatigue_bar;
     callbacks.refresh_health_bar = intgame_refresh_health_bar;
     callbacks.field_18 = sub_5570A0;
     callbacks.notify_item_inserted_or_removed = intgame_notify_item_inserted_or_removed;
@@ -235,7 +235,7 @@ void sub_57CBE0(char* str)
 }
 
 // 0x57CC10
-void sub_57CC10(int64_t obj)
+void refresh_fatigue_bar(int64_t obj)
 {
     if (player_is_local_pc_obj(obj)) {
         anim_ui_event_add(ANIM_UI_EVENT_TYPE_UPDATE_FATIGUE_BAR, -1);

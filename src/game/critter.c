@@ -306,7 +306,7 @@ int critter_fatigue_pts_set(int64_t obj, int value)
     }
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_PTS, value);
-    sub_460260(obj);
+    ui_refresh_fatigue_bar(obj);
 
     return value;
 }
@@ -331,7 +331,7 @@ int critter_fatigue_adj_set(int64_t obj, int value)
     }
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_PTS, value);
-    sub_460260(obj);
+    ui_refresh_fatigue_bar(obj);
 
     return value;
 }
@@ -362,7 +362,7 @@ int critter_fatigue_damage_set(int64_t obj, int value)
     was_unconscious = critter_is_unconscious(obj);
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE, value);
-    sub_460260(obj);
+    ui_refresh_fatigue_bar(obj);
 
     if (value != 0 && !obj_is_proto(obj)) {
         critter_fatigue_timeevent_schedule(obj, FATIGUE_EVENT_RECOVERY, 80000);
