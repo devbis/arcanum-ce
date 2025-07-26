@@ -1219,7 +1219,7 @@ void charedit_close()
         tig_window_hide(charedit_tech_win);
         tig_window_hide(charedit_scheme_win);
         charedit_obj = OBJ_HANDLE_NULL;
-        sub_551160();
+        iso_interface_refresh();
         intgame_mode_set(INTGAME_MODE_MAIN);
         sub_55EFB0();
         if (dword_64E02C) {
@@ -1726,7 +1726,7 @@ void charedit_refresh_internal()
     }
     charedit_refresh_alignment_aptitude_bars();
     charedit_refresh_basic_info();
-    sub_551160();
+    iso_interface_refresh();
     intgame_draw_bar(INTGAME_BAR_HEALTH);
     intgame_draw_bar(INTGAME_BAR_FATIGUE);
 }

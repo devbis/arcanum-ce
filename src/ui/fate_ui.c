@@ -289,7 +289,7 @@ bool fate_ui_message_filter(TigMessage* msg)
                     // Button is pressed - attempt to activate appropriate fate.
                     if (fate_activate(fate_ui_obj, fate)) {
                         // Refresh UI.
-                        sub_551160();
+                        iso_interface_refresh();
                     } else {
                         // Fate was not activated - simulate button release by
                         // programatically changing state so that appropriate
@@ -306,7 +306,7 @@ bool fate_ui_message_filter(TigMessage* msg)
                     // fate.
                     if (fate_deactivate(fate_ui_obj, fate)) {
                         // Refresh UI.
-                        sub_551160();
+                        iso_interface_refresh();
                     }
                 }
 

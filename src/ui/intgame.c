@@ -4436,7 +4436,7 @@ void intgame_pc_lens_redraw()
 }
 
 // 0x551160
-void sub_551160()
+void iso_interface_refresh()
 {
     int64_t pc_obj;
     int64_t obj;

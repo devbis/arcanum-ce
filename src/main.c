@@ -336,7 +336,7 @@ void main_loop()
 
     object_flags_unset(pc_obj, OF_OFF);
     sub_430460();
-    sub_551160();
+    iso_interface_refresh();
     intgame_draw_bar(INTGAME_BAR_HEALTH);
     intgame_draw_bar(INTGAME_BAR_FATIGUE);
 
@@ -466,7 +466,7 @@ void main_loop()
                             magictech_cheat_mode_on();
 
                             critter_fatigue_damage_set(pc_obj, 0);
-                            sub_551160();
+                            iso_interface_refresh();
                             intgame_draw_bar(INTGAME_BAR_HEALTH);
                             intgame_draw_bar(INTGAME_BAR_FATIGUE);
                         }

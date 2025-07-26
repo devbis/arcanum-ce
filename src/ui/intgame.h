@@ -103,7 +103,7 @@ void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens);
 bool intgame_pc_lens_check_pt(int x, int y);
 bool intgame_pc_lens_check_pt_unscale(int x, int y);
 void intgame_pc_lens_redraw();
-void sub_551160();
+void iso_interface_refresh();
 bool sub_5517A0(TigMessage* msg);
 bool intgame_get_location_under_cursor(int64_t* loc_ptr);
 IntgameMode intgame_mode_get();

@@ -183,7 +183,7 @@ void tb_inven_ui_update(int64_t obj)
 // 0x57CAE0
 void sub_57CAE0()
 {
-    sub_551160();
+    iso_interface_refresh();
     charedit_refresh();
 }
 

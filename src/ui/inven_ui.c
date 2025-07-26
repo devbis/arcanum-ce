@@ -1127,7 +1127,7 @@ void inven_ui_destroy()
     intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     inven_ui_target_inventory_scrollbar_destroy();
     intgame_big_window_unlock();
-    sub_551160();
+    iso_interface_refresh();
     mode = intgame_mode_get();
     if (mode != INTGAME_MODE_INVEN
         && mode != INTGAME_MODE_LOOT
