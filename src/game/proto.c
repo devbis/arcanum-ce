@@ -12636,12 +12636,12 @@ void sub_468930(int64_t obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         if (description < BP_KERGHANS_DEATH_SCROLL) {
-            int spl = description - BP_SCROLL_OF_DISARM;
-            int complexity = spl % 5;
-            obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, description);
-            obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 4 * (5 * complexity + 5));
-            if (complexity != 0) {
-                obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750 * complexity);
+            int spell = description - BP_SCROLL_OF_DISARM;
+            int level = spell % 5;
+            obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, spell);
+            obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20 * (level + 1));
+            if (level != 0) {
+                obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750 * level);
             } else {
                 obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             }
