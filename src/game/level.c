@@ -1044,7 +1044,7 @@ AutoLevelError auto_level_basic_skill(int64_t obj, int skill, int value)
  *
  * 0x4A77A0
  */
-int auto_level_tech_skill(int64_t obj, int skill, int score)
+AutoLevelError auto_level_tech_skill(int64_t obj, int skill, int score)
 {
     int level;
     int cost;
