@@ -75,7 +75,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.update_inven = tb_inven_ui_update;
     callbacks.field_C = NULL;
     callbacks.field_14 = sub_57CC10;
-    callbacks.field_10 = sub_5571C0;
+    callbacks.refresh_health_bar = intgame_refresh_health_bar;
     callbacks.field_18 = sub_5570A0;
     callbacks.notify_item_inserted_or_removed = intgame_notify_item_inserted_or_removed;
     callbacks.show_inven_loot = show_inven_loot;

@@ -67,10 +67,10 @@ void ui_update_inven(int64_t obj)
 }
 
 // 0x460240
-void sub_460240(int64_t a1)
+void ui_refresh_health_bar(int64_t obj)
 {
-    if (ui_callbacks.field_10 != NULL) {
-        ui_callbacks.field_10(a1);
+    if (ui_callbacks.refresh_health_bar != NULL) {
+        ui_callbacks.refresh_health_bar(obj);
     }
 }
 

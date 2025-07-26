@@ -529,7 +529,7 @@ void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index)
     sub_4F0070(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index, pc_obj);
     mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index, level);
     mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index, datetime_current_second());
-    sub_460240(npc_obj);
+    ui_refresh_health_bar(npc_obj);
     combat_recalc_reaction(npc_obj);
 }
 

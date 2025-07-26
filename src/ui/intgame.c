@@ -8028,7 +8028,7 @@ void intgame_notify_item_inserted_or_removed(int64_t item_obj, bool removed, int
 }
 
 // 0x5571C0
-void sub_5571C0(int64_t obj)
+void intgame_refresh_health_bar(int64_t obj)
 {
     if (player_is_local_pc_obj(obj)) {
         anim_ui_event_add(ANIM_UI_EVENT_TYPE_UPDATE_HEALTH_BAR, -1);

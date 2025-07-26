@@ -526,7 +526,7 @@ void level_recalc(int64_t pc_obj)
             if (player_is_local_pc_obj(pc_obj)) {
                 sub_460630(&ui_message);
                 ui_toggle_primary_button(UI_PRIMARY_BUTTON_CHAR, true);
-                sub_460240(pc_obj);
+                ui_refresh_health_bar(pc_obj);
                 sub_460260(pc_obj);
             }
 

@@ -421,7 +421,7 @@ void sub_4EE1D0(int64_t obj)
 {
     Packet100 pkt;
 
-    sub_460240(obj);
+    ui_refresh_health_bar(obj);
 
     if (tig_net_is_active()) {
         pkt.type = 100;
@@ -582,7 +582,7 @@ void sub_4EE5E0(Packet100* pkt)
         ui_follower_refresh();
         break;
     case 1:
-        sub_460240(objp_perm_lookup(pkt->d.b.field_8));
+        ui_refresh_health_bar(objp_perm_lookup(pkt->d.b.field_8));
         break;
     case 2:
         ui_toggle_primary_button(pkt->d.a.field_8, pkt->d.a.field_C);

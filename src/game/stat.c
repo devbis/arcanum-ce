@@ -801,7 +801,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         }
 
         // Update health bar.
-        sub_460240(obj);
+        ui_refresh_health_bar(obj);
         break;
     case STAT_GENDER:
         if (value == GENDER_FEMALE) {
@@ -1072,7 +1072,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
             // Update health bar.
             if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
-                sub_460240(obj);
+                ui_refresh_health_bar(obj);
             }
         }
         break;
@@ -1155,7 +1155,7 @@ bool poison_timeevent_schedule(int64_t obj, int poison, bool recovery)
     }
 
     // Update health bar.
-    sub_460240(obj);
+    ui_refresh_health_bar(obj);
 
     return true;
 }

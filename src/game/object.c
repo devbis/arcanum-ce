@@ -1551,7 +1551,7 @@ int object_hp_pts_set(int64_t obj, int value)
     }
 
     obj_field_int32_set(obj, OBJ_F_HP_PTS, value);
-    sub_460240(obj);
+    ui_refresh_health_bar(obj);
 
     return value;
 }
@@ -1566,7 +1566,7 @@ int object_hp_adj_get(int64_t obj)
 int object_hp_adj_set(int64_t obj, int value)
 {
     obj_field_int32_set(obj, OBJ_F_HP_ADJ, value);
-    sub_460240(obj);
+    ui_refresh_health_bar(obj);
     return value;
 }
 
