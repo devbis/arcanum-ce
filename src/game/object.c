@@ -1327,7 +1327,7 @@ void sub_43CEA0(int64_t obj, unsigned int flags, const char* path)
         break;
     default:
         sub_43CF70(obj);
-        sub_43CFF0(obj);
+        object_delete(obj);
         break;
     }
 }
@@ -1353,7 +1353,7 @@ void sub_43CF70(int64_t obj)
 }
 
 // 0x43CFF0
-void sub_43CFF0(int64_t obj)
+void object_delete(int64_t obj)
 {
     unsigned int flags;
 

@@ -39,7 +39,7 @@ bool sector_object_list_reset(SectorObjectList* list)
             sub_4D9A90(node->obj);
 
             if (object_is_static(node->obj)) {
-                sub_43CFF0(node->obj);
+                object_delete(node->obj);
             } else {
                 sub_443770(node->obj);
             }

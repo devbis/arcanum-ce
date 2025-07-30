@@ -128,7 +128,7 @@ void sub_4E18F0(int64_t obj, bool a2)
     if (a2) {
         if (obj_handle_is_valid(obj)) {
             sub_43CF70(obj);
-            sub_43CFF0(obj);
+            object_delete(obj);
         }
     }
 }

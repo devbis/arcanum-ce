@@ -79,7 +79,7 @@ void portal_delete(int64_t portal_obj, bool a2)
     node = objects.head;
     while (node != NULL) {
         sub_43CF70(node->obj);
-        sub_43CFF0(node->obj);
+        object_delete(node->obj);
         node = node->next;
     }
     object_list_destroy(&objects);

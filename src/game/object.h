@@ -103,7 +103,7 @@ bool object_duplicate(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
 bool object_duplicate_ex(int64_t proto_obj, int64_t loc, ObjectID* oids, int64_t* obj_ptr);
 void object_destroy(int64_t obj);
 void sub_43CF70(int64_t obj);
-void sub_43CFF0(int64_t obj);
+void object_delete(int64_t obj);
 void object_flags_set(int64_t obj, unsigned int flags);
 void object_flags_unset(int64_t obj, unsigned int flags);
 int object_hp_pts_get(int64_t obj);
