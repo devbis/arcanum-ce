@@ -185,7 +185,7 @@ static int roof_initialized;
 static uint8_t* dword_687660[7];
 
 // 0x687680
-static int dword_687680[7];
+static size_t dword_687680[7];
 
 // 0x4EAC80
 bool a_name_tile_init()
