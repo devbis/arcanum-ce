@@ -1307,7 +1307,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
 }
 
 // 0x4EC830
-tig_art_id_t sub_4EC830(tig_art_id_t aid)
+tig_art_id_t a_name_portal_aid_busted_set(tig_art_id_t aid)
 {
     if (tig_art_portal_id_type_get(aid) != TIG_ART_PORTAL_TYPE_WINDOW) {
         return TIG_ART_ID_INVALID;

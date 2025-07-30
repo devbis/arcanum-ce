@@ -35,7 +35,7 @@ bool a_name_portal_init();
 void a_name_portal_exit();
 bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname);
 tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid);
-tig_art_id_t sub_4EC830(tig_art_id_t aid);
+tig_art_id_t a_name_portal_aid_busted_set(tig_art_id_t aid);
 bool a_name_wall_init();
 void a_name_wall_exit();
 bool a_name_wall_aid_to_fname(tig_art_id_t art_id, char* path);

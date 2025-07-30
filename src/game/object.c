@@ -1323,7 +1323,7 @@ void sub_43CEA0(int64_t obj, unsigned int flags, const char* path)
         sub_4E18F0(obj, (flags & 0x1) != 0);
         break;
     case OBJ_TYPE_PORTAL:
-        sub_4F0790(obj, (flags & 0x1) != 0);
+        portal_delete(obj, (flags & 0x1) != 0);
         break;
     default:
         sub_43CF70(obj);
