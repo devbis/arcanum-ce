@@ -109,7 +109,7 @@ void sub_4E1490(int64_t a1, int64_t a2)
 }
 
 // 0x4E18F0
-void sub_4E18F0(int64_t obj, bool a2)
+void wall_delete(int64_t obj, bool a2)
 {
     tig_art_id_t art_id;
     int p_piece;

@@ -1320,7 +1320,7 @@ void sub_43CEA0(int64_t obj, unsigned int flags, const char* path)
 
     switch (type) {
     case OBJ_TYPE_WALL:
-        sub_4E18F0(obj, (flags & 0x1) != 0);
+        wall_delete(obj, (flags & 0x1) != 0);
         break;
     case OBJ_TYPE_PORTAL:
         portal_delete(obj, (flags & 0x1) != 0);

@@ -10,6 +10,6 @@ void wall_update_view(ViewOptions* view_options);
 void wall_toggle();
 void wall_draw(GameDrawInfo* draw_info);
 void sub_4E1490(int64_t a1, int64_t a2);
-void sub_4E18F0(int64_t obj, bool a2);
+void wall_delete(int64_t obj, bool a2);
 
 #endif /* ARCANUM_GAME_WALL_H_ */

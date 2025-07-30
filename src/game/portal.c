@@ -69,7 +69,7 @@ void portal_delete(int64_t portal_obj, bool a2)
     object_list_location(loc, OBJ_TM_WALL, &objects);
     node = objects.head;
     while (node != NULL) {
-        sub_4E18F0(node->obj, a2);
+        wall_delete(node->obj, a2);
         node = node->next;
     }
     object_list_destroy(&objects);
