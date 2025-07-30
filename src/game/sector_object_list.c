@@ -278,7 +278,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
 
             sub_406520(obj);
         } else {
-            sub_405BF0(obj);
+            obj_deallocate(obj);
         }
     }
 

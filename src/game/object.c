@@ -1369,7 +1369,7 @@ void object_delete(int64_t obj)
     sub_4AD7D0(obj);
     sub_4601D0(obj);
     sub_443770(obj);
-    sub_405BF0(obj);
+    obj_deallocate(obj);
 }
 
 // 0x43D0E0

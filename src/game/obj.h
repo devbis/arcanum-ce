@@ -402,7 +402,7 @@ void sub_405B30(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
 void sub_408D60(Object* object, int fld, int* value_ptr);
 void sub_408E70(Object* object, int fld, int value);
 bool obj_is_proto(int64_t obj);
-void sub_405BF0(int64_t obj);
+void obj_deallocate(int64_t obj);
 void sub_405CC0(int64_t obj);
 void sub_405D60(int64_t* new_obj_ptr, int64_t obj);
 void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj);

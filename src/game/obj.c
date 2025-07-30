@@ -902,7 +902,7 @@ bool obj_is_proto(int64_t obj)
 }
 
 // 0x405BF0
-void sub_405BF0(int64_t obj)
+void obj_deallocate(int64_t obj)
 {
     Object* object;
     int fld;

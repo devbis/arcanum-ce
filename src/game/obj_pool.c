@@ -131,7 +131,7 @@ void obj_pool_exit()
             if (hdr->status == STATUS_HANDLE) {
                 seq = sequence_from_hdr(hdr);
                 obj = make_handle(index, seq);
-                sub_405BF0(obj);
+                obj_deallocate(obj);
             }
         }
     }

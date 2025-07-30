@@ -471,7 +471,7 @@ void sub_468800()
 
     for (object_type = 0; object_type < OBJ_TYPE_COUNT; object_type++) {
         for (description = dword_5B37FC[object_type]; description < dword_5B384C[object_type]; description++) {
-            sub_405BF0(objp_perm_lookup(sub_468860(description)));
+            obj_deallocate(objp_perm_lookup(sub_468860(description)));
         }
     }
 }
@@ -496,7 +496,7 @@ void sub_468890(int description)
     in_proto_save = true;
     proto_save(obj);
     in_proto_save = false;
-    sub_405BF0(obj);
+    obj_deallocate(obj);
 }
 
 // 0x468930

@@ -1123,7 +1123,7 @@ bool map_preprocess_mobile(const char* name)
             return false;
         }
 
-        sub_405BF0(obj);
+        obj_deallocate(obj);
     }
 
     tig_file_list_destroy(&file_list);
@@ -1450,7 +1450,7 @@ bool map_load_mobile(const char* base_path, const char* save_path)
             }
 
             if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_EXTINCT) != 0) {
-                sub_405BF0(obj);
+                obj_deallocate(obj);
             }
         }
 
@@ -1471,7 +1471,7 @@ bool map_load_mobile(const char* base_path, const char* save_path)
             while (tig_file_fread(&oid, sizeof(oid), 1, stream) == 1) {
                 obj = objp_perm_lookup(oid);
                 if (obj != OBJ_HANDLE_NULL) {
-                    sub_405BF0(obj);
+                    obj_deallocate(obj);
                 }
             }
 
