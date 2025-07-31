@@ -68,7 +68,7 @@ void sub_4D9570(Light* light);
 void sub_4D9590(int64_t obj, bool a2);
 void sub_4D9990(int64_t obj);
 void sub_4D9A90(int64_t obj);
-bool sub_4D9B20(int64_t obj);
+bool shadow_apply(int64_t obj);
 void sub_4DA310(int64_t obj);
 bool sub_4DA360(int x, int y, tig_color_t color, tig_color_t* a4);
 void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr);

@@ -715,7 +715,7 @@ void object_draw(GameDrawInfo* draw_info)
                                                     if ((obj_flags & OF_FLAT) == 0) {
                                                         unsigned int render_flags = obj_field_int32_get(obj_node->obj, OBJ_F_RENDER_FLAGS);
                                                         if ((render_flags & ORF_04000000) == 0) {
-                                                            if (sub_4D9B20(obj_node->obj)) {
+                                                            if (shadow_apply(obj_node->obj)) {
                                                                 render_flags |= ORF_10000000;
                                                             }
                                                             render_flags |= ORF_04000000;
@@ -2140,7 +2140,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
         if ((flags & 0x1) != 0) {
             render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
             if ((render_flags & ORF_04000000) == 0) {
-                if (sub_4D9B20(obj)) {
+                if (shadow_apply(obj)) {
                     render_flags |= ORF_10000000;
                 }
                 render_flags |= ORF_04000000;

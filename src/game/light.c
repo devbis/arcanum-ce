@@ -850,7 +850,7 @@ void sub_4D9A90(int64_t obj)
 }
 
 // 0x4D9B20
-bool sub_4D9B20(int64_t obj)
+bool shadow_apply(int64_t obj)
 {
     tig_art_id_t art_id;
     int64_t loc;
@@ -867,8 +867,8 @@ bool sub_4D9B20(int64_t obj)
     int lx;
     int ly;
     int cnt = 0;
-    Shadow shadows[4];
-    int frames[4];
+    Shadow shadows[SHADOW_HANDLE_MAX - 1];
+    int frames[SHADOW_HANDLE_MAX - 1];
     Shadow* shadow;
     int palette;
     int idx;
@@ -917,14 +917,14 @@ bool sub_4D9B20(int64_t obj)
 
         node = head;
         while (node != NULL) {
-            if (cnt >= 4) {
+            if (cnt >= SHADOW_HANDLE_MAX - 1) {
                 break;
             }
 
             if (sector_lock(node->sec, &sector)) {
                 light_node = sector->lights.head;
                 while (light_node != NULL) {
-                    if (cnt >= 4) {
+                    if (cnt >= SHADOW_HANDLE_MAX - 1) {
                         break;
                     }
 
@@ -1017,7 +1017,7 @@ bool sub_4D9B20(int64_t obj)
         idx++;
     }
 
-    while (idx < 5) {
+    while (idx < SHADOW_HANDLE_MAX) {
         shadow = (Shadow*)obj_arrayfield_ptr_get(obj, OBJ_F_SHADOW_HANDLES, idx);
         if (shadow != NULL) {
             shadow_node_deallocate(shadow);
