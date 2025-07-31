@@ -18,18 +18,18 @@
 
 typedef struct WallStructure {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
+    /* 0004 */ int interior;
+    /* 0008 */ int interior_param;
+    /* 000C */ int exterior;
+    /* 0010 */ int exterior_param;
     /* 0014 */ tig_art_id_t tile_art_id;
     /* 0018 */ tig_art_id_t roof_art_id;
-    /* 001C */ int field_1C;
+    /* 001C */ int wall_proto;
 } WallStructure;
 
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
-static bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr);
+static bool a_name_tile_fname_to_aid(const char* name, tig_art_id_t* art_id_ptr);
 static bool count_tile_names();
 static bool load_tile_names();
 static bool load_tile_edges();
@@ -51,7 +51,7 @@ static void init_wall_names();
 static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index);
 static int sub_4ECC00(int index);
 static void init_wall_structures();
-static void sub_4ECD10(char* str, int index);
+static void parse_wall_structure(char* str, int index);
 static bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname);
 static int sub_4ED030(const char* str);
 static void sub_4ED180(int index, WallStructure* wallstructure);
@@ -384,7 +384,7 @@ bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr)
 }
 
 // 0x4EB160
-bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr)
+bool a_name_tile_fname_to_aid(const char* name, tig_art_id_t* art_id_ptr)
 {
     int index;
 
@@ -1474,14 +1474,14 @@ void init_wall_structures()
         index = num_wall_structures++;
         wall_structures = (WallStructure*)REALLOC(wall_structures, sizeof(WallStructure) * num_wall_structures);
         wall_structures[index].flags = 0;
-        wall_structures[index].field_4 = 4;
-        wall_structures[index].field_8 = 0;
-        wall_structures[index].field_C = 0;
-        wall_structures[index].field_10 = 0;
+        wall_structures[index].interior = 4;
+        wall_structures[index].interior_param = 0;
+        wall_structures[index].exterior = 0;
+        wall_structures[index].exterior_param = 0;
         wall_structures[index].tile_art_id = TIG_ART_ID_INVALID;
         wall_structures[index].roof_art_id = TIG_ART_ID_INVALID;
-        wall_structures[index].field_1C = 0;
-        sub_4ECD10(mes_file_entry.str, index);
+        wall_structures[index].wall_proto = 0;
+        parse_wall_structure(mes_file_entry.str, index);
     } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
 }
 
@@ -1541,9 +1541,9 @@ bool a_name_wall_aid_to_fname(tig_art_id_t art_id, char* path)
     }
 
     if (rotation / 2 == 0 || rotation / 2 == 3) {
-        v1 = wall_structures[num].field_4;
+        v1 = wall_structures[num].interior;
     } else {
-        v1 = wall_structures[num].field_C;
+        v1 = wall_structures[num].exterior;
     }
 
     if (v1 >= num_wall_file_names) {
@@ -1773,25 +1773,25 @@ char* a_name_wall_get_structure(int index)
 }
 
 // 0x4ECD10
-void sub_4ECD10(char* str, int index)
+void parse_wall_structure(char* str, int index)
 {
     char* tok;
 
     tok = strtok(str, " ");
-    wall_structures[index].field_8 = atoi(tok + 3);
+    wall_structures[index].interior_param = atoi(tok + 3);
 
     tok[3] = '\0';
-    wall_structures[index].field_4 = sub_4ED030(tok);
+    wall_structures[index].interior = sub_4ED030(tok);
 
     tok = strtok(NULL, " ");
-    wall_structures[index].field_10 = atoi(tok + 3);
+    wall_structures[index].exterior_param = atoi(tok + 3);
 
     tok[3] = '\0';
-    wall_structures[index].field_C = sub_4ED030(tok);
+    wall_structures[index].exterior = sub_4ED030(tok);
 
     tok = strtok(NULL, " ");
     if (SDL_strcasecmp(tok, "nul") != 0) {
-        sub_4EB160(tok, &(wall_structures[index].tile_art_id));
+        a_name_tile_fname_to_aid(tok, &(wall_structures[index].tile_art_id));
     } else {
         wall_structures[index].tile_art_id = TIG_ART_ID_INVALID;
     }
@@ -1803,7 +1803,7 @@ void sub_4ECD10(char* str, int index)
         wall_structures[index].roof_art_id = TIG_ART_ID_INVALID;
     }
 
-    wall_structures[index].field_1C = sub_4ECC00(wall_structures[index].field_C);
+    wall_structures[index].wall_proto = sub_4ECC00(wall_structures[index].exterior);
 
     tok = strtok(NULL, " ");
     while (tok != NULL) {
