@@ -1223,10 +1223,10 @@ bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname)
 }
 
 // 0x4EC670
-tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
+tig_art_id_t a_name_portal_aid_from_wall_aid(tig_art_id_t wall_art_id, ObjectID* oid)
 {
     int p_piece;
-    bool v1;
+    int type;
     WallStructure wallstructure;
     char path[TIG_MAX_PATH];
     char* fname;
@@ -1236,7 +1236,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
     int palette;
     tig_art_id_t portal_art_id;
 
-    p_piece = tig_art_wall_id_p_piece_get(art_id);
+    p_piece = tig_art_wall_id_p_piece_get(wall_art_id);
 
     switch (p_piece) {
     case 22:
@@ -1246,7 +1246,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
     case 30:
     case 31:
     case 32:
-        v1 = true;
+        type = TIG_ART_PORTAL_TYPE_DOOR;
         break;
     case 10:
     case 13:
@@ -1254,34 +1254,36 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
     case 17:
     case 18:
     case 19:
-        v1 = false;
+        type = TIG_ART_PORTAL_TYPE_WINDOW;
         break;
     default:
         return TIG_ART_ID_INVALID;
     }
 
-    sub_4ED180(tig_art_wall_id_num_get(art_id), &wallstructure);
+    sub_4ED180(tig_art_wall_id_num_get(wall_art_id), &wallstructure);
 
-    if ((wallstructure.flags & WS_NODOORS) != 0 && v1) {
+    if ((wallstructure.flags & WS_NODOORS) != 0
+        && type == TIG_ART_PORTAL_TYPE_DOOR) {
         return TIG_ART_ID_INVALID;
     }
 
-    if ((wallstructure.flags & WS_NOWINDOWS) != 0 && !v1) {
+    if ((wallstructure.flags & WS_NOWINDOWS) != 0
+        && type == TIG_ART_PORTAL_TYPE_WINDOW) {
         return TIG_ART_ID_INVALID;
     }
 
     oid->type = OID_TYPE_NULL;
 
-    if (!a_name_wall_aid_to_fname(art_id, path)) {
+    if (!a_name_wall_aid_to_fname(wall_art_id, path)) {
         return TIG_ART_ID_INVALID;
     }
 
     fname = &(path[strlen(path) - 12]);
 
-    if (v1) {
-        fname[3] = 'E';
-    } else {
+    if (type == TIG_ART_PORTAL_TYPE_WINDOW) {
         fname[3] = 'F';
+    } else {
+        fname[3] = 'E';
     }
 
     fname[6] = 'U';
@@ -1294,16 +1296,17 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
     mes_file_entry.num = portal_num;
     mes_get_msg(portal_mes_file, &mes_file_entry);
 
-    // See 0x4EC5A0 how string is split into two chunks.
+    // `a_name_portal_init` splits string into two chunks.
     *oid = sub_4E6540(atoi(mes_file_entry.str + strlen(mes_file_entry.str) + 1));
 
-    rotation = tig_art_id_rotation_get(art_id);
-    palette = tig_art_id_palette_get(art_id);
-    if (!v1) {
+    rotation = tig_art_id_rotation_get(wall_art_id);
+    palette = tig_art_id_palette_get(wall_art_id);
+
+    if (type == TIG_ART_PORTAL_TYPE_WINDOW) {
         portal_num -= 1001;
     }
 
-    tig_art_portal_id_create(portal_num, v1, 0, 0, rotation, palette, &portal_art_id);
+    tig_art_portal_id_create(portal_num, type, 0, 0, rotation, palette, &portal_art_id);
 
     return portal_art_id;
 }
