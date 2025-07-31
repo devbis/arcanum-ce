@@ -12,12 +12,14 @@
 #define TF_NATURAL 0x10
 #define TF_SOUNDPROOF 0x20
 
+typedef uint32_t WallStructureFlags;
+
 #define WS_NOWINDOWS 0x01
 #define WS_NODOORS 0x02
 #define WS_FENCE 0x04
 
 typedef struct WallStructure {
-    /* 0000 */ unsigned int flags;
+    /* 0000 */ WallStructureFlags flags;
     /* 0004 */ int interior;
     /* 0008 */ int interior_param;
     /* 000C */ int exterior;
@@ -1260,11 +1262,11 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
 
     sub_4ED180(tig_art_wall_id_num_get(art_id), &wallstructure);
 
-    if ((wallstructure.flags & 0x2) != 0 && v1) {
+    if ((wallstructure.flags & WS_NODOORS) != 0 && v1) {
         return TIG_ART_ID_INVALID;
     }
 
-    if ((wallstructure.flags & 0x1) != 0 && !v1) {
+    if ((wallstructure.flags & WS_NOWINDOWS) != 0 && !v1) {
         return TIG_ART_ID_INVALID;
     }
 
