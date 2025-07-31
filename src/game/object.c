@@ -4992,7 +4992,7 @@ void sub_443770(int64_t obj)
 // 0x4437C0
 void sub_4437C0(int64_t obj)
 {
-    sub_4DA310(obj);
+    shadow_clear(obj);
 }
 
 // 0x4437E0

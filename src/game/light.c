@@ -1030,7 +1030,7 @@ bool shadow_apply(int64_t obj)
 }
 
 // 0x4DA310
-void sub_4DA310(int64_t obj)
+void shadow_clear(int64_t obj)
 {
     int index;
     Shadow* shadow;
