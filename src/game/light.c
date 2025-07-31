@@ -66,10 +66,10 @@ static void sub_4DE4D0(Light* light);
 static void sub_4DE4F0(Light* light, int offset_x, int offset_y);
 static bool sub_4DE5D0();
 static void sub_4DE730();
-static Shadow* sub_4DE770();
-static void sub_4DE7A0(Shadow* node);
-static void sub_4DE7C0();
-static void sub_4DE7F0();
+static Shadow* shadow_node_allocate();
+static void shadow_node_deallocate(Shadow* node);
+static void shadow_node_reserve();
+static void shadow_node_clear();
 static bool sub_4DE820(TimeEvent* timeevent);
 static void sub_4DE870(LightCreateInfo* create_info, Light** light_ptr);
 static void light_render_internal(GameDrawInfo* draw_info);
@@ -112,7 +112,7 @@ static TigPalette* dword_602E58;
 static TigVideoBuffer* darker_vb;
 
 // 0x602E60
-static Shadow* off_602E60;
+static Shadow* shadow_node_head;
 
 // 0x602E68
 static TigVideoBufferData lighter_vb_data;
@@ -993,7 +993,7 @@ bool sub_4D9B20(int64_t obj)
     if (palette < 7) {
         shadow = (Shadow*)obj_arrayfield_ptr_get(obj, OBJ_F_SHADOW_HANDLES, idx);
         if (shadow == NULL) {
-            shadow = sub_4DE770();
+            shadow = shadow_node_allocate();
         }
 
         shadow->art_id = sub_504730(art_id, 2);
@@ -1006,7 +1006,7 @@ bool sub_4D9B20(int64_t obj)
     for (int i = 0; i < cnt; i++) {
         shadow = (Shadow*)obj_arrayfield_ptr_get(obj, OBJ_F_SHADOW_HANDLES, idx);
         if (shadow == NULL) {
-            shadow = sub_4DE770();
+            shadow = shadow_node_allocate();
         }
 
         shadow->art_id = shadows[i].art_id;
@@ -1020,7 +1020,7 @@ bool sub_4D9B20(int64_t obj)
     while (idx < 5) {
         shadow = (Shadow*)obj_arrayfield_ptr_get(obj, OBJ_F_SHADOW_HANDLES, idx);
         if (shadow != NULL) {
-            sub_4DE7A0(shadow);
+            shadow_node_deallocate(shadow);
             obj_arrayfield_ptr_set(obj, OBJ_F_SHADOW_HANDLES, idx, NULL);
         }
         idx++;
@@ -1041,7 +1041,7 @@ void sub_4DA310(int64_t obj)
             break;
         }
 
-        sub_4DE7A0(shadow);
+        shadow_node_deallocate(shadow);
         obj_arrayfield_ptr_set(obj, OBJ_F_SHADOW_HANDLES, index, NULL);
     }
 }
@@ -2331,7 +2331,7 @@ void sub_4DE730()
 {
     int index;
 
-    sub_4DE7F0();
+    shadow_node_clear();
 
     for (index = 0; index < 7; index++) {
         tig_palette_destroy(dword_602E58[index]);
@@ -2341,55 +2341,55 @@ void sub_4DE730()
 }
 
 // 0x4DE770
-Shadow* sub_4DE770()
+Shadow* shadow_node_allocate()
 {
     Shadow* node;
 
-    node = off_602E60;
+    node = shadow_node_head;
     if (node == NULL) {
-        sub_4DE7C0();
-        node = off_602E60;
+        shadow_node_reserve();
+        node = shadow_node_head;
     }
 
-    off_602E60 = node->next;
+    shadow_node_head = node->next;
     node->next = NULL;
 
     return node;
 }
 
 // 0x4DE7A0
-void sub_4DE7A0(Shadow* node)
+void shadow_node_deallocate(Shadow* node)
 {
-    node->next = off_602E60;
-    off_602E60 = node;
+    node->next = shadow_node_head;
+    shadow_node_head = node;
 }
 
 // 0x4DE7C0
-void sub_4DE7C0()
+void shadow_node_reserve()
 {
     int index;
     Shadow* node;
 
     for (index = 0; index < 20; index++) {
         node = (Shadow*)MALLOC(sizeof(*node));
-        node->next = off_602E60;
-        off_602E60 = node;
+        node->next = shadow_node_head;
+        shadow_node_head = node;
     }
 }
 
 // 0x4DE7F0
-void sub_4DE7F0()
+void shadow_node_clear()
 {
     Shadow* curr;
     Shadow* next;
 
-    curr = off_602E60;
+    curr = shadow_node_head;
     while (curr != NULL) {
         next = curr->next;
         FREE(curr);
         curr = next;
     }
-    off_602E60 = NULL;
+    shadow_node_head = NULL;
 }
 
 // 0x4DE820
