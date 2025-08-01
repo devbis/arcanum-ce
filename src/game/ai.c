@@ -102,7 +102,7 @@ static bool sub_4AB030(int64_t a1, int64_t a2);
 static int64_t ai_choose_target(int64_t attacker_obj, int64_t candidate1_obj, int64_t candidate2_obj);
 static void sub_4AB2A0(int64_t a1, int64_t a2);
 static bool ai_should_flee(int64_t source_obj, int64_t target_obj);
-static int64_t sub_4AB460(int64_t a1);
+static int64_t ai_find_target(int64_t a1);
 static bool sub_4AB990(int64_t a1, int64_t a2);
 static void sub_4ABC20(Ai* ai);
 static bool sub_4ABC70(Ai* ai);
@@ -182,7 +182,7 @@ static AiFloatLineFunc* ai_float_line_func;
 static Func5F848C* dword_5F848C;
 
 // 0x5F8498
-static bool dword_5F8498;
+static bool in_find_target;
 
 // 0x5F8490
 static int64_t ai_npc_wait_here_test_obj;
@@ -788,7 +788,7 @@ void sub_4A92D0(Ai* ai)
 
     switch (ai->danger_type) {
     case 0:
-        danger_source_obj = sub_4AB460(ai->obj);
+        danger_source_obj = ai_find_target(ai->obj);
         if (danger_source_obj != OBJ_HANDLE_NULL) {
             ai->danger_source = danger_source_obj;
             sub_4ABC20(ai);
@@ -1930,7 +1930,7 @@ int ai_critter_fatigue_ratio(int64_t obj)
 }
 
 // 0x4AB460
-int64_t sub_4AB460(int64_t critter_obj)
+int64_t ai_find_target(int64_t critter_obj)
 {
     int radius;
     ObjectList objects;
@@ -1947,7 +1947,7 @@ int64_t sub_4AB460(int64_t critter_obj)
     int64_t danger_source_obj = OBJ_HANDLE_NULL;
     int64_t v1 = OBJ_HANDLE_NULL;
 
-    if (dword_5F8498) {
+    if (in_find_target) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -1963,7 +1963,7 @@ int64_t sub_4AB460(int64_t critter_obj)
         return OBJ_HANDLE_NULL;
     }
 
-    dword_5F8498 = true;
+    in_find_target = true;
 
     radius = sub_4AF240(stat_level_get(critter_obj, STAT_PERCEPTION));
 
@@ -2067,7 +2067,7 @@ int64_t sub_4AB460(int64_t critter_obj)
         }
     }
 
-    dword_5F8498 = false;
+    in_find_target = false;
 
     return danger_source_obj;
 }
@@ -2101,7 +2101,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
                 return false;
             }
 
-            v1 = sub_4AB460(source_obj);
+            v1 = ai_find_target(source_obj);
             if (v1 != OBJ_HANDLE_NULL
                 && v1 != target_obj) {
                 return false;
@@ -2175,7 +2175,7 @@ int64_t sub_4ABBC0(int64_t obj)
 
     ai_target_unlock(obj);
 
-    return sub_4AB460(obj);
+    return ai_find_target(obj);
 }
 
 // 0x4ABC20
