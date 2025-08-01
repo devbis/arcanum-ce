@@ -1256,7 +1256,7 @@ void object_destroy(int64_t obj)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
         sub_45E180(obj);
-        sub_4AD7D0(obj);
+        ai_timeevent_clear(obj);
 
         if (obj_type == OBJ_TYPE_NPC) {
             pc_obj = sub_4C1110(obj);
@@ -1366,7 +1366,7 @@ void object_delete(int64_t obj)
     }
     sub_423FF0(obj);
     sub_459740(obj);
-    sub_4AD7D0(obj);
+    ai_timeevent_clear(obj);
     sub_4601D0(obj);
     sub_443770(obj);
     obj_deallocate(obj);

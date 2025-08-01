@@ -519,7 +519,7 @@ void sub_4D3E20(int64_t obj)
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_45F710(obj);
     }
-    sub_4AD7D0(obj);
+    ai_timeevent_clear(obj);
     sub_4601D0(obj);
     sub_43CF70(obj);
 }

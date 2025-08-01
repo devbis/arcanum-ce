@@ -130,7 +130,7 @@ static bool sub_4AD420(int64_t obj);
 static bool sub_4AD4D0(int64_t obj);
 static int sub_4AD5D0(int64_t obj);
 static int sub_4AD610(int64_t obj);
-static bool sub_4AD6B0(TimeEvent* timeevent);
+static bool ai_timeevent_check(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int ai_check_leader(int64_t npc_obj, int64_t pc_obj);
@@ -188,7 +188,7 @@ static bool dword_5F8498;
 static int64_t qword_5F8490;
 
 // 0x5F84A0
-static int64_t qword_5F84A0;
+static int64_t ai_test_obj;
 
 // 0x4A8320
 bool ai_init(GameInitInfo* init_info)
@@ -3077,9 +3077,9 @@ int sub_4AD610(int64_t obj)
 }
 
 // 0x4AD6B0
-bool sub_4AD6B0(TimeEvent* timeevent)
+bool ai_timeevent_check(TimeEvent* timeevent)
 {
-    return timeevent->params[0].object_value == qword_5F84A0;
+    return timeevent->params[0].object_value == ai_test_obj;
 }
 
 // 0x4AD6E0
@@ -3106,7 +3106,7 @@ void sub_4AD730(int64_t obj, DateTime* datetime)
         return;
     }
 
-    sub_4AD7D0(obj);
+    ai_timeevent_clear(obj);
 
     timeevent.type = TIMEEVENT_TYPE_AI;
     timeevent.params[0].object_value = obj;
@@ -3119,7 +3119,7 @@ void sub_4AD790(int64_t obj, int a2)
 {
     TimeEvent timeevent;
 
-    sub_4AD7D0(obj);
+    ai_timeevent_clear(obj);
 
     timeevent.type = TIMEEVENT_TYPE_AI;
     timeevent.params[0].object_value = obj;
@@ -3128,10 +3128,10 @@ void sub_4AD790(int64_t obj, int a2)
 }
 
 // 0x4AD7D0
-void sub_4AD7D0(int64_t obj)
+void ai_timeevent_clear(int64_t obj)
 {
-    qword_5F84A0 = obj;
-    timeevent_clear_one_ex(TIMEEVENT_TYPE_AI, sub_4AD6B0);
+    ai_test_obj = obj;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_AI, ai_timeevent_check);
 }
 
 // 0x4AD800

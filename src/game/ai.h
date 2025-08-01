@@ -144,7 +144,7 @@ int ai_critter_fatigue_ratio(int64_t obj);
 int64_t sub_4ABBC0(int64_t obj);
 bool ai_timeevent_process(TimeEvent* timeevent);
 void sub_4AD6E0(int64_t obj);
-void sub_4AD7D0(int64_t obj);
+void ai_timeevent_clear(int64_t obj);
 int ai_can_speak(int64_t npc_obj, int64_t pc_obj, bool a3);
 int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits);
 void sub_4AD790(int64_t obj, int a2);
