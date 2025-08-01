@@ -93,7 +93,7 @@ static void sub_4A9E10(int64_t a1, int64_t a2, int loudness);
 static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
-static bool sub_4AAA30(TimeEvent* timeevent);
+static bool ai_npc_wait_here_timeevent_check(TimeEvent* timeevent);
 static void ai_copy_params(int64_t obj, AiParams* params);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* sound_id_ptr);
@@ -185,7 +185,7 @@ static Func5F848C* dword_5F848C;
 static bool dword_5F8498;
 
 // 0x5F8490
-static int64_t qword_5F8490;
+static int64_t ai_npc_wait_here_test_obj;
 
 // 0x5F84A0
 static int64_t ai_test_obj;
@@ -1543,8 +1543,8 @@ void ai_npc_unwait(int64_t obj, bool force)
 
     critter_leader_set(obj, OBJ_HANDLE_NULL);
 
-    qword_5F8490 = obj;
-    timeevent_clear_one_ex(TIMEEVENT_TYPE_NPC_WAIT_HERE, sub_4AAA30);
+    ai_npc_wait_here_test_obj = obj;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_NPC_WAIT_HERE, ai_npc_wait_here_timeevent_check);
 
     critter_follow(obj, leader_obj, force);
 }
@@ -1580,9 +1580,9 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4AAA30
-bool sub_4AAA30(TimeEvent* timeevent)
+bool ai_npc_wait_here_timeevent_check(TimeEvent* timeevent)
 {
-    return timeevent->params[0].object_value == qword_5F8490;
+    return timeevent->params[0].object_value == ai_npc_wait_here_test_obj;
 }
 
 // 0x4AAA60
