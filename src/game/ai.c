@@ -86,7 +86,7 @@ static bool ai_heal_func(Ai* ai, int64_t obj, bool a3);
 static bool ai_look_for_item(Ai* ai);
 static bool ai_look_for_item_func(int64_t obj, unsigned int flags);
 static void sub_4A92D0(Ai* ai);
-static void sub_4A94C0(int64_t source_obj, int64_t target_obj);
+static void ai_redirect_func(int64_t source_obj, int64_t target_obj);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
 static void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6);
 static void sub_4A9E10(int64_t a1, int64_t a2, int loudness);
@@ -852,7 +852,7 @@ void sub_4A92D0(Ai* ai)
 }
 
 // 0x4A94C0
-void sub_4A94C0(int64_t source_obj, int64_t target_obj)
+void ai_redirect_func(int64_t source_obj, int64_t target_obj)
 {
     if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && source_obj != target_obj) {
         ai_attack(source_obj, target_obj, LOUDNESS_SILENT, 0);
@@ -891,7 +891,7 @@ void ai_redirect_perform(AiRedirect* ai_redirect)
                 || stat_level_get(ai_redirect->min_iq, STAT_INTELLIGENCE) <= ai_redirect->min_iq)
             && (ai_redirect->critter_flags == 0
                 || (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & ai_redirect->critter_flags) != 0)) {
-            sub_4A94C0(ai_redirect->source_obj, node->obj);
+            ai_redirect_func(ai_redirect->source_obj, node->obj);
         }
         node = node->next;
     }
