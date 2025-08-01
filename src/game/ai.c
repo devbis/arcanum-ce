@@ -128,8 +128,8 @@ static int64_t ai_find_nearest_bed(int64_t obj);
 static void ai_move_to(int64_t obj, int64_t loc, int range);
 static bool sub_4AD420(int64_t obj);
 static bool sub_4AD4D0(int64_t obj);
-static int sub_4AD5D0(int64_t obj);
-static int sub_4AD610(int64_t obj);
+static int ai_timeevent_delay(int64_t obj);
+static int ai_distance_to_nearest_player(int64_t obj);
 static bool ai_timeevent_check(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
@@ -2959,7 +2959,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
         }
     }
 
-    millis = sub_4AD5D0(obj);
+    millis = ai_timeevent_delay(obj);
     if (timeevent->params[1].integer_value != 0) {
         millis += random_between(0, 5000);
     }
@@ -3047,13 +3047,13 @@ bool sub_4AD4D0(int64_t obj)
 }
 
 // 0x4AD5D0
-int sub_4AD5D0(int64_t obj)
+int ai_timeevent_delay(int64_t obj)
 {
-    return 4750 * sub_4AD610(obj) / 30 + 250;
+    return 4750 * ai_distance_to_nearest_player(obj) / 30 + 250;
 }
 
 // 0x4AD610
-int sub_4AD610(int64_t obj)
+int ai_distance_to_nearest_player(int64_t obj)
 {
     int64_t pc_obj;
     int64_t dist;
@@ -3085,7 +3085,7 @@ bool ai_timeevent_check(TimeEvent* timeevent)
 // 0x4AD6E0
 void sub_4AD6E0(int64_t obj)
 {
-    sub_4AD700(obj, sub_4AD5D0(obj));
+    sub_4AD700(obj, ai_timeevent_delay(obj));
 }
 
 // 0x4AD700
