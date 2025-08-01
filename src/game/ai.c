@@ -125,7 +125,7 @@ static bool ai_standpoints_process(int64_t obj, bool a2);
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void ai_wake_up(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
-static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
+static void ai_move_to(int64_t obj, int64_t loc, int range);
 static bool sub_4AD420(int64_t obj);
 static bool sub_4AD4D0(int64_t obj);
 static int sub_4AD5D0(int64_t obj);
@@ -2689,7 +2689,7 @@ bool ai_waypoints_process(int64_t obj, bool a2)
             teleport_do(&teleport_data);
         }
     } else {
-        sub_4AD1B0(obj, next_loc, 3);
+        ai_move_to(obj, next_loc, 3);
     }
 
     return true;
@@ -2800,7 +2800,7 @@ bool ai_standpoints_process(int64_t obj, bool a2)
             teleport_do(&teleport_data);
         }
     } else {
-        sub_4AD1B0(obj, standpoint_loc, 1);
+        ai_move_to(obj, standpoint_loc, 1);
     }
 
     return true;
@@ -2872,12 +2872,12 @@ int64_t ai_find_nearest_bed(int64_t loc)
 }
 
 // 0x4AD1B0
-void sub_4AD1B0(int64_t a1, int64_t a2, int a3)
+void ai_move_to(int64_t obj, int64_t loc, int range)
 {
-    if (a3 != 0) {
-        sub_4341C0(a1, a2, a3);
+    if (range != 0) {
+        sub_4341C0(obj, loc, range);
     } else {
-        sub_433640(a1, a2);
+        sub_433640(obj, loc);
     }
 }
 
