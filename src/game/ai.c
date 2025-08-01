@@ -140,7 +140,7 @@ static int ai_check_protect(int64_t source_obj, int64_t target_obj);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
 static bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir);
-static int sub_4AF240(int value);
+static int ai_perception_distance(int value);
 static int sub_4AF640(int64_t source_obj, int64_t target_obj);
 static bool ai_check_decoy(int64_t source_obj, int64_t target_obj);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
@@ -687,7 +687,7 @@ bool ai_look_for_item_func(int64_t obj, unsigned int flags)
         return false;
     }
 
-    radius = sub_4AF240(stat_level_get(obj, STAT_PERCEPTION) - 5);
+    radius = ai_perception_distance(stat_level_get(obj, STAT_PERCEPTION) - 5);
     ai_objects_in_radius(obj, radius, &objects, flags);
     node = objects.head;
     while (node != NULL) {
@@ -1965,7 +1965,7 @@ int64_t ai_find_target(int64_t critter_obj)
 
     in_find_target = true;
 
-    radius = sub_4AF240(stat_level_get(critter_obj, STAT_PERCEPTION));
+    radius = ai_perception_distance(stat_level_get(critter_obj, STAT_PERCEPTION));
 
     cnt = 0;
     ai_objects_in_radius(critter_obj, radius, &objects, OBJ_TM_CRITTER);
@@ -4066,13 +4066,12 @@ bool ai_surrendered(int64_t obj, int64_t* danger_source_ptr)
 }
 
 // 0x4AF240
-int sub_4AF240(int value)
+int ai_perception_distance(int value)
 {
     if (value < 1) {
-        return 1;
-    }
-    if (value > 10) {
-        return 10;
+        value = 1;
+    } else if (value > 10) {
+        value = 10;
     }
     return value;
 }
@@ -4129,7 +4128,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
         perception += perception * diff / -100;
     }
 
-    perception = sub_4AF240(perception);
+    perception = ai_perception_distance(perception);
 
     dist = object_dist(source_obj, target_obj);
     if (dist > 1000) {
@@ -4199,7 +4198,7 @@ int ai_can_hear(int64_t source_obj, int64_t target_obj, int loudness)
         perception += perception * diff / -100;
     }
 
-    hear_dist = (dword_5B50C0[loudness] - dword_5B50C0[LOUDNESS_SILENT] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(source_obj, target_obj);
+    hear_dist = (dword_5B50C0[loudness] - dword_5B50C0[LOUDNESS_SILENT] + ai_perception_distance(perception - 4)) / 2 - sub_4AF640(source_obj, target_obj);
     if ((int)dist > hear_dist) {
         return (int)dist - hear_dist;
     }
