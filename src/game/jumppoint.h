@@ -5,8 +5,10 @@
 
 typedef struct JumpPoint {
     /* 0000 */ unsigned int flags;
+    /* 0004 */ int padding_4;
     /* 0008 */ int64_t loc;
     /* 0010 */ int dst_map;
+    /* 0014 */ int padding_14;
     /* 0018 */ int64_t dst_loc;
 } JumpPoint;
 

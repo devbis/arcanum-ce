@@ -73,9 +73,11 @@ typedef enum HitLocation {
 
 typedef struct CombatContext {
     /* 0000 */ unsigned int flags;
+    /* 0004 */ int padding_4;
     /* 0008 */ int64_t attacker_obj;
     /* 0010 */ int64_t weapon_obj;
     /* 0018 */ int skill;
+    /* 001C */ int padding_1C;
     /* 0020 */ int64_t target_obj;
     /* 0028 */ int64_t field_28;
     /* 0030 */ int64_t field_30;

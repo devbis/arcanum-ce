@@ -55,8 +55,10 @@ typedef struct Ryan {
     /* 0000 */ ObjectID objid;
     /* 0018 */ int64_t location;
     /* 0020 */ int map;
+    /* 0024 */ int padding_24;
 } Ryan;
 
+// Serializeable.
 static_assert(sizeof(Ryan) == 0x28, "wrong size");
 
 // TODO: Better name.
@@ -65,6 +67,7 @@ typedef struct FollowerInfo {
     /* 0008 */ Ryan field_8;
 } FollowerInfo;
 
+// Serializeable.
 static_assert(sizeof(FollowerInfo) == 0x30, "wrong size");
 
 typedef struct ObjectList {

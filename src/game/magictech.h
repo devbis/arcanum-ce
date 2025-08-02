@@ -288,6 +288,7 @@ typedef unsigned int MagicTechInvocationFlags;
 
 typedef struct MagicTechInvocation {
     /* 0000 */ int spell;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo source_obj;
     /* 0038 */ int64_t loc;
     /* 0040 */ FollowerInfo parent_obj;

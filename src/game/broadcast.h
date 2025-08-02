@@ -8,6 +8,9 @@ typedef struct Broadcast {
     char str[128];
 } Broadcast;
 
+// Serializeable.
+static_assert(sizeof(Broadcast) == 0x88, "wrong size");
+
 typedef void(BroadcastFloatLineFunc)(int64_t npc_obj, int64_t pc_obj, const char* str, int speech_id);
 
 bool broadcast_init(GameInitInfo* init_info);

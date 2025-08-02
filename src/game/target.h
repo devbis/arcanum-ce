@@ -10,7 +10,11 @@ typedef struct S4F2810 {
         /* 0000 */ int64_t loc;
     };
     /* 0008 */ int is_loc;
+    /* 000C */ int padding_C;
 } S4F2810;
+
+// Serializeable.
+static_assert(sizeof(S4F2810) == 0x10, "wrong size");
 
 typedef struct S603D20 {
     /* 0000 */ uint64_t aoe_flags;

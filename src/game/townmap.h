@@ -13,8 +13,10 @@ typedef struct TownMapInfo {
     /* 0010 */ int height;
     /* 0014 */ int num_hor_tiles;
     /* 0018 */ int num_vert_tiles;
+    /* 001C */ int padding_1C;
     /* 0020 */ int64_t loc;
     /* 0028 */ float scale;
+    /* 002C */ int padding_2C;
 } TownMapInfo;
 
 // Serializeable.

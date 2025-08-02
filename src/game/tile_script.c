@@ -5,8 +5,9 @@
 #include "game/tile_script_list.h"
 
 typedef struct TileScript {
-    int64_t loc;
-    Script scr;
+    /* 0000 */ int64_t loc;
+    /* 0008 */ Script scr;
+    /* 0014 */ int padding_14;
 } TileScript;
 
 static_assert(sizeof(TileScript) == 0x18, "wrong size");

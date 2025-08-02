@@ -25,6 +25,7 @@ typedef struct QuestLogbookEntry {
 typedef struct PcQuestState {
     /* 0000 */ DateTime datetime;
     /* 0008 */ int state;
+    /* 000C */ int padding_C;
 } PcQuestState;
 
 // Serializeable.

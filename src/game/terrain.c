@@ -17,6 +17,7 @@ typedef struct TerrainHeader {
     /* 0008 */ int64_t width;
     /* 0010 */ int64_t height;
     /* 0018 */ int base_terrain_type;
+    /* 001C */ int padding_1C;
 } TerrainHeader;
 
 // Serializeable.

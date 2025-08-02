@@ -14,7 +14,8 @@
 
 typedef struct PacketGamePlayerList {
     /* 0000 */ int type;
-    /* 0004 */ ObjectID oids[8];
+    /* 0004 */ int padding_4;
+    /* 0008 */ ObjectID oids[8];
 } PacketGamePlayerList;
 
 // Serializeable.
@@ -22,6 +23,7 @@ static_assert(sizeof(PacketGamePlayerList) == 0xC8, "wrong size");
 
 typedef struct PacketGameTime {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ uint64_t game_time;
     /* 0010 */ uint64_t anim_time;
 } PacketGameTime;
@@ -41,6 +43,7 @@ static_assert(sizeof(Packet4) == 0x28, "wrong size");
 
 typedef struct Packet5 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ DateTime field_8;
     /* 0010 */ AnimGoalData field_10;
     /* 0188 */ int64_t loc;
@@ -57,6 +60,7 @@ typedef struct Packet6 {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     /* 0008 */ tig_art_id_t art_id;
+    /* 000C */ int padding_C;
     /* 0010 */ ObjectID self_oid;
     /* 0028 */ ObjectID target_oid;
     /* 0040 */ int64_t loc;
@@ -153,9 +157,10 @@ typedef struct Packet16 {
 static_assert(sizeof(Packet16) == 0x58, "wrong size");
 
 typedef struct PacketBroadcastMsg {
-    int type;
-    ObjectID oid;
-    Broadcast bcast;
+    /* 0000 */ int type;
+    /* 0004 */ int padding_4;
+    /* 0008 */ ObjectID oid;
+    /* 0020 */ Broadcast bcast;
 } PacketBroadcastMsg;
 
 // Serializeable.
@@ -163,8 +168,10 @@ static_assert(sizeof(PacketBroadcastMsg) == 0xA8, "wrong size");
 
 typedef struct PacketCombatModeSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ bool active;
+    /* 0024 */ int padding_24;
 } PacketCombatModeSet;
 
 // Serializeable.
@@ -172,6 +179,7 @@ static_assert(sizeof(PacketCombatModeSet) == 0x28, "wrong size");
 
 typedef struct PacketCombatDmg {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ CombatContext combat;
     /* 0070 */ ObjectID attacker_oid;
     /* 0088 */ ObjectID weapon_oid;
@@ -185,6 +193,7 @@ static_assert(sizeof(PacketCombatDmg) == 0xE8, "wrong size");
 
 typedef struct PacketCombatHeal {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ CombatContext combat;
     /* 0070 */ ObjectID attacker_oid;
     /* 0088 */ ObjectID weapon_oid;
@@ -198,6 +207,7 @@ static_assert(sizeof(PacketCombatHeal) == 0xE8, "wrong size");
 
 typedef struct Packet22 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int64_t loc;
 } Packet22;
@@ -207,6 +217,7 @@ static_assert(sizeof(Packet22) == 0x28, "wrong size");
 
 typedef struct Packet23 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID item_oid;
     /* 0020 */ ObjectID parent_oid;
 } Packet23;
@@ -216,9 +227,11 @@ static_assert(sizeof(Packet23) == 0x38, "wrong size");
 
 typedef struct Packet24 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID item_oid;
     /* 0020 */ ObjectID parent_oid;
     /* 0038 */ int inventory_location;
+    /* 003C */ int padding_3C;
 } Packet24;
 
 // Serializeable.
@@ -235,8 +248,10 @@ typedef struct Packet25 {
 
 typedef struct Packet26 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int field_20;
+    /* 0024 */ int padding_24;
 } Packet26;
 
 // Serializeable.
@@ -244,6 +259,7 @@ static_assert(sizeof(Packet26) == 0x28, "wrong size");
 
 typedef struct Packet27 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int64_t loc;
 } Packet27;
@@ -252,9 +268,11 @@ static_assert(sizeof(Packet27) == 0x28, "wrong size");
 
 typedef struct Packet28 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID item_oid;
     /* 0020 */ ObjectID critter_oid;
     /* 0038 */ int inventory_location;
+    /* 003C */ int padding_3C;
 } Packet28;
 
 // Serializeable.
@@ -262,6 +280,7 @@ static_assert(sizeof(Packet28) == 0x40, "wrong size");
 
 typedef struct Packet29 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } Packet29;
 
@@ -272,6 +291,7 @@ typedef struct Packet30 {
     /* 0004 */ int field_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int field_38;
+    /* 003C */ int padding_3C;
 } Packet30;
 
 // Serializeable.
@@ -292,8 +312,10 @@ static_assert(sizeof(Packet31) == 0x68, "wrong size");
 
 typedef struct PacketCritterConcealSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int concealed;
+    /* 003C */ int padding_3C;
 } PacketCritterConcealSet;
 
 // Serializeable.
@@ -301,16 +323,20 @@ static_assert(sizeof(PacketCritterConcealSet) == 0x40, "wrong size");
 
 typedef struct PacketCritterRestingHeal {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int hours;
+    /* 0024 */ int padding_24;
 } PacketCritterRestingHeal;
 
 static_assert(sizeof(PacketCritterRestingHeal) == 0x28, "wrong size");
 
 typedef struct PacketCritterFatigueDamageSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int dam;
+    /* 0024 */ int padding_24;
 } PacketCritterFatigueDamageSet;
 
 // Serializeable.
@@ -321,6 +347,7 @@ static_assert(sizeof(PacketCritterFatigueDamageSet) == 0x28, "wrong size");
 
 typedef struct PacketFateStateSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo oid;
     /* 0038 */ int fate;
     /* 003C */ int action;
@@ -349,6 +376,7 @@ static_assert(sizeof(PacketRumorKnownSet) == 0x28, "wrong size");
 
 typedef struct PacketQuestStateSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int quest;
     /* 003C */ int state;
@@ -359,8 +387,10 @@ static_assert(sizeof(PacketQuestStateSet) == 0x70, "wrong size");
 
 typedef struct PacketQuestUnbotch {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int quest;
+    /* 003C */ int padding_3C;
 } PacketQuestUnbotch;
 
 // Serializeable.
@@ -411,6 +441,7 @@ typedef struct PacketDialog {
             /* 003C */ int field_3C;
             /* 0040 */ int field_40;
             /* 0044 */ char field_44[1000];
+            /* 042C */ int padding_42C;
         } d;
         struct {
             /* 0008 */ int field_8;
@@ -457,6 +488,7 @@ typedef struct SetBaseStatPacket {
     /* 0000 */ int type;
     /* 0004 */ int stat;
     /* 0008 */ int value;
+    /* 000C */ int padding_C;
     /* 0010 */ ObjectID oid;
 } SetBaseStatPacket;
 
@@ -468,6 +500,7 @@ typedef struct Packet51 {
     /* 0004 */ int field_4;
     /* 0008 */ ObjectID field_8;
     /* 0020 */ int field_20;
+    /* 0024 */ int padding_24;
 } Packet51;
 
 // Serializeable.
@@ -475,6 +508,7 @@ static_assert(sizeof(Packet51) == 0x28, "wrong size");
 
 typedef struct SetSkillTrainingPacket {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int skill;
     /* 003C */ int training;
@@ -556,6 +590,7 @@ static_assert(sizeof(Packet67) == 0x08, "wrong size");
 
 typedef struct PacketNotifyPlayerLagging {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
 } PacketNotifyPlayerLagging;
 
@@ -563,6 +598,7 @@ static_assert(sizeof(PacketNotifyPlayerLagging) == 0x38, "wrong size");
 
 typedef struct PacketNotifyPlayerRecovered {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ FollowerInfo field_8;
 } PacketNotifyPlayerRecovered;
 
@@ -610,6 +646,7 @@ static_assert(sizeof(PacketPartyUpdate) == 0x24, "wrong size");
 
 typedef struct PacketObjectDestroy {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } PacketObjectDestroy;
 
@@ -636,6 +673,7 @@ typedef struct Packet74 {
         struct {
             /* 0020 */ MagicTechComponentTrait trait;
             /* 0038 */ int obj_type;
+            /* 003C */ int padding_3C;
         };
     };
 } Packet74;
@@ -644,14 +682,16 @@ typedef struct Packet74 {
 static_assert(sizeof(Packet74) == 0x40, "wrong size");
 
 typedef struct PacketMagicTechObjFlag {
-    /* 0000 */  int type;
-    /* 0008 */  ObjectID field_8;
-    /* 0020 */  ObjectID self_oid;
-    /* 0038 */  int fld;
-    /* 003C */  int value;
-    /* 0040 */  int state;
-    /* 0048 */  ObjectID parent_oid;
-    /* 0060 */  ObjectID source_oid;
+    /* 0000 */ int type;
+    /* 0004 */ int padding_4;
+    /* 0008 */ ObjectID field_8;
+    /* 0020 */ ObjectID self_oid;
+    /* 0038 */ int fld;
+    /* 003C */ int value;
+    /* 0040 */ int state;
+    /* 0044 */ int padding_44;
+    /* 0048 */ ObjectID parent_oid;
+    /* 0060 */ ObjectID source_oid;
 } PacketMagicTechObjFlag;
 
 // Serializeable.
@@ -659,10 +699,12 @@ static_assert(sizeof(PacketMagicTechObjFlag) == 0x78, "wrong size");
 
 typedef struct Packet76 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int cost;
     /* 0024 */ bool field_24;
     /* 0028 */ int magictech;
+    /* 002C */ int padding_2C;
 } Packet76;
 
 // Serializeable.
@@ -684,6 +726,7 @@ typedef struct Packet79 {
     /* 0004 */ int field_4;
     /* 0008 */ ObjectID field_8;
     /* 0020 */ ObjectID field_20;
+    /* 0038 */ int field_38;
     /* 003C */ int field_3C;
 } Packet79;
 
@@ -758,6 +801,7 @@ typedef struct PacketTextFloater {
     /* 0004 */ int extra_length;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int tf_type;
+    /* 0028 */ int padding_28;
 } PacketTextFloater;
 
 // Serializeable.
@@ -790,9 +834,11 @@ static_assert(sizeof(PacketEffect) == 0x28, "wrong size");
 
 typedef struct PacketReactionAdj {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID npc_oid;
     /* 0020 */ ObjectID pc_oid;
     /* 0038 */ int value;
+    /* 003C */ int padding_3C;
 } PacketReactionAdj;
 
 // Serializeable.
@@ -812,6 +858,7 @@ typedef struct RepairInvocation {
     /* 0010 */ ObjectID target_oid;
     /* 0028 */ ObjectID source_oid;
     /* 0040 */ int success;
+    /* 0044 */ int padding_44;
 } RepairInvocation;
 
 // Serializeable.
@@ -828,6 +875,7 @@ typedef struct PacketPickLockInvocation {
     /* 0008 */ ObjectID source_oid;
     /* 0020 */ ObjectID target_oid;
     /* 0038 */ int success;
+    /* 003C */ int padding_3C;
 } PacketPickLockInvocation;
 
 // Serializeable.
@@ -835,9 +883,11 @@ static_assert(sizeof(PacketPickLockInvocation) == 0x40, "wrong size");
 
 typedef struct PacketTrapMarkKnown {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID pc_oid;
     /* 0020 */ ObjectID trap_oid;
     /* 0038 */ int reason;
+    /* 003C */ int padding_3C;
 } PacketTrapMarkKnown;
 
 // Serializeable.
@@ -848,6 +898,7 @@ static_assert(sizeof(PacketTrapMarkKnown) == 0x40, "wrong size");
 
 typedef struct PacketDisarmTrapInvocation {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID source_oid;
     /* 0020 */ ObjectID target_oid;
     /* 0038 */ int success;
@@ -859,8 +910,10 @@ static_assert(sizeof(PacketDisarmTrapInvocation) == 0x40, "wrong size");
 
 typedef struct Packet92 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ tig_art_id_t art_id;
+    /* 0024 */ int padding_24;
 } Packet92;
 
 // Serializeable.
@@ -871,6 +924,7 @@ typedef struct Packet93 {
     /* 0000 */ int field_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int field_20;
+    /* 0024 */ int padding_24;
 } Packet93;
 
 // Serializeable.
@@ -878,6 +932,7 @@ static_assert(sizeof(Packet93) == 0x28, "wrong size");
 
 typedef struct PacketUpdateInven {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } PacketUpdateInven;
 
@@ -886,6 +941,7 @@ static_assert(sizeof(PacketUpdateInven) == 0x20, "wrong size");
 
 typedef struct Packet95 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } Packet95;
 
@@ -893,8 +949,10 @@ static_assert(sizeof(Packet95) == 0x20, "wrong size");
 
 typedef struct PacketArrangeInventory {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ bool vertical;
+    /* 0024 */ int padding_24;
 } PacketArrangeInventory;
 
 // Serializeable.
@@ -902,6 +960,7 @@ static_assert(sizeof(PacketArrangeInventory) == 0x28, "wrong size");
 
 typedef struct Packet97 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID field_8;
     /* 0020 */ ObjectID field_20;
 } Packet97;
@@ -931,11 +990,13 @@ static_assert(sizeof(PacketMultiplayerFlagsChange) == 0xC, "wrong size");
 
 typedef struct Packet99 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int64_t location;
     /* 0028 */ int dx;
     /* 002C */ int dy;
     /* 0030 */ int field_30;
+    /* 0034 */ int padding_34;
 } Packet99;
 
 // Serializeable.
@@ -979,8 +1040,10 @@ static_assert(sizeof(Packet100) == 0x40, "wrong size");
 
 typedef struct PacketAreaKnownSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int area;
+    /* 0024 */ int padding_24;
 } PacketAreaKnownSet;
 
 // Serializeable.
@@ -988,6 +1051,7 @@ static_assert(sizeof(PacketAreaKnownSet) == 0x28, "wrong size");
 
 typedef struct PacketAreaResetLastKnown {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } PacketAreaResetLastKnown;
 
@@ -996,8 +1060,10 @@ static_assert(sizeof(PacketAreaResetLastKnown) == 0x20, "wrong size");
 
 typedef struct PacketObjectLock {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int locked;
+    /* 0024 */ int padding_24;
 } PacketObjectLock;
 
 // Serializeable.
@@ -1005,6 +1071,7 @@ static_assert(sizeof(PacketObjectLock) == 0x28, "wrong size");
 
 typedef struct Packet104 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } Packet104;
 
@@ -1032,6 +1099,7 @@ static_assert(sizeof(PacketPlaySound) == 0x28, "wrong size");
 
 typedef struct PacketPortalToggle {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
 } PacketPortalToggle;
 
@@ -1040,8 +1108,10 @@ static_assert(sizeof(PacketPortalToggle) == 0x20, "wrong size");
 
 typedef struct PacketSectorBlockSet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ int64_t sec;
     /* 0010 */ bool blocked;
+    /* 0014 */ int padding_14;
 } PacketSectorBlockSet;
 
 // Serializeable.
@@ -1049,8 +1119,10 @@ static_assert(sizeof(PacketSectorBlockSet) == 0x18, "wrong size");
 
 typedef struct PacketSpellMasterySet {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int college;
+    /* 0024 */ int padding_24;
 } PacketSpellMasterySet;
 
 // Serializeable.
@@ -1087,6 +1159,7 @@ typedef struct PacketTextRemove {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     /* 0008 */ int action;
+    /* 000C */ int padding_C;
     /* 0010 */ ObjectID oid;
 } PacketTextRemove;
 
@@ -1095,6 +1168,7 @@ static_assert(sizeof(PacketTextRemove) == 0x28, "wrong size");
 
 typedef struct PacketItemUse {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID source_oid;
     /* 0020 */ ObjectID item_oid;
     /* 0038 */ ObjectID target_oid;
@@ -1105,6 +1179,7 @@ static_assert(sizeof(PacketItemUse) == 0x50, "wrong size");
 
 typedef struct Packet118 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID field_8;
     /* 0020 */ ObjectID field_20;
 } Packet118;
@@ -1114,6 +1189,7 @@ static_assert(sizeof(Packet118) == 0x38, "wrong size");
 
 typedef struct PacketObjectDuplicate {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int64_t loc;
     /* 0028 */ int field_28;
@@ -1136,6 +1212,7 @@ typedef struct Packet121 {
     /* 0004 */ int field_4;
     /* 0008 */ ObjectID oid;
     /* 0020 */ int field_20;
+    /* 0024 */ int padding_24;
 } Packet121;
 
 // Serializeable.
@@ -1166,6 +1243,7 @@ static_assert(sizeof(Packet123) == 0x14, "wrong size");
 
 typedef struct PacketChangeReputation {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID pc_oid;
     /* 0020 */ int reputation;
     /* 0024 */ int action;
@@ -1196,10 +1274,12 @@ static_assert(sizeof(PacketScriptFunc) == 0x10, "wrong size");
 
 typedef struct PacketPerformIdentifyService {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID item_oid;
     /* 0020 */ ObjectID npc_oid;
     /* 0038 */ ObjectID pc_oid;
     /* 0050 */ int cost;
+    /* 0054 */ int padding_54;
 } PacketPerformIdentifyService;
 
 // Serializeable.
@@ -1207,10 +1287,12 @@ static_assert(sizeof(PacketPerformIdentifyService) == 0x58, "wrong size");
 
 typedef struct PacketPerformRepairService {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID item_oid;
     /* 0020 */ ObjectID npc_oid;
     /* 0038 */ ObjectID pc_oid;
     /* 0050 */ int cost;
+    /* 0054 */ int padding_54;
 } PacketPerformRepairService;
 
 // Serializeable.
@@ -1234,6 +1316,7 @@ static_assert(sizeof(PacketChareditTraitChange) == 0x10, "wrong size");
 
 typedef struct Packet128 {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ ObjectID target_oid;
     /* 0020 */ ObjectID item_oid;
 } Packet128;
@@ -1266,6 +1349,7 @@ typedef struct Packet129 {
             } d;
             struct {
                 /* 0028 */ int field_28;
+                /* 002C */ int padding_2C;
                 /* 0030 */ ObjectID oid;
             } e;
             struct {

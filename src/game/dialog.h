@@ -47,10 +47,11 @@ typedef struct DialogSerializedData {
     /* 00A8 */ int field_A8[5];
     /* 00BC */ int field_BC;
     /* 00C0 */ int field_C0;
+    /* 00C4 */ int padding_C4;
 } DialogSerializedData;
 
-// TODO: Figure out size.
-// static_assert(sizeof(DialogSerializedData) == 0xC4, "wrong size");
+// Serializeable.
+static_assert(sizeof(DialogSerializedData) == 0xC8, "wrong size");
 
 bool dialog_init(GameInitInfo* init_info);
 void dialog_exit();

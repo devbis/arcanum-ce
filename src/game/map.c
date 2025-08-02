@@ -81,6 +81,7 @@ typedef struct MapListInfo {
 
 typedef struct MapProperties {
     /* 0000 */ int base_terrain_type;
+    /* 0004 */ int padding_4;
     /* 0008 */ int64_t width;
     /* 0010 */ int64_t height;
 } MapProperties;

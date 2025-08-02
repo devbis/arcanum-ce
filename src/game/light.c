@@ -39,6 +39,7 @@ typedef struct LightSerializedData {
     /* 0022 */ uint8_t g;
     /* 0024 */ tig_color_t tint_color;
     /* 0028 */ int palette;
+    /* 002C */ int padding_2C;
 } LightSerializedData;
 
 // Serializeable.

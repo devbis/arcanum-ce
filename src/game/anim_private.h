@@ -190,6 +190,7 @@ typedef enum AgData {
 
 typedef struct AnimGoalData {
     /* 0000 */ int type;
+    /* 0004 */ int padding_4;
     /* 0008 */ AnimRunInfoParam params[AGDATA_COUNT];
     /* 00B0 */ Ryan field_B0[5];
 } AnimGoalData;

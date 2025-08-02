@@ -17,8 +17,10 @@ typedef struct ObjectID_P {
 #define OID_TYPE_P ((int16_t)3)
 
 typedef struct ObjectID {
-    int16_t type;
-    union {
+    /* 0000 */ int16_t type;
+    /* 0002 */ int16_t padding_2;
+    /* 0004 */ int padding_4;
+    /* 0008 */ union {
         int64_t h;
         int a;
         TigGuid g;
