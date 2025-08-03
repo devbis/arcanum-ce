@@ -308,7 +308,7 @@ set(SRCS
     "src/main.c"
 )
 
-add_executable(arcanum-ce WIN32
+add_executable(arcanum-ce WIN32 MACOSX_BUNDLE
     ${SRCS}
 )
 
@@ -319,3 +319,62 @@ target_include_directories(arcanum-ce PUBLIC
 target_link_libraries(arcanum-ce PUBLIC
     ${TIG_LIBRARY}
 )
+
+if(APPLE)
+    if(IOS)
+        set(RESOURCES
+            "ios/LaunchScreen.storyboard"
+        )
+
+        target_sources(arcanum-ce PUBLIC ${RESOURCES})
+        set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+        set_target_properties(arcanum-ce PROPERTIES
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/ios/Info.plist"
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.alexbatalov.arcanum-ce"
+            XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+        )
+
+        set(MACOSX_BUNDLE_BUNDLE_NAME arcanum-ce)
+        set(MACOSX_BUNDLE_DISPLAY_NAME "Arcanum")
+    else()
+        set(RESOURCES
+        )
+
+        target_sources(arcanum-ce PUBLIC ${RESOURCES})
+        set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+        set_target_properties(arcanum-ce PROPERTIES
+            OUTPUT_NAME "Arcanum Community Edition"
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/macos/Info.plist"
+            XCODE_ATTRIBUTE_EXECUTABLE_NAME "arcanum-ce"
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.alexbatalov.arcanum-ce"
+        )
+
+        set(MACOSX_BUNDLE_BUNDLE_NAME "Arcanum: Community Edition")
+        set(MACOSX_DEPLOYMENT_TARGET "11.5")
+    endif()
+
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.alexbatalov.arcanum-ce")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0")
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "1")
+endif()
+
+if(APPLE)
+    if(IOS)
+        install(TARGETS arcanum-ce DESTINATION "Payload")
+
+        set(CPACK_GENERATOR "ZIP")
+        set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+        set(CPACK_PACKAGE_FILE_NAME "arcanum-ce")
+        set(CPACK_ARCHIVE_FILE_EXTENSION "ipa")
+    else()
+        install(TARGETS arcanum-ce DESTINATION .)
+
+        set(CPACK_GENERATOR "DragNDrop")
+        set(CPACK_DMG_DISABLE_APPLICATIONS_SYMLINK ON)
+        set(CPACK_PACKAGE_FILE_NAME "Arcanum Community Edition")
+    endif()
+
+    include(CPack)
+endif()

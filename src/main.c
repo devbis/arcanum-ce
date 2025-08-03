@@ -69,6 +69,12 @@ int main(int argc, char** argv)
     int64_t pc_starting_location;
     char msg[80];
 
+#if SDL_PLATFORM_MACOS
+    chdir(SDL_GetBasePath());
+#elif SDL_PLATFORM_IOS
+    chdir(SDL_GetUserFolder(SDL_FOLDER_DOCUMENTS));
+#endif
+
     // Convert args array to WinMain-like lpCmdLine.
     char lpCmdLine[260];
     build_cmd_line(lpCmdLine, sizeof(lpCmdLine), argc, argv);

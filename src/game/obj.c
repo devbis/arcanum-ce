@@ -15,7 +15,7 @@
 #define OBJ_FILE_VERSION 119
 
 // TODO: Replace with proper SA type.
-#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_X64) || defined(_M_AMD64)
+#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_X64) || defined(_M_AMD64) || defined(__aarch64__)
 #define OBJ_CPU_X64 1
 #endif
 
