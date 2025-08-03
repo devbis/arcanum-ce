@@ -23,6 +23,8 @@ typedef enum SaType {
     SA_TYPE_STRING = 11,
     SA_TYPE_HANDLE = 12,
     SA_TYPE_HANDLE_ARRAY = 13,
+    SA_TYPE_PTR = 14,
+    SA_TYPE_PTR_ARRAY = 15,
 } SaType;
 
 typedef struct S4E4BD0 {
@@ -37,13 +39,14 @@ typedef struct ObjSa {
     /* 0004 */ void* ptr;
     /* 0008 */ int idx;
     /* 000C */ int field_C;
-    union {
-        /* 0010 */ int value;
-        /* 0010 */ int64_t value64;
-        /* 0010 */ char* str;
-        /* 0010 */ ObjectID oid;
+    /* 0010 */ union {
+        int value;
+        int64_t value64;
+        char* str;
+        ObjectID oid;
         Script scr;
         PcQuestState quest;
+        intptr_t ptr;
     } storage;
 } ObjSa;
 

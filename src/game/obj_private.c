@@ -111,6 +111,14 @@ void sub_4E3FA0(ObjSa* a1)
             sa_deallocate((SizeableArray**)a1->ptr);
         }
         break;
+    case SA_TYPE_PTR:
+        *(intptr_t*)a1->ptr = 0;
+        break;
+    case SA_TYPE_PTR_ARRAY:
+        if (*(SizeableArray**)a1->ptr != NULL) {
+            sa_deallocate((SizeableArray**)a1->ptr);
+        }
+        break;
     }
 }
 
@@ -186,6 +194,15 @@ void sub_4E4000(ObjSa* a1)
         }
         sa_set((SizeableArray**)a1->ptr, a1->idx, &(a1->storage));
         break;
+    case SA_TYPE_PTR:
+        *(intptr_t*)a1->ptr = a1->storage.ptr;
+        break;
+    case SA_TYPE_PTR_ARRAY:
+        if (*(SizeableArray**)a1->ptr == NULL) {
+            sa_allocate((SizeableArray**)a1->ptr, sizeof(intptr_t));
+        }
+        sa_set((SizeableArray**)a1->ptr, a1->idx, &(a1->storage));
+        break;
     }
 }
 
@@ -254,6 +271,16 @@ void sub_4E4180(ObjSa* a1)
             a1->storage.oid.type = OID_TYPE_NULL;
         }
         break;
+    case SA_TYPE_PTR:
+        a1->storage.ptr = *(intptr_t*)a1->ptr;
+        break;
+    case SA_TYPE_PTR_ARRAY:
+        if (*(SizeableArray**)a1->ptr != NULL) {
+            sa_get((SizeableArray**)a1->ptr, a1->idx, &(a1->storage));
+        } else {
+            a1->storage.ptr = 0;
+        }
+        break;
     }
 }
 
@@ -300,6 +327,9 @@ void sub_4E4280(ObjSa* a1, void* value)
             *(ObjectID**)value = NULL;
         }
         break;
+    case SA_TYPE_PTR:
+    case SA_TYPE_PTR_ARRAY:
+        assert(0);
     }
 }
 
@@ -388,6 +418,9 @@ bool sub_4E4360(ObjSa* a1, TigFile* stream)
             return false;
         }
         return true;
+    case SA_TYPE_PTR:
+    case SA_TYPE_PTR_ARRAY:
+        assert(0);
     default:
         return false;
     }
@@ -465,6 +498,9 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         return true;
+    case SA_TYPE_PTR:
+    case SA_TYPE_PTR_ARRAY:
+        assert(0);
     default:
         return false;
     }
@@ -539,6 +575,9 @@ void sub_4E4660(ObjSa* a1, uint8_t** data)
         }
         sub_4E4C50(*(ObjectID**)a1->ptr, sizeof(ObjectID), data);
         return;
+    case SA_TYPE_PTR:
+    case SA_TYPE_PTR_ARRAY:
+        assert(0);
     }
 }
 
@@ -600,6 +639,9 @@ bool sub_4E47E0(ObjSa* a1, TigFile* stream)
             if (!objf_write(&presence, sizeof(presence), stream)) return false;
         }
         return true;
+    case SA_TYPE_PTR:
+    case SA_TYPE_PTR_ARRAY:
+        assert(0);
     default:
         return false;
     }
@@ -681,6 +723,7 @@ void sub_4E4B70(ObjSa* a1)
     case SA_TYPE_SCRIPT:
     case SA_TYPE_QUEST:
     case SA_TYPE_HANDLE_ARRAY:
+    case SA_TYPE_PTR_ARRAY:
         if (*(SizeableArray**)a1->ptr != NULL) {
             sub_4E7760((SizeableArray**)a1->ptr, a1->idx);
         }
@@ -699,6 +742,7 @@ int sub_4E4BA0(ObjSa* a1)
     case SA_TYPE_SCRIPT:
     case SA_TYPE_QUEST:
     case SA_TYPE_HANDLE_ARRAY:
+    case SA_TYPE_PTR_ARRAY:
         if (*(SizeableArray**)a1->ptr != NULL) {
             return sa_count((SizeableArray**)a1->ptr);
         }

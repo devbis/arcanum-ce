@@ -14,11 +14,6 @@
 
 #define OBJ_FILE_VERSION 119
 
-// TODO: Replace with proper SA type.
-#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_X64) || defined(_M_AMD64) || defined(__aarch64__)
-#define OBJ_CPU_X64 1
-#endif
-
 typedef struct ObjectFieldInfo {
     /* 0000 */ int simple_array_idx;
     /* 0004 */ int complex_array_idx;
@@ -2389,6 +2384,9 @@ void sub_408760(Object* object, int fld, void* value_ptr)
     case SA_TYPE_HANDLE:
         v1.storage.oid = *(ObjectID*)value_ptr;
         break;
+    case SA_TYPE_PTR:
+        v1.storage.ptr = *(intptr_t*)value_ptr;
+        break;
     }
 
     sub_4E4000(&v1);
@@ -2435,6 +2433,9 @@ void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
         break;
     case SA_TYPE_HANDLE_ARRAY:
         v1.storage.oid = *(ObjectID*)value_ptr;
+        break;
+    case SA_TYPE_PTR_ARRAY:
+        v1.storage.ptr = *(intptr_t*)value_ptr;
         break;
     }
 
@@ -2489,6 +2490,9 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
     case SA_TYPE_HANDLE:
         *(ObjectID*)value_ptr = v1.storage.oid;
         break;
+    case SA_TYPE_PTR:
+        *(intptr_t*)value_ptr = v1.storage.ptr;
+        break;
     }
 }
 
@@ -2536,6 +2540,9 @@ void sub_408BB0(Object* object, int fld, int index, void* value)
         break;
     case SA_TYPE_HANDLE_ARRAY:
         *(ObjectID*)value = v1.storage.oid;
+        break;
+    case SA_TYPE_PTR_ARRAY:
+        *(intptr_t*)value = v1.storage.ptr;
         break;
     }
 }
@@ -3830,18 +3837,15 @@ void sub_40A8A0()
     object_fields[OBJ_F_TYPE].type = SA_TYPE_INT32;
     object_fields[OBJ_F_PROTOTYPE_HANDLE].type = SA_TYPE_HANDLE;
 
-    // NOTE: Temporary solution - on x64 platforms use int64_t to store pointers
-    // and arrays of pointers.
-#if OBJ_CPU_X64
-    object_fields[OBJ_F_RENDER_COLORS].type = SA_TYPE_INT64;
-    object_fields[OBJ_F_RENDER_PALETTE].type = SA_TYPE_INT64;
-    object_fields[OBJ_F_PALETTE].type = SA_TYPE_INT64;
-    object_fields[OBJ_F_COLORS].type = SA_TYPE_INT64;
-    object_fields[OBJ_F_LIGHT_HANDLE].type = SA_TYPE_INT64;
-    object_fields[OBJ_F_OVERLAY_LIGHT_HANDLES].type = SA_TYPE_INT64_ARRAY;
-    object_fields[OBJ_F_SHADOW_HANDLES].type = SA_TYPE_INT64_ARRAY;
-    object_fields[OBJ_F_FIND_NODE].type = SA_TYPE_INT64;
-#endif
+    // CE: Special case - designate pointer properties.
+    object_fields[OBJ_F_RENDER_COLORS].type = SA_TYPE_PTR;
+    object_fields[OBJ_F_RENDER_PALETTE].type = SA_TYPE_PTR;
+    object_fields[OBJ_F_PALETTE].type = SA_TYPE_PTR;
+    object_fields[OBJ_F_COLORS].type = SA_TYPE_PTR;
+    object_fields[OBJ_F_LIGHT_HANDLE].type = SA_TYPE_PTR;
+    object_fields[OBJ_F_OVERLAY_LIGHT_HANDLES].type = SA_TYPE_PTR_ARRAY;
+    object_fields[OBJ_F_SHADOW_HANDLES].type = SA_TYPE_PTR_ARRAY;
+    object_fields[OBJ_F_FIND_NODE].type = SA_TYPE_PTR;
 }
 
 // 0x40B8E0
@@ -5100,36 +5104,66 @@ bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info)
 
 void* obj_field_ptr_get(int64_t obj, int fld)
 {
-#if OBJ_CPU_X64
-    return (void*)obj_field_int64_get(obj, fld);
-#else
-    return (void*)obj_field_int32_get(obj, fld);
-#endif
+    Object* object;
+    intptr_t value;
+
+    object = obj_lock(obj);
+    if (!object_field_valid(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+        return 0;
+    }
+
+    sub_408A20(object, fld, &value);
+    obj_unlock(obj);
+
+    return (void*)value;
 }
 
 void obj_field_ptr_set(int64_t obj, int fld, void* value)
 {
-#if OBJ_CPU_X64
-    obj_field_int64_set(obj, fld, (int64_t)value);
-#else
-    obj_field_int32_set(obj, fld, (int)value);
-#endif
+    Object* object;
+
+    object = obj_lock(obj);
+    if (!object_field_valid(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+        return;
+    }
+
+    sub_408760(object, fld, &value);
+    obj_unlock(obj);
 }
 
 void* obj_arrayfield_ptr_get(int64_t obj, int fld, int index)
 {
-#if OBJ_CPU_X64
-    return (void*)obj_arrayfield_int64_get(obj, fld, index);
-#else
-    return (void*)obj_arrayfield_int32_get(obj, fld, index);
-#endif
+    Object* object;
+    void* value;
+
+    object = obj_lock(obj);
+    if (!object_field_valid(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+        return 0;
+    }
+
+    sub_408BB0(object, fld, index, &value);
+    obj_unlock(obj);
+
+    return value;
 }
 
 void obj_arrayfield_ptr_set(int64_t obj, int fld, int index, void* value)
 {
-#if OBJ_CPU_X64
-    obj_arrayfield_int64_set(obj, fld, index, (int64_t)value);
-#else
-    obj_arrayfield_int32_set(obj, fld, index, (int)value);
-#endif
+    Object* object;
+
+    object = obj_lock(obj);
+    if (!object_field_valid(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+        return;
+    }
+
+    sub_4088B0(object, fld, index, &value);
+    obj_unlock(obj);
 }
