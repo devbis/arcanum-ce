@@ -16749,5 +16749,7 @@ bool proto_id_list_check(int* proto_ids, int cnt, int id)
 
 void proto_id_list_destroy(int* proto_ids)
 {
-    FREE(proto_ids);
+    if (proto_ids != NULL) {
+        FREE(proto_ids);
+    }
 }
