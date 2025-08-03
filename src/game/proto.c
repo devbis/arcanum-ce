@@ -638,6 +638,7 @@ void sub_468930(int64_t obj, int description)
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8110);
             break;
         }
+        break;
     case OBJ_TYPE_CONTAINER:
         obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, 9);
         switch (description) {
