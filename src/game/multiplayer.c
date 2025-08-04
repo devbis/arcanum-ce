@@ -2321,7 +2321,7 @@ bool sub_4A51C0(int64_t pc_obj, int64_t item_obj)
 void sub_4A5290()
 {
     qword_5F0E20[0] = OBJ_HANDLE_NULL;
-    memcpy(&(qword_5F0E20[1]),
+    memmove(&(qword_5F0E20[1]),
         &(qword_5F0E20[0]),
         sizeof(qword_5F0E20) - sizeof(qword_5F0E20[0]));
 }
@@ -2366,7 +2366,7 @@ bool sub_4A5320(int client_id)
 void sub_4A5380()
 {
     qword_5E8D78[0] = OBJ_HANDLE_NULL;
-    memcpy(&(qword_5E8D78[1]),
+    memmove(&(qword_5E8D78[1]),
         &(qword_5E8D78[0]),
         sizeof(qword_5E8D78) - sizeof(qword_5E8D78[0]));
 }

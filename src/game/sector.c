@@ -919,7 +919,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
             sub_4D1400(&(sector_cache_entries[sector_cache_indexes[oldest]].sector));
             sector_cache_entries[sector_cache_indexes[oldest]].used = false;
 
-            memcpy(&(sector_cache_indexes[oldest]),
+            memmove(&(sector_cache_indexes[oldest]),
                 &(sector_cache_indexes[oldest + 1]),
                 sizeof(*sector_cache_indexes) * (sector_cache_size - oldest - 1));
             sector_cache_size--;
@@ -937,7 +937,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
         for (unsigned int j = 0; j < sector_history_size; j++) {
             if (sector_history_entries[j].id == id) {
                 datetime = sub_45A7D0(&(sector_history_entries[j].datetime));
-                memcpy(&(sector_history_entries[j]),
+                memmove(&(sector_history_entries[j]),
                     &(sector_history_entries[j + 1]),
                     sizeof(*sector_history_entries) * (sector_history_size - j - 1));
                 sector_history_size--;
@@ -954,7 +954,7 @@ bool sector_lock(int64_t id, Sector** sector_ptr)
             return false;
         }
 
-        memcpy(&(sector_cache_indexes[dword_60182C + 1]),
+        memmove(&(sector_cache_indexes[dword_60182C + 1]),
             &(sector_cache_indexes[dword_60182C]),
             sizeof(*sector_cache_indexes) * (sector_cache_size - dword_60182C));
         sector_cache_indexes[dword_60182C] = index;
@@ -1185,7 +1185,7 @@ bool sector_history_save(TigFile* stream)
 
             if (k >= sector_history_size) {
                 if (sector_history_size == 2 * sector_cache_capacity) {
-                    memcpy(&(sector_history_entries[0]),
+                    memmove(&(sector_history_entries[0]),
                         &(sector_history_entries[1]),
                         sizeof(*sector_history_entries) * (sector_history_size - 1));
                     sector_history_size--;
@@ -1281,7 +1281,7 @@ void sub_4D1400(Sector* sector)
 {
     if (sector->id != -1) {
         if (sector_history_size == 2 * sector_cache_capacity) {
-            memcpy(sector_history_entries,
+            memmove(sector_history_entries,
                 &(sector_history_entries[1]),
                 sizeof(*sector_history_entries) * (sector_history_size - 1));
             sector_history_size--;
@@ -2278,7 +2278,7 @@ void sector_block_add(int64_t sec)
 // 0x4D3050
 void sector_block_remove(int idx)
 {
-    memcpy(&(sector_blocked_sectors[idx]),
+    memmove(&(sector_blocked_sectors[idx]),
         &(sector_blocked_sectors[idx + 1]),
         sizeof(*sector_blocked_sectors) * (sector_blocked_sectors_cnt - idx - 1));
     sector_blocked_sectors_cnt--;

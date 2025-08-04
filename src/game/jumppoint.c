@@ -462,7 +462,7 @@ bool jumppoint_remove(int64_t loc)
     jumppoint_invalidate(index);
 
     // Shift remaining entries to fill the gap.
-    memcpy(&(jumppoints[index]),
+    memmove(&(jumppoints[index]),
         &(jumppoints[index + 1]),
         sizeof(*jumppoints) * (jumppoints_count - index - 1));
 

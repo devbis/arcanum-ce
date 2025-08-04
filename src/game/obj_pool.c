@@ -226,7 +226,7 @@ void sub_4E4FD0(ObjectID oid, int64_t obj)
     }
 
     if (index != dword_6036DC) {
-        memcpy(&(dword_6036B8[index + 1]),
+        memmove(&(dword_6036B8[index + 1]),
             &(dword_6036B8[index]),
             sizeof(*dword_6036B8) * (dword_6036DC - index));
     }

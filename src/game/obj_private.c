@@ -1084,7 +1084,7 @@ void sub_4E6040(int a1, int a2)
 
     if (a1 != dword_603724 - 1) {
         v1 = &(dword_603718[dword_603710[a1 + 1].field_4]);
-        memcpy(&(v1[a2]), v1, sizeof(*v1) * (dword_603708 - dword_603710[a1 + 1].field_4));
+        memmove(&(v1[a2]), v1, sizeof(*v1) * (dword_603708 - dword_603710[a1 + 1].field_4));
         sub_4E61B0(a1 + 1, dword_603724 - 1, a2);
     }
 
@@ -1103,7 +1103,7 @@ void sub_4E6130(int a1, int a2)
 
     if (a1 != dword_603724 - 1) {
         v1 = &(dword_603718[dword_603710[a1 + 1].field_4]);
-        memcpy(&(v1[-a2]), v1, sizeof(*v1) * (dword_603708 - dword_603710[a1 + 1].field_4));
+        memmove(&(v1[-a2]), v1, sizeof(*v1) * (dword_603708 - dword_603710[a1 + 1].field_4));
         sub_4E61B0(a1 + 1, dword_603724 - 1, -a2);
     }
 

@@ -945,7 +945,7 @@ void sub_438570(int64_t obj, int64_t sector_id, int type)
     Sector* sector;
 
     if (!sub_4386B0(obj, &index)) {
-        memcpy(&(stru_5E0E20[index + 1]),
+        memmove(&(stru_5E0E20[index + 1]),
             &(stru_5E0E20[index]),
             sizeof(*stru_5E0E20) * (dword_5E2E24 - index));
         stru_5E0E20[index].flags = 0;
@@ -1001,7 +1001,7 @@ void sub_438720(int64_t a1)
     int index;
 
     if (!sub_4387C0(a1, &index)) {
-        memcpy(&(stru_5E0A10[index + 1]),
+        memmove(&(stru_5E0A10[index + 1]),
             &(stru_5E0A10[index]),
             sizeof(*stru_5E0A10) * (dword_5E2E28 - index));
         stru_5E0A10[index].field_0 = a1;
@@ -1070,7 +1070,7 @@ void sub_438830()
 
             sector_unlock(stru_5E0E20[idx].sector_id);
 
-            memcpy(&(stru_5E0E20[idx]),
+            memmove(&(stru_5E0E20[idx]),
                 &(stru_5E0E20[idx + 1]),
                 sizeof(stru_5E0E20[0]) * (dword_5E2E24 - idx - 1));
             dword_5E2E24--;
@@ -1117,7 +1117,7 @@ void wallcheck_roof_faded_clear(int64_t a1)
 
     if (stru_5E0A10[index].field_8-- == 1) {
         roof_fade_off(a1);
-        memcpy(&(stru_5E0A10[index]),
+        memmove(&(stru_5E0A10[index]),
             &(stru_5E0A10[index + 1]),
             sizeof(*stru_5E0A10) * (dword_5E2E28 - index - 1));
         dword_5E2E28--;

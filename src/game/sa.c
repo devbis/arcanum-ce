@@ -244,7 +244,7 @@ void sub_4E7990(SizeableArray** sa_ptr, int a2)
     v1 = (*sa_ptr)->count - a2;
     if (v1 != 0) {
         data = (uint8_t*)sa_data(*sa_ptr);
-        memcpy(data + (*sa_ptr)->size * (a2 + 1),
+        memmove(data + (*sa_ptr)->size * (a2 + 1),
             data + (*sa_ptr)->size * a2,
             (*sa_ptr)->size * v1);
     }
@@ -261,7 +261,7 @@ void sub_4E79F0(SizeableArray** sa_ptr, int a2)
     v1 = (*sa_ptr)->count - a2 - 1;
     if (v1 != 0) {
         data = (uint8_t*)sa_data(*sa_ptr);
-        memcpy(data + (*sa_ptr)->size * a2,
+        memmove(data + (*sa_ptr)->size * a2,
             data + (*sa_ptr)->size * (a2 + 1),
             (*sa_ptr)->size * v1);
     }

@@ -468,7 +468,7 @@ void obj_find_sector_allocate(int64_t sec, FindSector** find_sector_ptr)
 
     // Shift existing find sectors to make a room for a new instance.
     if (find_sectors_size - index != 0) {
-        memcpy(&(find_sectors[index + 1]),
+        memmove(&(find_sectors[index + 1]),
             &(find_sectors[index]),
             sizeof(*find_sectors) * (find_sectors_size - index));
     }
@@ -495,7 +495,7 @@ void obj_find_sector_deallocate(FindSector* find_sector)
 
     // Shift remaining sectors to fill the gap.
     if (find_sectors_size - index != 1) {
-        memcpy(&(find_sectors[index]),
+        memmove(&(find_sectors[index]),
             &(find_sectors[index + 1]),
             sizeof(*find_sectors) * (find_sectors_size - index - 1));
     }

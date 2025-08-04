@@ -171,7 +171,7 @@ bool textedit_ui_process_message(TigMessage* msg)
                 break;
             case SDL_SCANCODE_DELETE:
                 // Delete character after cursor.
-                memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
+                memmove(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
                     &(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
                     textedit_ui_len - textedit_ui_pos);
                 textedit_ui_current_textedit->buffer[textedit_ui_len--] = '\0';
@@ -196,7 +196,7 @@ bool textedit_ui_process_message(TigMessage* msg)
             // Delete character before cursor.
             if (textedit_ui_pos > 0) {
                 textedit_ui_pos--;
-                memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
+                memmove(&(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
                     &(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
                     textedit_ui_len - textedit_ui_pos);
                 textedit_ui_current_textedit->buffer[textedit_ui_len--] = '\0';
@@ -241,7 +241,7 @@ bool textedit_ui_process_message(TigMessage* msg)
             textedit_ui_len++;
 
             // Shift characters to the right to make a room a new character.
-            memcpy(&(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
+            memmove(&(textedit_ui_current_textedit->buffer[textedit_ui_pos + 1]),
                 &(textedit_ui_current_textedit->buffer[textedit_ui_pos]),
                 textedit_ui_len - textedit_ui_pos);
         }
