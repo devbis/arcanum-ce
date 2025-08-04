@@ -4120,7 +4120,7 @@ void sub_565230()
 
     for (idx = 0; idx < *wmap_ui_mode_info[WMAP_UI_MODE_WORLD].num_notes; idx++) {
         note = &(wmap_ui_mode_info[WMAP_UI_MODE_WORLD].notes[idx]);
-        if (wmap_note_type_info[idx].enabled) {
+        if (wmap_note_type_info[note->type].enabled) {
             tmp_rect.x = vb_dst_rect.x + note->coords.x;
             tmp_rect.y = vb_dst_rect.y + note->coords.y + wmap_ui_window_frame.y;
             sub_5656B0(tmp_rect.x, tmp_rect.y, &coords);
