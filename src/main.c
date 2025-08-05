@@ -73,6 +73,8 @@ int main(int argc, char** argv)
     chdir(SDL_GetBasePath());
 #elif SDL_PLATFORM_IOS
     chdir(SDL_GetUserFolder(SDL_FOLDER_DOCUMENTS));
+#elif SDL_PLATFORM_ANDROID
+    chdir(SDL_GetPrefPath("com.alexbatalov", "arcanumce"));
 #endif
 
     // Convert args array to WinMain-like lpCmdLine.

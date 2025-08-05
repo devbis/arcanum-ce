@@ -308,7 +308,13 @@ set(SRCS
     "src/main.c"
 )
 
-add_executable(arcanum-ce WIN32 MACOSX_BUNDLE
+if(ANDROID)
+    add_library(arcanum-ce SHARED)
+else()
+    add_executable(arcanum-ce WIN32 MACOSX_BUNDLE)
+endif()
+
+target_sources(arcanum-ce PUBLIC
     ${SRCS}
 )
 
@@ -319,6 +325,11 @@ target_include_directories(arcanum-ce PUBLIC
 target_link_libraries(arcanum-ce PUBLIC
     ${TIG_LIBRARY}
 )
+
+# SDL HID on Android requires C++ linker.
+if(ANDROID)
+    enable_language(CXX)
+endif()
 
 if(APPLE)
     if(IOS)
