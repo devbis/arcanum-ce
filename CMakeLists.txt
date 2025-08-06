@@ -334,6 +334,7 @@ endif()
 if(APPLE)
     if(IOS)
         set(RESOURCES
+            "ios/AppIcon.xcassets"
             "ios/LaunchScreen.storyboard"
         )
 
@@ -342,6 +343,7 @@ if(APPLE)
 
         set_target_properties(arcanum-ce PROPERTIES
             MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/ios/Info.plist"
+            XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
             XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.alexbatalov.arcanum-ce"
             XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
         )
@@ -350,6 +352,7 @@ if(APPLE)
         set(MACOSX_BUNDLE_DISPLAY_NAME "Arcanum")
     else()
         set(RESOURCES
+            "macos/arcanum-ce.icns"
         )
 
         target_sources(arcanum-ce PUBLIC ${RESOURCES})
@@ -363,7 +366,7 @@ if(APPLE)
         )
 
         set(MACOSX_BUNDLE_BUNDLE_NAME "Arcanum: Community Edition")
-        set(MACOSX_DEPLOYMENT_TARGET "11.5")
+        set(MACOSX_BUNDLE_ICON_FILE "arcanum-ce.icns")
     endif()
 
     set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.alexbatalov.arcanum-ce")
