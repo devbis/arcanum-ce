@@ -1865,7 +1865,7 @@ bool sub_404C10(const char* module_name)
     if (tig_file_mkdir(path1)) {
         if (stru_5D0E88.editor == 1) {
             if (byte_5D0FA8[0] == '\0') {
-                sub_52E260(path1, "Module template");
+                tig_file_copy_directory(path1, "Module template");
             }
         }
 
