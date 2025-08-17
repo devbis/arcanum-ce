@@ -669,7 +669,7 @@ bool sub_49CC70(const char* a1, const char* a2)
     char dst[TIG_MAX_PATH];
 
     sub_45B360();
-    sub_52E040(".\\data\\temp");
+    tig_file_empty_directory(".\\data\\temp");
 
     modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
     modal_dialog_info.x = 237;

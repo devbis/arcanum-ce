@@ -536,7 +536,7 @@ bool map_new(MapNewInfo* new_map_info)
         }
     }
 
-    if (!sub_52E040(new_map_info->base_path)) {
+    if (!tig_file_empty_directory(new_map_info->base_path)) {
         return false;
     }
 
@@ -604,7 +604,7 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
 
     tig_file_mkdir(save_path);
     if (!a3) {
-        sub_52E040(save_path);
+        tig_file_empty_directory(save_path);
     }
 
     tig_debug_printf("map_open: reading properties file...");
@@ -690,7 +690,7 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
 
     tig_file_mkdir(map_save_path);
     if (!a3) {
-        sub_52E040(map_save_path);
+        tig_file_empty_directory(map_save_path);
     }
 
     tig_debug_printf("map_open: loading terrain...");

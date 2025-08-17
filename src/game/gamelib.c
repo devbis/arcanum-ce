@@ -415,7 +415,7 @@ void gamelib_reset()
         tig_debug_printf("gamelib_reset: Begin Removing Files...");
         tig_timer_now(&module_started_at);
 
-        if (!sub_52E040("Save\\Current")) {
+        if (!tig_file_empty_directory("Save\\Current")) {
             tig_debug_printf("gamelib_init(): error emptying folder %s\n", "Save\\Current");
         }
 
@@ -476,7 +476,7 @@ void gamelib_exit()
     }
 
     if (tig_file_is_directory("Save\\Current")) {
-        if (!sub_52E040("Save\\Current")) {
+        if (!tig_file_empty_directory("Save\\Current")) {
             // FIXME: Typo in function name, this is definitely not
             // `gamelib_init`.
             tig_debug_printf("gamelib_init(): error emptying folder %s\n", "Save\\Current");
@@ -676,7 +676,7 @@ bool gamelib_mod_load(const char* path)
 
     if (tig_file_is_directory("Save\\Current")) {
         if (!tig_file_is_empty_directory("Save\\Current")) {
-            if (!sub_52E040("Save\\Current")) {
+            if (!tig_file_empty_directory("Save\\Current")) {
                 tig_debug_printf("gamelib_mod_load(): error emptying folder %s\n", "Save\\Current");
                 sub_405070();
                 return false;
@@ -1089,7 +1089,7 @@ bool gamelib_load(const char* name)
 
     tig_debug_printf("gamelib_load: begin removing files...");
     tig_timer_now(&time);
-    if (!sub_52E040("Save\\Current")) {
+    if (!tig_file_empty_directory("Save\\Current")) {
         tig_debug_printf("gamelib_load(): Error clearing folder %s\n", "Save\\Current");
         in_load = false;
         return false;
