@@ -4115,7 +4115,7 @@ int ai_can_see(int64_t source_obj, int64_t target_obj)
         skill_invocation_init(&skill_invocation);
         sub_4440E0(target_obj, &(skill_invocation.source));
         sub_4440E0(source_obj, &(skill_invocation.target));
-        skill_invocation.flags |= 0x4000;
+        skill_invocation.flags |= SKILL_INVOCATION_CHECK_SEEING;
         skill_invocation.skill = BASIC_SKILL_PROWLING;
 
         diff = prowling - skill_invocation_difficulty(&skill_invocation);
@@ -4185,7 +4185,7 @@ int ai_can_hear(int64_t source_obj, int64_t target_obj, int loudness)
         skill_invocation_init(&skill_invocation);
         sub_4440E0(target_obj, &(skill_invocation.source));
         sub_4440E0(source_obj, &(skill_invocation.target));
-        skill_invocation.flags |= 0x2000;
+        skill_invocation.flags |= SKILL_INVOCATION_CHECK_HEARING;
         skill_invocation.skill = BASIC_SKILL_PROWLING;
 
         diff = prowling - skill_invocation_difficulty(&skill_invocation);

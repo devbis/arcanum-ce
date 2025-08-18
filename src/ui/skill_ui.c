@@ -322,7 +322,7 @@ void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3)
             sub_4440E0(obj, &(skill_invocation.source));
             sub_4440E0(a1->obj, &(skill_invocation.target));
             sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation.item));
-            skill_invocation.flags = 4;
+            skill_invocation.flags = SKILL_INVOCATION_0x04;
             skill_invocation.skill = SKILL_DISARM_TRAPS;
             sub_57A620(&skill_invocation);
             sub_57A6B0(&skill_invocation);

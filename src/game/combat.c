@@ -958,7 +958,7 @@ int sub_4B3170(CombatContext* combat)
                     return 0;
                 }
 
-                if ((skill_invocation.flags & 0x01) != 0) {
+                if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
                     MesFileEntry mes_file_entry;
 
                     mes_file_entry.num = 11; // "Dodge!"
@@ -967,7 +967,7 @@ int sub_4B3170(CombatContext* combat)
 
                     combat->flags &= ~(CF_HIT | CF_CRITICAL);
 
-                    if ((skill_invocation.flags & 0x10) != 0) {
+                    if ((skill_invocation.flags & SKILL_INVOCATION_CRITICAL) != 0) {
                         int training = basic_skill_training_get(combat->target_obj, BASIC_SKILL_DODGE);
                         if (random_between(1, 100) <= dword_5B57A8[training]) {
                             combat->flags |= CF_CRITICAL;

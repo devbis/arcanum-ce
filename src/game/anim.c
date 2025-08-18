@@ -6784,10 +6784,10 @@ bool sub_428E10(AnimRunInfo* run_info)
 
     flags = run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data;
     if ((flags & 0x01) != 0) {
-        skill_invocation.flags |= 0x02;
+        skill_invocation.flags |= SKILL_INVOCATION_0x02;
     }
     if ((flags & 0x2000) != 0) {
-        skill_invocation.flags |= 0x1000;
+        skill_invocation.flags |= SKILL_INVOCATION_FORCED;
     }
 
     skill_invocation_run(&skill_invocation);
@@ -6862,7 +6862,7 @@ bool sub_429160(AnimRunInfo* run_info)
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x01) != 0) {
-        skill_invocation.flags |= 0x02;
+        skill_invocation.flags |= SKILL_INVOCATION_0x02;
     }
 
     skill_invocation_run(&skill_invocation);
@@ -7647,7 +7647,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x1) != 0) {
-        skill_invocation.flags |= 0x2;
+        skill_invocation.flags |= SKILL_INVOCATION_0x02;
     }
 
     skill_invocation_run(&skill_invocation);
@@ -7734,7 +7734,7 @@ bool sub_42A4E0(AnimRunInfo* run_info)
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x1) != 0) {
-        skill_invocation.flags |= 0x2;
+        skill_invocation.flags |= SKILL_INVOCATION_0x02;
     }
 
     skill_invocation_run(&skill_invocation);

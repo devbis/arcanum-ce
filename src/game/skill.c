@@ -1611,7 +1611,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
     // is greater than difficulty plus random modifier, or the invocation is a
     // forced success.
     is_success = difficulty + rnd_difficulty_roll <= effectiveness
-        || (skill_invocation->flags & 0x1000) != 0;
+        || (skill_invocation->flags & SKILL_INVOCATION_FORCED) != 0;
 
     // Roll for critical hit/critical miss.
     crit_roll = random_between(1, 100);
@@ -1670,7 +1670,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         }
         break;
     case SKILL_PICK_POCKET: {
-        if ((skill_invocation->flags & 0x2) == 0) {
+        if ((skill_invocation->flags & SKILL_INVOCATION_0x02) == 0) {
             // Steal item from the target object.
             if (is_success) {
                 int64_t parent_obj;
@@ -1986,7 +1986,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             // NOTE: This condition is slightly unclear, I'm not sure it cannot
             // be below 0.
             if (repair <= 0) {
-                if (effectiveness > 0 || (skill_invocation->flags & 0x1000) != 0) {
+                if (effectiveness > 0 || (skill_invocation->flags & SKILL_INVOCATION_FORCED) != 0) {
                     // Provide minimal healing given success rate is non-zero or
                     // it was a forced success.
                     repair = 1;
@@ -2132,7 +2132,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         pkt.success = is_success;
         pkt.flags = 0;
 
-        if ((skill_invocation->flags & 0x04) != 0) {
+        if ((skill_invocation->flags & SKILL_INVOCATION_0x04) != 0) {
             // The master of disarming traps gets a second chance (unless the
             // first attempt was a critical failure).
             if (!is_success
@@ -2528,7 +2528,7 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
     // Calculate lighting penalty.
     if ((critter_flags & OCF_UNDEAD) == 0
         && ((skill_flags[skill] & SKILL_CHECK_LIGHT) != 0
-            || (skill_invocation->flags & 0x4000) != 0)) {
+            || (skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) != 0)) {
         bool affected = true;
 
         // Expert of melee combat/pick locks is unaffected by light penalties.
@@ -2538,12 +2538,12 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
             affected = false;
         }
 
-        if ((((skill_invocation->flags & 0x4000) == 0
+        if ((((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) == 0
                 && basic_skill != BASIC_SKILL_SPOT_TRAP
                 && tech_skill != TECH_SKILL_DISARM_TRAPS)
             || training < TRAINING_APPRENTICE) && affected) {
             int lum;
-            if ((skill_invocation->flags & 0x4000) != 0) {
+            if ((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) != 0) {
                 // Take light level of the source object.
                 lum = sub_4DCE10(source_obj) & 0xFF;
             } else if (target_obj != OBJ_HANDLE_NULL) {
@@ -2570,7 +2570,7 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
             }
 
             // Adjust for dark sight.
-            if ((skill_invocation->flags & 0x4000) != 0) {
+            if ((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) != 0) {
                 if (!critter_has_dark_sight(target_obj)) {
                     penalty = 30 - penalty;
                 }
@@ -2644,7 +2644,7 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
         break;
     }
     case SKILL_PROWLING: {
-        if ((skill_invocation->flags & 0x4000) != 0) {
+        if ((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) != 0) {
             // Check for blocking objects when hiding from a target.
             int64_t blocking_obj;
             int v6 = sub_4ADE00(target_obj,
@@ -2663,7 +2663,7 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
             }
 
             difficulty -= v6;
-        } else if ((skill_invocation->flags & 0x2000) != 0) {
+        } else if ((skill_invocation->flags & SKILL_INVOCATION_CHECK_HEARING) != 0) {
             // Apply armor-based modifier for silent movement.
             for (int inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
                 int64_t inv_item_obj = item_wield_get(source_obj, inventory_location);
@@ -2758,7 +2758,7 @@ void skill_perform_repair_service(int64_t item_obj, int64_t npc_obj, int64_t pc_
 
     // Set up and run repair skill invocation with force success flag set.
     skill_invocation_init(&skill_invocation);
-    skill_invocation.flags |= 0x1000;
+    skill_invocation.flags |= SKILL_INVOCATION_FORCED;
     skill_invocation.skill = SKILL_REPAIR;
     sub_4440E0(npc_obj, &(skill_invocation.source));
     sub_4440E0(item_obj, &(skill_invocation.target));
