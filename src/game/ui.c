@@ -607,12 +607,12 @@ void ui_queue_slide(int slide)
 }
 
 // 0x460BA0
-int sub_460BA0()
+bool ui_gameuilib_mod_load()
 {
-    if (ui_callbacks.field_118 != NULL) {
-        return ui_callbacks.field_118();
+    if (ui_callbacks.gameuilib_mod_load != NULL) {
+        return ui_callbacks.gameuilib_mod_load();
     } else {
-        return 0;
+        return false;
     }
 }
 

@@ -713,8 +713,8 @@ bool sub_49CC70(const char* a1, const char* a2)
         tig_window_modal_dialog(&modal_dialog_info, NULL);
     }
 
-    if (!gamelib_mod_load(a1) || !sub_460BA0()) {
-        if (!gamelib_mod_load(gamelib_default_module_name_get()) || !sub_460BA0()) {
+    if (!gamelib_mod_load(a1) || !ui_gameuilib_mod_load()) {
+        if (!gamelib_mod_load(gamelib_default_module_name_get()) || !ui_gameuilib_mod_load()) {
             tig_debug_printf("Multiplayer: Could not load module %s, or default module %s.\n",
                 a1,
                 gamelib_default_module_name_get());
