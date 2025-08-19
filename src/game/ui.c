@@ -507,10 +507,10 @@ void ui_gameuilib_reset()
 }
 
 // 0x4609E0
-void sub_4609E0(int64_t a1, int64_t a2, int a5, int a6, int a7)
+void ui_start_dialog(int64_t pc_obj, int64_t npc_obj, int script_num, int script_line, int num)
 {
-    if (ui_callbacks.field_E8 != NULL) {
-        ui_callbacks.field_E8(a1, a2, a5, a6, a7);
+    if (ui_callbacks.start_dialog != NULL) {
+        ui_callbacks.start_dialog(pc_obj, npc_obj, script_num, script_line, num);
     }
 }
 
