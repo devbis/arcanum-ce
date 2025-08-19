@@ -115,10 +115,10 @@ void ui_show_inven_identify(int64_t pc_obj, int64_t target_obj)
 }
 
 // 0x460330
-void sub_460330(int64_t obj, int tech, int action)
+void ui_tech_adjust_degree(int64_t obj, int tech, int action)
 {
-    if (ui_callbacks.field_28 != NULL) {
-        ui_callbacks.field_28(obj, tech, action);
+    if (ui_callbacks.tech_adjust_degree != NULL) {
+        ui_callbacks.tech_adjust_degree(obj, tech, action);
     }
 }
 

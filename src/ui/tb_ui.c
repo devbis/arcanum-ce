@@ -80,7 +80,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.notify_item_inserted_or_removed = intgame_notify_item_inserted_or_removed;
     callbacks.show_inven_loot = show_inven_loot;
     callbacks.show_inven_identify = show_inven_identify;
-    callbacks.field_28 = tech_ui_adjust_degree;
+    callbacks.tech_adjust_degree = tech_ui_adjust_degree;
     callbacks.skill_preprocess = skill_ui_preprocess;
     callbacks.skill_activate = skill_ui_activate;
     callbacks.adjust_skill = skill_ui_adjust_skill;
