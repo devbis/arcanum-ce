@@ -498,6 +498,14 @@ void sub_460980(int64_t a1)
     }
 }
 
+// 0x4609D0
+void ui_gameuilib_reset()
+{
+    if (ui_callbacks.gameuilib_reset != NULL) {
+        ui_callbacks.gameuilib_reset();
+    }
+}
+
 // 0x4609E0
 void sub_4609E0(int64_t a1, int64_t a2, int a5, int a6, int a7)
 {

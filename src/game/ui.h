@@ -103,7 +103,7 @@ typedef bool(UI_CALLBACKS_FUNC_D4)(Packet81* pkt);
 typedef void(UI_CALLBACKS_FUNC_D8)(int64_t obj);
 typedef void(UI_CALLBACKS_FUNC_DC)();
 typedef void(UI_CALLBACKS_FUNC_E0)();
-typedef void(UI_CALLBACKS_FUNC_E4)();
+typedef void(UiGameUiLibReset)();
 typedef void(UI_CALLBACKS_FUNC_E8)(int64_t a1, int64_t a2, int a5, int a6, int a7);
 typedef void(UI_CALLBACKS_FUNC_EC)(int64_t a1, int a3);
 typedef void(UI_CALLBACKS_FUNC_F0)(int64_t obj, int a2, int a3, int a4, int a5, int a6, const char* str);
@@ -197,7 +197,7 @@ typedef struct UiCallbacks {
     /* 00D8 */ UI_CALLBACKS_FUNC_D8* field_D8;
     /* 00DC */ UI_CALLBACKS_FUNC_DC* field_DC;
     /* 00E0 */ UI_CALLBACKS_FUNC_E0* field_E0;
-    /* 00E4 */ UI_CALLBACKS_FUNC_E4* field_E4;
+    /* 00E4 */ UiGameUiLibReset* gameuilib_reset;
     /* 00E8 */ UI_CALLBACKS_FUNC_E8* field_E8;
     /* 00EC */ UI_CALLBACKS_FUNC_EC* field_EC;
     /* 00F0 */ UI_CALLBACKS_FUNC_F0* field_F0;
@@ -292,6 +292,7 @@ void ui_schematic_feedback(bool success, int64_t primary_obj, int64_t secondary_
 void sub_460930(int64_t a1, int64_t a2);
 void sub_460960(Packet81* pkt);
 void sub_460980(int64_t a1);
+void ui_gameuilib_reset();
 void sub_4609E0(int64_t a1, int64_t a2, int a5, int a6, int a7);
 void sub_460A20(int64_t a1, int a3);
 void sub_460A40(int64_t obj, int a3, int a4, int a5, int a6, int a7, const char* str);
