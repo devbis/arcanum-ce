@@ -702,12 +702,12 @@ void sub_460CB0(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x460CE0
-int sub_460CE0(int64_t a1, int64_t a2, int a3)
+bool ui_inven_create(int64_t pc_obj, int64_t target_obj, int mode)
 {
-    if (ui_callbacks.field_140 != NULL) {
-        return ui_callbacks.field_140(a1, a2, a3);
+    if (ui_callbacks.inven_create != NULL) {
+        return ui_callbacks.inven_create(pc_obj, target_obj, mode);
     } else {
-        return 0;
+        return false;
     }
 }
 

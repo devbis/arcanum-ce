@@ -142,7 +142,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_134 = sub_572370;
     callbacks.field_138 = sub_572510;
     callbacks.field_13C = sub_572640;
-    callbacks.field_140 = inven_ui_create;
+    callbacks.inven_create = inven_ui_create;
     callbacks.field_150 = NULL;
     callbacks.field_144 = NULL;
     callbacks.field_148 = NULL;

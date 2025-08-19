@@ -676,7 +676,7 @@ void sub_4EE5E0(Packet100* pkt)
             break;
         case 3:
             if (tig_net_is_host()) {
-                sub_460CE0(v1, v2, pkt->d.z.field_38);
+                ui_inven_create(v1, v2, pkt->d.z.field_38);
             }
             break;
         }
