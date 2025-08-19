@@ -2663,7 +2663,7 @@ void MTComponentMovement_ProcFunc()
                 }
 
                 loc = 0;
-                sub_4608B0(dword_5E75F0->source_obj.obj, dword_5E75F0->spell);
+                ui_wmap_select(dword_5E75F0->source_obj.obj, dword_5E75F0->spell);
             } else {
                 MesFileEntry mes_file_entry;
 

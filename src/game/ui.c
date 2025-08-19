@@ -451,10 +451,10 @@ void ui_progressbar_update(int value)
 }
 
 // 0x4608B0
-void sub_4608B0(int64_t a1, int a2)
+void ui_wmap_select(int64_t obj, int spell)
 {
-    if (ui_callbacks.field_C4 != NULL) {
-        ui_callbacks.field_C4(a1, a2);
+    if (ui_callbacks.wmap_select != NULL) {
+        ui_callbacks.wmap_select(obj, spell);
     }
 }
 
