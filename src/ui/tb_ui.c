@@ -49,7 +49,7 @@ static void sub_57CE00();
 static void sub_57CE10();
 static void sub_57CE30(int64_t obj, void* a2, int a3);
 static void handle_sector_changed(int64_t sec, int64_t obj);
-static void ui_charedit_error_msg(int type, int a2);
+static void charedit_error_msg(int type, int param);
 static void sub_57CF70(int64_t a1, int64_t a2);
 static void sub_57CFA0();
 static bool sub_57CFB0();
@@ -108,7 +108,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.notify_sector_changed = handle_sector_changed;
     callbacks.written_newspaper_headline = written_ui_newspaper_headline;
     callbacks.sleep_toggle = sleep_ui_toggle;
-    callbacks.field_B4 = ui_charedit_error_msg;
+    callbacks.charedit_error_msg = charedit_error_msg;
     callbacks.charedit_refresh = charedit_refresh;
     callbacks.progressbar_init = mainmenu_ui_progressbar_init;
     callbacks.progressbar_update = mainmenu_ui_progressbar_update;
@@ -361,7 +361,7 @@ void handle_sector_changed(int64_t sec, int64_t obj)
 }
 
 // 0x57CEE0
-void ui_charedit_error_msg(int type, int a2)
+void charedit_error_msg(int type, int param)
 {
     switch (type) {
     case 0:
@@ -380,7 +380,7 @@ void ui_charedit_error_msg(int type, int a2)
         charedit_error_skill_at_max();
         break;
     case 5:
-        charedit_error_not_enough_stat(a2);
+        charedit_error_not_enough_stat(param);
         break;
     case 6:
         charedit_error_skill_is_zero();

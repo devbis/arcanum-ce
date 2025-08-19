@@ -419,10 +419,10 @@ void ui_sleep_toggle(int64_t bed_obj)
 }
 
 // 0x460840
-void sub_460840(int a1, int a2)
+void ui_charedit_error_msg(int type, int param)
 {
-    if (ui_callbacks.field_B4 != NULL) {
-        ui_callbacks.field_B4(a1, a2);
+    if (ui_callbacks.charedit_error_msg != NULL) {
+        ui_callbacks.charedit_error_msg(type, param);
     }
 }
 
