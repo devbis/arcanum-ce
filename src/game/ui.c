@@ -180,6 +180,14 @@ int sub_460460(int64_t obj)
     }
 }
 
+// 0x460480
+void ui_spell_add(int64_t obj, int spell)
+{
+    if (ui_callbacks.spell_add != NULL) {
+        ui_callbacks.spell_add(obj, spell);
+    }
+}
+
 // 0x4604A0
 bool ui_spell_maintain_add(int mt_id)
 {
