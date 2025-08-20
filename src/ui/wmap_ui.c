@@ -470,7 +470,7 @@ static const char* wmap_ui_action;
 static bool wmap_ui_encounter;
 
 // 0x66D9C8
-static bool dword_66D9C8;
+static bool wmap_ui_selecting;
 
 // 0x66D9CC
 static int dword_66D9CC;
@@ -1080,7 +1080,7 @@ void wmap_ui_encounter_end()
 void wmap_ui_open()
 {
     wmap_ui_spell = -1;
-    dword_66D9C8 = 0;
+    wmap_ui_selecting = false;
     wmap_ui_obj = OBJ_HANDLE_NULL;
     wmap_ui_open_internal();
 }
@@ -1091,7 +1091,7 @@ void wmap_ui_select(int64_t obj, int spell)
     wmap_ui_obj = obj;
     dword_65E968 = 0;
     stru_64E048[0].field_3C0 = 0;
-    dword_66D9C8 = 1;
+    wmap_ui_selecting = true;
     dword_66D880 = 0;
     wmap_ui_spell = spell;
     wmap_ui_open_internal();
@@ -1158,7 +1158,7 @@ void wmap_ui_open_internal()
     }
 
     if (!wmap_load_worldmap_info()) {
-        if (dword_66D9C8) {
+        if (wmap_ui_selecting) {
             sub_452650(pc_obj);
             return;
         }
@@ -1173,7 +1173,7 @@ void wmap_ui_open_internal()
         return;
     }
 
-    if (dword_66D9C8) {
+    if (wmap_ui_selecting) {
         wmap_ui_townmap = TOWNMAP_NONE;
     } else {
         sub_560EF0();
@@ -1198,7 +1198,7 @@ void wmap_ui_open_internal()
         wmap_ui_close();
         intgame_mode_set(INTGAME_MODE_MAIN);
 
-        if (dword_66D9C8) {
+        if (wmap_ui_selecting) {
             sub_452650(pc_obj);
             return;
         }
@@ -1798,7 +1798,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         return true;
                     }
 
-                    if (!dword_66D9C8) {
+                    if (!wmap_ui_selecting) {
                         return true;
                     }
 
@@ -2091,7 +2091,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     return true;
                 }
 
-                if (!dword_66D9C8) {
+                if (!wmap_ui_selecting) {
                     wmap_ui_mode_set(WMAP_UI_MODE_TOWN);
                     return true;
                 }
