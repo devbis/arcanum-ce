@@ -443,10 +443,10 @@ static bool wmap_ui_textedit_focused;
 static WmapNoteType dword_66D89C;
 
 // 0x66D8A0
-static int dword_66D8A0;
+static int wmap_ui_note_width;
 
 // 0x66D8A4
-static int dword_66D8A4;
+static int wmap_ui_note_height;
 
 // 0x66D8A8
 static bool wmap_ui_navigating;
@@ -1345,8 +1345,8 @@ bool wmap_load_worldmap_info()
     }
 
     dword_5C9AD8 = -1;
-    dword_66D8A0 = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].width;
-    dword_66D8A4 = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].height;
+    wmap_ui_note_width = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].width;
+    wmap_ui_note_height = wmap_note_type_info[WMAP_NOTE_TYPE_LOC].height;
     qword_66D850 = 320;
     sub_560EE0();
 
@@ -3642,8 +3642,8 @@ bool sub_564780(WmapCoords* coords, int* idx_ptr)
     route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
         ? WMAP_ROUTE_TYPE_TOWN
         : WMAP_ROUTE_TYPE_WORLD;
-    dx = dword_66D8A0 / 2 + 5;
-    dy = dword_66D8A4 / 2 + 5;
+    dx = wmap_ui_note_width / 2 + 5;
+    dy = wmap_ui_note_height / 2 + 5;
 
     for (idx = wmap_ui_routes[route_type].length - 1; idx >= 0; idx--) {
         if (coords->x >= wmap_ui_routes[route_type].waypoints[idx].coords.x - dx
