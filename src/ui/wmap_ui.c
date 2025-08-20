@@ -45,6 +45,12 @@ typedef enum WmapNoteType {
     WMAP_NOTE_TYPE_COUNT,
 } WmapNoteType;
 
+typedef enum WmapRouteType {
+    WMAP_ROUTE_TYPE_WORLD,
+    WMAP_ROUTE_TYPE_TOWN,
+    WMAP_ROUTE_TYPE_COUNT,
+} WmapRouteType;
+
 typedef struct WmapCoords {
     int x;
     int y;
@@ -124,22 +130,22 @@ typedef struct WmapInfo {
     /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
 } WmapInfo;
 
-typedef struct S64E048 {
+typedef struct WmapRouteWaypoint {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
     /* 0008 */ WmapCoords coords;
     /* 0010 */ int64_t loc;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-} S64E048;
+    /* 0018 */ int start;
+    /* 001C */ int steps;
+} WmapRouteWaypoint;
 
-typedef struct S64E408 {
-    /* 0000 */ S64E048 field_0[30];
-    /* 03C0 */ int field_3C0;
+typedef struct WmapRoute {
+    /* 0000 */ WmapRouteWaypoint waypoints[30];
+    /* 03C0 */ int length;
     /* 03C4 */ int field_3C4;
     /* 03C8 */ int field_3C8;
     /* 03CC */ int field_3CC;
-} S64E408;
+} WmapRoute;
 
 // 0x5C9160
 static WmapNoteTypeInfo wmap_note_type_info[WMAP_NOTE_TYPE_COUNT] = {
@@ -224,7 +230,7 @@ static void sub_564830(int a1, WmapCoords* coords);
 static void sub_564840(int a1);
 static void sub_5648E0(int a1, int a2, bool a3);
 static void sub_564940();
-static void sub_564970(S64E048* a1);
+static void sub_564970(WmapRouteWaypoint* wp);
 static void sub_5649C0();
 static void sub_5649D0(int a1);
 static bool sub_5649F0(int64_t loc);
@@ -332,7 +338,7 @@ static tig_color_t dword_64E034;
 static tig_color_t dword_64E03C;
 
 // 0x64E048
-static S64E408 stru_64E048[2];
+static WmapRoute wmap_ui_routes[WMAP_ROUTE_TYPE_COUNT];
 
 // 0x64E7E8
 static WmapCoords stru_64E7E8;
@@ -741,10 +747,10 @@ bool wmap_ui_init(GameInitInfo* init_info)
 
     wmap_ui_compass_arrow_num_frames = art_anim_data.num_frames;
 
-    for (index = 0; index < 2; index++) {
-        stru_64E048[index].field_3C0 = 0;
-        stru_64E048[index].field_3C4 = 1;
-        stru_64E048[index].field_3C8 = 1;
+    for (index = 0; index < WMAP_ROUTE_TYPE_COUNT; index++) {
+        wmap_ui_routes[index].length = 0;
+        wmap_ui_routes[index].field_3C4 = 1;
+        wmap_ui_routes[index].field_3C8 = 1;
     }
 
     wmap_ui_initialized = true;
@@ -887,17 +893,17 @@ void wmap_ui_reset()
             wmap_ui_mode_info[index].field_198 = -1;
         }
 
-        for (index = 0; index < 2; index++) {
-            stru_64E048[index].field_3C0 = 0;
-            stru_64E048[index].field_3C4 = 1;
-            stru_64E048[index].field_3C8 = 1;
+        for (index = 0; index < WMAP_ROUTE_TYPE_COUNT; index++) {
+            wmap_ui_routes[index].length = 0;
+            wmap_ui_routes[index].field_3C4 = 1;
+            wmap_ui_routes[index].field_3C8 = 1;
         }
 
         dword_5C9AD8 = -1;
         wmap_ui_mode = WMAP_UI_MODE_WORLD;
         dword_66D8AC = 0;
         dword_65E968 = 0;
-        stru_64E048[0].field_3C0 = 0;
+        wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length = 0;
         wmap_ui_encounter = false;
     }
 }
@@ -1090,7 +1096,7 @@ void wmap_ui_select(int64_t obj, int spell)
 {
     wmap_ui_obj = obj;
     dword_65E968 = 0;
-    stru_64E048[0].field_3C0 = 0;
+    wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length = 0;
     wmap_ui_selecting = true;
     dword_66D880 = 0;
     wmap_ui_spell = spell;
@@ -1573,7 +1579,7 @@ bool wmap_ui_create()
 
     dword_5C9B18 = -1;
     wmap_ui_compass_arrow_frame_set(1);
-    stru_64E048[0].field_3C8 = dword_66D880 != 0;
+    wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = dword_66D880 != 0;
     wmap_ui_created = true;
 
     return true;
@@ -1642,7 +1648,7 @@ bool sub_5615D0(int a1)
     if (dword_66D8AC != a1) {
         switch (a1) {
         case 0:
-            stru_64E048[0].field_3C8 = dword_66D880 != 0;
+            wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = dword_66D880 != 0;
             break;
         case 2:
             if (!sub_565140()) {
@@ -1780,18 +1786,18 @@ bool wmap_ui_message_filter(TigMessage* msg)
             case WMAP_UI_MODE_WORLD:
                 switch (dword_66D8AC) {
                 case 0: {
-                    if (stru_64E048[0].field_3C8) {
+                    if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8) {
                         if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
-                            sub_5649D0(stru_64E048[0].field_0[dword_5C9AD8].field_4);
+                            sub_5649D0(wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[dword_5C9AD8].field_4);
                             sub_5615D0(1);
-                            stru_64E048[0].field_3C8 = 0;
+                            wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = 0;
                             return true;
                         }
 
                         if (sub_5627B0(&stru_64E7E8) && sub_5643E0(&stru_64E7E8)) {
-                            dword_5C9AD8 = stru_64E048[0].field_3C0 - 1;
+                            dword_5C9AD8 = wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length - 1;
                             sub_5615D0(1);
-                            stru_64E048[0].field_3C8 = 0;
+                            wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = 0;
                             return true;
                         }
 
@@ -1869,16 +1875,16 @@ bool wmap_ui_message_filter(TigMessage* msg)
             case WMAP_UI_MODE_TOWN:
                 switch (dword_66D8AC) {
                 case 0:
-                    if (stru_64E048[1].field_3C8) {
+                    if (wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8) {
                         if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
-                            sub_5649D0(stru_64E048[1].field_0[dword_5C9AD8].field_4);
-                            stru_64E048[1].field_3C8 = 0;
+                            sub_5649D0(wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].waypoints[dword_5C9AD8].field_4);
+                            wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8 = 0;
                             return true;
                         }
 
                         if (sub_5627B0(&stru_64E7E8) && sub_5643E0(&stru_64E7E8)) {
-                            dword_5C9AD8 = stru_64E048[1].field_3C0 - 1;
-                            stru_64E048[1].field_3C8 = 0;
+                            dword_5C9AD8 = wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].length - 1;
+                            wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8 = 0;
                             return true;
                         }
                     }
@@ -1895,7 +1901,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
             switch (wmap_ui_mode) {
             case WMAP_UI_MODE_WORLD:
-                stru_64E048[0].field_3C8 = dword_66D880 != 0;
+                wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = dword_66D880 != 0;
                 if (dword_66D8AC == 1 || dword_66D8AC == 4) {
                     sub_5615D0(0);
                 }
@@ -1914,7 +1920,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 }
                 break;
             case WMAP_UI_MODE_TOWN:
-                stru_64E048[1].field_3C8 = 1;
+                wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8 = 1;
                 if (dword_66D8AC == 1 || dword_66D8AC == 4) {
                     sub_5615D0(0);
                 }
@@ -1936,15 +1942,17 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return false;
             }
 
-            int idx = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
+            WmapRouteType route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+                ? WMAP_ROUTE_TYPE_TOWN
+                : WMAP_ROUTE_TYPE_WORLD;
             if (dword_5C9AD8 == -1) {
-                dword_5C9AD8 = stru_64E048[idx].field_3C0 - 1;
+                dword_5C9AD8 = wmap_ui_routes[route_type].length - 1;
             }
 
             if (dword_5C9AD8 >= 0) {
                 sub_564840(dword_5C9AD8);
-                if (dword_5C9AD8 >= stru_64E048[idx].field_3C0) {
-                    dword_5C9AD8 = stru_64E048[idx].field_3C0 - 1;
+                if (dword_5C9AD8 >= wmap_ui_routes[route_type].length) {
+                    dword_5C9AD8 = wmap_ui_routes[route_type].length - 1;
                 }
             }
 
@@ -2120,7 +2128,10 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                 if (dword_66D8AC == 0) {
                     if (dword_66D880) {
-                        if (stru_64E048[wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0].field_3C0 > 0) {
+                        WmapRouteType route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+                            ? WMAP_ROUTE_TYPE_TOWN
+                            : WMAP_ROUTE_TYPE_WORLD;
+                        if (wmap_ui_routes[route_type].length > 0) {
                             dword_5C9AD8 = -1;
 
                             if (sub_5615D0(2)) {
@@ -2135,13 +2146,13 @@ bool wmap_ui_message_filter(TigMessage* msg)
                             }
                         }
                     } else {
-                        if (wmap_ui_mode == WMAP_UI_MODE_TOWN && stru_64E048[1].field_3C0 > 0) {
+                        if (wmap_ui_mode == WMAP_UI_MODE_TOWN && wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].length > 0) {
                             sub_433640(player_get_local_pc_obj(),
-                                stru_64E048[1].field_0[0].loc);
+                                wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].waypoints[0].loc);
 
-                            for (int idx = 1; idx < stru_64E048[1].field_3C0; idx++) {
+                            for (int idx = 1; idx < wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].length; idx++) {
                                 sub_433A00(player_get_local_pc_obj(),
-                                    stru_64E048[1].field_0[idx].loc,
+                                    wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].waypoints[idx].loc,
                                     tig_net_is_active()
                                         && !tig_net_is_host());
                             }
@@ -2556,7 +2567,7 @@ bool wmap_load_townmap_info()
     int index;
 
     wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
-    stru_64E048[1].field_3C0 = 0;
+    wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].length = 0;
 
     if (!townmap_info(wmap_ui_townmap, &wmap_ui_tmi)) {
         wmap_ui_townmap = TOWNMAP_NONE;
@@ -3519,9 +3530,9 @@ bool sub_5643C0(const char* str)
 bool sub_5643E0(WmapCoords* coords)
 {
     int start = 0;
-    int type = 0;
+    WmapRouteType route_type = WMAP_ROUTE_TYPE_WORLD;
     int wp_idx;
-    S64E048* wp;
+    WmapRouteWaypoint* wp;
     int64_t from;
     int64_t to;
     MesFileEntry mes_file_entry;
@@ -3531,27 +3542,27 @@ bool sub_5643E0(WmapCoords* coords)
 
     if (dword_66D880) {
         if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
-            type = 1;
+            route_type = WMAP_ROUTE_TYPE_TOWN;
         }
     } else {
         if (wmap_ui_mode != WMAP_UI_MODE_TOWN) {
             return false;
         }
-        type = 1;
+        route_type = WMAP_ROUTE_TYPE_TOWN;
     }
 
-    wp_idx = stru_64E048[type].field_3C0;
+    wp_idx = wmap_ui_routes[route_type].length;
     if (wp_idx >= 30) {
         return false;
     }
 
-    wp = &(stru_64E048[type].field_0[wp_idx]);
+    wp = &(wmap_ui_routes[route_type].waypoints[wp_idx]);
 
     if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
         if (wp_idx == 0) {
             from = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
         } else if (wp_idx < 6) {
-            from = stru_64E048[type].field_0[wp_idx - 1].loc;
+            from = wmap_ui_routes[route_type].waypoints[wp_idx - 1].loc;
         } else {
             // "You have reached the maximum allowable number of waypoints and may not add another."
             mes_file_entry.num = 611;
@@ -3578,8 +3589,8 @@ bool sub_5643E0(WmapCoords* coords)
         if (wp_idx == 0) {
             sub_561800(&(wmap_ui_mode_info[wmap_ui_mode].field_3C), &from);
         } else {
-            start = stru_64E048[type].field_0[wp_idx - 1].field_18 + stru_64E048[type].field_0[wp_idx - 1].field_1C;
-            from = stru_64E048[type].field_0[wp_idx - 1].loc;
+            start = wmap_ui_routes[route_type].waypoints[wp_idx - 1].start + wmap_ui_routes[route_type].waypoints[wp_idx - 1].steps;
+            from = wmap_ui_routes[route_type].waypoints[wp_idx - 1].loc;
         }
 
         path_info.from = sector_id_from_loc(from);
@@ -3601,17 +3612,17 @@ bool sub_5643E0(WmapCoords* coords)
         }
     }
 
-    dword_5C9AD8 = stru_64E048[type].field_3C0;
+    dword_5C9AD8 = wmap_ui_routes[route_type].length;
 
-    wp->field_1C = steps;
-    wp->field_18 = start;
+    wp->steps = steps;
+    wp->start = start;
     wp->field_0 = 0;
     wp->coords = *coords;
     wp->loc = to;
     wp->field_4 = -1;
 
-    sub_5648E0(stru_64E048[type].field_3C0, stru_64E048[type].field_3C4, false);
-    stru_64E048[type].field_3C0++;
+    sub_5648E0(wmap_ui_routes[route_type].length, wmap_ui_routes[route_type].field_3C4, false);
+    wmap_ui_routes[route_type].length++;
 
     sub_5649C0();
 
@@ -3623,24 +3634,22 @@ bool sub_5643E0(WmapCoords* coords)
 // 0x564780
 bool sub_564780(WmapCoords* coords, int* idx_ptr)
 {
-    int v1;
+    WmapRouteType route_type;
     int dx;
     int dy;
     int idx;
 
-    v1 = 0;
+    route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+        ? WMAP_ROUTE_TYPE_TOWN
+        : WMAP_ROUTE_TYPE_WORLD;
     dx = dword_66D8A0 / 2 + 5;
     dy = dword_66D8A4 / 2 + 5;
 
-    if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
-        v1 = 1;
-    }
-
-    for (idx = stru_64E048[v1].field_3C0 - 1; idx >= 0; idx--) {
-        if (coords->x >= stru_64E048[v1].field_0[idx].coords.x - dx
-            && coords->x <= stru_64E048[v1].field_0[idx].coords.x + dx
-            && coords->y >= stru_64E048[v1].field_0[idx].coords.y - dy
-            && coords->y <= stru_64E048[v1].field_0[idx].coords.y + dy) {
+    for (idx = wmap_ui_routes[route_type].length - 1; idx >= 0; idx--) {
+        if (coords->x >= wmap_ui_routes[route_type].waypoints[idx].coords.x - dx
+            && coords->x <= wmap_ui_routes[route_type].waypoints[idx].coords.x + dx
+            && coords->y >= wmap_ui_routes[route_type].waypoints[idx].coords.y - dy
+            && coords->y <= wmap_ui_routes[route_type].waypoints[idx].coords.y + dy) {
             *idx_ptr = idx;
             return true;
         }
@@ -3659,21 +3668,23 @@ void sub_564830(int a1, WmapCoords* coords)
 // 0x564840
 void sub_564840(int a1)
 {
-    int v1;
+    WmapRouteType route_type;
     int index;
 
-    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
-    if (stru_64E048[v1].field_3C0 > 0 && a1 < stru_64E048[v1].field_3C0) {
-        stru_64E048[v1].field_3C0--;
+    route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+        ? WMAP_ROUTE_TYPE_TOWN
+        : WMAP_ROUTE_TYPE_WORLD;
+    if (wmap_ui_routes[route_type].length > 0 && a1 < wmap_ui_routes[route_type].length) {
+        wmap_ui_routes[route_type].length--;
 
-        for (index = a1; index < stru_64E048[v1].field_3C0; index++) {
-            stru_64E048[v1].field_0[index] = stru_64E048[v1].field_0[index + 1];
+        for (index = a1; index < wmap_ui_routes[route_type].length; index++) {
+            wmap_ui_routes[route_type].waypoints[index] = wmap_ui_routes[route_type].waypoints[index + 1];
         }
 
         sub_5649C0();
         wmap_ui_mode_info[wmap_ui_mode].refresh();
 
-        if (stru_64E048[v1].field_3C0 == 0) {
+        if (wmap_ui_routes[route_type].length == 0) {
             dword_65E968 = 0;
         }
     }
@@ -3682,18 +3693,20 @@ void sub_564840(int a1)
 // 0x5648E0
 void sub_5648E0(int a1, int a2, bool a3)
 {
-    int v1;
+    WmapRouteType route_type;
 
     if (a1 == -1) {
         return;
     }
 
-    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
-    if (stru_64E048[v1].field_0[a1].field_4 == a2) {
+    route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+        ? WMAP_ROUTE_TYPE_TOWN
+        : WMAP_ROUTE_TYPE_WORLD;
+    if (wmap_ui_routes[route_type].waypoints[a1].field_4 == a2) {
         return;
     }
 
-    stru_64E048[v1].field_0[a1].field_4 = a2;
+    wmap_ui_routes[route_type].waypoints[a1].field_4 = a2;
 
     if (a3) {
         sub_5649C0();
@@ -3705,19 +3718,19 @@ void sub_5648E0(int a1, int a2, bool a3)
 void sub_564940()
 {
     if (dword_5C9AD8 != -1 && wmap_ui_mode != WMAP_UI_MODE_TOWN) {
-        sub_564970(&(stru_64E048[dword_5C9AD8].field_0[0]));
+        sub_564970(&(wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[dword_5C9AD8]));
     }
 }
 
 // 0x564970
-void sub_564970(S64E048* a1)
+void sub_564970(WmapRouteWaypoint* wp)
 {
-    int v1;
+    int area;
 
-    v1 = area_get_nearest_known_area(a1->loc, player_get_local_pc_obj(), qword_66D850);
-    if (v1 > 0) {
-        a1->loc = area_get_location(v1);
-        sub_561490(a1->loc, &(a1->coords));
+    area = area_get_nearest_known_area(wp->loc, player_get_local_pc_obj(), qword_66D850);
+    if (area > 0) {
+        wp->loc = area_get_location(area);
+        sub_561490(wp->loc, &(wp->coords));
     }
 }
 
@@ -3844,7 +3857,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
     v1 = false;
     wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
 
-    if (stru_64E048[0].field_3C0 > 0) {
+    if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length > 0) {
         v8 = wmap_info->field_3C;
 
         v6 = wmap_info->field_3C;
@@ -3854,14 +3867,14 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 
         sub_564A70(player_get_local_pc_obj(), loc);
 
-        if (dword_65E968 >= stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
+        if (dword_65E968 >= wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].start + wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].steps) {
             v0 = true;
 
             sub_564840(0);
 
-            if (stru_64E048[0].field_3C0 > 0) {
+            if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length > 0) {
                 if (!sub_565140()) {
-                    while (stru_64E048[0].field_3C0 > 0) {
+                    while (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length > 0) {
                         sub_564840(0);
                     }
 
@@ -3875,7 +3888,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
         }
 
         sub_563590(&wmap_info->field_3C, false);
-        wmap_ui_compass_arrow_frame_set(wmap_ui_compass_arrow_frame_calc(&wmap_info->field_3C, &stru_64E048[0].field_0[0].coords));
+        wmap_ui_compass_arrow_frame_set(wmap_ui_compass_arrow_frame_calc(&wmap_info->field_3C, &wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].coords));
         sub_5649C0();
         wmap_ui_mode_info[wmap_ui_mode].refresh();
     }
@@ -3891,12 +3904,12 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
         return true;
     }
 
-    if (stru_64E048[0].field_3C0 <= 0
-        || dword_65E968 >= stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
+    if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length <= 0
+        || dword_65E968 >= wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].start + wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].steps) {
         sub_5615D0(0);
         wmap_ui_close();
         dword_65E968 = 0;
-        stru_64E048[0].field_3C0 = 0;
+        wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length = 0;
         return true;
     }
 
@@ -4067,10 +4080,10 @@ void sub_565170(WmapCoords* coords)
     sector_in_dir(sector_id_from_loc(loc), byte_64E828[dword_65E968], &adjacent_sec);
 
     dword_65E968++;
-    if (dword_65E968 < stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
+    if (dword_65E968 < wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].start + wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].steps) {
         sub_561490(sector_loc_from_id(adjacent_sec), coords);
     } else {
-        sub_561490(stru_64E048[0].field_0[0].loc, coords);
+        sub_561490(wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].loc, coords);
     }
 }
 
@@ -4810,7 +4823,7 @@ void wmap_town_refresh_rect(TigRect* rect)
 // 0x566A80
 void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
 {
-    int v1;
+    WmapRouteType route_type;
     TigArtBlitInfo art_blit_info;
     TigRect src_rect;
     TigRect dst_rect;
@@ -4823,8 +4836,10 @@ void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
     int x2;
     int y2;
 
-    v1 = wmap_ui_mode == WMAP_UI_MODE_TOWN ? 1 : 0;
-    if (stru_64E048[v1].field_3C0 <= 0) {
+    route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
+        ? WMAP_ROUTE_TYPE_TOWN
+        : WMAP_ROUTE_TYPE_WORLD;
+    if (wmap_ui_routes[route_type].length <= 0) {
         return;
     }
 
@@ -4848,9 +4863,9 @@ void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_video_buffer = dword_64E7F4;
 
-    for (index = 0; index < stru_64E048[v1].field_3C0; index++) {
-        x2 = a2->x + stru_64E048[v1].field_0[index].coords.x - a1->field_34;
-        y2 = a2->y + stru_64E048[v1].field_0[index].coords.y - a1->field_38;
+    for (index = 0; index < wmap_ui_routes[route_type].length; index++) {
+        x2 = a2->x + wmap_ui_routes[route_type].waypoints[index].coords.x - a1->field_34;
+        y2 = a2->y + wmap_ui_routes[route_type].waypoints[index].coords.y - a1->field_38;
 
         line.x1 = x1;
         line.y1 = y1;
