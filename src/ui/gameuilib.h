@@ -11,8 +11,8 @@ bool gameuilib_mod_load();
 void gameuilib_mod_unload();
 bool gameuilib_save();
 bool gameuilib_load();
-bool sub_53EAD0();
-void sub_53EAF0();
-void sub_53EB00();
+bool gameuilib_wants_mainmenu();
+void gameuilib_wants_mainmenu_set();
+void gameuilib_wants_mainmenu_unset();
 
 #endif /* ARCANUM_UI_GAMEUILIB_H_ */

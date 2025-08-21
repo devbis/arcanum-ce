@@ -1625,7 +1625,7 @@ void sub_5412E0(bool a1)
     TimeEvent timeevent;
 
     if (mainmenu_ui_active) {
-        sub_53EB00();
+        gameuilib_wants_mainmenu_unset();
 
         pc_obj = player_get_local_pc_obj();
 
@@ -5596,7 +5596,7 @@ bool sub_549310(tig_button_handle_t button_handle)
         mainmenu_ui_type = !dword_5C4000 ? MM_TYPE_1 : MM_TYPE_DEFAULT;
         mainmenu_ui_open();
     } else {
-        sub_53EAF0();
+        gameuilib_wants_mainmenu_set();
     }
 
     if (!gamelib_mod_load(gamelib_default_module_name_get())

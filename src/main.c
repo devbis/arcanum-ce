@@ -384,7 +384,7 @@ void main_loop()
 
             intgame_process_event(&message);
 
-            if (sub_53EAD0()) {
+            if (gameuilib_wants_mainmenu()) {
                 mainmenu_ui_start(MM_TYPE_DEFAULT);
                 if (!mainmenu_ui_handle()) {
                     return;

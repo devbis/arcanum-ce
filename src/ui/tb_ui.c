@@ -96,7 +96,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_70 = sub_57CE10;
     callbacks.field_74 = sub_57CE00;
     callbacks.field_78 = sub_57CE30;
-    callbacks.field_88 = sub_53EAF0;
+    callbacks.field_88 = gameuilib_wants_mainmenu_set;
     callbacks.field_84 = sub_557730;
     callbacks.written_start_obj = written_ui_start_obj;
     callbacks.written_start_type = written_ui_start_type;

@@ -31,10 +31,24 @@
 #include "ui/wmap_ui.h"
 #include "ui/written_ui.h"
 
-#define MODULE_COUNT 32
+/**
+ * Path to the current save directory.
+ */
 #define SAVE_CURRENT "Save\\Current"
+
+/**
+ * Path to the `data2.sav` file in the current save directory.
+ */
 #define SAVE_CURRENT_DATA2_SAV "Save\\Current\\data2.sav"
+
+/**
+ * Version number for the save file format.
+ */
 #define VERSION 25
+
+/**
+ * Sentinel value to mark module data boundaries in the save file.
+ */
 #define SENTINEL 0xBEEFCAFE
 
 typedef bool(GameUiInitFunc)(GameInitInfo* init_info);
@@ -58,8 +72,10 @@ typedef struct GameUiLibModule {
     GameUiResizeFunc* resize_func;
 } GameUiLibModule;
 
-// 0x5C2AE0
-static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
+/**
+ * 0x5C2AE0
+ */
+static GameUiLibModule gameuilib_modules[] = {
     { "Scrollbar", scrollbar_ui_init, scrollbar_ui_reset, NULL, NULL, scrollbar_ui_exit, NULL, NULL, NULL },
     { "Cyclic-UI", cyclic_ui_init, NULL, NULL, NULL, cyclic_ui_exit, NULL, NULL, NULL },
     { "MainMenu-UI", mainmenu_ui_init, NULL, NULL, NULL, mainmenu_ui_exit, NULL, NULL, NULL },
@@ -91,25 +107,46 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Compact-UI", compact_ui_init, compact_ui_reset, NULL, NULL, compact_ui_exit, NULL, NULL, NULL },
 };
 
-// 0x63CBE0
-static bool dword_63CBE0;
+#define MODULE_COUNT SDL_arraysize(gameuilib_modules)
 
-// 0x63CBE4
+/**
+ * Flag indicating if the game UI wants to present mainmenu.
+ *
+ * 0x63CBE0
+ */
+static bool wants_mainmenu;
+
+/**
+ * Flag indicating if the game UI library is initialized.
+ *
+ * 0x63CBE4
+ */
 static bool gameuilib_initialized;
 
-// 0x63CBE8
+/**
+ * Flag indicating if the game UI module is loaded.
+ *
+ * 0x63CBE8
+ */
 static bool gameuilib_mod_loaded;
 
-// 0x53E600
+/**
+ * Called when the game is initialized.
+ *
+ * 0x53E600
+ */
 bool gameuilib_init(GameInitInfo* init_info)
 {
     int index;
 
+    // Initialize each module.
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].init_func != NULL) {
             if (!gameuilib_modules[index].init_func(init_info)) {
                 tig_debug_printf("gameuilib_init(): init function %d (%s) failed\n", index, gameuilib_modules[index].name);
 
+                // Something went wrong - clean up prevously initialized
+                // modules.
                 while (--index >= 0) {
                     if (gameuilib_modules[index].exit_func != NULL) {
                         gameuilib_modules[index].exit_func();
@@ -123,19 +160,25 @@ bool gameuilib_init(GameInitInfo* init_info)
 
     gameuilib_initialized = true;
 
+    // Register save and load callbacks.
     gamelib_set_extra_save_func(gameuilib_save);
     gamelib_set_extra_load_func(gameuilib_load);
 
     return true;
 }
 
-// 0x53E6A0
+/**
+ * Called when the game shuts down.
+ *
+ * 0x53E6A0
+ */
 void gameuilib_exit()
 {
     int index;
 
     tig_debug_printf("[Exiting Game]\n");
 
+    // Exit each module in reverse order.
     for (index = MODULE_COUNT - 1; index >= 0; index--) {
         if (gameuilib_modules[index].exit_func != NULL) {
             gameuilib_modules[index].exit_func();
@@ -145,7 +188,11 @@ void gameuilib_exit()
     gameuilib_initialized = false;
 }
 
-// 0x53E6E0
+/**
+ * Called when the game is being reset.
+ *
+ * 0x53E6E0
+ */
 void gameuilib_reset()
 {
     int index;
@@ -157,7 +204,11 @@ void gameuilib_reset()
     }
 }
 
-// 0x53E700
+/**
+ * Called when the window size has changed.
+ *
+ * 0x53E700
+ */
 void gameuilib_resize(GameResizeInfo* resize_info)
 {
     int index;
@@ -169,7 +220,11 @@ void gameuilib_resize(GameResizeInfo* resize_info)
     }
 }
 
-// 0x53E730
+/**
+ * Called when a module is being loaded.
+ *
+ * 0x53E730
+ */
 bool gameuilib_mod_load()
 {
     int index;
@@ -179,6 +234,7 @@ bool gameuilib_mod_load()
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].mod_load_func != NULL) {
             if (!gameuilib_modules[index].mod_load_func()) {
+                // Something went wrong - clean up prevously loaded modules.
                 while (--index >= 0) {
                     if (gameuilib_modules[index].mod_unload_func != NULL) {
                         gameuilib_modules[index].mod_unload_func();
@@ -195,23 +251,34 @@ bool gameuilib_mod_load()
     return true;
 }
 
-// 0x53E790
+/**
+ * Called when a module is being unloaded.
+ *
+ * 0x53E790
+ */
 void gameuilib_mod_unload()
 {
     int index;
 
-    if (gameuilib_mod_loaded) {
-        for (index = MODULE_COUNT - 1; index >= 0; index--) {
-            if (gameuilib_modules[index].mod_unload_func != NULL) {
-                gameuilib_modules[index].mod_unload_func();
-            }
-        }
-
-        gameuilib_mod_loaded = false;
+    if (!gameuilib_mod_loaded) {
+        return;
     }
+
+    // Unload each module in reverse order.
+    for (index = MODULE_COUNT - 1; index >= 0; index--) {
+        if (gameuilib_modules[index].mod_unload_func != NULL) {
+            gameuilib_modules[index].mod_unload_func();
+        }
+    }
+
+    gameuilib_mod_loaded = false;
 }
 
-// 0x53E7C0
+/**
+ * Called when the game is being saved.
+ *
+ * 0x53E7C0
+ */
 bool gameuilib_save()
 {
     int sentinel = SENTINEL;
@@ -221,17 +288,20 @@ bool gameuilib_save()
     int index;
     int pos;
 
+    // Check save directory existence.
     if (!tig_file_is_directory(SAVE_CURRENT)) {
         tig_debug_printf("gameuilib_save(): Error finding folder %s\n", SAVE_CURRENT);
         return false;
     }
 
+    // Open save file.
     stream = tig_file_fopen(SAVE_CURRENT_DATA2_SAV, "wb");
     if (stream == NULL) {
         tig_debug_printf("gameuilib_save(): Error creating data2.sav\n");
         return false;
     }
 
+    // Write version.
     version = VERSION;
     if (tig_file_fwrite(&version, sizeof(version), 1, stream) != 1) {
         tig_debug_printf("gameuilib_save(): Error writing version\n");
@@ -240,9 +310,11 @@ bool gameuilib_save()
         return false;
     }
 
+    // Retrieve start position of the first module.
     tig_file_fgetpos(stream, &start_pos);
     tig_debug_printf("\ngameuilib_save: Start Pos: %lu\n", start_pos);
 
+    // Save each module's state.
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].save_func != NULL) {
             if (!gameuilib_modules[index].save_func(stream)) {
@@ -252,6 +324,7 @@ bool gameuilib_save()
                 break;
             }
 
+            // Log file position.
             tig_file_fgetpos(stream, &pos);
             tig_debug_printf("gameuilib_save: Function %d (%s) wrote to: %lu, Total: (%lu)\n",
                 index,
@@ -260,6 +333,7 @@ bool gameuilib_save()
                 pos - start_pos);
             start_pos = pos;
 
+            // Write sentinel.
             if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
                 tig_debug_printf("gameuilib_save(): ERROR: Sentinel Failed to Save!\n");
                 break;
@@ -270,6 +344,7 @@ bool gameuilib_save()
     tig_file_fclose(stream);
 
     if (index < MODULE_COUNT) {
+        // One of the module failed to write data, remove malformed data file.
         tig_file_remove(SAVE_CURRENT_DATA2_SAV);
         return false;
     }
@@ -277,7 +352,11 @@ bool gameuilib_save()
     return true;
 }
 
-// 0x53E950
+/**
+ * Called when the game is being loaded.
+ *
+ * 0x53E950
+ */
 bool gameuilib_load()
 {
     int start_pos = 0;
@@ -287,17 +366,20 @@ bool gameuilib_load()
     int pos;
     int sentinel;
 
+    // Check save directory existence.
     if (!tig_file_is_directory(SAVE_CURRENT)) {
         tig_debug_printf("gameuilib_load(): Error finding folder %s\n", SAVE_CURRENT);
         return false;
     }
 
+    // Open save file.
     stream = tig_file_fopen(SAVE_CURRENT_DATA2_SAV, "rb");
     if (stream == NULL) {
         tig_debug_printf("gameuilib_load(): Error creating data2.sav\n");
         return false;
     }
 
+    // Read version.
     if (tig_file_fread(&(load_info.version), sizeof(load_info.version), 1, stream) != 1) {
         tig_debug_printf("gameuilib_load(): Error reading version\n");
         tig_file_fclose(stream);
@@ -306,9 +388,11 @@ bool gameuilib_load()
 
     load_info.stream = stream;
 
+    // Retrieve start position of the first module.
     tig_file_fgetpos(stream, &start_pos);
     tig_debug_printf("gameuilib_load: Start Pos: %lu\n", start_pos);
 
+    // Load each module's state.
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].load_func != NULL) {
             if (!gameuilib_modules[index].load_func(&load_info)) {
@@ -318,6 +402,7 @@ bool gameuilib_load()
                 break;
             }
 
+            // Log file position.
             tig_file_fgetpos(stream, &pos);
             tig_debug_printf("gameuilib_load: Function %d (%s) read to: %lu, Total: (%lu)\n",
                 index,
@@ -326,6 +411,7 @@ bool gameuilib_load()
                 pos - start_pos);
             start_pos = pos;
 
+            // Read & verify sentinel.
             if (tig_file_fread(&sentinel, sizeof(sentinel), 1, stream) != 1) {
                 tig_debug_printf("gameuilib_load(): ERROR: Load Sentinel Failed to Load!");
                 break;
@@ -341,31 +427,39 @@ bool gameuilib_load()
     tig_file_fclose(stream);
 
     if (index < MODULE_COUNT) {
+        // One of the module failed to read data.
         return false;
     }
 
     return true;
 }
 
-// 0x53EAD0
-bool sub_53EAD0()
+/**
+ * 0x53EAD0
+ */
+bool gameuilib_wants_mainmenu()
 {
-    if (!dword_63CBE0) {
+    if (!wants_mainmenu) {
         return false;
     }
 
-    dword_63CBE0 = false;
+    wants_mainmenu = false;
+
     return true;
 }
 
-// 0x53EAF0
-void sub_53EAF0()
+/**
+ * 0x53EAF0
+ */
+void gameuilib_wants_mainmenu_set()
 {
-    dword_63CBE0 = true;
+    wants_mainmenu = true;
 }
 
-// 0x53EB00
-void sub_53EB00()
+/**
+ * 0x53EB00
+ */
+void gameuilib_wants_mainmenu_unset()
 {
-    dword_63CBE0 = false;
+    wants_mainmenu = false;
 }
