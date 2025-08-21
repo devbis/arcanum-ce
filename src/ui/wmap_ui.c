@@ -204,7 +204,7 @@ static bool wmap_ui_create();
 static void sub_561430(int64_t location);
 static void sub_561490(int64_t location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
-static bool sub_5614F0();
+static bool is_default_wmap();
 static bool wmap_ui_state_set(WmapUiState state);
 static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
 static bool wmap_ui_teleport(int64_t loc);
@@ -1495,7 +1495,7 @@ bool wmap_ui_create()
             return false;
         }
 
-        if (sub_5614F0()) {
+        if (is_default_wmap()) {
             wmap_ui_mode_info[wmap_ui_mode].field_60 = 2000 - wmap_ui_mode_info[wmap_ui_mode].rect.width;
             wmap_ui_mode_info[wmap_ui_mode].field_64 = 2000 - wmap_ui_mode_info[wmap_ui_mode].rect.height;
         } else {
@@ -1507,7 +1507,7 @@ bool wmap_ui_create()
             wmap_ui_mode_info[wmap_ui_mode].field_64 = (int)(limit_y / 64) - wmap_ui_mode_info[wmap_ui_mode].rect.height;
         }
 
-        if (sub_5614F0()) {
+        if (is_default_wmap()) {
             dword_66D6F8 = 2000;
         } else {
             int64_t limit_x;
@@ -1652,7 +1652,7 @@ void sub_5614C0(int x, int y)
 }
 
 // 0x5614F0
-bool sub_5614F0()
+bool is_default_wmap()
 {
     if (wmap_ui_mode != WMAP_UI_MODE_WORLD) {
         return false;
@@ -2407,7 +2407,7 @@ void sub_562880(WmapCoords* coords)
                 &wmap_ui_lat_long_frame[index],
                 tig_color_make(0, 0, 0));
 
-            if (sub_5614F0()) {
+            if (is_default_wmap()) {
                 limit_x = 2000;
             } else {
                 location_limits_get(&limit_x, &limit_y);
@@ -3187,7 +3187,7 @@ void sub_563B10(int x, int y, WmapCoords* coords)
 
     rect = wmap_ui_mode_info[wmap_ui_mode].rect;
 
-    if (sub_5614F0()) {
+    if (is_default_wmap()) {
         width = 2000;
         height = 2000;
     } else {
@@ -4227,7 +4227,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
 
     rect = wmap_ui_mode_info[wmap_ui_mode].rect;
 
-    if (sub_5614F0()) {
+    if (is_default_wmap()) {
         width = 2000;
         height = 2000;
     } else {
