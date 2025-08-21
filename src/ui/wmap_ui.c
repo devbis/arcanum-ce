@@ -2010,7 +2010,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             switch (wmap_ui_mode) {
-            case 0:
+            case WMAP_UI_MODE_WORLD:
                 switch (wmap_ui_state) {
                 case WMAP_UI_STATE_NORMAL:
                     if (v3) {
@@ -2047,7 +2047,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 default:
                     return true;
                 }
-            case 1: {
+            case WMAP_UI_MODE_CONTINENT: {
                 if (!v3) {
                     return true;
                 }
@@ -2072,7 +2072,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                 return true;
             }
-            case 2:
+            case WMAP_UI_MODE_TOWN:
                 switch (wmap_ui_state) {
                 case WMAP_UI_STATE_NORMAL:
                     if (v3) {
