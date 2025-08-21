@@ -212,7 +212,7 @@ static bool wmap_ui_message_filter(TigMessage* msg);
 static bool sub_5627B0(WmapCoords* coords);
 static bool sub_5627F0(int64_t loc);
 static void sub_562800(int id);
-static void sub_562880(WmapCoords* coords);
+static void wmap_ui_draw_coords(WmapCoords* coords);
 static void wmap_ui_navigate(int x, int y);
 static void sub_562AF0(int x, int y);
 static void wmap_ui_mode_set(WmapUiMode mode);
@@ -1999,12 +1999,12 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height) {
                 if (wmap_ui_mode == WMAP_UI_MODE_WORLD || wmap_ui_mode == WMAP_UI_MODE_CONTINENT) {
                     wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
-                    sub_562880(&stru_64E7E8);
+                    wmap_ui_draw_coords(&stru_64E7E8);
                     v3 = true;
                 } else if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
                     v3 = true;
                 } else {
-                    sub_562880(&stru_64E7E8);
+                    wmap_ui_draw_coords(&stru_64E7E8);
                     v3 = true;
                 }
             }
@@ -2387,7 +2387,7 @@ void sub_562800(int id)
 }
 
 // 0x562880
-void sub_562880(WmapCoords* coords)
+void wmap_ui_draw_coords(WmapCoords* coords)
 {
     int x;
     int y;
@@ -2584,7 +2584,7 @@ void wmap_ui_mode_set(WmapUiMode mode)
         }
 
         wmap_ui_mode_info[wmap_ui_mode].refresh();
-        sub_562880(&stru_64E7E8);
+        wmap_ui_draw_coords(&stru_64E7E8);
     }
 }
 
