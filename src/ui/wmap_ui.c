@@ -51,6 +51,36 @@ typedef enum WmapRouteType {
     WMAP_ROUTE_TYPE_COUNT,
 } WmapRouteType;
 
+typedef enum WmapUiState  {
+    /**
+     * The UI is stationary.
+     */
+    WMAP_UI_STATE_NORMAL,
+
+    /**
+     * NOTE: Not implemented in the original code. Looks like the idea was to
+     * allow moving/updating individual waypoints on the path.
+     */
+    WMAP_UI_STATE_1,
+
+    /**
+     * Moving along the route.
+     */
+    WMAP_UI_STATE_MOVING,
+
+    /**
+     * NOTE: Not implemented in the original code. The idea was to allow
+     * creating/editing custom map notes.
+     */
+    WMAP_UI_STATE_EDITING,
+
+    /**
+     * Navigating the map by pressing and holding directional pad in the center
+     * of the map.
+     */
+    WMAP_UI_STATE_NAVIGATING,
+} WmapUiState;
+
 typedef struct WmapCoords {
     int x;
     int y;
@@ -175,7 +205,7 @@ static void sub_561430(int64_t location);
 static void sub_561490(int64_t location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
 static bool sub_5614F0();
-static bool sub_5615D0(int a1);
+static bool wmap_ui_state_set(WmapUiState state);
 static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
 static bool wmap_ui_teleport(int64_t loc);
 static bool wmap_ui_message_filter(TigMessage* msg);
@@ -452,7 +482,7 @@ static int wmap_ui_note_height;
 static bool wmap_ui_navigating;
 
 // 0x66D8AC
-static int dword_66D8AC;
+static int wmap_ui_state;
 
 // 0x66D8B0
 static int wmap_ui_compass_arrow_num_frames;
@@ -640,7 +670,7 @@ bool wmap_ui_init(GameInitInfo* init_info)
     }
 
     wmap_ui_mode = WMAP_UI_MODE_WORLD;
-    dword_66D8AC = 0;
+    wmap_ui_state = WMAP_UI_STATE_NORMAL;
 
     if (tig_art_interface_id_create(217, 0, 0, 0, &wmap_ui_nav_cvr_art_id) != TIG_OK
         || tig_art_frame_data(wmap_ui_nav_cvr_art_id, &art_frame_data) != TIG_OK) {
@@ -764,7 +794,7 @@ void wmap_ui_exit()
     int tile;
 
     wmap_ui_mode = WMAP_UI_MODE_WORLD;
-    dword_66D8AC = 0;
+    wmap_ui_state = WMAP_UI_STATE_NORMAL;
 
     for (mode = 0; mode < WMAP_UI_MODE_COUNT; mode++) {
         if (wmap_ui_mode_info[mode].tiles != NULL) {
@@ -901,7 +931,7 @@ void wmap_ui_reset()
 
         dword_5C9AD8 = -1;
         wmap_ui_mode = WMAP_UI_MODE_WORLD;
-        dword_66D8AC = 0;
+        wmap_ui_state = WMAP_UI_STATE_NORMAL;
         dword_65E968 = 0;
         wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length = 0;
         wmap_ui_encounter = false;
@@ -1391,7 +1421,7 @@ void wmap_ui_close()
 
     if (intgame_mode_set(INTGAME_MODE_MAIN) && wmap_ui_created) {
         sub_564070(false);
-        sub_5615D0(0);
+        wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
         intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         ambient_lighting_enable();
         intgame_button_destroy(&wmap_ui_navigate_button_info);
@@ -1554,7 +1584,7 @@ bool wmap_ui_create()
     vb_create_info.background_color = dword_64E03C;
     vb_create_info.color_key = dword_64E03C;
 
-    if (tig_video_buffer_create(&vb_create_info, &dword_64E7F4)) {
+    if (tig_video_buffer_create(&vb_create_info, &dword_64E7F4) != TIG_OK) {
         tig_debug_printf("wmap_ui_create: ERROR: tig_video_buffer_create failed!\n");
         exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
     }
@@ -1636,21 +1666,21 @@ bool sub_5614F0()
 }
 
 // 0x5615D0
-bool sub_5615D0(int a1)
+bool wmap_ui_state_set(WmapUiState state)
 {
-    bool v1 = false;
+    bool refresh = false;
     WmapInfo* wmap_info;
     tig_art_id_t art_id;
     int64_t pc_obj;
     int64_t loc;
 
     wmap_info = &(wmap_ui_mode_info[wmap_ui_mode]);
-    if (dword_66D8AC != a1) {
-        switch (a1) {
-        case 0:
+    if (wmap_ui_state != state) {
+        switch (state) {
+        case WMAP_UI_STATE_NORMAL:
             wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = dword_66D880 != 0;
             break;
-        case 2:
+        case WMAP_UI_STATE_MOVING:
             if (!sub_565140()) {
                 return false;
             }
@@ -1666,20 +1696,20 @@ bool sub_5615D0(int a1)
             gsound_stop_all(25);
             dword_66D848 = gsound_play_music_indefinitely("sound\\music\\arcanum.mp3", 25);
             break;
-        case 3:
+        case WMAP_UI_STATE_EDITING:
             dword_5C9AD8 = -1;
-            tig_art_interface_id_create(21u, 0, 0, 0, &art_id);
+            tig_art_interface_id_create(21, 0, 0, 0, &art_id);
             tig_mouse_cursor_set_art_id(art_id);
-            v1 = true;
+            refresh = true;
             break;
         }
 
-        switch (dword_66D8AC) {
-        case 1:
+        switch (wmap_ui_state) {
+        case WMAP_UI_STATE_1:
             sub_564940();
-            v1 = true;
+            refresh = true;
             break;
-        case 2:
+        case WMAP_UI_STATE_MOVING:
             tig_sound_destroy(dword_66D848);
             pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
@@ -1688,25 +1718,25 @@ bool sub_5615D0(int a1)
                 sub_4AA580(pc_obj);
             }
             timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
-            dword_66D8AC = a1;
+            wmap_ui_state = state;
             intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
             sub_561800(&(wmap_info->field_3C), &loc);
             wmap_ui_teleport(loc);
             sub_5649F0(loc);
             break;
-        case 3:
+        case WMAP_UI_STATE_EDITING:
             sub_564070(1);
             tig_art_interface_id_create(0, 0, 0, 0, &art_id);
             tig_mouse_cursor_set_art_id(art_id);
             break;
-        case 4:
-            tig_button_state_change(wmap_ui_navigate_button_info.button_handle, 1);
+        case WMAP_UI_STATE_NAVIGATING:
+            tig_button_state_change(wmap_ui_navigate_button_info.button_handle, TIG_BUTTON_STATE_RELEASED);
             break;
         }
 
-        dword_66D8AC = a1;
+        wmap_ui_state = state;
 
-        if (v1) {
+        if (refresh) {
             sub_5649C0();
             wmap_ui_mode_info[wmap_ui_mode].refresh();
         }
@@ -1771,7 +1801,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 || msg->data.mouse.y < wmap_info->field_14.y
                 || msg->data.mouse.x >= wmap_info->field_14.x + wmap_info->field_14.width
                 || msg->data.mouse.y >= wmap_info->field_14.y + wmap_info->field_14.height) {
-                if (dword_66D8AC == 4) {
+                if (wmap_ui_state == WMAP_UI_STATE_NAVIGATING) {
                     wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 }
@@ -1784,19 +1814,19 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
             switch (wmap_ui_mode) {
             case WMAP_UI_MODE_WORLD:
-                switch (dword_66D8AC) {
-                case 0: {
+                switch (wmap_ui_state) {
+                case WMAP_UI_STATE_NORMAL: {
                     if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8) {
                         if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
                             sub_5649D0(wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[dword_5C9AD8].field_4);
-                            sub_5615D0(1);
+                            wmap_ui_state_set(WMAP_UI_STATE_1);
                             wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = 0;
                             return true;
                         }
 
                         if (sub_5627B0(&stru_64E7E8) && sub_5643E0(&stru_64E7E8)) {
                             dword_5C9AD8 = wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length - 1;
-                            sub_5615D0(1);
+                            wmap_ui_state_set(WMAP_UI_STATE_1);
                             wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = 0;
                             return true;
                         }
@@ -1843,7 +1873,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                     return true;
                 }
-                case 1:
+                case WMAP_UI_STATE_1:
                     if (!dword_66D880) {
                         return true;
                     }
@@ -1857,7 +1887,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     sub_564830(dword_5C9AD8, &stru_64E7E8);
 
                     return true;
-                case 3: {
+                case WMAP_UI_STATE_EDITING: {
                     int id;
                     if (find_note_by_coords(&stru_64E7E8, &id)) {
                         sub_564360(id);
@@ -1866,15 +1896,15 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
                     return true;
                 }
-                case 4:
+                case WMAP_UI_STATE_NAVIGATING:
                     wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 default:
                     return true;
                 }
             case WMAP_UI_MODE_TOWN:
-                switch (dword_66D8AC) {
-                case 0:
+                switch (wmap_ui_state) {
+                case WMAP_UI_STATE_NORMAL:
                     if (wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8) {
                         if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
                             sub_5649D0(wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].waypoints[dword_5C9AD8].field_4);
@@ -1889,7 +1919,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         }
                     }
                     return true;
-                case 4:
+                case WMAP_UI_STATE_NAVIGATING:
                     wmap_ui_navigate(msg->data.mouse.x, msg->data.mouse.y);
                     return true;
                 default:
@@ -1902,8 +1932,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
             switch (wmap_ui_mode) {
             case WMAP_UI_MODE_WORLD:
                 wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].field_3C8 = dword_66D880 != 0;
-                if (dword_66D8AC == 1 || dword_66D8AC == 4) {
-                    sub_5615D0(0);
+                if (wmap_ui_state == WMAP_UI_STATE_1 || wmap_ui_state == WMAP_UI_STATE_NAVIGATING) {
+                    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
                 }
                 break;
             case WMAP_UI_MODE_CONTINENT:
@@ -1912,7 +1942,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     && msg->data.mouse.y >= wmap_info->field_14.y
                     && msg->data.mouse.x < wmap_info->field_14.x + wmap_info->field_14.width
                     && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height
-                    && dword_66D8AC == 0) {
+                    && wmap_ui_state == WMAP_UI_STATE_NORMAL) {
                     sub_563B10(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
                     wmap_ui_mode_set(WMAP_UI_MODE_WORLD);
                     sub_563590(&stru_64E7E8, 0);
@@ -1921,8 +1951,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 break;
             case WMAP_UI_MODE_TOWN:
                 wmap_ui_routes[WMAP_ROUTE_TYPE_TOWN].field_3C8 = 1;
-                if (dword_66D8AC == 1 || dword_66D8AC == 4) {
-                    sub_5615D0(0);
+                if (wmap_ui_state == WMAP_UI_STATE_1 || wmap_ui_state == WMAP_UI_STATE_NAVIGATING) {
+                    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
                 }
                 break;
             }
@@ -1934,9 +1964,9 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
             return false;
         case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP: {
-            if (dword_66D8AC == 3) {
+            if (wmap_ui_state == WMAP_UI_STATE_EDITING) {
                 if (wmap_ui_mode == WMAP_UI_MODE_WORLD) {
-                    sub_5615D0(0);
+                    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
                     return true;
                 }
                 return false;
@@ -1956,8 +1986,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 }
             }
 
-            if (dword_66D8AC == 2) {
-                sub_5615D0(0);
+            if (wmap_ui_state == WMAP_UI_STATE_MOVING) {
+                wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
             }
 
             return true;
@@ -1981,8 +2011,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
             switch (wmap_ui_mode) {
             case 0:
-                switch (dword_66D8AC) {
-                case 0:
+                switch (wmap_ui_state) {
+                case WMAP_UI_STATE_NORMAL:
                     if (v3) {
                         wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
@@ -2005,7 +2035,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
 
                     return true;
-                case 1:
+                case WMAP_UI_STATE_1:
                     if (wmap_info) {
                         sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
                         if (sub_5627B0(&stru_64E7E8)) {
@@ -2043,8 +2073,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return true;
             }
             case 2:
-                switch (dword_66D8AC) {
-                case 0:
+                switch (wmap_ui_state) {
+                case WMAP_UI_STATE_NORMAL:
                     if (v3) {
                         wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
@@ -2063,7 +2093,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     }
 
                     return true;
-                case 1:
+                case WMAP_UI_STATE_1:
                     if (v3) {
                         sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
                         if (!sub_5627B0(&stru_64E7E8)) {
@@ -2086,7 +2116,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_PRESSED:
             if (msg->data.button.button_handle == wmap_ui_navigate_button_info.button_handle) {
-                if (dword_66D8AC != 2 && sub_5615D0(4)) {
+                if (wmap_ui_state != WMAP_UI_STATE_MOVING && wmap_ui_state_set(WMAP_UI_STATE_NAVIGATING)) {
                     wmap_ui_navigate(msg->data.button.x, msg->data.button.y);
                 }
                 return true;
@@ -2122,11 +2152,11 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == wmap_ui_travel_button_info.button_handle) {
-                if (dword_66D8AC == 3) {
-                    sub_5615D0(0);
+                if (wmap_ui_state == WMAP_UI_STATE_EDITING) {
+                    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
                 }
 
-                if (dword_66D8AC == 0) {
+                if (wmap_ui_state == WMAP_UI_STATE_NORMAL) {
                     if (dword_66D880) {
                         WmapRouteType route_type = wmap_ui_mode == WMAP_UI_MODE_TOWN
                             ? WMAP_ROUTE_TYPE_TOWN
@@ -2134,7 +2164,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         if (wmap_ui_routes[route_type].length > 0) {
                             dword_5C9AD8 = -1;
 
-                            if (sub_5615D0(2)) {
+                            if (wmap_ui_state_set(WMAP_UI_STATE_MOVING)) {
                                 TimeEvent timeevent;
                                 DateTime datetime;
 
@@ -2162,8 +2192,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         }
                     }
                     return true;
-                } else if (dword_66D8AC == 2) {
-                    sub_5615D0(0);
+                } else if (wmap_ui_state == WMAP_UI_STATE_MOVING) {
+                    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
                 }
 
                 return true;
@@ -2239,7 +2269,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 return false;
             }
 
-            if (dword_66D8AC == 2) {
+            if (wmap_ui_state == WMAP_UI_STATE_MOVING) {
                 wmap_ui_mode_set(WMAP_UI_MODE_TOWN);
                 return true;
             }
@@ -2258,31 +2288,31 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
             return true;
         case SDL_SCANCODE_HOME:
-            if (dword_66D8AC != 2) {
+            if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
                 gsound_play_sfx(0, 1);
                 sub_563590(&(wmap_info->field_3C), true);
             }
             return true;
         case SDL_SCANCODE_LEFT:
-            if (dword_66D8AC != 2) {
+            if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(6);
             }
             return true;
         case SDL_SCANCODE_UP:
-            if (dword_66D8AC != 2) {
+            if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(0);
             }
             return true;
         case SDL_SCANCODE_RIGHT:
-            if (dword_66D8AC != 2) {
+            if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(2);
             }
             return true;
         case SDL_SCANCODE_DOWN:
-            if (dword_66D8AC != 2) {
+            if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
                 gsound_play_sfx(0, 1);
                 wmap_ui_scroll_with_kb(4);
             }
@@ -2468,7 +2498,7 @@ void wmap_ui_mode_set(WmapUiMode mode)
     TigRect src_rect;
     TigRect dst_rect;
 
-    sub_5615D0(0);
+    wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
 
     if (wmap_ui_mode == mode) {
         return;
@@ -2915,7 +2945,7 @@ void wmap_ui_handle_scroll()
     if (tig_timer_between(dword_66D9D0, gamelib_ping_time) >= 10) {
         dword_66D9D0 = gamelib_ping_time;
 
-        if (dword_66D8AC != 2) {
+        if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
             if (tig_kb_is_key_pressed(SDL_SCANCODE_LEFT)) {
                 scroll_horizontally = true;
                 horizontal_direction = 6;
@@ -2987,7 +3017,7 @@ void wmap_ui_scroll_with_kb(int direction)
 // 0x563770
 void wmap_ui_scroll(int direction)
 {
-    if (dword_66D8AC != 2) {
+    if (wmap_ui_state != WMAP_UI_STATE_MOVING) {
         wmap_ui_scroll_internal(direction, 8);
     }
 }
@@ -3899,14 +3929,14 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
     }
 
     if (v1) {
-        sub_5615D0(0);
+        wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
         wmap_ui_close();
         return true;
     }
 
     if (wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length <= 0
         || dword_65E968 >= wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].start + wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].waypoints[0].steps) {
-        sub_5615D0(0);
+        wmap_ui_state_set(WMAP_UI_STATE_NORMAL);
         wmap_ui_close();
         dword_65E968 = 0;
         wmap_ui_routes[WMAP_ROUTE_TYPE_WORLD].length = 0;
@@ -4902,7 +4932,7 @@ void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
 // 0x566CC0
 void wmap_ui_get_current_location(int64_t* loc_ptr)
 {
-    if (wmap_ui_created && dword_66D8AC == 2) {
+    if (wmap_ui_created && wmap_ui_state == WMAP_UI_STATE_MOVING) {
         sub_561800(&wmap_ui_mode_info[wmap_ui_mode].field_3C, loc_ptr);
     } else {
         *loc_ptr = obj_field_int64_get(player_get_local_pc_obj(), OBJ_F_LOCATION);
