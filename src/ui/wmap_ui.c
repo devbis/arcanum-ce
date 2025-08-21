@@ -1779,7 +1779,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
     MesFileEntry mes_file_entry;
     char str[48];
     UiMessage ui_message;
-    bool v3 = false;
+    bool inside = false;
 
     // Convert mouse position from screen coordinate system to centered 800x600
     // area.
@@ -1999,21 +1999,20 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 && msg->data.mouse.y < wmap_info->field_14.y + wmap_info->field_14.height) {
                 if (wmap_ui_mode == WMAP_UI_MODE_WORLD || wmap_ui_mode == WMAP_UI_MODE_CONTINENT) {
                     wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
-                    wmap_ui_draw_coords(&stru_64E7E8);
-                    v3 = true;
-                } else if (wmap_ui_mode == WMAP_UI_MODE_TOWN) {
-                    v3 = true;
-                } else {
-                    wmap_ui_draw_coords(&stru_64E7E8);
-                    v3 = true;
                 }
+
+                if (wmap_ui_mode != WMAP_UI_MODE_TOWN) {
+                    wmap_ui_draw_coords(&stru_64E7E8);
+                }
+
+                inside = true;
             }
 
             switch (wmap_ui_mode) {
             case WMAP_UI_MODE_WORLD:
                 switch (wmap_ui_state) {
                 case WMAP_UI_STATE_NORMAL:
-                    if (v3) {
+                    if (inside) {
                         wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
@@ -2048,25 +2047,23 @@ bool wmap_ui_message_filter(TigMessage* msg)
                     return true;
                 }
             case WMAP_UI_MODE_CONTINENT: {
-                if (!v3) {
-                    return true;
-                }
+                if (inside) {
+                    wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
-                wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
-
-                int id;
-                if (find_note_by_coords(&stru_64E7E8, &id)) {
-                    if (wmap_info->field_198 != id) {
-                        WmapNote* note = sub_563D90(id);
-                        if (note->id < 200) {
-                            wmap_info->field_198 = id;
-                            sub_550770(-1, area_get_description(note->id));
+                    int id;
+                    if (find_note_by_coords(&stru_64E7E8, &id)) {
+                        if (wmap_info->field_198 != id) {
+                            WmapNote* note = sub_563D90(id);
+                            if (note->id < 200) {
+                                wmap_info->field_198 = id;
+                                sub_550770(-1, area_get_description(note->id));
+                            }
                         }
-                    }
-                } else {
-                    if (wmap_info->field_198 != -1) {
-                        wmap_info->field_198 = -1;
-                        sub_550720();
+                    } else {
+                        if (wmap_info->field_198 != -1) {
+                            wmap_info->field_198 = -1;
+                            sub_550720();
+                        }
                     }
                 }
 
@@ -2075,7 +2072,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             case WMAP_UI_MODE_TOWN:
                 switch (wmap_ui_state) {
                 case WMAP_UI_STATE_NORMAL:
-                    if (v3) {
+                    if (inside) {
                         wmap_info->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
 
                         int id;
@@ -2094,7 +2091,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                     return true;
                 case WMAP_UI_STATE_1:
-                    if (v3) {
+                    if (inside) {
                         sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
                         if (!sub_5627B0(&stru_64E7E8)) {
                             return true;
