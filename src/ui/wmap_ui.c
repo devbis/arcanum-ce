@@ -419,7 +419,7 @@ static TigRect stru_66D708;
 static WmapNote stru_66D718;
 
 // 0x66D848
-static tig_sound_handle_t dword_66D848;
+static tig_sound_handle_t wmap_ui_music_handle;
 
 // 0x66D850
 static int64_t qword_66D850;
@@ -1694,7 +1694,7 @@ bool wmap_ui_state_set(WmapUiState state)
                 ai_stop_attacking(pc_obj);
             }
             gsound_stop_all(25);
-            dword_66D848 = gsound_play_music_indefinitely("sound\\music\\arcanum.mp3", 25);
+            wmap_ui_music_handle = gsound_play_music_indefinitely("sound\\music\\arcanum.mp3", 25);
             break;
         case WMAP_UI_STATE_EDITING:
             dword_5C9AD8 = -1;
@@ -1710,7 +1710,7 @@ bool wmap_ui_state_set(WmapUiState state)
             refresh = true;
             break;
         case WMAP_UI_STATE_MOVING:
-            tig_sound_destroy(dword_66D848);
+            tig_sound_destroy(wmap_ui_music_handle);
             pc_obj = player_get_local_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
