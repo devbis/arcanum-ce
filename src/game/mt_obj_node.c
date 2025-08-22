@@ -9,10 +9,19 @@ static void mt_obj_node_clear();
 static bool mt_obj_node_save_list_node(MagicTechObjectNode* node, TigFile* stream);
 static bool mt_obj_node_load_list_node(MagicTechObjectNode* node, TigFile* stream);
 
-// 0x5FC368
+/**
+ * A pool of the free `MagicTechObjectNode` instances for reuse.
+ *
+ * 0x5FC368
+ */
+//
 static MagicTechObjectNode* mt_obj_node_head;
 
-// 0x4BAC10
+/**
+ * Called when the game is initialized.
+ *
+ * 0x4BAC10
+ */
 bool mt_obj_node_init(GameInitInfo* init_info)
 {
     (void)init_info;
@@ -20,17 +29,26 @@ bool mt_obj_node_init(GameInitInfo* init_info)
     return true;
 }
 
-// 0x4BAC20
+/**
+ * Called when the game shuts down.
+ *
+ * 0x4BAC20
+ */
 void mt_obj_node_exit()
 {
     mt_obj_node_clear();
 }
 
-// 0x4BAC30
+/**
+ * Allocates a new `MagicTechObjectNode` instance.
+ *
+ * 0x4BAC30
+ */
 MagicTechObjectNode* mt_obj_node_create()
 {
     MagicTechObjectNode* node;
 
+    // Reserve a new batch if the free pool is empty.
     if (mt_obj_node_head == NULL) {
         mt_obj_node_reserve();
     }
@@ -47,14 +65,23 @@ MagicTechObjectNode* mt_obj_node_create()
     return node;
 }
 
-// 0x4BAC80
+/**
+ * Deallocates a `MagicTechObjectNode` by returning it to the free pool.
+ *
+ * 0x4BAC80
+ */
 void mt_obj_node_destroy(MagicTechObjectNode* node)
 {
     node->next = mt_obj_node_head;
     mt_obj_node_head = node;
 }
 
-// 0x4BACA0
+/**
+ * Allocates a batch of `MagicTechObjectNode` instances and place them into free
+ * pool.
+ *
+ * 0x4BACA0
+ */
 void mt_obj_node_reserve()
 {
     int index;
@@ -69,7 +96,11 @@ void mt_obj_node_reserve()
     }
 }
 
-// 0x4BACD0
+/**
+ * Deallocates all `MagicTechObjectNode` instances in the free pool.
+ *
+ * 0x4BACD0
+ */
 void mt_obj_node_clear()
 {
     MagicTechObjectNode* next;
@@ -81,7 +112,11 @@ void mt_obj_node_clear()
     }
 }
 
-// 0x4BAD00
+/**
+ * Saves a list of `MagicTechObjectNode` to a file.
+ *
+ * 0x4BAD00
+ */
 bool mt_obj_node_save_list(MagicTechObjectNode** head_ptr, TigFile* stream)
 {
     int cnt = 0;
@@ -91,16 +126,19 @@ bool mt_obj_node_save_list(MagicTechObjectNode** head_ptr, TigFile* stream)
         return false;
     }
 
+    // Count the nodes.
     node = *head_ptr;
     while (node != NULL) {
         cnt++;
         node = node->next;
     }
 
+    // Write the count.
     if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Write each node.
     node = *head_ptr;
     while (node != NULL) {
         if (!mt_obj_node_save_list_node(node, stream)) {
@@ -112,7 +150,11 @@ bool mt_obj_node_save_list(MagicTechObjectNode** head_ptr, TigFile* stream)
     return true;
 }
 
-// 0x4BAD70
+/**
+ * Saves a single `MagicTechObjectNode` to a file.
+ *
+ * 0x4BAD70
+ */
 bool mt_obj_node_save_list_node(MagicTechObjectNode* node, TigFile* stream)
 {
     if (node == NULL) {
@@ -134,7 +176,11 @@ bool mt_obj_node_save_list_node(MagicTechObjectNode* node, TigFile* stream)
     return true;
 }
 
-// 0x4BADD0
+/**
+ * Loads a list of `MagicTechObjectNode` from a file.
+ *
+ * 0x4BADD0
+ */
 bool mt_obj_node_load_list(MagicTechObjectNode** head_ptr, TigFile* stream)
 {
     int cnt = 0;
@@ -145,15 +191,19 @@ bool mt_obj_node_load_list(MagicTechObjectNode** head_ptr, TigFile* stream)
         return false;
     }
 
+    // Read the number of nodes.
     if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Load each node.
     for (index = 0; index < cnt; index++) {
         node = *head_ptr = mt_obj_node_create();
+
         if (!mt_obj_node_load_list_node(node, stream)) {
             return false;
         }
+
         head_ptr = &(node->next);
         node->next = NULL;
     }
@@ -161,7 +211,11 @@ bool mt_obj_node_load_list(MagicTechObjectNode** head_ptr, TigFile* stream)
     return true;
 }
 
-// 0x4BAE50
+/**
+ * Loads a single `MagicTechObjectNode` from a file.
+ *
+ * 0x4BAE50
+ */
 bool mt_obj_node_load_list_node(MagicTechObjectNode* node, TigFile* stream)
 {
     if (node == NULL) {
@@ -189,7 +243,11 @@ bool mt_obj_node_load_list_node(MagicTechObjectNode* node, TigFile* stream)
     return true;
 }
 
-// 0x4BAEE0
+/**
+ * Saves a detached `MagicTechObjectNode` to a file.
+ *
+ * 0x4BAEE0
+ */
 bool mt_obj_node_save_detached(MagicTechObjectNode* node, TigFile* stream)
 {
     if (node == NULL) {
@@ -215,7 +273,11 @@ bool mt_obj_node_save_detached(MagicTechObjectNode* node, TigFile* stream)
     return true;
 }
 
-// 0x4BAF50
+/**
+ * Loads a detached `MagicTechObjectNode` from a file.
+ *
+ * 0x4BAF50
+ */
 bool mt_obj_node_load_detached(MagicTechObjectNode* node, TigFile* stream)
 {
     if (node == NULL) {

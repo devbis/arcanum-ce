@@ -11,8 +11,8 @@ typedef struct MagicTechObjectNode {
     /* 0034 */ int aptitude;
     /* 0038 */ int type;
     union {
-    /* 0040 */ struct MagicTechObjectNode* next;
-    /* 0040 */ int64_t loc;
+        /* 0040 */ struct MagicTechObjectNode* next;
+        /* 0040 */ int64_t loc;
     };
 } MagicTechObjectNode;
 
