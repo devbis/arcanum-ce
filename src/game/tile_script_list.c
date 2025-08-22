@@ -18,25 +18,42 @@ static_assert(sizeof(TileScriptListNodeSerializedData) == 0x18, "wrong size");
 static void tile_script_node_reserve();
 static void tile_script_node_clear();
 
-// 0x603DD0
+/**
+ * A pool of the free `TileScriptListNode` instances for reuse.
+ *
+ * 0x603DD0
+ */
 static TileScriptListNode* tile_script_node_head;
 
-// 0x4F6310
+/**
+ * Initializes the tile script node submodule.
+ *
+ * 0x4F6310
+ */
 void tile_script_node_init()
 {
 }
 
-// 0x4F6320
+/**
+ * Shuts down the tile script node submodule.
+ *
+ * 0x4F6320
+ */
 void tile_script_node_exit()
 {
     tile_script_node_clear();
 }
 
-// 0x4F6330
+/**
+ * Allocates a new `TileScriptListNode` instance.
+ *
+ * 0x4F6330
+ */
 TileScriptListNode* tile_script_node_create()
 {
     TileScriptListNode* node;
 
+    // Reserve a new batch if the free list is empty.
     if (tile_script_node_head == NULL) {
         tile_script_node_reserve();
     }
@@ -49,14 +66,23 @@ TileScriptListNode* tile_script_node_create()
     return node;
 }
 
-// 0x4F6360
+/**
+ * Deallocates a `TileScriptListNode` by returning it to the free pool.
+ *
+ * 0x4F6360
+ */
 void tile_script_node_destroy(TileScriptListNode* node)
 {
     node->next = tile_script_node_head;
     tile_script_node_head = node;
 }
 
-// 0x4F6380
+/**
+ * Allocates a batch of `TileScriptListNode` instances and place them into free
+ * pool.
+ *
+ * 0x4F6380
+ */
 void tile_script_node_reserve()
 {
     int index;
@@ -71,7 +97,11 @@ void tile_script_node_reserve()
     }
 }
 
-// 0x4F63B0
+/**
+ * Deallocates all `TileScriptListNode` instances in the free pool.
+ *
+ * 0x4F63B0
+ */
 void tile_script_node_clear()
 {
     TileScriptListNode* next;
@@ -83,16 +113,24 @@ void tile_script_node_clear()
     }
 }
 
-// 0x4F63E0
+/**
+ * Initializes a tile script list.
+ *
+ * 0x4F63E0
+ */
 bool tile_script_list_init(TileScriptList* list)
 {
     list->flags = 0;
-    list->head = 0;
+    list->head = NULL;
 
     return true;
 }
 
-// 0x4F6400
+/**
+ * Resets a tile script list to its initial state.
+ *
+ * 0x4F6400
+ */
 bool tile_script_list_reset(TileScriptList* list)
 {
     TileScriptListNode* node;
@@ -111,13 +149,21 @@ bool tile_script_list_reset(TileScriptList* list)
     return true;
 }
 
-// 0x4F6460
+/**
+ * Cleans up a tile script list.
+ *
+ * 0x4F6460
+ */
 bool tile_script_list_exit(TileScriptList* list)
 {
     return tile_script_list_reset(list);
 }
 
-// 0x4F6470
+/**
+ * Sets a script for a specific tile ID in the list.
+ *
+ * 0x4F6470
+ */
 bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* prev;
@@ -128,9 +174,11 @@ bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr)
     node = list->head;
     while (node != NULL) {
         if (node->id == id) {
+            // // Update existing node.
             node->flags |= TILE_SCRIPT_LIST_NODE_MODIFIED;
             node->scr = *scr;
 
+            // Mark list as modified.
             list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
             return true;
@@ -144,6 +192,7 @@ bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr)
         node = node->next;
     }
 
+    // Create and insert new node.
     new_node = tile_script_node_create();
     new_node->flags = TILE_SCRIPT_LIST_NODE_MODIFIED;
     new_node->id = id;
@@ -156,17 +205,23 @@ bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr)
         list->head = new_node;
     }
 
+    // Mark list as modified.
     list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
-// 0x4F6520
+/**
+ * Removes a script for a specific tile ID from the list.
+ *
+ * 0x4F6520
+ */
 bool tile_script_list_remove(TileScriptList* list, unsigned int id)
 {
     TileScriptListNode* prev;
     TileScriptListNode* node;
 
+    // Search for the node.
     prev = NULL;
     node = list->head;
     while (node != NULL) {
@@ -181,23 +236,32 @@ bool tile_script_list_remove(TileScriptList* list, unsigned int id)
         return false;
     }
 
+    // Unlink the node.
     if (prev != NULL) {
         prev->next = node->next;
     } else {
         list->head = node->next;
     }
 
+    // Free the node.
     tile_script_node_destroy(node);
+
+    // Mark list as modified.
     list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
-// 0x4F6570
+/**
+ * Retrieves a script for a specific tile ID from the list.
+ *
+ * 0x4F6570
+ */
 bool tile_script_list_get(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* node;
 
+    // Search for the node.
     node = list->head;
     while (node != NULL) {
         if (node->id == id) {
@@ -210,7 +274,11 @@ bool tile_script_list_get(TileScriptList* list, unsigned int id, Script* scr)
     return false;
 }
 
-// 0x4F65B0
+/**
+ * Loads a tile script list from a file.
+ *
+ * 0x4F65B0
+ */
 bool tile_script_list_load(TileScriptList* list, TigFile* stream)
 {
     int cnt;
@@ -220,11 +288,14 @@ bool tile_script_list_load(TileScriptList* list, TigFile* stream)
     TileScriptListNodeSerializedData serialized;
 
     prev = NULL;
+
+    // Read the number of nodes.
     cnt = 0;
     if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Load each node.
     for (index = 0; index < cnt; index++) {
         node = tile_script_node_create();
 
@@ -236,6 +307,7 @@ bool tile_script_list_load(TileScriptList* list, TigFile* stream)
         node->id = serialized.id;
         node->scr = serialized.scr;
 
+        // Link the node.
         if (prev != NULL) {
             prev->next = node;
         } else {
@@ -247,13 +319,18 @@ bool tile_script_list_load(TileScriptList* list, TigFile* stream)
     return true;
 }
 
-// 0x4F6630
+/**
+ * Saves a tile script list to a file.
+ *
+ * 0x4F6630
+ */
 bool tile_script_list_save(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     TileScriptListNode* node;
     TileScriptListNodeSerializedData serialized;
 
+    // Count the nodes.
     cnt = 0;
     node = list->head;
     while (node != NULL) {
@@ -261,10 +338,12 @@ bool tile_script_list_save(TileScriptList* list, TigFile* stream)
         node = node->next;
     }
 
+    // Write the count.
     if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Write each node.
     node = list->head;
     while (node != NULL) {
         serialized.flags = node->flags;
@@ -278,28 +357,39 @@ bool tile_script_list_save(TileScriptList* list, TigFile* stream)
         node = node->next;
     }
 
+    // Clear the modified flag.
     list->flags &= ~TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
-// 0x4F66C0
+/**
+ * Checks if the tile script list has been modified.
+ *
+ * 0x4F66C0
+ */
 bool tile_script_list_is_modified(TileScriptList* list)
 {
     return (list->flags & TILE_SCRIPT_LIST_MODIFIED) != 0;
 }
 
-// 0x4F66D0
+/**
+ * Loads a differential update for a tile script list from a file.
+ *
+ * 0x4F66D0
+ */
 bool tile_script_list_load_with_dif(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     int index;
     TileScriptListNodeSerializedData serialized;
 
+    // Read the number of nodes.
     if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Load and apply each node.
     for (index = 0; index < cnt; index++) {
         if (tig_file_fread(&serialized, sizeof(serialized), 1, stream) != 1) {
             return false;
@@ -311,13 +401,18 @@ bool tile_script_list_load_with_dif(TileScriptList* list, TigFile* stream)
     return true;
 }
 
-// 0x4F6750
+/**
+ * Saves a differential update for a tile script list to a file.
+ *
+ * 0x4F6750
+ */
 bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
 {
     int cnt;
     TileScriptListNode* node;
     TileScriptListNodeSerializedData serialized;
 
+    // Count modified nodes.
     cnt = 0;
     node = list->head;
     while (node != NULL) {
@@ -327,10 +422,12 @@ bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
         node = node->next;
     }
 
+    // Write the count.
     if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         return false;
     }
 
+    // Write modified nodes.
     node = list->head;
     while (node != NULL) {
         if ((node->flags & TILE_SCRIPT_LIST_NODE_MODIFIED) != 0) {
