@@ -64,8 +64,8 @@ typedef struct TimeEventTypeInfo {
 static bool timeevent_do_nothing(TimeEvent* timeevent);
 static bool timeevent_save_node(TimeEventTypeInfo* timeevent_type_info, TimeEventNode* timeevent, TigFile* stream);
 static bool timeevent_load_node(TimeEvent* timeevent, TigFile* stream);
-static bool sub_45B8A0(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
-static bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
+static bool timeevent_add_delay_base(TimeEvent* timeevent, DateTime* delay, DateTime* base);
+static bool timeevent_add_base_at_func(TimeEvent* timeevent, DateTime* base, DateTime* at);
 static TimeEventNode* timeevent_node_create();
 static void timeevent_node_destroy(TimeEventNode* node);
 static bool timeevent_recover_handles(TimeEventNode *timeevent);
@@ -1008,13 +1008,13 @@ bool sub_45B7A0(TimeEventNode* node)
 }
 
 // 0x45B800
-bool sub_45B800(TimeEvent* timeevent, DateTime* datetime)
+bool timeevent_add_delay(TimeEvent* timeevent, DateTime* delay)
 {
-    return sub_45B8A0(timeevent, datetime, 0);
+    return timeevent_add_delay_base(timeevent, delay, NULL);
 }
 
 // 0x45B820
-bool sub_45B820(TimeEvent* timeevent)
+bool timeevent_add_immediate(TimeEvent* timeevent)
 {
     DateTime datetime;
     bool rc;
@@ -1022,7 +1022,7 @@ bool sub_45B820(TimeEvent* timeevent)
     dword_5E8620 = true;
 
     sub_45A950(&datetime, 0);
-    rc = sub_45B800(timeevent, &datetime);
+    rc = timeevent_add_delay(timeevent, &datetime);
 
     dword_5E8620 = false;
 
@@ -1030,25 +1030,25 @@ bool sub_45B820(TimeEvent* timeevent)
 }
 
 // 0x45B860
-bool sub_45B860(TimeEvent* timeevent, DateTime* datetime)
+bool timeevent_add_base(TimeEvent* timeevent, DateTime* base)
 {
-    return timeevent_add_base_offset_at_func(timeevent, datetime, 0);
+    return timeevent_add_base_at_func(timeevent, base, NULL);
 }
 
 // 0x45B880
-bool sub_45B880(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+bool timeevent_add_delay_at(TimeEvent* timeevent, DateTime* delay, DateTime* at)
 {
-    return sub_45BA30(timeevent, datetime, NULL, a3);
+    return timeevent_add_delay_base_at(timeevent, delay, NULL, at);
 }
 
 // 0x45B8A0
-bool sub_45B8A0(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+bool timeevent_add_delay_base(TimeEvent* timeevent, DateTime* delay, DateTime* base)
 {
-    return sub_45BA30(timeevent, datetime, a3, NULL);
+    return timeevent_add_delay_base_at(timeevent, delay, base, NULL);
 }
 
 // 0x45B8C0
-bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+bool timeevent_add_base_at_func(TimeEvent* timeevent, DateTime* base, DateTime* at)
 {
     TimeEventNode** node_ptr;
     TimeEventNode* node;
@@ -1073,7 +1073,7 @@ bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime,
         exit(EXIT_FAILURE);
     }
 
-    timeevent->datetime = *datetime;
+    timeevent->datetime = *base;
 
     time_type = stru_5B2188[timeevent->type].time_type;
     if (!timeevent_in_ping || dword_5E8620) {
@@ -1103,8 +1103,8 @@ bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime,
 
     *node_ptr = node;
 
-    if (a3 != NULL) {
-        *a3 = timeevent->datetime;
+    if (at != NULL) {
+        *at = timeevent->datetime;
     }
 
     return true;
@@ -1117,7 +1117,7 @@ TimeEventNode* timeevent_node_create()
 }
 
 // 0x45BA30
-bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime* a4)
+bool timeevent_add_delay_base_at(TimeEvent* timeevent, DateTime* delay, DateTime* base, DateTime* at)
 {
     DateTime time;
 
@@ -1129,8 +1129,8 @@ bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime
         return false;
     }
 
-    if (a3 != NULL && (a3->days != 0 || a3->milliseconds != 0)) {
-        time = *a3;
+    if (base != NULL && (base->days != 0 || base->milliseconds != 0)) {
+        time = *base;
     } else {
         switch (stru_5B2188[timeevent->type].time_type) {
         case TIME_TYPE_REAL_TIME:
@@ -1146,8 +1146,8 @@ bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime
         }
     }
 
-    datetime_add_datetime(&time, datetime);
-    return timeevent_add_base_offset_at_func(timeevent, &time, a4);
+    datetime_add_datetime(&time, delay);
+    return timeevent_add_base_at_func(timeevent, &time, at);
 }
 
 // 0x45BAF0

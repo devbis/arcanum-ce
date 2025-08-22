@@ -1095,7 +1095,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
                 next_timeevent.params[1].object_value = obj;
                 next_timeevent.params[2].integer_value = sub_45A7F0();
                 sub_45A950(&datetime, 120000);
-                if (!sub_45B800(&next_timeevent, &datetime)) {
+                if (!timeevent_add_delay(&next_timeevent, &datetime)) {
                     return false;
                 }
             }
@@ -1133,7 +1133,7 @@ bool poison_timeevent_schedule(int64_t obj, int poison, bool recovery)
     if (!timeevent_any(TIMEEVENT_TYPE_POISON, poison_timeevent_check)) {
         // Schedule damage event in 15 seconds.
         sub_45A950(&datetime, 15000);
-        if (!sub_45B800(&timeevent, &datetime)) {
+        if (!timeevent_add_delay(&timeevent, &datetime)) {
             return false;
         }
     }
@@ -1148,7 +1148,7 @@ bool poison_timeevent_schedule(int64_t obj, int poison, bool recovery)
 
             // Schedule recovery event in 120 seconds.
             sub_45A950(&datetime, 120000);
-            if (!sub_45B800(&timeevent, &datetime)) {
+            if (!timeevent_add_delay(&timeevent, &datetime)) {
                 return false;
             }
         }

@@ -1339,7 +1339,7 @@ void map_load_postprocess()
             if ((flags & OF_TELEPORTED) != 0) {
                 timeevent.type = TIMEEVENT_TYPE_TELEPORTED;
                 timeevent.params[0].object_value = obj;
-                sub_45B820(&timeevent);
+                timeevent_add_immediate(&timeevent);
 
                 flags &= ~OF_TELEPORTED;
                 obj_field_int32_set(obj, OBJ_F_FLAGS, flags);

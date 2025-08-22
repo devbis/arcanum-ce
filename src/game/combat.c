@@ -3182,7 +3182,7 @@ void sub_4B7080()
     if (!sub_45C0E0(TIMEEVENT_TYPE_TB_COMBAT)) {
         timeevent.type = TIMEEVENT_TYPE_TB_COMBAT;
         sub_45A950(&datetime, 2);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
     }
 }
 

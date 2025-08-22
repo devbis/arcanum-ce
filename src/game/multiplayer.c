@@ -845,7 +845,7 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
     datetime.milliseconds = 0;
     timeevent.type = TIMEEVENT_TYPE_TELEPORTED;
     timeevent.params[0].object_value = player_create_info->obj;
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 
     mes_unload(mes_file);
 }
@@ -864,7 +864,7 @@ bool multiplayer_timeevent_process(TimeEvent* timeevent)
     case 2:
         if (tig_net_xfer_count(timeevent->params[1].integer_value)) {
             sub_45A950(&datetime, 50);
-            sub_45B800(timeevent, &datetime);
+            timeevent_add_delay(timeevent, &datetime);
             return true;
         }
 
@@ -883,7 +883,7 @@ bool multiplayer_timeevent_process(TimeEvent* timeevent)
     case 4:
         if (tig_net_xfer_count(timeevent->params[1].integer_value)) {
             sub_45A950(&datetime, 50);
-            sub_45B800(timeevent, &datetime);
+            timeevent_add_delay(timeevent, &datetime);
             return true;
         }
 
@@ -1446,7 +1446,7 @@ void sub_4A33F0(int a1, int a2)
         timeevent.params[1].integer_value = a1;
         timeevent.params[2].integer_value = a2;
         sub_45A950(&datetime, 50);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
     }
 }
 
@@ -1547,7 +1547,7 @@ bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_han
         timeevent.type = TIMEEVENT_TYPE_MULTIPLAYER;
         timeevent.params[0].integer_value = 3;
         sub_45A950(&datetime, 5000);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
 
         return true;
     }

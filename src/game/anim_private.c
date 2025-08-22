@@ -352,7 +352,7 @@ bool anim_goal_restart(AnimID* anim_id)
     timeevent.params[0].integer_value = run_info->id.slot_num;
     timeevent.params[1].integer_value = run_info->id.field_4;
     timeevent.params[2].integer_value = 2222;
-    return sub_45B860(&timeevent, &(run_info->next_ping_time));
+    return timeevent_add_base(&timeevent, &(run_info->next_ping_time));
 }
 
 // 0x44CCB0
@@ -834,9 +834,9 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
     sub_45A950(&datetime, 5);
 
     if (!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == run_info->anim_obj) {
-        return sub_45B800(&timeevent, &datetime);
+        return timeevent_add_delay(&timeevent, &datetime);
     } else {
-        return sub_45B820(&timeevent);
+        return timeevent_add_immediate(&timeevent);
     }
 }
 

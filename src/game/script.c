@@ -2049,7 +2049,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
             datetime.milliseconds *= 8;
         }
 
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
 
         return NEXT;
     }
@@ -2531,7 +2531,7 @@ int script_execute_action(ScriptAction* action, int line, ScriptState* state)
                 timeevent.params[3].integer_value = 48;
 
                 sub_45A950(&datetime, 1000 * delay);
-                sub_45B800(&timeevent, &datetime);
+                timeevent_add_delay(&timeevent, &datetime);
             } else {
                 teleport_data.fade_in.flags = FADE_IN;
                 teleport_data.fade_in.duration = 2.0f;

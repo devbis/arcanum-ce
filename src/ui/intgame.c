@@ -5306,7 +5306,7 @@ bool intgame_clock_process_callback(TimeEvent* timeevent)
         next_timeevent.type = TIMEEVENT_TYPE_CLOCK;
         sub_45A950(&datetime, 3600000);
         timeevent_clear_one_typed(TIMEEVENT_TYPE_CLOCK);
-        sub_45B800(&next_timeevent, &datetime);
+        timeevent_add_delay(&next_timeevent, &datetime);
     }
 
     return true;

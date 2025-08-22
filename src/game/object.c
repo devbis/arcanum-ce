@@ -2586,7 +2586,7 @@ void object_bust(int64_t obj, int64_t triggerer_obj)
                 sub_45A950(&datetime, -60000 * scenery_respawn_delay);
             }
 
-            sub_45B800(&timeevent, &datetime);
+            timeevent_add_delay(&timeevent, &datetime);
         } else {
             destroyed_art_id = obj_field_int32_get(obj, OBJ_F_DESTROYED_AID);
             if ((scenery_flags & OSCF_BUSTED) != 0) {
@@ -4153,7 +4153,7 @@ bool object_locked_set(int64_t obj, bool locked)
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
         sub_45A950(&datetime, 3600000);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
     }
 
     if (locked) {
@@ -4210,7 +4210,7 @@ bool object_jammed_set(int64_t obj, bool jammed)
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
         sub_45A950(&datetime, 86400000);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
     }
 
     if (jammed) {

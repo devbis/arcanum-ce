@@ -1496,7 +1496,7 @@ void ai_npc_wait(int64_t obj)
         if (wait < 6) {
             datetime = stru_5B5088[wait];
             timeevent.type = TIMEEVENT_TYPE_NPC_WAIT_HERE;
-            sub_45B800(&timeevent, &datetime);
+            timeevent_add_delay(&timeevent, &datetime);
         }
     }
     critter_disband(obj, true);
@@ -3111,7 +3111,7 @@ void sub_4AD730(int64_t obj, DateTime* datetime)
     timeevent.type = TIMEEVENT_TYPE_AI;
     timeevent.params[0].object_value = obj;
     timeevent.params[1].integer_value = 0;
-    sub_45B800(&timeevent, datetime);
+    timeevent_add_delay(&timeevent, datetime);
 }
 
 // 0x4AD790
@@ -3124,7 +3124,7 @@ void sub_4AD790(int64_t obj, int a2)
     timeevent.type = TIMEEVENT_TYPE_AI;
     timeevent.params[0].object_value = obj;
     timeevent.params[1].integer_value = a2;
-    sub_45B820(&timeevent);
+    timeevent_add_immediate(&timeevent);
 }
 
 // 0x4AD7D0

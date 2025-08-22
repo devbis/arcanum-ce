@@ -1681,7 +1681,7 @@ void sub_5412E0(bool a1)
 
                 timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
                 sub_45A950(&datetime, 86400000 - sub_45AD70());
-                sub_45B800(&timeevent, &datetime);
+                timeevent_add_delay(&timeevent, &datetime);
 
                 wmap_rnd_schedule();
             } else {
@@ -5403,7 +5403,7 @@ void sub_547EF0()
             timeevent.type = TIMEEVENT_TYPE_MAINMENU;
             timeevent.params[0].integer_value = index;
             sub_45A950(&datetime, stru_64B870[index].fps);
-            sub_45B800(&timeevent, &datetime);
+            timeevent_add_delay(&timeevent, &datetime);
         }
     }
 }
@@ -5453,7 +5453,7 @@ bool mainmenu_ui_process_callback(TimeEvent* timeevent)
     next_timeevent.type = TIMEEVENT_TYPE_MAINMENU;
     next_timeevent.params[0].integer_value = index;
     sub_45A950(&datetime, stru_64B870[index].fps);
-    sub_45B800(&next_timeevent, &datetime);
+    timeevent_add_delay(&next_timeevent, &datetime);
 
     return true;
 }

@@ -319,7 +319,7 @@ void sub_460650(UiMessage* ui_message, unsigned int milliseconds)
     timeevent.params[1].integer_value = id;
     sub_45A950(&datetime, milliseconds);
     tig_idxtable_set(&stru_5E87C8, id, ui_message);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x4606C0

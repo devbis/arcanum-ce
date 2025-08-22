@@ -2167,7 +2167,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
 
                                 timeevent.type = TIMEEVENT_TYPE_WORLDMAP;
                                 sub_45A950(&datetime, 50);
-                                sub_45B800(&timeevent, &datetime);
+                                timeevent_add_delay(&timeevent, &datetime);
 
                                 return true;
                             }
@@ -3942,7 +3942,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 
     next_timeevent.type = TIMEEVENT_TYPE_WORLDMAP;
     sub_45A950(&datetime, 62);
-    sub_45B800(&next_timeevent, &datetime);
+    timeevent_add_delay(&next_timeevent, &datetime);
     return true;
 }
 

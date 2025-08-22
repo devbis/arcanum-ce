@@ -304,5 +304,5 @@ void sub_4BA320(int64_t a1, int64_t a2, int a3)
 
     datetime.milliseconds = 500;
     datetime.days = 0;
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }

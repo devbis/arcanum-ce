@@ -1169,7 +1169,7 @@ bool critter_fatigue_timeevent_schedule(int64_t obj, int type, int delay)
     timeevent.params[1].object_value = obj;
     timeevent.params[2].integer_value = sub_45A7F0();
     sub_45A950(&datetime, delay);
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x45E8D0
@@ -1287,7 +1287,7 @@ bool critter_resting_timeevent_schedule(int64_t obj)
     timeevent.params[0].object_value = obj;
     timeevent.params[1].integer_value = sub_45A7F0();
     sub_45A950(&datetime, 3600000);
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x45EB50
@@ -1336,7 +1336,7 @@ bool critter_decay_timeevent_schedule(int64_t obj)
     } else {
         sub_45A950(&datetime, 172800000);
     }
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x45EC80
@@ -1393,7 +1393,7 @@ bool critter_npc_combat_focus_wipe_schedule(int64_t npc_obj)
     timeevent.params[0].object_value = npc_obj;
     timeevent.params[1].integer_value = sub_45A7F0();
     sub_45A950(&datetime, 600000);
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x45EDE0

@@ -3923,7 +3923,7 @@ bool sub_4548D0(TimeEvent* timeevent, DateTime* a2, DateTime* a3)
         return true;
     }
 
-    return sub_45B880(timeevent, a2, a3);
+    return timeevent_add_delay_at(timeevent, a2, a3);
 }
 
 // 0x454920
@@ -4812,7 +4812,7 @@ void sub_455C30(MagicTechInvocation* mt_invocation)
         timeevent.params[0].integer_value = run_info->id;
         timeevent.params[2].integer_value = 3;
         sub_45A950(&datetime, 2);
-        if (sub_45B800(&timeevent, &datetime)) {
+        if (timeevent_add_delay(&timeevent, &datetime)) {
             return;
         }
     }
@@ -5342,7 +5342,7 @@ void magictech_interrupt_delayed(int mt_id)
     timeevent.params[2].integer_value = 2;
     sub_45A950(&datetime, 1);
 
-    if (!sub_45B800(&timeevent, &datetime)) {
+    if (!timeevent_add_delay(&timeevent, &datetime)) {
         tig_debug_printf("magictech_interrupt_delayed: Error: failed to queue timeevent!\n");
     }
 }
@@ -6494,7 +6494,7 @@ bool sub_459500(int index)
     timeevent.type = TIMEEVENT_TYPE_MAGICTECH;
     timeevent.params[0].integer_value = run_info->id;
     timeevent.params[2].integer_value = 1;
-    return sub_45B860(&timeevent, &(run_info->field_148));
+    return timeevent_add_base(&timeevent, &(run_info->field_148));
 }
 
 // 0x459590
@@ -6519,7 +6519,7 @@ bool magictech_recharge_timeevent_schedule(int64_t item_obj, int mana_cost, bool
     timeevent.params[2].integer_value = magictech_recharge_timeevent_mana_cost;
     sub_45A950(&datetime, 60000);
     datetime.milliseconds *= 8;
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x459640

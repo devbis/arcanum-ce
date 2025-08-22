@@ -2203,7 +2203,7 @@ void sub_4640C0(int64_t obj)
         }
 
         sub_45A950(&datetime, ms);
-        sub_45B800(&timeevent, &datetime);
+        timeevent_add_delay(&timeevent, &datetime);
     }
 }
 
@@ -4711,7 +4711,7 @@ bool item_decay(int64_t obj, int ms)
     timeevent.params[0].object_value = obj;
     timeevent.params[1].integer_value = sub_45A7F0();
     sub_45A950(&datetime, ms);
-    return sub_45B800(&timeevent, &datetime);
+    return timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x468110

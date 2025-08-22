@@ -1041,5 +1041,5 @@ void wmap_rnd_schedule()
 
     timeevent.type = TIMEEVENT_TYPE_RANDOM_ENCOUNTER;
     sub_45A950(&datetime, 60000 * random_between(300, 700));
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }

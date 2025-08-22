@@ -3844,9 +3844,9 @@ bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay)
     timeevent.params[2].integer_value = 1111;
 
     if (anim_catch_up) {
-        return sub_45BA30(&timeevent, &datetime, a2, &(run_info->next_ping_time));
+        return timeevent_add_delay_base_at(&timeevent, &datetime, a2, &(run_info->next_ping_time));
     } else {
-        return sub_45B880(&timeevent, &datetime, &(run_info->next_ping_time));
+        return timeevent_add_delay_at(&timeevent, &datetime, &(run_info->next_ping_time));
     }
 }
 
@@ -11304,7 +11304,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
     }
 
     next_timeevent.type = TIMEEVENT_TYPE_FIDGET_ANIM;
-    return sub_45B800(&next_timeevent, &datetime);
+    return timeevent_add_delay(&next_timeevent, &datetime);
 }
 
 // 0x4302D0
@@ -11363,7 +11363,7 @@ void sub_430460()
 
     sub_45A950(&datetime, 4000);
     timeevent.type = TIMEEVENT_TYPE_FIDGET_ANIM;
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x430490

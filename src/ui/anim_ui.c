@@ -53,7 +53,7 @@ bool anim_ui_init(GameInitInfo* init_info)
 
     timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 1);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 
     return true;
 }
@@ -71,7 +71,7 @@ void anim_ui_reset()
 
     timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 1);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x57D300
@@ -93,7 +93,7 @@ bool anim_ui_load(GameLoadInfo* load_info)
     timeevent_clear_all_typed(TIMEEVENT_TYPE_AMBIENT_LIGHTING);
     timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 3600000);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 
     return true;
 }
@@ -114,7 +114,7 @@ void anim_ui_event_add_delay(int type, int param, int milliseconds)
     timeevent.params[0].integer_value = type;
     timeevent.params[1].integer_value = param;
     sub_45A950(&datetime, milliseconds);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }
 
 // 0x57D3B0
@@ -267,7 +267,7 @@ bool ambient_lighting_process_callback(TimeEvent* timeevent)
     timeevent_clear_all_typed(TIMEEVENT_TYPE_AMBIENT_LIGHTING);
     next_timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 3600000);
-    sub_45B800(&next_timeevent, &datetime);
+    timeevent_add_delay(&next_timeevent, &datetime);
 
     return true;
 }
@@ -284,5 +284,5 @@ void ambient_lighting_reschedule()
     timeevent_clear_all_typed(TIMEEVENT_TYPE_AMBIENT_LIGHTING);
     timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 3600000);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 }

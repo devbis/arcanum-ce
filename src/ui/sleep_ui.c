@@ -574,7 +574,7 @@ bool sleep_ui_message_filter(TigMessage* msg)
 
     // Schedule the first sleep event in 50 ms.
     sub_45A950(&datetime, 50);
-    sub_45B800(&timeevent, &datetime);
+    timeevent_add_delay(&timeevent, &datetime);
 
     // Fade out.
     sleep_ui_fall_asleep();
@@ -640,7 +640,7 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
 
         // Schedule next event in 200ms.
         sub_45A950(&datetime, 200);
-        sub_45B800(&next_timeevent, &datetime);
+        timeevent_add_delay(&next_timeevent, &datetime);
 
         return true;
     }
@@ -657,7 +657,7 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
 
         // Schedule next event in 200ms.
         sub_45A950(&datetime, 200);
-        sub_45B800(&next_timeevent, &datetime);
+        timeevent_add_delay(&next_timeevent, &datetime);
         return true;
     }
 

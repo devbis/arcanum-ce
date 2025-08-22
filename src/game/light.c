@@ -430,7 +430,7 @@ void light_start_animating(Light* light)
             timeevent.params[1].integer_value = 1000 / art_anim_data.fps;
 
             sub_45A950(&datetime, 1000 / art_anim_data.fps);
-            if (sub_45B800(&timeevent, &datetime)) {
+            if (timeevent_add_delay(&timeevent, &datetime)) {
                 light_set_flags_internal(light, LF_ANIMATING);
             }
         }
@@ -457,7 +457,7 @@ bool light_timeevent_process(TimeEvent* timeevent)
 
     next_timeevent = *timeevent;
     sub_45A950(&datetime, next_timeevent.params[1].integer_value);
-    sub_45B800(&next_timeevent, &datetime);
+    timeevent_add_delay(&next_timeevent, &datetime);
 
     return true;
 }
