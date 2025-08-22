@@ -15,7 +15,7 @@ typedef struct TileScriptListNodeSerializedData {
 // Serializeable.
 static_assert(sizeof(TileScriptListNodeSerializedData) == 0x18, "wrong size");
 
-static void sub_4F6380();
+static void tile_script_node_reserve();
 
 // 0x603DD0
 TileScriptListNode* tile_script_node_head;
@@ -31,7 +31,7 @@ TileScriptListNode* tile_script_node_create()
     TileScriptListNode* node;
 
     if (tile_script_node_head == NULL) {
-        sub_4F6380();
+        tile_script_node_reserve();
     }
 
     node = tile_script_node_head;
@@ -50,7 +50,7 @@ void tile_script_node_destroy(TileScriptListNode* node)
 }
 
 // 0x4F6380
-void sub_4F6380()
+void tile_script_node_reserve()
 {
     int index;
     TileScriptListNode* node;
