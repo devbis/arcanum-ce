@@ -93,7 +93,7 @@ bool tile_script_init(GameInitInfo* init_info)
     tile_script_initialized = true;
     tile_script_enabled = true;
 
-    sub_4F6310();
+    tile_script_node_init();
 
     return true;
 }
@@ -114,15 +114,9 @@ void tile_script_reset()
  */
 void tile_script_exit()
 {
-    TileScriptListNode* next;
-
     tile_script_initialized = false;
 
-    while (tile_script_node_head != NULL) {
-        next = tile_script_node_head->next;
-        FREE(tile_script_node_head);
-        tile_script_node_head = next;
-    }
+    tile_script_node_exit();
 }
 
 /**
