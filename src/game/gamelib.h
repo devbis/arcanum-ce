@@ -92,7 +92,7 @@ const char* gamelib_default_module_name_get();
 void gamelib_modlist_create(GameModuleList* module_list, int type);
 void gamelib_modlist_destroy(GameModuleList* module_list);
 bool gamelib_mod_load(const char* path);
-bool gamelib_mod_guid(TigGuid* guid_ptr);
+bool gamelib_mod_guid_get(TigGuid* guid_ptr);
 void gamelib_mod_unload();
 bool gamelib_in_reset();
 int gamelib_cheat_level_get();

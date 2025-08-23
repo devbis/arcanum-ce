@@ -266,7 +266,7 @@ static char byte_5D0FA8[TIG_MAX_PATH];
 static void(*gamelib_draw_func)(GameDrawInfo* draw_info);
 
 // 0x5D10B0
-static TigGuid stru_5D10B0;
+static TigGuid gamelib_mod_guid;
 
 // 0x5D10C0
 static int gamelib_thumbnail_width;
@@ -669,7 +669,7 @@ bool gamelib_mod_load(const char* path)
     }
 
     if (byte_5D0FA8[0] != '\0') {
-        tig_file_repository_guid(byte_5D0FA8, &stru_5D10B0);
+        tig_file_repository_guid(byte_5D0FA8, &gamelib_mod_guid);
     }
 
     dword_5D10C4 = true;
@@ -729,13 +729,13 @@ bool gamelib_mod_load(const char* path)
 }
 
 // 0x402C20
-bool gamelib_mod_guid(TigGuid* guid_ptr)
+bool gamelib_mod_guid_get(TigGuid* guid_ptr)
 {
     if (!dword_5D10C4) {
         return false;
     }
 
-    *guid_ptr = stru_5D10B0;
+    *guid_ptr = gamelib_mod_guid;
 
     return true;
 }
@@ -1910,7 +1910,7 @@ void sub_405070()
     byte_5D0FA8[0] = '\0';
     byte_5D0EA4[0] = '\0';
 
-    memset(&stru_5D10B0, 0, sizeof(stru_5D10B0));
+    memset(&gamelib_mod_guid, 0, sizeof(gamelib_mod_guid));
 
-    dword_5D10C4 = 0;
+    dword_5D10C4 = false;
 }

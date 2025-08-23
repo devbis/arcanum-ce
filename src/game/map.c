@@ -1056,7 +1056,7 @@ bool map_preprocess_mobile(const char* name)
     unsigned int index;
     int64_t obj;
 
-    if (!gamelib_mod_guid(&guid)) {
+    if (!gamelib_mod_guid_get(&guid)) {
         tig_debug_printf("Attempt to retrieve mod GUID when no mod is loaded\n");
         return true;
     }
