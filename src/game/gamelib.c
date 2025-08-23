@@ -245,7 +245,7 @@ static int dword_5D0D7C;
 static int gamelib_thumbnail_height;
 
 // 0x5D0E88
-static GameInitInfo stru_5D0E88;
+static GameInitInfo gamelib_init_info;
 
 // 0x5D0E98
 static TigRectListNode* gamelib_dirty_rects_head;
@@ -337,7 +337,7 @@ bool gamelib_init(GameInitInfo* init_info)
     init_info->invalidate_rect_func = gamelib_invalidate_rect;
     init_info->draw_func = gamelib_draw;
 
-    stru_5D0E88 = *init_info;
+    gamelib_init_info = *init_info;
 
     tig_window_data(init_info->iso_window_handle, &window_data);
 
@@ -508,7 +508,7 @@ void gamelib_resize(GameResizeInfo* resize_info)
     TigRect bounds;
     TigRect frame;
 
-    stru_5D0E88.iso_window_handle = resize_info->window_handle;
+    gamelib_init_info.iso_window_handle = resize_info->window_handle;
     gamelib_iso_content_rect = resize_info->content_rect;
 
     dword_5D0D78 = resize_info->window_rect.x;
@@ -684,7 +684,7 @@ bool gamelib_mod_load(const char* path)
         }
     }
 
-    if (!stru_5D0E88.editor) {
+    if (!gamelib_init_info.editor) {
         tig_file_list_create(&file_list, "maps\\*.*");
 
         for (file_index = 0; file_index < file_list.count; file_index++) {
@@ -903,7 +903,7 @@ void gamelib_renderlock_release()
 // 0x402FC0
 void sub_402FC0()
 {
-    tig_window_fill(stru_5D0E88.iso_window_handle, NULL, 0);
+    tig_window_fill(gamelib_init_info.iso_window_handle, NULL, 0);
     tig_window_display();
     gamelib_invalidate_rect(NULL);
 }
@@ -1452,7 +1452,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
     dst_rect.height = gamelib_thumbnail_height;
 
     win_blit_info.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
-    win_blit_info.src_window_handle = stru_5D0E88.iso_window_handle;
+    win_blit_info.src_window_handle = gamelib_init_info.iso_window_handle;
     win_blit_info.src_rect = &gamelib_iso_content_rect;
     win_blit_info.dst_video_buffer = save_info->thumbnail_video_buffer;
     win_blit_info.dst_rect = &dst_rect;
@@ -1712,7 +1712,7 @@ void gamelib_draw_editor(GameDrawInfo* draw_info)
     color = tig_color_make(0, 0, 255);
     node = *draw_info->rects;
     while (node != NULL) {
-        tig_window_fill(stru_5D0E88.iso_window_handle, &(node->rect), color);
+        tig_window_fill(gamelib_init_info.iso_window_handle, &(node->rect), color);
         node = node->next;
     }
 
@@ -1863,7 +1863,7 @@ bool sub_404C10(const char* module_name)
     }
 
     if (tig_file_mkdir(path1)) {
-        if (stru_5D0E88.editor == 1) {
+        if (gamelib_init_info.editor) {
             if (byte_5D0FA8[0] == '\0') {
                 tig_file_copy_directory(path1, "Module template");
             }
