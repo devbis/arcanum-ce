@@ -236,10 +236,10 @@ static TigRect gamelib_iso_content_rect_ex;
 static bool in_draw;
 
 // 0x5D0D78
-static int dword_5D0D78;
+static int gamelib_window_rect_x;
 
 // 0x5D0D7C
-static int dword_5D0D7C;
+static int gamelib_window_rect_y;
 
 // 0x5D0D80
 static int gamelib_thumbnail_height;
@@ -341,8 +341,8 @@ bool gamelib_init(GameInitInfo* init_info)
 
     tig_window_data(init_info->iso_window_handle, &window_data);
 
-    dword_5D0D78 = window_data.rect.x;
-    dword_5D0D7C = window_data.rect.y;
+    gamelib_window_rect_x = window_data.rect.x;
+    gamelib_window_rect_y = window_data.rect.y;
     gamelib_thumbnail_width = window_data.rect.width / 4;
     gamelib_thumbnail_height = window_data.rect.height / 4;
 
@@ -511,8 +511,8 @@ void gamelib_resize(GameResizeInfo* resize_info)
     gamelib_init_info.iso_window_handle = resize_info->window_handle;
     gamelib_iso_content_rect = resize_info->content_rect;
 
-    dword_5D0D78 = resize_info->window_rect.x;
-    dword_5D0D7C = resize_info->window_rect.y;
+    gamelib_window_rect_x = resize_info->window_rect.x;
+    gamelib_window_rect_y = resize_info->window_rect.y;
 
     gamelib_iso_content_rect_ex.x = gamelib_iso_content_rect.x - 256;
     gamelib_iso_content_rect_ex.y = gamelib_iso_content_rect.y - 256;
@@ -867,8 +867,8 @@ bool gamelib_draw()
         while (node != NULL) {
             next = node->next;
             rect = node->rect;
-            rect.x += dword_5D0D78;
-            rect.y += dword_5D0D7C;
+            rect.x += gamelib_window_rect_x;
+            rect.y += gamelib_window_rect_y;
             tig_window_invalidate_rect(&rect);
             tig_rect_node_destroy(node);
             node = next;
