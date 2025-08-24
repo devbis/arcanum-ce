@@ -4,20 +4,20 @@
 #include "game/context.h"
 #include "game/gfade.h"
 
-typedef enum TeleportFlags {
-    TELEPORT_MOVIE1 = 0x0001,
-    TELEPORT_FADE_OUT = 0x0002,
-    TELEPORT_FADE_IN = 0x0004,
-    TELEPORT_TIME = 0x0008,
-    TELEPORT_SOUND = 0x0010,
-    TELEPORT_0x0020 = 0x0020,
-    TELEPORT_MOVIE2 = 0x0040,
-    TELEPORT_0x0100 = 0x0100,
-    TELEPORT_0x80000000 = 0x80000000,
-} TeleportFlags;
+typedef unsigned int TeleportFlags;
+
+#define TELEPORT_MOVIE1 0x0001u
+#define TELEPORT_FADE_OUT 0x0002u
+#define TELEPORT_FADE_IN 0x0004u
+#define TELEPORT_TIME 0x0008u
+#define TELEPORT_SOUND 0x0010u
+#define TELEPORT_0x0020 0x0020u
+#define TELEPORT_MOVIE2 0x0040u
+#define TELEPORT_0x0100 0x0100u
+#define TELEPORT_0x80000000 0x80000000u
 
 typedef struct TeleportData {
-    /* 0000 */ unsigned int flags;
+    /* 0000 */ TeleportFlags flags;
     /* 0008 */ int64_t obj;
     /* 0010 */ int64_t loc;
     /* 0018 */ int map;
