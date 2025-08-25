@@ -887,7 +887,7 @@ int basic_skill_vs(int64_t obj, int skill, int64_t other_obj)
 
     skill_level = basic_skill_level(obj, skill);
 
-    // Determine the target’s opposing stat or skill based on skill's
+    // Determine the target's opposing stat or skill based on skill's
     // configuration.
     if ((skill_flags[skill] & SKILL_VS_TARGET_PERCEPTION) != 0) {
         difficulty = stat_level_get(other_obj, STAT_PERCEPTION);
@@ -1712,7 +1712,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
                     if (moved) {
                         // Adjust alignment.
-                        sub_45DC90(source_obj, target_obj, 0);
+                        sub_45DC90(source_obj, target_obj, false);
 
                         // Mark item as stolen.
                         unsigned int critter_flags2 = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS2);

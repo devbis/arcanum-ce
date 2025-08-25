@@ -2927,14 +2927,14 @@ bool sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
             if (a2 != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC
                     || obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-                && sub_45E2E0(a1, a2)) {
+                && critter_party_same(a1, a2)) {
                 return true;
             }
 
             if (a3 != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC
                     || obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-                && sub_45E2E0(a1, a3)) {
+                && critter_party_same(a1, a3)) {
                 return true;
             }
         }
@@ -2945,14 +2945,14 @@ bool sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
             if (a2 != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC
                     || obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-                && sub_45E2E0(a1, a2)) {
+                && critter_party_same(a1, a2)) {
                 return true;
             }
 
             if (a3 != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC
                     || obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-                && sub_45E2E0(a1, a3)) {
+                && critter_party_same(a1, a3)) {
                 return true;
             }
         }
