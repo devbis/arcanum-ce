@@ -9,8 +9,8 @@ typedef struct ObjectID_P {
     int map;
 } ObjectID_P;
 
-#define OID_TYPE_HANDLE ((int16_t)-2)
-#define OID_TYPE_BLOCKED ((int16_t)-1)
+#define OID_TYPE_HANDLE ((int16_t)(-2))
+#define OID_TYPE_BLOCKED ((int16_t)(-1))
 #define OID_TYPE_NULL ((int16_t)0)
 #define OID_TYPE_A ((int16_t)1)
 #define OID_TYPE_GUID ((int16_t)2)
