@@ -213,7 +213,7 @@ void item_exit()
 }
 
 // 0x460FC0
-void item_resize(GameResizeInfo *resize_info)
+void item_resize(GameResizeInfo* resize_info)
 {
     item_iso_content_rect = resize_info->content_rect;
 }

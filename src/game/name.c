@@ -128,7 +128,7 @@ static char name_gender_codes[3] = {
 };
 
 // 0x5A11A4
-static const char *name_body_type_strs[TIG_ART_CRITTER_BODY_TYPE_COUNT] = {
+static const char* name_body_type_strs[TIG_ART_CRITTER_BODY_TYPE_COUNT] = {
     /*     TIG_ART_CRITTER_BODY_TYPE_HUMAN */ "HM",
     /*     TIG_ART_CRITTER_BODY_TYPE_DWARF */ "DF",
     /*  TIG_ART_CRITTER_BODY_TYPE_HALFLING */ "GH",
@@ -137,7 +137,7 @@ static const char *name_body_type_strs[TIG_ART_CRITTER_BODY_TYPE_COUNT] = {
 };
 
 // 0x5A11B8
-static const char *name_armor_type_strs[TIG_ART_ARMOR_TYPE_COUNT] = {
+static const char* name_armor_type_strs[TIG_ART_ARMOR_TYPE_COUNT] = {
     /*     TIG_ART_ARMOR_TYPE_UNDERWEAR */ "UW",
     /*      TIG_ART_ARMOR_TYPE_VILLAGER */ "V1",
     /*       TIG_ART_ARMOR_TYPE_LEATHER */ "LA",

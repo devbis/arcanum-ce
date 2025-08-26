@@ -35,14 +35,14 @@ typedef struct TextFloaterList {
 
 static void tf_clear();
 static TextFloaterList* tf_list_create();
-static void tf_list_destroy(TextFloaterList *list);
+static void tf_list_destroy(TextFloaterList* list);
 static void tf_list_free(TextFloaterList* node);
 static void tf_list_get_rect(TextFloaterList* node, TigRect* rect);
 static void tf_calc_rect(int64_t loc, int offset_x, int offset_y, TigRect* rect);
 static TextFloaterEntry* tf_entry_create();
 static void tf_entry_free(TextFloaterEntry* entry);
-static void tf_entry_destroy(TextFloaterList *list, TextFloaterEntry* entry);
-static void tf_entry_get_rect(TextFloaterList *list, TextFloaterEntry* entry, TigRect* entry_rect);
+static void tf_entry_destroy(TextFloaterList* list, TextFloaterEntry* entry);
+static void tf_entry_get_rect(TextFloaterList* list, TextFloaterEntry* entry, TigRect* entry_rect);
 static void tf_entry_get_rect_constrained_to(TigRect* list_rect, TextFloaterEntry* entry, TigRect* entry_rect);
 static void tf_entry_recalc_opacity(TextFloaterEntry* entry);
 static void tf_level_set_internal(int value);
@@ -129,7 +129,7 @@ static TigRect tf_entry_content_rect;
  *
  * 0x6028E0
  */
-TextFloaterList *tf_list_head;
+TextFloaterList* tf_list_head;
 
 /**
  * Timestamp of the last update.
@@ -138,7 +138,7 @@ TextFloaterList *tf_list_head;
  *
  * 0x6028E4
  */
-tig_timestamp_t  tf_ping_timestamp;
+tig_timestamp_t tf_ping_timestamp;
 
 /**
  * Handle to the parent window.
@@ -802,7 +802,7 @@ TextFloaterList* tf_list_create()
  *
  * 0x4D5820
  */
-void tf_list_destroy(TextFloaterList *list)
+void tf_list_destroy(TextFloaterList* list)
 {
     TextFloaterEntry* curr;
     TextFloaterEntry* next;
@@ -934,7 +934,7 @@ void tf_entry_free(TextFloaterEntry* entry)
  *
  * 0x4D59F0
  */
-void tf_entry_destroy(TextFloaterList *list, TextFloaterEntry* entry)
+void tf_entry_destroy(TextFloaterList* list, TextFloaterEntry* entry)
 {
     TigRect rect;
 
@@ -949,7 +949,7 @@ void tf_entry_destroy(TextFloaterList *list, TextFloaterEntry* entry)
  *
  * 0x4D5A30
  */
-void tf_entry_get_rect(TextFloaterList *list, TextFloaterEntry* entry, TigRect* entry_rect)
+void tf_entry_get_rect(TextFloaterList* list, TextFloaterEntry* entry, TigRect* entry_rect)
 {
     TigRect rect;
 

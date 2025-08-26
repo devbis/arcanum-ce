@@ -24,10 +24,10 @@
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/multiplayer.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
-#include "game/object_node.h"
+#include "game/obj_private.h"
 #include "game/object.h"
+#include "game/object_node.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
@@ -77,7 +77,7 @@ static void pc_switch_weapon(int64_t pc_obj, int64_t target_obj);
 // 0x5B5790
 static struct {
     const char* name;
-    bool(*func)(int64_t a1, int64_t a2, int64_t a3, int64_t a4);
+    bool (*func)(int64_t a1, int64_t a2, int64_t a3, int64_t a4);
 } stru_5B5790[] = {
     { "Multiplayer", sub_4A6190 },
 };
@@ -1878,7 +1878,6 @@ void combat_dmg(CombatContext* combat)
             poison = 0;
         }
         stat_base_set(combat->target_obj, STAT_POISON_LEVEL, poison);
-
 
         if (combat->dam[DAMAGE_TYPE_POISON] > 0 && tf_level_get() == TF_LEVEL_VERBOSE) {
             mes_file_entry.num = 0;
@@ -3839,8 +3838,6 @@ void sort_combat_list()
         node = node->next;
         index++;
     }
-
-
 }
 
 // 0x4B8040

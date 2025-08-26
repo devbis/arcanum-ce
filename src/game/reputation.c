@@ -212,14 +212,30 @@ bool reputation_parse(const char* path, int start, int end)
                 if (tok == NULL) break;
 
                 reputations[rep_num_to_idx(num)].factions[0] = atoi(tok);
-                while (SDL_isspace(*tok)) tok++;
-                while (SDL_isdigit(*tok)) tok++;
-                if (*tok == '\0') break;
+                while (SDL_isspace(*tok)) {
+                    tok++;
+                }
+
+                while (SDL_isdigit(*tok)) {
+                    tok++;
+                }
+
+                if (*tok == '\0') {
+                    break;
+                }
 
                 reputations[rep_num_to_idx(num)].factions[1] = atoi(tok);
-                while (SDL_isspace(*tok)) tok++;
-                while (SDL_isdigit(*tok)) tok++;
-                if (*tok == '\0') break;
+                while (SDL_isspace(*tok)) {
+                    tok++;
+                }
+
+                while (SDL_isdigit(*tok)) {
+                    tok++;
+                }
+
+                if (*tok == '\0') {
+                    break;
+                }
 
                 reputations[rep_num_to_idx(num)].factions[2] = atoi(tok);
 
@@ -246,14 +262,30 @@ bool reputation_parse(const char* path, int start, int end)
                 err = true;
                 do {
                     reputations[rep_num_to_idx(num)].effects[effect].adj = atoi(tok);
-                    while (SDL_isspace(*tok)) tok++;
-                    while (SDL_isdigit(*tok)) tok++;
-                    if (*tok == '\0') break;
+                    while (SDL_isspace(*tok)) {
+                        tok++;
+                    }
+
+                    while (SDL_isdigit(*tok)) {
+                        tok++;
+                    }
+
+                    if (*tok == '\0') {
+                        break;
+                    }
 
                     reputations[rep_num_to_idx(num)].effects[effect].origin = atoi(tok);
-                    while (SDL_isspace(*tok)) tok++;
-                    while (SDL_isdigit(*tok)) tok++;
-                    if (*tok == '\0') break;
+                    while (SDL_isspace(*tok)) {
+                        tok++;
+                    }
+
+                    while (SDL_isdigit(*tok)) {
+                        tok++;
+                    }
+
+                    if (*tok == '\0') {
+                        break;
+                    }
 
                     reputations[rep_num_to_idx(num)].effects[effect].faction = atoi(tok);
 

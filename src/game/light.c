@@ -1505,7 +1505,6 @@ void light_set_flags_internal(Light* light, unsigned int flags)
     light->flags |= flags;
     light->flags |= LF_MODIFIED;
 
-
     if (light->obj != OBJ_HANDLE_NULL) {
         if ((light->flags & LF_08000000) != 0) {
             obj_field_int32_set(light->obj, OBJ_F_LIGHT_FLAGS, light->flags);
@@ -2092,7 +2091,7 @@ bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info)
     }
 
     modify_info->flags = TIG_PALETTE_MODIFY_TINT;
-    switch (tig_art_type(art_id )) {
+    switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
         if (tig_art_tile_id_type_get(art_id) == 0) {
             modify_info->tint_color = light_indoor_color;
@@ -2431,7 +2430,7 @@ void light_render_internal(GameDrawInfo* draw_info)
     TigRectListNode* rect_node;
     TigRect tmp_rect;
     TigRectListNode* head;
-    SectorListNode *v1;
+    SectorListNode* v1;
     Sector* sector;
     SectorBlockListNode* light_node;
     Light* light;

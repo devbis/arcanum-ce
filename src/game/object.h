@@ -2,10 +2,10 @@
 #define ARCANUM_GAME_OBJECT_H_
 
 #include "game/context.h"
-#include "game/obj.h"
-#include "game/object_node.h"
-#include "game/object.h"
 #include "game/location.h"
+#include "game/obj.h"
+#include "game/object.h"
+#include "game/object_node.h"
 #include "game/timeevent.h"
 
 #define OBJ_TM_WALL 0x00000001
@@ -28,26 +28,26 @@
 #define OBJ_TM_TRAP 0x00020000
 
 #define OBJ_TM_ITEM (OBJ_TM_WEAPON \
-    | OBJ_TM_AMMO \
-    | OBJ_TM_ARMOR \
-    | OBJ_TM_GOLD \
-    | OBJ_TM_FOOD \
-    | OBJ_TM_SCROLL \
-    | OBJ_TM_KEY \
-    | OBJ_TM_KEY_RING \
-    | OBJ_TM_WRITTEN \
+    | OBJ_TM_AMMO                  \
+    | OBJ_TM_ARMOR                 \
+    | OBJ_TM_GOLD                  \
+    | OBJ_TM_FOOD                  \
+    | OBJ_TM_SCROLL                \
+    | OBJ_TM_KEY                   \
+    | OBJ_TM_KEY_RING              \
+    | OBJ_TM_WRITTEN               \
     | OBJ_TM_GENERIC)
 
 #define OBJ_TM_CRITTER (OBJ_TM_PC | OBJ_TM_NPC)
 
 #define OBJ_TM_ALL (OBJ_TM_WALL \
-    | OBJ_TM_PORTAL \
-    | OBJ_TM_CONTAINER \
-    | OBJ_TM_SCENERY \
-    | OBJ_TM_PROJECTILE \
-    | OBJ_TM_ITEM \
-    | OBJ_TM_PC \
-    | OBJ_TM_NPC \
+    | OBJ_TM_PORTAL             \
+    | OBJ_TM_CONTAINER          \
+    | OBJ_TM_SCENERY            \
+    | OBJ_TM_PROJECTILE         \
+    | OBJ_TM_ITEM               \
+    | OBJ_TM_PC                 \
+    | OBJ_TM_NPC                \
     | OBJ_TM_TRAP)
 
 // TODO: Better name.

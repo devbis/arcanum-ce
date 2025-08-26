@@ -5,10 +5,11 @@
 #include "game/object.h"
 #include "game/timeevent.h"
 
-#define ASSERT(x) if (!(x)) { \
-    tig_debug_printf("ASSERTION: File:%s, Line:%d: %s\n", __FILE__, __LINE__, #x); \
-    anim_stats(); \
-}
+#define ASSERT(x)                                                                      \
+    if (!(x)) {                                                                        \
+        tig_debug_printf("ASSERTION: File:%s, Line:%d: %s\n", __FILE__, __LINE__, #x); \
+        anim_stats();                                                                  \
+    }
 
 typedef enum AnimGoal {
     AG_ANIMATE,
@@ -111,7 +112,7 @@ typedef enum AgDataType {
 struct AnimRunInfo;
 
 typedef struct AnimGoalSubNode {
-    /* 0000 */ bool(*func)(struct AnimRunInfo* run_info);
+    /* 0000 */ bool (*func)(struct AnimRunInfo* run_info);
     /* 0004 */ int params[2];
     /* 000C */ int field_C;
     /* 0010 */ int field_10;
@@ -243,7 +244,7 @@ extern const char* off_5A164C[];
 extern int dword_5A5978;
 extern int dword_5A597C[AGDATA_COUNT];
 extern bool dword_5E34F4;
-extern void(*dword_5E34F8)();
+extern void (*dword_5E34F8)();
 extern bool in_anim_load;
 extern int dword_5E3500;
 extern int animNumActiveGoals;
@@ -270,9 +271,9 @@ bool sub_44D4E0(AnimGoalData* goal_data, int64_t obj, int goal_type);
 bool sub_44D500(AnimGoalData* goal_data, int64_t obj, int goal_type);
 bool sub_44D520(AnimGoalData* goal_data, AnimID* anim_id);
 bool sub_44D540(AnimGoalData* goal_data, AnimID* anim_id, unsigned int flags);
-bool sub_44D730(AnimGoalData *goal_data, AnimID *anim_id, bool a3, unsigned int flags);
+bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int flags);
 bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data);
-bool sub_44DBE0(AnimID anim_id, AnimGoalData *goal_data, const char* file, int line);
+bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data, const char* file, int line);
 bool anim_recover_handles(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode);
 void sub_44E050(int64_t a1, int64_t a2);
 void sub_44E0E0(int64_t a1, int64_t a2);

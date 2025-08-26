@@ -160,7 +160,7 @@ void target_resize(GameResizeInfo* resize_info);
 void sub_4F25B0(uint64_t flags);
 uint64_t sub_4F25D0();
 void sub_4F25E0(S603D20* a1);
-void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3);
+void sub_4F2600(S603CB8* a1, S603D20* a2, int64_t a3);
 bool sub_4F2680(S4F2680* a1);
 int sub_4F2C60(int64_t* obj_ptr);
 void sub_4F27F0(S4F2810* a1, int64_t loc);

@@ -139,7 +139,7 @@ int sub_579F70(int index)
 // 0x579F90
 int sub_579F90()
 {
-  return dword_5CB270;
+    return dword_5CB270;
 }
 
 // 0x579FA0
@@ -262,7 +262,7 @@ void sub_57A1F0(S4F2810* a1)
 }
 
 // 0x57A320
-void skill_ui_activate(S4F2810 *a1, int64_t obj, int a3)
+void skill_ui_activate(S4F2810* a1, int64_t obj, int a3)
 {
     bool is_pc;
     int skill;

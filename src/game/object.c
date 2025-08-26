@@ -16,10 +16,10 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/obj.h"
 #include "game/obj_file.h"
 #include "game/obj_find.h"
 #include "game/obj_private.h"
-#include "game/obj.h"
 #include "game/party.h"
 #include "game/player.h"
 #include "game/portal.h"
@@ -33,8 +33,8 @@
 #include "game/stat.h"
 #include "game/tb.h"
 #include "game/tf.h"
-#include "game/tile_script.h"
 #include "game/tile.h"
+#include "game/tile_script.h"
 #include "game/timeevent.h"
 #include "game/townmap.h"
 #include "game/trap.h"
@@ -972,7 +972,6 @@ int64_t object_hover_obj_get()
     if (!sub_444020(&object_hover_obj, &stru_5E2F60)) {
         object_hover_obj_set(OBJ_HANDLE_NULL);
         return OBJ_HANDLE_NULL;
-
     }
 
     return object_hover_obj;
@@ -1894,7 +1893,7 @@ bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
                                             && ext_y < obj_rect.y + obj_rect.height) {
 
                                             test_x = ext_x - obj_rect.x;
-                                            test_y  = ext_y - obj_rect.y;
+                                            test_y = ext_y - obj_rect.y;
 
                                             if (scale != 100) {
                                                 test_x = (int)((float)test_x / (float)scale * 100.0f);
@@ -3451,7 +3450,7 @@ void object_list_rect(LocRect* loc_rect, unsigned int flags, ObjectList* objects
                                 new_node->obj = obj;
                                 new_node->next = NULL;
                                 *prev_ptr = new_node;
-                                prev_ptr= &(new_node->next);
+                                prev_ptr = &(new_node->next);
                             }
                         }
                     } while (obj_find_walk_next(&obj, &iter));
@@ -3484,7 +3483,7 @@ void object_list_rect(LocRect* loc_rect, unsigned int flags, ObjectList* objects
                                     new_node->obj = obj_node->obj;
                                     new_node->next = NULL;
                                     *prev_ptr = new_node;
-                                    prev_ptr= &(new_node->next);
+                                    prev_ptr = &(new_node->next);
                                 }
                                 obj_node = obj_node->next;
                             }
@@ -4443,14 +4442,7 @@ void sub_442520(int64_t obj)
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     if ((render_flags & ORF_01000000) == 0) {
-        new_render_flags = render_flags & ~(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D
-            | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S
-            | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH
-            | TIG_ART_BLT_BLEND_ALPHA_LERP_Y
-            | TIG_ART_BLT_BLEND_ALPHA_LERP_X
-            | TIG_ART_BLT_BLEND_ALPHA_SRC
-            | TIG_ART_BLT_BLEND_ALPHA_CONST
-            | TIG_ART_BLT_BLEND_ALPHA_AVG);
+        new_render_flags = render_flags & ~(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH | TIG_ART_BLT_BLEND_ALPHA_LERP_Y | TIG_ART_BLT_BLEND_ALPHA_LERP_X | TIG_ART_BLT_BLEND_ALPHA_SRC | TIG_ART_BLT_BLEND_ALPHA_CONST | TIG_ART_BLT_BLEND_ALPHA_AVG);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_WALL) {
             switch (obj_field_int32_get(obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) {
             case OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT:
@@ -4478,14 +4470,7 @@ void sub_442520(int64_t obj)
             }
         }
 
-        if ((new_render_flags & (TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D
-                | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S
-                | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH
-                | TIG_ART_BLT_BLEND_ALPHA_LERP_Y
-                | TIG_ART_BLT_BLEND_ALPHA_LERP_X
-                | TIG_ART_BLT_BLEND_ALPHA_SRC
-                | TIG_ART_BLT_BLEND_ALPHA_CONST
-                | TIG_ART_BLT_BLEND_ALPHA_AVG)) != 0
+        if ((new_render_flags & (TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH | TIG_ART_BLT_BLEND_ALPHA_LERP_Y | TIG_ART_BLT_BLEND_ALPHA_LERP_X | TIG_ART_BLT_BLEND_ALPHA_SRC | TIG_ART_BLT_BLEND_ALPHA_CONST | TIG_ART_BLT_BLEND_ALPHA_AVG)) != 0
             && (flags & (OF_INVISIBLE | OF_TRANSLUCENT)) != 0) {
             obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 0, 128);
             new_render_flags |= object_blit_flags;
@@ -4800,14 +4785,7 @@ void object_setup_blit(int64_t obj, TigArtBlitInfo* blit_info)
                 obj_field_int32_get(obj, OBJ_F_BLIT_ALPHA));
         }
     } else {
-        blit_info->flags = render_flags & ~(ORF_01000000
-            | ORF_02000000
-            | ORF_04000000
-            | ORF_08000000
-            | ORF_10000000
-            | ORF_20000000
-            | ORF_40000000
-            | ORF_80000000);
+        blit_info->flags = render_flags & ~(ORF_01000000 | ORF_02000000 | ORF_04000000 | ORF_08000000 | ORF_10000000 | ORF_20000000 | ORF_40000000 | ORF_80000000);
     }
 
     blit_info->art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -4869,8 +4847,8 @@ void object_enqueue_blit(TigArtBlitInfo* blit_info, int order)
 
     if (object_blit_queue_size >= object_blit_queue_capacity) {
         object_blit_queue_capacity += 128;
-        object_pending_blits = (ObjectBlitInfo *)REALLOC(object_pending_blits, sizeof(*object_pending_blits) * object_blit_queue_capacity);
-        object_pending_rects = (ObjectBlitRectInfo *)REALLOC(object_pending_rects, sizeof(*object_pending_rects) * object_blit_queue_capacity);
+        object_pending_blits = (ObjectBlitInfo*)REALLOC(object_pending_blits, sizeof(*object_pending_blits) * object_blit_queue_capacity);
+        object_pending_rects = (ObjectBlitRectInfo*)REALLOC(object_pending_rects, sizeof(*object_pending_rects) * object_blit_queue_capacity);
     }
 
     object_pending_blits[object_blit_queue_size].order = order;
@@ -4982,11 +4960,7 @@ void sub_443770(int64_t obj)
     object_render_colors_clear(obj);
     obj_field_int32_set(obj,
         OBJ_F_RENDER_FLAGS,
-        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_40000000
-            | ORF_20000000
-            | ORF_10000000
-            | ORF_04000000
-            | ORF_02000000));
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_40000000 | ORF_20000000 | ORF_10000000 | ORF_04000000 | ORF_02000000));
 }
 
 // 0x4437C0
@@ -5132,7 +5106,7 @@ bool object_load_obj_handle_safe(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
             // FIX: Use 64-bit specifiers instead of casting values to 32-bit
             // ints (which is ok for coordinates, but plain wrong for sector
             // id).
-            tig_debug_printf("  Info: MapID: %d, Loc: [%" PRIi64 "x, %" PRIi64" y], Sector: %" PRIu64 ", ID: %s\n",
+            tig_debug_printf("  Info: MapID: %d, Loc: [%" PRIi64 "x, %" PRIi64 " y], Sector: %" PRIu64 ", ID: %s\n",
                 map,
                 LOCATION_GET_X(loc),
                 LOCATION_GET_Y(loc),

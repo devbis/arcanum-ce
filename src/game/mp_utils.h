@@ -3,13 +3,13 @@
 
 #include "game/anim_private.h"
 #include "game/broadcast.h"
-#include "game/context.h"
 #include "game/combat.h"
+#include "game/context.h"
 #include "game/dialog.h"
-#include "game/obj.h"
-#include "game/target.h"
 #include "game/magictech.h"
+#include "game/obj.h"
 #include "game/script.h"
+#include "game/target.h"
 #include "game/ui.h"
 
 typedef struct PacketGamePlayerList {
@@ -1083,13 +1083,13 @@ typedef struct PacketPlaySound {
     /* 0004 */ int subtype;
     union {
         struct {
-        /* 0008 */ int sound_id;
-        /* 000C */ int loops;
-        /* 0010 */ ObjectID oid;
+            /* 0008 */ int sound_id;
+            /* 000C */ int loops;
+            /* 0010 */ ObjectID oid;
         };
         struct {
-        /* 0008 */ int music_scheme_idx;
-        /* 000C */ int ambient_scheme_idx;
+            /* 0008 */ int music_scheme_idx;
+            /* 000C */ int ambient_scheme_idx;
         };
     };
 } PacketPlaySound;

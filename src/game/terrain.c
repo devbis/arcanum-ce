@@ -24,7 +24,7 @@ typedef struct TerrainHeader {
 static_assert(sizeof(TerrainHeader) == 0x20, "wrong size");
 
 static void sub_4E80C0(int a1, int a2, TigVideoBuffer* vb, TigRect* rect);
-static void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec));
+static void sub_4E88C0(int64_t sec, uint16_t tid, void (*callback)(uint64_t sec));
 static const char* terrain_base_name(int terrain_type);
 static int terrain_match_base_name(const char* base_name);
 static void terrain_color(int terrain_type, int* red, int* green, int* blue);
@@ -193,7 +193,6 @@ bool terrain_map_new(MapNewInfo* new_map_info)
 
     return terrain_flush();
 }
-
 
 // 0x4E7CB0
 bool terrain_open(const char* base_path, const char* save_path)
@@ -500,7 +499,7 @@ uint16_t sub_4E87F0(int64_t sec)
 }
 
 // 0x4E88C0
-void sub_4E88C0(int64_t sec, uint16_t tid, void(*callback)(uint64_t sec))
+void sub_4E88C0(int64_t sec, uint16_t tid, void (*callback)(uint64_t sec))
 {
     int x;
     int y;

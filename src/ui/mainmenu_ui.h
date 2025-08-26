@@ -2,8 +2,8 @@
 #define ARCANUM_UI_MAINMENU_UI_H_
 
 #include "game/context.h"
-#include "game/timeevent.h"
 #include "game/mes.h"
+#include "game/timeevent.h"
 #include "ui/types.h"
 
 typedef enum MainMenuFont {

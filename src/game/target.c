@@ -105,7 +105,7 @@ void sub_4F25E0(S603D20* a1)
 }
 
 // 0x4F2600
-void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3)
+void sub_4F2600(S603CB8* a1, S603D20* a2, int64_t a3)
 {
     a1->field_38 = 0;
     a1->field_30 = 0;
@@ -302,7 +302,6 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
             }
         }
     }
-
 
     if ((stru_603D20.aoe_flags & Tgt_No_Self) != 0) {
         object_flags_unset(pc_obj, OF_CLICK_THROUGH);

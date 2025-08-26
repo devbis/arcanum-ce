@@ -4,9 +4,9 @@
 
 #include "game/anim.h"
 #include "game/background.h"
-#include "game/descriptions.h"
 #include "game/combat.h"
 #include "game/critter.h"
+#include "game/descriptions.h"
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/item.h"
@@ -191,9 +191,9 @@ typedef struct S5F0BC8 {
 } S5F0BC8;
 
 typedef struct S5E8940 {
-    /* 0000 */ bool(*success_func)(void*);
+    /* 0000 */ bool (*success_func)(void*);
     /* 0004 */ void* success_info;
-    /* 0008 */ bool(*failure_func)(void*);
+    /* 0008 */ bool (*failure_func)(void*);
     /* 000C */ void* failure_info;
 } S5E8940;
 
@@ -252,9 +252,9 @@ static tig_button_handle_t dword_5B3FEC = TIG_BUTTON_HANDLE_INVALID;
 
 static const struct {
     const char* name;
-    bool(*save_func)(TigFile* stream);
-    bool(*load_func)(GameLoadInfo* load_info);
-    void(*ping_func)();
+    bool (*save_func)(TigFile* stream);
+    bool (*load_func)(GameLoadInfo* load_info);
+    void (*ping_func)();
 } stru_5B3FF0[8] = {
     { "Anim", anim_save, anim_load, sub_4A54A0 },
     { "MagicTech", magictech_post_save, magictech_post_load, sub_4A54E0 },
@@ -333,7 +333,7 @@ static S5F0DFC* dword_5F0DFC;
 static bool dword_5F0E00;
 
 // 0x5F0E04
-static void(*off_5F0E04)();
+static void (*off_5F0E04)();
 
 // 0x5F0E08
 static Func5F0E08* dword_5F0E08;
@@ -1337,7 +1337,7 @@ void sub_4A3170(ObjectID oid)
 }
 
 // 0x4A3230
-void sub_4A3230(ObjectID oid, bool(*success_func)(void*), void* success_info, bool(*failure_func)(void*), void* failure_info)
+void sub_4A3230(ObjectID oid, bool (*success_func)(void*), void* success_info, bool (*failure_func)(void*), void* failure_info)
 {
     if (tig_net_is_active()) {
         int64_t item_obj;
@@ -1515,7 +1515,7 @@ int sub_4A38A0()
 }
 
 // 0x4A38B0
-bool sub_4A38B0(bool(*func)(tig_button_handle_t), tig_button_handle_t button_handle)
+bool sub_4A38B0(bool (*func)(tig_button_handle_t), tig_button_handle_t button_handle)
 {
     if (tig_net_is_host()) {
         char oidstr[40];
@@ -1626,7 +1626,7 @@ bool save_char(const char* path, int64_t obj)
 
     sub_4A6010(obj);
 
-    sub_442050(&data, &size,obj);
+    sub_442050(&data, &size, obj);
 
     stream = tig_file_fopen(path, "wb");
     if (stream == NULL) {
@@ -2245,7 +2245,6 @@ bool sub_4A50D0(int64_t pc_obj, int64_t item_obj)
 {
     unsigned int flags;
 
-
     if (tig_net_is_active()) {
         int client_id;
         Packet93 pkt;
@@ -2662,7 +2661,6 @@ int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
     if (v1 != 0) {
         return v1;
     }
-
 
     // Fail safe weapons (if you didn't get any of the above).
     if (level <= 20) {

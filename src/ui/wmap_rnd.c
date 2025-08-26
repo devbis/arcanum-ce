@@ -74,17 +74,17 @@ static void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entr
 static void wmap_rnd_encounter_table_clear();
 static void wmap_rnd_encounter_chart_clear();
 static bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const char** value_list);
-static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry);
-static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
+static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry* entry);
+static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart* chart);
 static void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart);
 static int wmap_rnd_encounter_entry_compare(const void* va, const void* vb);
-static bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry);
+static bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry* entry);
 static bool wmap_rnd_check(int64_t location);
 static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
 static int wmap_rnd_determine_terrain(int64_t loc);
 static bool wmap_rnd_encounter_check();
 static bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry);
-static int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable *table);
+static int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable* table);
 static int wmap_rnd_encounter_entry_total_monsters(WmapRndEncounterTableEntry* entry);
 static void sub_559260(WmapRndEncounterTableEntry* entry);
 static void sub_5594E0(int a1, int64_t* dx_ptr, int64_t* dy_ptr);
@@ -621,7 +621,7 @@ bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const
 }
 
 // 0x558C90
-void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry)
+void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry* entry)
 {
     int64_t x;
     int64_t y;
@@ -633,7 +633,7 @@ void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry
 }
 
 // 0x558CE0
-void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart)
+void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart* chart)
 {
     if (chart->num_entries != 0) {
         FREE(chart->entries);
@@ -663,7 +663,7 @@ int wmap_rnd_encounter_entry_compare(const void* va, const void* vb)
 }
 
 // 0x558D40
-bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry *entry)
+bool wmap_rnd_parse_critters(char** str, WmapRndEncounterTableEntry* entry)
 {
     int index;
     int bp;
@@ -869,7 +869,7 @@ bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
 }
 
 // 0x5591B0
-int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable *table)
+int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable* table)
 {
     int frequency = 0;
     int index;

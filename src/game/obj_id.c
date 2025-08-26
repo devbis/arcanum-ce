@@ -333,8 +333,8 @@ bool sub_4E6B00(char* dst, const char* src, size_t length)
 
     for (index = 0; index < length; index++) {
         if (!((src[index] >= '0' && src[index] <= '9')
-            || (src[index] >= 'A' && src[index] <= 'F')
-            || (src[index] >= 'a' && src[index] <= 'f'))) {
+                || (src[index] >= 'A' && src[index] <= 'F')
+                || (src[index] >= 'a' && src[index] <= 'f'))) {
             return false;
         }
 

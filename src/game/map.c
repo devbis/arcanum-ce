@@ -10,8 +10,8 @@
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/jumppoint.h"
-#include "game/light_scheme.h"
 #include "game/light.h"
+#include "game/light_scheme.h"
 #include "game/location.h"
 #include "game/magictech.h"
 #include "game/mes.h"
@@ -672,8 +672,8 @@ bool map_open(const char* base_path, const char* save_path, bool a3)
     if (!map_editor) {
         if (!map_load_dynamic(save_path)) {
             tig_debug_println("Error reading dynamic mobile objects\n");
-                map_close();
-                return false;
+            map_close();
+            return false;
         }
     }
     duration = tig_timer_elapsed(timestamp);

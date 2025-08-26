@@ -24,7 +24,7 @@ typedef struct ObjectFieldInfo {
     /* 0018 */ int type;
 } ObjectFieldInfo;
 
-typedef bool (ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* field_info);
+typedef bool(ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* field_info);
 
 static void object_field_not_exists(Object* object, int fld);
 static void sub_408430(tig_art_id_t aid);
@@ -724,7 +724,7 @@ bool obj_validate_system(unsigned int flags)
 
                                 // TODO: Looks wrong, validates `obj` instead of `item_obj`.
                                 if (!obj_handle_is_valid(obj)) {
-                                    tig_debug_printf("!VS  Inventory entry id resolved to invalid handle.  H: %" PRIx64 "\n",  item_obj);
+                                    tig_debug_printf("!VS  Inventory entry id resolved to invalid handle.  H: %" PRIx64 "\n", item_obj);
                                 }
                             }
 
@@ -1280,7 +1280,6 @@ int obj_is_modified(int64_t obj)
     return modified;
 }
 
-
 // 0x4067F0
 bool obj_dif_write(TigFile* stream, int64_t obj)
 {
@@ -1468,10 +1467,10 @@ int obj_field_int32_get(int64_t obj, int fld)
 // 0x406D10
 void object_field_not_exists(Object* object, int fld)
 {
-  tig_debug_printf("Error: Accessing non-existant field [%s : %d] in object type [%d].\n",
-           object_field_names[fld],
-           fld,
-           object->type);
+    tig_debug_printf("Error: Accessing non-existant field [%s : %d] in object type [%d].\n",
+        object_field_names[fld],
+        fld,
+        object->type);
 }
 
 // 0x406D40

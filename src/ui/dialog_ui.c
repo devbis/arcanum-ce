@@ -10,12 +10,11 @@
 #include "game/dialog.h"
 #include "game/gsound.h"
 #include "game/mp_utils.h"
-#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/player.h"
-#include "game/script_name.h"
 #include "game/script.h"
+#include "game/script_name.h"
 #include "game/stat.h"
 #include "game/tb.h"
 #include "ui/charedit_ui.h"
@@ -46,7 +45,7 @@ static void sub_567D60(DialogUiEntry* entry);
 static bool sub_567E30(DialogUiEntry* entry, int a2);
 static bool dialog_ui_message_filter(TigMessage* msg);
 static bool sub_5681B0(DialogUiEntry* entry);
-static bool sub_568280(DialogUiEntry *a1);
+static bool sub_568280(DialogUiEntry* a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
 static void sub_568540(int64_t npc_obj, int64_t pc_obj, int type, int expires_in, const char* str, int speech_id);
@@ -613,7 +612,7 @@ void sub_568220(DialogSerializedData* serialized_data, int a2, int a3, int a4, i
 }
 
 // 0x568280
-bool sub_568280(DialogUiEntry *a1)
+bool sub_568280(DialogUiEntry* a1)
 {
     bool is_pc;
 

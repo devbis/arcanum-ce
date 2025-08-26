@@ -5,8 +5,8 @@
 #include "game/hrp.h"
 #include "game/item.h"
 #include "game/mt_item.h"
-#include "game/object.h"
 #include "game/obj_private.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "game/sfx.h"
 #include "game/spell.h"
@@ -511,7 +511,6 @@ void intgame_hotkey_refresh(int index)
         return;
     }
 
-
     hotkey = &(stru_6835E0[index]);
 
     if (tig_art_interface_id_create(dword_5CB494[0], 0, 0, 0, &art_id) == TIG_OK) {
@@ -696,7 +695,7 @@ void sub_57E5A0(Hotkey* hotkey)
 bool sub_57E5D0()
 {
     int index;
-    Hotkey *hotkey;
+    Hotkey* hotkey;
     tig_art_id_t art_id;
     UiButtonInfo button_info;
     int spl;

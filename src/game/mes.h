@@ -6,7 +6,7 @@
 #define MAX_STRING 2000
 
 typedef int mes_file_handle_t;
-#define MES_FILE_HANDLE_INVALID ((mes_file_handle_t)-1)
+#define MES_FILE_HANDLE_INVALID ((mes_file_handle_t)(-1))
 
 typedef struct MesFileEntry {
     /* 0000 */ int num;

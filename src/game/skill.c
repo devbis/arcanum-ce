@@ -295,7 +295,6 @@ static int dword_5B70E4[9] = {
 };
 
 /**
- *
  * 0x5FF424
  */
 static char* basic_skill_descriptions[BASIC_SKILL_COUNT];
@@ -2539,9 +2538,10 @@ int skill_invocation_difficulty(SkillInvocation* skill_invocation)
         }
 
         if ((((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) == 0
-                && basic_skill != BASIC_SKILL_SPOT_TRAP
-                && tech_skill != TECH_SKILL_DISARM_TRAPS)
-            || training < TRAINING_APPRENTICE) && affected) {
+                 && basic_skill != BASIC_SKILL_SPOT_TRAP
+                 && tech_skill != TECH_SKILL_DISARM_TRAPS)
+                || training < TRAINING_APPRENTICE)
+            && affected) {
             int lum;
             if ((skill_invocation->flags & SKILL_INVOCATION_CHECK_SEEING) != 0) {
                 // Take light level of the source object.

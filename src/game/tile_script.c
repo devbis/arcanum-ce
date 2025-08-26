@@ -158,8 +158,8 @@ bool tile_script_is_enabled()
  * The game does not render tile scripts, this function only makes sense in the
  * editor.
  *
+ * 0x4C0610
  */
-// 0x4C0610
 void tile_script_toggle()
 {
     tile_script_enabled = !tile_script_enabled;

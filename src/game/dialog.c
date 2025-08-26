@@ -17,8 +17,8 @@
 #include "game/reaction.h"
 #include "game/reputation.h"
 #include "game/rumor.h"
-#include "game/script_name.h"
 #include "game/script.h"
+#include "game/script_name.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
@@ -203,7 +203,7 @@ static void dialog_copy_npc_race_specific_msg(char* buffer, DialogState* state, 
 static void dialog_copy_npc_generic_msg(char* buffer, DialogState* state, int start, int end);
 static bool dialog_copy_npc_override_msg(char* buffer, DialogState* state, int num);
 static int sub_4189C0(const char* a1, int a2);
-static void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState *state);
+static void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState* state);
 static void sub_418B30(int a1, DialogState* a2);
 static void sub_418C40(int a1, int a2, int a3, DialogState* a4);
 static void dialog_offer_training(int* skills, int cnt, int back_response_val, DialogState* state);
@@ -1313,7 +1313,7 @@ int sub_414F50(DialogState* a1, int* a2)
     int gender;
     int intelligence;
     DialogFile* dialog;
-    DialogFileEntry *entry;
+    DialogFileEntry* entry;
     int idx;
     int cnt;
 
@@ -3298,7 +3298,7 @@ void sub_418A00(int a1, int* a2, int* a3)
 }
 
 // 0x418A40
-void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState *state)
+void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogState* state)
 {
     char buffer[1000];
 
@@ -3327,7 +3327,6 @@ void dialog_ask_money(int amt, int param1, int param2, int a4, int a5, DialogSta
 
     state->field_17F0[2] = param1;
     state->field_1804[2] = param2;
-
 }
 
 // 0x418B30

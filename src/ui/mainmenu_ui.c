@@ -14,8 +14,8 @@
 #include "game/item.h"
 #include "game/map.h"
 #include "game/mes.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/portrait.h"
@@ -137,8 +137,8 @@ static void mainmenu_ui_shop_create();
 static void mainmenu_ui_shop_destroy();
 static bool mainmenu_ui_shop_button_released(tig_button_handle_t button_handle);
 static void mainmenu_ui_shop_refresh(TigRect* rect);
-static bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height);
-static bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height, unsigned int flags);
+static bool main_menu_button_create(MainMenuButtonInfo* info, int width, int height);
+static bool main_menu_button_create_ex(MainMenuButtonInfo* info, int width, int height, unsigned int flags);
 static void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str, TigRect* rect, unsigned int flags);
 static void sub_546DD0();
 static void mainmenu_ui_create_shared_radio_buttons();
@@ -1237,7 +1237,7 @@ static MainMenuWindowInfo mainmenu_ui_shop_info = {
 };
 
 // 0x5C3A40
-static MainMenuWindowInfo *main_menu_window_info[MM_WINDOW_COUNT] = {
+static MainMenuWindowInfo* main_menu_window_info[MM_WINDOW_COUNT] = {
     /*                       MM_WINDOW_0 */ &stru_5C3AB0,
     /*                       MM_WINDOW_1 */ &stru_5C3B48,
     /*                MM_WINDOW_MAINMENU */ &mainmenu_ui_mainmenu_window_info,
@@ -3711,7 +3711,7 @@ void mmUISharedCharRefreshFunc(int64_t obj, TigRect* rect)
 
                     font = dword_64C210[0];
                     tig_font_push(font);
-                    mes_file_entry.num = 770 + 2 * race + gender;;
+                    mes_file_entry.num = 770 + 2 * race + gender;
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                     if (mes_file_entry.str[0] != '\0') {
                         sub_542DF0(mes_file_entry.str, &mainmenu_ui_shared_char_desc_body_rect, font);
@@ -4371,13 +4371,13 @@ void mainmenu_ui_shop_refresh(TigRect* rect)
 }
 
 // 0x5461A0
-bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height)
+bool main_menu_button_create(MainMenuButtonInfo* info, int width, int height)
 {
     return main_menu_button_create_ex(info, width, height, TIG_BUTTON_MOMENTARY);
 }
 
 // 0x5461C0
-bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height, unsigned int flags)
+bool main_menu_button_create_ex(MainMenuButtonInfo* info, int width, int height, unsigned int flags)
 {
     TigButtonData button_data;
     int index;
@@ -5028,7 +5028,7 @@ bool sub_546EE0(TigMessage* msg)
                         sub_5412D0();
                         if (stru_5C36B0[mainmenu_ui_type][1]
                             || mainmenu_ui_window_type == MM_WINDOW_MAINMENU
-                            || mainmenu_ui_window_type == MM_WINDOW_MAINMENU_IN_PLAY ) {
+                            || mainmenu_ui_window_type == MM_WINDOW_MAINMENU_IN_PLAY) {
                             mainmenu_ui_exit_game();
                         }
                         mainmenu_ui_window_type = MM_WINDOW_0;

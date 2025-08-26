@@ -332,8 +332,9 @@ static mes_file_handle_t written_ui_mes_files[WRITTEN_MES_COUNT];
 
 /**
  * Current type of writtne UI.
+ *
+ * 0x680DCC
  */
-// 0x680DCC
 static WrittenType written_ui_type;
 
 /**

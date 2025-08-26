@@ -381,7 +381,8 @@ bool script_load_hdr(Script* scr);
 bool script_flags(Script* scr, ScriptFlags* flags_ptr);
 void script_play_explosion_fx(int64_t obj);
 
-static inline bool sfo_is_any(uint8_t type) {
+static inline bool sfo_is_any(uint8_t type)
+{
     return type == SFO_ANY_FOLLOWER
         || type == SFO_ANYONE_IN_PARTY
         || type == SFO_ANYONE_IN_TEAM

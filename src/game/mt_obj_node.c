@@ -14,7 +14,6 @@ static bool mt_obj_node_load_list_node(MagicTechObjectNode* node, TigFile* strea
  *
  * 0x5FC368
  */
-//
 static MagicTechObjectNode* mt_obj_node_head;
 
 /**

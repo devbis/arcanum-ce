@@ -28,7 +28,6 @@
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/roof.h"
-#include "game/roof.h"
 #include "game/script.h"
 #include "game/scroll.h"
 #include "game/spell.h"

@@ -1,7 +1,7 @@
 #include "game/ai.h"
 
-#include "game/anim_private.h"
 #include "game/anim.h"
+#include "game/anim_private.h"
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/descriptions.h"
@@ -15,8 +15,8 @@
 #include "game/mt_item.h"
 #include "game/multiplayer.h"
 #include "game/obj.h"
-#include "game/object_node.h"
 #include "game/object.h"
+#include "game/object_node.h"
 #include "game/path.h"
 #include "game/player.h"
 #include "game/proto.h"
@@ -604,7 +604,7 @@ bool ai_heal_func(Ai* ai, int64_t obj, bool a3)
 
     if (hp_ratio < 70
         || (ai->danger_type == AI_DANGER_SOURCE_TYPE_NONE
-                && hp_ratio < 90)) {
+            && hp_ratio < 90)) {
         mt_ai_create(&magictech_ai, ai->obj, MAGICTECH_AI_ACTION_HEAL_LIGHT);
         v1.flags = 0x8;
         v1.entries = magictech_ai.actions[MAGICTECH_AI_ACTION_HEAL_LIGHT].entries;
@@ -834,8 +834,8 @@ void sub_4A92D0(Ai* ai)
 
         ai->danger_type = sub_4AABE0(ai->obj,
             AI_DANGER_SOURCE_TYPE_NONE,
-                OBJ_HANDLE_NULL,
-                &(ai->sound_id));
+            OBJ_HANDLE_NULL,
+            &(ai->sound_id));
         break;
     case 2:
         sub_4AAF50(ai);
@@ -1224,11 +1224,11 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
             ai_danger_source(a1, &danger_type, NULL);
             if (danger_type == AI_DANGER_SOURCE_TYPE_NONE
                 && (ai_can_see(a1, a3) == 0 || ai_can_hear(a1, a3, loudness) == 0)) {
-                    sub_4AABE0(a1,
-                        AI_DANGER_SOURCE_TYPE_FLEE,
-                        a2,
-                        NULL);
-                }
+                sub_4AABE0(a1,
+                    AI_DANGER_SOURCE_TYPE_FLEE,
+                    a2,
+                    NULL);
+            }
         }
     }
 }
@@ -2533,27 +2533,27 @@ void ai_action_perform_baking_off(Ai* ai)
 
     npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
     if ((npc_flags & ONF_BACKING_OFF) != 0) {
-            combat_min_dist = ai_params.field_3C;
-            if (combat_min_dist <= 1) {
-                combat_min_dist = 5;
-            }
+        combat_min_dist = ai_params.field_3C;
+        if (combat_min_dist <= 1) {
+            combat_min_dist = 5;
+        }
 
-            if (object_dist(ai->obj, ai->danger_source) < combat_min_dist) {
-                path_create_info.obj = ai->obj;
-                path_create_info.from = obj_field_int64_get(ai->obj, OBJ_F_LOCATION);
-                path_create_info.to = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
-                path_create_info.max_rotations = 100;
-                path_create_info.rotations = rotations;
-                path_create_info.flags = PATH_FLAG_0x0800;
-                path_create_info.field_24 = combat_min_dist;
-                if (sub_41F3C0(&path_create_info)) {
-                    sub_433C80(ai->obj, path_create_info.to);
-                } else {
-                    obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags & ~(ONF_BACKING_OFF));
-                }
+        if (object_dist(ai->obj, ai->danger_source) < combat_min_dist) {
+            path_create_info.obj = ai->obj;
+            path_create_info.from = obj_field_int64_get(ai->obj, OBJ_F_LOCATION);
+            path_create_info.to = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
+            path_create_info.max_rotations = 100;
+            path_create_info.rotations = rotations;
+            path_create_info.flags = PATH_FLAG_0x0800;
+            path_create_info.field_24 = combat_min_dist;
+            if (sub_41F3C0(&path_create_info)) {
+                sub_433C80(ai->obj, path_create_info.to);
             } else {
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags & ~(ONF_BACKING_OFF));
             }
+        } else {
+            obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags & ~(ONF_BACKING_OFF));
+        }
     }
 }
 
@@ -3513,12 +3513,12 @@ int ai_check_kos(int64_t source_obj, int64_t target_obj)
                     if ((npc_flags & ONF_KOS) != 0) {
                         critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
                         if ((obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_ENSHROUDED) != 0
-                                && (critter_flags & OCF_UNDEAD) != 0) {
+                            && (critter_flags & OCF_UNDEAD) != 0) {
                             return AI_KOS_NO;
                         }
 
                         if ((obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL_ENSHROUD) != 0
-                                && (critter_flags & OCF_ANIMAL) != 0) {
+                            && (critter_flags & OCF_ANIMAL) != 0) {
                             return AI_KOS_NO;
                         }
 

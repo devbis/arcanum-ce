@@ -1,7 +1,7 @@
 #include "game/obj_pool.h"
 
-#include "game/object.h"
 #include "game/map.h"
+#include "game/object.h"
 
 #define OBJ_POOL_CAP 0x200000
 #define OBJ_POOL_BUCKET_SIZE 0x2000
@@ -18,8 +18,8 @@
 #define STATUS_RELEASED 'P'
 
 typedef struct ObjPoolEntryHeader {
-    int status:8;
-    int seq:24;
+    int status : 8;
+    int seq : 24;
 } ObjPoolEntryHeader;
 
 typedef struct PermOidLookupEntry {
@@ -112,7 +112,7 @@ void obj_pool_init(int size, bool editor)
     dword_6036C0 = 1024;
     dword_6036DC = 0;
     obj_handle_requested = OBJ_HANDLE_NULL;
-    dword_6036B8 = (PermOidLookupEntry *)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
+    dword_6036B8 = (PermOidLookupEntry*)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
     obj_pool_initialized = true;
 }
 

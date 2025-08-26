@@ -389,7 +389,7 @@ typedef struct Object {
     /* 0054 */ intptr_t transient_properties[19];
 } Object;
 
-typedef bool (ObjEnumerateCallback)(Object* object, int fld);
+typedef bool(ObjEnumerateCallback)(Object* object, int fld);
 
 bool obj_init(GameInitInfo* init_info);
 void obj_exit();

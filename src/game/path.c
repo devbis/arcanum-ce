@@ -25,7 +25,7 @@ static int sub_41F9F0(PathCreateInfo* path_create_info);
 static int path_dist(int src, int dst, int width);
 static int sub_420110(int a1, int a2, int a3);
 static void sub_420330(int64_t x, int64_t y, S420330* a5);
-static void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void(*fn)(int64_t, int64_t, S420330*));
+static void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void (*fn)(int64_t, int64_t, S420330*));
 static int sub_420660(int64_t from, int64_t to, uint8_t* rotations);
 static int sub_420900(WmapPathInfo* path_info);
 static int sub_4209C0(WmapPathInfo* path_info);
@@ -591,10 +591,10 @@ int sub_420110(int a1, int a2, int a3)
     if (v4 >= 0) {
         if (v3 >= 0) {
             if (v4 <= 0) {
-                if (v4 > -1 )
-                rot = (v4 < 1) + 4;
+                if (v4 > -1)
+                    rot = (v4 < 1) + 4;
                 else
-                rot = 6;
+                    rot = 6;
             } else {
                 rot = (v3 >= 1) + 3;
             }
@@ -675,7 +675,7 @@ void sub_420330(int64_t x, int64_t y, S420330* a5)
 }
 
 // 0x4203B0
-void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void(*fn)(int64_t, int64_t, S420330*))
+void sub_4203B0(int64_t from_x, int64_t from_y, int64_t to_x, int64_t to_y, S420330* a5, void (*fn)(int64_t, int64_t, S420330*))
 {
     int64_t dx;
     int64_t dy;

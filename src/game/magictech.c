@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 #include "game/ai.h"
-#include "game/anim_private.h"
 #include "game/anim.h"
+#include "game/anim_private.h"
 #include "game/animfx.h"
 #include "game/antiteleport.h"
 #include "game/area.h"
@@ -36,8 +36,8 @@
 #include "game/stat.h"
 #include "game/target.h"
 #include "game/teleport.h"
-#include "game/tile_script.h"
 #include "game/tile.h"
+#include "game/tile_script.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
@@ -1878,7 +1878,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
             if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
                 sub_424070(obj, 5, false, false);
                 sub_43F710(obj);
-           }
+            }
         } else {
             if (!multiplayer_is_locked()) {
                 tig_debug_println("MP: MagicTech: magictech_effect_summon called without MP set correctly, tell smoret@troikagames.com");
@@ -2231,7 +2231,7 @@ void MTComponentDamage_ProcFunc()
 
     if ((combat.dam_flags & CDF_SCALE) != 0) {
         if (obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
-            int aptitude = dword_5E75F0->parent_obj.aptitude;;
+            int aptitude = dword_5E75F0->parent_obj.aptitude;
             if (aptitude > 0) {
                 dam_max = dam_min + aptitude * (dam_max - dam_min) / 100;
                 dam_min = dam_max;
@@ -3613,7 +3613,7 @@ void sub_453FA0()
         }
 
         if (dword_5E75F0->action >= MAGICTECH_ACTION_END && dword_5E75F0->action != MAGICTECH_ACTION_CALLBACK) {
-LABEL_69:
+        LABEL_69:
             if (dword_5E7598->components[MAGICTECH_ACTION_CALLBACK].cnt == 0
                 && dword_5E7598->components[MAGICTECH_ACTION_END_CALLBACK].cnt == 0) {
                 v0 = true;
@@ -3668,7 +3668,7 @@ LABEL_69:
                     sub_454790(&timeevent, dword_5E75F0->id, maintenance->period, &datetime);
 
                     if (sub_4547F0(&timeevent, &datetime)) {
-LABEL_25:
+                    LABEL_25:
                         if (dword_5E75F0->action != MAGICTECH_ACTION_END) {
                             return;
                         }
@@ -3699,7 +3699,7 @@ LABEL_25:
                         dword_5E75F0->field_150 = 8;
                     }
 
-LABEL_22:
+                LABEL_22:
                     if (sub_4547F0(&timeevent, &datetime)) {
                         if (!v1) {
                             return;
@@ -5183,7 +5183,6 @@ void magictech_fx_remove(int64_t obj, int fx)
 {
     if (tig_net_is_active() && !tig_net_is_host()) {
         return;
-
     }
 
     animfx_remove(&spell_eye_candies, obj, fx % 10 + 6 * (fx / 10), -1);

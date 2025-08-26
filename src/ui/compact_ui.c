@@ -23,7 +23,7 @@ typedef struct CompactUiComponent {
     /* 0000 */ const char* name;
     /* 0004 */ tig_window_handle_t window_handle;
     /* 0008 */ CompactUiComponentInit* init;
-    /* 000C */ void(*field_C)();
+    /* 000C */ void (*field_C)();
     /* 0010 */ TigWindowMessageFilterFunc* message_filter;
     /* 0014 */ CompactUiComponentDraw* draw;
     /* 0018 */ TigRect rect;

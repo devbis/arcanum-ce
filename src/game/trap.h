@@ -3,8 +3,8 @@
 
 #include "game/context.h"
 #include "game/object.h"
-#include "game/timeevent.h"
 #include "game/script.h"
+#include "game/timeevent.h"
 
 typedef enum TrapType {
     TRAP_TYPE_INVALID,

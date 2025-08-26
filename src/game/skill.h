@@ -111,12 +111,12 @@ typedef struct SkillCallbacks {
 // clang-format on
 
 #define SKILL_INVOCATION_PENALTY_MASK (SKILL_INVOCATION_PENALTY_MSR \
-    | SKILL_INVOCATION_PENALTY_RANGE \
-    | SKILL_INVOCATION_PENALTY_PERCEPTION \
-    | SKILL_INVOCATION_PENALTY_COVER \
-    | SKILL_INVOCATION_PENALTY_LIGHT \
-    | SKILL_INVOCATION_PENALTY_INJURY \
-    | SKILL_INVOCATION_BLOCKED_SHOT \
+    | SKILL_INVOCATION_PENALTY_RANGE                                \
+    | SKILL_INVOCATION_PENALTY_PERCEPTION                           \
+    | SKILL_INVOCATION_PENALTY_COVER                                \
+    | SKILL_INVOCATION_PENALTY_LIGHT                                \
+    | SKILL_INVOCATION_PENALTY_INJURY                               \
+    | SKILL_INVOCATION_BLOCKED_SHOT                                 \
     | SKILL_INVOCATION_MAGIC_TECH_PENALTY)
 
 typedef struct SkillInvocation {

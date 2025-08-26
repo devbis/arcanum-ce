@@ -1,8 +1,8 @@
 #include "game/wp.h"
 
 #include "game/location.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/obj_private.h"
 
 typedef struct S5FC668 {
     /* 0000 */ int64_t obj;

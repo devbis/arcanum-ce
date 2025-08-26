@@ -4,9 +4,9 @@
 #include "game/obj.h"
 #include "game/obj_id.h"
 #include "game/obj_pool.h"
+#include "game/quest.h"
 #include "game/sa.h"
 #include "game/script.h"
-#include "game/quest.h"
 
 typedef enum SaType {
     SA_TYPE_INVALID = 0,
@@ -74,7 +74,7 @@ int sub_4E5BF0(int a1);
 void sub_4E5C60(int a1, int a2, bool a3);
 int sub_4E5CE0(int a1, int a2);
 int sub_4E5D30(int a1, int a2);
-bool sub_4E5DB0(int a1, bool(*callback)(int));
+bool sub_4E5DB0(int a1, bool (*callback)(int));
 bool sub_4E5E20(int a1, TigFile* stream);
 bool sub_4E5E80(int* a1, TigFile* stream);
 int sub_4E5F10(int a1);

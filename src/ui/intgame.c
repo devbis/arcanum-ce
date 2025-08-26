@@ -14,15 +14,15 @@
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/hrp.h"
-#include "game/item_effect.h"
 #include "game/item.h"
+#include "game/item_effect.h"
 #include "game/level.h"
 #include "game/light.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mt_item.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/portrait.h"
@@ -934,13 +934,13 @@ static int intgame_message_history_end;
 static int intgame_message_history_curr;
 
 // 0x64C6CC
-static bool(*intgame_dialog_process_event_func)(TigMessage* msg);
+static bool (*intgame_dialog_process_event_func)(TigMessage* msg);
 
 // 0x64C6D0
 static int dword_64C6D0;
 
 // 0x64C6D4
-static void(*dword_64C6D4)(UiMessage* ui_message);
+static void (*dword_64C6D4)(UiMessage* ui_message);
 
 // 0x64C6D8
 static int dword_64C6D8;
@@ -1527,7 +1527,7 @@ void intgame_draw_counter(int counter, int value, int digits)
             }
             str[pos] = '\0';
         } else {
-            for(pos = 0; pos < digits; pos++) {
+            for (pos = 0; pos < digits; pos++) {
                 str[pos] = '?';
             }
             str[pos] = '\0';
@@ -1679,8 +1679,7 @@ void intgame_draw_bar_rect(TigRect* rect)
             v14 = 8;
             v15 = filled_height + 8;
             v16 = empty_height - 8;
-            if ( v15 > rects[bar].height )
-            {
+            if (v15 > rects[bar].height) {
                 v14 += rects[bar].height - v15;
                 v16 += v15 - rects[bar].height;
                 v15 = rects[bar].height;
@@ -3297,7 +3296,7 @@ void sub_54ED30(S4F2810* a1)
 
                     if (!a1->is_loc
                         && player_is_local_pc_obj(critter_pc_leader_get(a1->obj)
-                        && !tig_kb_is_key_pressed(SDL_SCANCODE_LALT))) {
+                            && !tig_kb_is_key_pressed(SDL_SCANCODE_LALT))) {
                         return;
                     }
                 }
@@ -4005,7 +4004,7 @@ void sub_550770(int a1, char* str)
 }
 
 // 0x5507D0
-void sub_5507D0(void(*func)(UiMessage* ui_message))
+void sub_5507D0(void (*func)(UiMessage* ui_message))
 {
     dword_64C6D4 = func;
 }
@@ -5138,7 +5137,6 @@ void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, ti
                 tig_font_pop();
                 return;
             }
-
         }
 
         rect.width = font_desc.width;
@@ -5202,8 +5200,9 @@ void intgame_clock_refresh()
 
     datetime = sub_45A7C0();
     v1 = (dword_64C47C[1] + dword_64C47C[0]
-        + (datetime_seconds_since_reference_date(&datetime) + 73800) % 86400 * (dword_64C47C[1] + dword_64C47C[0]) / 86400
-        - intgame_clock_frame.width / 2) % (dword_64C47C[1] + dword_64C47C[0]);
+             + (datetime_seconds_since_reference_date(&datetime) + 73800) % 86400 * (dword_64C47C[1] + dword_64C47C[0]) / 86400
+             - intgame_clock_frame.width / 2)
+        % (dword_64C47C[1] + dword_64C47C[0]);
     if (dword_5C7308 == v1) {
         return;
     }
@@ -5385,7 +5384,7 @@ void intgame_message_history_scroll_up()
         idx = (intgame_message_history_curr + MAX_MESSAGE_HISTORY_ITEMS - 1) % MAX_MESSAGE_HISTORY_ITEMS;
         if (idx != intgame_message_history_end
             && (intgame_message_history_end - idx + MAX_MESSAGE_HISTORY_ITEMS) % MAX_MESSAGE_HISTORY_ITEMS < intgame_message_history_size) {
-             intgame_message_history_curr = idx;
+            intgame_message_history_curr = idx;
         }
     }
 
@@ -5610,9 +5609,7 @@ void intgame_message_draw(tig_window_handle_t window_handle, UiMessage* ui_messa
             MSG_TEXT_HALIGN_LEFT);
 
         if (ui_message->field_C != 0) {
-            mes_file_entry1.num = 28 + (IS_TECH_SKILL(ui_message->field_8)
-                ? tech_skill_stat(GET_TECH_SKILL(ui_message->field_8))
-                : basic_skill_stat(GET_BASIC_SKILL(ui_message->field_8)));
+            mes_file_entry1.num = 28 + (IS_TECH_SKILL(ui_message->field_8) ? tech_skill_stat(GET_TECH_SKILL(ui_message->field_8)) : basic_skill_stat(GET_BASIC_SKILL(ui_message->field_8)));
             mes_get_msg(intgame_mes_file, &mes_file_entry1);
             sprintf(str, "%s: %d", mes_file_entry1.str, ui_message->field_C);
             intgame_message_window_write_text(window_handle,
@@ -5783,7 +5780,7 @@ void intgame_message_draw(tig_window_handle_t window_handle, UiMessage* ui_messa
 }
 
 // 0x553320
-bool intgame_dialog_begin(bool(*func)(TigMessage* msg))
+bool intgame_dialog_begin(bool (*func)(TigMessage* msg))
 {
     intgame_dialog_process_event_func = func;
     tc_show();

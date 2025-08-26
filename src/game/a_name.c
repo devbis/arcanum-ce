@@ -172,7 +172,7 @@ static bool light_initialized;
 static mes_file_handle_t light_mes_file;
 
 // 0x603B74
-static char **roof_file_names;
+static char** roof_file_names;
 
 // 0x603B78
 static mes_file_handle_t roofname_mes_file;
@@ -440,20 +440,20 @@ bool load_tile_names()
     int sound_type;
     int index;
 
-    outdoor_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_outdoor_flippable_names);
-    outdoor_non_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
-    indoor_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_indoor_flippable_names);
-    indoor_non_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
+    outdoor_flippable_tile_names = (char**)MALLOC(sizeof(char*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_names = (char**)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_names = (char**)MALLOC(sizeof(char*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_names = (char**)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
 
-    outdoor_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_outdoor_flippable_names);
-    outdoor_non_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_outdoor_non_flippable_names);
-    indoor_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_indoor_flippable_names);
-    indoor_non_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_indoor_non_flippable_names);
+    outdoor_flippable_tile_flags = (uint8_t*)MALLOC(sizeof(uint8_t*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_flags = (uint8_t*)MALLOC(sizeof(uint8_t*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_flags = (uint8_t*)MALLOC(sizeof(uint8_t*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_flags = (uint8_t*)MALLOC(sizeof(uint8_t*) * num_indoor_non_flippable_names);
 
-    outdoor_flippable_tile_sounds = (int *)MALLOC(sizeof(int*) * num_outdoor_flippable_names);
-    outdoor_non_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
-    indoor_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_indoor_flippable_names);
-    indoor_non_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
+    outdoor_flippable_tile_sounds = (int*)MALLOC(sizeof(int*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_sounds = (int*)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_sounds = (int*)MALLOC(sizeof(char*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_sounds = (int*)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
 
     mes_file_entry.num = 0;
     if (!mes_search(tilename_mes_file, &mes_file_entry)) {
@@ -740,7 +740,7 @@ bool sub_4EBA30(tig_art_id_t a, tig_art_id_t b)
     flippable = tig_art_tile_id_flippable1_get(c);
 
     return (num == tig_art_tile_id_num1_get(b)
-            && flippable == tig_art_tile_id_flippable1_get(b))
+               && flippable == tig_art_tile_id_flippable1_get(b))
         || (num == tig_art_tile_id_num1_get(a)
             && flippable == tig_art_tile_id_flippable1_get(a));
 }

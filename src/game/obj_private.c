@@ -443,10 +443,10 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-                *(int64_t**)a1->ptr = NULL;
+            *(int64_t**)a1->ptr = NULL;
             return true;
         }
-            *(int64_t**)a1->ptr = (int64_t*)MALLOC(sizeof(int64_t));
+        *(int64_t**)a1->ptr = (int64_t*)MALLOC(sizeof(int64_t));
         if (!objf_read(*(int64_t**)a1->ptr, sizeof(int64_t), stream)) {
             return false;
         }
@@ -462,7 +462,7 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-                *(SizeableArray**)a1->ptr = NULL;
+            *(SizeableArray**)a1->ptr = NULL;
             return true;
         }
         if (!sa_read_no_dealloc((SizeableArray**)a1->ptr, stream)) {
@@ -490,10 +490,10 @@ bool sub_4E44F0(ObjSa* a1, TigFile* stream)
             return false;
         }
         if (!presence) {
-                *(ObjectID**)a1->ptr = NULL;
+            *(ObjectID**)a1->ptr = NULL;
             return true;
         }
-            *(ObjectID**)a1->ptr = (ObjectID*)MALLOC(sizeof(ObjectID));
+        *(ObjectID**)a1->ptr = (ObjectID*)MALLOC(sizeof(ObjectID));
         if (!objf_read(*(ObjectID**)a1->ptr, sizeof(ObjectID), stream)) {
             return false;
         }
@@ -524,7 +524,6 @@ void sub_4E4660(ObjSa* a1, uint8_t** data)
                 *(int64_t**)a1->ptr = NULL;
             }
             return;
-
         }
         if (*(int64_t**)a1->ptr == NULL) {
             *(int64_t**)a1->ptr = (int64_t*)MALLOC(sizeof(int64_t));
@@ -867,7 +866,7 @@ int sub_4E5B40(int a1)
 
     if (dword_603714 == dword_603704) {
         dword_603704 += 4096;
-        dword_60370C = (int *)REALLOC(dword_60370C, sizeof(int) * dword_603704);
+        dword_60370C = (int*)REALLOC(dword_60370C, sizeof(int) * dword_603704);
     }
 
     dword_60370C[dword_603714] = a1;
@@ -958,7 +957,7 @@ int sub_4E5D30(int a1, int a2)
 }
 
 // 0x4E5DB0
-bool sub_4E5DB0(int a1, bool(*callback)(int))
+bool sub_4E5DB0(int a1, bool (*callback)(int))
 {
     int v1;
     int v2;

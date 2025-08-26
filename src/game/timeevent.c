@@ -68,7 +68,7 @@ static bool timeevent_add_delay_base(TimeEvent* timeevent, DateTime* delay, Date
 static bool timeevent_add_base_at_func(TimeEvent* timeevent, DateTime* base, DateTime* at);
 static TimeEventNode* timeevent_node_create();
 static void timeevent_node_destroy(TimeEventNode* node);
-static bool timeevent_recover_handles(TimeEventNode *timeevent);
+static bool timeevent_recover_handles(TimeEventNode* timeevent);
 static bool timeevent_recover_handles_internal(TimeEventNode* node, bool force);
 static void sub_45B750();
 static bool sub_45B7A0(TimeEventNode* node);
@@ -921,7 +921,7 @@ void timeevent_node_destroy(TimeEventNode* node)
 }
 
 // 0x45B610
-bool timeevent_recover_handles(TimeEventNode *timeevent)
+bool timeevent_recover_handles(TimeEventNode* timeevent)
 {
     return timeevent_recover_handles_internal(timeevent, false);
 }

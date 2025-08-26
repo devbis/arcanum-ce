@@ -9,8 +9,8 @@
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
-#include "game/light_scheme.h"
 #include "game/light.h"
+#include "game/light_scheme.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mp_utils.h"
@@ -2882,7 +2882,7 @@ bool anim_save(TigFile* stream)
     if (tig_file_fwrite(&dword_5DE6C0, 4, 1, stream) != 1) return false;
 
     cnt = 216;
-    if (tig_file_fwrite(&cnt, 4, 1, stream) != 1 ) return false;
+    if (tig_file_fwrite(&cnt, 4, 1, stream) != 1) return false;
 
     idx = 0;
     while (idx < cnt) {
@@ -2949,7 +2949,7 @@ bool anim_run_info_save(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->flags), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_state), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->path_attached_to_stack_index), 4, 1, stream) != 1) return false;
-    if (!object_save_obj_handle_safe(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
+    if (!object_save_obj_handle_safe(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream)) return false;
     if (tig_file_fwrite(&(run_info->extra_target_tile), 8, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
@@ -3077,7 +3077,7 @@ bool anim_load_internal(GameLoadInfo* load_info)
     if (tig_file_fread(&dword_5DE69C, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_5DE6C4, 4, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_5DE6C0, 4, 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&cnt, 4, 1, load_info->stream) != 1 ) return false;
+    if (tig_file_fread(&cnt, 4, 1, load_info->stream) != 1) return false;
 
     idx = 0;
     while (idx < cnt) {
@@ -3116,7 +3116,7 @@ bool anim_run_info_load(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fread(&(run_info->flags), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->current_state), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->path_attached_to_stack_index), 4, 1, stream) != 1) return false;
-    if (!object_load_obj_handle_safe(&(run_info->anim_obj), 0, stream) ) return false;
+    if (!object_load_obj_handle_safe(&(run_info->anim_obj), 0, stream)) return false;
     if (tig_file_fread(&(run_info->extra_target_tile), 8, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
@@ -3461,7 +3461,7 @@ bool sub_423300(int64_t obj, AnimID* anim_id)
 {
     int prev = -1;
     int slot;
-    AnimGoalNode *goal_node;
+    AnimGoalNode* goal_node;
 
     slot = anim_find_first(obj);
     while (slot != -1 && slot != prev) {
@@ -3492,7 +3492,7 @@ int sub_4233D0(int64_t obj)
 {
     int prev = -1;
     int slot;
-    AnimGoalNode *goal_node;
+    AnimGoalNode* goal_node;
 
     slot = anim_find_first(obj);
     while (slot != -1 && slot != prev) {
@@ -3960,7 +3960,7 @@ void anim_catch_up_disable()
 }
 
 // 0x423FE0
-void sub_423FE0(void(*func)())
+void sub_423FE0(void (*func)())
 {
     dword_5E34F8 = func;
 }
@@ -5793,7 +5793,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
     while (node != NULL) {
         art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
         obj_rot = tig_art_id_rotation_get(art_id);
-        if ((obj_rot & 1) ==0) {
+        if ((obj_rot & 1) == 0) {
             obj_rot++;
         }
         if (obj_rot == (rotation + 4) % 8) {
@@ -6630,7 +6630,7 @@ bool sub_428A10(AnimRunInfo* run_info)
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     rot = location_rot(source_loc, target_loc);
 
-    if ( sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
+    if (sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
         if (tig_net_is_active()
             && tig_net_is_host()) {
             sub_424070(source_obj, 2, false, false);
@@ -7969,7 +7969,7 @@ bool sub_42AB90(AnimRunInfo* run_info)
     ASSERT(item_obj != OBJ_HANDLE_NULL); // 7861, "itemObj != OBJ_HANDLE_NULL"
 
     if (source_obj == OBJ_HANDLE_NULL) {
-        return false;;
+        return false;
     }
 
     if (target_obj != OBJ_HANDLE_NULL) {
@@ -9220,7 +9220,7 @@ bool sub_42CB10(AnimRunInfo* run_info)
             } else {
                 sound_id = sfx_critter_sound(obj, CRITTER_SOUND_DYING);
             }
-             gsound_play_sfx_on_obj(sound_id, 1, obj);
+            gsound_play_sfx_on_obj(sound_id, 1, obj);
         }
     }
 
@@ -11966,15 +11966,15 @@ bool sub_431340(AnimRunInfo* run_info)
             }
 
             frame = tig_art_id_frame_get(art_id);
-                if (frame == art_anim_data.num_frames - 1) {
-                    return false;
-                }
+            if (frame == art_anim_data.num_frames - 1) {
+                return false;
+            }
 
-                object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
+            object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
 
-                if (frame == art_anim_data.action_frame - 1) {
-                    run_info->flags |= 0x04;
-                }
+            if (frame == art_anim_data.action_frame - 1) {
+                run_info->flags |= 0x04;
+            }
         }
     } else {
         if (overlay_light != -1) {

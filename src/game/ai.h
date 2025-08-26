@@ -2,8 +2,8 @@
 #define ARCANUM_GAME_AI_H_
 
 #include "game/context.h"
-#include "game/timeevent.h"
 #include "game/object.h"
+#include "game/timeevent.h"
 
 typedef void(AiFloatLineFunc)(int64_t npc_obj, int64_t pc_obj, const char* str, int speech_id);
 typedef void(Func5F848C)(int64_t, int);

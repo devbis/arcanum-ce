@@ -234,7 +234,7 @@ bool spell_init(GameInitInfo* init_info)
         spells[index].description = mes_file_entry.str;
     }
 
-     // Load spell college descriptions.
+    // Load spell college descriptions.
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_DESCRIPTION_ID;
         magictech_get_msg(&mes_file_entry);
@@ -517,7 +517,7 @@ bool spell_add(int64_t obj, int spell, bool force)
         }
 
         cost = spell_cost(spell);
-    } else  {
+    } else {
         // Calculate cost based on level difference. Note that this assumes
         // every spell level costs exactly 1 (without using `spell_cost`).
         cost = new_spell_level - spell_level;

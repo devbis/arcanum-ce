@@ -65,8 +65,9 @@ bool objf_solitary_read(int64_t* handle_ptr, const char* path)
 
 /**
  * Deletes an object's solitary file and creates a corresponding `.del` file.
+ *
+ * 0x4E6D10
  */
-// 0x4E6D10
 void objf_solitary_delete(int64_t handle, const char* dir, const char* ext)
 {
     char path[TIG_MAX_PATH];

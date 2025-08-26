@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 #include "game/ai.h"
-#include "game/anim_private.h"
 #include "game/anim.h"
+#include "game/anim_private.h"
 #include "game/animfx.h"
 #include "game/antiteleport.h"
 #include "game/area.h"
@@ -12,7 +12,6 @@
 #include "game/bless.h"
 #include "game/brightness.h"
 #include "game/broadcast.h"
-#include "game/ci.h"
 #include "game/ci.h"
 #include "game/critter.h"
 #include "game/curse.h"
@@ -25,13 +24,13 @@
 #include "game/gsound.h"
 #include "game/hrp.h"
 #include "game/invensource.h"
-#include "game/item_effect.h"
 #include "game/item.h"
+#include "game/item_effect.h"
 #include "game/jumppoint.h"
 #include "game/level.h"
 #include "game/li.h"
-#include "game/light_scheme.h"
 #include "game/light.h"
+#include "game/light_scheme.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
@@ -51,10 +50,10 @@
 #include "game/reputation.h"
 #include "game/roof.h"
 #include "game/rumor.h"
-#include "game/script_name.h"
 #include "game/script.h"
-#include "game/sector_script.h"
+#include "game/script_name.h"
 #include "game/sector.h"
+#include "game/sector_script.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
@@ -63,9 +62,9 @@
 #include "game/tech.h"
 #include "game/teleport.h"
 #include "game/tf.h"
+#include "game/tile.h"
 #include "game/tile_block.h"
 #include "game/tile_script.h"
-#include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/townmap.h"
 #include "game/trap.h"
@@ -146,9 +145,9 @@ static GameLibModule gamelib_modules[] = {
     { "Stat", stat_init, NULL, NULL, NULL, stat_exit, NULL, NULL, NULL, NULL, NULL },
     { "Level", level_init, NULL, NULL, NULL, level_exit, NULL, NULL, NULL, NULL, NULL },
     { "Map", map_init, map_reset, map_mod_load, map_mod_unload, map_exit, map_ping, map_update_view, map_save, map_load, map_resize },
-    { "LightScheme", light_scheme_init, light_scheme_reset, light_scheme_mod_load,light_scheme_mod_unload, light_scheme_exit, NULL, NULL, light_scheme_save, light_scheme_load, NULL },
+    { "LightScheme", light_scheme_init, light_scheme_reset, light_scheme_mod_load, light_scheme_mod_unload, light_scheme_exit, NULL, NULL, light_scheme_save, light_scheme_load, NULL },
     { "MagicTech-Post", magictech_post_init, NULL, NULL, NULL, NULL, NULL, NULL, magictech_post_save, magictech_post_load, NULL },
-    { "Player", player_init, player_reset,0, NULL, player_exit, NULL, NULL, player_save, player_load, NULL },
+    { "Player", player_init, player_reset, 0, NULL, player_exit, NULL, NULL, player_save, player_load, NULL },
     { "Area", area_init, area_reset, area_mod_load, area_mod_unload, area_exit, NULL, NULL, area_save, area_load, NULL },
     { "Facade", facade_init, NULL, NULL, NULL, facade_exit, NULL, facade_update_view, NULL, NULL, facade_resize },
     { "TC", tc_init, NULL, NULL, NULL, tc_exit, NULL, NULL, NULL, NULL, tc_resize },
@@ -156,7 +155,7 @@ static GameLibModule gamelib_modules[] = {
     { "Skill", skill_init, NULL, NULL, NULL, skill_exit, NULL, NULL, skill_save, skill_load, NULL },
     { "SoundGame", gsound_init, gsound_reset, gsound_mod_load, gsound_mod_unload, gsound_exit, gsound_ping, NULL, gsound_save, gsound_load, NULL },
     { "Item", item_init, NULL, NULL, NULL, item_exit, NULL, NULL, NULL, NULL, item_resize },
-    { "Combat", combat_init, combat_reset,0, NULL, combat_exit, NULL, NULL, combat_save, combat_load, NULL },
+    { "Combat", combat_init, combat_reset, 0, NULL, combat_exit, NULL, NULL, combat_save, combat_load, NULL },
     { "TimeEvent", timeevent_init, timeevent_reset, NULL, NULL, timeevent_exit, timeevent_ping, NULL, timeevent_save, timeevent_load, NULL },
     { "Rumor", rumor_init, rumor_reset, rumor_mod_load, rumor_mod_unload, rumor_exit, NULL, NULL, rumor_save, rumor_load, NULL },
     { "Quest", quest_init, quest_reset, quest_mod_load, quest_mod_unload, quest_exit, NULL, NULL, quest_save, quest_load, NULL },
@@ -164,14 +163,14 @@ static GameLibModule gamelib_modules[] = {
     { "Curse", NULL, NULL, curse_mod_load, curse_mod_unload, NULL, NULL, NULL, NULL, NULL, NULL },
     { "AI", ai_init, NULL, ai_mod_load, ai_mod_unload, ai_exit, NULL, NULL, NULL, NULL, NULL },
     { "Broadcast", broadcast_init, NULL, NULL, NULL, broadcast_exit, NULL, NULL, NULL, NULL, NULL },
-    { "Anim", anim_init, anim_reset, NULL, NULL,anim_exit, NULL, NULL, anim_save, anim_load, NULL },
+    { "Anim", anim_init, anim_reset, NULL, NULL, anim_exit, NULL, NULL, anim_save, anim_load, NULL },
     { "Anim-Private", anim_private_init, anim_private_reset, NULL, NULL, anim_private_exit, NULL, NULL, NULL, NULL, NULL },
     { "Multiplayer", multiplayer_init, multiplayer_reset, multiplayer_mod_load, multiplayer_mod_unload, multiplayer_exit, multiplayer_ping, NULL, multiplayer_save, mutliplayer_load, NULL },
     { "Tech", tech_init, NULL, NULL, NULL, tech_exit, NULL, NULL, NULL, NULL, NULL },
     { "Background", background_init, NULL, NULL, NULL, background_exit, NULL, NULL, NULL, NULL, NULL },
-    { "Reputation", reputation_init, NULL, reputation_mod_load, reputation_mod_unload, reputation_exit, NULL,0, NULL, NULL, NULL },
+    { "Reputation", reputation_init, NULL, reputation_mod_load, reputation_mod_unload, reputation_exit, NULL, 0, NULL, NULL, NULL },
     { "Reaction", reaction_init, NULL, NULL, NULL, reaction_exit, NULL, NULL, NULL, NULL, NULL },
-    { "Tile-Script", tile_script_init, tile_script_reset, NULL, NULL, tile_script_exit,0, tile_script_update_view, NULL, NULL, tile_script_resize },
+    { "Tile-Script", tile_script_init, tile_script_reset, NULL, NULL, tile_script_exit, 0, tile_script_update_view, NULL, NULL, tile_script_resize },
     { "Sector-Script", sector_script_init, sector_script_reset, NULL, NULL, sector_script_exit, NULL, NULL, NULL, NULL, NULL },
     { "WP", wp_init, NULL, NULL, NULL, wp_exit, NULL, wp_update_view, NULL, NULL, wp_resize },
     { "Inven-Source", invensource_init, NULL, NULL, NULL, invensource_exit, NULL, NULL, NULL, NULL, NULL },
@@ -188,7 +187,7 @@ static GameLibModule gamelib_modules[] = {
     { "TileBlock", tileblock_init, NULL, NULL, NULL, tileblock_exit, NULL, tileblock_update_view, NULL, NULL, tileblock_resize },
     { "MT-Obj-Node", mt_obj_node_init, NULL, NULL, NULL, mt_obj_node_exit, NULL, NULL, NULL, NULL, NULL },
     { "MonsterGen", monstergen_init, monstergen_reset, NULL, NULL, monstergen_exit, NULL, NULL, monstergen_save, monstergen_load, monstergen_resize },
-    { "Party", party_init, party_reset, NULL,0, party_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Party", party_init, party_reset, NULL, 0, party_exit, NULL, NULL, NULL, NULL, NULL },
     { "gameinit", gameinit_init, gameinit_reset, gameinit_mod_load, gameinit_mod_unload, gameinit_exit, NULL, NULL, NULL, NULL, NULL },
 };
 
@@ -263,7 +262,7 @@ static char byte_5D0EA4[TIG_MAX_PATH];
 static char byte_5D0FA8[TIG_MAX_PATH];
 
 // 0x5D10AC
-static void(*gamelib_draw_func)(GameDrawInfo* draw_info);
+static void (*gamelib_draw_func)(GameDrawInfo* draw_info);
 
 // 0x5D10B0
 static TigGuid gamelib_mod_guid;

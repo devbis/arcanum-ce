@@ -51,7 +51,7 @@ typedef enum WmapRouteType {
     WMAP_ROUTE_TYPE_COUNT,
 } WmapRouteType;
 
-typedef enum WmapUiState  {
+typedef enum WmapUiState {
     /**
      * The UI is stationary.
      */
@@ -131,9 +131,9 @@ typedef struct WmapInfo {
     /* 0038 */ int field_38;
     /* 003C */ WmapCoords field_3C;
     /* 0044 */ bool navigatable;
-    /* 0048 */ void(*refresh)();
-    /* 004C */ void(*refresh_rect)(TigRect* rect);
-    /* 0050 */ void(*field_50)(int direction, int, int, int);
+    /* 0048 */ void (*refresh)();
+    /* 004C */ void (*refresh_rect)(TigRect* rect);
+    /* 0050 */ void (*field_50)(int direction, int, int, int);
     /* 0054 */ int field_54;
     /* 0058 */ int map_width;
     /* 005C */ int map_height;
@@ -157,7 +157,7 @@ typedef struct WmapInfo {
     /* 01A4 */ char str[260];
     /* 02A8 */ TigRect field_2A8;
     /* 02B8 */ TigVideoBuffer* video_buffer;
-    /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
+    /* 02BC */ void (*field_2BC)(int x, int y, WmapCoords* coords);
 } WmapInfo;
 
 typedef struct WmapRouteWaypoint {
@@ -282,7 +282,7 @@ static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
 static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
-static void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3);
+static void sub_566A80(WmapInfo* a1, TigRect* a2, TigRect* a3);
 static void sub_566D10(int type, WmapCoords* coords, TigRect* a3, TigRect* a4, WmapInfo* wmap_info);
 
 // 0x5C9220
@@ -4517,7 +4517,7 @@ void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
     int max_x;
     int max_y;
     int idx;
-    WmapTile *entry;
+    WmapTile* entry;
     int col;
     int row;
     TigRect bounds;
@@ -4618,7 +4618,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     TigArtBlitInfo art_blit_info;
     TigRect art_src_rect;
     TigRect art_dst_rect;
-    WmapTile *entry;
+    WmapTile* entry;
     int64_t loc;
     int offset_x;
     int offset_y;
@@ -4644,7 +4644,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     }
 
     dirty_rect.x = rect->x;
-    dirty_rect.y = rect->y +  wmap_ui_window_frame.y;
+    dirty_rect.y = rect->y + wmap_ui_window_frame.y;
     dirty_rect.width = rect->width;
     dirty_rect.height = rect->height;
     tig_window_invalidate_rect(&dirty_rect);
@@ -4848,7 +4848,7 @@ void wmap_town_refresh_rect(TigRect* rect)
 }
 
 // 0x566A80
-void sub_566A80(WmapInfo *a1, TigRect *a2, TigRect *a3)
+void sub_566A80(WmapInfo* a1, TigRect* a2, TigRect* a3)
 {
     WmapRouteType route_type;
     TigArtBlitInfo art_blit_info;

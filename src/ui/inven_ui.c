@@ -11,8 +11,8 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
-#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/portrait.h"
@@ -983,7 +983,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
                 qword_6813A8 = qword_682C78;
             }
         } else if ((inven_ui_mode == INVEN_UI_MODE_LOOT
-            || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
+                       || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
             && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             dword_681510 = 88;
             item_decay_process_disable();
@@ -1108,7 +1108,7 @@ void inven_ui_destroy()
     sub_4A53B0(inven_ui_pc_obj, 0);
 
     if ((inven_ui_mode == INVEN_UI_MODE_LOOT
-        || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
+            || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
         && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         if (inven_ui_mode == INVEN_UI_MODE_LOOT) {
             art_id = obj_field_int32_get(qword_6813A8, OBJ_F_CURRENT_AID);
@@ -1135,7 +1135,7 @@ void inven_ui_destroy()
         && mode != INTGAME_MODE_BARTER
         && mode != INTGAME_MODE_NPC_IDENTIFY
         && mode != INTGAME_MODE_NPC_REPAIR) {
-      intgame_mode_set(INTGAME_MODE_MAIN);
+        intgame_mode_set(INTGAME_MODE_MAIN);
     }
     intgame_mode_set(INTGAME_MODE_MAIN);
 }
@@ -1632,10 +1632,10 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         && msg->data.mouse.y >= inven_ui_use_box_frame.y
         && msg->data.mouse.y < inven_ui_use_box_frame.y + inven_ui_use_box_frame.height) {
         if ((qword_681450 == qword_6813A8
-                && (inven_ui_mode == INVEN_UI_MODE_BARTER
-                    || inven_ui_mode == INVEN_UI_MODE_LOOT
-                    || inven_ui_mode == INVEN_UI_MODE_STEAL)
-            || sub_462C30(inven_ui_pc_obj, qword_6810E0))) {
+                    && (inven_ui_mode == INVEN_UI_MODE_BARTER
+                        || inven_ui_mode == INVEN_UI_MODE_LOOT
+                        || inven_ui_mode == INVEN_UI_MODE_STEAL)
+                || sub_462C30(inven_ui_pc_obj, qword_6810E0))) {
             sub_575770();
             qword_6810E0 = OBJ_HANDLE_NULL;
             inven_ui_use_box_image = 342;
@@ -3870,8 +3870,8 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             qty = obj_field_int32_get(item_obj, qty_fld);
             if (qty != 1) {
                 if (inven_ui_mode == INVEN_UI_MODE_LOOT
-                    && (a4 & 0x01) != 0
-                    && target_obj == inven_ui_pc_obj
+                        && (a4 & 0x01) != 0
+                        && target_obj == inven_ui_pc_obj
                     || (a4 & 0x20) != 0) {
                     sub_578B80(qty);
                 } else {

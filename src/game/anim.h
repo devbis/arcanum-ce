@@ -1,9 +1,9 @@
 #ifndef ARCANUM_GAME_ANIM_H_
 #define ARCANUM_GAME_ANIM_H_
 
-#include "game/context.h"
 #include "game/anim_private.h"
 #include "game/combat.h"
+#include "game/context.h"
 #include "game/timeevent.h"
 
 // TODO: Figure out priority meaning.
@@ -75,7 +75,7 @@ bool anim_timeevent_process(TimeEvent* timeevent);
 void sub_423E60(const char* msg);
 void anim_catch_up_enable();
 void anim_catch_up_disable();
-void sub_423FE0(void(*func)());
+void sub_423FE0(void (*func)());
 bool sub_423FF0(int64_t obj);
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4);
 bool anim_goal_interrupt_all_goals();
