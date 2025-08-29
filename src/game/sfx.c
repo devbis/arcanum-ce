@@ -306,7 +306,7 @@ int sfx_critter_sound(int64_t obj, CritterSoundType type)
     int tile_sound_type;
 
     // Validate the object and ensure it's a critter.
-    if (obj != OBJ_HANDLE_NULL
+    if (obj == OBJ_HANDLE_NULL
         || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return -1;
     }
