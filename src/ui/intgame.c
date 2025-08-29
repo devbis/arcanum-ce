@@ -6528,7 +6528,7 @@ void sub_554640(int a1, int a2, TigRect* rect, int value)
 
         dst_rect.x = rect->x;
         dst_rect.y = rect->y;
-        dst_rect.width = art_frame_data.width;
+        dst_rect.width = src_rect.width;
         dst_rect.height = art_frame_data.height;
 
         if (intgame_is_compact_interface()) {
