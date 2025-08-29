@@ -4426,6 +4426,7 @@ bool main_menu_button_create_ex(MainMenuButtonInfo* info, int width, int height,
         button_data.mouse_down_snd_id = SND_INTERFACE_BUTTON_MEDIUM;
         button_data.mouse_up_snd_id = SND_INTERFACE_BUTTON_MEDIUM_RELEASE;
     } else {
+        button_data.mouse_up_snd_id = -1;
         button_data.mouse_down_snd_id = SND_INTERFACE_MORPHTEXT_CLICK;
         button_data.mouse_enter_snd_id = SND_INTERFACE_MORPHTEXT_HOVER;
     }
