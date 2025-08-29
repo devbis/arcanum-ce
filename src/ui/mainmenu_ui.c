@@ -5223,6 +5223,15 @@ bool sub_546EE0(TigMessage* msg)
             }
             return false;
         default:
+            switch (msg->data.keyboard.key) {
+            case SDL_SCANCODE_ESCAPE:
+                gsound_play_sfx(0, 1);
+                mainmenu_ui_close(true);
+                if (mainmenu_ui_window_type == MM_WINDOW_0) {
+                    sub_5412D0();
+                }
+                return true;
+            }
             return false;
         }
     }
