@@ -950,7 +950,7 @@ void mp_handle_art_touch(PacketArtTouch* pkt)
 }
 
 // 0x4EF1E0
-void map_map_precache_sectors(int64_t loc, int64_t obj)
+void mp_map_precache_sectors(int64_t loc, int64_t obj)
 {
     if (player_get_local_pc_obj() == obj) {
         map_precache_sectors(loc);
@@ -968,7 +968,7 @@ void map_map_precache_sectors(int64_t loc, int64_t obj)
 }
 
 // 0x4EF260
-void sub_4EF260(PacketMapPrecacheSectors* pkt)
+void mp_handle_map_precache_sectors(PacketMapPrecacheSectors* pkt)
 {
     int64_t obj;
 

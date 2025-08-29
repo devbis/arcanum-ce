@@ -1433,7 +1433,7 @@ void mp_sector_block_set(int64_t sec, bool blocked);
 void mp_spell_mastery_set(int64_t obj, int college);
 void mp_townmap_set_known(int map, bool known);
 void mp_art_touch(tig_art_id_t art_id);
-void map_map_precache_sectors(int64_t loc, int64_t obj);
+void mp_map_precache_sectors(int64_t loc, int64_t obj);
 void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
 void mp_item_use(int64_t source_obj, int64_t item_obj, int64_t target_obj);
