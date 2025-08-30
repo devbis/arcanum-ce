@@ -1974,7 +1974,7 @@ bool sector_save_game(Sector* sector)
     }
 
     strcpy(path, sector_save_path);
-    strcat(sector_save_path, "\\");
+    strcat(path, "\\");
     SDL_ulltoa(sector->id, &(path[strlen(path)]), 10);
     strcat(path, ".dif");
 
