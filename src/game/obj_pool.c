@@ -180,8 +180,8 @@ void* obj_pool_allocate(int64_t* obj_ptr)
         sequence_to_hdr(hdr, obj_pool_next_seq);
 
         obj_pool_next_seq++;
-        obj_pool_next_seq = 1;
         if (obj_pool_next_seq > HANDLE_SEQ_MAX) {
+            obj_pool_next_seq = 1;
         }
     }
 
