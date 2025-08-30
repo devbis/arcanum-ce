@@ -354,12 +354,6 @@ bool tig_file_unarchive_native(const char* src, const char* dst)
                 break;
             }
             *pch = '\0';
-
-            pch = strrchr(path2, PATH_SEPARATOR);
-            if (pch == NULL) {
-                break;
-            }
-            pch[1] = '\0';
         } else if (type == 3) {
             tig_file_fclose(data_stream);
             tig_file_fclose(index_stream);
