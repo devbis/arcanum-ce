@@ -2224,59 +2224,59 @@ void combat_heal(CombatContext* combat)
         if ((combat->dam_flags & CDF_RESURRECT) == 0) {
             return;
         }
-    }
 
-    critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
-    if ((critter_flags & OCF_UNREVIVIFIABLE) != 0
-        && (combat->dam_flags & CDF_REANIMATE) != 0) {
-        unressurectable = true;
-    }
-    if ((critter_flags & OCF_UNRESSURECTABLE) != 0
-        && (combat->dam_flags & CDF_REANIMATE) == 0) {
-        unressurectable = true;
-    }
-
-    if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || unressurectable) {
-        magictech_error_unressurectable(combat->target_obj);
-        return;
-    }
-
-    art_id = obj_field_int32_get(combat->target_obj, OBJ_F_CURRENT_AID);
-    art_id = tig_art_id_anim_set(art_id, 0);
-    art_id = tig_art_id_frame_set(art_id, 0);
-    object_set_current_aid(combat->target_obj, art_id);
-
-    v2 = true;
-
-    combat_remove_blood_splotch(combat->target_loc);
-    ai_stop_fleeing(combat->target_obj);
-    object_flags_unset(combat->target_obj, OF_FLAT | OF_NO_BLOCK);
-
-    critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
-    critter_flags &= ~OCF_STUNNED;
-    obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-
-    critter_decay_timeevent_cancel(combat->target_obj);
-
-    if (critter_fatigue_damage_get(combat->target_obj) != 10) {
-        critter_fatigue_damage_set(combat->target_obj, 10);
-    }
-
-    sub_459740(combat->target_obj);
-
-    if (combat->attacker_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        int reaction_level = reaction_get(combat->target_obj, combat->attacker_obj);
-        if (reaction_level > 0 && reaction_level < 70) {
-            reaction_adj(combat->target_obj, combat->attacker_obj, 70 - reaction_level);
+        critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
+        if ((critter_flags & OCF_UNREVIVIFIABLE) != 0
+            && (combat->dam_flags & CDF_REANIMATE) != 0) {
+            unressurectable = true;
         }
-    }
+        if ((critter_flags & OCF_UNRESSURECTABLE) != 0
+            && (combat->dam_flags & CDF_REANIMATE) == 0) {
+            unressurectable = true;
+        }
 
-    if (type == OBJ_TYPE_NPC) {
-        int64_t leader_obj = critter_leader_get(combat->target_obj);
-        if (leader_obj != OBJ_HANDLE_NULL) {
-            if (!critter_follow(combat->target_obj, leader_obj, false)) {
-                critter_leader_set(combat->target_obj, OBJ_HANDLE_NULL);
+        if (!object_script_execute(combat->attacker_obj, combat->target_obj, combat->weapon_obj, SAP_RESURRECT, 0) || unressurectable) {
+            magictech_error_unressurectable(combat->target_obj);
+            return;
+        }
+
+        art_id = obj_field_int32_get(combat->target_obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_anim_set(art_id, 0);
+        art_id = tig_art_id_frame_set(art_id, 0);
+        object_set_current_aid(combat->target_obj, art_id);
+
+        v2 = true;
+
+        combat_remove_blood_splotch(combat->target_loc);
+        ai_stop_fleeing(combat->target_obj);
+        object_flags_unset(combat->target_obj, OF_FLAT | OF_NO_BLOCK);
+
+        critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
+        critter_flags &= ~OCF_STUNNED;
+        obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+        critter_decay_timeevent_cancel(combat->target_obj);
+
+        if (critter_fatigue_damage_get(combat->target_obj) != 10) {
+            critter_fatigue_damage_set(combat->target_obj, 10);
+        }
+
+        sub_459740(combat->target_obj);
+
+        if (combat->attacker_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            int reaction_level = reaction_get(combat->target_obj, combat->attacker_obj);
+            if (reaction_level > 0 && reaction_level < 70) {
+                reaction_adj(combat->target_obj, combat->attacker_obj, 70 - reaction_level);
+            }
+        }
+
+        if (type == OBJ_TYPE_NPC) {
+            int64_t leader_obj = critter_leader_get(combat->target_obj);
+            if (leader_obj != OBJ_HANDLE_NULL) {
+                if (!critter_follow(combat->target_obj, leader_obj, false)) {
+                    critter_leader_set(combat->target_obj, OBJ_HANDLE_NULL);
+                }
             }
         }
     }
