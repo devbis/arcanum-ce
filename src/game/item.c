@@ -2259,7 +2259,7 @@ bool item_check_invensource_buy_list(int64_t item_obj, int64_t buyer_npc_obj)
     }
 
     substitute_inventory_obj = critter_substitute_inventory_get(buyer_npc_obj);
-    if (substitute_inventory_obj == OBJ_HANDLE_NULL) {
+    if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
         return item_check_invensource_buy_list(item_obj, substitute_inventory_obj);
     }
 
