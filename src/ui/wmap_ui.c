@@ -4242,7 +4242,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
     }
     coords->x = (int)(offset_x * rect.width / width);
 
-    offset_y = y - rect.y;
+    offset_y = y - wmap_ui_window_frame.y - rect.y;
     if (offset_y == 0) {
         offset_y = 1;
     }
