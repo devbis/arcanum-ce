@@ -330,7 +330,7 @@ bool hotkey_ui_process_event(TigMessage* msg)
                         if (sub_573620()) {
                             sub_57DC20();
                         }
-                        sub_57E8D0(1);
+                        sub_57E8D0(TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP);
                     } else {
                         sub_54FCF0(&(stru_6835E0[index]));
                     }
@@ -802,7 +802,7 @@ void sub_57E8B0()
 }
 
 // 0x57E8D0
-bool sub_57E8D0(int a1)
+bool sub_57E8D0(TigMessageMouseEvent mouse_event)
 {
     int64_t parent_obj;
     MesFileEntry mes_file_entry;
@@ -820,7 +820,8 @@ bool sub_57E8D0(int a1)
         return false;
     }
 
-    if (a1 == 1 && !sub_573620()) {
+    if (mouse_event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
+        && sub_573620() == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -948,28 +949,29 @@ bool sub_57E8D0(int a1)
         hotkey->type = stru_683950.type;
         hotkey->flags = 0;
         intgame_hotkey_refresh(index);
-    }
-
-    if (stru_683950.type != HOTKEY_ITEM) {
-        if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
-            sound_id = sfx_item_sound(stru_683950.item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
-            if (sound_id != -1) {
-                gsound_play_sfx(sound_id, 1);
+    } else {
+        if (stru_683950.type == HOTKEY_ITEM) {
+            if (inven_ui_is_created()) {
+                dword_6839B0 = false;
+                dword_5CB4E4 = -1;
             }
+
+            return false;
         }
-
-        dword_6839B0 = false;
-        intgame_refresh_cursor();
-        dword_5CB4E4 = -1;
-        return true;
     }
 
-    if (inven_ui_is_created()) {
-        dword_6839B0 = false;
-        dword_5CB4E4 = -1;
+    if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
+        sound_id = sfx_item_sound(stru_683950.item_obj.obj, player_get_local_pc_obj(), OBJ_HANDLE_NULL, ITEM_SOUND_DROP);
+        if (sound_id != -1) {
+            gsound_play_sfx(sound_id, 1);
+        }
     }
 
-    return false;
+    dword_6839B0 = false;
+    intgame_refresh_cursor();
+    dword_5CB4E4 = -1;
+
+    return true;
 }
 
 // 0x57ED60
@@ -982,7 +984,7 @@ void sub_57ED60(Hotkey* hotkey, int a2)
 }
 
 // 0x57EDA0
-bool sub_57EDA0(int a1)
+bool sub_57EDA0(TigMessageMouseEvent mouse_event)
 {
     if (sub_573620() != OBJ_HANDLE_NULL) {
         stru_683950.slot = -1;
@@ -991,7 +993,7 @@ bool sub_57EDA0(int a1)
         dword_6839B0 = true;
     }
 
-    return sub_57E8D0(a1) != 0;
+    return sub_57E8D0(mouse_event);
 }
 
 // 0x57EDF0

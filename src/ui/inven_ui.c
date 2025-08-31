@@ -1760,7 +1760,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
     }
 
     if (inventory_location - dword_683470 < 0) {
-        if (!sub_57EDA0(1)) {
+        if (!sub_57EDA0(TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP)) {
             sub_575770();
         }
     } else if (v2 == inven_ui_pc_obj) {
@@ -1983,7 +1983,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 }
             } else {
                 if (inventory_location - dword_683470 < 0) {
-                    if (!sub_57EDA0(1)) {
+                    if (!sub_57EDA0(TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP)) {
                         sub_575770();
                     }
                 } else if (parent_obj == inven_ui_pc_obj) {

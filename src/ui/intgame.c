@@ -1939,7 +1939,7 @@ bool sub_54B5D0(TigMessage* msg)
             if (sub_573620()) {
                 sub_57DC20();
             }
-            if (sub_57E8D0(3)) {
+            if (sub_57E8D0(TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP)) {
                 return true;
             }
             break;
@@ -1947,7 +1947,7 @@ bool sub_54B5D0(TigMessage* msg)
             if (sub_573620()) {
                 sub_57DC20();
             }
-            if (sub_57E8D0(1)) {
+            if (sub_57E8D0(TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP)) {
                 return true;
             }
             break;
