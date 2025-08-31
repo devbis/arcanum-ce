@@ -21,7 +21,7 @@ bool hotkey_ui_process_event(TigMessage* msg);
 bool sub_57DE00();
 void intgame_hotkey_refresh(int index);
 void sub_57E5A0(Hotkey* hotkey);
-bool sub_57E5D0();
+bool hotkey_ui_begin_drag();
 void sub_57EF90(int index);
 void sub_57EFA0(int type, int data, int64_t item_obj);
 void sub_57E8B0();

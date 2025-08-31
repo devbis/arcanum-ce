@@ -692,7 +692,7 @@ void sub_57E5A0(Hotkey* hotkey)
 }
 
 // 0x57E5D0
-bool sub_57E5D0()
+bool hotkey_ui_begin_drag()
 {
     int index;
     Hotkey* hotkey;
@@ -715,42 +715,44 @@ bool sub_57E5D0()
             return false;
         }
 
-        dword_5CB4E4 = index;
-        switch (hotkey->type) {
-        case HOTKEY_ITEM:
-            stru_683950.type = hotkey->type;
-            stru_683950.item_obj = hotkey->item_obj;
-            sub_573630(stru_683950.item_obj.obj);
-            art_id = TIG_ART_ID_INVALID;
-            v1 = false;
-            break;
-        case HOTKEY_SKILL:
-            stru_683950.type = hotkey->type;
-            stru_683950.data = hotkey->data;
-            tig_art_interface_id_create(sub_579F70(stru_683950.data), 0, 0, 0, &art_id);
-            break;
-        case HOTKEY_SPELL:
-            stru_683950.type = hotkey->type;
-            stru_683950.data = hotkey->data;
-            tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
-            break;
-        case HOTKEY_ITEM_SPELL:
-            stru_683950.type = hotkey->type;
-            stru_683950.item_obj = hotkey->item_obj;
-            stru_683950.data = hotkey->data;
-            tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
-            break;
-        default:
-            // Should be unreachable.
-            assert(0);
-        }
+        if (hotkey->type != HOTKEY_NONE) {
+            dword_5CB4E4 = index;
+            switch (hotkey->type) {
+            case HOTKEY_ITEM:
+                stru_683950.type = hotkey->type;
+                stru_683950.item_obj = hotkey->item_obj;
+                sub_573630(stru_683950.item_obj.obj);
+                art_id = TIG_ART_ID_INVALID;
+                v1 = false;
+                break;
+            case HOTKEY_SKILL:
+                stru_683950.type = hotkey->type;
+                stru_683950.data = hotkey->data;
+                tig_art_interface_id_create(sub_579F70(stru_683950.data), 0, 0, 0, &art_id);
+                break;
+            case HOTKEY_SPELL:
+                stru_683950.type = hotkey->type;
+                stru_683950.data = hotkey->data;
+                tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
+                break;
+            case HOTKEY_ITEM_SPELL:
+                stru_683950.type = hotkey->type;
+                stru_683950.item_obj = hotkey->item_obj;
+                stru_683950.data = hotkey->data;
+                tig_art_interface_id_create(spell_icon(stru_683950.data), 0, 0, 0, &art_id);
+                break;
+            default:
+                // Should be unreachable.
+                assert(0);
+            }
 
-        stru_683950.slot = index;
-        hotkey->flags |= HOTKEY_DRAGGED;
-        intgame_hotkey_refresh(index);
-        intgame_hotkey_mouse_load(art_id, v1);
-        dword_6839B0 = true;
-        return true;
+            stru_683950.slot = index;
+            hotkey->flags |= HOTKEY_DRAGGED;
+            intgame_hotkey_refresh(index);
+            intgame_hotkey_mouse_load(art_id, v1);
+            dword_6839B0 = true;
+            return true;
+        }
     }
 
     if (!intgame_is_compact_interface()) {

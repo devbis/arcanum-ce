@@ -1931,7 +1931,7 @@ bool sub_54B5D0(TigMessage* msg)
                 break;
             }
 
-            if (sub_57E5D0()) {
+            if (hotkey_ui_begin_drag()) {
                 return true;
             }
             break;
