@@ -931,6 +931,7 @@ bool sub_57E8D0(TigMessageMouseEvent mouse_event)
             hotkey->data = stru_683950.data;
             hotkey->info.art_num = sub_579F70(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
+            break;
         case HOTKEY_SPELL:
             hotkey->data = stru_683950.data;
             hotkey->info.art_num = spell_icon(stru_683950.data);
