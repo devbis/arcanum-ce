@@ -2345,10 +2345,9 @@ tig_art_id_t sub_504730(tig_art_id_t art_id, int rotation)
         rotation = 31;
     }
 
-    // TODO: Check.
     return (art_id & ~0xFF0)
         | ((rotation % 8) << 9)
-        | ((rotation & 0xF) << 4);
+        | (rotation << 4);
 }
 
 // 0x504790

@@ -940,12 +940,15 @@ bool shadow_apply(int64_t obj)
                             && ly >= stru_602ED8.y
                             && lx < stru_602ED8.x + stru_602ED8.width
                             && ly < stru_602ED8.y + stru_602ED8.height) {
-                            color_index = ((uint8_t*)light_shadowmap_bmp.pixels)[light_shadowmap_bmp.pitch * (lx - stru_602ED8.y) + lx - stru_602ED8.x];
+                            color_index = ((uint8_t*)light_shadowmap_bmp.pixels)[light_shadowmap_bmp.pitch * (ly - stru_602ED8.y) + lx - stru_602ED8.x];
                             if (color_index != 0) {
-                                int delta = tig_color_rgb_to_grayscale(light->tint_color) - color;
+                                uint8_t light_gray = tig_color_red_grayscale_table[(light->tint_color & tig_color_red_mask) >> tig_color_red_shift]
+                                    + tig_color_green_grayscale_table[(light->tint_color & tig_color_green_mask) >> tig_color_green_shift]
+                                    + tig_color_blue_grayscale_table[(light->tint_color & tig_color_blue_mask) >> tig_color_blue_shift];
+                                int delta = light_gray - gray;
                                 if (delta > 0) {
                                     int v1 = (int)((float)delta * 0.4f);
-                                    int frame = art_id - 32;
+                                    int frame = color_index - 32;
 
                                     shadows[cnt].art_id = sub_504730(art_id, (frame / 7 + 16) % 32);
 
@@ -955,8 +958,10 @@ bool shadow_apply(int64_t obj)
                                     shadows[cnt].palette = dword_602E58[frame];
                                     shadows[cnt].art_id = tig_art_id_frame_set(shadows[cnt].art_id, frame);
 
-                                    // TODO: Wrong.
-                                    shadows[cnt].color = tig_color_make(v1, v1, v1);
+                                    int shadow_grey = v1 - frame * (v1 / 7);
+                                    shadows[cnt].color = tig_color_make(shadow_grey, shadow_grey, shadow_grey);
+
+                                    cnt++;
                                 }
                             }
                         }
@@ -985,6 +990,8 @@ bool shadow_apply(int64_t obj)
             }
 
             palette = 8 - frames[0];
+        } else {
+            palette = 2;
         }
     } else {
         palette = 2;
