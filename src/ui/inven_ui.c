@@ -875,8 +875,8 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
             return false;
         }
 
-        button_group[0] = inven_ui_paperdoll_btn;
-        button_group[1] = inven_ui_inventory_btn;
+        button_group[0] = inven_ui_inventory_btn;
+        button_group[1] = inven_ui_paperdoll_btn;
         tig_button_radio_group_create(2, button_group, 0);
 
         if (obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_CONTAINER) {
@@ -909,8 +909,8 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
                 return false;
             }
 
-            button_group[0] = inven_ui_target_paperdoll_btn;
-            button_group[1] = inven_ui_target_inventory_btn;
+            button_group[0] = inven_ui_target_inventory_btn;
+            button_group[1] = inven_ui_target_paperdoll_btn;
             tig_button_radio_group_create(2, button_group, 0);
 
             button_data.flags = TIG_BUTTON_HIDDEN;
