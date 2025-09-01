@@ -2879,7 +2879,41 @@ void intgame_process_event(TigMessage* msg)
             case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
                 skill_ui_cancel();
                 break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+                break;
             }
+            break;
+        case TIG_MESSAGE_KEYBOARD:
+            if (!textedit_ui_is_focused()) {
+                if (!msg->data.keyboard.pressed) {
+                    switch (msg->data.keyboard.key) {
+                    case SDL_SCANCODE_F1:
+                    case SDL_SCANCODE_F2:
+                    case SDL_SCANCODE_F3:
+                    case SDL_SCANCODE_F4:
+                    case SDL_SCANCODE_F5:
+                    case SDL_SCANCODE_F6:
+                        intgame_get_location_under_cursor(&loc);
+                        sub_4C3BE0(msg->data.keyboard.key - SDL_SCANCODE_F1, loc);
+                        break;
+                    case SDL_SCANCODE_HOME:
+                        sub_54EB60();
+                        break;
+                    }
+                }
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
         }
         return;
     case INTGAME_MODE_DIALOG:
