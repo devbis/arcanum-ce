@@ -4726,8 +4726,8 @@ void wmap_town_refresh_rect(TigRect* rect)
         offset_x = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].notes[note].coords.x;
         offset_y = wmap_ui_mode_info[WMAP_UI_MODE_TOWN].notes[note].coords.y;
 
-        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
-        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height / 2 - wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
+        offset_x -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].width / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_34;
+        offset_y -= wmap_note_type_info[WMAP_NOTE_TYPE_QUEST].height / 2 + wmap_ui_mode_info[WMAP_UI_MODE_TOWN].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
