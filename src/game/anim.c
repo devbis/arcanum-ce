@@ -7769,11 +7769,9 @@ bool sub_42A630(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
-        return false;
+    if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0) {
+        sub_4B3BB0(source_obj, target_obj, hit_loc);
     }
-
-    sub_4B3BB0(source_obj, target_obj, hit_loc);
 
     return true;
 }

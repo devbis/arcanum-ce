@@ -368,7 +368,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
         if (obj_type_is_critter(type)) {
             combat->weapon_obj = combat_critter_weapon(attacker_obj);
         } else {
-            combat->weapon_obj = OBJ_HANDLE_NULL;
+            combat->weapon_obj = attacker_obj;
         }
     } else {
         combat->weapon_obj = OBJ_HANDLE_NULL;
@@ -601,7 +601,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
                 && attacker_to_target_dist - proj_to_target_dist != 0) {
                 scale = (int)(200 - 150 * (attacker_to_target_dist - proj_to_target_dist) / attacker_to_target_dist);
             } else {
-                range = (int)(200 + 150 * (attacker_to_target_dist - proj_to_target_dist) / attacker_to_target_dist);
+                scale = (int)(200 + 150 * (attacker_to_target_dist - proj_to_target_dist) / attacker_to_target_dist);
             }
         } else {
             scale = 50;
