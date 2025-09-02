@@ -261,6 +261,15 @@ bool teleport_process(TeleportData* teleport_data)
             if (obj != OBJ_HANDLE_NULL) {
                 mp_map_precache_sectors(teleport_data->loc, obj);
             }
+
+            // CE: Using Teleport spell may cause fatigue exhaustion. All
+            // effects have already been applied in `critter_fatigue_damage_set`
+            // (particularly, demaintaing spells and notifying MT-Item system).
+            // However, since animations are reset, we need to knock down the
+            // unconscious PC.
+            if (critter_is_unconscious(obj)) {
+                anim_goal_knockdown(obj);
+            }
         }
     }
 
