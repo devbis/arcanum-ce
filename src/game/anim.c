@@ -14546,7 +14546,7 @@ bool anim_goal_make_knockdown(int64_t obj)
         return false;
     }
 
-    if (sub_424070(obj, 4, false, false)) {
+    if (!sub_424070(obj, PRIORITY_4, false, false)) {
         return false;
     }
 
