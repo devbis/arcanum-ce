@@ -974,6 +974,8 @@ void sub_405D60(int64_t* new_obj_ptr, int64_t obj)
     new_object->type = object->type;
     new_object->oid = object->oid;
     new_object->prototype_oid = object->prototype_oid;
+    new_object->prototype_obj = object->prototype_obj;
+    new_object->field_40 = object->field_40;
     new_object->modified = object->modified;
     new_object->num_fields = object->num_fields;
     new_object->data = (intptr_t*)CALLOC(object->num_fields, sizeof(*new_object->data));
@@ -1036,6 +1038,7 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
     }
 
     copy_object->prototype_oid = existing_object->prototype_oid;
+    copy_object->prototype_obj = existing_object->prototype_obj;
     copy_object->field_40 = 0;
     copy_object->num_fields = existing_object->num_fields;
     copy_object->modified = false;
