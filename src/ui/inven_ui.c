@@ -669,7 +669,7 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
             gold_obj = sub_462540(substitute_inventory_obj, prototype_obj, 0);
             while (gold_obj != OBJ_HANDLE_NULL) {
                 amt = item_gold_get(gold_obj);
-                item_gold_transfer(substitute_inventory_obj, prototype_obj, amt, gold_obj);
+                item_gold_transfer(substitute_inventory_obj, target_obj, amt, gold_obj);
                 gold_obj = sub_462540(substitute_inventory_obj, prototype_obj, 0);
             }
         }
