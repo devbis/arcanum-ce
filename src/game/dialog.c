@@ -2198,10 +2198,10 @@ bool sub_415BA0(DialogState* a1, char* a2, int a3)
             v50 = sub_4167C0(pch);
             if (IS_TECH_SKILL(value)) {
                 level = tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value));
-                training = tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value));
+                training = tech_skill_training_get(a1->pc_obj, GET_TECH_SKILL(value));
             } else {
                 level = basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value));
-                training = basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value));
+                training = basic_skill_training_get(a1->pc_obj, GET_BASIC_SKILL(value));
             }
 
             if (level < training_min_skill_level_required(TRAINING_EXPERT)) {
