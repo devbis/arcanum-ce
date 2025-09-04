@@ -252,7 +252,7 @@ bool sub_44C9A0(AnimRunInfo* run_info)
     }
 
     return (anim_goal_nodes[run_info->cur_stack_data->type]->field_10 & 0x1) != 0
-        && (run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0;
+        || (run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0;
 }
 
 // 0x44CA70
