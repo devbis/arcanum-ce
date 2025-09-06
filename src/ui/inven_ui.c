@@ -2765,9 +2765,90 @@ void inven_ui_update(int64_t obj)
 }
 
 // 0x5761D0
-void redraw_inven_fix_bad_inven_obj(int64_t a1)
+void redraw_inven_fix_bad_inven_obj(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int i;
+    int j;
+    int k;
+    int64_t item_obj;
+    tig_art_id_t art_id;
+    int inventory_location;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    for (i = 0; i < cnt; i++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, i);
+        for (j = i + 1; j < cnt; j++) {
+            if (item_obj == obj_arrayfield_handle_get(obj, inventory_list_fld, j)) {
+                tig_debug_printf("redraw_inven_fix_bad_inven_obj: WARNING: Found duplicate handle for object in inventory...CORRECTING!\n");
+                cnt--;
+                for (k = j; k < cnt; k++) {
+                    item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, k + 1);
+                    obj_arrayfield_obj_set(obj, inventory_list_fld, k, item_obj);
+                }
+
+                obj_arrayfield_length_set(obj, inventory_list_fld, cnt);
+                obj_field_int32_set(obj, inventory_num_fld, cnt);
+                j--;
+            }
+        }
+    }
+
+    for (i = 0; i < cnt; i++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, i);
+        if (redraw_inven_fix_bad_inven(item_obj, obj) && i < cnt - 1) {
+            cnt = obj_field_int32_get(obj, inventory_num_fld);
+            i--;
+        }
+    }
+
+    for (i = 0; i < cnt; i++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, i);
+
+        art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
+        if (tig_art_item_id_disposition_get(art_id) != TIG_ART_ITEM_DISPOSITION_GROUND) {
+            continue;
+        }
+
+        art_id = tig_art_item_id_disposition_set(art_id, TIG_ART_ITEM_DISPOSITION_INVENTORY);
+        obj_field_int32_set(item_obj, OBJ_F_ITEM_INV_AID, art_id);
+
+        inventory_location = item_inventory_location_get(item_obj);
+        if (IS_WEAR_INV_LOC(inventory_location) || IS_HOTKEY_INV_LOC(inventory_location)) {
+            continue;
+        }
+
+        if (item_check_remove(item_obj) == ITEM_CANNOT_OK) {
+            item_drop_nearby(item_obj);
+            item_arrange_inventory(item_obj, false);
+            if (item_check_insert(item_obj, obj, &inventory_location) == ITEM_CANNOT_OK) {
+                if (!item_transfer_ex(item_obj, obj, inventory_location)) {
+                    cnt--;
+                }
+            } else {
+                cnt--;
+            }
+            i = -1;
+        } else {
+            tig_debug_printf("Warning! A object with bad inventory art could not be removed and re-inserted. It may cause inventory graphic errors.\n");
+        }
+    }
 }
 
 // 0x5764B0
