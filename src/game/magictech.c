@@ -4333,21 +4333,21 @@ void sub_4554B0(MagicTechRunInfo* run_info, int64_t obj)
 {
     MagicTechObjectNode* node;
 
-    if (obj != OBJ_HANDLE_NULL) {
-        node = run_info->summoned_obj;
-        while (node != NULL) {
-            node = node->next;
-        }
-
-        run_info->summoned_obj = mt_obj_node_create();
-        run_info->summoned_obj->next = node;
-        run_info->summoned_obj->obj = obj;
-        run_info->summoned_obj->type = obj_field_int32_get(obj, OBJ_F_TYPE);
-        if (obj_type_is_critter(run_info->summoned_obj->type)) {
-            run_info->summoned_obj->aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
-        }
-        sub_443EB0(obj, &(run_info->summoned_obj->field_8));
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
     }
+
+    node = run_info->summoned_obj;
+
+    run_info->summoned_obj = mt_obj_node_create();
+    run_info->summoned_obj->next = node;
+    run_info->summoned_obj->obj = obj;
+    run_info->summoned_obj->type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(run_info->summoned_obj->type)) {
+        run_info->summoned_obj->aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
+    }
+
+    sub_443EB0(obj, &(run_info->summoned_obj->field_8));
 }
 
 // 0x455550
