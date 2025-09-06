@@ -5554,11 +5554,11 @@ void magictech_build_aoe_info(MagicTechInfo* info, char* str)
             info->field_70[action].no_spell_flags |= flags;
         }
 
-        if (tig_str_parse_named_value(&str, "Radius:", &value)) {
+        if (tig_str_parse_named_value(&str, off_5B0D64[action].radius, &value)) {
             info->field_70[action].radius = value;
         }
 
-        if (tig_str_parse_named_value(&str, "Count:", &value)) {
+        if (tig_str_parse_named_value(&str, off_5B0D64[action].count, &value)) {
             info->field_70[action].count = value;
         }
     }
