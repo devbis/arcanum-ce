@@ -900,6 +900,7 @@ bool magictech_post_save(TigFile* stream)
                 if (!sub_44F3C0(&(magictech_run_info[start]), stream)) {
                     return false;
                 }
+                start++;
             }
         }
 
