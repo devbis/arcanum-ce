@@ -5838,6 +5838,8 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
 
     if (tig_str_parse_named_value(&str, "Radius:", &value)) {
         component_info->aoe.radius = value;
+    } else {
+        component_info->aoe.radius = info->field_70[action].radius;
     }
 
     if (tig_str_parse_named_value(&str, "Count:", &value)) {
