@@ -8553,7 +8553,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
         combat_critter_activate_combat_mode(target_obj);
     } else {
         leader_obj = critter_pc_leader_get(target_obj);
-        if (leader_obj == OBJ_HANDLE_NULL && !critter_is_dead(leader_obj)) {
+        if (leader_obj != OBJ_HANDLE_NULL && !critter_is_dead(leader_obj)) {
             combat_critter_activate_combat_mode(leader_obj);
         }
     }
