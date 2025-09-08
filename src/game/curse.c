@@ -185,7 +185,7 @@ void curse_add(int64_t obj, int curse)
     obj_arrayfield_int64_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt, sub_45A7C0().value);
 
     // Apply the associated effect.
-    effect_add(obj, curse, EFFECT_CAUSE_CURSE);
+    effect_add(obj, curse_get_effect(curse), EFFECT_CAUSE_CURSE);
 
     if (player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 1000; // "You have received a curse!"

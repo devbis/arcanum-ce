@@ -186,7 +186,7 @@ void bless_add(int64_t obj, int bless)
     obj_arrayfield_int64_set(obj, OBJ_F_PC_BLESSING_TS_IDX, cnt, sub_45A7C0().value);
 
     // Apply the associated effect.
-    effect_add(obj, bless, EFFECT_CAUSE_BLESS);
+    effect_add(obj, bless_get_effect(bless), EFFECT_CAUSE_BLESS);
 
     if (player_is_local_pc_obj(obj)) {
         mes_file_entry.num = 1000; // "You have received a Blessing!"
