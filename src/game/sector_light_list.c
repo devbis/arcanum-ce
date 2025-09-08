@@ -472,7 +472,7 @@ bool sector_light_list_node_detach(SectorLightList* list, Light* light, SectorBl
     node = list->head;
     while (node != NULL) {
         if (node->data == light) {
-            if (prev == list->head) {
+            if (prev == node) {
                 list->head = node->next;
             } else {
                 prev->next = node->next;
