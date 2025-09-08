@@ -1391,7 +1391,7 @@ void sub_4F40B0(S603CB8* a1)
         }
     }
 
-    if ((v2->aoe_flags & Tgt_No_ST_Critter_Dead) != 0 && a1->field_54 != NULL) {
+    if ((v2->aoe_flags & Tgt_List) != 0 && a1->field_54 != NULL) {
         mt_obj_node = *a1->field_54;
         if (mt_obj_node != NULL) {
             while (mt_obj_node != NULL) {
