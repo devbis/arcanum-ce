@@ -8,6 +8,7 @@
 #include "tig/file.h"
 #include "tig/file_cache.h"
 #include "tig/font.h"
+#include "tig/guid.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
 #include "tig/message.h"
@@ -54,6 +55,7 @@ static TigModule modules[] = {
     { "file_cache", tig_file_cache_init, tig_file_cache_exit },
     { "sound", tig_sound_init, tig_sound_exit },
     { "movie", tig_movie_init, tig_movie_exit },
+    { "guid", tig_guid_init, tig_guid_exit },
 };
 
 // 0x60F23C

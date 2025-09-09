@@ -1,6 +1,20 @@
 #include "tig/guid.h"
 
 #include <stdlib.h>
+#include <time.h>
+
+int tig_guid_init(TigInitInfo* init_info)
+{
+    (void)init_info;
+
+    srand((unsigned int)time(NULL));
+
+    return TIG_OK;
+}
+
+void tig_guid_exit()
+{
+}
 
 /**
  * Generates UUID v4.

@@ -14,6 +14,8 @@ typedef struct TigGuid {
 // Serializeable.
 static_assert(sizeof(TigGuid) == 16, "wrong size");
 
+int tig_guid_init(TigInitInfo* init_info);
+void tig_guid_exit();
 void tig_guid_create(TigGuid* guid);
 bool tig_guid_is_equal(const TigGuid* a, const TigGuid* b);
 
