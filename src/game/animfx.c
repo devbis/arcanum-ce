@@ -784,6 +784,7 @@ bool sub_4CD7A0(AnimFxNode* node)
                     if (tig_art_exists(entry->light_art_id) == TIG_OK) {
                         overlay_light_index = index;
                     }
+                    break;
                 }
             }
         }
