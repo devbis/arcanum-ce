@@ -1752,11 +1752,11 @@ void sub_54B3C0()
                 qty = obj_field_int32_get(item_obj, OBJ_F_ITEM_MANA_STORE);
                 if (qty > 0) {
                     art_num = 469;
+                } else {
+                    qty = item_gold_get(pc_obj);
                 }
             }
-        }
-
-        if (qty <= 0) {
+        } else {
             qty = item_gold_get(pc_obj);
         }
     }
