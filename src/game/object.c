@@ -595,7 +595,10 @@ void object_draw(GameDrawInfo* draw_info)
                                                     for (idx = 0; idx < 4; idx++) {
                                                         art_id = obj_arrayfield_uint32_get(obj_node->obj, OBJ_F_UNDERLAY, idx);
                                                         if (art_id != TIG_ART_ID_INVALID) {
-                                                            sub_443620(obj_flags, 100, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
+                                                            // FIX: Ignore shrunk objects so they match 100% scale. This makes the reaction
+                                                            // underlay perfectly match the hover underlay size (the hover underlay is not
+                                                            // scaled and is unaffected by shrinking).
+                                                            sub_443620(obj_flags & ~OF_SHRUNK, 100, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
 
                                                             rect_node = *draw_info->rects;
                                                             while (rect_node != NULL) {
