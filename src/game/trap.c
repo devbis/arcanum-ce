@@ -24,6 +24,13 @@
 #define TRAP_START_SENTINEL 0x81726354
 #define TRAP_END_SENTINEL 0x81726354
 
+typedef enum TrapEyeCandyType {
+    TRAP_EYE_CANDY_TYPE_TRIGGER_EFFECT,
+    TRAP_EYE_CANDY_TYPE_VICTIM_EFFECT,
+    TRAP_EYE_CANDY_TYPE_SPOTTED,
+    TRAP_EYE_CANDY_TYPE_COUNT,
+} TrapEyeCandyType;
+
 typedef enum TrapScript {
     TRAP_SCRIPT_MAGICAL = 30000,
     TRAP_SCRIPT_MECHANICAL = 30001,
@@ -303,7 +310,11 @@ void trap_mark_known(int64_t pc_obj, int64_t trap_obj, int reason)
     } else {
         obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
         if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
-            sub_4CCD20(&trap_eye_candies, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
+            sub_4CCD20(&trap_eye_candies,
+                &animfx,
+                trap_obj,
+                -1,
+                TRAP_EYE_CANDY_TYPE_COUNT * (scr.num - TRAP_SCRIPT_FIRST) + TRAP_EYE_CANDY_TYPE_SPOTTED);
             animfx.animate = true;
             animfx_add(&animfx);
         }
@@ -334,7 +345,10 @@ void trap_remove_internal(int64_t trap_obj)
         } else {
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
-                animfx_remove(&trap_eye_candies, trap_obj, 3 * scr.num - 90000 - 2, -1);
+                animfx_remove(&trap_eye_candies,
+                    trap_obj,
+                    TRAP_EYE_CANDY_TYPE_COUNT * (scr.num - TRAP_SCRIPT_FIRST) + TRAP_EYE_CANDY_TYPE_SPOTTED,
+                    -1);
             }
             scr.num = 0;
             obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
@@ -630,7 +644,7 @@ bool trap_script_execute(ScriptInvocation* invocation)
     ObjectList critters;
     ObjectNode* node;
     AnimFxNode animfx;
-    int v1;
+    int base;
 
     if (trap_type_from_scr(invocation->script) == TRAP_TYPE_INVALID) {
         return false;
@@ -664,25 +678,35 @@ bool trap_script_execute(ScriptInvocation* invocation)
     }
 
     if (invocation->script->num >= TRAP_SCRIPT_FIRST && invocation->script->num < TRAP_SCRIPT_COUNT) {
-        v1 = 3 * invocation->script->num - 90000;
-
-        // TODO: Looks unreachable, check.
-        if (3 * invocation->script->num != 89999) {
-            sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1);
-            animfx.animate = true;
-            animfx_add(&animfx);
-            animfx_remove(&trap_eye_candies, invocation->attachee_obj, v1 + 2, -1);
-        }
+        base = TRAP_EYE_CANDY_TYPE_COUNT * (invocation->script->num - TRAP_SCRIPT_FIRST);
     } else {
-        v1 = -1;
+        base = -1;
+    }
+
+    if (base != -1) {
+        sub_4CCD20(&trap_eye_candies,
+            &animfx,
+            invocation->triggerer_obj,
+            -1,
+            base + TRAP_EYE_CANDY_TYPE_TRIGGER_EFFECT);
+        animfx.animate = true;
+        animfx_add(&animfx);
+        animfx_remove(&trap_eye_candies,
+            invocation->attachee_obj,
+            base + TRAP_EYE_CANDY_TYPE_SPOTTED,
+            -1);
     }
 
     if (radius > 0) {
         node = critters.head;
         while (node != NULL) {
             trigger_trap(node->obj, invocation);
-            if (v1 != -1) {
-                sub_4CCD20(&trap_eye_candies, &animfx, node->obj, -1, v1 + 1);
+            if (base != -1) {
+                sub_4CCD20(&trap_eye_candies,
+                    &animfx,
+                    node->obj,
+                    -1,
+                    base + TRAP_EYE_CANDY_TYPE_VICTIM_EFFECT);
                 animfx.animate = true;
                 animfx_add(&animfx);
             }
@@ -698,8 +722,12 @@ bool trap_script_execute(ScriptInvocation* invocation)
     } else {
         if (invocation->triggerer_obj != OBJ_HANDLE_NULL) {
             trigger_trap(invocation->triggerer_obj, invocation);
-            if (v1 != -1) {
-                sub_4CCD20(&trap_eye_candies, &animfx, invocation->triggerer_obj, -1, v1 + 1);
+            if (base != -1) {
+                sub_4CCD20(&trap_eye_candies,
+                    &animfx,
+                    invocation->triggerer_obj,
+                    -1,
+                    base + TRAP_EYE_CANDY_TYPE_VICTIM_EFFECT);
                 animfx.animate = true;
                 animfx_add(&animfx);
             }
