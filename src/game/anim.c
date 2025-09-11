@@ -7380,7 +7380,7 @@ bool sub_429CD0(AnimRunInfo* run_info)
         }
 
         if (back != -1) {
-            object_overlay_set(obj, OBJ_F_OVERLAY_FORE, fore, TIG_ART_ID_INVALID);
+            object_overlay_set(obj, OBJ_F_OVERLAY_BACK, back, TIG_ART_ID_INVALID);
         }
     } else {
         object_overlay_set(obj, OBJ_F_UNDERLAY, fore, TIG_ART_ID_INVALID);
