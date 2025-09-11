@@ -2129,25 +2129,33 @@ bool inven_ui_message_filter(TigMessage* msg)
 
     switch (msg->type) {
     case TIG_MESSAGE_BUTTON:
-        switch (msg->data.button.state) {
-        case TIG_BUTTON_STATE_PRESSED:
-            // 0x573897
-            if (inven_ui_message_filter_handle_button_pressed(msg)) {
-                return true;
+        // CE: Ignore button events while dragging an item to steal it. This
+        // prevents handling press events that would switch between the
+        // inventory and paperdoll panels (these buttons form a radio group and
+        // use the "pressed" event as their main handler, not "released" as with
+        // usual buttons).
+        if (!(inven_ui_mode == INVEN_UI_MODE_STEAL
+            && inven_ui_drag_item_obj != OBJ_HANDLE_NULL)) {
+            switch (msg->data.button.state) {
+            case TIG_BUTTON_STATE_PRESSED:
+                // 0x573897
+                if (inven_ui_message_filter_handle_button_pressed(msg)) {
+                    return true;
+                }
+                break;
+            case TIG_BUTTON_STATE_RELEASED:
+                // 0x573A95
+                if (inven_ui_message_filter_handle_button_released(msg)) {
+                    return true;
+                }
+                break;
+            case TIG_BUTTON_STATE_MOUSE_INSIDE:
+                // 0x573BAF
+                if (inven_ui_mssage_filter_handle_button_hovered(msg)) {
+                    return true;
+                }
+                break;
             }
-            break;
-        case TIG_BUTTON_STATE_RELEASED:
-            // 0x573A95
-            if (inven_ui_message_filter_handle_button_released(msg)) {
-                return true;
-            }
-            break;
-        case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            // 0x573BAF
-            if (inven_ui_mssage_filter_handle_button_hovered(msg)) {
-                return true;
-            }
-            break;
         }
         break;
     case TIG_MESSAGE_MOUSE:
