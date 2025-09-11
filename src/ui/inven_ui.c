@@ -2135,7 +2135,7 @@ bool inven_ui_message_filter(TigMessage* msg)
         // use the "pressed" event as their main handler, not "released" as with
         // usual buttons).
         if (!(inven_ui_mode == INVEN_UI_MODE_STEAL
-            && inven_ui_drag_item_obj != OBJ_HANDLE_NULL)) {
+                && inven_ui_drag_item_obj != OBJ_HANDLE_NULL)) {
             switch (msg->data.button.state) {
             case TIG_BUTTON_STATE_PRESSED:
                 // 0x573897
