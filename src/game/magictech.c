@@ -1908,6 +1908,14 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
         int64_t summoner_loc;
         int rot;
 
+        // CE: Summoned monsters can have specific palette which may differ
+        // from the prototype. This palette must be considered the base art ID
+        // so that temporary changes (during transformations and polymorping)
+        // can be reversible.
+        art_id = obj_field_int32_get(obj, OBJ_F_AID);
+        art_id = tig_art_id_palette_set(art_id, summon_info->palette);
+        obj_field_int32_set(obj, OBJ_F_AID, art_id);
+
         summoner_loc = obj_field_int64_get(summon_info->field_0.obj, OBJ_F_LOCATION);
         rot = location_rot(summon_info->loc, summoner_loc);
 
