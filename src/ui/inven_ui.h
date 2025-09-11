@@ -26,7 +26,7 @@ void inven_ui_destroy();
 void sub_573590(int64_t obj);
 int inven_ui_is_created();
 int64_t sub_573600();
-int64_t sub_573620();
+int64_t inven_ui_drag_item_obj_get();
 void sub_573630(int64_t obj);
 void sub_5736E0();
 void sub_573730();

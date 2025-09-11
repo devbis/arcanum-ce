@@ -159,7 +159,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         break;
     case ANIM_UI_EVENT_TYPE_END_DEATH:
         if (critter_is_dead(player_get_local_pc_obj())) {
-            if (sub_573620() != OBJ_HANDLE_NULL) {
+            if (inven_ui_drag_item_obj_get() != OBJ_HANDLE_NULL) {
                 sub_575770();
             }
             if (mainmenu_ui_is_active()) {
@@ -181,7 +181,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         }
         break;
     case ANIM_UI_EVENT_TYPE_END_GAME:
-        if (sub_573620() != OBJ_HANDLE_NULL) {
+        if (inven_ui_drag_item_obj_get() != OBJ_HANDLE_NULL) {
             sub_575770();
         }
         if (mainmenu_ui_is_active()) {

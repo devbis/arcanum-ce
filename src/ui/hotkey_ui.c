@@ -305,7 +305,7 @@ void sub_57DC20()
 {
     stru_683950.slot = -1;
     stru_683950.type = HOTKEY_ITEM;
-    sub_4440E0(sub_573620(), &(stru_683950.item_obj));
+    sub_4440E0(inven_ui_drag_item_obj_get(), &(stru_683950.item_obj));
     dword_6839B0 = true;
 }
 
@@ -326,8 +326,8 @@ bool hotkey_ui_process_event(TigMessage* msg)
             }
             for (index = 0; index < 10; index++) {
                 if (msg->data.button.button_handle == stru_6835E0[index].info.button_handle) {
-                    if (dword_6839B0 || sub_573620()) {
-                        if (sub_573620()) {
+                    if (dword_6839B0 || inven_ui_drag_item_obj_get() != OBJ_HANDLE_NULL) {
+                        if (inven_ui_drag_item_obj_get() != OBJ_HANDLE_NULL) {
                             sub_57DC20();
                         }
                         sub_57E8D0(TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP);
@@ -823,7 +823,7 @@ bool sub_57E8D0(TigMessageMouseEvent mouse_event)
     }
 
     if (mouse_event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
-        && sub_573620() == OBJ_HANDLE_NULL) {
+        && inven_ui_drag_item_obj_get() == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -989,10 +989,10 @@ void sub_57ED60(Hotkey* hotkey, int a2)
 // 0x57EDA0
 bool sub_57EDA0(TigMessageMouseEvent mouse_event)
 {
-    if (sub_573620() != OBJ_HANDLE_NULL) {
+    if (inven_ui_drag_item_obj_get() != OBJ_HANDLE_NULL) {
         stru_683950.slot = -1;
         stru_683950.type = HOTKEY_ITEM;
-        sub_4440E0(sub_573620(), &(stru_683950.item_obj));
+        sub_4440E0(inven_ui_drag_item_obj_get(), &(stru_683950.item_obj));
         dword_6839B0 = true;
     }
 
