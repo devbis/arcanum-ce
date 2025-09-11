@@ -937,7 +937,7 @@ int stat_level_max(int64_t obj, int stat)
     switch (race) {
     case RACE_DWARF:
     case RACE_HALF_ORC:
-        if (stat == STAT_STRENGTH || stat == STAT_UNSPENT_POINTS) {
+        if (stat == STAT_STRENGTH || stat == STAT_CONSTITUTION) {
             return 21;
         }
         break;
