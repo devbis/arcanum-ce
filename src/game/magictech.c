@@ -2926,15 +2926,16 @@ void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type
 // 0x452CD0
 void sub_452CD0(int64_t obj, tig_art_id_t art_id)
 {
-    int v1;
+    int specie;
     unsigned int flags;
     int rotation;
     int anim;
     tig_art_id_t current_art_id;
 
     if (tig_art_type(art_id) == TIG_ART_TYPE_MONSTER) {
-        v1 = tig_art_monster_id_specie_get(art_id);
-        if (v1 >= 26 && v1 <= 28) {
+        specie = tig_art_monster_id_specie_get(art_id);
+        if (specie >= TIG_ART_MONSTER_SPECIE_FIRE_ELEMENTAL
+            && specie <= TIG_ART_MONSTER_SPECIE_AIR_ELEMENTAL) {
             flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
             flags &= ~OCF2_AUTO_ANIMATES;
             obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
