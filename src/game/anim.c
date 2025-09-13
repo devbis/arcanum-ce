@@ -14989,7 +14989,7 @@ bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
             if (!critter_is_dead(node->obj)
                 && !sub_44E8C0(node->obj, NULL)
                 && obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-                && node->obj == *source_obj_ptr) {
+                && node->obj != *source_obj_ptr) {
                 break;
             }
             node = node->next;
