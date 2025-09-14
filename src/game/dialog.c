@@ -2576,7 +2576,7 @@ bool find_dialog(const char* path, int* index_ptr)
     if (candidate != -1) {
         *index_ptr = candidate;
         if (dialog_files[candidate].path[0] != '\0') {
-            sub_412F60(index);
+            sub_412F60(candidate);
         }
         return false;
     }
