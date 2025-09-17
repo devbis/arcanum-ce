@@ -242,7 +242,7 @@ static bool sub_431290(AnimRunInfo* run_info);
 static bool sub_431320(AnimRunInfo* run_info);
 static bool sub_431340(AnimRunInfo* run_info);
 static void sub_431550(AnimRunInfo* run_info, int64_t obj);
-static bool sub_4315B0(AnimRunInfo* run_info);
+static bool AGbeginAnimEyeCandy(AnimRunInfo* run_info);
 static void sub_431960(AnimRunInfo* run_info, int64_t obj);
 static void sub_4319F0(AnimRunInfo* run_info, int64_t obj);
 static bool sub_431A40(AnimRunInfo* run_info);
@@ -950,7 +950,7 @@ static AnimGoalNode anim_goal_node_attempt_spell = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 11, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 8, -2, 4, 0 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 12, 0, 0x10000000, 0 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 12, 0, 0x10000000, 0 },
         /*  4 */ { sub_42CAA0, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x10000000, -2, 5, 0 },
         /*  5 */ { sub_429C40, { AGDATA_SPELL_DATA, -1 }, -1, 9, 0, 6, 0 },
         /*  6 */ { sub_424820, { AGDATA_SELF_OBJ, AGDATA_SELF_TILE }, 5, 8, 0, 7, 0 },
@@ -1436,7 +1436,7 @@ static AnimGoalNode anim_goal_node_eye_candy = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  4 */ { sub_431A40, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { 0 },
         /*  6 */ { 0 },
@@ -1490,7 +1490,7 @@ static AnimGoalNode anim_goal_node_eye_candy_callback = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 5, 0 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  4 */ { sub_431A40, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { sub_42CAA0, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x10000000, -2, 6, 0 },
         /*  6 */ { sub_42A260, { AGDATA_SPELL_DATA, -1 }, -1, 4, 0, 0x10000000, -2 },
@@ -1787,7 +1787,7 @@ static AnimGoalNode anim_goal_node_eye_candy_end_callback = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, 0 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, 0 },
         /*  4 */ { sub_42A280, { AGDATA_SPELL_DATA, -1 }, -1, 5, 0, 5, 0 },
         /*  5 */ { sub_431A40, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, 0, 0x30000000, 0 },
         /*  6 */ { 0 },
@@ -2219,7 +2219,7 @@ static AnimGoalNode anim_goal_node_attempt_spell_friendly = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 11, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 8, -2, 4, 0 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 12, 0, 0x10000000, 0 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 12, 0, 0x10000000, 0 },
         /*  4 */ { sub_42CAA0, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x10000000, -2, 5, 0 },
         /*  5 */ { sub_429C40, { AGDATA_SPELL_DATA, -1 }, -1, 9, 0, 6, 0 },
         /*  6 */ { sub_424820, { AGDATA_SELF_OBJ, AGDATA_SELF_TILE }, 5, 8, 0, 7, 0 },
@@ -2246,7 +2246,7 @@ static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_4322A0, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 4, 0, 0x10000000, -2 },
-        /*  3 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 5, 0 },
+        /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 5, 0 },
         /*  4 */ { sub_431A40, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { sub_42A720, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  6 */ { 0 },
@@ -2490,7 +2490,7 @@ static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim_secondary = {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_431340, { AGDATA_SELF_OBJ, -1 }, -1, 5, 0, 0x10000000, -2 },
         /*  3 */ { sub_429F00, { AGDATA_SPELL_DATA, -1 }, -1, 0x90000000, 0, 4, -2 },
-        /*  4 */ { sub_4315B0, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  4 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  5 */ { sub_431A40, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  6 */ { 0 },
         /*  7 */ { 0 },
@@ -12009,7 +12009,7 @@ void sub_431550(AnimRunInfo* run_info, int64_t obj)
 }
 
 // 0x4315B0
-bool sub_4315B0(AnimRunInfo* run_info)
+bool AGbeginAnimEyeCandy(AnimRunInfo* run_info)
 {
     int64_t obj;
     int overlay_fore;
