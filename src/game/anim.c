@@ -191,7 +191,7 @@ static bool sub_42CF40(AnimRunInfo* run_info);
 static bool AGbeginAnimOpenDoor(AnimRunInfo* run_info);
 static bool AGupdateAnimOpenDoor(AnimRunInfo* run_info);
 static bool AGbeginAnimCloseDoor(AnimRunInfo* run_info);
-static bool sub_42D2A0(AnimRunInfo* run_info);
+static bool AGupdateAnimCloseDoor(AnimRunInfo* run_info);
 static bool sub_42D300(AnimRunInfo* run_info);
 static bool sub_42D440(AnimRunInfo* run_info);
 static bool sub_42D570(AnimRunInfo* run_info);
@@ -2137,7 +2137,7 @@ static AnimGoalNode anim_goal_node_animate_door_closed = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_42CA90, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_42D2A0, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, -2, 0x10000000, -2 },
+        /*  2 */ { AGupdateAnimCloseDoor, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, -2, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimCloseDoor, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x30000000, 0, 0x10000000, -2 },
         /*  4 */ { 0 },
         /*  5 */ { 0 },
@@ -9498,18 +9498,22 @@ bool AGbeginAnimCloseDoor(AnimRunInfo* run_info)
 }
 
 // 0x42D2A0
-bool sub_42D2A0(AnimRunInfo* run_info)
+bool AGupdateAnimCloseDoor(AnimRunInfo* run_info)
 {
     int64_t door_obj;
 
     door_obj = run_info->params[0].obj;
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 9640, doorObj != OBJ_HANDLE_NULL
     if (door_obj == OBJ_HANDLE_NULL) {
-        tig_debug_printf("Anim: AGupdateAnimOpenDoor: Warning: Goal Received NULL Object!\n");
+        tig_debug_printf("Anim: AGupdateAnimCloseDoor: Warning: Goal Received NULL Object!\n");
         return false;
     }
 
-    return portal_close(door_obj);
+    if (!portal_close(door_obj)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x42D300
