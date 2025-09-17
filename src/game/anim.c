@@ -247,7 +247,7 @@ static void sub_431960(AnimRunInfo* run_info, int64_t obj);
 static void sub_4319F0(AnimRunInfo* run_info, int64_t obj);
 static bool sub_431A40(AnimRunInfo* run_info);
 static bool sub_431B20(AnimRunInfo* run_info);
-static bool sub_431C40(AnimRunInfo* run_info);
+static bool AGupdateAnimEyeCandyReverse(AnimRunInfo* run_info);
 static bool AGbeginAnimEyeCandyReverse(AnimRunInfo* run_info);
 static bool sub_4321C0(AnimRunInfo* run_info);
 static bool sub_4322A0(AnimRunInfo* run_info);
@@ -1462,7 +1462,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_431C40, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
+        /*  2 */ { AGupdateAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  4 */ { sub_4321C0, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { 0 },
@@ -1516,7 +1516,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_callback = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_431C40, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 5, 0 },
+        /*  2 */ { AGupdateAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 5, 0 },
         /*  3 */ { AGbeginAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  4 */ { sub_4321C0, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { sub_42CAA0, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x10000000, -2, 6, 0 },
@@ -1813,7 +1813,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_end_callback = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_431C40, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
+        /*  2 */ { AGupdateAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, 0 },
         /*  4 */ { sub_42A280, { AGDATA_SPELL_DATA, -1 }, -1, 5, 0, 5, 0 },
         /*  5 */ { sub_4321C0, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, 0, 0x30000000, 0 },
@@ -12284,7 +12284,7 @@ bool sub_431B20(AnimRunInfo* run_info)
 }
 
 // 0x431C40
-bool sub_431C40(AnimRunInfo* run_info)
+bool AGupdateAnimEyeCandyReverse(AnimRunInfo* run_info)
 {
     int64_t obj;
     int overlay_fore;
@@ -12311,7 +12311,7 @@ bool sub_431C40(AnimRunInfo* run_info)
             if (overlay_fore != -1) {
                 art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
                 if (art_id == TIG_ART_ID_INVALID) {
-                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandyReverse: Error: No Art!\n");
                     return false;
                 }
 
@@ -12334,7 +12334,7 @@ bool sub_431C40(AnimRunInfo* run_info)
             if (overlay_back != -1) {
                 art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_BACK, overlay_back);
                 if (art_id == TIG_ART_ID_INVALID) {
-                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandyReverse: Error: No Art!\n");
                     return false;
                 }
 
@@ -12352,7 +12352,7 @@ bool sub_431C40(AnimRunInfo* run_info)
         } else {
             art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, overlay_fore);
             if (art_id == TIG_ART_ID_INVALID) {
-                tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                tig_debug_printf("Anim: AGupdateAnimEyeCandyReverse: Error: No Art!\n");
                 return false;
             }
 
