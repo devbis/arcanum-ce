@@ -189,7 +189,7 @@ static bool sub_42CC80(AnimRunInfo* run_info);
 static bool sub_42CDF0(AnimRunInfo* run_info);
 static bool sub_42CF40(AnimRunInfo* run_info);
 static bool AGbeginAnimOpenDoor(AnimRunInfo* run_info);
-static bool sub_42D160(AnimRunInfo* run_info);
+static bool AGupdateAnimOpenDoor(AnimRunInfo* run_info);
 static bool sub_42D1C0(AnimRunInfo* run_info);
 static bool sub_42D2A0(AnimRunInfo* run_info);
 static bool sub_42D300(AnimRunInfo* run_info);
@@ -2110,7 +2110,7 @@ static AnimGoalNode anim_goal_node_animate_door_open = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_42CA90, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_42D160, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
+        /*  2 */ { AGupdateAnimOpenDoor, { AGDATA_SELF_OBJ, -1 }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimOpenDoor, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x30000000, 0, 0x10000000, -2 },
         /*  4 */ { sub_42B790, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, 0, 0x70000000 | AG_PEND_CLOSING_DOOR, 1500 },
         /*  5 */ { 0 },
@@ -9442,7 +9442,7 @@ bool AGbeginAnimOpenDoor(AnimRunInfo* run_info)
 }
 
 // 0x42D160
-bool sub_42D160(AnimRunInfo* run_info)
+bool AGupdateAnimOpenDoor(AnimRunInfo* run_info)
 {
     int64_t door_obj;
 
@@ -9453,7 +9453,11 @@ bool sub_42D160(AnimRunInfo* run_info)
         return false;
     }
 
-    return portal_open(door_obj);
+    if (!portal_open(door_obj)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x42D1C0
