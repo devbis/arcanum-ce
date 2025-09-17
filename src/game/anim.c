@@ -7662,7 +7662,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
 // 0x42A430
 bool sub_42A430(AnimRunInfo* run_info)
 {
-    return (run_info->flags & 40000) != 0;
+    return (run_info->flags & 0x40000) != 0;
 }
 
 // 0x42A440
