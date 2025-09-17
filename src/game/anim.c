@@ -250,7 +250,7 @@ static bool sub_431B20(AnimRunInfo* run_info);
 static bool AGupdateAnimEyeCandyReverse(AnimRunInfo* run_info);
 static bool AGbeginAnimEyeCandyReverse(AnimRunInfo* run_info);
 static bool AGendAnimEyeCandyReverse(AnimRunInfo* run_info);
-static bool sub_4322A0(AnimRunInfo* run_info);
+static bool AGupdateAnimEyeCandyFireDmg(AnimRunInfo* run_info);
 static bool sub_4324D0(AnimRunInfo* run_info);
 static bool sub_432700(AnimRunInfo* run_info);
 static bool sub_432990(AnimRunInfo* run_info);
@@ -2245,7 +2245,7 @@ static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_431320, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_4322A0, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 4, 0, 0x10000000, -2 },
+        /*  2 */ { AGupdateAnimEyeCandyFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 5, 0 },
         /*  4 */ { AGendAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
         /*  5 */ { sub_42A720, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
@@ -12573,7 +12573,7 @@ bool AGendAnimEyeCandyReverse(AnimRunInfo* run_info)
 }
 
 // 0x4322A0
-bool sub_4322A0(AnimRunInfo* run_info)
+bool AGupdateAnimEyeCandyFireDmg(AnimRunInfo* run_info)
 {
     int64_t obj;
     int overlay_fore;
@@ -12600,7 +12600,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
             if (overlay_fore != -1) {
                 art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
                 if (art_id == TIG_ART_ID_INVALID) {
-                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandyFireDmg: Error: No Art!\n");
                     return false;
                 }
 
@@ -12627,7 +12627,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
             if (overlay_back != -1) {
                 art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_BACK, overlay_back);
                 if (art_id == TIG_ART_ID_INVALID) {
-                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandyFireDmg: Error: No Art!\n");
                     return false;
                 }
 
@@ -12645,7 +12645,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
         } else {
             art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, overlay_fore);
             if (art_id == TIG_ART_ID_INVALID) {
-                tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                tig_debug_printf("Anim: AGupdateAnimEyeCandyFireDmg: Error: No Art!\n");
                 return false;
             }
 
