@@ -222,7 +222,7 @@ static bool AGbeginAnimMoveStraight(AnimRunInfo* run_info);
 static bool AGupdateAnimMoveStraight(AnimRunInfo* run_info);
 static bool sub_42F5C0(AnimRunInfo* run_info);
 static bool sub_42F6A0(AnimRunInfo* run_info);
-static bool sub_42FA50(AnimRunInfo* run_info);
+static bool AGupdateAnimMoveStraightKnockback(AnimRunInfo* run_info);
 static bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from, int64_t to);
 static bool sub_42FEA0(AnimRunInfo* run_info);
 static bool sub_42FEB0(AnimRunInfo* run_info);
@@ -1948,7 +1948,7 @@ static AnimGoalNode anim_goal_node_attempt_move_straight_knockback = {
     { -1, -1, -1 },
     {
         /*  1 */ { sub_42CA90, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
-        /*  2 */ { sub_42FA50, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -3 },
+        /*  2 */ { AGupdateAnimMoveStraightKnockback, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, -3 },
         /*  3 */ { AGbeginAnimMoveStraight, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 0x10000000, 0 },
         /*  4 */ { 0 },
         /*  5 */ { 0 },
@@ -11002,7 +11002,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
 }
 
 // 0x42FA50
-bool sub_42FA50(AnimRunInfo* run_info)
+bool AGupdateAnimMoveStraightKnockback(AnimRunInfo* run_info)
 {
     int64_t obj;
     int idx;
