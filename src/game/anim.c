@@ -147,7 +147,7 @@ static bool sub_42A440(AnimRunInfo* run_info);
 static bool sub_42A490(AnimRunInfo* run_info);
 static bool sub_42A4E0(AnimRunInfo* run_info);
 static bool sub_42A630(AnimRunInfo* run_info);
-static bool sub_42A720(AnimRunInfo* run_info);
+static bool AGapplyFireDmg(AnimRunInfo* run_info);
 static bool sub_42A930(AnimRunInfo* run_info);
 static bool sub_42A9B0(AnimRunInfo* run_info);
 static bool sub_42AA70(int64_t source_obj, int64_t target_obj);
@@ -2248,7 +2248,7 @@ static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
         /*  2 */ { AGupdateAnimEyeCandyFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 5, 0 },
         /*  4 */ { AGendAnimEyeCandy, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
-        /*  5 */ { sub_42A720, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  5 */ { AGapplyFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  6 */ { 0 },
         /*  7 */ { 0 },
         /*  8 */ { 0 },
@@ -2275,7 +2275,7 @@ static AnimGoalNode anim_goal_node_eye_candy_reverse_fire_dmg = {
         /*  2 */ { AGupdateAnimEyeCandyReverseFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 4, 0, 0x10000000, -2 },
         /*  3 */ { AGbeginAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 0x90000000, 0, 5, 0 },
         /*  4 */ { AGendAnimEyeCandyReverse, { AGDATA_SELF_OBJ, -1 }, -1, 3, 0, 0x30000000, 0 },
-        /*  5 */ { sub_42A720, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  5 */ { AGapplyFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  6 */ { 0 },
         /*  7 */ { 0 },
         /*  8 */ { 0 },
@@ -2302,7 +2302,7 @@ static AnimGoalNode anim_goal_node_animate_loop_fire_dmg = {
         /*  2 */ { sub_42DCF0, { AGDATA_SELF_OBJ, -1 }, -1, 0x10000000, 800, 3, 0 },
         /*  3 */ { sub_42DDE0, { AGDATA_SELF_OBJ, -1 }, -1, 5, 0, 0x10000000, -2 },
         /*  4 */ { sub_42DA50, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x90000000, 0, 5, 0 },
-        /*  5 */ { sub_42A720, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
+        /*  5 */ { AGapplyFireDmg, { AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ }, -1, 0x90000000, 0, 0x10000000, -2 },
         /*  6 */ { 0 },
         /*  7 */ { 0 },
         /*  8 */ { 0 },
@@ -7777,22 +7777,22 @@ bool sub_42A630(AnimRunInfo* run_info)
 }
 
 // 0x42A720
-bool sub_42A720(AnimRunInfo* run_info)
+bool AGapplyFireDmg(AnimRunInfo* run_info)
 {
     int64_t source_obj;
-    int64_t v1;
+    int64_t parent_obj;
     int64_t source_loc;
     ObjectList objects;
     ObjectNode* node;
     CombatContext combat;
     int dam;
-    bool v2;
-    bool v3;
+    bool update_turn;
+    bool is_normal_dam;
     int aptitude;
 
     source_obj = run_info->params[0].obj;
-    v1 = run_info->params[1].obj;
-    v2 = false;
+    parent_obj = run_info->params[1].obj;
+    update_turn = false;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 7650, "sourceObj != OBJ_HANDLE_NULL"
 
@@ -7801,39 +7801,39 @@ bool sub_42A720(AnimRunInfo* run_info)
     }
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    object_list_location(source_loc, 0x1FFE0, &objects);
+    object_list_location(source_loc, OBJ_TM_CRITTER | OBJ_TM_ITEM, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_4B2210(source_obj, node->obj, &combat);
-        combat.field_30 = v1;
+        combat.field_30 = parent_obj;
         if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x4000) != 0) {
             dam = 1;
-            v3 = true;
+            is_normal_dam = true;
         } else {
             dam = 3;
-            v3 = false;
+            is_normal_dam = false;
         }
 
-        if (v1 != OBJ_HANDLE_NULL) {
-            aptitude = stat_level_get(v1, STAT_MAGICK_TECH_APTITUDE);
+        if (parent_obj != OBJ_HANDLE_NULL) {
+            aptitude = stat_level_get(parent_obj, STAT_MAGICK_TECH_APTITUDE);
             if (aptitude > 0) {
                 dam += 5 * aptitude / 100 - 1;
             }
         }
 
-        if (v3) {
+        if (is_normal_dam) {
             combat.dam[DAMAGE_TYPE_NORMAL] = dam;
         } else {
             combat.dam[DAMAGE_TYPE_FIRE] = dam;
         }
 
-        if ((v1 == OBJ_HANDLE_NULL || v1 != node->obj)
-            && critter_pc_leader_get(node->obj) != v1) {
-            ai_attack(v1, node->obj, LOUDNESS_NORMAL, 0);
+        if ((parent_obj == OBJ_HANDLE_NULL || parent_obj != node->obj)
+            && critter_pc_leader_get(node->obj) != parent_obj) {
+            ai_attack(parent_obj, node->obj, LOUDNESS_NORMAL, 0);
 
             if (combat_turn_based_is_active()
                 && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != combat_turn_based_turn_get()) {
-                v2 = true;
+                update_turn = true;
                 combat.dam[DAMAGE_TYPE_NORMAL] *= 2;
                 combat.dam[DAMAGE_TYPE_FIRE] *= 2;
                 combat_dmg(&combat);
@@ -7846,7 +7846,7 @@ bool sub_42A720(AnimRunInfo* run_info)
     }
     object_list_destroy(&objects);
 
-    if (v2) {
+    if (update_turn) {
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data = combat_turn_based_turn_get();
     }
 
@@ -12610,7 +12610,7 @@ bool AGupdateAnimEyeCandyFireDmg(AnimRunInfo* run_info)
 
                 frame = tig_art_id_frame_get(art_id);
                 if (frame % 3 == 1) {
-                    sub_42A720(run_info);
+                    AGapplyFireDmg(run_info);
                 }
 
                 if (frame == art_anim_data.num_frames - 1) {
@@ -12717,7 +12717,7 @@ bool AGupdateAnimEyeCandyReverseFireDmg(AnimRunInfo* run_info)
 
                 frame = tig_art_id_frame_get(art_id);
                 if (frame % 3 == 1) {
-                    sub_42A720(run_info);
+                    AGapplyFireDmg(run_info);
                 }
 
                 if (frame == 0) {
