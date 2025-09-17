@@ -190,7 +190,7 @@ static bool sub_42CDF0(AnimRunInfo* run_info);
 static bool sub_42CF40(AnimRunInfo* run_info);
 static bool AGbeginAnimOpenDoor(AnimRunInfo* run_info);
 static bool AGupdateAnimOpenDoor(AnimRunInfo* run_info);
-static bool sub_42D1C0(AnimRunInfo* run_info);
+static bool AGbeginAnimCloseDoor(AnimRunInfo* run_info);
 static bool sub_42D2A0(AnimRunInfo* run_info);
 static bool sub_42D300(AnimRunInfo* run_info);
 static bool sub_42D440(AnimRunInfo* run_info);
@@ -2138,7 +2138,7 @@ static AnimGoalNode anim_goal_node_animate_door_closed = {
     {
         /*  1 */ { sub_42CA90, { AGDATA_SELF_OBJ, -1 }, -1, 2, 0, 3, 0 },
         /*  2 */ { sub_42D2A0, { AGDATA_SELF_OBJ, -1 }, -1, 0x30000000, -2, 0x10000000, -2 },
-        /*  3 */ { sub_42D1C0, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x30000000, 0, 0x10000000, -2 },
+        /*  3 */ { AGbeginAnimCloseDoor, { AGDATA_SELF_OBJ, AGDATA_ANIM_ID }, -1, 0x30000000, 0, 0x10000000, -2 },
         /*  4 */ { 0 },
         /*  5 */ { 0 },
         /*  6 */ { 0 },
@@ -9461,7 +9461,7 @@ bool AGupdateAnimOpenDoor(AnimRunInfo* run_info)
 }
 
 // 0x42D1C0
-bool sub_42D1C0(AnimRunInfo* run_info)
+bool AGbeginAnimCloseDoor(AnimRunInfo* run_info)
 {
     int64_t door_obj;
     tig_art_id_t art_id;
@@ -9471,7 +9471,7 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     door_obj = run_info->params[0].obj;
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 9603, doorObj != OBJ_HANDLE_NULL
     if (door_obj == OBJ_HANDLE_NULL) {
-        tig_debug_printf("Anim: AGbeginAnimOpenDoor: Warning: Goal Received NULL Object!\n");
+        tig_debug_printf("Anim: AGbeginAnimCloseDoor: Warning: Goal Received NULL Object!\n");
         return false;
     }
 
@@ -9483,7 +9483,7 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
         run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
-        tig_debug_printf("Anim: AGbeginAnimOpenDoor: Failed to find Aid: %d, defaulting to 10 fps!\n", art_id);
+        tig_debug_printf("Anim: AGbeginAnimCloseDoor: Failed to find Aid: %d, defaulting to 10 fps!\n", art_id);
         run_info->pause_time.milliseconds = 100;
     }
 
