@@ -693,7 +693,13 @@ void object_draw(GameDrawInfo* draw_info)
                                                                             src_rect.height *= 2;
                                                                         }
 
-                                                                        if (obj_type == OBJ_TYPE_ARMOR) {
+                                                                        // CE: The thing being perceived as a ghost is actually an overlay eye candy
+                                                                        // on top of the dead, non-decaying critter's body. These "ghosts" must be placed
+                                                                        // in the same z-order group as other normal objects.
+                                                                        if (obj_type == OBJ_TYPE_ARMOR
+                                                                            || (obj_type == OBJ_TYPE_NPC
+                                                                                && critter_is_dead(obj_node->obj)
+                                                                                && tig_art_num_get(art_id) == 243)) {
                                                                             order = non_flat_order++;
                                                                         } else {
                                                                             order = overlay_order++;
