@@ -4401,6 +4401,13 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
         return true;
     }
 
+    // FIX: Gracefully complete spells that were cast before the "Reflection
+    // Shield" was applied.
+    if ((run_info->flags & MAGICTECH_RUN_REFLECTED) == 0
+        && run_info->action >= MAGICTECH_ACTION_END) {
+        return true;
+    }
+
     run_info->flags |= MAGICTECH_RUN_REFLECTED;
 
     if ((run_info->field_138 & 0x2000) == 0
