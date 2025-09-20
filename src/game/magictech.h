@@ -260,6 +260,16 @@ typedef struct MagicTechInfo {
     /* 0154 */ int defensive2;
 } MagicTechInfo;
 
+typedef unsigned int MagicTechRunFlags;
+
+#define MAGICTECH_RUN_ACTIVE 0x0001u
+#define MAGICTECH_RUN_FREE 0x0002u
+#define MAGICTECH_RUN_0x04 0x0004u
+#define MAGICTECH_RUN_REFLECTED 0x0008u
+#define MAGICTECH_RUN_UNRESISTABLE 0x0010u
+#define MAGICTECH_RUN_0x20 0x0020u
+#define MAGICTECH_RUN_0x40 0x0040u
+
 typedef struct MagicTechRunInfo {
     /* 0000 */ int id;
     /* 0004 */ int spell;
@@ -272,7 +282,7 @@ typedef struct MagicTechRunInfo {
     /* 0130 */ MagicTechObjectNode* objlist;
     /* 0134 */ MagicTechObjectNode* summoned_obj;
     /* 0138 */ int field_138;
-    /* 013C */ int field_13C;
+    /* 013C */ MagicTechRunFlags flags;
     /* 0140 */ unsigned int trigger;
     /* 0144 */ int field_144;
     /* 0148 */ DateTime field_148;
