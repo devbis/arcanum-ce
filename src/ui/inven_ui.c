@@ -524,7 +524,8 @@ bool sub_572340()
 bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
 {
     int rot;
-    tig_art_id_t art_id;
+    tig_art_id_t old_art_id;
+    tig_art_id_t new_art_id;
     int err;
     int sound_id;
     MesFileEntry mes_file_entry;
@@ -544,11 +545,19 @@ bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
 
     if (mode == INVEN_UI_MODE_LOOT
         || mode == INVEN_UI_MODE_STEAL) {
+        // FIX: To determine if a PC can see the target object, the PC is
+        // instantly rotated toward the target before calling `ai_can_see`.
+        // However, when the PC is walking or running along a plotted path
+        // (expressed as a series of rotations), this instant rotation disrupts
+        // the path, causing the PC to run straight to the target and ignore any
+        // obstacles. The fix is straightforward: restore the previous rotation
+        // if the PC cannot see the target.
         rot = object_rot(pc_obj, target_obj);
-        art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
-        art_id = tig_art_id_rotation_set(art_id, rot);
-        object_set_current_aid(pc_obj, art_id);
+        old_art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
+        new_art_id = tig_art_id_rotation_set(old_art_id, rot);
+        object_set_current_aid(pc_obj, new_art_id);
         if (ai_can_see(pc_obj, target_obj) != 0) {
+            object_set_current_aid(pc_obj, old_art_id);
             return false;
         }
     }
