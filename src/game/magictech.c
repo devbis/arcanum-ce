@@ -2372,6 +2372,7 @@ void sub_451C40(int mt_id, int64_t obj)
         if (run_info->source_obj.obj == obj
             && run_info->id != mt_id
             && (magictech_spells[run_info->spell].flags & MAGICTECH_IS_TECH) == 0) {
+            run_info->flags |= MAGICTECH_RUN_DISPELLED;
             magictech_interrupt_delayed(run_info->id);
         }
     }
@@ -2382,6 +2383,7 @@ void sub_451C40(int mt_id, int64_t obj)
             if (run_info->target_obj.obj == obj
                 && index != mt_id
                 && (magictech_spells[run_info->spell].flags & MAGICTECH_IS_TECH) == 0) {
+                run_info->flags |= MAGICTECH_RUN_DISPELLED;
                 magictech_interrupt_delayed(run_info->id);
             }
 
@@ -2390,6 +2392,7 @@ void sub_451C40(int mt_id, int64_t obj)
                 if (node->obj == obj
                     && index != mt_id
                     && (magictech_spells[run_info->spell].flags & MAGICTECH_IS_TECH) == 0) {
+                    run_info->flags |= MAGICTECH_RUN_DISPELLED;
                     magictech_interrupt_delayed(run_info->id);
                 }
                 node = node->next;
@@ -2400,6 +2403,7 @@ void sub_451C40(int mt_id, int64_t obj)
                 if (node->obj == obj
                     && index != mt_id
                     && (magictech_spells[run_info->spell].flags & MAGICTECH_IS_TECH) == 0) {
+                    run_info->flags |= MAGICTECH_RUN_DISPELLED;
                     magictech_interrupt_delayed(run_info->id);
                 }
                 node = node->next;
@@ -4375,6 +4379,13 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
 
     if ((a1->field_60 & OSF_ANTI_MAGIC_SHELL) != 0
         && (run_info->field_138 & 0x800) == 0) {
+        // FIX: Gracefully complete spells when dispelled by the "Dweomer
+        // Shield".
+        if ((run_info->flags & MAGICTECH_RUN_DISPELLED) != 0
+            && run_info->action >= MAGICTECH_ACTION_END) {
+            return true;
+        }
+
         if (player_is_local_pc_obj(run_info->parent_obj.obj)) {
             mes_file_entry.num = 603; // "The effect is nullified."
             mes_get_msg(magictech_spell_mes_file, &mes_file_entry);

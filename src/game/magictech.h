@@ -269,6 +269,7 @@ typedef unsigned int MagicTechRunFlags;
 #define MAGICTECH_RUN_UNRESISTABLE 0x0010u
 #define MAGICTECH_RUN_0x20 0x0020u
 #define MAGICTECH_RUN_0x40 0x0040u
+#define MAGICTECH_RUN_DISPELLED 0x80000000u
 
 typedef struct MagicTechRunInfo {
     /* 0000 */ int id;
