@@ -3816,7 +3816,7 @@ void sub_578330(int64_t a1, int64_t a2)
             if ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0
                 || IS_WEAR_INV_LOC(item_inventory_location_get(a1))) {
                 dialog_copy_npc_normally_wont_sell_msg(qword_682C78, inven_ui_pc_obj, byte_68241C);
-                pos = strlen(byte_68241C);
+                pos = (int)strlen(byte_68241C);
             } else {
                 pos = 0;
             }
