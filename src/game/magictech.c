@@ -4370,8 +4370,12 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
     int64_t parent_obj;
 
     a1->field_60 = 0;
-    if (a1->field_20 == OBJ_HANDLE_NULL
-        || a1->field_20 == dword_5E75F0->parent_obj.obj) {
+
+    // FIX: Move the self-targeting spell check below, after handling the
+    // effects of the "Dweomer Shield". This prevents the execution of end
+    // actions for spells that didn't even have a chance to begin (the result of
+    // interrupting a spell during the initial processing).
+    if (a1->field_20 == OBJ_HANDLE_NULL) {
         return true;
     }
 
@@ -4393,6 +4397,10 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
             ui_spell_maintain_end(run_info->id);
         }
         return false;
+    }
+
+    if (a1->field_20 == dword_5E75F0->parent_obj.obj) {
+        return true;
     }
 
     if (((a1->field_60 & OSF_FULL_REFLECTION) == 0
