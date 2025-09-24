@@ -3058,8 +3058,8 @@ void redraw_inven(bool a1)
 
             dst_rect.x = 141;
             dst_rect.y = 36;
-            dst_rect.width = art_frame_data.width;
-            dst_rect.height = art_frame_data.width;
+            dst_rect.width = art_frame_data.width / 2;
+            dst_rect.height = art_frame_data.width / 2;
 
             art_blit_info.flags = 0;
             art_blit_info.src_rect = &src_rect;
@@ -3095,7 +3095,7 @@ void redraw_inven(bool a1)
     art_blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
-    if (inven_ui_panel) {
+    if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
         tig_art_interface_id_create(341, 0, 0, 0, &(art_blit_info.art_id));
         if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
             return;
@@ -3378,6 +3378,8 @@ void redraw_inven(bool a1)
                 }
 
                 if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) == TIG_OK) {
+                    src_rect.x = 0;
+                    src_rect.y = 0;
                     src_rect.height = art_frame_data.height;
                     src_rect.width = art_frame_data.width;
 
@@ -3455,6 +3457,8 @@ void redraw_inven(bool a1)
             }
 
             if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) == TIG_OK) {
+                src_rect.x = 0;
+                src_rect.y = 0;
                 src_rect.height = art_frame_data.height;
                 src_rect.width = art_frame_data.width;
 
@@ -3484,6 +3488,8 @@ void redraw_inven(bool a1)
                 dst_rect.width = text_rects[index].width;
                 dst_rect.height = text_rects[index].height;
 
+                src_rect.x = 0;
+                src_rect.y = 0;
                 src_rect.width = inven_ui_inventory_paperdoll_inv_slot_rects[index].width;
                 src_rect.height = inven_ui_inventory_paperdoll_inv_slot_rects[index].height;
 
