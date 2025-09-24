@@ -1609,8 +1609,11 @@ int item_get_keys(int64_t obj, int* key_ids)
     }
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_KEY_RING_LIST_IDX);
-    for (index = 0; index < cnt; index++) {
-        key_ids[index] = obj_arrayfield_uint32_get(obj, OBJ_F_KEY_RING_LIST_IDX, index);
+
+    if (key_ids != NULL) {
+        for (index = 0; index < cnt; index++) {
+            key_ids[index] = obj_arrayfield_uint32_get(obj, OBJ_F_KEY_RING_LIST_IDX, index);
+        }
     }
 
     return cnt;
