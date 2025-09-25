@@ -1726,7 +1726,7 @@ int object_get_ac(int64_t obj, bool a2)
         for (index = FIRST_WEAR_INV_LOC; index <= LAST_WEAR_INV_LOC; index++) {
             item_obj = item_wield_get(obj, index);
             if (item_obj != OBJ_HANDLE_NULL) {
-                ac += item_armor_ac_adj(obj, item_obj, a2);
+                ac += item_armor_ac_adj(item_obj, obj, a2);
             }
         }
 
