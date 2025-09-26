@@ -1252,9 +1252,11 @@ void magictech_load_nodes_from_map(const char* map)
         run_info = &(magictech_run_info[tmp_run_info.id]);
         if ((run_info->flags & MAGICTECH_RUN_ACTIVE) != 0) {
             magictech_id_new_lock(&run_info);
+            mt_id = run_info->id;
+        } else {
+            mt_id = tmp_run_info.id;
         }
 
-        mt_id = run_info->id;
         *run_info = tmp_run_info;
         run_info->id = mt_id;
         sub_459500(run_info->id);
