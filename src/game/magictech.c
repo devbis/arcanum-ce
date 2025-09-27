@@ -54,7 +54,7 @@ typedef struct MagicTechSummonTable {
     /* 0008 */ int type;
 } MagicTechSummonTable;
 
-static bool sub_44F3C0(MagicTechRunInfo* run_info, TigFile* stream);
+static bool magictech_run_info_save(MagicTechRunInfo* run_info, TigFile* stream);
 static bool sub_44F620(MagicTechRunInfo* run_info, TigFile* stream);
 static bool sub_44FE30(int a1, const char* path, int a3);
 static bool sub_44FFA0(int a1, const char* a2, int a3);
@@ -897,7 +897,7 @@ bool magictech_post_save(TigFile* stream)
             }
 
             while (start < index) {
-                if (!sub_44F3C0(&(magictech_run_info[start]), stream)) {
+                if (!magictech_run_info_save(&(magictech_run_info[start]), stream)) {
                     return false;
                 }
                 start++;
@@ -921,7 +921,7 @@ bool magictech_post_save(TigFile* stream)
 }
 
 // 0x44F3C0
-bool sub_44F3C0(MagicTechRunInfo* run_info, TigFile* stream)
+bool magictech_run_info_save(MagicTechRunInfo* run_info, TigFile* stream)
 {
     if (stream == NULL) return false;
     if (tig_file_fwrite(&(run_info->id), sizeof(run_info->id), 1, stream) != 1) return false;
@@ -1108,7 +1108,7 @@ void magictech_break_nodes_to_map(const char* map)
                 continue;
             }
 
-            if (!sub_44F3C0(&(magictech_run_info[idx]), stream)) {
+            if (!magictech_run_info_save(&(magictech_run_info[idx]), stream)) {
                 break;
             }
 
@@ -1187,7 +1187,7 @@ void magictech_save_nodes_to_map(const char* map)
 
     for (idx = 0; idx < 512; idx++) {
         if ((magictech_run_info[idx].flags & MAGICTECH_RUN_ACTIVE) != 0) {
-            if (!sub_44F3C0(&(magictech_run_info[idx]), stream)) {
+            if (!magictech_run_info_save(&(magictech_run_info[idx]), stream)) {
                 break;
             }
             cnt++;
