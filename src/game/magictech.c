@@ -73,7 +73,7 @@ static void MTComponentChargeNBranch_ProcFunc();
 static void MTComponentDamage_ProcFunc();
 static void MTComponentDestroy_ProcFunc();
 static void MTComponentDispel_ProcFunc();
-static void sub_451C40(int mt_id, int64_t obj);
+static void magictech_component_dispel_internal(int mt_id, int64_t obj);
 static void MTComponentEffect_ProcFunc();
 static void MTComponentEyeCandy_ProcFunc();
 static void MTComponentHeal_ProcFunc();
@@ -2321,11 +2321,11 @@ void MTComponentDestroy_ProcFunc()
 // 0x451B90
 void MTComponentDispel_ProcFunc()
 {
-    sub_451BB0(stru_5E6D28.field_20, dword_5E75F0->id);
+    magictech_component_dispel(stru_5E6D28.field_20, dword_5E75F0->id);
 }
 
 // 0x451BB0
-void sub_451BB0(int64_t obj, int mt_id)
+void magictech_component_dispel(int64_t obj, int mt_id)
 {
     if (!multiplayer_is_locked()) {
         Packet74 pkt;
@@ -2346,12 +2346,12 @@ void sub_451BB0(int64_t obj, int mt_id)
     }
 
     if (obj != OBJ_HANDLE_NULL) {
-        sub_451C40(mt_id, obj);
+        magictech_component_dispel_internal(mt_id, obj);
     }
 }
 
 // 0x451C40
-void sub_451C40(int mt_id, int64_t obj)
+void magictech_component_dispel_internal(int mt_id, int64_t obj)
 {
     int obj_type;
     int index;

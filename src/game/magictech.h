@@ -366,7 +366,7 @@ bool sub_450940(int mt_id);
 int sub_450B40(int64_t obj);
 void magictech_effect_summon(MagicTechSummonInfo* summon_info);
 void sub_451070(MagicTechRunInfo* a1);
-void sub_451BB0(int64_t obj, int mt_id);
+void magictech_component_dispel(int64_t obj, int mt_id);
 void sub_452650(int64_t obj);
 void magictech_component_trait(int64_t obj, MagicTechComponentTrait* trait, int obj_type);
 int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell);
