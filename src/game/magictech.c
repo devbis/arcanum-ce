@@ -55,7 +55,7 @@ typedef struct MagicTechSummonTable {
 } MagicTechSummonTable;
 
 static bool magictech_run_info_save(MagicTechRunInfo* run_info, TigFile* stream);
-static bool sub_44F620(MagicTechRunInfo* run_info, TigFile* stream);
+static bool magictech_run_info_load(MagicTechRunInfo* run_info, TigFile* stream);
 static bool sub_44FE30(int a1, const char* path, int a3);
 static bool sub_44FFA0(int a1, const char* a2, int a3);
 static void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
@@ -971,7 +971,7 @@ bool magictech_post_load(GameLoadInfo* load_info)
 
         if (extent > 0) {
             for (j = 0; j < extent; j++) {
-                if (!sub_44F620(&(magictech_run_info[index]), load_info->stream)) {
+                if (!magictech_run_info_load(&(magictech_run_info[index]), load_info->stream)) {
                     return false;
                 }
 
@@ -986,7 +986,7 @@ bool magictech_post_load(GameLoadInfo* load_info)
 }
 
 // 0x44F620
-bool sub_44F620(MagicTechRunInfo* run_info, TigFile* stream)
+bool magictech_run_info_load(MagicTechRunInfo* run_info, TigFile* stream)
 {
     if (stream == NULL) return false;
     if (tig_file_fread(&(run_info->id), sizeof(run_info->id), 1, stream) != 1) return false;
@@ -1245,7 +1245,7 @@ void magictech_load_nodes_from_map(const char* map)
 
     for (index = 0; index < cnt; index++) {
         sub_4559E0(&tmp_run_info);
-        if (!sub_44F620(&tmp_run_info, stream)) {
+        if (!magictech_run_info_load(&tmp_run_info, stream)) {
             break;
         }
 
