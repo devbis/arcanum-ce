@@ -368,7 +368,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info);
 void sub_451070(MagicTechRunInfo* a1);
 void sub_451BB0(int64_t obj, int mt_id);
 void sub_452650(int64_t obj);
-void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type);
+void magictech_component_trait(int64_t obj, MagicTechComponentTrait* trait, int obj_type);
 int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell);
 int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3);
 bool sub_454920(int64_t obj, int num, int max);

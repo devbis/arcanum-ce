@@ -2873,11 +2873,11 @@ void MTComponentTestNBranch_ProcFunc()
 // 0x452AD0
 void MTComponentTrait_ProcFunc()
 {
-    magictech_process(stru_5E6D28.field_20, &(dword_5E761C->data.trait), dword_5E75AC);
+    magictech_component_trait(stru_5E6D28.field_20, &(dword_5E761C->data.trait), dword_5E75AC);
 }
 
 // 0x452B00
-void magictech_process(int64_t obj, MagicTechComponentTrait* trait, int obj_type)
+void magictech_component_trait(int64_t obj, MagicTechComponentTrait* trait, int obj_type)
 {
     if (obj == OBJ_HANDLE_NULL) {
         return;
