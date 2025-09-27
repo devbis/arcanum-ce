@@ -2751,7 +2751,7 @@ void sub_452650(int64_t obj)
 // 0x452800
 void MTComponentRecharge_ProcFunc()
 {
-    sub_454920(stru_5E6D28.field_20,
+    magictech_component_recharge(stru_5E6D28.field_20,
         dword_5E761C->data.recharge.num,
         dword_5E761C->data.recharge.max);
 }
@@ -3943,7 +3943,7 @@ bool sub_4548D0(TimeEvent* timeevent, DateTime* a2, DateTime* a3)
 }
 
 // 0x454920
-bool sub_454920(int64_t obj, int num, int max)
+bool magictech_component_recharge(int64_t obj, int num, int max)
 {
     int spell_mana_store;
 
