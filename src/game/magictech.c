@@ -6604,7 +6604,7 @@ bool magictech_recharge_timeevent_process(TimeEvent* timeevent)
         v4 = v2;
     }
 
-    diff = mana_store - v4;
+    diff = v2 - v4;
     obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, mana_store + v4);
 
     parent_obj = obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
