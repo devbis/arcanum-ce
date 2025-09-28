@@ -4049,6 +4049,18 @@ void object_examine(int64_t obj, int64_t pc_obj, char* buffer)
         return;
     }
 
+    // Special case for items - unidentified item name is stored in a separate
+    // field.
+    if (obj_type_is_item(type)
+        && !object_editor
+        && !item_is_identified(obj)) {
+        name = description_get(obj_field_int32_get(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN));
+        if (name != NULL) {
+            strcpy(buffer, name);
+        }
+        return;
+    }
+
     // Special case for PC - name is stored in a specific object field.
     if (type == OBJ_TYPE_PC) {
         char* player_name;
