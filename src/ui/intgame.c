@@ -7242,6 +7242,9 @@ void sub_555910(int64_t obj, char* buffer)
 
     // RNG
     min = obj_field_int32_get(obj, OBJ_F_WEAPON_RANGE);
+    if (min == 1) {
+        min = 0;
+    }
     if (identified) {
         adj = obj_field_int32_get(obj, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
     } else {
