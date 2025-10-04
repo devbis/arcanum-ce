@@ -137,7 +137,7 @@ static char** item_ammunition_type_names;
 static bool item_editor;
 
 // 0x5E87E8
-static bool dword_5E87E8;
+static bool in_rewield;
 
 // 0x5E87F0
 static int64_t item_decay_test_obj;
@@ -197,7 +197,7 @@ bool item_init(GameInitInfo* init_info)
         item_armor_coverage_type_names[index] = msg.str;
     }
 
-    dword_5E87E8 = 0;
+    in_rewield = 0;
     dword_5E8820 = 0;
     item_decay_process_cnt = 1;
 
@@ -2993,7 +2993,7 @@ void item_wield_best_all(int64_t critter_obj, int64_t target_obj)
 }
 
 // 0x465530
-void sub_465530(int64_t obj)
+void item_rewield(int64_t obj)
 {
     int inventory_location;
     int64_t item_obj;
@@ -3001,19 +3001,19 @@ void sub_465530(int64_t obj)
     for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
         item_obj = item_wield_get(obj, inventory_location);
         if (item_obj != OBJ_HANDLE_NULL) {
-            dword_5E87E8 = true;
+            in_rewield = true;
             item_recalc_light(item_obj, obj);
             object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
             object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
-            dword_5E87E8 = false;
+            in_rewield = false;
         }
     }
 }
 
 // 0x4655C0
-bool sub_4655C0()
+bool item_in_rewield()
 {
-    return dword_5E87E8;
+    return in_rewield;
 }
 
 // 0x4655D0
