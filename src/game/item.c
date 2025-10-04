@@ -71,7 +71,7 @@ static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_locat
 static bool item_force_remove_success(void* userinfo);
 static bool item_force_remove_failure(void* userinfo);
 static bool sub_467E70();
-static void sub_467E80(int64_t a1, int64_t a2);
+static void item_recalc_light(int64_t item_obj, int64_t parent_obj);
 static bool item_cancel_decay(int64_t obj);
 static bool item_decay_timeevent_check(TimeEvent* timeevent);
 
@@ -3002,7 +3002,7 @@ void sub_465530(int64_t obj)
         item_obj = item_wield_get(obj, inventory_location);
         if (item_obj != OBJ_HANDLE_NULL) {
             dword_5E87E8 = true;
-            sub_467E80(item_obj, obj);
+            item_recalc_light(item_obj, obj);
             object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
             object_script_execute(obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
             dword_5E87E8 = false;
@@ -4367,7 +4367,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
     }
 
     mt_item_notify_wear(item_obj, parent_obj);
-    sub_467E80(item_obj, parent_obj);
+    item_recalc_light(item_obj, parent_obj);
     object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
 }
 
@@ -4541,7 +4541,7 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
     }
 
     mt_item_notify_unwear(item_obj, parent_obj);
-    sub_467E80(item_obj, parent_obj);
+    item_recalc_light(item_obj, parent_obj);
     object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
 }
 
@@ -4601,7 +4601,7 @@ bool sub_467E70()
 }
 
 // 0x467E80
-void sub_467E80(int64_t a1, int64_t a2)
+void item_recalc_light(int64_t item_obj, int64_t parent_obj)
 {
     int inventory_location;
     int64_t item_obj;
@@ -4612,51 +4612,53 @@ void sub_467E80(int64_t a1, int64_t a2)
     tig_art_id_t aid;
     tig_color_t color;
 
-    if (a1 == OBJ_HANDLE_NULL
-        || (obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY) != 0) {
-        light_flags = 0;
-        for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
-            item_obj = item_wield_get(a2, inventory_location);
-            if (item_obj != OBJ_HANDLE_NULL) {
-                light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
-                if (light_size != 0) {
-                    effectiveness = item_effective_power_ratio(item_obj, a2);
-                    if (effectiveness <= 25) {
-                        light_size >>= 3;
-                    } else if (effectiveness <= 50) {
-                        light_size >>= 2;
-                    } else if (effectiveness <= 75) {
-                        light_size >>= 1;
-                    }
-                    light_flags |= light_size & OIF_LIGHT_ANY;
+    if (item_obj != OBJ_HANDLE_NULL
+        && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY) == 0) {
+        return;
+    }
+
+    light_flags = 0;
+    for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
+        item_obj = item_wield_get(parent_obj, inventory_location);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
+            if (light_size != 0) {
+                effectiveness = item_effective_power_ratio(item_obj, parent_obj);
+                if (effectiveness <= 25) {
+                    light_size >>= 3;
+                } else if (effectiveness <= 50) {
+                    light_size >>= 2;
+                } else if (effectiveness <= 75) {
+                    light_size >>= 1;
                 }
+                light_flags |= light_size & OIF_LIGHT_ANY;
             }
         }
-
-        critter_flags = obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS);
-        critter_flags &= ~OCF_LIGHT_ANY;
-
-        if ((light_flags & OIF_LIGHT_XLARGE) != 0) {
-            critter_flags |= OCF_LIGHT_XLARGE;
-        }
-
-        if ((light_flags & OIF_LIGHT_LARGE) != 0) {
-            critter_flags |= OCF_LIGHT_LARGE;
-        }
-
-        if ((light_flags & OIF_LIGHT_MEDIUM) != 0) {
-            critter_flags |= OCF_LIGHT_MEDIUM;
-        }
-
-        if ((light_flags & OIF_LIGHT_SMALL) != 0) {
-            critter_flags |= OCF_LIGHT_SMALL;
-        }
-
-        obj_field_int32_set(a2, OBJ_F_CRITTER_FLAGS, critter_flags);
-
-        aid = critter_light_get(a2, &color);
-        object_set_light(a2, 0, aid, color);
     }
+
+    critter_flags = obj_field_int32_get(parent_obj, OBJ_F_CRITTER_FLAGS);
+    critter_flags &= ~OCF_LIGHT_ANY;
+
+    if ((light_flags & OIF_LIGHT_XLARGE) != 0) {
+        critter_flags |= OCF_LIGHT_XLARGE;
+    }
+
+    if ((light_flags & OIF_LIGHT_LARGE) != 0) {
+        critter_flags |= OCF_LIGHT_LARGE;
+    }
+
+    if ((light_flags & OIF_LIGHT_MEDIUM) != 0) {
+        critter_flags |= OCF_LIGHT_MEDIUM;
+    }
+
+    if ((light_flags & OIF_LIGHT_SMALL) != 0) {
+        critter_flags |= OCF_LIGHT_SMALL;
+    }
+
+    obj_field_int32_set(parent_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+    aid = critter_light_get(parent_obj, &color);
+    object_set_light(parent_obj, 0, aid, color);
 }
 
 // 0x467FC0
