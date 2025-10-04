@@ -67,7 +67,7 @@ static char* item_error_str(int reason);
 static int find_free_inv_loc_horizontal(int64_t item_obj, int64_t parent_obj, int* slots);
 static int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots);
 static void item_equipped(int64_t item_obj, int64_t parent_obj, int inventory_location);
-static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
+static void item_unequipped(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static bool item_force_remove_success(void* userinfo);
 static bool item_force_remove_failure(void* userinfo);
 static bool sub_467E70();
@@ -4483,7 +4483,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     }
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
-        sub_467CB0(item_obj, parent_obj, inventory_location);
+        item_unequipped(item_obj, parent_obj, inventory_location);
     } else if (IS_HOTKEY_INV_LOC(inventory_location)) {
         if (is_pc) {
             sub_460540(inventory_location - 2000);
@@ -4519,7 +4519,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x467CB0
-void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
+void item_unequipped(int64_t item_obj, int64_t parent_obj, int inventory_location)
 {
     tig_art_id_t aid;
 
