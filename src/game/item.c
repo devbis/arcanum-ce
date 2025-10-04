@@ -4368,7 +4368,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     mt_item_notify_wear(item_obj, parent_obj);
     sub_467E80(item_obj, parent_obj);
-    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+    object_script_execute(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_ON, 0);
 }
 
 // 0x467860
