@@ -4604,7 +4604,7 @@ bool sub_467E70()
 void item_recalc_light(int64_t item_obj, int64_t parent_obj)
 {
     int inventory_location;
-    int64_t item_obj;
+    int64_t inven_item_obj;
     unsigned int light_flags;
     unsigned int light_size;
     unsigned int critter_flags;
@@ -4619,11 +4619,11 @@ void item_recalc_light(int64_t item_obj, int64_t parent_obj)
 
     light_flags = 0;
     for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
-        item_obj = item_wield_get(parent_obj, inventory_location);
-        if (item_obj != OBJ_HANDLE_NULL) {
-            light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
+        inven_item_obj = item_wield_get(parent_obj, inventory_location);
+        if (inven_item_obj != OBJ_HANDLE_NULL) {
+            light_size = obj_field_int32_get(inven_item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
             if (light_size != 0) {
-                effectiveness = item_effective_power_ratio(item_obj, parent_obj);
+                effectiveness = item_effective_power_ratio(inven_item_obj, parent_obj);
                 if (effectiveness <= 25) {
                     light_size >>= 3;
                 } else if (effectiveness <= 50) {
