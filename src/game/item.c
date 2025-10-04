@@ -66,7 +66,7 @@ static bool sub_466EF0(int64_t obj, int64_t loc);
 static char* item_error_str(int reason);
 static int find_free_inv_loc_horizontal(int64_t item_obj, int64_t parent_obj, int* slots);
 static int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots);
-static void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location);
+static void item_equipped(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static bool item_force_remove_success(void* userinfo);
 static bool item_force_remove_failure(void* userinfo);
@@ -3792,7 +3792,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     mt_item_notify_pickup(item_obj, parent_obj);
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
-        sub_4677B0(item_obj, parent_obj, inventory_location);
+        item_equipped(item_obj, parent_obj, inventory_location);
     }
 
     if (parent_obj_type != OBJ_TYPE_CONTAINER) {
@@ -4345,7 +4345,7 @@ int find_free_inv_loc_vertical(int64_t item_obj, int64_t parent_obj, int* slots)
 }
 
 // 0x4677B0
-void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
+void item_equipped(int64_t item_obj, int64_t parent_obj, int inventory_location)
 {
     tig_art_id_t aid;
 
