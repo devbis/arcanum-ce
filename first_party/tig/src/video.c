@@ -1152,6 +1152,12 @@ bool tig_video_window_create(TigInitInfo* init_info)
         return false;
     }
 
+    if (!SDL_SetHint(SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES, "1")) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        return false;
+    }
+
     if ((init_info->flags & TIG_INITIALIZE_POSITIONED) != 0) {
         SDL_SetWindowPosition(window, init_info->x, init_info->y);
     }
