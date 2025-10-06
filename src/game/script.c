@@ -1485,8 +1485,8 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
             rc = script_execute_action(&(condition->els), line, state);
         }
     } break;
-    case SCT_50:
-        if (sub_4655C0()) {
+    case SCT_ITEMS_ARE_BEING_REWIELDED:
+        if (item_in_rewield()) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
