@@ -1157,6 +1157,11 @@ bool tig_video_window_create(TigInitInfo* init_info)
         SDL_DestroyWindow(window);
         return false;
     }
+    if (!SDL_SetHint(SDL_HINT_VIDEO_MAC_FULLSCREEN_MENU_VISIBILITY, "0")) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        return false;
+    }
 
     if ((init_info->flags & TIG_INITIALIZE_POSITIONED) != 0) {
         SDL_SetWindowPosition(window, init_info->x, init_info->y);
