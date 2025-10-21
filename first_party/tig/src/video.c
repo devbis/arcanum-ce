@@ -1152,12 +1152,17 @@ bool tig_video_window_create(TigInitInfo* init_info)
         return false;
     }
 
-    if (!SDL_SetHint(SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES, "1")) {
+    if (!SDL_SetHint(SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES, "0")) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         return false;
     }
     if (!SDL_SetHint(SDL_HINT_VIDEO_MAC_FULLSCREEN_MENU_VISIBILITY, "0")) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        return false;
+    }
+    if (!SDL_SetHint(SDL_HINT_VIDEO_MATCH_EXCLUSIVE_MODE_ON_MOVE, "1")) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         return false;
